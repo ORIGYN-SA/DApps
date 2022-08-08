@@ -129,14 +129,12 @@ export const useAuth = () => {
     const agent = new HttpAgent({
       host: 'https://boundary.ic0.app/',
     })
-    console.log(canisterId)
+
     const actor = Actor.createActor(origynNftIdl, {
       agent,
       canisterId: canisterId || '',
     })
-    actor.whoami().then((r) => {
-      console.log('anon actor', r)
-    })
+    return actor
   }
 
   useEffect(() => {
