@@ -1,0 +1,44 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Publish dApps
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+    - name: Install Node v16
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Bootstrap Packages
+      run: npm run bootstrap
+
+    - name: Run build
+      run: npm run build
+
+    - name: Create .ZIP Archive of the build
+      run: zip -r dist.zip dist
+
+    - name: Upload dApps to Release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: dist.zip
+        asset_name: dapps
+        tag: "dist-auto-built"
+        overwrite: true
+        body: "Automatically built files of dApps Monorepo"
