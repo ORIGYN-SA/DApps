@@ -15,7 +15,7 @@ const monorepoRoot = '../../../'
 const asset_entry = repoRoot + '/src/index.tsx'
 const publicPath = monorepoRoot + 'public'
 
-module.exports = (env, argv) => ({
+module.exports = (env, argv, dAppName) => ({
   target: 'web',
   mode: argv.mode || 'production',
   entry: {
@@ -93,10 +93,12 @@ module.exports = (env, argv) => ({
         ? {
             template: path.resolve(publicPath, 'index.html'),
             inject: 'body',
+            filename: dAppName ? `${dAppName}.html` : 'index.html',
             publicPath: '/',
           }
         : {
             template: path.resolve(publicPath, 'index.html'),
+            filename: dAppName ? `${dAppName}.html` : 'index.html',
             inject: 'body',
           }
     ),

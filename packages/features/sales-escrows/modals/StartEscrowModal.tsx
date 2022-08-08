@@ -26,7 +26,7 @@ import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import * as Yup from 'yup'
 
-export default function StartEscrow({
+export function StartEscrowModal({
   nft,
   open,
   handleClose,

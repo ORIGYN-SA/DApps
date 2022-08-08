@@ -27,7 +27,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { TokenIcon } from '@dapp/features-components'
 import { useTokensContext } from '@dapp/features-tokens-provider'
 
-export default function StartAuction({ currentToken, open, handleClose }) {
+export function StartAuctionModal({ currentToken, open, handleClose }) {
   const { actor, ogyActor } = React.useContext(AuthContext)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
   const [token, setToken] = React.useState('OGY')

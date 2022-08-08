@@ -20,7 +20,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />
 })
 
-const ConfirmAction = ({
+export const ConfirmSalesActionModal = ({
   open,
   handleClose,
   currentToken,
@@ -181,4 +181,3 @@ const ConfirmAction = ({
     </div>
   )
 }
-export default ConfirmAction

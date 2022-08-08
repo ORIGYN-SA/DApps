@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap --force-local --reject-cycles",
-    "start:wallet": "lerna exec --scope @dapp/app-wallet -- npm run start"
+    "start:wallet": "lerna exec --scope @dapp/app-wallet -- npm run start",
+    "build:wallet": "lerna exec --scope @dapp/app-wallet -- npm run build"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",

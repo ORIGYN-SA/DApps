@@ -23,8 +23,10 @@ import {
 import { AuthContext } from '@dapp/features-authentication'
 import { useTokensContext } from '@dapp/features-tokens-provider'
 import { timeConverter } from '@dapp/utils'
-import ConfirmAction from './Modals/ConfirmAction'
-import StartAuction from './Modals/StartAuction'
+import {
+  ConfirmSalesActionModal,
+  StartAuctionModal,
+} from '@dapp/features-sales-escrows'
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext)
@@ -433,7 +435,7 @@ const WalletPage = () => {
             </p>
           </Box>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <ConfirmAction
+            <ConfirmSalesActionModal
               open={openConfirmation}
               handleClose={handleClose}
               currentToken={selectdNFT}
@@ -480,7 +482,7 @@ const WalletPage = () => {
                 You do not have any NFT in your wallet
               </Typography>
             )}
-            <StartAuction
+            <StartAuctionModal
               open={openAuction}
               handleClose={handleClose}
               currentToken={selectdNFT}

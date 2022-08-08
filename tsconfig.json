@@ -24,6 +24,9 @@
       "@dapp/features-components": [
         "./packages/features/components/src/index.ts"
       ],
+      "@dapp/features-sales-escrows": [
+        "./packages/features/sales-escrows/src/index.ts"
+      ],
       "@dapp/features-tokens-provider": [
         "./packages/features/tokens-provider/src/index.ts"
       ],

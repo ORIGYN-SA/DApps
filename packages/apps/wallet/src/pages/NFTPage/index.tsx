@@ -22,7 +22,7 @@ import { NatPrice } from '@dapp/features-components'
 import { timeConverter, eToNumber } from '@dapp/utils'
 import { ICPIcon, OGYIcon } from '@dapp/common-assets'
 import { AuthContext } from '@dapp/features-authentication'
-import StartEscrow from './Modals/StartEscrow'
+import { StartEscrowModal } from '@dapp/features-sales-escrows'
 
 const SymbolWithIcon = ({ symbol }) => {
   return symbol === 'OGY' ? (
@@ -148,7 +148,7 @@ const NFTPage = () => {
     )
   return (
     <div>
-      <StartEscrow
+      <StartEscrowModal
         open={openEscrowModal}
         handleClose={handleClose}
         nft={currentNFT}
