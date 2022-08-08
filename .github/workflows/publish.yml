@@ -28,7 +28,7 @@ jobs:
         run: npm run bootstrap
 
       - name: Run build
-        run: npm run build
+        run: npm run build:all
 
       - name: Create .ZIP Archive of the build
         run: zip -r dist.zip dist
