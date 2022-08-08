@@ -15,7 +15,7 @@ const monorepoRoot = '../../../'
 const asset_entry = repoRoot + '/src/index.tsx'
 const publicPath = monorepoRoot + 'public'
 
-module.exports = (env, argv, dAppName) => ({
+module.exports = (env, argv, dAppConfig) => ({
   target: 'web',
   mode: argv.mode || 'production',
   entry: {
@@ -41,7 +41,7 @@ module.exports = (env, argv, dAppName) => ({
     },
   },
   output: {
-    filename: 'index.js',
+    filename: dAppConfig?.name ? `${dAppConfig?.name}.js` : 'index.js',
     path: path.join(__dirname, 'dist'),
   },
 
@@ -93,12 +93,13 @@ module.exports = (env, argv, dAppName) => ({
         ? {
             template: path.resolve(publicPath, 'index.html'),
             inject: 'body',
-            filename: dAppName ? `${dAppName}.html` : 'index.html',
-            publicPath: '/',
+            publicPath: `/`,
           }
         : {
             template: path.resolve(publicPath, 'index.html'),
-            filename: dAppName ? `${dAppName}.html` : 'index.html',
+            filename: dAppConfig?.name
+              ? `${dAppConfig?.name}.html`
+              : 'index.html',
             inject: 'body',
           }
     ),
@@ -118,6 +119,8 @@ module.exports = (env, argv, dAppName) => ({
     watchContentBase: true,
     open: true,
     disableHostCheck: true,
-    openPage: '-/baycdev/-/bayc-1/-/wallet',
+    openPage: dAppConfig?.openPage
+      ? dAppConfig.openPage
+      : '-/baycdev/-/bayc-1/-/',
   },
 })
