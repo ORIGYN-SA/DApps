@@ -38,6 +38,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist.zip
-          tag: 'dApps Latest Build'
+          tag: 'dapps-latest-build'
           overwrite: true
           body: 'Automatically built files of dApps Monorepo'
