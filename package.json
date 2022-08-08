@@ -5,9 +5,11 @@
     "bootstrap": "lerna bootstrap --force-local --reject-cycles",
     "start:wallet": "lerna exec --scope @dapp/app-wallet -- npm run start",
     "start:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run start",
+    "start:ledger": "lerna exec --scope @dapp/app-ledger -- npm run start",
     "build:all": "npm run build:wallet && npm run build:marketplace",
     "build:wallet": "lerna exec --scope @dapp/app-wallet -- npm run build",
-    "build:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run build"
+    "build:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run build",
+    "build:ledger": "lerna exec --scope @dapp/app-ledger -- npm run build"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",

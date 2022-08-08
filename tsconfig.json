@@ -21,6 +21,9 @@
       "@dapp/app-marketplace": [
         "./packages/apps/marketplace/src/index.tsx"
       ],
+      "@dapp/app-ledger":[
+        "./packages/apps/ledger/src/index.tsx"
+      ],
       "@dapp/features-authentication": [
         "./packages/features/authentication/src/index.ts"
       ],

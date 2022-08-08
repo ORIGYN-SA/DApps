@@ -21,10 +21,10 @@ export const getAccountId = (
   principal?: Principal,
   subAccount?: number
 ): string => {
-  if (!principal) return ''
-  const sha = CryptoJS.algo.SHA224.create()
-  sha.update(ACCOUNT_DOMAIN_SEPERATOR) // Internally parsed with UTF-8, like go does
-  sha.update(byteArrayToWordArray(principal.toUint8Array()))
+  if (!principal) return "";
+  const sha = CryptoJS.algo.SHA224.create();
+  sha.update(ACCOUNT_DOMAIN_SEPERATOR); // Internally parsed with UTF-8, like go does
+  sha.update(byteArrayToWordArray(Uint8Array.from(Object.values(principal))));//Pass the array to (byteArrayToWordArray(arg))
   const subBuffer = Buffer.from(SUB_ACCOUNT_ZERO)
   if (subAccount) {
     subBuffer.writeUInt32BE(subAccount)
