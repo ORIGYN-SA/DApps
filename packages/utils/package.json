@@ -1,0 +1,9 @@
+{
+  "name": "@dapp/utils",
+  "version": "0.1.0",
+  "description": "Utility functions needed within the dApps.",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@dapp/common-candid": "0.1.0"
+  }
+}

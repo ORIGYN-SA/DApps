@@ -1,0 +1,9 @@
+{
+  "name": "@dapp/features-theme",
+  "version": "0.1.0",
+  "description": "Theme provider for each dApp.",
+  "main": "src/index.tsx",
+  "dependencies": {
+    "@dapp/utils": "0.1.0"
+  }
+}

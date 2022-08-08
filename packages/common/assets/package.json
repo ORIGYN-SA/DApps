@@ -1,0 +1,6 @@
+{
+  "name": "@dapp/common-assets",
+  "version": "0.1.0",
+  "description": "Contains all assets files needed by dApps.",
+  "main": "src/index.ts"
+}

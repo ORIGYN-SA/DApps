@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "jsx": "preserve",
+    "noImplicitAny": false,
+    "outDir": "dist",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "target": "esnext",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "lib": ["es5", "es6", "esnext", "dom", "dom.iterable"],
+    "paths": {
+      "@dapp/app-wallet": [
+        "./packages/apps/wallet/src/index.tsx"
+      ],
+      "@dapp/features-authentication": [
+        "./packages/features/authentication/src/index.ts"
+      ],
+      "@dapp/features-components": [
+        "./packages/features/components/src/index.ts"
+      ],
+      "@dapp/features-tokens-provider": [
+        "./packages/features/tokens-provider/src/index.ts"
+      ],
+      "@dapp/features-theme": [
+        "./packages/features/theme/src/index.tsx"
+      ],
+      "@dapp/utils": [
+        "./packages/utils/src/index.ts"
+      ],
+      "@dapp/common-candid": [
+        "./packages/common/candid/src/index.ts"
+      ],
+      "@dapp/common-assets": [
+        "./packages/common/assets/src/index.ts"
+      ],
+    }
+  },
+  "include": [
+    "packages/**/*",
+    "index.d.ts",
+    "webpack.config.js",
+  ],
+  "exclude": [
+    "./node_modules",
+    ".git",
+    "**/node_modules",
+    "**/dist/**/*.js"
+  ]
+}

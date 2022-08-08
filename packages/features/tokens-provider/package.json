@@ -1,0 +1,10 @@
+{
+  "name": "@dapp/features-tokens-provider",
+  "version": "0.1.0",
+  "description": "Tokens Context provider that handles tokens and ledger canisters.",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@dapp/features-authentication": "0.1.0",
+    "@dapp/utils": "0.1.0"
+  }
+}

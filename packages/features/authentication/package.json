@@ -1,0 +1,9 @@
+{
+  "name": "@dapp/features-authentication",
+  "version": "0.1.0",
+  "description": "Authentication provider for all dApps.",
+  "main": "src/index.tsx",
+  "dependencies": {
+    "@dapp/common-candid": "0.1.0"
+  }
+}

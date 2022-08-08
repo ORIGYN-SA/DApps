@@ -1,0 +1,13 @@
+{
+  "name": "@dapp/features-components",
+  "version": "0.1.0",
+  "description": "All common components used within the dApps.",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@dapp/common-assets": "0.1.0",
+    "@dapp/features-authentication": "0.1.0",
+    "@dapp/features-theme": "0.1.0",
+    "@dapp/features-tokens-provider": "0.1.0",
+    "@dapp/utils": "0.1.0"
+  }
+}

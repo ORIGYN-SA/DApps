@@ -1,0 +1,6 @@
+{
+  "name": "@dapp/common-candid",
+  "version": "0.1.0",
+  "description": "Candid files used within the dApps.",
+  "main": "src/index.ts"
+}
