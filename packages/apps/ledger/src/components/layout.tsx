@@ -17,10 +17,9 @@ import {
 } from "@mui/material";
 import React, { useContext } from "react";
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../Logo";
-import { useAuthContext } from '@dapp/features-authentication'
-import ThemeConfig, { SiteContext } from '@dapp/features-theme'
-
+import { OrigynLogo } from  "@dapp/common-assets";
+import { useAuthContext } from "@dapp/features-authentication";
+import ThemeConfig, { SiteContext } from "@dapp/features-theme";
 
 const Items = [
   {
@@ -40,7 +39,7 @@ const Items = [
   },
 ];
 
-export const LedgerLayout = ({ children }) => {
+export const Layout = ({ children }) => {
   const { onChangeMode, themeMode } = useContext(SiteContext);
 
   const { logIn, loggedIn, principal } = useAuthContext();
@@ -77,7 +76,7 @@ export const LedgerLayout = ({ children }) => {
                     }}
                   >
                     <Box sx={{ padding: "8px" }}>
-                      <Logo />
+                      <OrigynLogo/>
                     </Box>
                   </Box>
                   <Divider />
@@ -156,4 +155,3 @@ export const LedgerLayout = ({ children }) => {
     </>
   );
 };
-
