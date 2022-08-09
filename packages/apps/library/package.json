@@ -1,16 +1,10 @@
 {
-  "name": "origyn-dapps",
-  "private": true,
+  "name": "@dapp/app-library",
+  "version": "0.1.0",
   "scripts": {
-    "bootstrap": "lerna bootstrap --force-local --reject-cycles",
-    "start:wallet": "lerna exec --scope @dapp/app-wallet -- npm run start",
-    "start:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run start",
-    "start:ledger": "lerna exec --scope @dapp/app-ledger -- npm run start",
-    "build:all": "npm run build:wallet && npm run build:marketplace && npm run build:ledger",
-    "build:wallet": "lerna exec --scope @dapp/app-wallet -- npm run build",
-    "build:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run build",
-    "build:ledger": "lerna exec --scope @dapp/app-ledger -- npm run build",
-    "build:library": "lerna exec --scope @dapp/app-library -- npm run build"
+    "build": "webpack",
+    "start": "webpack serve --mode development --env development",
+    "start-ssl": "sudo ./node_modules/.bin/webpack serve --mode development --env development"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
@@ -39,7 +33,6 @@
     "fork-ts-checker-webpack-plugin": "^6.3.2",
     "html-inline-script-webpack-plugin": "3.0.0",
     "html-webpack-plugin": "5.3.1",
-    "lerna": "^5.3.0",
     "process": "0.11.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -59,11 +52,12 @@
     "@date-io/moment": "^2.14.0",
     "@dfinity/auth-client": "^0.10.4",
     "@dfinity/authentication": "^0.10.4",
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
     "@hookform/resolvers": "^2.9.3",
     "@mui/icons-material": "^5.8.4",
-    "@mui/material": "^5.8.5",
+    "@mui/lab": "^5.0.0-alpha.87",
+    "@mui/material": "^5.9.3",
     "@mui/x-date-pickers": "^5.0.0-alpha.7",
     "@svgr/webpack": "^6.2.1",
     "@types/react": "^17.0.19",
@@ -80,12 +74,15 @@
     "react-is": "^18.2.0",
     "react-toastify": "^8.1.0",
     "react-tooltip": "^4.2.21",
-    "yup": "^0.32.11"
-  },
-  "browserslist": [
-    "last 2 chrome version",
-    "last 2 firefox version",
-    "last 2 safari version",
-    "last 2 edge version"
-  ]
+    "yup": "^0.32.11",
+    "@dapp/common-assets": "0.1.0",
+    "@dapp/common-candid": "0.1.0",
+    "@dapp/features-authentication": "0.1.0",
+    "@dapp/features-components": "0.1.0",
+    "@dapp/features-sales-escrows": "0.1.0",
+    "@dapp/features-theme": "0.1.0",
+    "@dapp/features-tokens-provider": "0.1.0",
+    "@dapp/utils": "0.1.0"
+  }
+
 }
