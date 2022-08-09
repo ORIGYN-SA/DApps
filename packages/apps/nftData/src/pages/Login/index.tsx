@@ -52,8 +52,11 @@ const Login = () => {
         else {
           try {
             const result = await axios.get(`https://${canisterId}.raw.ic0.app/collection/info`);
-            console.log('heeeeeeeeeeeeeeeeeey22222');
-            setNFTData(result.data);
+            if(result.data.search('"is_soulbound":,')){
+              setNFTData(JSON.parse(result.data.replace('"is_soulbound":,', '')));
+            } else { 
+              setNFTData(JSON.parse(result.data));
+             }
           }
           catch(err) {
             console.log(err);
