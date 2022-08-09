@@ -14,7 +14,7 @@ const App = () => {
         <SiteProvider>
           <HeaderPart>
             <Routes>
-              <Route path="/" element={<Library/>}/>
+              <Route path="*" element={<Login/>}/>
             </Routes>
           </HeaderPart>
         </SiteProvider>

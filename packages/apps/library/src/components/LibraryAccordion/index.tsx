@@ -1,6 +1,6 @@
 
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { AuthContext } from "../../hooks/auth";
+import { AuthContext } from '@dapp/features-authentication';
 import LibraryBox from "../LibraryBox"
 //Accordion @MUI
 import { styled } from '@mui/material/styles';

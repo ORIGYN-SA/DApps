@@ -1,6 +1,6 @@
 import React, {useContext} from "react"
 import { Box } from "@mui/material"
-import { SiteContext } from "../../theme"
+import { SiteContext } from '@dapp/features-theme';
 
 function Logo() {
 
