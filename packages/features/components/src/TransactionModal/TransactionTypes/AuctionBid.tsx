@@ -1,49 +1,40 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
-//Icons ICP & OGY
-import {ICPIcon, OGYIcon} from  "@dapp/common-assets";
-
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
+// Icons ICP & OGY
+import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 
 const AuctionBid = (props) => {
-  var singleT_type = props.data.type_txn;
-  var bid_buyer = props.data.buyer;
-  //buyer accoount
-  var buyer = bid_buyer.acc_principal_string;
-  //I HAVE OTHER BUYER PROPS IN ACCOUNT BUT NOT WORKING?
-  var bid_amount = props.data.amount;
-  var bid_token = props.data.token;
-  //token specs
-  var canister = bid_token.canister_string;
-  var fee = bid_token.fee;
-  var sym = bid_token.symbol;
-  var decimals = bid_token.decimal;
-  var standard = bid_token.standard;
-  var bid_saleId = props.data.sale_id;
+  const singleT_type = props.data.type_txn;
+  const bid_buyer = props.data.buyer;
+  // buyer accoount
+  const buyer = bid_buyer.acc_principal_string;
+  // I HAVE OTHER BUYER PROPS IN ACCOUNT BUT NOT WORKING?
+  const bid_amount = props.data.amount;
+  const bid_token = props.data.token;
+  // token specs
+  const canister = bid_token.canister_string;
+  const {fee} = bid_token;
+  const sym = bid_token.symbol;
+  const decimals = bid_token.decimal;
+  const {standard} = bid_token;
+  const bid_saleId = props.data.sale_id;
 
   return (
     <Box>
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
-        <Typography
-          sx={{ fontSize: 14 }}
-          color="text.secondary"
-          gutterBottom
-        >
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Transaction type:
         </Typography>
         <Typography variant="h5" gutterBottom>
           {singleT_type}
         </Typography>
-        <Typography
-          sx={{ fontSize: 14 }}
-          color="text.secondary"
-          gutterBottom
-        >
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Sale ID:
         </Typography>
         <Typography variant="h5" gutterBottom>
@@ -109,7 +100,7 @@ const AuctionBid = (props) => {
               Symbol:
             </Typography>
             <Typography>
-              {sym === "OGY" ? (
+              {sym === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -127,7 +118,7 @@ const AuctionBid = (props) => {
         </Grid>
       </Box>
     </Box>
-  )
+  );
 };
 
 export default AuctionBid;
