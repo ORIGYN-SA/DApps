@@ -1,7 +1,7 @@
 import React from "react";
 import {BrowserRouter, Routes, Route} from "react-router-dom"
 import Ledger from "./pages/Ledger"
-import { LedgerLayout } from '@dapp/features-components'
+import { Layout } from '../src/components/layout'
 import { AuthProvider } from '@dapp/features-authentication'
 import { SiteProvider } from '@dapp/features-theme';
 import "react-toastify/dist/ReactToastify.css";
@@ -11,11 +11,11 @@ const App = () => {
     <BrowserRouter>
       <AuthProvider>
         <SiteProvider>
-          <LedgerLayout>
+          <Layout>
             <Routes>
               <Route path="*" element={<Ledger/>}/>
             </Routes>
-          </LedgerLayout>
+          </Layout>
         </SiteProvider>
       </AuthProvider>
     </BrowserRouter>
