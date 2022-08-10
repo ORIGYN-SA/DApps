@@ -6,10 +6,12 @@
     "start:wallet": "lerna exec --scope @dapp/app-wallet -- npm run start",
     "start:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run start",
     "start:ledger": "lerna exec --scope @dapp/app-ledger -- npm run start",
-    "build:all": "npm run build:wallet && npm run build:marketplace && npm run build:ledger",
+    "start:library": "lerna exec --scope @dapp/app-library -- npm run start",
+    "build:all": "npm run build:wallet && npm run build:marketplace && npm run build:ledger && npm run build:library",
     "build:wallet": "lerna exec --scope @dapp/app-wallet -- npm run build",
     "build:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run build",
     "build:ledger": "lerna exec --scope @dapp/app-ledger -- npm run build",
+    "build:library": "lerna exec --scope @dapp/app-library -- npm run build",
     "test": "jest",
     "eslint": "**/*.tsx"
   },
