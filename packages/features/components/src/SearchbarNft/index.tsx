@@ -1,85 +1,79 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "@dapp/features-authentication";
-import { Box, IconButton, Typography } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Paper from "@mui/material/Paper";
-import FormControl from "@mui/material/FormControl";
-import { collectionName } from "@dapp/utils"
-//Preloader
-import { CircularProgress } from "@mui/material";
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '@dapp/features-authentication';
+import { Box, IconButton, Typography } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import Paper from '@mui/material/Paper';
+import FormControl from '@mui/material/FormControl';
+import { collectionName } from '@dapp/utils';
+// Preloader
+import { CircularProgress } from '@mui/material';
 
 export const SearchbarNft = (props) => {
-  const { tokenId, canisterId, principal, actor } =
-    useContext(AuthContext);
-  const [selectTokenIds, setSelectTokenIds] = React.useState([""]);
-  const [idsNumber, setIdsNumber] = React.useState("");
+  const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
+  const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
+  const [idsNumber, setIdsNumber] = React.useState('');
 
   const handleSelectIds = (event, value) => {
-    //setSearchBarTokenId state
+    // setSearchBarTokenId state
     if (value == null) {
-      value = "";
+      value = '';
     }
     props.setSearchBarTokenId(value);
-    //replace the tokenId in the searchBar
+    // replace the tokenId in the searchBar
     window.history.pushState(
-      "",
-      "",
-      window.location.href.replace(`/${props.searchBarTokenId}/`, `/${value}/`)
+      '',
+      '',
+      window.location.href.replace(`/${props.searchBarTokenId}/`, `/${value}/`),
     );
   };
 
   const getNFTCollection = async () => {
-    //console.log("PROVA COLL", tokenId);
-    setSelectTokenIds(["Loading..."]);
+    // console.log("PROVA COLL", tokenId);
+    setSelectTokenIds(['Loading...']);
 
-    let response = await actor?.collection_nft_origyn([]);
+    const response = await actor?.collection_nft_origyn([]);
 
-    let collectionNFT = response.ok;
+    const collectionNFT = response.ok;
 
-    let obj_token_ids = collectionNFT.token_ids;
-    let number_ids = collectionNFT.token_ids_count[0].toString();
+    const obj_token_ids = collectionNFT.token_ids;
+    const number_ids = collectionNFT.token_ids_count[0].toString();
     setIdsNumber(number_ids);
 
-    var x: string;
-    var arrayTokenIds = [];
+    let x: string;
+    const arrayTokenIds = [];
     for (x in obj_token_ids) {
       var newID = obj_token_ids[x];
-      //This is the array created to be filtered with Intersection
+      // This is the array created to be filtered with Intersection
       arrayTokenIds.push(newID);
-      setSelectTokenIds((x) => {
-        return [...newID];
-      });
+      setSelectTokenIds((x) => [...newID]);
     }
 
-    //Check if the token Id is in the url
-    let splitted_url: string[] = window.location.href.split("/");
-    //Empty indexID
-    props.setIndexID("");
-    //Check for indexID in url
+    // Check if the token Id is in the url
+    const splitted_url: string[] = window.location.href.split('/');
+    // Empty indexID
+    props.setIndexID('');
+    // Check for indexID in url
     const urlParams = new URLSearchParams(window.location.search);
     for (const [key, value] of urlParams) {
-      if (key == "indexID") {
+      if (key == 'indexID') {
         props.setIndexID(value);
       }
       break;
     }
 
-    //If an item of splitted array is present in the array of Token Ids
-    //we have token id in url
-    var intersection = splitted_url.filter(function (e) {
-      return arrayTokenIds[0].indexOf(e) > -1;
-    });
+    // If an item of splitted array is present in the array of Token Ids
+    // we have token id in url
+    const intersection = splitted_url.filter((e) => arrayTokenIds[0].indexOf(e) > -1);
     if (intersection.length > 0) {
-      //setSearchBarTokenId state
+      // setSearchBarTokenId state
       props.setSearchBarTokenId(tokenId);
     } else {
-      //setSearchBarTokenId state
-      props.setSearchBarTokenId("Not selected");
+      // setSearchBarTokenId state
+      props.setSearchBarTokenId('Not selected');
     }
-
   };
-  //if the actor changes getNftCollection is called
+  // if the actor changes getNftCollection is called
   useEffect(() => {
     if (actor) {
       getNFTCollection();
@@ -90,28 +84,30 @@ export const SearchbarNft = (props) => {
     <Box
       component={Paper}
       elevation={2}
-      sx={{ margin: 2, width: "100%", padding: 2 }}
+      sx={{ margin: 2, width: '100%', padding: 2 }}
     >
       {props.isLoading ? (
-        <Box sx={{ textAlign: "center" }}>
-          <CircularProgress color="inherit"></CircularProgress>
+        <Box sx={{ textAlign: 'center' }}>
+          <CircularProgress color="inherit" />
         </Box>
       ) : (
-        <FormControl sx={{ m: 1, width: "100%" }}>
-          {(tokenId == "") ? (
+        <FormControl sx={{ m: 1, width: '100%' }}>
+          {tokenId == '' ? (
             <div>
               <Typography
                 sx={{
                   m: 1,
-                  width: "95%",
+                  width: '95%',
                 }}
-              >Collection name: <b>{collectionName(tokenId)}</b> </Typography>
+              >
+                Collection name: <b>{collectionName(tokenId)}</b>{' '}
+              </Typography>
               <Typography
                 sx={{
                   m: 1,
-                  borderBottom: "1px solid",
+                  borderBottom: '1px solid',
                   paddingBottom: 2,
-                  width: "95%",
+                  width: '95%',
                 }}
               >
                 Current Token ID: <b>{props.searchBarTokenId}</b>
@@ -121,9 +117,9 @@ export const SearchbarNft = (props) => {
             <Typography
               sx={{
                 m: 1,
-                borderBottom: "1px solid",
+                borderBottom: '1px solid',
                 paddingBottom: 2,
-                width: "95%",
+                width: '95%',
               }}
             >
               Current Token ID: <b>{props.searchBarTokenId}</b>
@@ -136,7 +132,7 @@ export const SearchbarNft = (props) => {
             disablePortal
             id="combo-box-demo"
             options={selectTokenIds}
-            sx={{ width: "95%", m: 1 }}
+            sx={{ width: '95%', m: 1 }}
             renderInput={(params) => (
               <TextField {...params} label="Other tokens IDS" />
             )}

@@ -1,25 +1,24 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
-//Icons ICP & OGY
-import {ICPIcon, OGYIcon} from  "@dapp/common-assets";
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
+// Icons ICP & OGY
+import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
 const SaleEnded = (props) => {
-  var end_seller = props.data.seller;
-  var principal_seller = end_seller.acc_principal_string;
+  const end_seller = props.data.seller;
+  const principal_seller = end_seller.acc_principal_string;
 
-  var end_buyer = props.data.buyer;
-  var principal_buyer = end_buyer.acc_principal_string;
+  const end_buyer = props.data.buyer;
+  const principal_buyer = end_buyer.acc_principal_string;
 
-  var end_amount = props.data.amount;
+  const end_amount = props.data.amount;
 
-  var token_end = props.data.token;
-  var canister = token_end.canister_string;
-  var fee = token_end.fee;
-  var sym = token_end.symbol;
-  var decimals = token_end.decimal;
-  var standard = token_end.standard;
-
+  const token_end = props.data.token;
+  const canister = token_end.canister_string;
+  const {fee} = token_end;
+  const sym = token_end.symbol;
+  const decimals = token_end.decimal;
+  const {standard} = token_end;
 
   return (
 
@@ -27,7 +26,7 @@ const SaleEnded = (props) => {
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
         <Typography
@@ -54,7 +53,7 @@ const SaleEnded = (props) => {
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
         <Typography
@@ -125,7 +124,7 @@ const SaleEnded = (props) => {
               Symbol:
             </Typography>
             <Typography>
-              {sym === "OGY" ? (
+              {sym === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />

@@ -1,15 +1,15 @@
-import { Box, Typography } from '@mui/material'
-import React from 'react'
+import { Box, Typography } from '@mui/material';
+import React from 'react';
 
 interface TabPanelProps {
-  children?: React.ReactNode
-  index: number
-  value: number
-  padding?: number
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+  padding?: number;
 }
 
 export const TabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...other } = props
+  const { children, value, index, ...other } = props;
 
   return (
     <div
@@ -25,5 +25,5 @@ export const TabPanel = (props: TabPanelProps) => {
         </Box>
       )}
     </div>
-  )
-}
+  );
+};

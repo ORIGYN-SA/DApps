@@ -7,9 +7,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const Dotenv = require('dotenv-webpack')
 const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin')
 
-console.log(path.join(__dirname, 'node_modules'))
 const repoRoot = path.join(process.cwd())
-console.log(path.join(repoRoot, 'node_modules'))
 const monorepoRoot = '../../../'
 
 const asset_entry = repoRoot + '/src/index.tsx'

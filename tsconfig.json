@@ -24,6 +24,9 @@
       "@dapp/app-marketplace": [
         "./packages/apps/marketplace/src/index.tsx"
       ],
+      "@dapp/app-library": [
+        "./packages/apps/library/src/index.tsx"
+      ],
       "@dapp/app-ledger":[
         "./packages/apps/ledger/src/index.tsx"
       ],

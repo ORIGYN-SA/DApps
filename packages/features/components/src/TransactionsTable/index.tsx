@@ -1,82 +1,81 @@
-import React, { useContext, useEffect, useState } from "react";
-import { timeConverter } from "@dapp/utils";
-import { AuthContext } from  "@dapp/features-authentication";
-import { Box, IconButton } from "@mui/material";
-import Modal from "@mui/material/Modal";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import TableFooter from "@mui/material/TableFooter";
-import TablePagination from "@mui/material/TablePagination";
-import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
-import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
-//Import Interfaces TS
+import React, { useContext, useEffect, useState } from 'react';
+import { timeConverter } from '@dapp/utils';
+import { AuthContext } from '@dapp/features-authentication';
+import { Box, IconButton } from '@mui/material';
+import Modal from '@mui/material/Modal';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import TableFooter from '@mui/material/TableFooter';
+import TablePagination from '@mui/material/TablePagination';
+import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
+import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
+// Import Interfaces TS
 import {
   Transactions,
-  Row
-} from "@dapp/utils";
-//Import fn to get the TransactionObj
-import Mint from "./functions/Mint";
-import AuctionBid from "./functions/AuctionBid";
-import SaleEnded from "./functions/SaleEnded";
-import SaleOpened from "./functions/SaleOpened";
-import OwnerTransfer from "./functions/OwnerTransfer";
-import EscrowDeposit from "./functions/EscrowDeposit";
-import EscrowWithdraw from "./functions/EscrowWithdraw";
-import SaleWithdraw from "./functions/SaleWithdraw";
-//Preloader
-import { CircularProgress } from "@mui/material";
-//Modal Box - Component
-import {Transaction} from "../TransactionModal";
-//Table style
+  Row,
+} from '@dapp/utils';
+// Import fn to get the TransactionObj
+import { CircularProgress } from '@mui/material';
+import Mint from './functions/Mint';
+import AuctionBid from './functions/AuctionBid';
+import SaleEnded from './functions/SaleEnded';
+import SaleOpened from './functions/SaleOpened';
+import OwnerTransfer from './functions/OwnerTransfer';
+import EscrowDeposit from './functions/EscrowDeposit';
+import EscrowWithdraw from './functions/EscrowWithdraw';
+import SaleWithdraw from './functions/SaleWithdraw';
+// Preloader
+// Modal Box - Component
+import {Transaction} from '../TransactionModal';
+// Table style
 const cell_style = {
-  colSpan: "4",
-  align: "center",
-  fontWeight: "Bold",
+  colSpan: '4',
+  align: 'center',
+  fontWeight: 'Bold',
 };
-//Style Modal Box
+// Style Modal Box
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  minWidth: "600px",
-  bgcolor: "background.paper",
-  border: "3px solid ",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  minWidth: '600px',
+  bgcolor: 'background.paper',
+  border: '3px solid ',
   boxShadow: 24,
   p: 4,
   borderRadius: 0,
   borderImage:
-    "linear-gradient(to right,yellow 30%,red 50%,violet 70%, blue 80%, green 100%) 2",
+    'linear-gradient(to right,yellow 30%,red 50%,violet 70%, blue 80%, green 100%) 2',
 };
-//array without duplicates
+// array without duplicates
 function removeDuplicates(arr: string[]) {
   return arr.filter((item, index) => arr.indexOf(item) === index);
 }
 
 export const TransactionsTable = (props) => {
-  //Authcontext
-  const { actor } =
-    useContext(AuthContext);
+  // Authcontext
+  const { actor } = useContext(AuthContext);
 
-  //**STATUS OF THE OBJ WITH HISTORY **//
-  //Is empty-
+  //* *STATUS OF THE OBJ WITH HISTORY **//
+  // Is empty-
   const [isEmpty, setIsEmpty] = useState(false);
 
-  //**PAGINATION**//
+  //* *PAGINATION**//
 
-  //Pagination number of rows
+  // Pagination number of rows
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  //Order of tnx-
+  // Order of tnx-
   const [isReverse, setReverseOrder] = useState(true);
-  //Change order of transactions
+  // Change order of transactions
   const changeOrder = () => {
     if (isReverse) {
       setReverseOrder(false);
@@ -84,67 +83,67 @@ export const TransactionsTable = (props) => {
       setReverseOrder(true);
     }
   };
-  //N of rows per page
+  // N of rows per page
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
-  //N of page
+  // N of page
   const [page, setPage] = React.useState(0);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  //*TABLE ROWS*/
+  //* TABLE ROWS*/
 
   const [rowsArray, setRowsArray] = useState([]);
 
-  //**VALUES FOR SELECT */
-  //Array with all types
+  //* *VALUES FOR SELECT */
+  // Array with all types
   const [allTypes, setAllTypes] = React.useState([]);
 
-  //**MODAL BOX */
-  //Modal Box Features
+  //* *MODAL BOX */
+  // Modal Box Features
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    let urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has("indexID")) {
-      var cur_url = new URL(document.location.href);
-      var search_params = cur_url.searchParams;
-      search_params.delete("indexID");
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('indexID')) {
+      const cur_url = new URL(document.location.href);
+      const search_params = cur_url.searchParams;
+      search_params.delete('indexID');
       cur_url.search = search_params.toString();
       window.history.pushState(
-        "",
-        "",
-        window.location.href.replace(window.location.href, cur_url.toString())
+        '',
+        '',
+        window.location.href.replace(window.location.href, cur_url.toString()),
       );
     }
-    props.setIndexID("");
+    props.setIndexID('');
     setOpen(false);
   };
   const openModal = (event, key, obj_trans) => {
-    //Loading
-    setModalData("Loading...");
-    for (var i in obj_trans) {
+    // Loading
+    setModalData('Loading...');
+    for (const i in obj_trans) {
       if (obj_trans[i].trans_index == key) {
-        //Setting data for the modal
+        // Setting data for the modal
         setModalData(obj_trans[i]);
-        //Open the modal
+        // Open the modal
         handleOpen();
-        //Check if the tokenID is present
-        var str = window.location.pathname.split("/");
+        // Check if the tokenID is present
+        const str = window.location.pathname.split('/');
         if (str.includes(props.searchBarTokenId)) {
-          //Set url params with indexID
-          let urlParams = new URLSearchParams(window.location.search);
-          if (urlParams.has("indexID")) {
-            console.log("Id is in URL");
+          // Set url params with indexID
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.has('indexID')) {
+            console.log('Id is in URL');
           } else {
-            var url = new URL(document.location.href);
-            var search_params = url.searchParams;
-            search_params.set("indexID", key);
+            const url = new URL(document.location.href);
+            const search_params = url.searchParams;
+            search_params.set('indexID', key);
             url.search = search_params.toString();
             window.history.pushState(
-              "",
-              "",
-              window.location.href.replace(window.location.href, url.toString())
+              '',
+              '',
+              window.location.href.replace(window.location.href, url.toString()),
             );
           }
         }
@@ -157,244 +156,227 @@ export const TransactionsTable = (props) => {
   const getHistory = async () => {
     props.setIsLoading(true);
     setIsEmpty(true);
-    props.setTrans_types(["Loading..."]);
-    //array for dynamyc Select values
-    var select_vals = ["All types"];
-    var array_with_all_types = ["All types"];
-    let response = await actor?.history_nft_origyn(
+    props.setTrans_types(['Loading...']);
+    // array for dynamyc Select values
+    const select_vals = ['All types'];
+    const array_with_all_types = ['All types'];
+    const response = await actor?.history_nft_origyn(
       props.searchBarTokenId.toString(),
       [],
-      []
+      [],
     );
 
-    //response 2 string
-    let string_history = JSON.stringify(
+    // response 2 string
+    const string_history = JSON.stringify(
       response,
-      (key, value) => (typeof value === "bigint" ? value.toString() : value),
-      2
+      (key, value) => (typeof value === 'bigint' ? value.toString() : value),
+      2,
     );
-    //parsing response
-    let json_history = JSON.parse(string_history);
+    // parsing response
+    const json_history = JSON.parse(string_history);
 
-    //enter in the obj
-    let historyNFT = json_history.ok;
-    //console.log("!!!", actor);
-    let x: string, _props: string;
+    // enter in the obj
+    const historyNFT = json_history.ok;
+    // console.log("!!!", actor);
+    let x: string; let
+      _props: string;
 
-    //loop through all the obj
+    // loop through all the obj
     for (x in historyNFT) {
-      //single transaction obj declaration
+      // single transaction obj declaration
       var transactionObj: Transactions;
-      var _transaction_type_formatted: string = "";
+      let _transaction_type_formatted: string = '';
 
-      var _date_string = timeConverter(BigInt(historyNFT[x].timestamp));
+      const _date_string = timeConverter(BigInt(historyNFT[x].timestamp));
 
-      var enter_in_transaction = historyNFT[x].txn_type;
+      const enter_in_transaction = historyNFT[x].txn_type;
 
-      var _indexTrans = historyNFT[x].index;
+      const _indexTrans = historyNFT[x].index;
 
-      var _token_id = historyNFT[x].token_id;
+      const _token_id = historyNFT[x].token_id;
 
       for (_props in enter_in_transaction) {
         if (enter_in_transaction.hasOwnProperty(_props)) {
-          //capitalize transaction
-          var capitalized = _props.charAt(0).toUpperCase() + _props.slice(1);
-          //replace _ with " "
-          var replaced = capitalized.replace("_", " ");
+          // capitalize transaction
+          const capitalized = _props.charAt(0).toUpperCase() + _props.slice(1);
+          // replace _ with " "
+          const replaced = capitalized.replace('_', ' ');
           _transaction_type_formatted += replaced;
 
           switch (_props) {
-            case "auction_bid":
+            case 'auction_bid':
               transactionObj = AuctionBid(
                 enter_in_transaction,
                 _props,
                 transactionObj,
                 historyNFT[x],
-                _transaction_type_formatted
+                _transaction_type_formatted,
               );
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
-                  setModalData("Loading...");
+                  setModalData('Loading...');
                   setModalData(transactionObj);
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => {
-                return [...y, { ...transactionObj }];
-              });
+              props.setTransactionData((y) => [...y, { ...transactionObj }]);
 
               break;
-            case "mint":
+            case 'mint':
               transactionObj = Mint(
                 enter_in_transaction,
                 _props,
                 transactionObj,
                 historyNFT[x],
-                _transaction_type_formatted
+                _transaction_type_formatted,
               );
-              //console.log(transactionObj);
+              // console.log(transactionObj);
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
-                  setModalData("Loading...");
+                  setModalData('Loading...');
                   setModalData(transactionObj);
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => {
-                return [...y, { ...transactionObj }];
-              });
+              props.setTransactionData((y) => [...y, { ...transactionObj }]);
               break;
-            case "sale_ended":
+            case 'sale_ended':
               transactionObj = SaleEnded(
                 enter_in_transaction,
                 _props,
                 transactionObj,
                 historyNFT[x],
-                _transaction_type_formatted
+                _transaction_type_formatted,
               );
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
-                  setModalData("Loading...");
+                  setModalData('Loading...');
                   setModalData(transactionObj);
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => {
-                return [...y, { ...transactionObj }];
-              });
+              props.setTransactionData((y) => [...y, { ...transactionObj }]);
               break;
-            case "sale_opened":
+            case 'sale_opened':
               transactionObj = SaleOpened(
                 enter_in_transaction,
                 _props,
                 transactionObj,
                 historyNFT[x],
-                _transaction_type_formatted
+                _transaction_type_formatted,
               );
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
-                  setModalData("Loading...");
+                  setModalData('Loading...');
                   setModalData(transactionObj);
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => {
-                return [...y, { ...transactionObj }];
-              });
+              props.setTransactionData((y) => [...y, { ...transactionObj }]);
 
               break;
-            case "owner_transfer":
+            case 'owner_transfer':
               transactionObj = OwnerTransfer(
                 enter_in_transaction,
                 _props,
                 transactionObj,
                 historyNFT[x],
-                _transaction_type_formatted
+                _transaction_type_formatted,
               );
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
-                  setModalData("Loading...");
+                  setModalData('Loading...');
                   setModalData(transactionObj);
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => {
-                return [...y, { ...transactionObj }];
-              });
+              props.setTransactionData((y) => [...y, { ...transactionObj }]);
 
               break;
-            case "escrow_deposit":
+            case 'escrow_deposit':
               transactionObj = EscrowDeposit(
                 enter_in_transaction,
                 _props,
                 transactionObj,
                 historyNFT[x],
-                _transaction_type_formatted
+                _transaction_type_formatted,
               );
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
-                  setModalData("Loading...");
+                  setModalData('Loading...');
                   setModalData(transactionObj);
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => {
-                return [...y, { ...transactionObj }];
-              });
+              props.setTransactionData((y) => [...y, { ...transactionObj }]);
               break;
-            case "escrow_withdraw":
+            case 'escrow_withdraw':
               transactionObj = EscrowWithdraw(
                 enter_in_transaction,
                 _props,
                 transactionObj,
                 historyNFT[x],
-                _transaction_type_formatted
+                _transaction_type_formatted,
               );
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
-                  setModalData("Loading...");
+                  setModalData('Loading...');
                   setModalData(transactionObj);
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => {
-                return [...y, { ...transactionObj }];
-              });
+              props.setTransactionData((y) => [...y, { ...transactionObj }]);
               break;
-            case "sale_withdraw":
+            case 'sale_withdraw':
               transactionObj = SaleWithdraw(
                 enter_in_transaction,
                 _props,
                 transactionObj,
                 historyNFT[x],
-                _transaction_type_formatted
+                _transaction_type_formatted,
               );
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
-                  setModalData("Loading...");
+                  setModalData('Loading...');
                   setModalData(transactionObj);
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => {
-                return [...y, { ...transactionObj }];
-              });
+              props.setTransactionData((y) => [...y, { ...transactionObj }]);
               break;
           }
         }
       }
       array_with_all_types.push(transactionObj.type_txn);
-      var return_all_rows = false;
+      let return_all_rows = false;
       let found: number;
       let newRow: Row;
 
       if (
-        props.filter.transactionType == "" ||
-        props.filter.transactionType == "All types"
+        props.filter.transactionType == ''
+        || props.filter.transactionType == 'All types'
       ) {
         switch (props.filter.categoryToFilter) {
-          case "All":
+          case 'All':
             newRow = {
               index: _indexTrans,
               date: _date_string,
               id_token: _token_id,
               type_txn: _transaction_type_formatted,
             };
-            setRowsArray((x) => {
-              return [...x, { ...newRow }];
-            });
+            setRowsArray((x) => [...x, { ...newRow }]);
             select_vals.push(transactionObj.type_txn);
-            //console.log('match');
+            // console.log('match');
             setIsEmpty(false);
             break;
-          case "Transaction Id":
-            //If input is '' show all the rows
-            if (props.filter.searchInputValue.toString().trim() == "") {
+          case 'Transaction Id':
+            // If input is '' show all the rows
+            if (props.filter.searchInputValue.toString().trim() == '') {
               return_all_rows = true;
             }
             if (
-              transactionObj.trans_index ==
-              props.filter.searchInputValue.toString().trim()
+              transactionObj.trans_index
+              == props.filter.searchInputValue.toString().trim()
             ) {
               newRow = {
                 index: _indexTrans,
@@ -402,22 +384,20 @@ export const TransactionsTable = (props) => {
                 id_token: _token_id,
                 type_txn: _transaction_type_formatted,
               };
-              setRowsArray((x) => {
-                return [...x, { ...newRow }];
-              });
+              setRowsArray((x) => [...x, { ...newRow }]);
 
-              //console.log('match');
+              // console.log('match');
               setIsEmpty(false);
             }
             break;
-          case "Token Id":
-            //If input is '' show all the rows
-            if (props.filter.searchInputValue.toString().trim() == "") {
+          case 'Token Id':
+            // If input is '' show all the rows
+            if (props.filter.searchInputValue.toString().trim() == '') {
               return_all_rows = true;
             }
             if (
-              transactionObj.token_id ==
-              props.filter.searchInputValue.toString().trim()
+              transactionObj.token_id
+              == props.filter.searchInputValue.toString().trim()
             ) {
               newRow = {
                 index: _indexTrans,
@@ -425,21 +405,19 @@ export const TransactionsTable = (props) => {
                 id_token: _token_id,
                 type_txn: _transaction_type_formatted,
               };
-              setRowsArray((x) => {
-                return [...x, { ...newRow }];
-              });
+              setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              //console.log('match');
+              // console.log('match');
               setIsEmpty(false);
             }
             break;
-          case "Principal":
-            //If input is '' show all the rows
-            if (props.filter.searchInputValue.toString().trim() == "") {
+          case 'Principal':
+            // If input is '' show all the rows
+            if (props.filter.searchInputValue.toString().trim() == '') {
               return_all_rows = true;
             }
             found = transactionObj.principals.indexOf(
-              props.filter.searchInputValue.toString().trim()
+              props.filter.searchInputValue.toString().trim(),
             );
             if (found != -1) {
               newRow = {
@@ -448,21 +426,19 @@ export const TransactionsTable = (props) => {
                 id_token: _token_id,
                 type_txn: _transaction_type_formatted,
               };
-              setRowsArray((x) => {
-                return [...x, { ...newRow }];
-              });
+              setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              //console.log('match');
+              // console.log('match');
               setIsEmpty(false);
             }
             break;
-          case "Account":
-            //If input is '' show all the rows
-            if (props.filter.searchInputValue.toString().trim() == "") {
+          case 'Account':
+            // If input is '' show all the rows
+            if (props.filter.searchInputValue.toString().trim() == '') {
               return_all_rows = true;
             }
             found = transactionObj.accounts.indexOf(
-              props.filter.searchInputValue.toString().trim()
+              props.filter.searchInputValue.toString().trim(),
             );
             if (found != -1) {
               newRow = {
@@ -471,12 +447,10 @@ export const TransactionsTable = (props) => {
                 id_token: _token_id,
                 type_txn: _transaction_type_formatted,
               };
-              setRowsArray((x) => {
-                return [...x, { ...newRow }];
-              });
+              setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
 
-              //console.log('match');
+              // console.log('match');
               setIsEmpty(false);
             }
 
@@ -484,7 +458,7 @@ export const TransactionsTable = (props) => {
         }
       } else {
         switch (props.filter.categoryToFilter) {
-          case "All":
+          case 'All':
             if (transactionObj.type_txn == props.filter.transactionType) {
               newRow = {
                 index: _indexTrans,
@@ -492,24 +466,22 @@ export const TransactionsTable = (props) => {
                 id_token: _token_id,
                 type_txn: _transaction_type_formatted,
               };
-              setRowsArray((x) => {
-                return [...x, { ...newRow }];
-              });
+              setRowsArray((x) => [...x, { ...newRow }]);
               if (props.filter.update == 0) {
                 var i;
                 for (i in allTypes) {
-                  var type = allTypes[i]
+                  const type = allTypes[i];
                   select_vals.push(type);
                 }
               } else {
                 select_vals.push(transactionObj.type_txn);
               }
-              //console.log('match');
+              // console.log('match');
               setIsEmpty(false);
             }
             break;
-          case "Transaction Id":
-            if (props.filter.searchInputValue == "") {
+          case 'Transaction Id':
+            if (props.filter.searchInputValue == '') {
               if (
                 transactionObj.type_txn == props.filter.transactionType
               ) {
@@ -519,40 +491,34 @@ export const TransactionsTable = (props) => {
                   id_token: _token_id,
                   type_txn: _transaction_type_formatted,
                 };
-                setRowsArray((x) => {
-                  return [...x, { ...newRow }];
-                });
+                setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
                 setIsEmpty(false);
               }
+            } else if (
+              transactionObj.trans_index
+                == props.filter.searchInputValue.toString().trim()
+                && transactionObj.type_txn == props.filter.transactionType
+            ) {
+              newRow = {
+                index: _indexTrans,
+                date: _date_string,
+                id_token: _token_id,
+                type_txn: _transaction_type_formatted,
+              };
+              setRowsArray((x) => [...x, { ...newRow }]);
+              select_vals.push(transactionObj.type_txn);
+              // console.log('match');
+              setIsEmpty(false);
             } else {
-              if (
-                transactionObj.trans_index ==
-                props.filter.searchInputValue.toString().trim() &&
-                transactionObj.type_txn == props.filter.transactionType
-              ) {
-                newRow = {
-                  index: _indexTrans,
-                  date: _date_string,
-                  id_token: _token_id,
-                  type_txn: _transaction_type_formatted,
-                };
-                setRowsArray((x) => {
-                  return [...x, { ...newRow }];
-                });
-                select_vals.push(transactionObj.type_txn);
-                //console.log('match');
-                setIsEmpty(false);
-              } else {
-                select_vals.push("");
-              }
+              select_vals.push('');
             }
 
             break;
-          case "Principal":
-            if (props.filter.searchInputValue == "") {
-              if (transactionObj.principals.length > 0 &&
-                transactionObj.type_txn == props.filter.transactionType
+          case 'Principal':
+            if (props.filter.searchInputValue == '') {
+              if (transactionObj.principals.length > 0
+                && transactionObj.type_txn == props.filter.transactionType
               ) {
                 newRow = {
                   index: _indexTrans,
@@ -560,19 +526,17 @@ export const TransactionsTable = (props) => {
                   id_token: _token_id,
                   type_txn: _transaction_type_formatted,
                 };
-                setRowsArray((x) => {
-                  return [...x, { ...newRow }];
-                });
+                setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
                 setIsEmpty(false);
               }
             } else {
               found = transactionObj.principals.indexOf(
-                props.filter.searchInputValue.toString().trim()
+                props.filter.searchInputValue.toString().trim(),
               );
               if (
-                transactionObj.type_txn == props.filter.transactionType &&
-                found != -1
+                transactionObj.type_txn == props.filter.transactionType
+                && found != -1
               ) {
                 newRow = {
                   index: _indexTrans,
@@ -580,20 +544,18 @@ export const TransactionsTable = (props) => {
                   id_token: _token_id,
                   type_txn: _transaction_type_formatted,
                 };
-                setRowsArray((x) => {
-                  return [...x, { ...newRow }];
-                });
+                setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
-                //console.log('match');
+                // console.log('match');
                 setIsEmpty(false);
               }
             }
 
             break;
-          case "Account":
-            if (props.filter.searchInputValue == "") {
-              if (transactionObj.accounts.length > 0 &&
-                transactionObj.type_txn == props.filter.transactionType
+          case 'Account':
+            if (props.filter.searchInputValue == '') {
+              if (transactionObj.accounts.length > 0
+                && transactionObj.type_txn == props.filter.transactionType
               ) {
                 newRow = {
                   index: _indexTrans,
@@ -601,19 +563,17 @@ export const TransactionsTable = (props) => {
                   id_token: _token_id,
                   type_txn: _transaction_type_formatted,
                 };
-                setRowsArray((x) => {
-                  return [...x, { ...newRow }];
-                });
+                setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
                 setIsEmpty(false);
               }
             } else {
               found = transactionObj.accounts.indexOf(
-                props.filter.searchInputValue.toString().trim()
+                props.filter.searchInputValue.toString().trim(),
               );
               if (
-                found != -1 &&
-                transactionObj.type_txn == props.filter.transactionType
+                found != -1
+                && transactionObj.type_txn == props.filter.transactionType
               ) {
                 newRow = {
                   index: _indexTrans,
@@ -621,9 +581,7 @@ export const TransactionsTable = (props) => {
                   id_token: _token_id,
                   type_txn: _transaction_type_formatted,
                 };
-                setRowsArray((x) => {
-                  return [...x, { ...newRow }];
-                });
+                setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
                 setIsEmpty(false);
               }
@@ -633,20 +591,16 @@ export const TransactionsTable = (props) => {
         }
       }
       if (return_all_rows == true) {
-
         newRow = {
           index: _indexTrans,
           date: _date_string,
           id_token: _token_id,
           type_txn: _transaction_type_formatted,
         };
-        setRowsArray((x) => {
-          return [...x, { ...newRow }];
-        });
+        setRowsArray((x) => [...x, { ...newRow }]);
         select_vals.push(transactionObj.type_txn);
         setIsEmpty(false);
       }
-
     }
 
     props.setTrans_types(removeDuplicates(select_vals));
@@ -654,7 +608,7 @@ export const TransactionsTable = (props) => {
     props.setIsLoading(false);
   };
   useEffect(() => {
-    if (props.searchBarTokenId != "Not selected" && props.searchBarTokenId != "") {
+    if (props.searchBarTokenId != 'Not selected' && props.searchBarTokenId != '') {
       if (actor) {
         setRowsArray([]);
         setModalData({});
@@ -676,51 +630,51 @@ export const TransactionsTable = (props) => {
           <Box
             component={Paper}
             elevation={3}
-            sx={{ margin: 2, width: "100%", padding: 2, textAlign: "center" }}
+            sx={{ margin: 2, width: '100%', padding: 2, textAlign: 'center' }}
           >
-            <CircularProgress color="inherit"></CircularProgress>
+            <CircularProgress color="inherit" />
           </Box>
         ) : (
           <TableContainer
             component={Paper}
             elevation={2}
-            sx={{ margin: 2, width: "100%", padding: 2 }}
+            sx={{ margin: 2, width: '100%', padding: 2 }}
           >
             <Table
               stickyHeader
               sx={{ minWidth: 650 }}
               aria-label="ogy_data_table"
             >
-              {props.searchBarTokenId == "Not selected" ||
-                props.searchBarTokenId == "Not selected" ? (
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={cell_style}>Select a Token ID</TableCell>
-                  </TableRow>
-                </TableHead>
-              ) : (
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">
-                      <IconButton
-                        aria-label="Sort by..."
-                        size="small"
-                        sx={{ margin: 1 }}
-                        onClick={changeOrder}
-                      >
-                        {isReverse ? (
-                          <ArrowDownwardOutlinedIcon />
-                        ) : (
-                          <ArrowUpwardOutlinedIcon />
-                        )}
-                      </IconButton>
-                      Transaction Index
-                    </TableCell>
-                    <TableCell align="center">Transaction Type</TableCell>
-                    <TableCell align="center">Date</TableCell>
-                  </TableRow>
-                </TableHead>
-              )}
+              {props.searchBarTokenId == 'Not selected'
+                || props.searchBarTokenId == 'Not selected' ? (
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={cell_style}>Select a Token ID</TableCell>
+                    </TableRow>
+                  </TableHead>
+                ) : (
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">
+                        <IconButton
+                          aria-label="Sort by..."
+                          size="small"
+                          sx={{ margin: 1 }}
+                          onClick={changeOrder}
+                        >
+                          {isReverse ? (
+                            <ArrowDownwardOutlinedIcon />
+                          ) : (
+                            <ArrowUpwardOutlinedIcon />
+                          )}
+                        </IconButton>
+                        Transaction Index
+                      </TableCell>
+                      <TableCell align="center">Transaction Type</TableCell>
+                      <TableCell align="center">Date</TableCell>
+                    </TableRow>
+                  </TableHead>
+                )}
 
               {isEmpty ? (
                 <TableBody>
@@ -728,8 +682,8 @@ export const TransactionsTable = (props) => {
                     hover
                     key="Not found"
                     sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                      cursor: "pointer",
+                      '&:last-child td, &:last-child th': { border: 0 },
+                      cursor: 'pointer',
                     }}
                   >
                     <TableCell sx={cell_style}>
@@ -746,16 +700,14 @@ export const TransactionsTable = (props) => {
                       <TableRow
                         hover
                         key={row.index}
-                        onClick={(event) =>
-                          openModal(event, row.index, props.transactionData)
-                        }
+                        onClick={(event) => openModal(event, row.index, props.transactionData)}
                         sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                          cursor: "pointer",
+                          '&:last-child td, &:last-child th': { border: 0 },
+                          cursor: 'pointer',
                         }}
                       >
                         <TableCell align="center">{row.index}</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                           {row.type_txn}
                         </TableCell>
                         <TableCell align="center">{row.date}</TableCell>
@@ -788,5 +740,5 @@ export const TransactionsTable = (props) => {
         </Box>
       </Modal>
     </Box>
-  )
+  );
 };

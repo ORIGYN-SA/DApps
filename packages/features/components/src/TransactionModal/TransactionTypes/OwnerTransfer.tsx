@@ -1,21 +1,20 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
 
 const OwnerTransfer = (props) => {
+  const singleT_type = props.data.type_txn;
+  const account_from = props.data.from;
+  const account_to = props.data.to;
 
-  var singleT_type = props.data.type_txn;
-  var account_from = props.data.from;
-  var account_to = props.data.to;
-
-  var from_principal = account_from.principal;
-  var to_principal = account_to.principal;
+  const from_principal = account_from.principal;
+  const to_principal = account_to.principal;
   return (
     <Box>
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
         <Typography
@@ -52,7 +51,7 @@ const OwnerTransfer = (props) => {
         </Grid>
       </Box>
     </Box>
-  )
+  );
 };
 
 export default OwnerTransfer;
