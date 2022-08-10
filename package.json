@@ -13,7 +13,7 @@
     "build:ledger": "lerna exec --scope @dapp/app-ledger -- npm run build",
     "build:library": "lerna exec --scope @dapp/app-library -- npm run build",
     "test": "jest",
-    "eslint": "**/*.tsx"
+    "lint": "eslint **/*.tsx"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
