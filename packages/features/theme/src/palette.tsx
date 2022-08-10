@@ -1,4 +1,5 @@
 import { grey, blueGrey } from '@mui/material/colors';
+
 const COMMON = {
   common: { black: '#000', white: '#fff' },
 };

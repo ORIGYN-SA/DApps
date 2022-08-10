@@ -2,13 +2,13 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { origynNftIdl } from '@dapp/common-candid';
+import { toast } from 'react-toastify';
+import { Preloader } from '@dapp/features-components';
+import { AuthClient } from '@dfinity/auth-client';
 import usePlug from './plug';
 import useStoic from './stoic';
 import useInternetIdentity from './internedIdentity';
-import { toast } from 'react-toastify';
-import { Preloader } from '@dapp/features-components';
 import { getCanisterId, getTokenId } from './getRoute';
-import { AuthClient } from '@dfinity/auth-client';
 
 interface authContextType {
   isLoading: boolean;
@@ -104,7 +104,7 @@ export const useAuth = () => {
       setIsLoading(false);
     } catch (e) {
       console.log('err', e);
-      toast.error('Cannot authorize. Try again.' + e);
+      toast.error(`Cannot authorize. Try again.${e}`);
       logOut();
     }
   };

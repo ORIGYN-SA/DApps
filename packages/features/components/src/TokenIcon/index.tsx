@@ -11,10 +11,9 @@ const iconStyle = {
 };
 export const TokenIcon = ({ symbol }) => {
   if (
-    typeof symbol === 'string' &&
-    (symbol.indexOf('https://') !== -1 || symbol.indexOf('data:image') !== -1)
-  )
-    return <img style={iconStyle} src={symbol} />;
+    typeof symbol === 'string'
+    && (symbol.indexOf('https://') !== -1 || symbol.indexOf('data:image') !== -1)
+  ) return <img style={iconStyle} src={symbol} />;
 
   if (typeof symbol === 'string') symbol = symbol.toUpperCase();
   const Component = {

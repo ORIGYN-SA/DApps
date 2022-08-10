@@ -17,12 +17,12 @@ import {
   Avatar,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { TabPanel } from '../TabPanel';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
-import { TokenIcon } from '../TokenIcon';
 import { IdlStandard } from '@dapp/utils';
-import { LoadingContainer } from '../LoadingContainer';
 import { useAuthContext } from '@dapp/features-authentication';
+import { TabPanel } from '../TabPanel';
+import { TokenIcon } from '../TokenIcon';
+import { LoadingContainer } from '../LoadingContainer';
 
 export const WalletTokens = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -32,8 +32,7 @@ export const WalletTokens = ({ children }) => {
   );
   const [inputCanisterId, setInputCanisterId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { tokens, addToken, toggleToken, refreshAllBalances } =
-    useTokensContext();
+  const { tokens, addToken, toggleToken, refreshAllBalances } = useTokensContext();
   const { enqueueSnackbar } = useSnackbar();
   const { principal } = useAuthContext();
   const handleAddButton = async () => {
@@ -79,12 +78,10 @@ export const WalletTokens = ({ children }) => {
   const onTokenCheck = (symbol: string) => {
     toggleToken(symbol);
   };
-  const a11yProps = (index: number) => {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
-  };
+  const a11yProps = (index: number) => ({
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  });
   return (
     <>
       <Dialog
@@ -113,14 +110,14 @@ export const WalletTokens = ({ children }) => {
                 return (
                   <ListItem
                     key={`${token.symbol}-${token.enabled}`}
-                    secondaryAction={
+                    secondaryAction={(
                       <Checkbox
                         edge="end"
                         onChange={() => onTokenCheck(token.symbol)}
                         checked={token.enabled}
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
-                    }
+                    )}
                     disablePadding
                   >
                     <ListItemButton>

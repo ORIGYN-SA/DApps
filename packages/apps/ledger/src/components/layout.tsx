@@ -44,76 +44,74 @@ export const Layout = ({ children }) => {
 
   const { logIn, loggedIn, principal } = useAuthContext();
   const toggleTheme = () => {
-    let t = themeMode === 'light' ? 'dark' : 'light';
+    const t = themeMode === 'light' ? 'dark' : 'light';
     onChangeMode(t);
   };
 
   const handleNavigation = (i) => {
-    window.location.href =
-      window.location.href.substr(
-        0,
-        window.location.href.lastIndexOf('\\') + 1,
-      ) + i.page;
+    window.location.href = window.location.href.substr(
+      0,
+      window.location.href.lastIndexOf('\\') + 1,
+    ) + i.page;
   };
 
   return (
-    <>
-      <ThemeConfig>
-        <Box
-          sx={{
-            display: 'flex',
-          }}
-        >
-          <Hidden lgDown>
-            <Box width="320px" bgcolor="red">
-              <Drawer variant="permanent" open={true}>
-                <Box width="320px">
-                  <Box
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      padding: '1rem 2rem',
-                    }}
-                  >
-                    <Box sx={{ padding: '8px' }}>
-                      <OrigynLogo />
-                    </Box>
+    <ThemeConfig>
+      <Box
+        sx={{
+          display: 'flex',
+        }}
+      >
+        <Hidden lgDown>
+          <Box width="320px" bgcolor="red">
+            <Drawer variant="permanent" open>
+              <Box width="320px">
+                <Box
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '1rem 2rem',
+                  }}
+                >
+                  <Box sx={{ padding: '8px' }}>
+                    <OrigynLogo />
                   </Box>
-                  <Divider />
-                  <Box>
-                    <List>
-                      {!loggedIn ? (
-                        <>
+                </Box>
+                <Divider />
+                <Box>
+                  <List>
+                    {!loggedIn ? (
+                      <>
                           <ListItem button onClick={() => logIn('ii')}>
                             <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                               <LoginIcon />
                             </ListItemIcon>
-                            <ListItemText primary={'CONNECT WALLET (II)'} />
+                            <ListItemText primary="CONNECT WALLET (II)" />
                           </ListItem>
                           <ListItem button onClick={() => logIn('plug')}>
                             <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                               <LoginIcon />
                             </ListItemIcon>
-                            <ListItemText primary={'CONNECT WALLET (plug)'} />
+                            <ListItemText primary="CONNECT WALLET (plug)" />
                           </ListItem>
                         </>
-                      ) : (
+                    ) : (
                         <ListItem button style={{ color: '#00b400' }}>
                           <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                             <CheckIcon style={{ color: '#00b400' }} />
                           </ListItemIcon>
                           <ListItemText
-                            primary={'WALLET CONNECTED'}
+                            primary="WALLET CONNECTED"
                             secondary={
-                              principal?.toText().substring(0, 25) + '...'
+                              `${principal?.toText().substring(0, 25)}...`
                             }
                           />
                         </ListItem>
-                      )}
-                      <Divider />
+                    )}
+                    <Divider />
 
-                      {Items.map((i) => (
-                        <ListItem
+                    {Items.map((i) => (
+                      <ListItem
                           key={i.page}
                           onClick={() => handleNavigation(i)}
                           button
@@ -123,35 +121,34 @@ export const Layout = ({ children }) => {
                           </ListItemIcon>
                           <ListItemText primary={i.title} />
                         </ListItem>
-                      ))}
-                    </List>
-                    <Divider />
-                    <List>
-                      <ListItem button onClick={toggleTheme}>
-                        <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
+                    ))}
+                  </List>
+                  <Divider />
+                  <List>
+                    <ListItem button onClick={toggleTheme}>
+                      <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                           {themeMode === 'light' ? <DarkIcon /> : <LightIcon />}
                         </ListItemIcon>
-                        <ListItemText primary={'THEME'} />
-                      </ListItem>
-                    </List>
-                    {}
-                  </Box>
+                      <ListItemText primary="THEME" />
+                    </ListItem>
+                  </List>
+                  {}
                 </Box>
-              </Drawer>
-            </Box>
-          </Hidden>
-          <Box
-            sx={{
-              marginTop: '50px',
-              flexGrow: '1',
-              padding: (theme) => theme.spacing(1),
-              width: 'calc(100% - 320px)',
-            }}
-          >
-            {children}
+              </Box>
+            </Drawer>
           </Box>
+        </Hidden>
+        <Box
+          sx={{
+            marginTop: '50px',
+            flexGrow: '1',
+            padding: (theme) => theme.spacing(1),
+            width: 'calc(100% - 320px)',
+          }}
+        >
+          {children}
         </Box>
-      </ThemeConfig>
-    </>
+      </Box>
+    </ThemeConfig>
   );
 };

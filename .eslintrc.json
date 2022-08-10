@@ -4,9 +4,10 @@
         "es2021": true
     },
     "extends": [
+        "airbnb-typescript/base",
         "eslint:recommended",
         "plugin:react/recommended",
-        "airbnb"
+        "prettier"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -14,11 +15,15 @@
             "jsx": true
         },
         "ecmaVersion": "latest",
-        "sourceType": "module"
+        "sourceType": "module",
+        "project": "./tsconfig.json"
     },
+
     "plugins": [
+        "prettier",
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "import"
     ],
     "rules": {
         "no-use-before-define": "off",
@@ -31,6 +36,9 @@
         "@typescript-eslint/no-prototype-builtins": "off",
         "no-prototype-builtins": "off",
         "@typescript-eslint/no-underscore-dangle": "off",
+        "@typescript-eslint/naming-convention": "off",
+        "camelcase": "off",
+        "@typescript-eslint/camelcase": "off",
         "import/no-extraneous-dependencies": "off",
         "import/prefer-default-export": "off",
         "object-curly-spacing": "off",
@@ -43,6 +51,7 @@
         "react/prop-types": ["warn"],
         "react/jsx-one-expression-per-line": "off",
         "react/jsx-filename-extension": "off",
+        "react/function-component-definition": "off",
         "import/extensions": [
             "error",
             "ignorePackages",
@@ -55,6 +64,9 @@
     "settings": {
         "import/resolver": {
             "typescript": {}
+        },
+        "react": {
+            "version": "detect"
         }
     }
 }

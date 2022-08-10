@@ -32,8 +32,7 @@ export function StartEscrowModal({
   handleClose,
   initialValues = undefined,
 }) {
-  const { actor, ogyActor, principal, canisterId } =
-    React.useContext(AuthContext);
+  const { actor, ogyActor, principal, canisterId } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -64,14 +63,12 @@ export function StartEscrowModal({
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
-    defaultValues: React.useMemo(() => {
-      return initialValues;
-    }, [initialValues]),
+    defaultValues: React.useMemo(() => initialValues, [initialValues]),
   });
 
   React.useEffect(() => {
     reset(initialValues);
-    let params = getValues();
+    const params = getValues();
     setSearchParams(params);
   }, [initialValues]);
 
@@ -81,14 +78,14 @@ export function StartEscrowModal({
   };
   React.useEffect(() => {
     const subscription = watch((value, { name, type }) => {
-      let params = getValues();
+      const params = getValues();
       setSearchParams(params);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
 
   React.useEffect(() => {
-    let params = getValues();
+    const params = getValues();
     if (open && params.priceOffer) {
       setSearchParams(params);
     }
@@ -101,23 +98,21 @@ export function StartEscrowModal({
     token:
       nft?.current_sale?.length > 0
         ? nft?.current_sale[0].sale_type?.auction?.config?.auction?.token?.ic
-            ?.symbol
+          ?.symbol
         : 'OGY',
 
-    openAuction: nft?.current_sale?.find((sale) =>
-      sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-    ),
+    openAuction: nft?.current_sale?.find((sale) => sale?.sale_type?.auction?.status?.hasOwnProperty('open')),
   };
   console.log('🚀 ~ file: StartEscrow.tsx ~ line 112 ~ _nft', _nft);
 
   const handleStartEscrow = async (data) => {
     console.log(data);
     if (
-      isNaN(parseFloat(data.priceOffer)) ||
-      data.sellerId === 'undefined' ||
-      data.nftId === 'undefined'
+      isNaN(parseFloat(data.priceOffer))
+      || data.sellerId === 'undefined'
+      || data.nftId === 'undefined'
     ) {
-      enqueueSnackbar(`Error: Fill all fields correctly`, {
+      enqueueSnackbar('Error: Fill all fields correctly', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
@@ -156,7 +151,7 @@ export function StartEscrowModal({
           seller: {
             principal: Principal.fromText(_nft.seller),
           },
-          buyer: { principal: principal },
+          buyer: { principal },
           amount: BigInt(amount),
           sale_id: _nft?.openAuction?.sale_id
             ? [_nft?.openAuction?.sale_id]
@@ -168,7 +163,7 @@ export function StartEscrowModal({
         const escrowResponse = await actor.escrow_nft_origyn(escrowData);
         if (!_nft.openAuction) {
           if (escrowResponse.ok) {
-            enqueueSnackbar(`Your escrow has been successfully sent.`, {
+            enqueueSnackbar('Your escrow has been successfully sent.', {
               variant: 'success',
               anchorOrigin: {
                 vertical: 'top',
@@ -192,7 +187,7 @@ export function StartEscrowModal({
           };
           const bidResponse = await actor.bid_nft_origyn(bidData);
           if (bidResponse.ok) {
-            enqueueSnackbar(`Your bid has been successfully placed.`, {
+            enqueueSnackbar('Your bid has been successfully placed.', {
               variant: 'success',
               anchorOrigin: {
                 vertical: 'top',
@@ -242,7 +237,7 @@ export function StartEscrowModal({
                 variant="outlined"
                 value={_nft.id}
                 {...register('nftId')}
-                error={errors.nftId ? true : false}
+                error={!!errors.nftId}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.nftId?.message}
@@ -258,7 +253,7 @@ export function StartEscrowModal({
                 variant="outlined"
                 value={_nft.seller}
                 {...register('sellerId')}
-                error={errors.sellerId ? true : false}
+                error={!!errors.sellerId}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.sellerId?.message}
@@ -273,7 +268,7 @@ export function StartEscrowModal({
                 id="escrowPrice"
                 variant="outlined"
                 {...register('priceOffer')}
-                error={errors.priceOffer ? true : false}
+                error={!!errors.priceOffer}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.priceOffer?.message}

@@ -65,10 +65,7 @@ export type TokensContext = {
   tokens: {
     [key: string]: Token;
   };
-  addToken?: (
-    canisterId: string,
-    standard: IdlStandard,
-  ) => Promise<Token | string>;
+  addToken?: (canisterId: string, standard: IdlStandard) => Promise<Token | string>;
   getBalance?: (principal: Principal, token: Token) => Promise<number>;
   toggleToken?: (symbol: string) => void;
   refreshBalance?: (symbol: string) => void;
@@ -120,7 +117,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       canisterId,
       standard,
       icon,
-      fee: fee,
+      fee,
       enabled: true,
       decimals,
     };
@@ -135,6 +132,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
 
   const toggleToken = (symbol: string) => {
     setTokens((pTokens) => {
+      /* eslint-disable no-param-reassign */
       pTokens[symbol].enabled = !pTokens[symbol].enabled;
 
       return { ...pTokens };
@@ -144,7 +142,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
   const getBalance = async (principal: Principal, token: Token) => {
     try {
       const balance = await getBalanceFromCanister(principal, token);
-      return balance.value / Math.pow(10, balance.decimals);
+      return balance.value / 10 ** balance.decimals;
     } catch {
       return 0;
     }
@@ -165,9 +163,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         _tokens[symbol].balance = await getBalance(principal, _tokens[symbol]);
       }),
     ).then(() => {
-      setTokens(() => {
-        return { ..._tokens };
-      });
+      setTokens(() => ({ ..._tokens }));
     });
   };
 

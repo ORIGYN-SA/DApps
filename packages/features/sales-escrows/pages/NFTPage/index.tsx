@@ -1,11 +1,18 @@
+import { ICPIcon, OGYIcon } from '@dapp/common-assets';
+import { AuthContext } from '@dapp/features-authentication';
+import { NatPrice } from '@dapp/features-components';
+import {
+  ConfirmSalesActionModal,
+  StartAuctionModal,
+  StartEscrowModal,
+} from '@dapp/features-sales-escrows';
+import { eToNumber, timeConverter } from '@dapp/utils';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import PendingIcon from '@mui/icons-material/Pending';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import {
   Accordion,
   AccordionDetails,
@@ -16,20 +23,13 @@ import {
   Link,
   Typography,
 } from '@mui/material';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { NatPrice } from '@dapp/features-components';
-import { eToNumber, timeConverter } from '@dapp/utils';
-import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { AuthContext } from '@dapp/features-authentication';
-import {
-  StartEscrowModal,
-  StartAuctionModal,
-  ConfirmSalesActionModal,
-} from '@dapp/features-sales-escrows';
 
-const SymbolWithIcon = ({ symbol }) => {
-  return symbol === 'OGY' ? (
+const SymbolWithIcon = ({ symbol }) =>
+  symbol === 'OGY' ? (
     <>
       <OGYIcon
         style={{
@@ -58,9 +58,8 @@ const SymbolWithIcon = ({ symbol }) => {
       {symbol}
     </>
   );
-};
 export const NFTPage = () => {
-  const { logIn, loggedIn, tokenId, canisterId, principal, actor } = useContext(AuthContext);
+  const { canisterId, principal, actor } = useContext(AuthContext);
   const [currentNFT, setCurrentNFT] = useState<any>({});
   const [openAuction, setOpenAuction] = React.useState(false);
   const [dialogAction, setDialogAction] = useState<any>();
@@ -93,7 +92,7 @@ export const NFTPage = () => {
   );
 
   const handleOpen = (type) => {
-    let modalInitial = {
+    const modalInitial = {
       nftId: params.nft_id,
       sellerId: currentNFT?.metadata?.Class?.find(
         ({ name }) => name === 'owner',
@@ -126,15 +125,15 @@ export const NFTPage = () => {
   const handleCloseEscrow = async (dataChanged = false) => {
     setOpenEscrowModal(false);
     if (dataChanged) {
-      //fetchData();
+      // fetchData();
     }
   };
 
   useEffect(() => {
     if (searchParams.get('nftId')) {
       const initialParameters = searchParams.entries();
-      let params = {};
-      for (let [key, value] of initialParameters) {
+      const params = {};
+      for (const [key, value] of initialParameters) {
         params[key] = value;
       }
       setModalInitialValues(params);
@@ -153,12 +152,13 @@ export const NFTPage = () => {
     }
   }, []);
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
       </Box>
     );
+  }
   return (
     <div>
       <StartEscrowModal
@@ -230,7 +230,7 @@ export const NFTPage = () => {
             ).value.Principal.toText() === principal?.toText() ? (
               <div>
                 {currentOpenAuction ? (
-                  <Accordion expanded={true}>
+                  <Accordion expanded>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -302,11 +302,11 @@ export const NFTPage = () => {
                           </strong>
                         </Typography>
                       )}
-                      <div style={{ display: 'flex', gap: 5, marginTop: 5 }}></div>
+                      <div style={{ display: 'flex', gap: 5, marginTop: 5 }} />
                     </AccordionDetails>
                   </Accordion>
                 ) : (
-                  <Accordion expanded={true}>
+                  <Accordion expanded>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -335,7 +335,7 @@ export const NFTPage = () => {
             ) : (
               <div>
                 {currentOpenAuction ? (
-                  <Accordion expanded={true}>
+                  <Accordion expanded>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -431,7 +431,7 @@ export const NFTPage = () => {
                     </AccordionDetails>
                   </Accordion>
                 ) : (
-                  <Accordion expanded={true}>
+                  <Accordion expanded>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -459,7 +459,7 @@ export const NFTPage = () => {
               </div>
             )}
             <div hidden>
-              <Accordion expanded={true}>
+              <Accordion expanded>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel2a-content"

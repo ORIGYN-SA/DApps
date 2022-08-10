@@ -1,24 +1,24 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
-//Icons ICP & OGY
+// Icons ICP & OGY
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 
 const AuctionBid = (props) => {
-  var singleT_type = props.data.type_txn;
-  var bid_buyer = props.data.buyer;
-  //buyer accoount
-  var buyer = bid_buyer.acc_principal_string;
-  //I HAVE OTHER BUYER PROPS IN ACCOUNT BUT NOT WORKING?
-  var bid_amount = props.data.amount;
-  var bid_token = props.data.token;
-  //token specs
-  var canister = bid_token.canister_string;
-  var fee = bid_token.fee;
-  var sym = bid_token.symbol;
-  var decimals = bid_token.decimal;
-  var standard = bid_token.standard;
-  var bid_saleId = props.data.sale_id;
+  const singleT_type = props.data.type_txn;
+  const bid_buyer = props.data.buyer;
+  // buyer accoount
+  const buyer = bid_buyer.acc_principal_string;
+  // I HAVE OTHER BUYER PROPS IN ACCOUNT BUT NOT WORKING?
+  const bid_amount = props.data.amount;
+  const bid_token = props.data.token;
+  // token specs
+  const canister = bid_token.canister_string;
+  const {fee} = bid_token;
+  const sym = bid_token.symbol;
+  const decimals = bid_token.decimal;
+  const {standard} = bid_token;
+  const bid_saleId = props.data.sale_id;
 
   return (
     <Box>

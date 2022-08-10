@@ -11,14 +11,12 @@ import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useSnackbar } from 'notistack';
 
-const Transition = React.forwardRef(function Transition(
+const Transition = React.forwardRef((
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
   },
   ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+) => <Slide direction="up" ref={ref} {...props} />);
 
 export const ConfirmSalesActionModal = ({
   open,
@@ -52,18 +50,17 @@ export const ConfirmSalesActionModal = ({
           );
           setIsLoading(false);
           return handleClose(true);
-        } else {
-          enqueueSnackbar(`Error: ${endSaleResponse.err.flag_point}.`, {
-            variant: 'error',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
-          setIsLoading(false);
-          return handleClose(false);
         }
-      } else if (action === 'withdraw') {
+        enqueueSnackbar(`Error: ${endSaleResponse.err.flag_point}.`, {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        setIsLoading(false);
+        return handleClose(false);
+      } if (action === 'withdraw') {
         if (!escrow) {
           return handleClose(false);
         }
@@ -76,7 +73,7 @@ export const ConfirmSalesActionModal = ({
           },
         });
         if (withdrawResponse.ok) {
-          enqueueSnackbar(`Your escrow has been successfully withdrawn.`, {
+          enqueueSnackbar('Your escrow has been successfully withdrawn.', {
             variant: 'success',
             anchorOrigin: {
               vertical: 'top',
@@ -85,18 +82,17 @@ export const ConfirmSalesActionModal = ({
           });
           setIsLoading(false);
           return handleClose(true);
-        } else {
-          enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
-            variant: 'error',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
-          setIsLoading(false);
-          return handleClose(false);
         }
-      } else if (action === 'reject') {
+        enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        setIsLoading(false);
+        return handleClose(false);
+      } if (action === 'reject') {
         if (!escrow) {
           return handleClose(false);
         }
@@ -108,7 +104,7 @@ export const ConfirmSalesActionModal = ({
           },
         });
         if (rejectResponse.ok) {
-          enqueueSnackbar(`The escrow has been rejected.`, {
+          enqueueSnackbar('The escrow has been rejected.', {
             variant: 'success',
             anchorOrigin: {
               vertical: 'top',
@@ -117,17 +113,16 @@ export const ConfirmSalesActionModal = ({
           });
           setIsLoading(false);
           return handleClose(true);
-        } else {
-          enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
-            variant: 'error',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
-          setIsLoading(false);
-          return handleClose(false);
         }
+        enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        setIsLoading(false);
+        return handleClose(false);
       }
     }
     handleClose(false);
@@ -145,8 +140,8 @@ export const ConfirmSalesActionModal = ({
           {action === 'endSale'
             ? 'Confirm End Sale?'
             : action === 'withdraw'
-            ? 'Confirm Escrow Withdraw'
-            : 'Confirm Escrow Rejection'}
+              ? 'Confirm Escrow Withdraw'
+              : 'Confirm Escrow Rejection'}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">

@@ -21,8 +21,7 @@ export function useLocalStorage(key, defaultValue) {
 
   const setValueInLocalStorage = (newValue) => {
     setValue((currentValue) => {
-      const result =
-        typeof newValue === 'function' ? newValue(currentValue) : newValue;
+      const result = typeof newValue === 'function' ? newValue(currentValue) : newValue;
       localStorage.setItem(key, JSON.stringify(result));
       return result;
     });

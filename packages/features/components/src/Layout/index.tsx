@@ -18,12 +18,12 @@ import {
 } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
-import Logo from '../Logo';
 import { useAuthContext } from '@dapp/features-authentication';
 import ThemeConfig, { SiteContext } from '@dapp/features-theme';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import Logo from '../Logo';
 import { WalletTokens } from '../WalletTokens';
 import { TokenIcon } from '../TokenIcon';
-import { useTokensContext } from '@dapp/features-tokens-provider';
 
 const Items = [
   {
@@ -49,76 +49,74 @@ export const Layout = ({ children }) => {
   const { logIn, loggedIn, principal, logOut } = useAuthContext();
   const { tokens, refreshAllBalances } = useTokensContext();
   const toggleTheme = () => {
-    let t = themeMode === 'light' ? 'dark' : 'light';
+    const t = themeMode === 'light' ? 'dark' : 'light';
     onChangeMode(t);
   };
 
   const handleNavigation = (i) => {
-    window.location.href =
-      window.location.href.substr(
-        0,
-        window.location.href.lastIndexOf('\\') + 1,
-      ) + i.page;
+    window.location.href = window.location.href.substr(
+      0,
+      window.location.href.lastIndexOf('\\') + 1,
+    ) + i.page;
   };
 
   useEffect(() => {
-    if (tokens['OGY'].balance === -1) {
+    if (tokens.OGY.balance === -1) {
       refreshAllBalances();
     }
   }, [tokens]);
   return (
-    <>
-      <ThemeConfig>
-        <Box
-          sx={{
-            display: 'flex',
-          }}
-        >
-          <Hidden lgDown>
-            <Box width="320px" bgcolor="red">
-              <Drawer variant="permanent" open={true}>
-                <Box width="320px">
-                  <Box
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      padding: '1rem 2rem',
-                    }}
-                  >
-                    <Box sx={{ padding: '8px' }}>
-                      <Logo />
-                    </Box>
+    <ThemeConfig>
+      <Box
+        sx={{
+          display: 'flex',
+        }}
+      >
+        <Hidden lgDown>
+          <Box width="320px" bgcolor="red">
+            <Drawer variant="permanent" open>
+              <Box width="320px">
+                <Box
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '1rem 2rem',
+                  }}
+                >
+                  <Box sx={{ padding: '8px' }}>
+                    <Logo />
                   </Box>
-                  <Divider />
-                  <Box>
-                    <List>
-                      {!loggedIn ? (
-                        <>
+                </Box>
+                <Divider />
+                <Box>
+                  <List>
+                    {!loggedIn ? (
+                      <>
                           <ListItem button onClick={() => logIn('ii')}>
                             <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                               <LoginIcon />
                             </ListItemIcon>
                             <ListItemText
-                              primary={'Authenticate (Internet Identity)'}
+                              primary="Authenticate (Internet Identity)"
                             />
                           </ListItem>
                           <ListItem button onClick={() => logIn('plug')}>
                             <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                               <LoginIcon />
                             </ListItemIcon>
-                            <ListItemText primary={'Authenticate (Plug)'} />
+                            <ListItemText primary="Authenticate (Plug)" />
                           </ListItem>
                         </>
-                      ) : (
+                    ) : (
                         <ListItem button style={{ color: '#00b400' }}>
                           <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                             <CheckIcon style={{ color: '#00b400' }} />
                           </ListItemIcon>
                           <WalletTokens>
                             <ListItemText
-                              primary={'WALLET CONNECTED'}
+                              primary="WALLET CONNECTED"
                               secondary={
-                                principal?.toText().substring(0, 25) + '...'
+                                `${principal?.toText().substring(0, 25)}...`
                               }
                             />
                             {['OGY', 'ICP'].map((token) => (
@@ -137,9 +135,9 @@ export const Layout = ({ children }) => {
                             ))}
                           </WalletTokens>
                         </ListItem>
-                      )}
-                      <Divider />
-                      {/* <ListItem
+                    )}
+                    <Divider />
+                    {/* <ListItem
                         button
                         style={{ color: "#00b400" }}
                         onClick={sendXTC}
@@ -148,8 +146,8 @@ export const Layout = ({ children }) => {
                           <ListItemText primary={"Test send function"} />
                         </WalletTokens>
                       </ListItem> */}
-                      {Items.map((i) => (
-                        <ListItem
+                    {Items.map((i) => (
+                      <ListItem
                           key={i.page}
                           onClick={() => handleNavigation(i)}
                           button
@@ -159,52 +157,51 @@ export const Layout = ({ children }) => {
                           </ListItemIcon>
                           <ListItemText primary={i.title} />
                         </ListItem>
-                      ))}
-                    </List>
-                    <Divider />
-                    <List>
-                      {loggedIn && (
-                        <ListItem button onClick={logOut}>
+                    ))}
+                  </List>
+                  <Divider />
+                  <List>
+                    {loggedIn && (
+                    <ListItem button onClick={logOut}>
                           <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                             <LogoutIcon />
                           </ListItemIcon>
-                          <ListItemText primary={'Log Out'} />
+                          <ListItemText primary="Log Out" />
                         </ListItem>
-                      )}
-                    </List>
-                    {}
-                  </Box>
+                    )}
+                  </List>
+                  {}
                 </Box>
+              </Box>
+              <div
+                style={{
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'end',
+                }}
+              >
                 <div
-                  style={{
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'end',
-                  }}
+                  style={{ paddingBottom: '25px', cursor: 'pointer' }}
+                  onClick={toggleTheme}
                 >
-                  <div
-                    style={{ paddingBottom: '25px', cursor: 'pointer' }}
-                    onClick={toggleTheme}
-                  >
-                    {themeMode === 'light' ? <DarkIcon /> : <LightIcon />}
-                  </div>
+                  {themeMode === 'light' ? <DarkIcon /> : <LightIcon />}
                 </div>
-              </Drawer>
-            </Box>
-          </Hidden>
-          <Box
-            sx={{
-              marginTop: '50px',
-              flexGrow: '1',
-              padding: (theme) => theme.spacing(1),
-              width: 'calc(100% - 320px)',
-            }}
-          >
-            {children}
+              </div>
+            </Drawer>
           </Box>
+        </Hidden>
+        <Box
+          sx={{
+            marginTop: '50px',
+            flexGrow: '1',
+            padding: (theme) => theme.spacing(1),
+            width: 'calc(100% - 320px)',
+          }}
+        >
+          {children}
         </Box>
-      </ThemeConfig>
-    </>
+      </Box>
+    </ThemeConfig>
   );
 };

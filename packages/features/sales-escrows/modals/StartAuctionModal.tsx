@@ -85,7 +85,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
         },
       });
       if (resp.ok) {
-        enqueueSnackbar(`Your auction has been started.`, {
+        enqueueSnackbar('Your auction has been started.', {
           variant: 'success',
           anchorOrigin: {
             vertical: 'top',
@@ -94,7 +94,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
         });
         handleClose(true);
       } else {
-        enqueueSnackbar(`There was an error when starting your auction.`, {
+        enqueueSnackbar('There was an error when starting your auction.', {
           variant: 'error',
           anchorOrigin: {
             vertical: 'top',
@@ -104,7 +104,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
       }
     } catch (e) {
       console.log(e);
-      enqueueSnackbar(`There was an error when starting your auction.`, {
+      enqueueSnackbar('There was an error when starting your auction.', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
@@ -169,7 +169,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
                 value={startPrice}
                 onChange={(e) => setStartPrice(e.target.value)}
                 {...register('startPrice')}
-                error={errors.startPrice ? true : false}
+                error={!!errors.startPrice}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.startPrice?.message}
@@ -185,7 +185,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
                 value={priceStep}
                 onChange={(e) => setPriceStep(e.target.value)}
                 {...register('minIncrease')}
-                error={errors.minIncrease ? true : false}
+                error={!!errors.minIncrease}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.minIncrease?.message}
@@ -202,7 +202,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
                 value={buyNowPrice}
                 onChange={(e) => setBuyNowPrice(e.target.value)}
                 {...register('buyNowPrice')}
-                error={errors.buyNowPrice ? true : false}
+                error={!!errors.buyNowPrice}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.buyNowPrice?.message}
@@ -221,7 +221,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
                     <TextField
                       {...params}
                       {...register('endDate')}
-                      error={errors.endDate ? true : false}
+                      error={!!errors.endDate}
                     />
                   )}
                 />

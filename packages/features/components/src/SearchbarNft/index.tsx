@@ -6,7 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
-//Preloader
+// Preloader
 import { CircularProgress } from '@mui/material';
 
 export const SearchbarNft = (props) => {
@@ -15,12 +15,12 @@ export const SearchbarNft = (props) => {
   const [idsNumber, setIdsNumber] = React.useState('');
 
   const handleSelectIds = (event, value) => {
-    //setSearchBarTokenId state
+    // setSearchBarTokenId state
     if (value == null) {
       value = '';
     }
     props.setSearchBarTokenId(value);
-    //replace the tokenId in the searchBar
+    // replace the tokenId in the searchBar
     window.history.pushState(
       '',
       '',
@@ -29,33 +29,31 @@ export const SearchbarNft = (props) => {
   };
 
   const getNFTCollection = async () => {
-    //console.log("PROVA COLL", tokenId);
+    // console.log("PROVA COLL", tokenId);
     setSelectTokenIds(['Loading...']);
 
-    let response = await actor?.collection_nft_origyn([]);
+    const response = await actor?.collection_nft_origyn([]);
 
-    let collectionNFT = response.ok;
+    const collectionNFT = response.ok;
 
-    let obj_token_ids = collectionNFT.token_ids;
-    let number_ids = collectionNFT.token_ids_count[0].toString();
+    const obj_token_ids = collectionNFT.token_ids;
+    const number_ids = collectionNFT.token_ids_count[0].toString();
     setIdsNumber(number_ids);
 
-    var x: string;
-    var arrayTokenIds = [];
+    let x: string;
+    const arrayTokenIds = [];
     for (x in obj_token_ids) {
       var newID = obj_token_ids[x];
-      //This is the array created to be filtered with Intersection
+      // This is the array created to be filtered with Intersection
       arrayTokenIds.push(newID);
-      setSelectTokenIds((x) => {
-        return [...newID];
-      });
+      setSelectTokenIds((x) => [...newID]);
     }
 
-    //Check if the token Id is in the url
-    let splitted_url: string[] = window.location.href.split('/');
-    //Empty indexID
+    // Check if the token Id is in the url
+    const splitted_url: string[] = window.location.href.split('/');
+    // Empty indexID
     props.setIndexID('');
-    //Check for indexID in url
+    // Check for indexID in url
     const urlParams = new URLSearchParams(window.location.search);
     for (const [key, value] of urlParams) {
       if (key == 'indexID') {
@@ -64,20 +62,18 @@ export const SearchbarNft = (props) => {
       break;
     }
 
-    //If an item of splitted array is present in the array of Token Ids
-    //we have token id in url
-    var intersection = splitted_url.filter(function (e) {
-      return arrayTokenIds[0].indexOf(e) > -1;
-    });
+    // If an item of splitted array is present in the array of Token Ids
+    // we have token id in url
+    const intersection = splitted_url.filter((e) => arrayTokenIds[0].indexOf(e) > -1);
     if (intersection.length > 0) {
-      //setSearchBarTokenId state
+      // setSearchBarTokenId state
       props.setSearchBarTokenId(tokenId);
     } else {
-      //setSearchBarTokenId state
+      // setSearchBarTokenId state
       props.setSearchBarTokenId('Not selected');
     }
   };
-  //if the actor changes getNftCollection is called
+  // if the actor changes getNftCollection is called
   useEffect(() => {
     if (actor) {
       getNFTCollection();
@@ -92,7 +88,7 @@ export const SearchbarNft = (props) => {
     >
       {props.isLoading ? (
         <Box sx={{ textAlign: 'center' }}>
-          <CircularProgress color="inherit"></CircularProgress>
+          <CircularProgress color="inherit" />
         </Box>
       ) : (
         <FormControl sx={{ m: 1, width: '100%' }}>
