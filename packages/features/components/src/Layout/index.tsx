@@ -74,7 +74,7 @@ export const Layout = ({ children }) => {
             display: 'flex',
           }}
         >
-          <Hidden lgDown>
+         
             <Box width="320px" bgcolor="red">
               <Drawer variant="permanent" open={true}>
                 <Box width="320px">
@@ -192,7 +192,6 @@ export const Layout = ({ children }) => {
                 </div>
               </Drawer>
             </Box>
-          </Hidden>
           <Box
             sx={{
               marginTop: '50px',

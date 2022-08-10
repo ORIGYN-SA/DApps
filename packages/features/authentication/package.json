@@ -5,6 +5,7 @@
   "main": "src/index.tsx",
   "dependencies": {
     "@dapp/common-candid": "0.1.0",
-    "@dapp/utils": "0.1.0"
+    "@dapp/utils": "0.1.0",
+    "@dapp/features-components":"0.1.0"
   }
 }

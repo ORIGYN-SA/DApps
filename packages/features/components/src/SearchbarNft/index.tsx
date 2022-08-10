@@ -10,8 +10,7 @@ import { collectionName } from "@dapp/utils"
 import { CircularProgress } from "@mui/material";
 
 export const SearchbarNft = (props) => {
-  const { tokenId, canisterId, principal, actor } =
-    useContext(AuthContext);
+  const { tokenId, actor } = useContext(AuthContext);
   const [selectTokenIds, setSelectTokenIds] = React.useState([""]);
   const [idsNumber, setIdsNumber] = React.useState("");
 
@@ -130,9 +129,10 @@ export const SearchbarNft = (props) => {
             </Typography>
           )}
           <Typography sx={{ m: 1, fontSize: 13 }}>
-            Search for other NFT'S <em>(+{idsNumber}...)</em>
+            Search for other NFT'S <em data-testid="numberIds">(+{idsNumber}...)</em>
           </Typography>
           <Autocomplete
+            data-testid="autocomplete"
             disablePortal
             id="combo-box-demo"
             options={selectTokenIds}

@@ -6,7 +6,7 @@ import usePlug from './plug'
 import useStoic from './stoic'
 import useInternetIdentity from './internedIdentity'
 import { toast } from 'react-toastify'
-import { Preloader } from '@dapp/features-components'
+
 import { getCanisterId, getTokenId } from './getRoute'
 import { AuthClient } from '@dfinity/auth-client'
 
@@ -173,7 +173,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   return (
     <AuthContext.Provider value={auth}>
-      {auth.isLoading ? <Preloader /> : children}
+      {auth.isLoading ? <div /> : children}
     </AuthContext.Provider>
   )
 }
