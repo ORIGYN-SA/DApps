@@ -1,32 +1,29 @@
-
-import React, { useContext, useEffect, useState, useRef } from "react";
-import { AuthContext } from '@dapp/features-authentication';
-import LibraryBox from "../LibraryBox"
+import React, { useContext, useEffect, useState, useRef } from 'react'
+import { AuthContext } from '@dapp/features-authentication'
+import LibraryBox from '../LibraryBox'
 //Accordion @MUI
-import { styled } from '@mui/material/styles';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
+import { styled } from '@mui/material/styles'
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
+import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionSummary, {
   AccordionSummaryProps,
-} from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-
+} from '@mui/material/AccordionSummary'
+import MuiAccordionDetails from '@mui/material/AccordionDetails'
+import Typography from '@mui/material/Typography'
 
 //Source Test
 //https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.primary
 
 const LibraryAccordion = (props) => {
-    const { tokenId, actor } =
-    useContext(AuthContext);
-  const [libData, setLibData] = useState([]);
-  const [currentLibrary, setCurrentLibrary] = useState();
-  const [expanded, setExpanded] = React.useState<string | false>();
+  const { tokenId, actor } = useContext(AuthContext)
+  const [libData, setLibData] = useState([])
+  const [currentLibrary, setCurrentLibrary] = useState()
+  const [expanded, setExpanded] = React.useState<string | false>()
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
+      setExpanded(newExpanded ? panel : false)
+    }
 
   const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -38,7 +35,7 @@ const LibraryAccordion = (props) => {
     '&:before': {
       display: 'none',
     },
-  }));
+  }))
 
   const AccordionSummary = styled((props: AccordionSummaryProps) => (
     <MuiAccordionSummary
@@ -57,33 +54,33 @@ const LibraryAccordion = (props) => {
     '& .MuiAccordionSummary-content': {
       marginLeft: theme.spacing(1),
     },
-  }));
+  }))
 
   const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(2),
     borderTop: '1px solid rgba(0, 0, 0, .125)',
-  }));
+  }))
 
   useEffect(() => {
     if (actor) {
       actor
         .nft_origyn(tokenId)
         .then((r) => {
-          console.log(r);
+          console.log(r)
           setLibData(
             r.ok.metadata.Class.filter((res) => {
-              return res["name"] === "library"
+              return res['name'] === 'library'
             })[0].value.Array.thawed
-          );
-          console.log("R", r);
+          )
+          console.log('R', r)
         })
-        .catch(console.log);
+        .catch(console.log)
     }
-  }, [actor]);
+  }, [actor])
 
   return (
     <div>
-    {libData?.map((library) => (
+      {libData?.map((library) => (
         <Accordion
           key={library?.Class[0]?.value?.Text}
           expanded={expanded === 'panel' + libData.indexOf(library)}
@@ -103,7 +100,7 @@ const LibraryAccordion = (props) => {
         </Accordion>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default LibraryAccordion;
+export default LibraryAccordion
