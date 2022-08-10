@@ -2,7 +2,7 @@ import React from "react";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
-import {SiteProvider} from "./theme";
+import {SiteProvider} from "@dapp/features-theme";
 import {AuthProvider} from '@dapp/features-authentication';
 import "react-toastify/dist/ReactToastify.css";
 

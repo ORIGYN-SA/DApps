@@ -19,7 +19,7 @@ import React, { useContext } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import Logo from "../components/Logo";
 import { useAuthContext } from '@dapp/features-authentication';
-import ThemeConfig, { SiteContext } from "../theme";
+import ThemeConfig, { SiteContext } from "@dapp/features-theme";
 
 const Items = [
   {
