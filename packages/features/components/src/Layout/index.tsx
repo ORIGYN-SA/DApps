@@ -18,7 +18,7 @@ import {
 } from '@mui/material'
 import React, { useContext, useEffect } from 'react'
 import 'react-toastify/dist/ReactToastify.css'
-import Logo from '../Logo'
+import {ThemeLogo} from '../Logo'
 import { useAuthContext } from '@dapp/features-authentication'
 import ThemeConfig, { SiteContext } from '@dapp/features-theme'
 import { WalletTokens } from '../WalletTokens'
@@ -86,7 +86,7 @@ export const Layout = ({ children }) => {
                     }}
                   >
                     <Box sx={{ padding: '8px' }}>
-                      <Logo />
+                      <ThemeLogo />
                     </Box>
                   </Box>
                   <Divider />

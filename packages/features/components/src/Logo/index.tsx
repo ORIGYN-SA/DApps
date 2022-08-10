@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Box } from '@mui/material'
 import { SiteContext } from '@dapp/features-theme'
 
-function Logo() {
+export function ThemeLogo() {
   const { themeMode } = useContext(SiteContext)
   return (
     <Box sx={{ width: 220, height: 50 }}>
@@ -118,4 +118,4 @@ function Logo() {
   )
 }
 
-export default Logo
+

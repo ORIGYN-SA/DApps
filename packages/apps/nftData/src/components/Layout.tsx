@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import React, { useContext } from "react";
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../components/Logo";
+import {ThemeLogo} from '@dapp/features-components';
 import { useAuthContext } from '@dapp/features-authentication';
 import ThemeConfig, { SiteContext } from "@dapp/features-theme";
 
@@ -76,7 +76,7 @@ const Layout = ({ children }) => {
                     }}
                   >
                     <Box sx={{ padding: "8px" }}>
-                      <Logo />
+                      <ThemeLogo />
                     </Box>
                   </Box>
                   <Divider />
