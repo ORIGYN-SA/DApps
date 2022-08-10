@@ -1,7 +1,7 @@
-import { grey, blueGrey } from '@mui/material/colors'
+import { grey, blueGrey } from '@mui/material/colors';
 const COMMON = {
   common: { black: '#000', white: '#fff' },
-}
+};
 
 const palette = {
   light: {
@@ -66,6 +66,6 @@ const palette = {
       color: 'rgba(255, 255, 255, 0.54)',
     },
   },
-}
+};
 
-export default palette
+export default palette;

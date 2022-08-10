@@ -1,18 +1,16 @@
-import React, {
-  useEffect,
-} from "react";
-import { Box, Typography } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Switch from "@mui/material/Switch";
-import Collapse from "@mui/material/Collapse";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Autocomplete from "@mui/material/Autocomplete";
+import React, { useEffect } from 'react';
+import { Box, Typography } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Paper from '@mui/material/Paper';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Switch from '@mui/material/Switch';
+import Collapse from '@mui/material/Collapse';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Autocomplete from '@mui/material/Autocomplete';
 
 //Interface for filter
 interface Filter {
@@ -38,7 +36,7 @@ const MenuProps = {
 };
 
 //Search into categories
-const search_into = ["All", "Principal", "Account", "Transaction Id"];
+const search_into = ['All', 'Principal', 'Account', 'Transaction Id'];
 
 export const TransactionFilter = (props) => {
   //Collapse - switch btn
@@ -51,13 +49,13 @@ export const TransactionFilter = (props) => {
   //Update
   const [_update, setUpdate] = React.useState(1);
   //Fn for search on keyup event
-  const [typedVal, setTypedVal] = React.useState("");
+  const [typedVal, setTypedVal] = React.useState('');
 
   const handleSelectIds = (event, value) => {
-    myFilter.searchInputValue = "";
+    myFilter.searchInputValue = '';
     if (value == null) {
       value = '';
-    };
+    }
     setTypedVal((x) => {
       return value;
     });
@@ -66,9 +64,9 @@ export const TransactionFilter = (props) => {
   };
 
   //Fn for select category to filter
-  const [searchTrough, setSearchTrough] = React.useState("All");
+  const [searchTrough, setSearchTrough] = React.useState('All');
   const handleCategoryFilter = (event) => {
-    myFilter.categoryToFilter = "";
+    myFilter.categoryToFilter = '';
     const {
       target: { value },
     } = event;
@@ -80,7 +78,7 @@ export const TransactionFilter = (props) => {
     var k: string;
     var autocompleteArray: string[] = [];
     switch (value) {
-      case "Account":
+      case 'Account':
         var objTransactions = props.transactionData;
         for (i in objTransactions) {
           var accountArray: string[] = objTransactions[i].accounts;
@@ -90,9 +88,9 @@ export const TransactionFilter = (props) => {
             }
           }
         }
-        setTypedVal("");
+        setTypedVal('');
         break;
-      case "Principal":
+      case 'Principal':
         var objTransactions = props.transactionData;
         for (i in objTransactions) {
           var principalArray: string[] = objTransactions[i].principals;
@@ -102,15 +100,15 @@ export const TransactionFilter = (props) => {
             }
           }
         }
-        setTypedVal("");
+        setTypedVal('');
         break;
-      case "Transaction Id":
+      case 'Transaction Id':
         var objTransactions = props.transactionData;
         for (i in objTransactions) {
           var id: string = objTransactions[i].trans_index;
           autocompleteArray.push(id);
         }
-        setTypedVal("");
+        setTypedVal('');
         break;
     }
 
@@ -118,7 +116,7 @@ export const TransactionFilter = (props) => {
   };
 
   //Fn for select transaction types
-  const [transType, setType] = React.useState("");
+  const [transType, setType] = React.useState('');
   const handleChangeSelect = (event) => {
     const {
       target: { value },
@@ -148,142 +146,145 @@ export const TransactionFilter = (props) => {
     <Box
       component={Paper}
       elevation={2}
-      sx={{ margin: 2, width: "100%", padding: 2 }}
+      sx={{ margin: 2, width: '100%', padding: 2 }}
     >
-      {
-        props.searchBarTokenId == "Not selected" ||
-          props.searchBarTokenId == "Not selected" ? (
-          <div>
-            <FormControlLabel
-              control={<Switch checked={checked} onChange={handleChangeCollapse} />}
-              label="Filters unavailables, select a Token ID"
-            />
-          </div>
-        ) : (
-          <div>
-            <FormControlLabel
-              control={<Switch checked={checked} onChange={handleChangeCollapse} />}
-              label="Filter transactions"
-            />
-            <Collapse in={checked}>
-              <div>
-                {props.isLoading ? (
-                  <FormControl sx={{ m: 1, width: 400 }}>
-                    <Autocomplete
-                      disablePortal
-                      disabled
-                      id="combo-box-demo"
-                      options={AutocompleteVals}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Enter a value" />
-                      )}
-                      value={typedVal}
-                      onChange={(event, newValue) => {
-                        handleSelectIds(event, newValue);
-                      }}
-                    />
-                  </FormControl>
-                ) : (
-                  <FormControl sx={{ m: 1, width: 400 }}>
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      options={AutocompleteVals}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Enter a value" />
-                      )}
-                      value={typedVal}
-                      onChange={(event, newValue) => {
-                        handleSelectIds(event, newValue);
-                      }}
-                    />
-                  </FormControl>
-                )}
-                {props.isLoading ? (
-                  <FormControl sx={{ m: 1, width: 300 }} >
-                    <InputLabel id="label-search-into-select">Loading...</InputLabel>
-                    <Select
-                      labelId="label-search-into-select"
-                      id="search-into-select"
-                      label="Loading..."
-                      value="Loading..."
-                      onChange={handleCategoryFilter}
-                      MenuProps={MenuProps}
-                      disabled
-                      input={<OutlinedInput label="Loading..." />}
-                    >
-                      <MenuItem value="Loading..." key="0">
-                        Loading...
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                ) : (
-                  <FormControl sx={{ m: 1, width: 300 }} >
-                    <InputLabel id="label-search-into-select">Search</InputLabel>
-                    <Select
-                      labelId="label-search-into-select"
-                      id="search-into-select"
-                      label="Search"
-                      value={searchTrough}
-                      onChange={handleCategoryFilter}
-                      MenuProps={MenuProps}
-                      input={<OutlinedInput label="Search" />}
-                    >
-                      {search_into.map((filter_to_choose) => (
-                        <MenuItem key={filter_to_choose} value={filter_to_choose}>
-                          {filter_to_choose}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-                {props.isLoading ? (
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="label-transaction-types-select">
+      {props.searchBarTokenId == 'Not selected' ||
+      props.searchBarTokenId == 'Not selected' ? (
+        <div>
+          <FormControlLabel
+            control={
+              <Switch checked={checked} onChange={handleChangeCollapse} />
+            }
+            label="Filters unavailables, select a Token ID"
+          />
+        </div>
+      ) : (
+        <div>
+          <FormControlLabel
+            control={
+              <Switch checked={checked} onChange={handleChangeCollapse} />
+            }
+            label="Filter transactions"
+          />
+          <Collapse in={checked}>
+            <div>
+              {props.isLoading ? (
+                <FormControl sx={{ m: 1, width: 400 }}>
+                  <Autocomplete
+                    disablePortal
+                    disabled
+                    id="combo-box-demo"
+                    options={AutocompleteVals}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Enter a value" />
+                    )}
+                    value={typedVal}
+                    onChange={(event, newValue) => {
+                      handleSelectIds(event, newValue);
+                    }}
+                  />
+                </FormControl>
+              ) : (
+                <FormControl sx={{ m: 1, width: 400 }}>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={AutocompleteVals}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Enter a value" />
+                    )}
+                    value={typedVal}
+                    onChange={(event, newValue) => {
+                      handleSelectIds(event, newValue);
+                    }}
+                  />
+                </FormControl>
+              )}
+              {props.isLoading ? (
+                <FormControl sx={{ m: 1, width: 300 }}>
+                  <InputLabel id="label-search-into-select">
+                    Loading...
+                  </InputLabel>
+                  <Select
+                    labelId="label-search-into-select"
+                    id="search-into-select"
+                    label="Loading..."
+                    value="Loading..."
+                    onChange={handleCategoryFilter}
+                    MenuProps={MenuProps}
+                    disabled
+                    input={<OutlinedInput label="Loading..." />}
+                  >
+                    <MenuItem value="Loading..." key="0">
                       Loading...
-                    </InputLabel>
-                    <Select
-                      labelId="label-transaction-types-select"
-                      id="transaction-select"
-                      label="Loading..."
-                      value="Loading..."
-                      input={<OutlinedInput label="Loading..." />}
-                      MenuProps={MenuProps}
-                      disabled
-                    >
-                      <MenuItem key="0" value="Loading...">
-                        Loading...
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              ) : (
+                <FormControl sx={{ m: 1, width: 300 }}>
+                  <InputLabel id="label-search-into-select">Search</InputLabel>
+                  <Select
+                    labelId="label-search-into-select"
+                    id="search-into-select"
+                    label="Search"
+                    value={searchTrough}
+                    onChange={handleCategoryFilter}
+                    MenuProps={MenuProps}
+                    input={<OutlinedInput label="Search" />}
+                  >
+                    {search_into.map((filter_to_choose) => (
+                      <MenuItem key={filter_to_choose} value={filter_to_choose}>
+                        {filter_to_choose}
                       </MenuItem>
-                    </Select>
-                  </FormControl>
-                ) : (
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="label-transaction-types-select">
-                      Transaction type
-                    </InputLabel>
-                    <Select
-                      labelId="label-transaction-types-select"
-                      id="transaction-select"
-                      label="Transaction type"
-                      value={transType}
-                      onChange={handleChangeSelect}
-                      input={<OutlinedInput label="Transaction type" />}
-                      MenuProps={MenuProps}
-                    >
-                      {array_types.map((typeOf) => (
-                        <MenuItem key={typeOf} value={typeOf}>
-                          {typeOf}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              </div>
-            </Collapse>
-          </div>
-        )
-      }
-
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              {props.isLoading ? (
+                <FormControl sx={{ m: 1, width: 300 }}>
+                  <InputLabel id="label-transaction-types-select">
+                    Loading...
+                  </InputLabel>
+                  <Select
+                    labelId="label-transaction-types-select"
+                    id="transaction-select"
+                    label="Loading..."
+                    value="Loading..."
+                    input={<OutlinedInput label="Loading..." />}
+                    MenuProps={MenuProps}
+                    disabled
+                  >
+                    <MenuItem key="0" value="Loading...">
+                      Loading...
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              ) : (
+                <FormControl sx={{ m: 1, width: 300 }}>
+                  <InputLabel id="label-transaction-types-select">
+                    Transaction type
+                  </InputLabel>
+                  <Select
+                    labelId="label-transaction-types-select"
+                    id="transaction-select"
+                    label="Transaction type"
+                    value={transType}
+                    onChange={handleChangeSelect}
+                    input={<OutlinedInput label="Transaction type" />}
+                    MenuProps={MenuProps}
+                  >
+                    {array_types.map((typeOf) => (
+                      <MenuItem key={typeOf} value={typeOf}>
+                        {typeOf}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            </div>
+          </Collapse>
+        </div>
+      )}
     </Box>
   );
 };

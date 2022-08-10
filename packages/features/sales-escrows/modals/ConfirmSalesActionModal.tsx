@@ -1,24 +1,24 @@
-import * as React from 'react'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
-import Slide from '@mui/material/Slide'
-import { TransitionProps } from '@mui/material/transitions'
-import { AuthContext } from '@dapp/features-authentication'
-import { LoadingContainer } from '@dapp/features-components'
-import { useSnackbar } from 'notistack'
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import { TransitionProps } from '@mui/material/transitions';
+import { AuthContext } from '@dapp/features-authentication';
+import { LoadingContainer } from '@dapp/features-components';
+import { useSnackbar } from 'notistack';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
-    children: React.ReactElement<any, any>
+    children: React.ReactElement<any, any>;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
-  return <Slide direction="up" ref={ref} {...props} />
-})
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export const ConfirmSalesActionModal = ({
   open,
@@ -27,18 +27,18 @@ export const ConfirmSalesActionModal = ({
   action,
   escrow = null,
 }) => {
-  const { actor, principal } = React.useContext(AuthContext)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const { enqueueSnackbar } = useSnackbar()
-
+  const { actor, principal } = React.useContext(AuthContext);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  console.log(escrow, action);
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
-      if (isLoading) return
-      setIsLoading(true)
+      if (isLoading) return;
+      setIsLoading(true);
       const tokenId = currentToken?.Class?.find(({ name }) => name === 'id')
-        .value.Text
+        .value.Text;
       if (action === 'endSale') {
-        const endSaleResponse = await actor.end_sale_nft_origyn(tokenId)
+        const endSaleResponse = await actor.end_sale_nft_origyn(tokenId);
         if (endSaleResponse.ok) {
           enqueueSnackbar(
             `You have successfully ended the sale for ${tokenId}.`,
@@ -48,31 +48,33 @@ export const ConfirmSalesActionModal = ({
                 vertical: 'top',
                 horizontal: 'right',
               },
-            }
-          )
-          setIsLoading(false)
-          return handleClose(true)
+            },
+          );
+          setIsLoading(false);
+          return handleClose(true);
         } else {
-          enqueueSnackbar(`Error: ${endSaleResponse.err.text}.`, {
+          enqueueSnackbar(`Error: ${endSaleResponse.err.flag_point}.`, {
             variant: 'error',
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
-          })
-          setIsLoading(false)
-          return handleClose(false)
+          });
+          setIsLoading(false);
+          return handleClose(false);
         }
       } else if (action === 'withdraw') {
         if (!escrow) {
-          return handleClose(false)
+          return handleClose(false);
         }
-        const withdrawResponse = await actor?.withdraw_nft_origyn({
-          escrow: {
-            ...escrow,
-            withdraw_to: { principal },
+        const withdrawResponse = await actor?.sale_nft_origyn({
+          withdraw: {
+            escrow: {
+              ...escrow,
+              withdraw_to: { principal },
+            },
           },
-        })
+        });
         if (withdrawResponse.ok) {
           enqueueSnackbar(`Your escrow has been successfully withdrawn.`, {
             variant: 'success',
@@ -80,29 +82,31 @@ export const ConfirmSalesActionModal = ({
               vertical: 'top',
               horizontal: 'right',
             },
-          })
-          setIsLoading(false)
-          return handleClose(true)
+          });
+          setIsLoading(false);
+          return handleClose(true);
         } else {
-          enqueueSnackbar(`Error: ${withdrawResponse.err.text}.`, {
+          enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
             variant: 'error',
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
-          })
-          setIsLoading(false)
-          return handleClose(false)
+          });
+          setIsLoading(false);
+          return handleClose(false);
         }
       } else if (action === 'reject') {
         if (!escrow) {
-          return handleClose(false)
+          return handleClose(false);
         }
-        const rejectResponse = await actor?.withdraw_nft_origyn({
-          reject: {
-            ...escrow,
+        const rejectResponse = await actor?.sale_nft_origyn({
+          withdraw: {
+            reject: {
+              ...escrow,
+            },
           },
-        })
+        });
         if (rejectResponse.ok) {
           enqueueSnackbar(`The escrow has been rejected.`, {
             variant: 'success',
@@ -110,9 +114,9 @@ export const ConfirmSalesActionModal = ({
               vertical: 'top',
               horizontal: 'right',
             },
-          })
-          setIsLoading(false)
-          return handleClose(true)
+          });
+          setIsLoading(false);
+          return handleClose(true);
         } else {
           enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
             variant: 'error',
@@ -120,14 +124,14 @@ export const ConfirmSalesActionModal = ({
               vertical: 'top',
               horizontal: 'right',
             },
-          })
-          setIsLoading(false)
-          return handleClose(false)
+          });
+          setIsLoading(false);
+          return handleClose(false);
         }
       }
     }
-    handleClose(false)
-  }
+    handleClose(false);
+  };
   return (
     <div>
       <Dialog
@@ -179,5 +183,5 @@ export const ConfirmSalesActionModal = ({
         </DialogActions>
       </Dialog>
     </div>
-  )
-}
+  );
+};

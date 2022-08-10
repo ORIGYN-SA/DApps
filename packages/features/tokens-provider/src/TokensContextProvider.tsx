@@ -1,10 +1,10 @@
-import { useAuthContext } from '@dapp/features-authentication'
-import { IdlStandard } from '@dapp/utils'
-import { Principal } from '@dfinity/principal'
-import JSONBig from 'json-bigint'
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { getBalance as getBalanceFromCanister } from './getBalance'
-import { getMetadata } from './getMetadata'
+import { useAuthContext } from '@dapp/features-authentication';
+import { IdlStandard } from '@dapp/utils';
+import { Principal } from '@dfinity/principal';
+import JSONBig from 'json-bigint';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { getBalance as getBalanceFromCanister } from './getBalance';
+import { getMetadata } from './getMetadata';
 
 const defaultTokens = {
   ICP: {
@@ -14,6 +14,7 @@ const defaultTokens = {
     standard: IdlStandard.ICP,
     decimals: 8,
     enabled: true,
+    balance: -1,
   },
   OGY: {
     symbol: 'OGY',
@@ -22,6 +23,7 @@ const defaultTokens = {
     standard: IdlStandard.ICP,
     decimals: 8,
     enabled: true,
+    balance: -1,
   },
   XTC: {
     symbol: 'XTC',
@@ -30,6 +32,7 @@ const defaultTokens = {
     standard: IdlStandard.DIP20,
     icon: 'https://storageapi.fleek.co/fleek-team-bucket/Dank/XTC-DAB.png',
     enabled: false,
+    balance: -1,
   },
   // WICP: {
   //   symbol: "WICP",
@@ -39,78 +42,78 @@ const defaultTokens = {
   //   icon: "https://storageapi.fleek.co/fleek-team-bucket/logos/wicp-logo.png",
   //   enabled: false,
   // },
-}
+};
 
 export type Token = {
-  balance?: number
-  canisterId: string
-  decimals?: number
-  enabled?: boolean
-  fee?: number
-  icon?: any
-  standard: IdlStandard
-  symbol: string
-}
+  balance?: number;
+  canisterId: string;
+  decimals?: number;
+  enabled?: boolean;
+  fee?: number;
+  icon?: any;
+  standard: IdlStandard;
+  symbol: string;
+};
 
 export const AddTokenError = {
   INVALID:
     'There was an error while adding your token. Make sure that the canister id and the standard is correct.',
   ALREADY_EXIST: 'The token you are adding is already registered',
-}
+};
 
 export type TokensContext = {
   tokens: {
-    [key: string]: Token
-  }
+    [key: string]: Token;
+  };
   addToken?: (
     canisterId: string,
-    standard: IdlStandard
-  ) => Promise<Token | string>
-  getBalance?: (principal: Principal, token: Token) => Promise<number>
-  toggleToken?: (symbol: string) => void
-  refreshBalance?: (symbol: string) => void
-  refreshAllBalances?: () => void
-}
+    standard: IdlStandard,
+  ) => Promise<Token | string>;
+  getBalance?: (principal: Principal, token: Token) => Promise<number>;
+  toggleToken?: (symbol: string) => void;
+  refreshBalance?: (symbol: string) => void;
+  refreshAllBalances?: () => void;
+};
 
 const defaultTokensMapped = () => {
-  const defaultTokensMapped = {}
+  const defaultTokensMapped = {};
   Object.keys(defaultTokens).forEach((key: string) => {
-    const token: Token = defaultTokens[key]
+    const token: Token = defaultTokens[key];
     defaultTokensMapped[token.symbol] = {
       canisterId: Principal.fromText(token.canisterId),
       icon: token.icon ?? token.symbol,
       ...token,
-    }
-  })
-  return defaultTokensMapped
-}
+    };
+  });
+  return defaultTokensMapped;
+};
 
 const localStorageTokens = () => {
-  const localStorageTokens = localStorage.getItem('tokensContext')
-  if (!localStorageTokens) return undefined
+  const localStorageTokens = localStorage.getItem('tokensContext');
+  if (!localStorageTokens) return undefined;
 
-  return JSONBig.parse(localStorageTokens ?? '')
-}
-const initialTokens = localStorageTokens() ?? defaultTokensMapped()
+  return JSONBig.parse(localStorageTokens ?? '');
+};
+const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
-})
+});
 
 export const useTokensContext = () => {
-  const context = useContext(TokensContext)
-  return context
-}
+  const context = useContext(TokensContext);
+  return context;
+};
 
 export const TokensContextProvider: React.FC = ({ children }) => {
-  const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens)
-  const { principal } = useAuthContext()
+  const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
+  const { principal } = useAuthContext();
 
   const addToken = async (canisterId: string, standard: IdlStandard) => {
-    const metadata: any = await getMetadata(canisterId, standard)
-    const { symbol, fee, decimals, icon } = metadata || {}
+    const metadata: any = await getMetadata(canisterId, standard);
+    const { symbol, fee, decimals, icon } = metadata || {};
 
-    if (tokens[symbol]) return AddTokenError.ALREADY_EXIST
+    if (tokens[symbol]) return AddTokenError.ALREADY_EXIST;
 
     const token: Token = {
       symbol,
@@ -120,53 +123,57 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       fee: fee,
       enabled: true,
       decimals,
-    }
+    };
 
-    token.balance = await getBalance(principal, token)
-    const _tokens = tokens
-    _tokens[token.symbol] = token
-    setTokens(_tokens)
-    localStorage.setItem('tokensContext', JSONBig.stringify(_tokens))
-    return token
-  }
+    token.balance = await getBalance(principal, token);
+    const _tokens = tokens;
+    _tokens[token.symbol] = token;
+    setTokens(_tokens);
+    localStorage.setItem('tokensContext', JSONBig.stringify(_tokens));
+    return token;
+  };
 
   const toggleToken = (symbol: string) => {
     setTokens((pTokens) => {
-      pTokens[symbol].enabled = !pTokens[symbol].enabled
+      pTokens[symbol].enabled = !pTokens[symbol].enabled;
 
-      return { ...pTokens }
-    })
-  }
+      return { ...pTokens };
+    });
+  };
 
   const getBalance = async (principal: Principal, token: Token) => {
-    const balance = await getBalanceFromCanister(principal, token)
-    return balance.value / Math.pow(10, balance.decimals)
-  }
+    try {
+      const balance = await getBalanceFromCanister(principal, token);
+      return balance.value / Math.pow(10, balance.decimals);
+    } catch {
+      return 0;
+    }
+  };
 
   const refreshBalance = async (symbol: string) => {
-    const balance = await getBalance(principal, tokens[symbol])
+    const balance = await getBalance(principal, tokens[symbol]);
     setTokens((pTokens) => {
-      pTokens[symbol].balance = balance
-      return { ...pTokens }
-    })
-  }
+      pTokens[symbol].balance = balance;
+      return { ...pTokens };
+    });
+  };
 
   const refreshAllBalances = () => {
-    const _tokens = tokens
+    const _tokens = tokens;
     Promise.all(
       Object.keys(_tokens).map(async (symbol) => {
-        _tokens[symbol].balance = await getBalance(principal, _tokens[symbol])
-      })
+        _tokens[symbol].balance = await getBalance(principal, _tokens[symbol]);
+      }),
     ).then(() => {
       setTokens(() => {
-        return { ..._tokens }
-      })
-    })
-  }
+        return { ..._tokens };
+      });
+    });
+  };
 
   useEffect(() => {
-    localStorage.setItem('tokensContext', JSONBig.stringify(tokens))
-  }, [tokens])
+    localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
+  }, [tokens]);
 
   return (
     <TokensContext.Provider
@@ -181,5 +188,5 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     >
       {children}
     </TokensContext.Provider>
-  )
-}
+  );
+};

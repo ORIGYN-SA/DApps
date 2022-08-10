@@ -1,9 +1,8 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
 //Icons ICP & OGY
-import {ICPIcon, OGYIcon} from  "@dapp/common-assets";
-
+import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 
 const AuctionBid = (props) => {
   var singleT_type = props.data.type_txn;
@@ -26,24 +25,16 @@ const AuctionBid = (props) => {
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
-        <Typography
-          sx={{ fontSize: 14 }}
-          color="text.secondary"
-          gutterBottom
-        >
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Transaction type:
         </Typography>
         <Typography variant="h5" gutterBottom>
           {singleT_type}
         </Typography>
-        <Typography
-          sx={{ fontSize: 14 }}
-          color="text.secondary"
-          gutterBottom
-        >
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Sale ID:
         </Typography>
         <Typography variant="h5" gutterBottom>
@@ -109,7 +100,7 @@ const AuctionBid = (props) => {
               Symbol:
             </Typography>
             <Typography>
-              {sym === "OGY" ? (
+              {sym === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -127,7 +118,7 @@ const AuctionBid = (props) => {
         </Grid>
       </Box>
     </Box>
-  )
+  );
 };
 
 export default AuctionBid;

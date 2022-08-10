@@ -1,10 +1,10 @@
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import DarkIcon from "@mui/icons-material/Brightness4Rounded";
-import LightIcon from "@mui/icons-material/Brightness7Rounded";
-import CheckIcon from "@mui/icons-material/Check";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import LoginIcon from "@mui/icons-material/Login";
-import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import DarkIcon from '@mui/icons-material/Brightness4Rounded';
+import LightIcon from '@mui/icons-material/Brightness7Rounded';
+import CheckIcon from '@mui/icons-material/Check';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import LoginIcon from '@mui/icons-material/Login';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import {
   Box,
   Divider,
@@ -14,27 +14,27 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from "@mui/material";
-import React, { useContext } from "react";
-import "react-toastify/dist/ReactToastify.css";
-import { OrigynLogo } from  "@dapp/common-assets";
-import { useAuthContext } from "@dapp/features-authentication";
-import ThemeConfig, { SiteContext } from "@dapp/features-theme";
+} from '@mui/material';
+import React, { useContext } from 'react';
+import 'react-toastify/dist/ReactToastify.css';
+import { OrigynLogo } from '@dapp/common-assets';
+import { useAuthContext } from '@dapp/features-authentication';
+import ThemeConfig, { SiteContext } from '@dapp/features-theme';
 
 const Items = [
   {
-    page: "ledger",
-    title: "Ledger",
+    page: 'ledger',
+    title: 'Ledger',
     icon: <ListAltOutlinedIcon />,
   },
   {
-    page: "data",
-    title: "NFT info",
+    page: 'data',
+    title: 'NFT info',
     icon: <InfoOutlinedIcon />,
   },
   {
-    page: "wallet",
-    title: "Wallet",
+    page: 'wallet',
+    title: 'Wallet',
     icon: <AccountBalanceWalletOutlinedIcon />,
   },
 ];
@@ -44,7 +44,7 @@ export const Layout = ({ children }) => {
 
   const { logIn, loggedIn, principal } = useAuthContext();
   const toggleTheme = () => {
-    let t = themeMode === "light" ? "dark" : "light";
+    let t = themeMode === 'light' ? 'dark' : 'light';
     onChangeMode(t);
   };
 
@@ -52,7 +52,7 @@ export const Layout = ({ children }) => {
     window.location.href =
       window.location.href.substr(
         0,
-        window.location.href.lastIndexOf("\\") + 1
+        window.location.href.lastIndexOf('\\') + 1,
       ) + i.page;
   };
 
@@ -61,7 +61,7 @@ export const Layout = ({ children }) => {
       <ThemeConfig>
         <Box
           sx={{
-            display: "flex",
+            display: 'flex',
           }}
         >
           <Hidden lgDown>
@@ -70,13 +70,13 @@ export const Layout = ({ children }) => {
                 <Box width="320px">
                   <Box
                     style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      padding: "1rem 2rem",
+                      display: 'flex',
+                      flexDirection: 'column',
+                      padding: '1rem 2rem',
                     }}
                   >
-                    <Box sx={{ padding: "8px" }}>
-                      <OrigynLogo/>
+                    <Box sx={{ padding: '8px' }}>
+                      <OrigynLogo />
                     </Box>
                   </Box>
                   <Divider />
@@ -84,28 +84,28 @@ export const Layout = ({ children }) => {
                     <List>
                       {!loggedIn ? (
                         <>
-                          <ListItem button onClick={() => logIn("ii")}>
+                          <ListItem button onClick={() => logIn('ii')}>
                             <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                               <LoginIcon />
                             </ListItemIcon>
-                            <ListItemText primary={"CONNECT WALLET (II)"} />
+                            <ListItemText primary={'CONNECT WALLET (II)'} />
                           </ListItem>
-                          <ListItem button onClick={() => logIn("plug")}>
+                          <ListItem button onClick={() => logIn('plug')}>
                             <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                               <LoginIcon />
                             </ListItemIcon>
-                            <ListItemText primary={"CONNECT WALLET (plug)"} />
+                            <ListItemText primary={'CONNECT WALLET (plug)'} />
                           </ListItem>
                         </>
                       ) : (
-                        <ListItem button style={{ color: "#00b400" }}>
+                        <ListItem button style={{ color: '#00b400' }}>
                           <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
-                            <CheckIcon style={{ color: "#00b400" }} />
+                            <CheckIcon style={{ color: '#00b400' }} />
                           </ListItemIcon>
                           <ListItemText
-                            primary={"WALLET CONNECTED"}
+                            primary={'WALLET CONNECTED'}
                             secondary={
-                              principal?.toText().substring(0, 25) + "..."
+                              principal?.toText().substring(0, 25) + '...'
                             }
                           />
                         </ListItem>
@@ -118,7 +118,7 @@ export const Layout = ({ children }) => {
                           onClick={() => handleNavigation(i)}
                           button
                         >
-                          <ListItemIcon sx={{ pading: "8px" }}>
+                          <ListItemIcon sx={{ pading: '8px' }}>
                             {i.icon}
                           </ListItemIcon>
                           <ListItemText primary={i.title} />
@@ -129,9 +129,9 @@ export const Layout = ({ children }) => {
                     <List>
                       <ListItem button onClick={toggleTheme}>
                         <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
-                          {themeMode === "light" ? <DarkIcon /> : <LightIcon />}
+                          {themeMode === 'light' ? <DarkIcon /> : <LightIcon />}
                         </ListItemIcon>
-                        <ListItemText primary={"THEME"} />
+                        <ListItemText primary={'THEME'} />
                       </ListItem>
                     </List>
                     {}
@@ -142,10 +142,10 @@ export const Layout = ({ children }) => {
           </Hidden>
           <Box
             sx={{
-              marginTop: "50px",
-              flexGrow: "1",
+              marginTop: '50px',
+              flexGrow: '1',
               padding: (theme) => theme.spacing(1),
-              width: "calc(100% - 320px)",
+              width: 'calc(100% - 320px)',
             }}
           >
             {children}

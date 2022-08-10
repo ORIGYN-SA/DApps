@@ -1,5 +1,5 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 
 const StyledPreloader = styled.div`
   width: ${({ width }) => width || '100vw'};
@@ -20,7 +20,7 @@ const StyledPreloader = styled.div`
       transform: rotate(360deg);
     }
   }
-`
+`;
 
 export const Preloader = (props) => {
   return (
@@ -131,5 +131,5 @@ export const Preloader = (props) => {
         </defs>
       </svg>
     </StyledPreloader>
-  )
-}
+  );
+};

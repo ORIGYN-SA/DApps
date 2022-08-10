@@ -1,11 +1,11 @@
-import { AuthContext } from '@dapp/features-authentication'
-import { LoadingContainer, TokenIcon } from '@dapp/features-components'
+import { AuthContext } from '@dapp/features-authentication';
+import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import {
   sendTransaction,
   useTokensContext,
-} from '@dapp/features-tokens-provider'
-import { Principal } from '@dfinity/principal'
-import { yupResolver } from '@hookform/resolvers/yup'
+} from '@dapp/features-tokens-provider';
+import { Principal } from '@dfinity/principal';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   FormControl,
   Grid,
@@ -14,17 +14,17 @@ import {
   Select,
   TextField,
   Typography,
-} from '@mui/material'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import { useSnackbar } from 'notistack'
-import * as React from 'react'
-import { useForm } from 'react-hook-form'
-import { useSearchParams } from 'react-router-dom'
-import * as Yup from 'yup'
+} from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useSnackbar } from 'notistack';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
+import * as Yup from 'yup';
 
 export function StartEscrowModal({
   nft,
@@ -33,12 +33,12 @@ export function StartEscrowModal({
   initialValues = undefined,
 }) {
   const { actor, ogyActor, principal, canisterId } =
-    React.useContext(AuthContext)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [token, setToken] = React.useState('OGY')
-  const [searchParams, setSearchParams] = useSearchParams()
-  const { enqueueSnackbar } = useSnackbar()
-  const { tokens, refreshAllBalances } = useTokensContext()
+    React.useContext(AuthContext);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [token, setToken] = React.useState('OGY');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { enqueueSnackbar } = useSnackbar();
+  const { tokens, refreshAllBalances } = useTokensContext();
   const validationSchema = Yup.object().shape({
     nftId: Yup.string().required(),
     escrowPrice: Yup.number()
@@ -47,14 +47,14 @@ export function StartEscrowModal({
       .typeError('This cannot be a nullable number')
       .moreThan(
         Yup.ref('startPrice'),
-        'Instant buy price must be greater than the start price'
+        'Instant buy price must be greater than the start price',
       ),
-  })
+  });
 
   const handleCustomClose = (value) => {
-    setSearchParams({})
-    handleClose(value)
-  }
+    setSearchParams({});
+    handleClose(value);
+  };
   const {
     register,
     getValues,
@@ -65,52 +65,53 @@ export function StartEscrowModal({
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: React.useMemo(() => {
-      return initialValues
+      return initialValues;
     }, [initialValues]),
-  })
+  });
 
   React.useEffect(() => {
-    reset(initialValues)
-    let params = getValues()
-    setSearchParams(params)
-  }, [initialValues])
+    reset(initialValues);
+    let params = getValues();
+    setSearchParams(params);
+  }, [initialValues]);
 
   const customSubmit = (data) => {
-    console.log(data)
-    handleStartEscrow(data)
-  }
+    console.log(data);
+    handleStartEscrow(data);
+  };
   React.useEffect(() => {
     const subscription = watch((value, { name, type }) => {
-      let params = getValues()
-      setSearchParams(params)
-    })
-    return () => subscription.unsubscribe()
-  }, [watch])
+      let params = getValues();
+      setSearchParams(params);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   React.useEffect(() => {
-    let params = getValues()
+    let params = getValues();
     if (open && params.priceOffer) {
-      setSearchParams(params)
+      setSearchParams(params);
     }
-  }, [open])
+  }, [open]);
   const _nft = {
     id: nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text,
     seller: nft?.metadata?.Class?.find(
-      ({ name }) => name === 'owner'
+      ({ name }) => name === 'owner',
     ).value.Principal.toText(),
     token:
       nft?.current_sale?.length > 0
         ? nft?.current_sale[0].sale_type?.auction?.config?.auction?.token?.ic
             ?.symbol
         : 'OGY',
+
     openAuction: nft?.current_sale?.find((sale) =>
-      sale?.sale_type?.auction?.status?.hasOwnProperty('open')
+      sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
     ),
-  }
-  console.log('🚀 ~ file: StartEscrow.tsx ~ line 112 ~ _nft', _nft)
+  };
+  console.log('🚀 ~ file: StartEscrow.tsx ~ line 112 ~ _nft', _nft);
 
   const handleStartEscrow = async (data) => {
-    console.log(data)
+    console.log(data);
     if (
       isNaN(parseFloat(data.priceOffer)) ||
       data.sellerId === 'undefined' ||
@@ -122,23 +123,23 @@ export function StartEscrowModal({
           vertical: 'top',
           horizontal: 'right',
         },
-      })
-      return
+      });
+      return;
     }
-    if (isLoading) return
+    if (isLoading) return;
     if (ogyActor) {
-      setIsLoading(true)
-      const amount = data.priceOffer * 1e8
-      const walletType = localStorage.getItem('loggedIn')
-      const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] })
-      const { account_id } = saleInfo?.ok?.deposit_info ?? {}
+      setIsLoading(true);
+      const amount = data.priceOffer * 1e8;
+      const walletType = localStorage.getItem('loggedIn');
+      const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
+      const { account_id } = saleInfo?.ok?.deposit_info ?? {};
 
       const transactionHeight = await sendTransaction(
         walletType,
         tokens[token],
         new Uint8Array(account_id),
-        amount
-      )
+        amount,
+      );
       const escrowData = {
         token_id: _nft.id,
         deposit: {
@@ -162,9 +163,9 @@ export function StartEscrowModal({
             : [],
         },
         lock_to_date: [],
-      }
+      };
       try {
-        const escrowResponse = await actor.escrow_nft_origyn(escrowData)
+        const escrowResponse = await actor.escrow_nft_origyn(escrowData);
         if (!_nft.openAuction) {
           if (escrowResponse.ok) {
             enqueueSnackbar(`Your escrow has been successfully sent.`, {
@@ -173,23 +174,23 @@ export function StartEscrowModal({
                 vertical: 'top',
                 horizontal: 'right',
               },
-            })
-            setIsLoading(false)
-            handleCustomClose(true)
-            refreshAllBalances()
+            });
+            setIsLoading(false);
+            handleCustomClose(true);
+            refreshAllBalances();
           } else {
-            throw escrowResponse.err.text
+            throw escrowResponse.err.text;
           }
         } else {
-          if (!escrowResponse?.ok) throw escrowResponse.err.text
+          if (!escrowResponse?.ok) throw escrowResponse.err.text;
 
-          console.log('escrowResponse', escrowResponse)
+          console.log('escrowResponse', escrowResponse);
           const bidData = {
             broker_id: [],
             escrow_receipt: escrowResponse?.ok?.receipt,
             sale_id: _nft.openAuction?.sale_id,
-          }
-          const bidResponse = await actor.bid_nft_origyn(bidData)
+          };
+          const bidResponse = await actor.bid_nft_origyn(bidData);
           if (bidResponse.ok) {
             enqueueSnackbar(`Your bid has been successfully placed.`, {
               variant: 'success',
@@ -197,16 +198,16 @@ export function StartEscrowModal({
                 vertical: 'top',
                 horizontal: 'right',
               },
-            })
-            setIsLoading(false)
-            handleCustomClose(true)
-            refreshAllBalances()
+            });
+            setIsLoading(false);
+            handleCustomClose(true);
+            refreshAllBalances();
           } else {
-            throw bidResponse.err
+            throw bidResponse.err;
           }
         }
       } catch (e) {
-        console.log(e?.message ?? e)
+        console.log(e?.message ?? e);
 
         enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
           variant: 'error',
@@ -214,11 +215,11 @@ export function StartEscrowModal({
             vertical: 'top',
             horizontal: 'right',
           },
-        })
+        });
       }
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
   return (
     <div>
       <Dialog
@@ -313,5 +314,5 @@ export function StartEscrowModal({
         </DialogActions>
       </Dialog>
     </div>
-  )
+  );
 }

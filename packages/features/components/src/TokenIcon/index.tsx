@@ -1,5 +1,5 @@
-import React from 'react'
-import { ICPIcon, OGYIcon, QuestionIcon } from '@dapp/common-assets'
+import React from 'react';
+import { ICPIcon, OGYIcon, QuestionIcon } from '@dapp/common-assets';
 
 const iconStyle = {
   verticalAlign: 'middle',
@@ -8,20 +8,20 @@ const iconStyle = {
   marginRight: '3px',
   borderRadius: '25px',
   backgroundColor: 'black',
-}
+};
 export const TokenIcon = ({ symbol }) => {
   if (
     typeof symbol === 'string' &&
     (symbol.indexOf('https://') !== -1 || symbol.indexOf('data:image') !== -1)
   )
-    return <img style={iconStyle} src={symbol} />
+    return <img style={iconStyle} src={symbol} />;
 
-  if (typeof symbol === 'string') symbol = symbol.toUpperCase()
+  if (typeof symbol === 'string') symbol = symbol.toUpperCase();
   const Component = {
     OGY: <OGYIcon style={iconStyle} />,
     ICP: <ICPIcon style={iconStyle} />,
-  }
-  if (Component?.hasOwnProperty(symbol)) return Component[symbol]
+  };
+  if (Component?.hasOwnProperty(symbol)) return Component[symbol];
 
   return (
     <QuestionIcon
@@ -31,5 +31,5 @@ export const TokenIcon = ({ symbol }) => {
         fill: 'gray',
       }}
     />
-  )
-}
+  );
+};

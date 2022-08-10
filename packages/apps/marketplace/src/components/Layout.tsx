@@ -1,13 +1,13 @@
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined'
-import { Box } from '@mui/material'
-import { useContext, useEffect } from 'react'
-import 'react-toastify/dist/ReactToastify.css'
-import { useAuthContext } from '@dapp/features-authentication'
-import { useTokensContext } from '@dapp/features-tokens-provider'
-import ThemeConfig, { SiteContext } from '@dapp/features-theme'
-import ResponsiveAppBar from './Layout/AppBarr'
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import { Box } from '@mui/material';
+import { useContext, useEffect } from 'react';
+import 'react-toastify/dist/ReactToastify.css';
+import { useAuthContext } from '@dapp/features-authentication';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import ThemeConfig, { SiteContext } from '@dapp/features-theme';
+import ResponsiveAppBar from './Layout/AppBarr';
 
 const Items = [
   {
@@ -25,30 +25,30 @@ const Items = [
     title: 'Wallet',
     icon: <AccountBalanceWalletOutlinedIcon />,
   },
-]
+];
 
 const Layout = ({ children }) => {
-  const { onChangeMode, themeMode } = useContext(SiteContext)
+  const { onChangeMode, themeMode } = useContext(SiteContext);
 
-  const { logIn, loggedIn, principal, logOut } = useAuthContext()
-  const { tokens, refreshAllBalances } = useTokensContext()
+  const { logIn, loggedIn, principal, logOut } = useAuthContext();
+  const { tokens, refreshAllBalances } = useTokensContext();
   const toggleTheme = () => {
-    let t = themeMode === 'light' ? 'dark' : 'light'
-    onChangeMode(t)
-  }
+    let t = themeMode === 'light' ? 'dark' : 'light';
+    onChangeMode(t);
+  };
   const handleNavigation = (i) => {
     window.location.href =
       window.location.href.substr(
         0,
-        window.location.href.lastIndexOf('\\') + 1
-      ) + i.page
-  }
+        window.location.href.lastIndexOf('\\') + 1,
+      ) + i.page;
+  };
 
   useEffect(() => {
-    if (!tokens['OGY'].balance) {
-      refreshAllBalances()
+    if (tokens['OGY'].balance === -1) {
+      refreshAllBalances();
     }
-  }, [tokens])
+  }, [tokens]);
   return (
     <>
       <ThemeConfig>
@@ -144,7 +144,7 @@ const Layout = ({ children }) => {
         {/*</Box>*/}
       </ThemeConfig>
     </>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

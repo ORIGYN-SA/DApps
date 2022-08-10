@@ -1,11 +1,11 @@
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
-import DarkIcon from '@mui/icons-material/Brightness4Rounded'
-import LightIcon from '@mui/icons-material/Brightness7Rounded'
-import CheckIcon from '@mui/icons-material/Check'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import LoginIcon from '@mui/icons-material/Login'
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined'
-import LogoutIcon from '@mui/icons-material/Logout'
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import DarkIcon from '@mui/icons-material/Brightness4Rounded';
+import LightIcon from '@mui/icons-material/Brightness7Rounded';
+import CheckIcon from '@mui/icons-material/Check';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import LoginIcon from '@mui/icons-material/Login';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import LogoutIcon from '@mui/icons-material/Logout';
 import {
   Box,
   Divider,
@@ -15,15 +15,15 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from '@mui/material'
-import React, { useContext, useEffect } from 'react'
-import 'react-toastify/dist/ReactToastify.css'
-import Logo from '../Logo'
-import { useAuthContext } from '@dapp/features-authentication'
-import ThemeConfig, { SiteContext } from '@dapp/features-theme'
-import { WalletTokens } from '../WalletTokens'
-import { TokenIcon } from '../TokenIcon'
-import { useTokensContext } from '@dapp/features-tokens-provider'
+} from '@mui/material';
+import React, { useContext, useEffect } from 'react';
+import 'react-toastify/dist/ReactToastify.css';
+import Logo from '../Logo';
+import { useAuthContext } from '@dapp/features-authentication';
+import ThemeConfig, { SiteContext } from '@dapp/features-theme';
+import { WalletTokens } from '../WalletTokens';
+import { TokenIcon } from '../TokenIcon';
+import { useTokensContext } from '@dapp/features-tokens-provider';
 
 const Items = [
   {
@@ -41,31 +41,31 @@ const Items = [
     title: 'Wallet',
     icon: <AccountBalanceWalletOutlinedIcon />,
   },
-]
+];
 
 export const Layout = ({ children }) => {
-  const { onChangeMode, themeMode } = useContext(SiteContext)
+  const { onChangeMode, themeMode } = useContext(SiteContext);
 
-  const { logIn, loggedIn, principal, logOut } = useAuthContext()
-  const { tokens, refreshAllBalances } = useTokensContext()
+  const { logIn, loggedIn, principal, logOut } = useAuthContext();
+  const { tokens, refreshAllBalances } = useTokensContext();
   const toggleTheme = () => {
-    let t = themeMode === 'light' ? 'dark' : 'light'
-    onChangeMode(t)
-  }
+    let t = themeMode === 'light' ? 'dark' : 'light';
+    onChangeMode(t);
+  };
 
   const handleNavigation = (i) => {
     window.location.href =
       window.location.href.substr(
         0,
-        window.location.href.lastIndexOf('\\') + 1
-      ) + i.page
-  }
+        window.location.href.lastIndexOf('\\') + 1,
+      ) + i.page;
+  };
 
   useEffect(() => {
-    if (!tokens['OGY'].balance) {
-      refreshAllBalances()
+    if (tokens['OGY'].balance === -1) {
+      refreshAllBalances();
     }
-  }, [tokens])
+  }, [tokens]);
   return (
     <>
       <ThemeConfig>
@@ -206,5 +206,5 @@ export const Layout = ({ children }) => {
         </Box>
       </ThemeConfig>
     </>
-  )
-}
+  );
+};

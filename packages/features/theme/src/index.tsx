@@ -1,43 +1,43 @@
-import React, { createContext, useContext } from 'react'
-import { useMemo } from 'react'
-import { CssBaseline } from '@mui/material'
+import React, { createContext, useContext } from 'react';
+import { useMemo } from 'react';
+import { CssBaseline } from '@mui/material';
 import {
   createTheme,
   responsiveFontSizes,
   ThemeProvider,
   StyledEngineProvider,
-} from '@mui/material/styles'
-import { useLocalStorage } from '@dapp/utils'
-import palette from './palette'
+} from '@mui/material/styles';
+import { useLocalStorage } from '@dapp/utils';
+import palette from './palette';
 
 const initialState = {
   themeMode: 'dark',
   drawerMode: false,
   onChangeMode: (t) => {},
   onDrawerMode: (d) => {},
-}
+};
 
-export const SiteContext = createContext(initialState)
+export const SiteContext = createContext(initialState);
 
 export const SiteProvider = ({ children }) => {
   const [site, setSite] = useLocalStorage('site', {
     themeMode: initialState.themeMode,
-  })
+  });
 
   const onChangeMode = (t) => {
     setSite({
       ...site,
       themeMode: t,
       drawerMode: false,
-    })
-  }
+    });
+  };
   const onDrawerMode = (d) => {
     setSite({
       ...site,
       drawerMode: d,
-    })
-  }
-  console.log(site)
+    });
+  };
+  console.log(site);
   return (
     <SiteContext.Provider
       value={{
@@ -48,13 +48,13 @@ export const SiteProvider = ({ children }) => {
     >
       {children}
     </SiteContext.Provider>
-  )
-}
+  );
+};
 
 export default function ThemeConfig({ children }) {
-  const { themeMode } = useContext(SiteContext)
-  console.log('themeMode', themeMode)
-  const isLight = themeMode === 'light'
+  const { themeMode } = useContext(SiteContext);
+  console.log('themeMode', themeMode);
+  const isLight = themeMode === 'light';
 
   const themeOptions: any = useMemo(
     () => ({
@@ -80,11 +80,11 @@ export default function ThemeConfig({ children }) {
         },
       },
     }),
-    [isLight]
-  )
+    [isLight],
+  );
 
-  let theme = createTheme(themeOptions)
-  theme = responsiveFontSizes(theme)
+  let theme = createTheme(themeOptions);
+  theme = responsiveFontSizes(theme);
 
   return (
     <StyledEngineProvider injectFirst>
@@ -93,5 +93,5 @@ export default function ThemeConfig({ children }) {
         {children}
       </ThemeProvider>
     </StyledEngineProvider>
-  )
+  );
 }

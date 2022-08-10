@@ -1,11 +1,11 @@
-import * as React from 'react'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import { Principal } from '@dfinity/principal'
-import DialogTitle from '@mui/material/DialogTitle'
-import { AuthContext } from '@dapp/features-authentication'
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import { Principal } from '@dfinity/principal';
+import DialogTitle from '@mui/material/DialogTitle';
+import { AuthContext } from '@dapp/features-authentication';
 import {
   Backdrop,
   CircularProgress,
@@ -16,33 +16,33 @@ import {
   TextField,
   Typography,
   Grid,
-} from '@mui/material'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { useSnackbar } from 'notistack'
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as Yup from 'yup'
-import { DateTimePicker } from '@mui/x-date-pickers'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import { TokenIcon } from '@dapp/features-components'
-import { useTokensContext } from '@dapp/features-tokens-provider'
+} from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useSnackbar } from 'notistack';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+import { DateTimePicker } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { TokenIcon } from '@dapp/features-components';
+import { useTokensContext } from '@dapp/features-tokens-provider';
 
 export function StartAuctionModal({ currentToken, open, handleClose }) {
-  const { actor, ogyActor } = React.useContext(AuthContext)
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-  const [token, setToken] = React.useState('OGY')
-  const [inProgress, setInProgress] = React.useState(false)
-  const [buyNowPrice, setBuyNowPrice] = React.useState<any>()
-  const [startPrice, setStartPrice] = React.useState<any>()
-  const [priceStep, setPriceStep] = React.useState<any>()
+  const { actor, ogyActor } = React.useContext(AuthContext);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [token, setToken] = React.useState('OGY');
+  const [inProgress, setInProgress] = React.useState(false);
+  const [buyNowPrice, setBuyNowPrice] = React.useState<any>();
+  const [startPrice, setStartPrice] = React.useState<any>();
+  const [priceStep, setPriceStep] = React.useState<any>();
   const [endDate, setEndDate] = React.useState<any>(
-    new Date().toJSON().slice(0, 19)
-  )
-  const { tokens } = useTokensContext()
+    new Date().toJSON().slice(0, 19),
+  );
+  const { tokens } = useTokensContext();
 
   const handleChange = (event) => {
-    setToken(event.target.value as string)
-  }
+    setToken(event.target.value as string);
+  };
 
   const handleStartAuction = async ({
     startPrice,
@@ -50,7 +50,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
     minIncrease: priceStep,
     endDate,
   }) => {
-    setInProgress(true)
+    setInProgress(true);
     try {
       const resp = await actor.market_transfer_nft_origyn({
         token_id: currentToken?.Class?.find(({ name }) => name === 'id').value
@@ -83,7 +83,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
           },
           escrow_receipt: [],
         },
-      })
+      });
       if (resp.ok) {
         enqueueSnackbar(`Your auction has been started.`, {
           variant: 'success',
@@ -91,8 +91,8 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
             vertical: 'top',
             horizontal: 'right',
           },
-        })
-        handleClose(true)
+        });
+        handleClose(true);
       } else {
         enqueueSnackbar(`There was an error when starting your auction.`, {
           variant: 'error',
@@ -100,20 +100,20 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
             vertical: 'top',
             horizontal: 'right',
           },
-        })
+        });
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
       enqueueSnackbar(`There was an error when starting your auction.`, {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'right',
         },
-      })
+      });
     }
-    setInProgress(false)
-  }
+    setInProgress(false);
+  };
   const validationSchema = Yup.object().shape({
     startPrice: Yup.number()
       .typeError('This must be a number')
@@ -126,13 +126,13 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
       .typeError('This cannot be a nullable number')
       .moreThan(
         Yup.ref('startPrice'),
-        'Instant buy price must be greater than the start price'
+        'Instant buy price must be greater than the start price',
       ),
     endDate: Yup.date().min(
       new Date(),
-      'The end date needs to be in the future!'
+      'The end date needs to be in the future!',
     ),
-  })
+  });
 
   const {
     register,
@@ -140,11 +140,11 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
-  })
+  });
   const customSubmit = (data) => {
-    console.log(data)
-    handleStartAuction(data)
-  }
+    console.log(data);
+    handleStartAuction(data);
+  };
   return (
     <div>
       <Dialog
@@ -215,7 +215,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
                   label="End Date"
                   value={endDate}
                   onChange={(newValue) => {
-                    setEndDate(newValue)
+                    setEndDate(newValue);
                   }}
                   renderInput={(params) => (
                     <TextField
@@ -266,5 +266,5 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
         </Backdrop>
       </Dialog>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import React, { useContext } from 'react'
-import { Box } from '@mui/material'
-import { SiteContext } from '@dapp/features-theme'
+import React, { useContext } from 'react';
+import { Box } from '@mui/material';
+import { SiteContext } from '@dapp/features-theme';
 
 function Logo() {
-  const { themeMode } = useContext(SiteContext)
+  const { themeMode } = useContext(SiteContext);
   return (
     <Box sx={{ width: 220, height: 50 }}>
       <svg
@@ -115,7 +115,7 @@ function Logo() {
         </defs>
       </svg>
     </Box>
-  )
+  );
 }
 
-export default Logo
+export default Logo;
