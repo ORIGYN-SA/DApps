@@ -1,17 +1,15 @@
-const { TextEncoder, TextDecoder } = require('util');
-const fetch = require('node-fetch');
+const path = require('path');
 
 module.exports = {
-  globals: {
-    TextEncoder,
-    TextDecoder,
-    fetch,
-  },
   moduleNameMapper: {
     '\\.(css|less|scss|sass|svg)$': 'identity-obj-proxy',
     '@testUtils': '<rootDir>/testUtils/index.js',
   },
-  testEnvironment: 'jsdom',
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  transformIgnorePatterns: ['/node_modules/', '/dist/'],
+  moduleDirectories: ['node_modules', 'packages', 'src'],
+  testEnvironment: '<rootDir>/testUtils/testEnv.js',
+  transformIgnorePatterns: ['node_modules/(?!@dfinity)'],
+  transform: {
+    '^.+\\.[jt]sx?$': 'babel-jest',
+    '.+\\.(svg|css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
+  },
 };
