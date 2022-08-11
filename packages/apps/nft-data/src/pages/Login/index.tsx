@@ -12,14 +12,14 @@ import NFTInfo from '../NFTInfo';
     ).replace(/"(-?\d+)#bigint"/g, (_, a) => a);
   }
 } */
-function isJson(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-}
+// function isJson(str) {
+//   try {
+//     JSON.parse(str);
+//   } catch (e) {
+//     return false;
+//   }
+//   return true;
+// }
 const Login = () => {
   const { /* logIn, loggedIn, */ tokenId, canisterId, principal, actor } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState();

@@ -29,7 +29,7 @@ import {
 } from '@mui/material';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
-import { useSnackbar } from 'notistack';
+// import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
 
 const SymbolWithIcon = ({ symbol }:any) =>
@@ -76,22 +76,22 @@ const Marketplace = () => {
   const [minPrice, setMinPrice] = useState<any>(0);
   const [maxPrice, setMaxPrice] = useState<any>(0);
 
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
 
-  const pushNotification = (message, variant) => {
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-    });
-  };
+  // const pushNotification = (message, variant) => {
+  //   enqueueSnackbar(message, {
+  //     variant,
+  //     anchorOrigin: {
+  //       vertical: 'top',
+  //       horizontal: 'right',
+  //     },
+  //   });
+  // };
 
   const fetchData = () => {
     console.log(actor);
     if (actor) {
-      setIsLoading(true);
+      setIsLoading(isLoading);
       actor?.collection_nft_origyn([]).then((response) => {
         console.log(response);
 

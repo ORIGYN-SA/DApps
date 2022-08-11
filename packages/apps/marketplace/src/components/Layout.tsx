@@ -3,10 +3,10 @@ import React from 'react';
 // import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 // import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import { Box } from '@mui/material';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import ThemeConfig, { SiteContext } from '@dapp/features-theme';
+import ThemeConfig from '@dapp/features-theme';
 import ResponsiveAppBar from './Layout/AppBarr';
 
 // const Items = [
@@ -28,19 +28,19 @@ import ResponsiveAppBar from './Layout/AppBarr';
 // ];
 
 const Layout = ({ children }: any) => {
-  const { onChangeMode, themeMode } = useContext(SiteContext);
+  // const {  themeMode } = useContext(SiteContext);
 
   const { tokens, refreshAllBalances } = useTokensContext();
-  const toggleTheme = () => {
-    const t = themeMode === 'light' ? 'dark' : 'light';
-    onChangeMode(t);
-  };
-  const handleNavigation = (i) => {
-    window.location.href = window.location.href.substr(
-      0,
-      window.location.href.lastIndexOf('\\') + 1,
-    ) + i.page;
-  };
+  // const toggleTheme = () => {
+  //   const t = themeMode === 'light' ? 'dark' : 'light';
+  //   onChangeMode(t);
+  // };
+  // const handleNavigation = (i) => {
+  //   window.location.href = window.location.href.substr(
+  //     0,
+  //     window.location.href.lastIndexOf('\\') + 1,
+  //   ) + i.page;
+  // };
 
   useEffect(() => {
     if (tokens.OGY.balance === -1) {

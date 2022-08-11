@@ -36,7 +36,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const NFTInfo = ({metadata}) => {
+const NFTInfo = ({metadata}: any) => {
     const [value, setValue] = React.useState(1);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
