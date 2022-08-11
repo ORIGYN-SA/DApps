@@ -1,9 +1,6 @@
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
-import {
-  sendTransaction,
-  useTokensContext,
-} from '@dapp/features-tokens-provider';
+import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -25,18 +22,14 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
+var JSONbig = require('json-bigint');
 
-export function StartEscrowModal({
-  nft,
-  open,
-  handleClose,
-  initialValues = undefined,
-}) {
-  const { actor, ogyActor, principal, canisterId } = React.useContext(AuthContext);
+export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }) {
+  const { actor, ogyActor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
   const [searchParams, setSearchParams] = useSearchParams();
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens, refreshAllBalances } = useTokensContext();
   const validationSchema = Yup.object().shape({
     nftId: Yup.string().required(),
@@ -44,10 +37,7 @@ export function StartEscrowModal({
       .typeError('This must be a number')
       .nullable()
       .typeError('This cannot be a nullable number')
-      .moreThan(
-        Yup.ref('startPrice'),
-        'Instant buy price must be greater than the start price',
-      ),
+      .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
   });
 
   const handleCustomClose = (value) => {
@@ -92,25 +82,24 @@ export function StartEscrowModal({
   }, [open]);
   const _nft = {
     id: nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text,
-    seller: nft?.metadata?.Class?.find(
-      ({ name }) => name === 'owner',
-    ).value.Principal.toText(),
+    seller: nft?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText(),
     token:
       nft?.current_sale?.length > 0
-        ? nft?.current_sale[0].sale_type?.auction?.config?.auction?.token?.ic
-          ?.symbol
+        ? nft?.current_sale[0].sale_type?.auction?.config?.auction?.token?.ic?.symbol
         : 'OGY',
 
-    openAuction: nft?.current_sale?.find((sale) => sale?.sale_type?.auction?.status?.hasOwnProperty('open')),
+    openAuction: nft?.current_sale?.find((sale) =>
+      sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
+    ),
   };
   console.log('🚀 ~ file: StartEscrow.tsx ~ line 112 ~ _nft', _nft);
 
   const handleStartEscrow = async (data) => {
     console.log(data);
     if (
-      isNaN(parseFloat(data.priceOffer))
-      || data.sellerId === 'undefined'
-      || data.nftId === 'undefined'
+      isNaN(parseFloat(data.priceOffer)) ||
+      data.sellerId === 'undefined' ||
+      data.nftId === 'undefined'
     ) {
       enqueueSnackbar('Error: Fill all fields correctly', {
         variant: 'error',
@@ -153,9 +142,7 @@ export function StartEscrowModal({
           },
           buyer: { principal },
           amount: BigInt(amount),
-          sale_id: _nft?.openAuction?.sale_id
-            ? [_nft?.openAuction?.sale_id]
-            : [],
+          sale_id: _nft?.openAuction?.sale_id ? [_nft?.openAuction?.sale_id] : [],
         },
         lock_to_date: [],
       };
