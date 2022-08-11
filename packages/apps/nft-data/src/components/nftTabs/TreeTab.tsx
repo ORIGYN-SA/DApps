@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Typography, Link, FormControlLabel, Switch } from '@mui/material';
+import { Box, FormControlLabel, Switch } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
 import lodash from 'lodash';
@@ -16,7 +16,7 @@ interface RenderTree {
   children?: readonly RenderTree[];
 }
 
-function Tree({ metadata }) {
+function Tree({ metadata }: any) {
   let all_index = 0;
   let apps_index: number[] = [0, 0];
   let libraries_index: number[] = [0, 0];

@@ -27,9 +27,9 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { TokenIcon } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 
-export function StartAuctionModal({ currentToken, open, handleClose }) {
-  const { actor, ogyActor } = React.useContext(AuthContext);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+export function StartAuctionModal({ currentToken, open, handleClose }: any) {
+  const { actor } = React.useContext(AuthContext);
+  const { enqueueSnackbar} = useSnackbar();
   const [token, setToken] = React.useState('OGY');
   const [inProgress, setInProgress] = React.useState(false);
   const [buyNowPrice, setBuyNowPrice] = React.useState<any>();
@@ -241,8 +241,8 @@ export function StartAuctionModal({ currentToken, open, handleClose }) {
                   label="Token"
                   onChange={handleChange}
                 >
-                  {Object.keys(tokens).map((t) => (
-                    <MenuItem value={t}>
+                  {Object.keys(tokens).map((t, index) => (
+                    <MenuItem key={`${token}+${index}`} value={t}>
                       <TokenIcon symbol={tokens[t].icon} />
                       {tokens[t].symbol}
                     </MenuItem>

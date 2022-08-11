@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import { Box, Container, List, ListItem, ListItemText, Grid, Divider, Typography, Link } from "@mui/material";
+import { List, ListItem, ListItemText, Grid, Divider } from "@mui/material";
 import lodash from 'lodash';
 /* import data from '../../../tokenMetadataInfo.json'; */
 /* import useSite from '../../hooks/useSite'; */
-const FormTab = ({metadata}) => {
+const FormTab = ({metadata}: any) => {
 console.log(metadata);
 /* const {getMetadata, metadata} = useSite(); */
 
@@ -99,7 +99,7 @@ useEffect(() => {
     </Grid>
     </Grid>
     <Divider/>
-       {apps?.map((app, i)=>{ return  (<Grid sx={{ marginTop: '20px'}}  container spacing={2} >
+       {apps?.map((app, i, index)=>{ return  (<Grid sx={{ marginTop: '20px'}}  container spacing={2} key={`${app}+${index}`}>
        <Grid item xs={2}></Grid>
         <Grid item xs={2} sx={{ }}>{`app ${i+1}` }</Grid>
        <Grid item xs={8}>
@@ -123,7 +123,7 @@ useEffect(() => {
               <ListItem secondaryAction={<ListItemText primary={app.write.type} />}>
               <ListItemText primary={'type'} />
               </ListItem> <Divider />
-              {app.write.list.map(item=>(<ListItem> 
+              {app.write.list.map(item=>(<ListItem key={`${item}+${index}`} > 
               <ListItemText  primary={item} />
               </ListItem>))} 
             </List>
@@ -138,7 +138,7 @@ useEffect(() => {
               <ListItem secondaryAction={<ListItemText primary={app.permissions.type} />}>
               <ListItemText primary={'type'} />
               </ListItem> <Divider />
-              {app.permissions.list.map(item=>(<ListItem> 
+              {app.permissions.list.map(item=>(<ListItem key={`${item}}+${index}`}> 
               <ListItemText  primary={item} />
               </ListItem>))} 
             </List>
@@ -176,8 +176,8 @@ useEffect(() => {
             
             );})}
       <Divider />
-      {library?.map((lib, i) => { let length = Object.keys(lib).length;
-        return (<Grid sx={{marginTop: '20px'}} container spacing={2}>
+      {library?.map((lib, i, index) => { let length = Object.keys(lib).length;
+        return (<Grid key={`${lib}+${index}`} sx={{marginTop: '20px'}} container spacing={2}>
                 <Grid item xs={2}></Grid>
                 <Grid item xs={2} sx={{ }}>{`ibrary ${i+1}` }</Grid>
                 <Grid item xs={8}>

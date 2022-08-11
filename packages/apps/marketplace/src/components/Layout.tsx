@@ -1,31 +1,31 @@
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import React from 'react';
+// import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+// import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+// import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import { Box } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
-import { useAuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import ThemeConfig, { SiteContext } from '@dapp/features-theme';
 import ResponsiveAppBar from './Layout/AppBarr';
 
-const Items = [
-  {
-    page: 'ledger',
-    title: 'Ledger',
-    icon: <ListAltOutlinedIcon />,
-  },
-  {
-    page: 'data',
-    title: 'NFT info',
-    icon: <InfoOutlinedIcon />,
-  },
-  {
-    page: 'wallet',
-    title: 'Wallet',
-    icon: <AccountBalanceWalletOutlinedIcon />,
-  },
-];
+// const Items = [
+//   {
+//     page: 'ledger',
+//     title: 'Ledger',
+//     icon: <ListAltOutlinedIcon />,
+//   },
+//   {
+//     page: 'data',
+//     title: 'NFT info',
+//     icon: <InfoOutlinedIcon />,
+//   },
+//   {
+//     page: 'wallet',
+//     title: 'Wallet',
+//     icon: <AccountBalanceWalletOutlinedIcon />,
+//   },
+// ];
 
 const Layout = ({ children }: any) => {
   const { onChangeMode, themeMode } = useContext(SiteContext);

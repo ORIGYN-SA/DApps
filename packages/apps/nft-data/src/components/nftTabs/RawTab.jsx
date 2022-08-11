@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from 'react';
+import React from 'react';
 import { JsonToTable } from "react-json-to-table";
 
 /* import useSite from '../../hooks/useSite'; */

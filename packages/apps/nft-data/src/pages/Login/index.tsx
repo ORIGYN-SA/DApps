@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 //import { AuthContext } from "../../hooks/auth";
 import { AuthContext } from '@dapp/features-authentication';
-import { Principal } from '@dfinity/principal';
 import NFTInfo from '../NFTInfo';
 
 /* function toJson(data) {

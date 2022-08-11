@@ -1,7 +1,7 @@
-import React, { Component, useEffect } from 'react';
+import React from 'react';
 /* import useSite from '../../hooks/useSite'; */
 
-const JSONTab = ({metadata}) => {
+const JSONTab = ({metadata}: any) => {
   console.log(metadata);
     /* const {getMetadata, metadata} = useSite(); */
     /* useEffect(() => {
