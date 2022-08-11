@@ -82,7 +82,7 @@ export const Layout = ({ children }) => {
                   }}
                 >
                   <Box sx={{ padding: '8px' }}>
-                    <Logo />
+                    <ThemeLogo />
                   </Box>
                 </Box>
                 <Divider />

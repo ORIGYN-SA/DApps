@@ -1,12 +1,11 @@
 {
-  "name": "@dapp/app-nftData",
+  "name": "@dapp/app-nft-data",
   "version": "0.1.0",
   "scripts": {
     "build": "webpack",
     "start": "webpack serve --mode development --env development",
     "start-ssl": "sudo ./node_modules/.bin/webpack serve --mode development --env development"
   },
-  
   "dependencies": {
     "@dapp/common-assets": "0.1.0",
     "@dapp/common-candid": "0.1.0",
@@ -16,11 +15,5 @@
     "@dapp/features-theme": "0.1.0",
     "@dapp/features-tokens-provider": "0.1.0",
     "@dapp/utils": "0.1.0"
-  },
-  "browserslist": [
-    "last 2 chrome version",
-    "last 2 firefox version",
-    "last 2 safari version",
-    "last 2 edge version"
-  ]
+  }
 }

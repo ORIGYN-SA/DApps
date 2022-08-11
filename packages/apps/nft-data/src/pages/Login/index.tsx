@@ -1,10 +1,8 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState, useRef } from 'react';
 //import { AuthContext } from "../../hooks/auth";
 import { AuthContext } from '@dapp/features-authentication';
-import axios from 'axios';
-import { Principal } from "@dfinity/principal";
-import NFTInfo from "../NFTInfo";
-
+import { Principal } from '@dfinity/principal';
+import NFTInfo from '../NFTInfo';
 
 /* function toJson(data) {
   if (data !== undefined) {
@@ -17,9 +15,9 @@ import NFTInfo from "../NFTInfo";
 } */
 function isJson(str) {
   try {
-      JSON.parse(str);
+    JSON.parse(str);
   } catch (e) {
-      return false;
+    return false;
   }
   return true;
 }
@@ -29,47 +27,41 @@ const Login = () => {
 
   useEffect(() => {
     const getData = async () => {
-       // console.log(actor, canisterId);
+      // console.log(actor, canisterId);
       if (actor && canisterId) {
         if (tokenId) {
-            try{
-              const result = await axios.get(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
-              /* console.group(result.data);
-              console.log(JSON.stringify(result.data)); */
-             // console.log(isJson(JSON.stringify(result.data)));
-              
-              if(result.data.search('"is_soulbound":,')){
-                setNFTData(JSON.parse(result.data.replace('"is_soulbound":,', '')));
-              } else { 
-                setNFTData(JSON.parse(result.data));
-               }
-              
-            }
-            catch(err){
-              console.log(err);
-            }
-        }
-        else {
           try {
-            const result = await axios.get(`https://${canisterId}.raw.ic0.app/collection/info`);
-            if(result.data.search('"is_soulbound":,')){
+            const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
+            /* console.group(result.data);
+              console.log(JSON.stringify(result.data)); */
+            // console.log(isJson(JSON.stringify(result.data)));
+            const result = await response.json();
+            if (result.data.search('"is_soulbound":,')) {
               setNFTData(JSON.parse(result.data.replace('"is_soulbound":,', '')));
-            } else { 
+            } else {
               setNFTData(JSON.parse(result.data));
-             }
+            }
+          } catch (err) {
+            console.log(err);
           }
-          catch(err) {
+        } else {
+          try {
+            const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
+            const result = await response.json();
+            if (result.data.search('"is_soulbound":,')) {
+              setNFTData(JSON.parse(result.data.replace('"is_soulbound":,', '')));
+            } else {
+              setNFTData(JSON.parse(result.data));
+            }
+          } catch (err) {
             console.log(err);
           }
         }
       }
-      
     };
     getData();
   }, [actor, canisterId]);
 
-
-  
   /* const getMetadata =  (metadata) => { console.log(metadata);
     let data =  metadata.ok.metadata.Class;
     let owner = data.find(x=>x.name == 'owner').value.Principal._arr;
@@ -117,32 +109,31 @@ const Login = () => {
   }; */
 
   return (
-   
     <div>
+      <div>
+        <p>
+          Canister ID: <b>{canisterId}</b>
+        </p>
+        <p>
+          Token(NFT) ID: <b>{tokenId}</b>
+        </p>
+        <p>
+          You principal: <b>{principal?.toText()}</b>
+        </p>
         <div>
           <p>
-            Canister ID: <b>{canisterId}</b>
+            <b>NFT Data:</b>
           </p>
-          <p>
-            Token(NFT) ID: <b>{tokenId}</b>
-          </p>
-          <p>
-            You principal: <b>{principal?.toText()}</b>
-          </p>
-          <div>
-            <p><b>NFT Data:</b></p>
-            {NFTData?<NFTInfo metadata={NFTData} />:null}
-            {/* <pre>
+          {NFTData ? <NFTInfo metadata={NFTData} /> : null}
+          {/* <pre>
               {
                 // @ts-ignore
                 toJson(NFTData)
               }
             </pre> */}
-          </div>
         </div>
+      </div>
     </div>
-  
-
   );
-      }
+};
 export default Login;
