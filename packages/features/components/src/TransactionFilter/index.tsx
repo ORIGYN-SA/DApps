@@ -1,31 +1,29 @@
-import React, {
-  useEffect,
-} from "react";
-import { Box, Typography } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Switch from "@mui/material/Switch";
-import Collapse from "@mui/material/Collapse";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Autocomplete from "@mui/material/Autocomplete";
+import React, { useEffect } from 'react';
+import { Box } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Paper from '@mui/material/Paper';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Switch from '@mui/material/Switch';
+import Collapse from '@mui/material/Collapse';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Autocomplete from '@mui/material/Autocomplete';
 
-//Interface for filter
+// Interface for filter
 interface Filter {
   searchInputValue: string;
   categoryToFilter: string;
   transactionType: string;
   update: number;
 }
-//array without duplicates
+// array without duplicates
 function removeDuplicates(arr: string[]) {
   return arr.filter((item, index) => arr.indexOf(item) === index);
 }
-//Select menu styling
+// Select menu styling
 const ITEM_HEIGHT: number = 48;
 const ITEM_PADDING_TOP: number = 8;
 const MenuProps = {
@@ -37,101 +35,95 @@ const MenuProps = {
   },
 };
 
-//Search into categories
-const search_into = ["All", "Principal", "Account", "Transaction Id"];
+// Search into categories
+const search_into = ['All', 'Principal', 'Account', 'Transaction Id'];
 
-export const TransactionFilter = (props) => {
-  //Collapse - switch btn
+export const TransactionFilter = (props : any) => {
+  // Collapse - switch btn
   const [checked, setChecked] = React.useState(false);
   const handleChangeCollapse = () => {
     setChecked((prev) => !prev);
   };
-  //AutocompleteVals
+  // AutocompleteVals
   const [AutocompleteVals, SetAutocompleteVals] = React.useState([]);
-  //Update
+  // Update
   const [_update, setUpdate] = React.useState(1);
-  //Fn for search on keyup event
-  const [typedVal, setTypedVal] = React.useState("");
+  // Fn for search on keyup event
+  const [typedVal, setTypedVal] = React.useState('');
 
   const handleSelectIds = (event, value) => {
-    myFilter.searchInputValue = "";
+    myFilter.searchInputValue = '';
     if (value == null) {
       value = '';
-    };
-    setTypedVal((x) => {
-      return value;
-    });
+    }
+    setTypedVal(value);
     console.log(value);
     setUpdate(1);
   };
 
-  //Fn for select category to filter
-  const [searchTrough, setSearchTrough] = React.useState("All");
+  // Fn for select category to filter
+  const [searchTrough, setSearchTrough] = React.useState('All');
   const handleCategoryFilter = (event) => {
-    myFilter.categoryToFilter = "";
+    myFilter.categoryToFilter = '';
     const {
       target: { value },
     } = event;
-    setSearchTrough((x) => {
-      return value;
-    });
+    setSearchTrough(value);
     setUpdate(1);
-    var i: string;
-    var k: string;
-    var autocompleteArray: string[] = [];
+    let i: string;
+    let k: string;
+    const autocompleteArray: string[] = [];
     switch (value) {
-      case "Account":
+      case 'Account':
         var objTransactions = props.transactionData;
         for (i in objTransactions) {
-          var accountArray: string[] = objTransactions[i].accounts;
+          const accountArray: string[] = objTransactions[i].accounts;
           if (accountArray.length >= 1) {
             for (k in accountArray) {
               autocompleteArray.push(accountArray[k]);
             }
           }
         }
-        setTypedVal("");
+        setTypedVal('');
         break;
-      case "Principal":
+      case 'Principal':
         var objTransactions = props.transactionData;
         for (i in objTransactions) {
-          var principalArray: string[] = objTransactions[i].principals;
+          const principalArray: string[] = objTransactions[i].principals;
           if (principalArray.length >= 1) {
             for (k in principalArray) {
               autocompleteArray.push(principalArray[k]);
             }
           }
         }
-        setTypedVal("");
+        setTypedVal('');
         break;
-      case "Transaction Id":
+      case 'Transaction Id':
         var objTransactions = props.transactionData;
         for (i in objTransactions) {
-          var id: string = objTransactions[i].trans_index;
+          const id: string = objTransactions[i].trans_index;
           autocompleteArray.push(id);
         }
-        setTypedVal("");
+        setTypedVal('');
         break;
     }
 
     SetAutocompleteVals(removeDuplicates(autocompleteArray));
   };
 
-  //Fn for select transaction types
-  const [transType, setType] = React.useState("");
+  // Fn for select transaction types
+  const [transType, setType] = React.useState('');
   const handleChangeSelect = (event) => {
     const {
       target: { value },
     } = event;
-    setType((x) => {
-      return value;
-    });
+    setType(value);
     setUpdate(0);
   };
 
   const array_types: string[] = props.trans_types;
 
-  //Filter for the ledgfer
+  // Filter for the ledgfer
   const myFilter: Filter = {
     searchInputValue: typedVal,
     categoryToFilter: searchTrough,
@@ -148,21 +140,24 @@ export const TransactionFilter = (props) => {
     <Box
       component={Paper}
       elevation={2}
-      sx={{ margin: 2, width: "100%", padding: 2 }}
+      sx={{ margin: 2, width: '100%', padding: 2 }}
     >
-      {
-        props.searchBarTokenId == "Not selected" ||
-          props.searchBarTokenId == "Not selected" ? (
-          <div>
-            <FormControlLabel
-              control={<Switch checked={checked} onChange={handleChangeCollapse} />}
-              label="Filters unavailables, select a Token ID"
-            />
-          </div>
+      {props.searchBarTokenId == 'Not selected'
+      || props.searchBarTokenId == 'Not selected' ? (
+        <div>
+          <FormControlLabel
+            control={
+              <Switch checked={checked} onChange={handleChangeCollapse} />
+            }
+            label="Filters unavailables, select a Token ID"
+          />
+        </div>
         ) : (
           <div>
             <FormControlLabel
-              control={<Switch checked={checked} onChange={handleChangeCollapse} />}
+              control={
+                <Switch checked={checked} onChange={handleChangeCollapse} />
+            }
               label="Filter transactions"
             />
             <Collapse in={checked}>
@@ -200,8 +195,10 @@ export const TransactionFilter = (props) => {
                   </FormControl>
                 )}
                 {props.isLoading ? (
-                  <FormControl sx={{ m: 1, width: 300 }} >
-                    <InputLabel id="label-search-into-select">Loading...</InputLabel>
+                  <FormControl sx={{ m: 1, width: 300 }}>
+                    <InputLabel id="label-search-into-select">
+                      Loading...
+                    </InputLabel>
                     <Select
                       labelId="label-search-into-select"
                       id="search-into-select"
@@ -218,7 +215,7 @@ export const TransactionFilter = (props) => {
                     </Select>
                   </FormControl>
                 ) : (
-                  <FormControl sx={{ m: 1, width: 300 }} >
+                  <FormControl sx={{ m: 1, width: 300 }}>
                     <InputLabel id="label-search-into-select">Search</InputLabel>
                     <Select
                       labelId="label-search-into-select"
@@ -231,8 +228,8 @@ export const TransactionFilter = (props) => {
                     >
                       {search_into.map((filter_to_choose) => (
                         <MenuItem key={filter_to_choose} value={filter_to_choose}>
-                          {filter_to_choose}
-                        </MenuItem>
+                        {filter_to_choose}
+                      </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
@@ -272,8 +269,8 @@ export const TransactionFilter = (props) => {
                     >
                       {array_types.map((typeOf) => (
                         <MenuItem key={typeOf} value={typeOf}>
-                          {typeOf}
-                        </MenuItem>
+                        {typeOf}
+                      </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
@@ -281,9 +278,7 @@ export const TransactionFilter = (props) => {
               </div>
             </Collapse>
           </div>
-        )
-      }
-
+        )}
     </Box>
   );
 };

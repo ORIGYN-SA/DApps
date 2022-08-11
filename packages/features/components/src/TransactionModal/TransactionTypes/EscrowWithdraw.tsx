@@ -1,38 +1,38 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
-//Icons ICP & OGY
-import {ICPIcon, OGYIcon} from  "@dapp/common-assets";
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
+// Icons ICP & OGY
+import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const EscrowWithdraw = (props) => {
-  //type
-  var singleT_type = props.data.type_txn;
-  //buyer
-  var account_buyer = props.data.buyer;
-  var buyer_principal = account_buyer.acc_principal_string;
-  //seller
-  var account_seller = props.data.seller;
-  var seller_principal = account_seller.acc_principal_string;
-  //token
-  var wit_token = props.data.token;
-  //token specs
-  var canister = wit_token.canister_string;
-  var fee = wit_token.fee;
-  var sym = wit_token.symbol;
-  var decimals = wit_token.decimal;
-  var standard = wit_token.standard;
-  //token id
-  var token_id = props.data.token_id;
-  var amount = props.data.amount;
-  var token_fee = props.data.fee;
+const EscrowWithdraw = (props : any) => {
+  // type
+  const singleT_type = props.data.type_txn;
+  // buyer
+  const account_buyer = props.data.buyer;
+  const buyer_principal = account_buyer.acc_principal_string;
+  // seller
+  const account_seller = props.data.seller;
+  const seller_principal = account_seller.acc_principal_string;
+  // token
+  const wit_token = props.data.token;
+  // token specs
+  const canister = wit_token.canister_string;
+  const {fee} = wit_token;
+  const sym = wit_token.symbol;
+  const decimals = wit_token.decimal;
+  const {standard} = wit_token;
+  // token id
+  const {token_id} = props.data;
+  const {amount} = props.data;
+  let token_fee = props.data.fee;
   if (!token_fee) {
-    token_fee = "Undefined";
+    token_fee = 'Undefined';
   }
-  //trx_id
-  var trans = props.data.trx_id;
-  var _nat = trans._nat;
-  var _text = trans._text;
-  var id_trans : string;
+  // trx_id
+  const trans = props.data.trx_id;
+  const {_nat} = trans;
+  const {_text} = trans;
+  let id_trans : string;
   if (_text) {
     id_trans = _text;
   } else {
@@ -43,7 +43,7 @@ const EscrowWithdraw = (props) => {
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
         <Typography
@@ -70,7 +70,7 @@ const EscrowWithdraw = (props) => {
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
         <Grid container>
@@ -157,7 +157,7 @@ const EscrowWithdraw = (props) => {
               Symbol:
             </Typography>
             <Typography>
-              {sym === "OGY" ? (
+              {sym === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -175,7 +175,7 @@ const EscrowWithdraw = (props) => {
         </Grid>
       </Box>
     </Box>
-  )
+  );
 };
 
 export default EscrowWithdraw;

@@ -1,36 +1,36 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
 
-const SaleWithdraw = (props) => {
-  //type
-  var singleT_type = props.data.type_txn;
-  //buyer
-  var account_buyer = props.data.buyer;
-  var buyer_principal = account_buyer.acc_principal_string;
-  //seller
-  var account_seller = props.data.seller;
-  var seller_principal = account_seller.acc_principal_string;
-  //token
-  var sale_wit_token = props.data.token;
-  //token specs
-  var canister = sale_wit_token.canister_string;
-  var fee = sale_wit_token.fee;
-  var sym = sale_wit_token.symbol;
-  var decimals = sale_wit_token.decimal;
-  var standard = sale_wit_token.standard;
-  //token id
-  var token_id = props.data.token_id;
-  var amount = props.data.amount;
-  var token_fee = props.data.fee;
+const SaleWithdraw = (props : any) => {
+  // type
+  const singleT_type = props.data.type_txn;
+  // buyer
+  const account_buyer = props.data.buyer;
+  const buyer_principal = account_buyer.acc_principal_string;
+  // seller
+  const account_seller = props.data.seller;
+  const seller_principal = account_seller.acc_principal_string;
+  // token
+  const sale_wit_token = props.data.token;
+  // token specs
+  const canister = sale_wit_token.canister_string;
+  const {fee} = sale_wit_token;
+  const sym = sale_wit_token.symbol;
+  const decimals = sale_wit_token.decimal;
+  const {standard} = sale_wit_token;
+  // token id
+  const {token_id} = props.data;
+  const {amount} = props.data;
+  let token_fee = props.data.fee;
   if (!token_fee) {
-    token_fee = "Undefined";
+    token_fee = 'Undefined';
   }
-  //trx_id
-  var trans = props.data.trx_id;
-  var _nat = trans._nat;
-  var _text = trans._text;
-  var id_trans;
+  // trx_id
+  const trans = props.data.trx_id;
+  const {_nat} = trans;
+  const {_text} = trans;
+  let id_trans;
   if (_text) {
     id_trans = _text;
   } else {
@@ -41,7 +41,7 @@ const SaleWithdraw = (props) => {
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
         <Typography
@@ -68,7 +68,7 @@ const SaleWithdraw = (props) => {
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
         <Grid container>
@@ -167,7 +167,7 @@ const SaleWithdraw = (props) => {
         </Grid>
       </Box>
     </Box>
-  )
+  );
 };
 
 export default SaleWithdraw;

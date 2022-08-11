@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -13,36 +13,31 @@ import {
   Checkbox,
   ListItemButton,
   ListItemText,
-  ListItemAvatar,
-  Avatar,
-} from '@mui/material'
-import { useSnackbar } from 'notistack'
-import { TabPanel } from '../TabPanel'
-import { useTokensContext, Token } from '@dapp/features-tokens-provider'
-import { TokenIcon } from '../TokenIcon'
-import { IdlStandard } from '@dapp/utils'
-import { LoadingContainer } from '../LoadingContainer'
-import { useAuthContext } from '@dapp/features-authentication'
+} from '@mui/material';
+import { useSnackbar } from 'notistack';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { IdlStandard } from '@dapp/utils';
+import { TabPanel } from '../TabPanel';
+import { TokenIcon } from '../TokenIcon';
+import { LoadingContainer } from '../LoadingContainer';
 
-export const WalletTokens = ({ children }) => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const [selectedTab, setSelectedTab] = useState<number>(0)
+export const WalletTokens = ({ children }: any) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedTab, setSelectedTab] = useState<number>(0);
   const [selectedStandard, setSelectedStandard] = useState<string>(
-    IdlStandard.DIP20.toString()
-  )
-  const [inputCanisterId, setInputCanisterId] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { tokens, addToken, toggleToken, refreshAllBalances } =
-    useTokensContext()
-  const { enqueueSnackbar } = useSnackbar()
-  const { principal } = useAuthContext()
+    IdlStandard.DIP20.toString(),
+  );
+  const [inputCanisterId, setInputCanisterId] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { tokens, addToken, toggleToken, refreshAllBalances } = useTokensContext();
+  const { enqueueSnackbar } = useSnackbar();
   const handleAddButton = async () => {
-    if (isLoading) return
-    setIsLoading(true)
+    if (isLoading) return;
+    setIsLoading(true);
     const tokenResponse = await addToken(
       inputCanisterId,
-      IdlStandard[selectedStandard]
-    )
+      IdlStandard[selectedStandard],
+    );
     if (typeof tokenResponse !== 'string') {
       enqueueSnackbar(
         `You have successfully added token ${tokenResponse.symbol}.`,
@@ -52,8 +47,8 @@ export const WalletTokens = ({ children }) => {
             vertical: 'top',
             horizontal: 'right',
           },
-        }
-      )
+        },
+      );
     } else {
       enqueueSnackbar(tokenResponse, {
         variant: 'error',
@@ -61,30 +56,28 @@ export const WalletTokens = ({ children }) => {
           vertical: 'top',
           horizontal: 'right',
         },
-      })
+      });
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
   const handleModalClose = () => {
-    setIsModalOpen(false)
-  }
+    setIsModalOpen(false);
+  };
 
   const handleModalOpen = () => {
-    setIsModalOpen(true)
-    refreshAllBalances()
-  }
+    setIsModalOpen(true);
+    refreshAllBalances();
+  };
   const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
-    setSelectedTab(tab)
-  }
+    setSelectedTab(tab);
+  };
   const onTokenCheck = (symbol: string) => {
-    toggleToken(symbol)
-  }
-  const a11yProps = (index: number) => {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    }
-  }
+    toggleToken(symbol);
+  };
+  const a11yProps = (index: number) => ({
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  });
   return (
     <>
       <Dialog
@@ -108,19 +101,19 @@ export const WalletTokens = ({ children }) => {
           <TabPanel value={selectedTab} index={0} padding={1}>
             <List dense disablePadding>
               {Object.keys(tokens).map((key: string) => {
-                const token = tokens[key]
-                const labelId = `checkbox-list-secondary-label-${token.symbol}`
+                const token = tokens[key];
+                const labelId = `checkbox-list-secondary-label-${token.symbol}`;
                 return (
                   <ListItem
                     key={`${token.symbol}-${token.enabled}`}
-                    secondaryAction={
+                    secondaryAction={(
                       <Checkbox
                         edge="end"
                         onChange={() => onTokenCheck(token.symbol)}
                         checked={token.enabled}
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
-                    }
+                    )}
                     disablePadding
                   >
                     <ListItemButton>
@@ -133,7 +126,7 @@ export const WalletTokens = ({ children }) => {
                       {token.balance}
                     </ListItemButton>
                   </ListItem>
-                )
+                );
               })}
             </List>
           </TabPanel>
@@ -163,7 +156,7 @@ export const WalletTokens = ({ children }) => {
                 label="Token Standard"
                 value={selectedStandard}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setSelectedStandard(event.target.value)
+                  setSelectedStandard(event.target.value);
                 }}
                 SelectProps={{
                   native: true,
@@ -193,5 +186,5 @@ export const WalletTokens = ({ children }) => {
       </Dialog>
       <div onClick={handleModalOpen}>{children}</div>
     </>
-  )
-}
+  );
+};

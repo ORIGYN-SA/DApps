@@ -1,45 +1,44 @@
-import React, { useState } from "react";
-import Container from "@mui/material/Container";
-import { Box } from "@mui/material";
+import React, { useState } from 'react';
+import Container from '@mui/material/Container';
+import { Box } from '@mui/material';
 
-//Version Label
-import {VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft} from "@dapp/features-components";
+// Version Label
+import {VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft} from '@dapp/features-components';
 
-//Style container
+// Style container
 const container_style = {
-  size: "l",
-  padding: "12px",
+  size: 'l',
+  padding: '12px',
 };
 
 const Ledger = () => {
+  // Current Ledger Version
+  const ledgerVersion: string = '0.1.0';
 
-  //Current Ledger Version
-  const ledgerVersion: string = "0.1.0";
-
-  //Is Loading? 
+  // Is Loading?
   const [isLoading, setIsLoading] = useState(false);
 
-  //Props forSearchbarNFT
-  const [searchBarTokenId, setSearchBarTokenId] = React.useState("");
-  const [indexID, setIndexID] = React.useState("");
+  // Props forSearchbarNFT
+  const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
+  const [indexID, setIndexID] = React.useState('');
 
-  //Filter object
+  // Filter object
   const [filter, setFilter] = useState<{
     searchInputValue: string;
     categoryToFilter: string;
     transactionType: string;
     update: number;
   }>({
-    searchInputValue: "",
-    categoryToFilter: "",
-    transactionType: "",
+    searchInputValue: '',
+    categoryToFilter: '',
+    transactionType: '',
     update: 0,
   });
 
-  //Single Transaction 
+  // Single Transaction
   const [transactionData, setTransactionData] = useState([]);
-  
-  //Array for select-by-types
+
+  // Array for select-by-types
   const [trans_types, setTrans_types] = React.useState([]);
 
   return (

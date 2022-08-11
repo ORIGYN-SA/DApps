@@ -1,29 +1,29 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
-//Icons ICP & OGY
-import {ICPIcon, OGYIcon} from  "@dapp/common-assets";
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
+// Icons ICP & OGY
+import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const SaleOpened = (props) => {
-  var singleT_type = props.data.type_txn;
-  var singleT_pricing = props.data.pricing_config;
+const SaleOpened = (props : any) => {
+  const singleT_type = props.data.type_txn;
+  const singleT_pricing = props.data.pricing_config;
 
-  var singleT_sale_id = props.data.sale_id;
+  const singleT_sale_id = props.data.sale_id;
 
-  //This variable contain all the pricing config
-  //Its used in data to show
-  var display_pricing_config: JSX.Element;
+  // This variable contain all the pricing config
+  // Its used in data to show
+  let display_pricing_config: any;
 
-  var type_of_pricing = singleT_pricing.type_of_pricing_config;
-  //Depending on the pricing type I show different data
-  //Switch here
+  const type_of_pricing = singleT_pricing.type_of_pricing_config;
+  // Depending on the pricing type I show different data
+  // Switch here
   switch (type_of_pricing) {
-    case "dutch":
+    case 'dutch':
       var pricingType = type_of_pricing.toUpperCase();
 
-      var start_price = type_of_pricing.start_price;
-      var decay_per_hour = type_of_pricing.decay_per_hour;
-      var reserve = type_of_pricing.reserve;
+      var {start_price} = type_of_pricing;
+      var {decay_per_hour} = type_of_pricing;
+      var {reserve} = type_of_pricing;
 
       display_pricing_config = (
         <Box
@@ -80,17 +80,17 @@ const SaleOpened = (props) => {
         </Box>
       );
       break;
-    case "flat":
+    case 'flat':
       var pricingType = type_of_pricing.toUpperCase();
 
-      var amount = type_of_pricing.amount;
+      var {amount} = type_of_pricing;
 
       var obj_token = singleT_pricing.token;
       var canister = obj_token.canister_string;
-      var fee = obj_token.fee;
+      var {fee} = obj_token;
       var sym = obj_token.symbol;
       var decimals = obj_token.decimal;
-      var standard = obj_token.standard;
+      var {standard} = obj_token;
 
       display_pricing_config = (
         <Box
@@ -151,7 +151,7 @@ const SaleOpened = (props) => {
                 Symbol:
               </Typography>
               <Typography>
-                {sym === "OGY" ? (
+                {sym === 'OGY' ? (
                   <OGYIcon className="token-symbol" />
                 ) : (
                   <ICPIcon className="token-symbol" />
@@ -183,9 +183,9 @@ const SaleOpened = (props) => {
       );
 
       break;
-    case "auction":
+    case 'auction':
       var pricingType = type_of_pricing.toUpperCase();
-      var reserve = singleT_pricing.reserve;
+      var {reserve} = singleT_pricing;
       var buyNow = singleT_pricing.buy_now;
       var startPrice = singleT_pricing.start_price;
       var minIncrease = singleT_pricing.min_increase;
@@ -194,10 +194,10 @@ const SaleOpened = (props) => {
 
       var obj_token = singleT_pricing.token;
       var canister = obj_token.canister_string;
-      var fee = obj_token.fee;
+      var {fee} = obj_token;
       var sym = obj_token.symbol;
       var decimals = obj_token.decimal;
-      var standard = obj_token.standard;
+      var {standard} = obj_token;
 
       display_pricing_config = (
         <Box
@@ -281,7 +281,7 @@ const SaleOpened = (props) => {
                 Symbol:
               </Typography>
               <Typography>
-                {sym === "OGY" ? (
+                {sym === 'OGY' ? (
                   <OGYIcon className="token-symbol" />
                 ) : (
                   <ICPIcon className="token-symbol" />
@@ -327,13 +327,12 @@ const SaleOpened = (props) => {
       break;
   }
 
-
   return (
     <Box>
       <Box
         sx={{
           padding: 1,
-          borderBottom: "1px solid",
+          borderBottom: '1px solid',
         }}
       >
         <Typography
@@ -355,9 +354,9 @@ const SaleOpened = (props) => {
         </Typography>
         <Typography gutterBottom>{singleT_sale_id}</Typography>
       </Box>
-      <div children={display_pricing_config}></div>
+      {display_pricing_config}
     </Box>
-  )
+  );
 };
 
 export default SaleOpened;
