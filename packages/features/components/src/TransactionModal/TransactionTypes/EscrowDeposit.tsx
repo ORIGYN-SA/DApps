@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const EscrowDeposit = (props) => {
+const EscrowDeposit = (props: any) => {
   // type
   const singleT_type = props.data.type_txn;
   // buyer

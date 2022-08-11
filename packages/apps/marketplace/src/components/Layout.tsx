@@ -27,10 +27,9 @@ const Items = [
   },
 ];
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: any) => {
   const { onChangeMode, themeMode } = useContext(SiteContext);
 
-  const { logIn, loggedIn, principal, logOut } = useAuthContext();
   const { tokens, refreshAllBalances } = useTokensContext();
   const toggleTheme = () => {
     const t = themeMode === 'light' ? 'dark' : 'light';

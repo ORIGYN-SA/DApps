@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -13,18 +13,15 @@ import {
   Checkbox,
   ListItemButton,
   ListItemText,
-  ListItemAvatar,
-  Avatar,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { useTokensContext, Token } from '@dapp/features-tokens-provider';
+import { useTokensContext } from '@dapp/features-tokens-provider';
 import { IdlStandard } from '@dapp/utils';
-import { useAuthContext } from '@dapp/features-authentication';
 import { TabPanel } from '../TabPanel';
 import { TokenIcon } from '../TokenIcon';
 import { LoadingContainer } from '../LoadingContainer';
 
-export const WalletTokens = ({ children }) => {
+export const WalletTokens = ({ children }: any) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [selectedStandard, setSelectedStandard] = useState<string>(
@@ -34,7 +31,6 @@ export const WalletTokens = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { tokens, addToken, toggleToken, refreshAllBalances } = useTokensContext();
   const { enqueueSnackbar } = useSnackbar();
-  const { principal } = useAuthContext();
   const handleAddButton = async () => {
     if (isLoading) return;
     setIsLoading(true);

@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const EscrowWithdraw = (props) => {
+const EscrowWithdraw = (props: any) => {
   // type
   const singleT_type = props.data.type_txn;
   // buyer

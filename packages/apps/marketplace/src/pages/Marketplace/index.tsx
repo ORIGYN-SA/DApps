@@ -32,7 +32,7 @@ import TextField from '@mui/material/TextField';
 import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
 
-const SymbolWithIcon = ({ symbol }) =>
+const SymbolWithIcon = ({ symbol }:any) =>
   symbol === 'OGY' ? (
     <>
       <OGYIcon
@@ -64,7 +64,7 @@ const SymbolWithIcon = ({ symbol }) =>
   );
 
 const Marketplace = () => {
-  const { logIn, loggedIn, tokenId, canisterId, principal, actor, ogyActor } =
+  const { canisterId, actor } =
     useContext(AuthContext);
   const [NFTData, setNFTData] = useState<any>();
   const [filteredNFTs, setFilteredNFTs] = useState([]);
@@ -250,10 +250,10 @@ const Marketplace = () => {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            {filteredNFTs?.map((nft) => {
+            {filteredNFTs?.map((nft, index) => {
               const nftID = nft.metadata.Class.find(({ name }) => name === 'id').value.Text;
               return (
-                <Grid item xs={12} md={display}>
+                <Grid item xs={12} md={display} key={`${nft}+${index}`}>
                   <Link href={`#/${nftID}`}>
                     <Card variant="outlined">
                       <CardMedia

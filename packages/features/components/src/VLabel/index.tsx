@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Typography } from '@mui/material';
 
-export const VersionLabel = (props) => {
+export const VersionLabel = (props: any) => {
   const VNumber: string = props.ledgerVersion;
 
   return (
