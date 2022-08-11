@@ -38,12 +38,15 @@ const SaleOpened = (
 
   let typeOfPricing: string;
 
+  let InstantData: PricingConfiguration;
+  let FlatData: PricingConfiguration;
+  let DutchData: PricingConfiguration;
+  let AuctionData: PricingConfiguration;
+
   for (typeOfPricing in obj_pricing) {
     if (obj_pricing.hasOwnProperty(typeOfPricing)) {
       switch (typeOfPricing) {
-        case 'instant': {
-          let InstantData: PricingConfiguration;
-
+        case 'instant':
           InstantData = {
             txn_id: curr_obj.index.toString(),
             token_id: curr_obj.token_id,
@@ -68,11 +71,8 @@ const SaleOpened = (
           };
 
           break;
-        }
 
-        case 'flat': {
-          let FlatData: PricingConfiguration;
-
+        case 'flat':
           var flat_token = obj_pricing[typeOfPricing].token;
           var tokenProps: string;
           for (tokenProps in flat_token) {
@@ -118,11 +118,8 @@ const SaleOpened = (
           };
 
           break;
-        }
 
-        case 'dutch': {
-          let DutchData: PricingConfiguration;
-
+        case 'dutch':
           DutchData = {
             txn_id: curr_obj.index.toString(),
             token_id: curr_obj.token_id,
@@ -152,11 +149,8 @@ const SaleOpened = (
           };
 
           break;
-        }
 
-        case 'auction': {
-          let AuctionData: PricingConfiguration;
-
+        case 'auction':
           var _reserve = obj_pricing[typeOfPricing].reserve;
           var _buyNow = obj_pricing[typeOfPricing].buy_now;
           var _startPrice = obj_pricing[typeOfPricing].start_price;
@@ -244,13 +238,11 @@ const SaleOpened = (
           };
 
           break;
-        }
 
-        case 'extensible': {
+        case 'extensible':
           console.log('extensible');
 
           break;
-        }
       }
     }
   }

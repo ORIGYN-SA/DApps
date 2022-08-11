@@ -21,7 +21,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useAuthContext } from '@dapp/features-authentication';
 import ThemeConfig, { SiteContext } from '@dapp/features-theme';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import Logo from '../Logo';
+import { ThemeLogo } from '../Logo';
 import { WalletTokens } from '../WalletTokens';
 import { TokenIcon } from '../TokenIcon';
 
@@ -43,7 +43,7 @@ const Items = [
   },
 ];
 
-export const Layout = ({ children }: any) => {
+export const Layout = ({ children }) => {
   const { onChangeMode, themeMode } = useContext(SiteContext);
 
   const { logIn, loggedIn, principal, logOut } = useAuthContext();
@@ -54,10 +54,8 @@ export const Layout = ({ children }: any) => {
   };
 
   const handleNavigation = (i) => {
-    window.location.href = window.location.href.substr(
-      0,
-      window.location.href.lastIndexOf('\\') + 1,
-    ) + i.page;
+    window.location.href =
+      window.location.href.substr(0, window.location.href.lastIndexOf('\\') + 1) + i.page;
   };
 
   useEffect(() => {
@@ -84,7 +82,7 @@ export const Layout = ({ children }: any) => {
                   }}
                 >
                   <Box sx={{ padding: '8px' }}>
-                    <Logo />
+                    <ThemeLogo />
                   </Box>
                 </Box>
                 <Divider />
@@ -92,49 +90,45 @@ export const Layout = ({ children }: any) => {
                   <List>
                     {!loggedIn ? (
                       <>
-                          <ListItem button onClick={() => logIn('ii')}>
-                            <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
-                              <LoginIcon />
-                            </ListItemIcon>
-                            <ListItemText
-                              primary="Authenticate (Internet Identity)"
-                            />
-                          </ListItem>
-                          <ListItem button onClick={() => logIn('plug')}>
-                            <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
-                              <LoginIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Authenticate (Plug)" />
-                          </ListItem>
-                        </>
-                    ) : (
-                        <ListItem button style={{ color: '#00b400' }}>
+                        <ListItem button onClick={() => logIn('ii')}>
                           <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
-                            <CheckIcon style={{ color: '#00b400' }} />
+                            <LoginIcon />
                           </ListItemIcon>
-                          <WalletTokens>
-                            <ListItemText
-                              primary="WALLET CONNECTED"
-                              secondary={
-                                `${principal?.toText().substring(0, 25)}...`
-                              }
-                            />
-                            {['OGY', 'ICP'].map((token, index) => (
-                              <div key={`${token}+${index}`}>
-                                <TokenIcon symbol={token} />{' '}
-                                <span
-                                  style={{
-                                    color: 'white',
-                                    marginRight: '5px',
-                                    marginBottom: '-3px',
-                                  }}
-                                >
-                                  {tokens[token]?.balance}
-                                </span>
-                              </div>
-                            ))}
-                          </WalletTokens>
+                          <ListItemText primary="Authenticate (Internet Identity)" />
                         </ListItem>
+                        <ListItem button onClick={() => logIn('plug')}>
+                          <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
+                            <LoginIcon />
+                          </ListItemIcon>
+                          <ListItemText primary="Authenticate (Plug)" />
+                        </ListItem>
+                      </>
+                    ) : (
+                      <ListItem button style={{ color: '#00b400' }}>
+                        <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
+                          <CheckIcon style={{ color: '#00b400' }} />
+                        </ListItemIcon>
+                        <WalletTokens>
+                          <ListItemText
+                            primary="WALLET CONNECTED"
+                            secondary={`${principal?.toText().substring(0, 25)}...`}
+                          />
+                          {['OGY', 'ICP'].map((token) => (
+                            <div>
+                              <TokenIcon symbol={token} />{' '}
+                              <span
+                                style={{
+                                  color: 'white',
+                                  marginRight: '5px',
+                                  marginBottom: '-3px',
+                                }}
+                              >
+                                {tokens[token]?.balance}
+                              </span>
+                            </div>
+                          ))}
+                        </WalletTokens>
+                      </ListItem>
                     )}
                     <Divider />
                     {/* <ListItem
@@ -147,27 +141,21 @@ export const Layout = ({ children }: any) => {
                         </WalletTokens>
                       </ListItem> */}
                     {Items.map((i) => (
-                      <ListItem
-                          key={i.page}
-                          onClick={() => handleNavigation(i)}
-                          button
-                        >
-                          <ListItemIcon sx={{ pading: '8px' }}>
-                            {i.icon}
-                          </ListItemIcon>
-                          <ListItemText primary={i.title} />
-                        </ListItem>
+                      <ListItem key={i.page} onClick={() => handleNavigation(i)} button>
+                        <ListItemIcon sx={{ pading: '8px' }}>{i.icon}</ListItemIcon>
+                        <ListItemText primary={i.title} />
+                      </ListItem>
                     ))}
                   </List>
                   <Divider />
                   <List>
                     {loggedIn && (
-                    <ListItem button onClick={logOut}>
-                          <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
-                            <LogoutIcon />
-                          </ListItemIcon>
-                          <ListItemText primary="Log Out" />
-                        </ListItem>
+                      <ListItem button onClick={logOut}>
+                        <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
+                          <LogoutIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Log Out" />
+                      </ListItem>
                     )}
                   </List>
                   {}
@@ -181,10 +169,7 @@ export const Layout = ({ children }: any) => {
                   alignItems: 'end',
                 }}
               >
-                <div
-                  style={{ paddingBottom: '25px', cursor: 'pointer' }}
-                  onClick={toggleTheme}
-                >
+                <div style={{ paddingBottom: '25px', cursor: 'pointer' }} onClick={toggleTheme}>
                   {themeMode === 'light' ? <DarkIcon /> : <LightIcon />}
                 </div>
               </div>

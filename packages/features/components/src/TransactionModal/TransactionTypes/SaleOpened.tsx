@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const SaleOpened = (props: any) => {
+const SaleOpened = (props : any) => {
   const singleT_type = props.data.type_txn;
   const singleT_pricing = props.data.pricing_config;
 
@@ -12,7 +12,7 @@ const SaleOpened = (props: any) => {
 
   // This variable contain all the pricing config
   // Its used in data to show
-  let display_pricing_config: Element;
+  let display_pricing_config: any;
 
   const type_of_pricing = singleT_pricing.type_of_pricing_config;
   // Depending on the pricing type I show different data
@@ -354,7 +354,7 @@ const SaleOpened = (props: any) => {
         </Typography>
         <Typography gutterBottom>{singleT_sale_id}</Typography>
       </Box>
-      <div children={display_pricing_config} />
+      {display_pricing_config}
     </Box>
   );
 };

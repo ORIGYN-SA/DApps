@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const Mint = (props: any) => {
+const Mint = (props : any) => {
   const singleT_type = props.data.type_txn;
   const singleT_mint_from = props.data.mint_from;
   const singleT_mint_to = props.data.mint_to;
@@ -15,7 +15,7 @@ const Mint = (props: any) => {
   // inspect token
   const token_mint = singleT_sale.token;
 
-  let display_token_config: JSX.Element;
+  let display_token_config: any;
 
   if (token_mint == 'Token not defined') {
     display_token_config = (
@@ -170,7 +170,7 @@ const Mint = (props: any) => {
           </Grid>
         </Grid>
       </Box>
-      <div children={display_token_config} />
+      {display_token_config}
     </Box>
   );
 };

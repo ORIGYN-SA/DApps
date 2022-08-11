@@ -1,19 +1,16 @@
-import React from 'react'
-import { render } from '@testing-library/react'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import React from 'react';
+import { render } from '@testing-library/react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-import { createMemoryHistory } from 'history'
+import { createMemoryHistory } from 'history';
 
 function customRender(children) {
-  function Wrapper({ children }) {
-    const history = createMemoryHistory({ initialEntries: ['/'] })
-    return <Router history={history}>{children}</Router>
-  }
-  return render(<Wrapper>{children}</Wrapper>)
+  const history = createMemoryHistory({ initialEntries: ['/'] });
+  return render(<Router history={history}>{children}</Router>);
 }
-export * from '@testing-library/react'
+export * from '@testing-library/react';
 
-export { customRender as render }
+export { customRender as render };
 
 export const makeFormikMethods = (mockFn) => ({
   resetForm: mockFn,
@@ -29,4 +26,4 @@ export const makeFormikMethods = (mockFn) => ({
   submitForm: mockFn,
   validateField: mockFn,
   validateForm: mockFn,
-})
+});
