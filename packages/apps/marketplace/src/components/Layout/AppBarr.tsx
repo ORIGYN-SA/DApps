@@ -82,8 +82,8 @@ const ResponsiveAppBar = () => {
           ) : (
             <div style={{ display: 'flex' }}>
               <WalletTokens>
-                {['OGY', 'ICP'].map((token) => (
-                  <div>
+                {['OGY', 'ICP'].map((token, index) => (
+                  <div key={`${token}+${index}`}>
                     <TokenIcon symbol={token} />{' '}
                     <span
                       style={{
