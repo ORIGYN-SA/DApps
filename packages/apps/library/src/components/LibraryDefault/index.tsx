@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import PropTypes from 'prop-types';
 
 const linkStyle = {
   width: 'auto',
@@ -32,6 +33,10 @@ const LibraryText = (props) => {
       </Tooltip>
     </Box>
   )
+}
+
+LibraryText.propTypes = {
+  source: PropTypes.string.isRequired,
 }
 
 export default LibraryText

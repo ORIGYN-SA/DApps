@@ -5,7 +5,6 @@ import { SiteProvider } from '@dapp/features-theme'
 import { AuthProvider } from '@dapp/features-authentication'
 import 'react-toastify/dist/ReactToastify.css'
 import HeaderPart from './components/Header'
-import Library from './pages/Login'
 
 const App = () => {
   return (

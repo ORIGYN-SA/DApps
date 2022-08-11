@@ -98,6 +98,7 @@
     "json-bigint": "^1.0.0",
     "moment": "^2.29.3",
     "notistack": "^2.0.5",
+    "prop-types": "^15.8.1",
     "react-hook-form": "^7.33.0",
     "react-is": "^18.2.0",
     "react-toastify": "^8.1.0",

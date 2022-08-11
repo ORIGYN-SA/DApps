@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import Link from '@mui/material/Link';
 import { useSnackbar } from 'notistack';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   TabPanel,
   TokenIcon,
@@ -129,6 +129,7 @@ const WalletPage = () => {
     }
   };
 
+
   const pushNotification = (message, variant) => {
     enqueueSnackbar(message, {
       variant,
@@ -138,6 +139,7 @@ const WalletPage = () => {
       },
     });
   };
+  
   const createTableData = (data) => {
     const columns = [
       { id: 'id', label: 'id' },
@@ -327,7 +329,7 @@ const WalletPage = () => {
               for (const item of data) {
                 for (const sale of item.current_sale) {
                   console.log(sale);
-                  const { start_price, buy_now, min_increase, token, ending } = sale?.sale_type?.auction?.config?.auction || {};
+                  const { start_price, buy_now, token, ending } = sale?.sale_type?.auction?.config?.auction || {};
                   const { status, current_bid_amount } = sale?.sale_type?.auction || {};
 
                   if (!status?.hasOwnProperty('closed')) {
