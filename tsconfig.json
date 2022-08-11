@@ -18,6 +18,9 @@
       "@dapp/app-wallet": [
         "./packages/apps/wallet/src/index.tsx"
       ],
+      "@dapp/app-nft-data": [
+        "./packages/apps/nft-data/src/index.tsx"
+      ],
       "@dapp/app-marketplace": [
         "./packages/apps/marketplace/src/index.tsx"
       ],
