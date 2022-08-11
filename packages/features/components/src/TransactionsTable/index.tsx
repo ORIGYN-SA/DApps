@@ -58,7 +58,7 @@ function removeDuplicates(arr: string[]) {
   return arr.filter((item, index) => arr.indexOf(item) === index);
 }
 
-export const TransactionsTable = (props) => {
+export const TransactionsTable = (props : any) => {
   // Authcontext
   const { actor } = useContext(AuthContext);
 

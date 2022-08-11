@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 
-const AuctionBid = (props) => {
+const AuctionBid = (props : any) => {
   const singleT_type = props.data.type_txn;
   const bid_buyer = props.data.buyer;
   // buyer accoount

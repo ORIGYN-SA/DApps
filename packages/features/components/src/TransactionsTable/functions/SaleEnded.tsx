@@ -98,7 +98,7 @@ const SaleEnded = (
   if (!end_sale_id) {
     end_sale_id = 'Sale ID not defined';
   } else {
-    end_sale_id[0];
+   end_sale_id=obj_transaction[_props].sale_id[0];
   }
   const end_amount = obj_transaction[_props].amount;
 

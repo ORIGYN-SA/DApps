@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
-const SaleWithdraw = (props) => {
+const SaleWithdraw = (props : any) => {
   // type
   const singleT_type = props.data.type_txn;
   // buyer

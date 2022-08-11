@@ -9,7 +9,7 @@ import EscrowDeposit from './TransactionTypes/EscrowDeposit';
 import EscrowWithdraw from './TransactionTypes/EscrowWithdraw';
 import SaleWithdraw from './TransactionTypes/SaleWithdraw';
 
-export const Transaction = (props) => (
+export const Transaction = (props : any) => (
   <Box>
     {(() => {
       switch (props.modalData.type_txn) {
