@@ -15,10 +15,7 @@ import TablePagination from '@mui/material/TablePagination';
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 // Import Interfaces TS
-import {
-  Transactions,
-  Row,
-} from '@dapp/utils';
+import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
 import { CircularProgress } from '@mui/material';
 import Mint from './functions/Mint';
@@ -31,7 +28,7 @@ import EscrowWithdraw from './functions/EscrowWithdraw';
 import SaleWithdraw from './functions/SaleWithdraw';
 // Preloader
 // Modal Box - Component
-import {Transaction} from '../TransactionModal';
+import { Transaction } from '../TransactionModal';
 // Table style
 const cell_style = {
   colSpan: '4',
@@ -50,15 +47,14 @@ const style = {
   boxShadow: 24,
   p: 4,
   borderRadius: 0,
-  borderImage:
-    'linear-gradient(to right,yellow 30%,red 50%,violet 70%, blue 80%, green 100%) 2',
+  borderImage: 'linear-gradient(to right,yellow 30%,red 50%,violet 70%, blue 80%, green 100%) 2',
 };
 // array without duplicates
 function removeDuplicates(arr: string[]) {
   return arr.filter((item, index) => arr.indexOf(item) === index);
 }
 
-export const TransactionsTable = (props : any) => {
+export const TransactionsTable = (props: any) => {
   // Authcontext
   const { actor } = useContext(AuthContext);
 
@@ -160,11 +156,7 @@ export const TransactionsTable = (props : any) => {
     // array for dynamyc Select values
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
-    const response = await actor?.history_nft_origyn(
-      props.searchBarTokenId.toString(),
-      [],
-      [],
-    );
+    const response = await actor?.history_nft_origyn(props.searchBarTokenId.toString(), [], []);
 
     // response 2 string
     const string_history = JSON.stringify(
@@ -178,13 +170,17 @@ export const TransactionsTable = (props : any) => {
     // enter in the obj
     const historyNFT = json_history.ok;
     // console.log("!!!", actor);
-    let x: string; let
-      _props: string;
+    let x: string;
+    let _props: string;
 
+    // single transaction obj declaration
+    let transactionObj: Transactions;
+    function setTransData(i: any) {
+      'use strict';
+      return (y) => [...y, { ...i }];
+    }
     // loop through all the obj
     for (x in historyNFT) {
-      // single transaction obj declaration
-      var transactionObj: Transactions;
       let _transaction_type_formatted: string = '';
 
       const _date_string = timeConverter(BigInt(historyNFT[x].timestamp));
@@ -219,7 +215,7 @@ export const TransactionsTable = (props : any) => {
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => [...y, { ...transactionObj }]);
+              props.setTransactionData(setTransData(transactionObj));
 
               break;
             case 'mint':
@@ -238,7 +234,7 @@ export const TransactionsTable = (props : any) => {
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => [...y, { ...transactionObj }]);
+              props.setTransactionData(setTransData(transactionObj));
               break;
             case 'sale_ended':
               transactionObj = SaleEnded(
@@ -255,7 +251,7 @@ export const TransactionsTable = (props : any) => {
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => [...y, { ...transactionObj }]);
+              props.setTransactionData(setTransData(transactionObj));
               break;
             case 'sale_opened':
               transactionObj = SaleOpened(
@@ -272,7 +268,7 @@ export const TransactionsTable = (props : any) => {
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => [...y, { ...transactionObj }]);
+              props.setTransactionData(setTransData(transactionObj));
 
               break;
             case 'owner_transfer':
@@ -290,7 +286,7 @@ export const TransactionsTable = (props : any) => {
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => [...y, { ...transactionObj }]);
+              props.setTransactionData(setTransData(transactionObj));
 
               break;
             case 'escrow_deposit':
@@ -308,7 +304,7 @@ export const TransactionsTable = (props : any) => {
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => [...y, { ...transactionObj }]);
+              props.setTransactionData(setTransData(transactionObj));
               break;
             case 'escrow_withdraw':
               transactionObj = EscrowWithdraw(
@@ -325,7 +321,7 @@ export const TransactionsTable = (props : any) => {
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => [...y, { ...transactionObj }]);
+              props.setTransactionData(setTransData(transactionObj));
               break;
             case 'sale_withdraw':
               transactionObj = SaleWithdraw(
@@ -342,7 +338,7 @@ export const TransactionsTable = (props : any) => {
                   handleOpen();
                 }
               }
-              props.setTransactionData((y) => [...y, { ...transactionObj }]);
+              props.setTransactionData(setTransData(transactionObj));
               break;
           }
         }
@@ -352,10 +348,7 @@ export const TransactionsTable = (props : any) => {
       let found: number;
       let newRow: Row;
 
-      if (
-        props.filter.transactionType == ''
-        || props.filter.transactionType == 'All types'
-      ) {
+      if (props.filter.transactionType == '' || props.filter.transactionType == 'All types') {
         switch (props.filter.categoryToFilter) {
           case 'All':
             newRow = {
@@ -374,10 +367,7 @@ export const TransactionsTable = (props : any) => {
             if (props.filter.searchInputValue.toString().trim() == '') {
               return_all_rows = true;
             }
-            if (
-              transactionObj.trans_index
-              == props.filter.searchInputValue.toString().trim()
-            ) {
+            if (transactionObj.trans_index == props.filter.searchInputValue.toString().trim()) {
               newRow = {
                 index: _indexTrans,
                 date: _date_string,
@@ -395,10 +385,7 @@ export const TransactionsTable = (props : any) => {
             if (props.filter.searchInputValue.toString().trim() == '') {
               return_all_rows = true;
             }
-            if (
-              transactionObj.token_id
-              == props.filter.searchInputValue.toString().trim()
-            ) {
+            if (transactionObj.token_id == props.filter.searchInputValue.toString().trim()) {
               newRow = {
                 index: _indexTrans,
                 date: _date_string,
@@ -482,9 +469,7 @@ export const TransactionsTable = (props : any) => {
             break;
           case 'Transaction Id':
             if (props.filter.searchInputValue == '') {
-              if (
-                transactionObj.type_txn == props.filter.transactionType
-              ) {
+              if (transactionObj.type_txn == props.filter.transactionType) {
                 newRow = {
                   index: _indexTrans,
                   date: _date_string,
@@ -496,9 +481,8 @@ export const TransactionsTable = (props : any) => {
                 setIsEmpty(false);
               }
             } else if (
-              transactionObj.trans_index
-                == props.filter.searchInputValue.toString().trim()
-                && transactionObj.type_txn == props.filter.transactionType
+              transactionObj.trans_index == props.filter.searchInputValue.toString().trim() &&
+              transactionObj.type_txn == props.filter.transactionType
             ) {
               newRow = {
                 index: _indexTrans,
@@ -517,8 +501,9 @@ export const TransactionsTable = (props : any) => {
             break;
           case 'Principal':
             if (props.filter.searchInputValue == '') {
-              if (transactionObj.principals.length > 0
-                && transactionObj.type_txn == props.filter.transactionType
+              if (
+                transactionObj.principals.length > 0 &&
+                transactionObj.type_txn == props.filter.transactionType
               ) {
                 newRow = {
                   index: _indexTrans,
@@ -534,10 +519,7 @@ export const TransactionsTable = (props : any) => {
               found = transactionObj.principals.indexOf(
                 props.filter.searchInputValue.toString().trim(),
               );
-              if (
-                transactionObj.type_txn == props.filter.transactionType
-                && found != -1
-              ) {
+              if (transactionObj.type_txn == props.filter.transactionType && found != -1) {
                 newRow = {
                   index: _indexTrans,
                   date: _date_string,
@@ -554,8 +536,9 @@ export const TransactionsTable = (props : any) => {
             break;
           case 'Account':
             if (props.filter.searchInputValue == '') {
-              if (transactionObj.accounts.length > 0
-                && transactionObj.type_txn == props.filter.transactionType
+              if (
+                transactionObj.accounts.length > 0 &&
+                transactionObj.type_txn == props.filter.transactionType
               ) {
                 newRow = {
                   index: _indexTrans,
@@ -571,10 +554,7 @@ export const TransactionsTable = (props : any) => {
               found = transactionObj.accounts.indexOf(
                 props.filter.searchInputValue.toString().trim(),
               );
-              if (
-                found != -1
-                && transactionObj.type_txn == props.filter.transactionType
-              ) {
+              if (found != -1 && transactionObj.type_txn == props.filter.transactionType) {
                 newRow = {
                   index: _indexTrans,
                   date: _date_string,
@@ -619,116 +599,99 @@ export const TransactionsTable = (props : any) => {
   }, [props.searchBarTokenId, props.filter]);
 
   return (
-    <Box
-      margin="0 0 0 0"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-    >
-      {
-        props.isLoading ? (
-          <Box
-            component={Paper}
-            elevation={3}
-            sx={{ margin: 2, width: '100%', padding: 2, textAlign: 'center' }}
-          >
-            <CircularProgress color="inherit" />
-          </Box>
-        ) : (
-          <TableContainer
-            component={Paper}
-            elevation={2}
-            sx={{ margin: 2, width: '100%', padding: 2 }}
-          >
-            <Table
-              stickyHeader
-              sx={{ minWidth: 650 }}
-              aria-label="ogy_data_table"
-            >
-              {props.searchBarTokenId == 'Not selected'
-                || props.searchBarTokenId == 'Not selected' ? (
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={cell_style}>Select a Token ID</TableCell>
-                    </TableRow>
-                  </TableHead>
-                ) : (
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center">
-                        <IconButton
-                          aria-label="Sort by..."
-                          size="small"
-                          sx={{ margin: 1 }}
-                          onClick={changeOrder}
-                        >
-                          {isReverse ? (
-                            <ArrowDownwardOutlinedIcon />
-                          ) : (
-                            <ArrowUpwardOutlinedIcon />
-                          )}
-                        </IconButton>
-                        Transaction Index
-                      </TableCell>
-                      <TableCell align="center">Transaction Type</TableCell>
-                      <TableCell align="center">Date</TableCell>
-                    </TableRow>
-                  </TableHead>
-                )}
+    <Box margin="0 0 0 0" display="flex" flexDirection="column" alignItems="center">
+      {props.isLoading ? (
+        <Box
+          component={Paper}
+          elevation={3}
+          sx={{ margin: 2, width: '100%', padding: 2, textAlign: 'center' }}
+        >
+          <CircularProgress color="inherit" />
+        </Box>
+      ) : (
+        <TableContainer
+          component={Paper}
+          elevation={2}
+          sx={{ margin: 2, width: '100%', padding: 2 }}
+        >
+          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="ogy_data_table">
+            {props.searchBarTokenId == 'Not selected' ||
+            props.searchBarTokenId == 'Not selected' ? (
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={cell_style}>Select a Token ID</TableCell>
+                </TableRow>
+              </TableHead>
+            ) : (
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">
+                    <IconButton
+                      aria-label="Sort by..."
+                      size="small"
+                      sx={{ margin: 1 }}
+                      onClick={changeOrder}
+                    >
+                      {isReverse ? <ArrowDownwardOutlinedIcon /> : <ArrowUpwardOutlinedIcon />}
+                    </IconButton>
+                    Transaction Index
+                  </TableCell>
+                  <TableCell align="center">Transaction Type</TableCell>
+                  <TableCell align="center">Date</TableCell>
+                </TableRow>
+              </TableHead>
+            )}
 
-              {isEmpty ? (
-                <TableBody>
-                  <TableRow
-                    hover
-                    key="Not found"
-                    sx={{
-                      '&:last-child td, &:last-child th': { border: 0 },
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <TableCell sx={cell_style}>
-                      Transactions not found
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              ) : (
-                <TableBody>
-                  {rowsArray
-                    .reverse()
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <TableRow
-                        hover
-                        key={row.index}
-                        onClick={(event) => openModal(event, row.index, props.transactionData)}
-                        sx={{
-                          '&:last-child td, &:last-child th': { border: 0 },
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <TableCell align="center">{row.index}</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                          {row.type_txn}
-                        </TableCell>
-                        <TableCell align="center">{row.date}</TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              )}
-              <TableFooter />
-            </Table>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, 50, 100]}
-              component="div"
-              count={rowsArray.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableContainer>
-        )
-      }
+            {isEmpty ? (
+              <TableBody>
+                <TableRow
+                  hover
+                  key="Not found"
+                  sx={{
+                    '&:last-child td, &:last-child th': { border: 0 },
+                    cursor: 'pointer',
+                  }}
+                >
+                  <TableCell sx={cell_style}>Transactions not found</TableCell>
+                </TableRow>
+              </TableBody>
+            ) : (
+              <TableBody>
+                {rowsArray
+                  .reverse()
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <TableRow
+                      hover
+                      key={row.index}
+                      onClick={(event) => openModal(event, row.index, props.transactionData)}
+                      sx={{
+                        '&:last-child td, &:last-child th': { border: 0 },
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <TableCell align="center">{row.index}</TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                        {row.type_txn}
+                      </TableCell>
+                      <TableCell align="center">{row.date}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            )}
+            <TableFooter />
+          </Table>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50, 100]}
+            component="div"
+            count={rowsArray.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </TableContainer>
+      )}
       <Modal
         open={open}
         onClose={handleClose}

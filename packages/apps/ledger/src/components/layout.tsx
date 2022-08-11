@@ -39,7 +39,7 @@ const Items = [
   },
 ];
 
-export const Layout = ({ children }) => {
+export const Layout = ({ children } : any ) => {
   const { onChangeMode, themeMode } = useContext(SiteContext);
 
   const { logIn, loggedIn, principal } = useAuthContext();
