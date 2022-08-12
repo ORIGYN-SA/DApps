@@ -10,6 +10,7 @@ import { collectionName } from '@dapp/utils';
 import { CircularProgress } from '@mui/material';
 
 export const SearchbarNft = (props : any) => {
+
   const { tokenId, actor } = useContext(AuthContext);
   const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
   const [idsNumber, setIdsNumber] = React.useState('');
@@ -85,6 +86,7 @@ export const SearchbarNft = (props : any) => {
       component={Paper}
       elevation={2}
       sx={{ margin: 2, width: '100%', padding: 2 }}
+      data-testid="searchbar-component"
     >
       {props.isLoading ? (
         <Box sx={{ textAlign: 'center' }}>
@@ -100,7 +102,7 @@ export const SearchbarNft = (props : any) => {
                   width: '95%',
                 }}
               >
-                Collection name: <b>{collectionName(tokenId)}</b>{' '}
+                Collection name: <b>{collectionName(tokenId)}</b>
               </Typography>
               <Typography
                 sx={{
