@@ -1,31 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import { Box, Container, List, ListItem, ListItemText, Grid, Divider, Typography, Link } from "@mui/material";
-import lodash from 'lodash';
+import { List, ListItem, ListItemText, Grid, Divider } from "@mui/material";
+import {pick} from 'lodash';
 /* import data from '../../../tokenMetadataInfo.json'; */
-/* import useSite from '../../hooks/useSite'; */
+/* import useSite from '../../hooks/useSite'; */                
 const FormTab = ({metadata}) => {
 console.log(metadata);
-/* const {getMetadata, metadata} = useSite(); */
+/* const {getMetadata, metadata} = useSite(); */                                                            
 
-const [owner, setOwner] = useState('');
+const [owner, setOwner] = useState('');               
 const [hiddenAsset, setHiddenAsset] = useState('');
 const [previewAsset, setPreviewAsset] = useState('');
 const [primaryAsset, setPrimaryAsset] = useState('');
 const [experienceAsset, setExperienceAsset] = useState('');
 const [id, setId] = useState('');
-const [apps, setApps] = useState([]);
+const [apps, setApps] = useState([]);                                               
 const [library, setLibrary] = useState([]);
 useEffect(() => { 
-  if(Object.entries(metadata).length){
+  if(Object.entries(metadata).length){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
    // let obj = lodash.pick(metadata, ['owner', 'hidden_asset', 'preview_asset', 'primary_asset', 'experience_asset', 'id']);
-    setOwner(lodash.pick(metadata,['owner']).owner);
-    setHiddenAsset(lodash.pick(metadata,['hidden_asset']).hidden_asset);
-    setPreviewAsset(lodash.pick(metadata,['preview_asset']).preview_asset);
-    setPrimaryAsset(lodash.pick(metadata,['primary_asset']).primary_asset);
-    setExperienceAsset(lodash.pick(metadata,['experience_asset']).experience_asset);
-    setId(lodash.pick(metadata,['id']).id);
-    setApps(lodash.pick(metadata,['__apps']).__apps);
-    setLibrary(lodash.pick(metadata,['library']).library);
+    setOwner(pick(metadata,['owner']).owner);
+    setHiddenAsset(pick(metadata,['hidden_asset']).hidden_asset);
+    setPreviewAsset(pick(metadata,['preview_asset']).preview_asset);
+    setPrimaryAsset(pick(metadata,['primary_asset']).primary_asset);
+    setExperienceAsset(pick(metadata,['experience_asset']).experience_asset);
+    setId(pick(metadata,['id']).id);
+    setApps(pick(metadata,['__apps']).__apps);
+    setLibrary(pick(metadata,['library']).library);
   }
   
  }, [metadata]);

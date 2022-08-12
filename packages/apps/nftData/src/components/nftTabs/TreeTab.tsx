@@ -1,8 +1,8 @@
 import React, {useEffect} from "react"
-import { Box, Typography, Link, FormControlLabel, Switch } from "@mui/material";
+import { Box, FormControlLabel, Switch } from "@mui/material";
 import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
-import lodash from 'lodash';
+import {pick} from 'lodash';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 /* import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; */
@@ -94,7 +94,7 @@ function Tree({metadata}) {
 
   
   const parseData = (data) => { 
-    let arr: RenderTree[] = []; let obj = lodash.pick(data, ['owner', 'hidden_asset', 'preview_asset', 'primary_asset', 'experience_asset', 'id']);
+    let arr: RenderTree[] = []; let obj = pick(data, ['owner', 'hidden_asset', 'preview_asset', 'primary_asset', 'experience_asset', 'id']);
   
     for(let i in obj) {
       arr.push({id: increment(), name: i, children: [{id: increment(), name: obj[i]}]});
