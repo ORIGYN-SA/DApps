@@ -40,7 +40,7 @@ const Items = [
 ];
 
 const Layout = ({ children }: any) => {
-  const { onChangeMode, themeMode } = useContext(SiteContext);
+  const { onChangeMode, themeMode } : any= useContext(SiteContext);
 
   const { logIn, loggedIn, principal } = useAuthContext();
   const toggleTheme = () => {

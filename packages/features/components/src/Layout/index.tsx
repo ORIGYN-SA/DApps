@@ -44,7 +44,7 @@ const Items = [
 ];
 
 export const Layout = ({ children }: any) => {
-  const { onChangeMode, themeMode } = useContext(SiteContext);
+  const { onChangeMode, themeMode } :any = useContext(SiteContext);
 
   const { logIn, loggedIn, principal, logOut } = useAuthContext();
   const { tokens, refreshAllBalances } = useTokensContext();
