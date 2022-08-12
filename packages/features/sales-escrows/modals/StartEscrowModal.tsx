@@ -221,6 +221,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 fullWidth
                 id="nftId"
                 variant="outlined"
+                inputProps={{ 'aria-label': 'nftId' }}
                 value={_nft.id}
                 {...register('nftId')}
                 error={!!errors.nftId}
@@ -235,7 +236,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 required
                 label="Seller"
                 fullWidth
-                id="nftId"
+                id="sellerId"
+                inputProps={{ 'aria-label': 'sellerId' }}
                 variant="outlined"
                 value={_nft.seller}
                 {...register('sellerId')}
@@ -251,7 +253,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 required
                 label="Your Offer (in tokens)"
                 fullWidth
-                id="escrowPrice"
+                id="priceOffer"
+                inputProps={{ 'aria-label': 'priceOffer' }}
                 variant="outlined"
                 {...register('priceOffer')}
                 error={!!errors.priceOffer}
@@ -283,7 +286,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
           </Grid>
           {isLoading && (
             <div style={{ marginTop: 5 }}>
-              <LoadingContainer />
+              <LoadingContainer data-testid="loading-container" />
             </div>
           )}
         </DialogContent>
