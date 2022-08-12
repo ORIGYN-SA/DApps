@@ -7,15 +7,13 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const Dotenv = require('dotenv-webpack')
 const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin')
 
-console.log(path.join(__dirname, 'node_modules'))
 const repoRoot = path.join(process.cwd())
-console.log(path.join(repoRoot, 'node_modules'))
 const monorepoRoot = '../../../'
 
 const asset_entry = repoRoot + '/src/index.tsx'
 const publicPath = monorepoRoot + 'public'
 
-module.exports = (env, argv) => ({
+module.exports = (env, argv, dAppConfig) => ({
   target: 'web',
   mode: argv.mode || 'production',
   entry: {
@@ -41,7 +39,7 @@ module.exports = (env, argv) => ({
     },
   },
   output: {
-    filename: 'index.js',
+    filename: dAppConfig?.name ? `${dAppConfig?.name}.js` : 'index.js',
     path: path.join(__dirname, 'dist'),
   },
 
@@ -93,10 +91,13 @@ module.exports = (env, argv) => ({
         ? {
             template: path.resolve(publicPath, 'index.html'),
             inject: 'body',
-            publicPath: '/',
+            publicPath: `/`,
           }
         : {
             template: path.resolve(publicPath, 'index.html'),
+            filename: dAppConfig?.name
+              ? `${dAppConfig?.name}.html`
+              : 'index.html',
             inject: 'body',
           }
     ),
@@ -116,6 +117,8 @@ module.exports = (env, argv) => ({
     watchContentBase: true,
     open: true,
     disableHostCheck: true,
-    openPage: '-/baycdev/-/bayc-1/-/wallet',
+    openPage: dAppConfig?.openPage
+      ? dAppConfig.openPage
+      : '-/baycdev/-/bayc-1/-/',
   },
 })
