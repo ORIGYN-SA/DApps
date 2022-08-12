@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import Logo from '../components/Logo'
 import Grid from '@mui/material/Grid'
-import PropTypes from 'prop-types';
 
 const Header = styled.header`
   display: flex;
@@ -22,7 +21,7 @@ const Header = styled.header`
     display: block;
   }
 `
-const HeaderPart = ({ children }) => {
+const HeaderPart = ({ children }: any) => {
   return (
     <div>
       <Header>
@@ -49,9 +48,5 @@ const HeaderPart = ({ children }) => {
     </div>
   )
 }
-
-HeaderPart.propTypes = {
-  children: PropTypes.node.isRequired,
-  };
 
 export default HeaderPart

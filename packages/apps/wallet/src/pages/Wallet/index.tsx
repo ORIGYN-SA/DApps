@@ -11,7 +11,6 @@ import {
   Typography,
 } from '@mui/material';
 import Link from '@mui/material/Link';
-// import { useSnackbar } from 'notistack';
 import React, { useContext, useEffect, useState } from 'react';
 import {
   TabPanel,
@@ -109,7 +108,6 @@ const WalletPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true);
 
-  // const { enqueueSnackbar } = useSnackbar();
   const { tokens } = useTokensContext();
 
   const handleClickOpen = (item, modal = 'auction') => {

@@ -32,7 +32,7 @@ import TextField from '@mui/material/TextField';
 // import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
 
-const SymbolWithIcon = ({ symbol }:any) =>
+const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
     <>
       <OGYIcon

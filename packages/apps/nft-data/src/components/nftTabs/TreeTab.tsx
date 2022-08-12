@@ -34,7 +34,6 @@ function Tree({ metadata }: any) {
   };
 
   const handleExpandAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-
     setAll(event.target.checked);
     if (event.target.checked) {
       setExpanded([...init(0, all_index)]);
@@ -72,7 +71,7 @@ function Tree({ metadata }: any) {
     return `${all_index}`;
   };
   const handleToggle = (event, nodeIds) => {
-    setExpanded(nodeIds); 
+    setExpanded(nodeIds);
   };
 
   useEffect(() => {
