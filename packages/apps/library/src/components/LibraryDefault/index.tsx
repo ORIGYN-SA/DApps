@@ -15,9 +15,6 @@ const linkStyle = {
   color: '#000000!important',
 }
 
-//Source Test
-//https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.primary
-
 const LibraryText = (props) => {
   return (
     <Box sx={linkStyle}>

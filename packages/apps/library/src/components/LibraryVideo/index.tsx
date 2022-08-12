@@ -1,9 +1,6 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 
-//Source Test
-//https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.primary
-
 const LibraryVideo = (props: any) => {
   return (
     <Box

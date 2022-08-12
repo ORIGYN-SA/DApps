@@ -22,7 +22,6 @@ const Header = styled.header`
     display: block;
   }
 `
-
 const HeaderPart = ({ children }) => {
   return (
     <div>

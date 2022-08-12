@@ -37,8 +37,6 @@ const LibraryBox = (props: any) => {
     size: props.currentLibrary?.Class[6]?.value?.Nat,
   };
 
-  //console.log(formatBytes(Number(objLibraryData.size)));
-
   return (
     <Card
       variant="outlined"

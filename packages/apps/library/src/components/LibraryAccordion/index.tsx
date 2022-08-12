@@ -11,9 +11,6 @@ import MuiAccordionSummary, {
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
 
-//Source Test
-//https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.primary
-
 const LibraryAccordion = () => {
   const { tokenId, actor } = useContext(AuthContext)
   const [libData, setLibData] = useState([])

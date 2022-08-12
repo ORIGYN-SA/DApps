@@ -27,7 +27,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
   const { actor, ogyActor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({});
   const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens, refreshAllBalances } = useTokensContext();
   const validationSchema = Yup.object().shape({
@@ -39,8 +39,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
   });
 
-  const handleCustomClose = (value) => {
-    setSearchParams({});
+  const handleCustomClose = (value: any) => {
+    setSearchParams(searchParams);
     handleClose(value);
   };
   const {
