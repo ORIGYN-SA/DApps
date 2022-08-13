@@ -11,8 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import Link from '@mui/material/Link';
-import { useSnackbar } from 'notistack';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   TabPanel,
   TokenIcon,
@@ -109,7 +108,6 @@ const WalletPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true);
 
-  const { enqueueSnackbar } = useSnackbar();
   const { tokens } = useTokensContext();
 
   const handleClickOpen = (item, modal = 'auction') => {
@@ -128,16 +126,7 @@ const WalletPage = () => {
       fetchData();
     }
   };
-
-  const pushNotification = (message, variant) => {
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-    });
-  };
+  
   const createTableData = (data) => {
     const columns = [
       { id: 'id', label: 'id' },
@@ -248,10 +237,6 @@ const WalletPage = () => {
                   <p>{escrow.seller.principal.toText().substring(0, 8)}...</p>
                 </Tooltip>
               );
-              // esc.lockDate =
-              //   escrow?.lock_to_date?.length > 0
-              //     ? timeConverter(BigInt(parseInt(escrow?.lock_to_date[0]) * 1e9))
-              //     : "-";
 
               esc.amount = parseFloat(
                 (parseInt(escrow.amount) * 1e-8).toString(),
@@ -287,10 +272,6 @@ const WalletPage = () => {
                   <p>{offer.seller.principal.toText().substring(0, 8)}...</p>
                 </Tooltip>
               );
-              // esc.lockDate =
-              //   escrow?.lock_to_date?.length > 0
-              //     ? timeConverter(BigInt(parseInt(escrow?.lock_to_date[0]) * 1e9))
-              //     : "-";
 
               esc.amount = parseFloat(
                 (parseInt(offer.amount) * 1e-8).toString(),
@@ -327,7 +308,7 @@ const WalletPage = () => {
               for (const item of data) {
                 for (const sale of item.current_sale) {
                   console.log(sale);
-                  const { start_price, buy_now, min_increase, token, ending } = sale?.sale_type?.auction?.config?.auction || {};
+                  const { start_price, buy_now, token, ending } = sale?.sale_type?.auction?.config?.auction || {};
                   const { status, current_bid_amount } = sale?.sale_type?.auction || {};
 
                   if (!status?.hasOwnProperty('closed')) {
@@ -450,8 +431,6 @@ const WalletPage = () => {
               <Tab label="My NFTs" {...a11yProps(0)} />
               <Tab label="Active Sales" {...a11yProps(1)} />
               <Tab label="Active Escrows" {...a11yProps(2)} />
-              {/* <Tab label="TEST: Create & Mint NFT" {...a11yProps(3)} />
-              <Tab label="TEST: Create Transaction" {...a11yProps(4)} /> */}
             </Tabs>
           </Box>
           <TabPanel value={selectedTab} index={0}>
@@ -512,40 +491,6 @@ const WalletPage = () => {
                 </Typography>
               )}
           </TabPanel>
-          {/* <TabPanel value={selectedTab} index={3}>
-            <div style={{ opacity: isLoading ? "0.4" : "1" }}>
-              <Box
-                component="form"
-                autoComplete="off"
-                style={{ marginBottom: 10 }}
-              >
-                <TextField
-                  inputRef={tokenIdRef}
-                  required
-                  id="outlined-required"
-                  label="Token ID"
-                />
-              </Box>
-              <Button variant="outlined" onClick={createNFT}>
-                Create NFT
-              </Button>
-              <Button
-                variant="contained"
-                onClick={mintNFT}
-                style={{ marginLeft: 5 }}
-              >
-                Mint NFT
-              </Button>
-            </div>
-            {isLoading && (
-              <div style={{ marginTop: 5 }}>
-                <LoadingContainer />
-              </div>
-            )}
-          </TabPanel>
-          <TabPanel value={selectedTab} index={4}>
-            <Button onClick={createTransaction}>Create Transaction</Button>
-          </TabPanel> */}
         </div>
       ) : (
         <GuestContainer />

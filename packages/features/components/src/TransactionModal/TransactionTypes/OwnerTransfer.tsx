@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
-const OwnerTransfer = (props) => {
+const OwnerTransfer = (props : any) => {
   const singleT_type = props.data.type_txn;
   const account_from = props.data.from;
   const account_to = props.data.to;

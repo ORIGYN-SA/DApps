@@ -1,13 +1,10 @@
 import React, { useEffect } from 'react';
-import { Box, Typography, Link, FormControlLabel, Switch } from '@mui/material';
+import { Box, FormControlLabel, Switch } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
-import lodash from 'lodash';
+import pick from 'lodash/pick';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-/* import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; */
-/* import ChevronRightIcon from '@mui/icons-material/ChevronRight'; */
-
 import { useState } from 'react';
 
 interface RenderTree {
@@ -16,7 +13,7 @@ interface RenderTree {
   children?: readonly RenderTree[];
 }
 
-function Tree({ metadata }) {
+function Tree({ metadata }: any) {
   let all_index = 0;
   let apps_index: number[] = [0, 0];
   let libraries_index: number[] = [0, 0];
@@ -36,13 +33,7 @@ function Tree({ metadata }) {
     return array;
   };
 
-  /* const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-  }; */
   const handleExpandAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    /* setExpanded((oldExpanded) =>
-      oldExpanded.length - 1 < all_index ? [...init(0, all_index)] : [],
-    ); */
     setAll(event.target.checked);
     if (event.target.checked) {
       setExpanded([...init(0, all_index)]);
@@ -74,34 +65,22 @@ function Tree({ metadata }) {
     setAll(false);
     setApps(false);
   };
-  // const [index, setIndex] = useState(0);
-  /*   const {getMetadata, metadata} = useSite(); */
-  // const {owner, __apps } = metadata;
 
   const increment = () => {
     all_index++;
     return `${all_index}`;
   };
   const handleToggle = (event, nodeIds) => {
-    setExpanded(nodeIds); /* console.log(expanded.length-1, all_index);
-    if(nodeIds.length-1 < all_index){
-      
-      setAll(false);}
-    else if (nodeIds.length-1 == all_index) {  setAll(true);} */
+    setExpanded(nodeIds);
   };
 
   useEffect(() => {
     setExpanded([...init(0, all_index)]);
   }, [metadata]);
-  /*  useEffect(() => {
-   
-    getMetadata();
-    
-  }, []); */
 
   const parseData = (data) => {
     let arr: RenderTree[] = [];
-    let obj = lodash.pick(data, [
+    let obj = pick(data, [
       'owner',
       'hidden_asset',
       'preview_asset',
@@ -119,11 +98,7 @@ function Tree({ metadata }) {
       name: '__apps',
       children: data.__apps?.map((item, i) => {
         apps_index[0] = all_index;
-        // getting the app_id and read properties
 
-        // getting the write and permissions
-
-        // getting the data
         let obj1 = { ...item.data };
         let arr1: RenderTree[] = [];
         for (let j in obj1) {
@@ -174,9 +149,7 @@ function Tree({ metadata }) {
       }),
     });
     apps_index[1] = all_index;
-    /* setApps((x:string[])=>([...x, index+''])); */
 
-    // console.log(library);
     libraries_index[0] = all_index + 1;
     arr.push({
       id: increment(),

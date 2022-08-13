@@ -43,8 +43,8 @@ const Items = [
   },
 ];
 
-export const Layout = ({ children }) => {
-  const { onChangeMode, themeMode } = useContext(SiteContext);
+export const Layout = ({ children }: any) => {
+  const { onChangeMode, themeMode } :any = useContext(SiteContext);
 
   const { logIn, loggedIn, principal, logOut } = useAuthContext();
   const { tokens, refreshAllBalances } = useTokensContext();
@@ -113,8 +113,8 @@ export const Layout = ({ children }) => {
                             primary="WALLET CONNECTED"
                             secondary={`${principal?.toText().substring(0, 25)}...`}
                           />
-                          {['OGY', 'ICP'].map((token) => (
-                            <div>
+                          {['OGY', 'ICP'].map((token, index) => (
+                            <div key={`${token}+${index}`} >
                               <TokenIcon symbol={token} />{' '}
                               <span
                                 style={{

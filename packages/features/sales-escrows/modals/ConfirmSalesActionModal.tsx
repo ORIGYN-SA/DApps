@@ -18,13 +18,15 @@ const Transition = React.forwardRef((
   ref: React.Ref<unknown>,
 ) => <Slide direction="up" ref={ref} {...props} />);
 
+Transition.displayName = 'Transition';
+
 export const ConfirmSalesActionModal = ({
   open,
   handleClose,
   currentToken,
   action,
   escrow = null,
-}) => {
+}: any) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();

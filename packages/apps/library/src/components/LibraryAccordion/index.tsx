@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react'
+import React, { useContext, useEffect, useState} from 'react'
 import { AuthContext } from '@dapp/features-authentication'
 import LibraryBox from '../LibraryBox'
 //Accordion @MUI
@@ -11,10 +11,7 @@ import MuiAccordionSummary, {
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
 
-//Source Test
-//https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.primary
-
-const LibraryAccordion = (props) => {
+const LibraryAccordion = () => {
   const { tokenId, actor } = useContext(AuthContext)
   const [libData, setLibData] = useState([])
   const [currentLibrary, setCurrentLibrary] = useState()
@@ -69,7 +66,7 @@ const LibraryAccordion = (props) => {
           console.log(r)
           setLibData(
             r.ok.metadata.Class.filter((res) => {
-              return res['name'] === 'library'
+              return res.name === 'library'
             })[0].value.Array.thawed
           )
           console.log('R', r)

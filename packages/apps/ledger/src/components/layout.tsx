@@ -39,8 +39,8 @@ const Items = [
   },
 ];
 
-export const Layout = ({ children }) => {
-  const { onChangeMode, themeMode } = useContext(SiteContext);
+export const Layout = ({ children } : any ) => {
+  const { onChangeMode, themeMode } : any = useContext(SiteContext);
 
   const { logIn, loggedIn, principal } = useAuthContext();
   const toggleTheme = () => {

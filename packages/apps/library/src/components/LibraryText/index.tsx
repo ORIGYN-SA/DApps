@@ -14,10 +14,7 @@ const linkStyle = {
   color: '#000000!important',
 }
 
-//Source Test
-//https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.primary
-
-const LibraryText = (props) => {
+const LibraryText = (props: any) => {
   return (
     <Box sx={linkStyle}>
       <Tooltip title={props.source}>
@@ -26,7 +23,7 @@ const LibraryText = (props) => {
         </IconButton>
       </Tooltip>
       <Tooltip describeChild title={props.source}>
-        <a href={props.source} target="_blank">
+        <a href={props.source} target="_blank" rel="noreferrer">
           {props.source}
         </a>
       </Tooltip>

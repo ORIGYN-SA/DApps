@@ -1,7 +1,5 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import Box from '@mui/material/Box'
-import { AuthContext } from '@dapp/features-authentication'
 import Logo from '../components/Logo'
 import Grid from '@mui/material/Grid'
 
@@ -23,9 +21,7 @@ const Header = styled.header`
     display: block;
   }
 `
-
-const HeaderPart = ({ children }) => {
-  const { canisterId } = useContext(AuthContext)
+const HeaderPart = ({ children }: any) => {
   return (
     <div>
       <Header>

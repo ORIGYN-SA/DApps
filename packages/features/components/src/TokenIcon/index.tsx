@@ -9,7 +9,7 @@ const iconStyle = {
   borderRadius: '25px',
   backgroundColor: 'black',
 };
-export const TokenIcon = ({ symbol }) => {
+export const TokenIcon = ({ symbol }: any) => {
   if (
     typeof symbol === 'string'
     && (symbol.indexOf('https://') !== -1 || symbol.indexOf('data:image') !== -1)

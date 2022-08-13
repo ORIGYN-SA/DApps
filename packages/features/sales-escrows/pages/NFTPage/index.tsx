@@ -28,7 +28,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
-const SymbolWithIcon = ({ symbol }) =>
+const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
     <>
       <OGYIcon
@@ -65,7 +65,7 @@ export const NFTPage = () => {
   const [dialogAction, setDialogAction] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams]  = useSearchParams();
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
   const [modalInitialValues, setModalInitialValues] = React.useState({});
   const [expanded, setExpanded] = React.useState<string | false>('panel1');
@@ -78,7 +78,7 @@ export const NFTPage = () => {
     }
   };
 
-  const handleClose = async (dataChanged = false) => {
+  const handleClose = async () => {
     setOpenAuction(false);
     setOpenConfirmation(false);
   };
@@ -195,8 +195,8 @@ export const NFTPage = () => {
                   <Typography>
                     {currentNFT?.metadata?.Class?.find(({ name }) => name === '__apps')
                       ?.value?.Array?.thawed[0].Class.find(({ name }) => name === 'data')
-                      .value.Class.map(({ name, value }) => (
-                        <div>
+                      .value.Class.map(({ name, value, index }) => (
+                        <div key={`${name}+${index}`}>
                           {name}: <b>{Object.values(value)[0].toString()}</b>
                         </div>
                       )) || <b>No properties available</b>}

@@ -28,7 +28,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ /* p: 3 */ }}>
+        <Box sx={{}}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -36,7 +36,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const NFTInfo = ({metadata}) => {
+const NFTInfo = ({metadata}: any) => {
     const [value, setValue] = React.useState(1);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -44,21 +44,8 @@ const NFTInfo = ({metadata}) => {
   };
     
     return (
-      <Container maxWidth="xl" /* size="md" */ /* padding="12px" */>
-       {/* <Box sx={{ width: '100%', typography: 'body1' }}>
-      <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Raw" value={1} index={0} />
-            <Tab label="Table" value={2} index={1} />
-            <Tab label="Form" value={3} index={2} />
-          </TabList>
-        </Box>
-        <TabPanel value="1"><RawTab /></TabPanel>
-        <TabPanel value="2"><TablesTab /></TabPanel>
-        <TabPanel value="3"><FormTab /></TabPanel>
-      </TabContext>
-    </Box> */}
+      <Container maxWidth="xl">
+
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">

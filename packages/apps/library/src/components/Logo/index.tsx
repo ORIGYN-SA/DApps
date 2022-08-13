@@ -1,6 +1,5 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Box } from '@mui/material'
-import { SiteContext } from '@dapp/features-theme'
 
 function Logo() {
   return (
