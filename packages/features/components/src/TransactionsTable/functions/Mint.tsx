@@ -8,7 +8,6 @@ export const Mint = (
   _transaction_type_formatted:string,
 ) => {
   const mint: string = 'Mint';
-
   const array8uint_from = obj_transaction[_props].from;
   const mint_from = formatPrincipal(array8uint_from);
 

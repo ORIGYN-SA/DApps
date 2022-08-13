@@ -198,7 +198,7 @@ export const TransactionsTable = (props: any) => {
           // replace _ with " "
           const replaced = capitalized.replace('_', ' ');
           _transaction_type_formatted += replaced;
-
+          
           switch (_props) {
             case 'auction_bid':
               transactionObj = AuctionBid(
@@ -226,7 +226,7 @@ export const TransactionsTable = (props: any) => {
                 historyNFT[x],
                 _transaction_type_formatted,
               );
-              // console.log(transactionObj);
+              
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
                   setModalData('Loading...');
