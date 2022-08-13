@@ -12,6 +12,9 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
+            "describe": true,
+            "expect": true,
+            "it": true,
             "jsx": true
         },
         "ecmaVersion": "latest",
