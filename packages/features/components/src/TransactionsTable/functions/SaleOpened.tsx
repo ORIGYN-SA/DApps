@@ -1,13 +1,7 @@
 import { Principal } from '@dfinity/principal';
 
 // Import Interfaces TS
-import {
-  Transactions,
-  PricingConfiguration,
-  WaitForQuiet,
-  formatTime,
-
-} from '@dapp/utils';
+import { Transactions, PricingConfiguration, WaitForQuiet, formatTime } from '@dapp/utils';
 
 function TypeTokenSpec(
   canister: { _arr: [] },
@@ -44,12 +38,15 @@ const SaleOpened = (
 
   let typeOfPricing: string;
 
+  let InstantData: PricingConfiguration;
+  let FlatData: PricingConfiguration;
+  let DutchData: PricingConfiguration;
+  let AuctionData: PricingConfiguration;
+
   for (typeOfPricing in obj_pricing) {
     if (obj_pricing.hasOwnProperty(typeOfPricing)) {
       switch (typeOfPricing) {
         case 'instant':
-          let InstantData: PricingConfiguration;
-
           InstantData = {
             txn_id: curr_obj.index.toString(),
             token_id: curr_obj.token_id,
@@ -76,8 +73,6 @@ const SaleOpened = (
           break;
 
         case 'flat':
-          let FlatData: PricingConfiguration;
-
           var flat_token = obj_pricing[typeOfPricing].token;
           var tokenProps: string;
           for (tokenProps in flat_token) {
@@ -92,13 +87,7 @@ const SaleOpened = (
             }
           }
 
-          var obj_token = TypeTokenSpec(
-            _canister,
-            _fee,
-            _symbol,
-            _decimals,
-            token_standard,
-          );
+          var obj_token = TypeTokenSpec(_canister, _fee, _symbol, _decimals, token_standard);
           FlatData.token = obj_token;
 
           FlatData = {
@@ -131,16 +120,13 @@ const SaleOpened = (
           break;
 
         case 'dutch':
-          let DutchData: PricingConfiguration;
-
           DutchData = {
             txn_id: curr_obj.index.toString(),
             token_id: curr_obj.token_id,
             type_txn: _transaction_type_formatted,
             type_of_pricing_config: typeOfPricing,
             start_price: obj_pricing[typeOfPricing].start_price,
-            decay_per_hour:
-              obj_pricing[typeOfPricing].decay_per_hour,
+            decay_per_hour: obj_pricing[typeOfPricing].decay_per_hour,
             reserve: obj_pricing[typeOfPricing].reserve,
           };
 
@@ -165,14 +151,10 @@ const SaleOpened = (
           break;
 
         case 'auction':
-          let AuctionData: PricingConfiguration;
-
           var _reserve = obj_pricing[typeOfPricing].reserve;
           var _buyNow = obj_pricing[typeOfPricing].buy_now;
           var _startPrice = obj_pricing[typeOfPricing].start_price;
-          var _startDate = format_data(
-            obj_pricing[typeOfPricing].start_date,
-          );
+          var _startDate = format_data(obj_pricing[typeOfPricing].start_date);
 
           var _minIncrease = obj_pricing[typeOfPricing].min_increase;
           var minimum_increase: string;
@@ -187,13 +169,11 @@ const SaleOpened = (
           if (_ending.hasOwnProperty('date')) {
             ending_date = format_data(_ending.date);
           } else {
-            const {wait_for_quiet} = _ending;
+            const { wait_for_quiet } = _ending;
             var wait_props: string;
 
             for (wait_props in wait_for_quiet) {
-              var wfq_date = format_data(
-                wait_for_quiet[wait_props].date,
-              );
+              var wfq_date = format_data(wait_for_quiet[wait_props].date);
               var wfq_extention = wait_for_quiet[wait_props].extention;
               var wfq_fade = wait_for_quiet[wait_props].fade;
               var wfq_max = wait_for_quiet[wait_props].max;
@@ -223,13 +203,7 @@ const SaleOpened = (
             }
           }
 
-          var obj_token = TypeTokenSpec(
-            _canister,
-            _fee,
-            _symbol,
-            _decimals,
-            token_standard,
-          );
+          var obj_token = TypeTokenSpec(_canister, _fee, _symbol, _decimals, token_standard);
 
           AuctionData = {
             txn_id: curr_obj.index.toString(),
@@ -272,9 +246,7 @@ const SaleOpened = (
       }
     }
   }
-  return (
-    transactionObj
-  );
+  return transactionObj;
 };
 
 export default SaleOpened;

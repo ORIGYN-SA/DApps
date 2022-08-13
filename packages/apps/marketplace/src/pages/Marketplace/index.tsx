@@ -29,10 +29,10 @@ import {
 } from '@mui/material';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
-import { useSnackbar } from 'notistack';
+// import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
 
-const SymbolWithIcon = ({ symbol }) =>
+const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
     <>
       <OGYIcon
@@ -64,11 +64,10 @@ const SymbolWithIcon = ({ symbol }) =>
   );
 
 const Marketplace = () => {
-  const { logIn, loggedIn, tokenId, canisterId, principal, actor, ogyActor } =
-    useContext(AuthContext);
+  const { canisterId, actor } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState<any>();
   const [filteredNFTs, setFilteredNFTs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  //const [isLoading, setIsLoading] = useState(true);
   const [display, setDisplay] = useState(3);
   const [open, setOpen] = useState(false);
   const [openPrice, setOpenPrice] = useState(false);
@@ -76,22 +75,10 @@ const Marketplace = () => {
   const [minPrice, setMinPrice] = useState<any>(0);
   const [maxPrice, setMaxPrice] = useState<any>(0);
 
-  const { enqueueSnackbar } = useSnackbar();
-
-  const pushNotification = (message, variant) => {
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-    });
-  };
-
   const fetchData = () => {
     console.log(actor);
     if (actor) {
-      setIsLoading(true);
+      //setIsLoading(true);
       actor?.collection_nft_origyn([]).then((response) => {
         console.log(response);
 
@@ -99,12 +86,12 @@ const Marketplace = () => {
           response?.ok?.token_ids[0]?.map((nft) => actor?.nft_origyn(nft).then((r) => r.ok)),
         )
           .then((data: any) => {
-            setIsLoading(false);
+            //setIsLoading(false);
             console.log(data);
             setNFTData(data);
           })
           .catch((err) => {
-            setIsLoading(false);
+            //setIsLoading(false);
             console.log(err);
           });
       });
@@ -250,10 +237,10 @@ const Marketplace = () => {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            {filteredNFTs?.map((nft) => {
+            {filteredNFTs?.map((nft, index) => {
               const nftID = nft.metadata.Class.find(({ name }) => name === 'id').value.Text;
               return (
-                <Grid item xs={12} md={display}>
+                <Grid item xs={12} md={display} key={`${nft}+${index}`}>
                   <Link href={`#/${nftID}`}>
                     <Card variant="outlined">
                       <CardMedia

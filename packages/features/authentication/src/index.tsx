@@ -64,7 +64,7 @@ export const useAuth = () => {
       const resolvedWallet = wallet || localStorage.getItem('loggedIn');
       setWalletType(resolvedWallet || undefined);
       switch (resolvedWallet) {
-        case 'ii':
+        case 'ii': {
           const ii = await connectInternetIdentity();
           if (ii.authorized) {
             setPrincipal(ii.principal);
@@ -77,7 +77,8 @@ export const useAuth = () => {
             setIsAuthorized(false);
           }
           break;
-        case 'plug':
+        }
+        case 'plug': {
           const p = await connectPlug();
           setPrincipal(p.principal);
           setActor(p.actor);
@@ -87,7 +88,8 @@ export const useAuth = () => {
           setLoggedIn(true);
           setLoggedWallet('plug');
           break;
-        case 'stoic':
+        }
+        case 'stoic': {
           const s = await connectStoic();
           setPrincipal(s.principal);
           setWalletAccounts(s.accounts);
@@ -96,6 +98,7 @@ export const useAuth = () => {
           setLoggedIn(true);
           setLoggedWallet('stoic');
           break;
+        }
         default:
           logOut();
           console.error('Error: No wallet defined for log in function');

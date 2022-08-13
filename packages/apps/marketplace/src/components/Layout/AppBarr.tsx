@@ -17,20 +17,12 @@ import { TokenIcon, WalletTokens } from '@dapp/features-components';
 const ResponsiveAppBar = () => {
   const { logIn, loggedIn, logOut } = React.useContext(AuthContext);
   const { tokens } = useTokensContext();
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null,
   );
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = () => {
@@ -82,8 +74,8 @@ const ResponsiveAppBar = () => {
           ) : (
             <div style={{ display: 'flex' }}>
               <WalletTokens>
-                {['OGY', 'ICP'].map((token) => (
-                  <div>
+                {['OGY', 'ICP'].map((token, index) => (
+                  <div key={`${token}+${index}`}>
                     <TokenIcon symbol={token} />{' '}
                     <span
                       style={{

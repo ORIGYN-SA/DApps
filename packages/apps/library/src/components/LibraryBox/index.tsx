@@ -1,35 +1,33 @@
-import React from 'react'
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
-import Paper from '@mui/material/Paper'
-import Grid from '@mui/material/Grid'
-
-import LibraryImage from '../LibraryImage'
-import LibraryVideo from '../LibraryVideo'
-import LibraryText from '../LibraryText'
-import LibraryDefault from '../LibraryDefault'
+import React from 'react';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import LibraryImage from '../LibraryImage';
+import LibraryVideo from '../LibraryVideo';
+import LibraryText from '../LibraryText';
+import LibraryDefault from '../LibraryDefault';
 
 interface curLibraryData {
-  library_id: string
-  title: string
-  content_type: string
-  location: string
-  location_type: string
-  size: number
+  library_id: string;
+  title: string;
+  content_type: string;
+  location: string;
+  location_type: string;
+  size: number;
 }
 function formatBytes(bytes, decimals = 2) {
-  if (bytes === 0) return '0 Bytes'
-  const k = 1024
-  const dm = decimals < 0 ? 0 : decimals
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-const LibraryBox = (props) => {
+const LibraryBox = (props: any) => {
   let objLibraryData: curLibraryData = {
     library_id: props.currentLibrary?.Class[0]?.value?.Text,
     title: props.currentLibrary?.Class[1]?.value?.Text,
@@ -37,9 +35,7 @@ const LibraryBox = (props) => {
     location: props.currentLibrary?.Class[3]?.value?.Text,
     location_type: props.currentLibrary?.Class[2]?.value?.Text,
     size: props.currentLibrary?.Class[6]?.value?.Nat,
-  }
-
-  //console.log(formatBytes(Number(objLibraryData.size)));
+  };
 
   return (
     <Card
@@ -102,16 +98,16 @@ const LibraryBox = (props) => {
               {(() => {
                 switch (objLibraryData.content_type) {
                   case 'image/png' || 'image/jpg':
-                    return <LibraryImage source={objLibraryData.location} />
+                    return <LibraryImage source={objLibraryData.location} />;
 
                   case 'video/mp4' || 'video/html5':
-                    return <LibraryVideo source={objLibraryData.location} />
+                    return <LibraryVideo source={objLibraryData.location} />;
 
                   case 'text/html':
-                    return <LibraryText source={objLibraryData.location} />
+                    return <LibraryText source={objLibraryData.location} />;
 
                   default:
-                    return <LibraryDefault source={objLibraryData.location} />
+                    return <LibraryDefault source={objLibraryData.location} />;
                 }
               })()}
             </Box>
@@ -119,7 +115,7 @@ const LibraryBox = (props) => {
         </Grid>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default LibraryBox
+export default LibraryBox;

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -38,7 +38,7 @@ const MenuProps = {
 // Search into categories
 const search_into = ['All', 'Principal', 'Account', 'Transaction Id'];
 
-export const TransactionFilter = (props) => {
+export const TransactionFilter = (props : any) => {
   // Collapse - switch btn
   const [checked, setChecked] = React.useState(false);
   const handleChangeCollapse = () => {
@@ -56,7 +56,7 @@ export const TransactionFilter = (props) => {
     if (value == null) {
       value = '';
     }
-    setTypedVal((x) => value);
+    setTypedVal(value);
     console.log(value);
     setUpdate(1);
   };
@@ -68,7 +68,7 @@ export const TransactionFilter = (props) => {
     const {
       target: { value },
     } = event;
-    setSearchTrough((x) => value);
+    setSearchTrough(value);
     setUpdate(1);
     let i: string;
     let k: string;
@@ -117,7 +117,7 @@ export const TransactionFilter = (props) => {
     const {
       target: { value },
     } = event;
-    setType((x) => value);
+    setType(value);
     setUpdate(0);
   };
 

@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Paper from '@mui/material/Paper';
@@ -9,8 +9,8 @@ import { collectionName } from '@dapp/utils';
 // Preloader
 import { CircularProgress } from '@mui/material';
 
-export const SearchbarNft = (props) => {
-  const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
+export const SearchbarNft = (props : any) => {
+  const { tokenId, actor } = useContext(AuthContext);
   const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
   const [idsNumber, setIdsNumber] = React.useState('');
 
@@ -46,7 +46,7 @@ export const SearchbarNft = (props) => {
       var newID = obj_token_ids[x];
       // This is the array created to be filtered with Intersection
       arrayTokenIds.push(newID);
-      setSelectTokenIds((x) => [...newID]);
+      setSelectTokenIds([...newID]);
     }
 
     // Check if the token Id is in the url
@@ -126,7 +126,7 @@ export const SearchbarNft = (props) => {
             </Typography>
           )}
           <Typography sx={{ m: 1, fontSize: 13 }}>
-            Search for other NFT'S <em>(+{idsNumber}...)</em>
+            Search for other NFT&#39;S <em>(+{idsNumber}...)</em>
           </Typography>
           <Autocomplete
             disablePortal

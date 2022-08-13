@@ -18,7 +18,9 @@
         "sourceType": "module",
         "project": "./tsconfig.json"
     },
-
+    "globals": {
+        "JSX": true
+    },
     "plugins": [
         "prettier",
         "react",

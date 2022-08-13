@@ -12,13 +12,11 @@ import palette from './palette';
 const initialState = {
   themeMode: 'dark',
   drawerMode: false,
-  onChangeMode: (t) => {},
-  onDrawerMode: (d) => {},
 };
 
 export const SiteContext = createContext(initialState);
 
-export const SiteProvider = ({ children }) => {
+export const SiteProvider = ({ children }: any) => {
   const [site, setSite] = useLocalStorage('site', {
     themeMode: initialState.themeMode,
   });
@@ -50,7 +48,7 @@ export const SiteProvider = ({ children }) => {
   );
 };
 
-export default function ThemeConfig({ children }) {
+export default function ThemeConfig({ children }: any) {
   const { themeMode } = useContext(SiteContext);
   console.log('themeMode', themeMode);
   const isLight = themeMode === 'light';

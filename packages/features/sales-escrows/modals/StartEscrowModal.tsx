@@ -23,11 +23,11 @@ import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
-export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }) {
+export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
   const { actor, ogyActor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({});
   const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens, refreshAllBalances } = useTokensContext();
   const validationSchema = Yup.object().shape({
@@ -38,8 +38,9 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       .typeError('This cannot be a nullable number')
       .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
   });
-  const handleCustomClose = (value) => {
-    setSearchParams({});
+
+  const handleCustomClose = (value: any) => {
+    setSearchParams(searchParams);
     handleClose(value);
   };
   const {
@@ -65,7 +66,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
     handleStartEscrow(data);
   };
   React.useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
+    const subscription = watch(() => {
       const params = getValues();
       setSearchParams(params);
     });
@@ -273,8 +274,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                   onChange={(e) => setToken(e.target.value)}
                   label="Token"
                 >
-                  {Object.keys(tokens).map((t) => (
-                    <MenuItem value={t}>
+                  {Object.keys(tokens).map((t, index) => (
+                    <MenuItem key={`${tokens}+${index}`} value={t}>
                       <TokenIcon symbol={tokens[t].icon} />
                       {tokens[t].symbol}
                     </MenuItem>

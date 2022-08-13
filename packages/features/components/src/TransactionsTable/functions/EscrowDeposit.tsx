@@ -1,5 +1,5 @@
 import { Principal } from '@dfinity/principal';
-import { formatTime, getAccountId, Transactions, TypeTransactionId } from '@dapp/utils';
+import { getAccountId, Transactions, TypeTransactionId } from '@dapp/utils';
 
 // Create obj account
 function TypeAccount(
