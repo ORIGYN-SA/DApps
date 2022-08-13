@@ -1,31 +1,6 @@
-import { Principal } from '@dfinity/principal';
+import { Transactions, PricingConfiguration, WaitForQuiet, formatTime, TypeTokenSpec,format_data, removeDuplicates } from '@dapp/utils';
 
-// Import Interfaces TS
-import { Transactions, PricingConfiguration, WaitForQuiet, formatTime } from '@dapp/utils';
-
-function TypeTokenSpec(
-  canister: { _arr: [] },
-  fee: string,
-  symbol: string,
-  decimal: string,
-  standard: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(canister._arr));
-  const canister_string = Principal.fromUint8Array(thisArray).toText();
-  return { canister_string, fee, symbol, decimal, standard };
-}
-
-// format data from ns
-function format_data(_date_int: string) {
-  const formatted_data = formatTime(BigInt(_date_int));
-  return formatted_data;
-}
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-
-const SaleOpened = (
+export const SaleOpened = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -248,5 +223,3 @@ const SaleOpened = (
   }
   return transactionObj;
 };
-
-export default SaleOpened;

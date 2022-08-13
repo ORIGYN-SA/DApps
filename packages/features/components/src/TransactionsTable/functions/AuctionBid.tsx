@@ -1,34 +1,6 @@
-import { Principal } from '@dfinity/principal';
-import { getAccountId, Transactions } from '@dapp/utils';
+import { getAccountId, Transactions, removeDuplicates, TypeAccount, TypeTokenSpec  } from '@dapp/utils';
 
-// Create obj account
-function TypeAccount(
-  acc_principal: { _arr },
-  acc_id: string,
-  acc_extensible: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(acc_principal._arr));
-  const acc_principal_string = Principal.fromUint8Array(thisArray).toText();
-  return { acc_principal_string, acc_id, acc_extensible };
-}
-// Create obj Token
-function TypeTokenSpec(
-  canister: { _arr: [] },
-  fee: string,
-  symbol: string,
-  decimal: string,
-  standard: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(canister._arr));
-  const canister_string = Principal.fromUint8Array(thisArray).toText();
-  return { canister_string, fee, symbol, decimal, standard };
-}
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-
-const AuctionBid = (
+export const AuctionBid = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -100,4 +72,3 @@ const AuctionBid = (
   );
 };
 
-export default AuctionBid;

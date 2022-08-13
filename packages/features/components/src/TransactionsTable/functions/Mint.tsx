@@ -1,31 +1,6 @@
-import { Principal } from '@dfinity/principal';
-import { getAccountId, Transactions, Sale } from '@dapp/utils';
+import { getAccountId, Transactions, Sale, formatPrincipal, TypeTokenSpec, removeDuplicates } from '@dapp/utils';
 
-// Create obj Token
-function TypeTokenSpec(
-  canister: { _arr: [] },
-  fee: string,
-  symbol: string,
-  decimal: string,
-  standard: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(canister._arr));
-  const canister_string = Principal.fromUint8Array(thisArray).toText();
-  return { canister_string, fee, symbol, decimal, standard };
-}
-// format a principal and return a string
-function formatPrincipal(_Uint8Array: { principal: { _arr: [] } }) {
-  const thisArray = Uint8Array.from(Object.values(_Uint8Array.principal._arr));
-  const acc_principal_string = Principal.fromUint8Array(thisArray).toText();
-  return acc_principal_string;
-}
-
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-
-const Mint = (
+export const Mint = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -101,5 +76,3 @@ const Mint = (
     transactionObj
   );
 };
-
-export default Mint;

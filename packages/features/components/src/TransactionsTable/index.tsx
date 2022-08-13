@@ -18,14 +18,14 @@ import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined
 import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
 import { CircularProgress } from '@mui/material';
-import Mint from './functions/Mint';
-import AuctionBid from './functions/AuctionBid';
-import SaleEnded from './functions/SaleEnded';
-import SaleOpened from './functions/SaleOpened';
-import OwnerTransfer from './functions/OwnerTransfer';
-import EscrowDeposit from './functions/EscrowDeposit';
-import EscrowWithdraw from './functions/EscrowWithdraw';
-import SaleWithdraw from './functions/SaleWithdraw';
+import { Mint } from './functions/Mint';
+import { AuctionBid } from './functions/AuctionBid';
+import { SaleEnded } from './functions/SaleEnded';
+import { SaleOpened } from './functions/SaleOpened';
+import { OwnerTransfer } from './functions/OwnerTransfer';
+import { EscrowDeposit } from './functions/EscrowDeposit';
+import { EscrowWithdraw } from './functions/EscrowWithdraw';
+import { SaleWithdraw } from './functions/SaleWithdraw';
 // Preloader
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';

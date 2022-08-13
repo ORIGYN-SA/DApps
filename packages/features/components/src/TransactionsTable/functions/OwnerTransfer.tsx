@@ -1,23 +1,6 @@
-import { Principal } from '@dfinity/principal';
-import { getAccountId, Transactions } from '@dapp/utils';
+import { getAccountId, Transactions, TypeAccount, removeDuplicates } from '@dapp/utils';
 
-// Create obj account
-function TypeAccount(
-  acc_principal: { _arr },
-  acc_id: string,
-  acc_extensible: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(acc_principal._arr));
-  const acc_principal_string = Principal.fromUint8Array(thisArray).toText();
-  return { acc_principal_string, acc_id, acc_extensible };
-}
-
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-
-const OwnerTransfer = (
+export const OwnerTransfer = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -79,5 +62,3 @@ const OwnerTransfer = (
     transactionObj
   );
 };
-
-export default OwnerTransfer;
