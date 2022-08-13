@@ -275,7 +275,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                   label="Token"
                 >
                   {Object.keys(tokens).map((t, index) => (
-                    <MenuItem key={`${tokens}+${index}`} value={t}>
+                    <MenuItem key={`${t}+${index}`} value={t}>
                       <TokenIcon symbol={tokens[t].icon} />
                       {tokens[t].symbol}
                     </MenuItem>
