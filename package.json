@@ -8,6 +8,7 @@
     "start:ledger": "lerna exec --scope @dapp/app-ledger -- npm run start",
     "start:library": "lerna exec --scope @dapp/app-library -- npm run start",
     "start:nft-data": "lerna exec --scope @dapp/app-nft-data -- npm run start",
+    "start:luxury": "lerna exec --scope @dapp/app-luxury -- npm run start",
     "build:all": "npm run build:wallet && npm run build:marketplace && npm run build:ledger && npm run build:library && npm run build:nft-data",
     "build:wallet": "lerna exec --scope @dapp/app-wallet -- npm run build",
     "build:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run build",
