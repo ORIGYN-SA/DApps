@@ -3,10 +3,10 @@ import { getDiffInDays, timeConverter, formatTime } from '../dateTime';
 describe('Utils > Date Time', () => {
   it('timeConverter converts correct date from Nat', () => {
     const INPUT_TEST_DATE = 1660210980000000000n;
-    const RESULT = '11/Aug/2022 11:43';
+    const RESULT = /11\/Aug\/2022 [0-9]{2}:43/g;
 
     const readableDate = timeConverter(INPUT_TEST_DATE);
-    expect(readableDate).toBe(RESULT);
+    expect(RESULT.test(readableDate));
   });
 
   it('getDiffInDays returns correct', () => {
@@ -20,9 +20,9 @@ describe('Utils > Date Time', () => {
 
   it('formatTime formats time correctly', () => {
     const INPUT_TEST_DATE = 1660210980000000000n;
-    const RESULT = '11/08/2022 11:43am';
+    const RESULT = /11\/08\/2022 [0-9]{2}:43(am|pm)/g;
 
     const formattedTime = formatTime(INPUT_TEST_DATE);
-    expect(formattedTime).toBe(RESULT);
+    expect(RESULT.test(formattedTime));
   });
 });
