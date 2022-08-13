@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, Grid, Divider } from '@mui/material';
-import lodash from 'lodash';
+import pick from 'lodash/pick';
 const FormTab = ({ metadata }: any) => {
   console.log(metadata);
 
@@ -14,14 +14,14 @@ const FormTab = ({ metadata }: any) => {
   const [library, setLibrary] = useState([]);
   useEffect(() => {
     if (Object.entries(metadata).length) {
-      setOwner(lodash.pick(metadata, ['owner']).owner);
-      setHiddenAsset(lodash.pick(metadata, ['hidden_asset']).hidden_asset);
-      setPreviewAsset(lodash.pick(metadata, ['preview_asset']).preview_asset);
-      setPrimaryAsset(lodash.pick(metadata, ['primary_asset']).primary_asset);
-      setExperienceAsset(lodash.pick(metadata, ['experience_asset']).experience_asset);
-      setId(lodash.pick(metadata, ['id']).id);
-      setApps(lodash.pick(metadata, ['__apps']).__apps);
-      setLibrary(lodash.pick(metadata, ['library']).library);
+      setOwner(pick(metadata, ['owner']).owner);
+      setHiddenAsset(pick(metadata, ['hidden_asset']).hidden_asset);
+      setPreviewAsset(pick(metadata, ['preview_asset']).preview_asset);
+      setPrimaryAsset(pick(metadata, ['primary_asset']).primary_asset);
+      setExperienceAsset(pick(metadata, ['experience_asset']).experience_asset);
+      setId(pick(metadata, ['id']).id);
+      setApps(pick(metadata, ['__apps']).__apps);
+      setLibrary(pick(metadata, ['library']).library);
     }
   }, [metadata]);
 

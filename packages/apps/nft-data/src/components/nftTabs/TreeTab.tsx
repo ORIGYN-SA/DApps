@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Box, FormControlLabel, Switch } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
-import lodash from 'lodash';
+import pick from 'lodash/pick';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useState } from 'react';
@@ -80,7 +80,7 @@ function Tree({ metadata }: any) {
 
   const parseData = (data) => {
     let arr: RenderTree[] = [];
-    let obj = lodash.pick(data, [
+    let obj = pick(data, [
       'owner',
       'hidden_asset',
       'preview_asset',

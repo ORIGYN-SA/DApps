@@ -64,11 +64,10 @@ const SymbolWithIcon = ({ symbol }: any) =>
   );
 
 const Marketplace = () => {
-  const { canisterId, actor } =
-    useContext(AuthContext);
+  const { canisterId, actor } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState<any>();
   const [filteredNFTs, setFilteredNFTs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  //const [isLoading, setIsLoading] = useState(true);
   const [display, setDisplay] = useState(3);
   const [open, setOpen] = useState(false);
   const [openPrice, setOpenPrice] = useState(false);
@@ -76,22 +75,10 @@ const Marketplace = () => {
   const [minPrice, setMinPrice] = useState<any>(0);
   const [maxPrice, setMaxPrice] = useState<any>(0);
 
-  // const { enqueueSnackbar } = useSnackbar();
-
-  // const pushNotification = (message, variant) => {
-  //   enqueueSnackbar(message, {
-  //     variant,
-  //     anchorOrigin: {
-  //       vertical: 'top',
-  //       horizontal: 'right',
-  //     },
-  //   });
-  // };
-
   const fetchData = () => {
     console.log(actor);
     if (actor) {
-      setIsLoading(isLoading);
+      //setIsLoading(true);
       actor?.collection_nft_origyn([]).then((response) => {
         console.log(response);
 
@@ -99,12 +86,12 @@ const Marketplace = () => {
           response?.ok?.token_ids[0]?.map((nft) => actor?.nft_origyn(nft).then((r) => r.ok)),
         )
           .then((data: any) => {
-            setIsLoading(false);
+            //setIsLoading(false);
             console.log(data);
             setNFTData(data);
           })
           .catch((err) => {
-            setIsLoading(false);
+            //setIsLoading(false);
             console.log(err);
           });
       });
