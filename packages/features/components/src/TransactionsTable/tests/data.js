@@ -168,7 +168,5 @@ module.exports = {
         "timestamp": "1660343723076170818",
         "index": "0"
     }
-  }
-
-  
+  } 
 };
