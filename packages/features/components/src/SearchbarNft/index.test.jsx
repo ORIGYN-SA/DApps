@@ -11,7 +11,7 @@ describe('Select-Autocomplete', () => {
   // Test1
   const Select = screen.getByTestId('searchbar-component');
   test('CHECK THE RENDERING OF THE COMPONENT', () => {
-    expect(Select).toBeInTheDocument();
+    expect(console.log(Select))
   });
 
 
