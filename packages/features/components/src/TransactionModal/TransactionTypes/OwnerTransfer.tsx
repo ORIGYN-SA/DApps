@@ -4,12 +4,9 @@ import Grid from '@mui/material/Grid';
 
 const OwnerTransfer = (props : any) => {
   const singleT_type = props.data.type_txn;
-  const account_from = props.data.from;
-  const account_to = props.data.to;
+  const from_principal = props.data.from.acc_principal_string;
+  const to_principal = props.data.to.acc_principal_string;
 
-  const from_principal = account_from.acc_principal_string;
-  const to_principal = account_to.acc_principal_string;
-  
   return (
     <Box>
       <Box
