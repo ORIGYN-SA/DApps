@@ -14,10 +14,10 @@ const AuctionBid = (props : any) => {
   const bid_token = props.data.token;
   // token specs
   const canister = bid_token.canister_string;
-  const {fee} = bid_token;
+  const fee = bid_token.fee;
   const sym = bid_token.symbol;
   const decimals = bid_token.decimal;
-  const {standard} = bid_token;
+  const standard = bid_token.standard;
   const bid_saleId = props.data.sale_id;
 
   return (
@@ -31,7 +31,7 @@ const AuctionBid = (props : any) => {
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Transaction type:
         </Typography>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom data-testid='typeTrans'>
           {singleT_type}
         </Typography>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -120,5 +120,4 @@ const AuctionBid = (props : any) => {
     </Box>
   );
 };
-
-export default AuctionBid;
+export default AuctionBid

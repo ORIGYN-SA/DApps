@@ -27,6 +27,7 @@ export const AuctionBid = (
   let tokenProps: string;
   for (tokenProps in bid_token) {
     var _canister = bid_token[tokenProps].canister;
+    console.log(_canister);
     var _fee = bid_token[tokenProps].fee;
     var _symbol = bid_token[tokenProps].symbol;
     var _decimals = bid_token[tokenProps].decimals;

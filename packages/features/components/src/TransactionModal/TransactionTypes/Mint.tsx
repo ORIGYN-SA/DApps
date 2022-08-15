@@ -55,7 +55,7 @@ const Mint = (props : any) => {
     );
   } else {
     const canister = token_mint.canister_string;
-    const {fee} = token_mint;
+    const fee = token_mint.fee;
     const sym = token_mint.symbol;
     const decimals = token_mint.decimal;
     const {standard} = token_mint;
