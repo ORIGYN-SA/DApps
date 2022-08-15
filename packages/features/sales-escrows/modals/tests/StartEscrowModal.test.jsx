@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor, screen, act } from '../../../../../testUtils';
+import { render } from '@testUtils';
 import '@testing-library/jest-dom';
 import { StartEscrowModal } from '../StartEscrowModal';
 import testData from './data';

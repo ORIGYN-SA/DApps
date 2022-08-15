@@ -11,14 +11,15 @@ const iconStyle = {
 };
 export const TokenIcon = ({ symbol }: any) => {
   if (
-    typeof symbol === 'string'
-    && (symbol.indexOf('https://') !== -1 || symbol.indexOf('data:image') !== -1)
-  ) return <img style={iconStyle} src={symbol} />;
+    typeof symbol === 'string' &&
+    (symbol.indexOf('https://') !== -1 || symbol.indexOf('data:image') !== -1)
+  )
+    return <img style={iconStyle} src={symbol} />;
 
   if (typeof symbol === 'string') symbol = symbol.toUpperCase();
   const Component = {
-    OGY: <OGYIcon style={iconStyle} />,
-    ICP: <ICPIcon style={iconStyle} />,
+    OGY: <OGYIcon style={iconStyle} data-testid="ogy-icon" />,
+    ICP: <ICPIcon style={iconStyle} data-testid="icp-icon" />,
   };
   if (Component?.hasOwnProperty(symbol)) return Component[symbol];
 
@@ -29,6 +30,7 @@ export const TokenIcon = ({ symbol }: any) => {
         height: '20px',
         fill: 'gray',
       }}
+      data-testid="question-icon"
     />
   );
 };

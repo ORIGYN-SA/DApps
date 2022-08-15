@@ -12,17 +12,18 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
-            "describe": true,
-            "expect": true,
-            "it": true,
-            "jsx": true
+            
         },
         "ecmaVersion": "latest",
         "sourceType": "module",
         "project": "./tsconfig.json"
     },
     "globals": {
-        "JSX": true
+        "JSX": true,
+        "describe": true,
+        "expect": true,
+        "it": true,
+        "jsx": true
     },
     "plugins": [
         "prettier",

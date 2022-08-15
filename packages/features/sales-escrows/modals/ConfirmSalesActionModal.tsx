@@ -11,12 +11,14 @@ import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useSnackbar } from 'notistack';
 
-const Transition = React.forwardRef((
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: React.Ref<unknown>,
-) => <Slide direction="up" ref={ref} {...props} />);
+const Transition = React.forwardRef(
+  (
+    props: TransitionProps & {
+      children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>,
+  ) => <Slide direction="up" ref={ref} {...props} />,
+);
 
 Transition.displayName = 'Transition';
 
@@ -29,27 +31,23 @@ export const ConfirmSalesActionModal = ({
 }: any) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar() || {};
   console.log(escrow, action);
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
       if (isLoading) return;
       setIsLoading(true);
-      const tokenId = currentToken?.Class?.find(({ name }) => name === 'id')
-        .value.Text;
+      const tokenId = currentToken?.Class?.find(({ name }) => name === 'id').value.Text;
       if (action === 'endSale') {
         const endSaleResponse = await actor.end_sale_nft_origyn(tokenId);
         if (endSaleResponse.ok) {
-          enqueueSnackbar(
-            `You have successfully ended the sale for ${tokenId}.`,
-            {
-              variant: 'success',
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
+          enqueueSnackbar(`You have successfully ended the sale for ${tokenId}.`, {
+            variant: 'success',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
             },
-          );
+          });
           setIsLoading(false);
           return handleClose(true);
         }
@@ -62,7 +60,8 @@ export const ConfirmSalesActionModal = ({
         });
         setIsLoading(false);
         return handleClose(false);
-      } if (action === 'withdraw') {
+      }
+      if (action === 'withdraw') {
         if (!escrow) {
           return handleClose(false);
         }
@@ -94,7 +93,8 @@ export const ConfirmSalesActionModal = ({
         });
         setIsLoading(false);
         return handleClose(false);
-      } if (action === 'reject') {
+      }
+      if (action === 'reject') {
         if (!escrow) {
           return handleClose(false);
         }
@@ -142,8 +142,8 @@ export const ConfirmSalesActionModal = ({
           {action === 'endSale'
             ? 'Confirm End Sale?'
             : action === 'withdraw'
-              ? 'Confirm Escrow Withdraw'
-              : 'Confirm Escrow Rejection'}
+            ? 'Confirm Escrow Withdraw'
+            : 'Confirm Escrow Rejection'}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
@@ -152,10 +152,7 @@ export const ConfirmSalesActionModal = ({
                 <>
                   Are you sure you want to end the sale for token{' '}
                   <strong>
-                    {
-                      currentToken?.Class?.find(({ name }) => name === 'id')
-                        .value.Text
-                    }
+                    {currentToken?.Class?.find(({ name }) => name === 'id').value.Text}
                   </strong>
                   ?
                 </>
