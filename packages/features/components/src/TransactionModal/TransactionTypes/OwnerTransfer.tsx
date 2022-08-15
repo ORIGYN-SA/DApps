@@ -7,8 +7,9 @@ const OwnerTransfer = (props : any) => {
   const account_from = props.data.from;
   const account_to = props.data.to;
 
-  const from_principal = account_from.principal;
-  const to_principal = account_to.principal;
+  const from_principal = account_from.acc_principal_string;
+  const to_principal = account_to.acc_principal_string;
+  
   return (
     <Box>
       <Box
