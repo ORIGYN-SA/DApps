@@ -1,16 +1,16 @@
 import React from 'react';
-import HeaderPart from '../components/Header';
+import LibraryImage from '../components/LibraryImage';
 import { render, screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-describe('HeaderPart', () => {
-  it('should return HeaderPart rendered', () => {
-    render(<HeaderPart />);
+describe('LibraryImage', () => {
+  it('should return LibraryImage rendered', () => {
+    render(<LibraryImage />);
     expect(screen.getByText('Library')).toBeInTheDocument();
     cleanup();
   });
   it('should match snapshot', () => {
-    const { asFragment } = render(<HeaderPart />);
+    const { asFragment } = render(<LibraryImage />);
     expect(asFragment()).toMatchSnapshot();
     afterEach(cleanup);
   });
