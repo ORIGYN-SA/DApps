@@ -44,7 +44,6 @@ export const AuctionBid = (
     _decimals,
     token_standard,
   );
-
   const bid_sale_id = obj_transaction[_props].sale_id;
 
   // Down here the accounts and the principals of the transaction.

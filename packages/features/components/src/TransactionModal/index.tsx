@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import Mint from './TransactionTypes/Mint';
 import SaleOpened from './TransactionTypes/SaleOpened';
 import SaleEnded from './TransactionTypes/SaleEnded';
-import AuctionBid from './TransactionTypes/AuctionBid';
+import {AuctionBid} from './TransactionTypes/AuctionBid';
 import OwnerTransfer from './TransactionTypes/OwnerTransfer';
 import EscrowDeposit from './TransactionTypes/EscrowDeposit';
 import EscrowWithdraw from './TransactionTypes/EscrowWithdraw';

@@ -19,7 +19,7 @@ import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
 import { CircularProgress } from '@mui/material';
 import { Mint } from './functions/Mint';
-import { AuctionBid } from './functions/AuctionBid';
+import {AuctionBid}  from './functions/AuctionBid';
 import { SaleEnded } from './functions/SaleEnded';
 import { SaleOpened } from './functions/SaleOpened';
 import { OwnerTransfer } from './functions/OwnerTransfer';
@@ -157,7 +157,7 @@ export const TransactionsTable = (props: any) => {
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
     const response = await actor?.history_nft_origyn(props.searchBarTokenId.toString(), [], []);
-
+console.log('R',response);
     // response 2 string
     const string_history = JSON.stringify(
       response,

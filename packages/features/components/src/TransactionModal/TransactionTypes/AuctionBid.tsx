@@ -2,9 +2,10 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
-import { ICPIcon, OGYIcon } from '@dapp/common-assets';
+import {ICPIcon} from '@dapp/common-assets';
+import {OGYIcon} from '@dapp/common-assets';
 
-const AuctionBid = (props : any) => {
+export const AuctionBid = (props : any) => {
   const singleT_type = props.data.type_txn;
   const bid_buyer = props.data.buyer;
   // buyer accoount
@@ -120,4 +121,3 @@ const AuctionBid = (props : any) => {
     </Box>
   );
 };
-export default AuctionBid

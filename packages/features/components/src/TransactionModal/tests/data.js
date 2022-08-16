@@ -1,11 +1,27 @@
 module.exports = { 
-    obj_token :  {
-        canister_string : '#canisterString',
-        fee : '#fee',
-        symbol : 'ICP',
-        decimal : '#decimal',
-        standard : '#standard'
+ ic :  {
+    "fee": "10000",
+    "decimals": "8",
+    "canister": {
+        "_arr": {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0,
+            "7": 2,
+            "8": 1,
+            "9": 1
+        },
+        "_isPrincipal": true
     },
+    "standard": {
+        "Ledger": null
+    },
+    "symbol": "ICP"
+},
     trans_to_account : {
       acc_principal_string : 'principalTo',
       acc_id : 'idTo',
