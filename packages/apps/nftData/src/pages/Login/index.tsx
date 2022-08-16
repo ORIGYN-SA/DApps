@@ -34,6 +34,7 @@ const Login = () => {
         if (tokenId) {
             try{
               const result = await axios.get(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
+              https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bm-1/info
               /* console.group(result.data);
               console.log(JSON.stringify(result.data)); */
              // console.log(isJson(JSON.stringify(result.data)));

@@ -5,6 +5,7 @@ import {pick} from 'lodash';
 /* import useSite from '../../hooks/useSite'; */                
 const FormTab = ({metadata}) => {
 console.log(metadata);
+localStorage.setItem('metadata',JSON.stringify(metadata));
 /* const {getMetadata, metadata} = useSite(); */                                                            
 
 const [owner, setOwner] = useState('');               
@@ -179,7 +180,7 @@ useEffect(() => {
       {library?.map((lib, i) => { let length = Object.keys(lib).length;
         return (<Grid sx={{marginTop: '20px'}} container spacing={2}>
                 <Grid item xs={2}></Grid>
-                <Grid item xs={2} sx={{ }}>{`ibrary ${i+1}` }</Grid>
+                <Grid item xs={2} sx={{ }}>{`library ${i+1}` }</Grid>
                 <Grid item xs={8}>
                     <List>
                       {Object.keys(lib).map((item, j)=>(<>
