@@ -25,7 +25,7 @@ import { ThemeLogo } from '../Logo';
 import { WalletTokens } from '../WalletTokens';
 import { TokenIcon } from '../TokenIcon';
 
-const Items = [
+const initialMenuItems: MenuItem[] = [
   {
     page: 'ledger',
     title: 'Ledger',
@@ -43,8 +43,8 @@ const Items = [
   },
 ];
 
-export const Layout = ({ children }: any) => {
-  const { onChangeMode, themeMode } :any = useContext(SiteContext);
+export const Layout = ({ menuItems, children }: LayoutProps) => {
+  const { onChangeMode, themeMode }: any = useContext(SiteContext);
 
   const { logIn, loggedIn, principal, logOut } = useAuthContext();
   const { tokens, refreshAllBalances } = useTokensContext();
@@ -114,7 +114,7 @@ export const Layout = ({ children }: any) => {
                             secondary={`${principal?.toText().substring(0, 25)}...`}
                           />
                           {['OGY', 'ICP'].map((token, index) => (
-                            <div key={`${token}+${index}`} >
+                            <div key={`${token}+${index}`}>
                               <TokenIcon symbol={token} />{' '}
                               <span
                                 style={{
@@ -131,16 +131,13 @@ export const Layout = ({ children }: any) => {
                       </ListItem>
                     )}
                     <Divider />
-                    {/* <ListItem
-                        button
-                        style={{ color: "#00b400" }}
-                        onClick={sendXTC}
-                      >
-                        <WalletTokens>
-                          <ListItemText primary={"Test send function"} />
-                        </WalletTokens>
-                      </ListItem> */}
-                    {Items.map((i) => (
+                    {initialMenuItems.map((i) => (
+                      <ListItem key={i.page} onClick={() => handleNavigation(i)} button>
+                        <ListItemIcon sx={{ pading: '8px' }}>{i.icon}</ListItemIcon>
+                        <ListItemText primary={i.title} />
+                      </ListItem>
+                    ))}
+                    {menuItems?.map((i) => (
                       <ListItem key={i.page} onClick={() => handleNavigation(i)} button>
                         <ListItemIcon sx={{ pading: '8px' }}>{i.icon}</ListItemIcon>
                         <ListItemText primary={i.title} />
@@ -189,4 +186,15 @@ export const Layout = ({ children }: any) => {
       </Box>
     </ThemeConfig>
   );
+};
+
+export type MenuItem = {
+  page: string;
+  title: string;
+  icon: JSX.Element;
+};
+
+export type LayoutProps = {
+  children: JSX.Element;
+  menuItems?: MenuItem[];
 };

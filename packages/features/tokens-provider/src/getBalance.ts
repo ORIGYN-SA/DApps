@@ -1,4 +1,4 @@
-import { Actor, ActorSubclass, HttpAgent } from '@dfinity/agent';
+import { Actor, HttpAgent } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
 import { IdlStandard, getIdl, getAccountId } from '@dapp/utils';
 import { Token } from './TokensContextProvider';
@@ -42,10 +42,7 @@ const icpMethod = async (principal: Principal): Promise<BalanceResponse> => {
   return { value, decimals: currency.decimals };
 };
 
-const dip20Method = async (
-  principal: Principal,
-  token: Token,
-): Promise<BalanceResponse> => {
+const dip20Method = async (principal: Principal, token: Token): Promise<BalanceResponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.DIP20), {
     canisterId: token.canisterId,
     agent,
@@ -54,10 +51,7 @@ const dip20Method = async (
   return { value, decimals: 8 };
 };
 
-const extMethod = async (
-  principal: Principal,
-  token: Token,
-): Promise<BalanceResponse> => {
+const extMethod = async (principal: Principal, token: Token): Promise<BalanceResponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.EXT), {
     canisterId: token.canisterId,
     agent,
@@ -66,16 +60,12 @@ const extMethod = async (
     token: token.canisterId,
     user: { principal: principal },
   });
-  if ('ok' in balanceResult)
-    return { value: balanceResult.ok.toString(), decimals: 8 };
+  if ('ok' in balanceResult) return { value: balanceResult.ok.toString(), decimals: 8 };
 
   throw new Error(Object.keys(balanceResult.err)[0]);
 };
 
-const xtcMethod = async (
-  principal: Principal,
-  token: Token,
-): Promise<BalanceResponse> => {
+const xtcMethod = async (principal: Principal, token: Token): Promise<BalanceResponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.XTC), {
     canisterId: token.canisterId,
     agent,
@@ -84,10 +74,7 @@ const xtcMethod = async (
   return { value: parseFloat(value.toString()), decimals: 8 };
 };
 
-const wicpMethod = async (
-  principal: Principal,
-  token: Token,
-): Promise<BalanceResponse> => {
+const wicpMethod = async (principal: Principal, token: Token): Promise<BalanceResponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.WICP), {
     canisterId: token.canisterId,
     agent,
@@ -96,10 +83,7 @@ const wicpMethod = async (
   return { value: parseFloat(value.toString()), decimals: 8 };
 };
 
-const ogyMethod = async (
-  principal: Principal,
-  token: Token,
-): Promise<BalanceResponse> => {
+const ogyMethod = async (principal: Principal, token: Token): Promise<BalanceResponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.ICP), {
     canisterId: token.canisterId,
     agent,

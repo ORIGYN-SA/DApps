@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import NFTInfo from '../NFTInfo';
 
-
-const Login = () => {
+const Home = () => {
   const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState();
 
@@ -13,11 +12,11 @@ const Login = () => {
         if (tokenId) {
           try {
             const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
-            const result = await response.json();
-            if (result.data.search('"is_soulbound":,')) {
-              setNFTData(JSON.parse(result.data.replace('"is_soulbound":,', '')));
+            const result = await response.text();
+            if (result.search('"is_soulbound":,')) {
+              setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
             } else {
-              setNFTData(JSON.parse(result.data));
+              setNFTData(JSON.parse(result));
             }
           } catch (err) {
             console.log(err);
@@ -25,11 +24,11 @@ const Login = () => {
         } else {
           try {
             const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
-            const result = await response.json();
-            if (result.data.search('"is_soulbound":,')) {
-              setNFTData(JSON.parse(result.data.replace('"is_soulbound":,', '')));
+            const result = await response.text();
+            if (result.search('"is_soulbound":,')) {
+              setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
             } else {
-              setNFTData(JSON.parse(result.data));
+              setNFTData(JSON.parse(result));
             }
           } catch (err) {
             console.log(err);
@@ -57,10 +56,9 @@ const Login = () => {
             <b>NFT Data:</b>
           </p>
           {NFTData ? <NFTInfo metadata={NFTData} /> : null}
-
         </div>
       </div>
     </div>
   );
 };
-export default Login;
+export default Home;
