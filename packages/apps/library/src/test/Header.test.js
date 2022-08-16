@@ -1,8 +1,6 @@
 import HeaderPart from "../components/Header";
-
-// import { render, screen, cleanup } from "@testing-library/react";
-// // Importing the jest testing library
-// import '@testing-library/jest-dom'
+import { render, screen, cleanup } from "@testing-library/react";
+import '@testing-library/jest-dom'
 // import Button from "./Button";
   
 // // afterEach function runs after each test suite is executed
