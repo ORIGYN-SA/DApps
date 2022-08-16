@@ -30,17 +30,12 @@ export const SearchbarNft = (props : any) => {
   };
 
   const getNFTCollection = async () => {
-    // console.log("PROVA COLL", tokenId);
     setSelectTokenIds(['Loading...']);
-
     const response = await actor?.collection_nft_origyn([]);
-
     const collectionNFT = response.ok;
-
     const obj_token_ids = collectionNFT.token_ids;
     const number_ids = collectionNFT.token_ids_count[0].toString();
     setIdsNumber(number_ids);
-
     let x: string;
     const arrayTokenIds = [];
     for (x in obj_token_ids) {
@@ -86,7 +81,6 @@ export const SearchbarNft = (props : any) => {
       component={Paper}
       elevation={2}
       sx={{ margin: 2, width: '100%', padding: 2 }}
-      data-testid="searchbar-component"
     >
       {props.isLoading ? (
         <Box sx={{ textAlign: 'center' }}>

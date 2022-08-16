@@ -11,18 +11,8 @@ import Switch from '@mui/material/Switch';
 import Collapse from '@mui/material/Collapse';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Autocomplete from '@mui/material/Autocomplete';
+import { removeDuplicates, Filter } from '@dapp/utils'
 
-// Interface for filter
-interface Filter {
-  searchInputValue: string;
-  categoryToFilter: string;
-  transactionType: string;
-  update: number;
-}
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
 // Select menu styling
 const ITEM_HEIGHT: number = 48;
 const ITEM_PADDING_TOP: number = 8;

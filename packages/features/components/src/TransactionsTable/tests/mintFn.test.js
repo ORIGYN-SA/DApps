@@ -31,4 +31,3 @@ it('MINT FUNCTION - Returns Mint transaction correctly', () => {
   );
   expect(mintFunction).toStrictEqual(mintResult);
 });
-

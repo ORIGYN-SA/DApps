@@ -157,7 +157,6 @@ export const TransactionsTable = (props: any) => {
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
     const response = await actor?.history_nft_origyn(props.searchBarTokenId.toString(), [], []);
-console.log('R',response);
     // response 2 string
     const string_history = JSON.stringify(
       response,
@@ -615,8 +614,7 @@ console.log('R',response);
           sx={{ margin: 2, width: '100%', padding: 2 }}
         >
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="ogy_data_table">
-            {props.searchBarTokenId == 'Not selected' ||
-            props.searchBarTokenId == 'Not selected' ? (
+            {props.searchBarTokenId == 'Not selected'? (
               <TableHead>
                 <TableRow>
                   <TableCell sx={cell_style}>Select a Token ID</TableCell>
