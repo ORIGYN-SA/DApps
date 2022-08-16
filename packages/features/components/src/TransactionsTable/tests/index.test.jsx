@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { render, fireEvent, waitFor, screen, cleanup } from '../../../../../../testUtils';
 import '@testing-library/jest-dom';
+import testData from './data';
 
 import { TransactionsTable } from '..';
 
@@ -50,12 +51,8 @@ describe('Components>TransactionsTable', () => {
   test('Snapshot', () => {
     const { asFragment } = render(<TransactionsTable isLoading={false} />);
     expect(asFragment()).toMatchSnapshot();
-  } );  
-  // Test7
-  // test the rendering of the component that it matches the snapshot
-  test('Snapshot', () => {
-    const { asFragment } = render(<TransactionsTable isLoading={false} />);
-    expect(asFragment()).toMatchSnapshot();
-  }
+    cleanup();
+  } 
   );
+
 });

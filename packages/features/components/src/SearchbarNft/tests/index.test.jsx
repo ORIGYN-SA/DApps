@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { render, fireEvent, waitFor, screen } from '../../../../../../testUtils';
+import { render, fireEvent, waitFor, screen,cleanup } from '../../../../../../testUtils';
 import '@testing-library/jest-dom';
 import { AuthContext } from '@dapp/features-authentication';
 import { SearchbarNft } from '../index';
@@ -25,13 +25,15 @@ describe('Select-Autocomplete', () => {
   test('Searchbar is rendered and match snapshot', () => {
     const { asFragment } = render(<SearchbarNft isLoading={false}/>);
     expect(asFragment()).toMatchSnapshot();
+    cleanup()
   }
   );
   // Test4
-  //pass all the properties to the component
-  test('Searchbar is rendered with all the properties', () => {
+  //pass properties to the component
+  test('Searchbar is rendered with the token ID', () => {
     const { asFragment } = render(<SearchbarNft isLoading={false} searchBarTokenId={'#myId'} />);
     expect(asFragment()).toMatchSnapshot();
+    cleanup();
   }
   );
   
