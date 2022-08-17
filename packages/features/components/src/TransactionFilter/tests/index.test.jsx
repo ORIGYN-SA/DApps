@@ -42,4 +42,5 @@ describe('Features > Component > TransactionFilter', () => {
         cleanup();
         }
     );
+
 });
