@@ -1,4 +1,4 @@
-import { getAccountId, Transactions, Sale, formatPrincipal, TypeTokenSpec, removeDuplicates } from '@dapp/utils';
+import { getAccountId, Transactions, Sale, formatPrincipal, TypeTokenSpec, removeDuplicates, objPrincipal } from '@dapp/utils';
 
 export const Mint = (
   obj_transaction,
@@ -8,11 +8,10 @@ export const Mint = (
   _transaction_type_formatted:string,
 ) => {
   const mint: string = 'Mint';
-  const array8uint_from = obj_transaction[_props].from;
-  const mint_from = formatPrincipal(array8uint_from);
-
-  const array8uint_to = obj_transaction[_props].to;
-  const mint_to = formatPrincipal(array8uint_to);
+  const from = obj_transaction[_props].from;
+  const mint_from  = formatPrincipal(from);
+  const to = obj_transaction[_props].to;
+  const mint_to = formatPrincipal(to);
 
   const mint_sale = obj_transaction[_props].sale;
 
@@ -54,8 +53,8 @@ export const Mint = (
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
   array_accounts.push(
-    getAccountId(array8uint_from.principal._arr),
-    getAccountId(array8uint_to.principal._arr),
+    getAccountId(objPrincipal(from)),
+    getAccountId(objPrincipal(to))
   );
   const array_principals: string[] = [];
   array_principals.push();

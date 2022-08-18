@@ -5,7 +5,8 @@ import {
   getAccountId,
   TypeAccount,
   TypeTokenSpec,
-  removeDuplicates
+  removeDuplicates,
+  objPrincipal
 } from '@dapp/utils';
 
 export const SaleWithdraw = (
@@ -19,7 +20,6 @@ export const SaleWithdraw = (
   const sale_wit_buyer = obj_transaction[_props].buyer;
   const sale_wit_seller = obj_transaction[_props].seller;
   // enter in buyer
-  const buyer_principal = sale_wit_buyer.principal;
   let buyer_id = sale_wit_buyer.account_id;
   let buyer_ext = sale_wit_buyer.extensible;
   if (!buyer_id) {
@@ -30,13 +30,12 @@ export const SaleWithdraw = (
   }
   // account BUYER
   const buyer_account = TypeAccount(
-    buyer_principal,
+    sale_wit_buyer.principal,
     buyer_id,
     buyer_ext,
   );
 
   // enter in seller
-  const seller_principal = sale_wit_seller.principal;
   let seller_id = sale_wit_seller.account_id;
   let seller_ext = sale_wit_seller.extensible;
   if (!seller_id) {
@@ -47,7 +46,7 @@ export const SaleWithdraw = (
   }
   // account SELLER
   const seller_account = TypeAccount(
-    seller_principal,
+    sale_wit_seller.principal,
     seller_id,
     seller_ext,
   );
@@ -92,9 +91,10 @@ export const SaleWithdraw = (
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
   array_accounts.push(
-    getAccountId(buyer_principal._arr),
-    getAccountId(seller_principal._arr),
+    getAccountId(objPrincipal(sale_wit_buyer)),
+    getAccountId(objPrincipal(sale_wit_seller))
   );
+  console.log(array_accounts);
   const array_principals: string[] = [];
   array_principals.push(obj_token.canister_string);
   transactionObj = {

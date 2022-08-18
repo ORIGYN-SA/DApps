@@ -1,4 +1,4 @@
-import { getAccountId, Transactions, removeDuplicates, TypeAccount, TypeTokenSpec  } from '@dapp/utils';
+import { getAccountId, Transactions, removeDuplicates, TypeAccount, TypeTokenSpec, objPrincipal  } from '@dapp/utils';
 
 export const AuctionBid = (
   obj_transaction,
@@ -8,15 +8,12 @@ export const AuctionBid = (
   _transaction_type_formatted: string,
 ) => {
   const auction = 'Auction bid';
-
   const bid_buyer = obj_transaction[_props].buyer;
-  // account specs
-  const bid_principal = bid_buyer.principal;
   const bid_account_id = bid_buyer.account_id;
   const bid_extensible = bid_buyer.extensible;
   // create account
   const buyer = TypeAccount(
-    bid_principal,
+    bid_buyer.principal,
     bid_account_id,
     bid_extensible,
   );
@@ -50,7 +47,7 @@ export const AuctionBid = (
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
 
-  array_accounts.push(getAccountId(bid_principal._arr));
+  array_accounts.push(getAccountId(objPrincipal(bid_buyer)));
   const array_principals: string[] = [];
   array_principals.push(bid_obj_token.canister_string);
 

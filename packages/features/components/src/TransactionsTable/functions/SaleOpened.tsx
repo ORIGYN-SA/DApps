@@ -1,4 +1,4 @@
-import { Transactions, PricingConfiguration, WaitForQuiet, TypeTokenSpec,format_data, removeDuplicates } from '@dapp/utils';
+import { Transactions, PricingConfiguration, WaitForQuiet, TypeTokenSpec,format_data, removeDuplicates, objPrincipal } from '@dapp/utils';
 
 export const SaleOpened = (
   obj_transaction,

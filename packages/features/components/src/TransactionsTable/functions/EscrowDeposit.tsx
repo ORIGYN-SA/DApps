@@ -1,4 +1,4 @@
-import { getAccountId, Transactions, TypeTransactionId, TypeAccount, TypeTokenSpec, removeDuplicates } from '@dapp/utils';
+import { getAccountId, Transactions, TypeTransactionId, TypeAccount, TypeTokenSpec, removeDuplicates, objPrincipal } from '@dapp/utils';
 
 export const EscrowDeposit = (
   obj_transaction,
@@ -9,9 +9,10 @@ export const EscrowDeposit = (
 ) => {
   // get buyer and seller objs
   const dep_buyer = obj_transaction[_props].buyer;
+  const buyerPrincipal = objPrincipal(dep_buyer);
   const dep_seller = obj_transaction[_props].seller;
+  const sellerPrincipal = objPrincipal(dep_seller);
   // enter in buyer
-  const buyer_principal = dep_buyer.principal;
   let buyer_id = dep_buyer.account_id;
   let buyer_ext = dep_buyer.extensible;
   if (!buyer_id) {
@@ -22,13 +23,12 @@ export const EscrowDeposit = (
   }
   // account BUYER
   const buyer_account = TypeAccount(
-    buyer_principal,
+    dep_buyer.principal,
     buyer_id,
     buyer_ext,
   );
 
   // enter in seller
-  const seller_principal = dep_seller.principal;
   let seller_id = dep_seller.account_id;
   let seller_ext = dep_seller.extensible;
   if (!seller_id) {
@@ -39,7 +39,7 @@ export const EscrowDeposit = (
   }
   // account SELLER
   const seller_account = TypeAccount(
-    seller_principal,
+    dep_seller.principal,
     seller_id,
     seller_ext,
   );
@@ -80,12 +80,11 @@ export const EscrowDeposit = (
     _extensible: trans_ext,
   };
 
-  // Down here the accounts or principals of the transaction.
-  // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
+
   array_accounts.push(
-    getAccountId(seller_principal._arr),
-    getAccountId(buyer_principal._arr),
+    getAccountId(buyerPrincipal),
+    getAccountId(sellerPrincipal)
   );
   const array_principals: string[] = [];
   array_principals.push(obj_token.canister_string);

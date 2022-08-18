@@ -1,4 +1,4 @@
-import { getAccountId, Transactions, TypeAccount, TypeTokenSpec, removeDuplicates } from '@dapp/utils';
+import { getAccountId, Transactions, TypeAccount, TypeTokenSpec, removeDuplicates, objPrincipal } from '@dapp/utils';
 
 export const SaleEnded = (
   obj_transaction,
@@ -13,7 +13,6 @@ export const SaleEnded = (
   const end_buyer = obj_transaction[_props].buyer;
   const end_token = obj_transaction[_props].token;
   // specs seller
-  const seller_principal = end_seller.principal;
   let seller_id = end_seller.account_id;
   var seller_ext = end_seller.extensible;
   if (!seller_id) {
@@ -24,12 +23,11 @@ export const SaleEnded = (
     seller_ext = 'Extensible';
   }
   const seller_account = TypeAccount(
-    seller_principal,
+    end_seller.principal,
     seller_id,
     seller_ext,
   );
   // specs buyer
-  const buyer_principal = end_buyer.principal;
   let buyer_id = end_buyer.account_id;
   if (!buyer_id) {
     buyer_id = 'Id undefined';
@@ -39,7 +37,7 @@ export const SaleEnded = (
     buyer_ext = 'Extensible';
   }
   const buyer_account = TypeAccount(
-    buyer_principal,
+    end_buyer.principal,
     buyer_id,
     buyer_ext,
   );
@@ -77,8 +75,8 @@ export const SaleEnded = (
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
   array_accounts.push(
-    getAccountId(seller_principal._arr),
-    getAccountId(buyer_principal._arr),
+    getAccountId(objPrincipal(end_buyer)),
+    getAccountId(objPrincipal(end_seller))
   );
 
   const array_principals: string[] = [];
