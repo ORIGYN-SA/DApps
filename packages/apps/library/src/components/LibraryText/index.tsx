@@ -3,7 +3,6 @@ import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import LinkIcon from '@mui/icons-material/Link'
 import Tooltip from '@mui/material/Tooltip'
-import PropTypes from 'prop-types';
 
 const linkStyle = {
   width: 'auto',
@@ -14,9 +13,6 @@ const linkStyle = {
   fontFamily: '"Roboto","Helvetica","Arial",sans-serif;',
   color: '#000000!important',
 }
-
-//Source Test
-//https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.primary
 
 const LibraryText = (props: any) => {
   return (
@@ -33,10 +29,6 @@ const LibraryText = (props: any) => {
       </Tooltip>
     </Box>
   )
-}
-
-LibraryText.protoType = {
-  source: PropTypes.node.isRequired,
 }
 
 export default LibraryText

@@ -6,7 +6,7 @@ export const NatPrice = ({ value, symbol }: NatPrice) => {
   if (!symbol) return <>{natToFloat(value)}</>;
   return (
     <>
-      <TokenIcon symbol={symbol} />
+      <TokenIcon symbol={symbol} data-testid="token-icon" />
       {natToFloat(value)}
     </>
   );

@@ -3,7 +3,6 @@ import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
-import PropTypes from 'prop-types';
 
 const linkStyle = {
   width: 'auto',
@@ -15,10 +14,7 @@ const linkStyle = {
   color: '#000000!important',
 }
 
-//Source Test
-//https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.primary
-
-const LibraryText = (props) => {
+const LibraryText = (props: any) => {
   return (
     <Box sx={linkStyle}>
       <Tooltip title={props.source}>
@@ -33,10 +29,6 @@ const LibraryText = (props) => {
       </Tooltip>
     </Box>
   )
-}
-
-LibraryText.propTypes = {
-  source: PropTypes.string.isRequired,
 }
 
 export default LibraryText

@@ -27,7 +27,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
   const { actor, ogyActor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
-  const [setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({});
   const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens, refreshAllBalances } = useTokensContext();
   const validationSchema = Yup.object().shape({
@@ -39,8 +39,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
   });
 
-  const handleCustomClose = (value) => {
-    setSearchParams({});
+  const handleCustomClose = (value: any) => {
+    setSearchParams(searchParams);
     handleClose(value);
   };
   const {
@@ -221,6 +221,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 fullWidth
                 id="nftId"
                 variant="outlined"
+                inputProps={{ 'aria-label': 'nftId' }}
                 value={_nft.id}
                 {...register('nftId')}
                 error={!!errors.nftId}
@@ -235,7 +236,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 required
                 label="Seller"
                 fullWidth
-                id="nftId"
+                id="sellerId"
+                inputProps={{ 'aria-label': 'sellerId' }}
                 variant="outlined"
                 value={_nft.seller}
                 {...register('sellerId')}
@@ -251,7 +253,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 required
                 label="Your Offer (in tokens)"
                 fullWidth
-                id="escrowPrice"
+                id="priceOffer"
+                inputProps={{ 'aria-label': 'priceOffer' }}
                 variant="outlined"
                 {...register('priceOffer')}
                 error={!!errors.priceOffer}
@@ -272,7 +275,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                   label="Token"
                 >
                   {Object.keys(tokens).map((t, index) => (
-                    <MenuItem key={`${tokens}+${index}`} value={t}>
+                    <MenuItem key={`${t}+${index}`} value={t}>
                       <TokenIcon symbol={tokens[t].icon} />
                       {tokens[t].symbol}
                     </MenuItem>
@@ -283,7 +286,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
           </Grid>
           {isLoading && (
             <div style={{ marginTop: 5 }}>
-              <LoadingContainer />
+              <LoadingContainer data-testid="loading-container" />
             </div>
           )}
         </DialogContent>

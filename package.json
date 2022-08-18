@@ -8,6 +8,7 @@
     "start:ledger": "lerna exec --scope @dapp/app-ledger -- npm run start",
     "start:library": "lerna exec --scope @dapp/app-library -- npm run start",
     "start:nft-data": "lerna exec --scope @dapp/app-nft-data -- npm run start",
+    "start:luxury": "lerna exec --scope @dapp/app-luxury -- npm run start",
     "build:all": "npm run build:wallet && npm run build:marketplace && npm run build:ledger && npm run build:library && npm run build:nft-data",
     "build:wallet": "lerna exec --scope @dapp/app-wallet -- npm run build",
     "build:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run build",
@@ -15,7 +16,7 @@
     "build:library": "lerna exec --scope @dapp/app-library -- npm run build",
     "build:nft-data": "lerna exec --scope @dapp/app-nft-data -- npm run build",
     "test": "jest --env=./testUtils/testEnv.js",
-    "lint": "eslint **/*.tsx"
+    "lint": "eslint packages/**/*.tsx"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
@@ -65,7 +66,6 @@
     "jest-environment-jsdom-global": "^3.1.2",
     "jest-transform-stub": "^2.0.0",
     "lerna": "^5.3.0",
-    "lint": "^0.7.0",
     "process": "0.11.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -106,7 +106,6 @@
     "json-bigint": "^1.0.0",
     "moment": "^2.29.3",
     "notistack": "^2.0.5",
-    "prop-types": "^15.8.1",
     "react-hook-form": "^7.33.0",
     "react-is": "^18.2.0",
     "react-json-to-table": "^0.1.7",

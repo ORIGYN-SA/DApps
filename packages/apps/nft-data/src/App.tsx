@@ -1,24 +1,30 @@
-import React from "react";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Login from "./pages/Login";
-import Layout from "./components/Layout";
-import {SiteProvider} from "@dapp/features-theme";
-import {AuthProvider} from '@dapp/features-authentication';
-import "react-toastify/dist/ReactToastify.css";
+import React from 'react';
+import { Routes, Route, HashRouter } from 'react-router-dom';
+import Home from './pages/Home';
+import { Layout } from '@dapp/features-components';
+import { SiteProvider } from '@dapp/features-theme';
+import { AuthProvider } from '@dapp/features-authentication';
+import 'react-toastify/dist/ReactToastify.css';
+import { TokensContextProvider } from '@dapp/features-tokens-provider';
+import { SnackbarProvider } from 'notistack';
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <SiteProvider>
-          <Layout>
-            <Routes>
-              <Route path="*" element={<Login/>}/>
-            </Routes>
-          </Layout>
+          <TokensContextProvider>
+            <SnackbarProvider maxSnack={3}>
+              <Layout>
+                <Routes>
+                  <Route path="*" element={<Home />} />
+                </Routes>
+              </Layout>
+            </SnackbarProvider>
+          </TokensContextProvider>
         </SiteProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 

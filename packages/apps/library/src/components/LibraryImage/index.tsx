@@ -1,9 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 
-//Source test
-//"https://nft.origyn.network/-/nftforgood_uffc/-/ogy.nftforgood_uffc.1/-/ogy.nftforgood_uffc.1.preview"
-
 const LibraryImage = (props: any) => {
   return (
     <Box

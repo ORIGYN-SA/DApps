@@ -1,23 +1,29 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import { AuthProvider } from '@dapp/features-authentication';
 import { SiteProvider } from '@dapp/features-theme';
 import Ledger from './pages/Ledger';
-import { Layout } from './components/layout';
+import { Layout } from '@dapp/features-components';
 import 'react-toastify/dist/ReactToastify.css';
+import { TokensContextProvider } from '@dapp/features-tokens-provider';
+import { SnackbarProvider } from 'notistack';
 
 const App = () => (
-  <BrowserRouter>
+  <HashRouter>
     <AuthProvider>
       <SiteProvider>
-        <Layout>
-          <Routes>
-            <Route path="*" element={<Ledger />} />
-          </Routes>
-        </Layout>
+        <TokensContextProvider>
+          <SnackbarProvider maxSnack={3}>
+            <Layout>
+              <Routes>
+                <Route path="*" element={<Ledger />} />
+              </Routes>
+            </Layout>
+          </SnackbarProvider>
+        </TokensContextProvider>
       </SiteProvider>
     </AuthProvider>
-  </BrowserRouter>
+  </HashRouter>
 );
 
 export default App;
