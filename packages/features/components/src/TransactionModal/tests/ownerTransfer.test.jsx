@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 
 import { Transaction } from '..';
-import testData from './data'
+import {trans_from_account,trans_to_account} from './data'
 
 const props = {
   modalData: {
@@ -13,8 +13,8 @@ const props = {
     message: 'Owner Transfer',
     accounts: 'AccountsHere',
     principals: 'PrincipalsHere',
-    to: testData.trans_to_account,
-    from: testData.trans_from_account
+    to: trans_to_account,
+    from: trans_from_account
   },
 };
 
@@ -25,4 +25,10 @@ describe('Component/TransactionModal/OwnerTransfer', () => {
     screen.getByText(props.modalData.to.acc_principal_string)
     screen.getByText(props.modalData.from.acc_principal_string)
   });
+  //the render should match the snapshot
+  it('should match the snapshot', () => {
+    const { asFragment } = render(Transaction(props));
+    expect(asFragment()).toMatchSnapshot();
+  }
+  );
 });

@@ -157,7 +157,6 @@ export const TransactionsTable = (props: any) => {
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
     const response = await actor?.history_nft_origyn(props.searchBarTokenId.toString(), [], []);
-    console.log(response);
     // response 2 string
     const string_history = JSON.stringify(
       response,

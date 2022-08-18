@@ -43,6 +43,7 @@ export const SaleOpened = (
             principals: array_principals,
             pricing_config: InstantData,
             type_of_pricing_config: typeOfPricing,
+            sale_id:_sale_id
           };
 
           break;

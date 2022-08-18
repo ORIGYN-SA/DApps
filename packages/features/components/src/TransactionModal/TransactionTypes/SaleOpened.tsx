@@ -21,9 +21,9 @@ const SaleOpened = (props : any) => {
     case 'dutch':
       var pricingType = type_of_pricing.toUpperCase();
 
-      var {start_price} = type_of_pricing;
-      var {decay_per_hour} = type_of_pricing;
-      var {reserve} = type_of_pricing;
+      var start_price = singleT_pricing.start_price;
+      var decay_per_hour = singleT_pricing.decay_per_hour;
+      var reserve = singleT_pricing.reserve;
 
       display_pricing_config = (
         <Box
@@ -83,14 +83,14 @@ const SaleOpened = (props : any) => {
     case 'flat':
       var pricingType = type_of_pricing.toUpperCase();
 
-      var {amount} = type_of_pricing;
+      var amount = singleT_pricing.amount;
 
       var obj_token = singleT_pricing.token;
       var canister = obj_token.canister_string;
-      var {fee} = obj_token;
+      var fee = obj_token.fee;
       var sym = obj_token.symbol;
       var decimals = obj_token.decimal;
-      var {standard} = obj_token;
+      var standard = obj_token.standard;
 
       display_pricing_config = (
         <Box
@@ -325,7 +325,45 @@ const SaleOpened = (props : any) => {
       );
 
       break;
-  }
+    case 'instant':
+
+      var pricingType = type_of_pricing.toUpperCase();
+      var txn_id = singleT_pricing.txn_id;
+
+      display_pricing_config = (
+        <Box
+          sx={{
+            padding: 1,
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={6} md={6}>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+                gutterBottom
+              >
+                Pricing type:
+              </Typography>
+              <Typography sx={{ fontSize: 12 }} gutterBottom>
+                {pricingType}
+              </Typography>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+                gutterBottom
+              >
+               Transaction ID:
+              </Typography>
+              <Typography sx={{ fontSize: 12 }} gutterBottom>
+                {txn_id}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+      );
+      break;
+    }
 
   return (
     <Box>
