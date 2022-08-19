@@ -30,6 +30,7 @@ export const SearchbarNft = (props : any) => {
   };
 
   const getNFTCollection = async () => {
+    console.log('tokenIDfromContext',tokenId);
     setSelectTokenIds(['Loading...']);
     const response = await actor?.collection_nft_origyn([]);
     const collectionNFT = response.ok;
@@ -88,7 +89,7 @@ export const SearchbarNft = (props : any) => {
         </Box>
       ) : (
         <FormControl sx={{ m: 1, width: '100%' }}>
-          {tokenId == '' ? (
+          {tokenId == "" ? (
             <div>
               <Typography
                 sx={{
@@ -96,7 +97,7 @@ export const SearchbarNft = (props : any) => {
                   width: '95%',
                 }}
               >
-                Collection name: <b>{collectionName(tokenId)}</b>
+                Collection names: <b>{collectionName(tokenId)}</b>
               </Typography>
               <Typography
                 sx={{

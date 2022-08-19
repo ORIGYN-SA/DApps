@@ -71,3 +71,5 @@ export * from './typeToken';
 export * from './formatPrincipal';
 export * from './objPrincipal';
 export * from './formatData';
+export * from './switchCanisterCollection';
+export * from './checkCanister';

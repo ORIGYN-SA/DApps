@@ -182,3 +182,4 @@ export const AuthProvider: React.FC = ({ children }) => {
 };
 
 export * from './createWalletActor';
+export * from './getRoute';
