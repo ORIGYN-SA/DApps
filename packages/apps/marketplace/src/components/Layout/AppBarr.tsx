@@ -1,41 +1,33 @@
-import AppBar from '@mui/material/AppBar'
-import Avatar from '@mui/material/Avatar'
-import Box from '@mui/material/Box'
-import Container from '@mui/material/Container'
-import IconButton from '@mui/material/IconButton'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import Toolbar from '@mui/material/Toolbar'
-import Tooltip from '@mui/material/Tooltip'
-import Typography from '@mui/material/Typography'
-import * as React from 'react'
-import { AuthContext } from '@dapp/features-authentication'
-import { useTokensContext } from '@dapp/features-tokens-provider'
-import { OrigynLogo as Logo } from '@dapp/common-assets'
-import { TokenIcon, WalletTokens } from '@dapp/features-components'
+import AppBar from '@mui/material/AppBar';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
+import { AuthContext } from '@dapp/features-authentication';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { OrigynLogo as Logo } from '@dapp/common-assets';
+import { TokenIcon, WalletTokens } from '@dapp/features-components';
 
 const ResponsiveAppBar = () => {
-  const { logIn, loggedIn, logOut } = React.useContext(AuthContext)
-  const { tokens } = useTokensContext()
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
+  const { logIn, loggedIn, logOut } = React.useContext(AuthContext);
+  const { tokens } = useTokensContext();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  )
+    null,
+  );
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget)
-  }
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget)
-  }
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null)
-  }
+    setAnchorElUser(event.currentTarget);
+  };
 
   const handleCloseUserMenu = () => {
-    setAnchorElUser(null)
-  }
+    setAnchorElUser(null);
+  };
 
   return (
     <AppBar position="static">
@@ -63,16 +55,16 @@ const ResponsiveAppBar = () => {
               >
                 <MenuItem
                   onClick={() => {
-                    logIn('plug')
-                    handleCloseUserMenu()
+                    logIn('plug');
+                    handleCloseUserMenu();
                   }}
                 >
                   <Typography textAlign="center">Plug</Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    logIn('ii')
-                    handleCloseUserMenu()
+                    logIn('ii');
+                    handleCloseUserMenu();
                   }}
                 >
                   <Typography textAlign="center">Internet Identity</Typography>
@@ -82,8 +74,8 @@ const ResponsiveAppBar = () => {
           ) : (
             <div style={{ display: 'flex' }}>
               <WalletTokens>
-                {['OGY', 'ICP'].map((token) => (
-                  <div>
+                {['OGY', 'ICP'].map((token, index) => (
+                  <div key={`${token}+${index}`}>
                     <TokenIcon symbol={token} />{' '}
                     <span
                       style={{
@@ -100,7 +92,7 @@ const ResponsiveAppBar = () => {
               <Box>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt={'A'} />
+                    <Avatar alt="A" />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -129,6 +121,6 @@ const ResponsiveAppBar = () => {
         </Toolbar>
       </Container>
     </AppBar>
-  )
-}
-export default ResponsiveAppBar
+  );
+};
+export default ResponsiveAppBar;
