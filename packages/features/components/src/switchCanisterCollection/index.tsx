@@ -16,6 +16,8 @@ export const SwitchCanisterCollection = () => {
        let response : string | boolean = await checkCanister(switchTo);
          if(response === false){
                 alert('Canister not found');
+         }else{
+            alert(response);
          }
     }
     return (
@@ -41,7 +43,7 @@ export const SwitchCanisterCollection = () => {
                 />
                 <Button variant="text"
                     onClick={changeCanisterCollection}
-                >CHANGE</Button>
+                >SWITCH</Button>
             </Paper>
         </Box>
 
