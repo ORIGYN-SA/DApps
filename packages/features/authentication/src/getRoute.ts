@@ -44,5 +44,4 @@ export const getTokenId = () => {
   } catch (e) {
     return ids[4];
   }
-  return;
 };

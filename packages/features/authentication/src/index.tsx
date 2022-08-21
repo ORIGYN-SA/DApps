@@ -39,9 +39,7 @@ export const useAuthContext = () => useContext(AuthContext);
 
 export const useAuth = () => {
   const loggedInStatus = localStorage.getItem('loggedIn');
-  const [isLoading, setIsLoading] = useState(
-    !!(loggedInStatus && loggedInStatus !== 'false'),
-  );
+  const [isLoading, setIsLoading] = useState(!!(loggedInStatus && loggedInStatus !== 'false'));
   const [loggedIn, setLoggedIn] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState<boolean>();
   const [principal, setPrincipal] = useState<Principal | undefined>();
@@ -57,6 +55,7 @@ export const useAuth = () => {
   const connectPlug = usePlug();
   const connectStoic = useStoic();
   const connectInternetIdentity = useInternetIdentity();
+
   console.log(actor);
   const logIn = async (wallet?: string) => {
     try {
@@ -83,7 +82,6 @@ export const useAuth = () => {
           setPrincipal(p.principal);
           setActor(p.actor);
           setOgyActor(p.ogyActor);
-          setCanisterId(p.canisterId);
           setTokenId(p.tokenId);
           setLoggedIn(true);
           setLoggedWallet('plug');
@@ -152,6 +150,22 @@ export const useAuth = () => {
       });
     }
   }, [localStorage.getItem('loggedIn')]);
+
+  useEffect(() => {
+    if (!canisterId) {
+      getCanisterId().then((id) => setCanisterId(id));
+    }
+  }, []);
+
+  useEffect(() => {
+    const ids = window.location.pathname.split('/');
+    const canisterPath = localStorage.getItem('canisterPath');
+    const newCanisterPath = ids[2];
+    if (canisterPath !== newCanisterPath) {
+      localStorage.setItem('canisterPath', newCanisterPath);
+      getCanisterId().then((id) => setCanisterId(id));
+    }
+  }, [window.location.pathname]);
 
   return {
     isLoading,
