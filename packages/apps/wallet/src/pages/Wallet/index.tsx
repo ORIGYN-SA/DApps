@@ -433,7 +433,7 @@ const WalletPage = () => {
               <Tab label="Active Escrows" {...a11yProps(2)} />
             </Tabs>
           </Box>
-          <TabPanel value={selectedTab} index={0}>
+          <TabPanel value={selectedTab} index={0} aria-label="Tabs">
             {isLoading ? (
               <LoadingContainer />
             ) : NFTData?.rows?.length > 0 && NFTData?.columns ? (

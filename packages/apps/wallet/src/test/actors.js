@@ -1,0 +1,7 @@
+const nftOrigyn = {
+
+}
+
+const historyNftOrigyn = {
+    
+}
