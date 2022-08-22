@@ -245,7 +245,7 @@ const Marketplace = () => {
                     <Card variant="outlined">
                       <CardMedia
                         component="img"
-                        image={`https://${canisterId}.raw.ic0.app/-/${nftID}`}
+                        image={`https://${canisterId}.raw.ic0.app/-/${nftID}/preview`}
                         alt={nftID}
                       />
                       <CardContent>

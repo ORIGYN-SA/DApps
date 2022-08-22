@@ -2,6 +2,7 @@
 /* eslint-disable no-bitwise */
 import crc32 from 'buffer-crc32';
 import CryptoJS from 'crypto-js';
+import { Buffer } from 'buffer';
 
 export const byteArrayToWordArray = (byteArray: Uint8Array) => {
   const wordArray = [] as any;
@@ -26,10 +27,7 @@ export const wordToByteArray = (word, length): number[] => {
 };
 
 export const wordArrayToByteArray = (wordArray, length) => {
-  if (
-    wordArray.hasOwnProperty('sigBytes') &&
-    wordArray.hasOwnProperty('words')
-  ) {
+  if (wordArray.hasOwnProperty('sigBytes') && wordArray.hasOwnProperty('words')) {
     length = wordArray.sigBytes;
     wordArray = wordArray.words;
   }
