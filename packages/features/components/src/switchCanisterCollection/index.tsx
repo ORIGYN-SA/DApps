@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import { Box, Button } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
+import { getCanisterId,getTokenId } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';
 export const SwitchCanisterCollection = () => {
 
@@ -15,10 +16,14 @@ export const SwitchCanisterCollection = () => {
 
     const changeCanisterCollection = async () => {
         let response: string | boolean = await checkCanister(switchTo.toLowerCase().trim());
+        let currentCanisterId = await getCanisterId();
+        let currentTokenId = await getTokenId();
         if (response === false) {
             setErrorText('Canister not found');
         } else {
-            window.location.pathname = '/-/'+response+'/-/ledger';
+            //window.location.pathname = '/-/'+response+'/-/ledger';
+            console.log('currentCanister',currentCanisterId);
+            console.log('currentTokenId',currentTokenId);
             setErrorText('');
         }
     }

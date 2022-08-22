@@ -25,6 +25,7 @@ export const checkCanister = async (newCanister) => {
       });
       // @ts-ignore
       canisterId = (await actor.lookup(newCanister)).toString();
+
     }
   }
   return (!canisterId) ? (canisterId=false) : canisterId;
