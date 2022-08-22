@@ -3,7 +3,7 @@
 exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-1gpybnd-MuiPaper-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-gjx9le-MuiPaper-root"
   >
     <div
       class="MuiFormControl-root css-78me8v-MuiFormControl-root"
@@ -12,7 +12,9 @@ exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
         class="MuiTypography-root MuiTypography-body1 css-17r5iss-MuiTypography-root"
       >
         Current Token ID: 
-        <b />
+        <b>
+          #myId
+        </b>
       </p>
       <p
         class="MuiTypography-root MuiTypography-body1 css-1mi2yzt-MuiTypography-root"
@@ -23,14 +25,14 @@ exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
         </em>
       </p>
       <div
-        class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-60y2nb-MuiAutocomplete-root"
+        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-60y2nb-MuiAutocomplete-root"
       >
         <div
           class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
         >
           <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-outlined MuiFormLabel-colorPrimary css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root"
-            data-shrink="false"
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
+            data-shrink="true"
             for="combo-box-demo"
             id="combo-box-demo-label"
           >
@@ -50,11 +52,33 @@ exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
               role="combobox"
               spellcheck="false"
               type="text"
-              value=""
+              value="#myId"
             />
             <div
               class="MuiAutocomplete-endAdornment css-1q60rmi-MuiAutocomplete-endAdornment"
             >
+              <button
+                aria-label="Clear"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-clearIndicator css-1glvl0p-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-clearIndicator"
+                tabindex="-1"
+                title="Clear"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-ptiqhd-MuiSvgIcon-root"
+                  data-testid="CloseIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                  />
+                </svg>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
               <button
                 aria-label="Open"
                 class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-popupIndicator css-qzbt6i-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator"
@@ -83,7 +107,7 @@ exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
               class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-1ftyaf0"
+                class="css-1in441m"
               >
                 <span>
                   Other tokens IDS
@@ -101,7 +125,7 @@ exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
 exports[`Select-Autocomplete Searchbar is rendered with the token ID 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-1gpybnd-MuiPaper-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-gjx9le-MuiPaper-root"
   >
     <div
       class="MuiFormControl-root css-78me8v-MuiFormControl-root"
