@@ -14,7 +14,7 @@ export const SwitchCanisterCollection = () => {
     const [errorText, setErrorText] = React.useState('');
 
     const changeCanisterCollection = async () => {
-        let response: string | boolean = await checkCanister(switchTo);
+        let response: string | boolean = await checkCanister(switchTo.toLowerCase().trim());
         if (response === false) {
             setErrorText('Canister not found');
         } else {
