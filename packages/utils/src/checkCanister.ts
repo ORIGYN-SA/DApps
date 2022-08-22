@@ -1,5 +1,5 @@
 import { Principal } from '@dfinity/principal';
-import { Actor, HttpAgent } from '@dfinity/agent';
+import { Actor, HttpAgent} from '@dfinity/agent';
 import { phonebookIdl } from '@dapp/common-candid';
 
 export const checkCanister = async (newCanister) => {
@@ -25,7 +25,6 @@ export const checkCanister = async (newCanister) => {
       });
       // @ts-ignore
       canisterId = (await actor.lookup(newCanister)).toString();
-
     }
   }
   return (!canisterId) ? (canisterId=false) : canisterId;

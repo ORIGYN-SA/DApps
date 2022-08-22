@@ -17,13 +17,14 @@ export const SwitchCanisterCollection = () => {
     const changeCanisterCollection = async () => {
         let response: string | boolean = await checkCanister(switchTo.toLowerCase().trim());
         let currentCanisterId = await getCanisterId();
-        let currentTokenId = await getTokenId();
+        //let currentTokenId = await getTokenId();
         if (response === false) {
             setErrorText('Canister not found');
         } else {
-            //window.location.pathname = '/-/'+response+'/-/ledger';
+            var url = window.location.href;
+            url.replace(currentCanisterId, response.toString());
             console.log('currentCanister',currentCanisterId);
-            console.log('currentTokenId',currentTokenId);
+            console.log('newCanister',response);
             setErrorText('');
         }
     }
