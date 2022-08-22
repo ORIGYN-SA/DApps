@@ -1,12 +1,10 @@
 import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { phonebookIdl } from '@dapp/common-candid';
-import { boolean } from 'yup';
 
 export const checkCanister = async (newCanister) => {
 
   let canisterId : string|boolean;
-  let found : boolean = false;
 
   try {
     const subdomain = window.location.hostname.split('.')[0];
@@ -27,6 +25,7 @@ export const checkCanister = async (newCanister) => {
       });
       // @ts-ignore
       canisterId = (await actor.lookup(newCanister)).toString();
+      console.log("!!!",actor);
     }
   }
   return (!canisterId) ? (canisterId=false) : canisterId;
