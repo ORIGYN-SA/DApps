@@ -97,7 +97,7 @@ export const SearchbarNft = (props : any) => {
                   width: '95%',
                 }}
               >
-                Collection names: <b>{collectionName(tokenId)}</b>
+                Collection name: <b>{collectionName(tokenId)}</b>
               </Typography>
               <Typography
                 sx={{

@@ -1,10 +1,11 @@
 import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { phonebookIdl } from '@dapp/common-candid';
+import { boolean } from 'yup';
 
 export const checkCanister = async (newCanister) => {
 
-  let canisterId : string  = '';
+  let canisterId : string|boolean;
   let found : boolean = false;
 
   try {
@@ -28,10 +29,6 @@ export const checkCanister = async (newCanister) => {
       canisterId = (await actor.lookup(newCanister)).toString();
     }
   }
-  if(canisterId){
-    found = true;
-  }
-
-  return found;
+  return (!canisterId) ? (canisterId=false) : canisterId;
   
 };
