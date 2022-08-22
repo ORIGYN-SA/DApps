@@ -209,6 +209,7 @@ const WalletPage = () => {
           const offers = response?.ok?.offers;
           const inEscrow: any = [];
           const outEscrow: any = [];
+          console.log("balance of", response);
           if (escrows) {
             escrows.forEach((escrow, index) => {
               const esc: any = {};
