@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const SaleEnded = (props : any) => {
+export const SaleEnded = (props : any) => {
   const end_seller = props.data.seller;
   const principal_seller = end_seller.acc_principal_string;
 
@@ -144,5 +144,3 @@ const SaleEnded = (props : any) => {
     </Box>
   );
 };
-
-export default SaleEnded;

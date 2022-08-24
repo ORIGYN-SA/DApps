@@ -68,6 +68,4 @@ export * from './interfaces';
 export * from './removeDuplicates';
 export * from './typeAccount';
 export * from './typeToken';
-export * from './formatPrincipal';
 export * from './objPrincipal';
-export * from './formatData';

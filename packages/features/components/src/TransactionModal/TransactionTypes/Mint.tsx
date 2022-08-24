@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const Mint = (props : any) => {
+export const Mint = (props : any) => {
 
   const singleT_type = props.data.type_txn;
   const singleT_mint_from = props.data.mint_from;
@@ -176,4 +176,3 @@ const Mint = (props : any) => {
   );
 };
 
-export default Mint;

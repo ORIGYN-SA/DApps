@@ -1,4 +1,4 @@
-import { Transactions, PricingConfiguration, WaitForQuiet, TypeTokenSpec,format_data, removeDuplicates } from '@dapp/utils';
+import { Transactions, PricingConfiguration, WaitForQuiet, TypeTokenSpec,formatTime, removeDuplicates } from '@dapp/utils';
 
 export const SaleOpened = (
   obj_transaction,
@@ -130,7 +130,7 @@ export const SaleOpened = (
           var _reserve = obj_pricing[typeOfPricing].reserve;
           var _buyNow = obj_pricing[typeOfPricing].buy_now;
           var _startPrice = obj_pricing[typeOfPricing].start_price;
-          var _startDate = format_data(obj_pricing[typeOfPricing].start_date);
+          var _startDate = formatTime(BigInt(obj_pricing[typeOfPricing].start_date));
 
           var _minIncrease = obj_pricing[typeOfPricing].min_increase;
           var minimum_increase: string;
@@ -143,20 +143,20 @@ export const SaleOpened = (
           var _ending = obj_pricing[typeOfPricing].ending;
           var ending_date: string | {};
           if (_ending.hasOwnProperty('date')) {
-            ending_date = format_data(_ending.date);
+            ending_date = formatTime(BigInt(_ending.date));
           } else {
             const { wait_for_quiet } = _ending;
             var wait_props: string;
 
             for (wait_props in wait_for_quiet) {
-              var wfq_date = format_data(wait_for_quiet[wait_props].date);
+              var wfq_date = formatTime(BigInt(wait_for_quiet[wait_props].date));
               var wfq_extention = wait_for_quiet[wait_props].extention;
               var wfq_fade = wait_for_quiet[wait_props].fade;
               var wfq_max = wait_for_quiet[wait_props].max;
             }
 
             const obj_wfq: WaitForQuiet = {
-              date: format_data(wfq_date),
+              date: wfq_date,
               extention: wfq_extention,
               fade: wfq_fade,
               max: wfq_max,

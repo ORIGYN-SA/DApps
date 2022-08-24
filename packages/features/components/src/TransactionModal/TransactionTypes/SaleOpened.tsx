@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const SaleOpened = (props : any) => {
+export const SaleOpened = (props : any) => {
   const singleT_type = props.data.type_txn;
   const singleT_pricing = props.data.pricing_config;
 
@@ -396,5 +396,3 @@ const SaleOpened = (props : any) => {
     </Box>
   );
 };
-
-export default SaleOpened;

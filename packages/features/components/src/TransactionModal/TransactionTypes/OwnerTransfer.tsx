@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
-const OwnerTransfer = (props : any) => {
+export const OwnerTransfer = (props : any) => {
   const singleT_type = props.data.type_txn;
   const from_principal = props.data.from.acc_principal_string;
   const to_principal = props.data.to.acc_principal_string;
@@ -51,5 +51,3 @@ const OwnerTransfer = (props : any) => {
     </Box>
   );
 };
-
-export default OwnerTransfer;
