@@ -1,7 +1,7 @@
 import React from "react";
 import Box from '@mui/material/Box';
 import LibraryAccordion from "../../components/LibraryAccordion";
-import Treeview from "../../components/Treeview";
+import TreeviewPart from "../../components/TreeviewPart";
 
 const Library = () => {
 
@@ -9,7 +9,7 @@ const Library = () => {
         <Box
           sx={{ m: 2,p: 2}}>
             <LibraryAccordion/>
-            <Treeview/>     
+            <TreeviewPart/>     
         </Box>
   );
 };
