@@ -146,7 +146,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
         lock_to_date: [],
       };
       try {
-        const escrowResponse = await actor.escrow_nft_origyn(escrowData);
+        const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
         if (!_nft.openAuction) {
           if (escrowResponse.ok) {
             enqueueSnackbar('Your escrow has been successfully sent.', {
@@ -171,7 +171,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             escrow_receipt: escrowResponse?.ok?.receipt,
             sale_id: _nft.openAuction?.sale_id,
           };
-          const bidResponse = await actor.bid_nft_origyn(bidData);
+          const bidResponse = await actor.sale_nft_origyn({ bid: bidData });
           if (bidResponse.ok) {
             enqueueSnackbar('Your bid has been successfully placed.', {
               variant: 'success',
