@@ -21,12 +21,12 @@ export const AuctionBid = (
 
   const bid_amount = obj_transaction[_props].amount;
   const bid_token = obj_transaction[_props].token;
-  console.log('TOKEN',bid_token);
+
   // token specs
   let tokenProps: string;
   for (tokenProps in bid_token) {
     var _canister = bid_token[tokenProps].canister;
-    console.log(_canister);
+
     var _fee = bid_token[tokenProps].fee;
     var _symbol = bid_token[tokenProps].symbol;
     var _decimals = bid_token[tokenProps].decimals;

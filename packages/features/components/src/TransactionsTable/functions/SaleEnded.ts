@@ -82,7 +82,6 @@ export const SaleEnded = (
 
   const array_principals: string[] = [];
   array_principals.push(obj_token_end.canister_string);
-  console.log('Principal', obj_token_end.canister_string);
 
   transactionObj = {
     trans_index: curr_obj.index.toString(),

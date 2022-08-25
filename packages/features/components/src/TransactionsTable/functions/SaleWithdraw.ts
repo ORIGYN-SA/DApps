@@ -87,7 +87,6 @@ export const SaleWithdraw = (
     getAccountId(objPrincipal(sale_wit_buyer)),
     getAccountId(objPrincipal(sale_wit_seller))
   );
-  console.log(array_accounts);
   const array_principals: string[] = [];
   array_principals.push(obj_token.canister_string);
   transactionObj = {
