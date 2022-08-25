@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 
 import { Transaction } from '..';
-import {instantData} from './data'
+import { instantData } from './data';
 
 const props = {
   modalData: {
@@ -15,23 +15,23 @@ const props = {
     principals: 'PrincipalsHere',
     pricing_config: instantData,
     type_of_pricing_config: 'instant',
-    sale_id:'saleId'
+    sale_id: 'saleId',
   },
 };
 
 describe('Component/TransactionModal/Sale opened - Conf : Instant', () => {
   it('should display transaction values', () => {
     const { getByText } = render(Transaction(props));
-    screen.getByText(props.modalData.type_txn);
-    screen.getByText(props.modalData.pricing_config.txn_id);
-    screen.getByText(props.modalData.pricing_config.type_of_pricing_config.toUpperCase());
-    screen.getByText(props.modalData.sale_id);
-
+    expect(screen.getByText(props.modalData.type_txn)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.pricing_config.txn_id)).toBeInTheDocument();
+    expect(
+      screen.getByText(props.modalData.pricing_config.type_of_pricing_config.toUpperCase()),
+    ).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.sale_id)).toBeInTheDocument();
   });
   //the render should match the snapshot
   it('should match the snapshot', () => {
     const { asFragment } = render(Transaction(props));
     expect(asFragment()).toMatchSnapshot();
-  }
-  );
+  });
 });
