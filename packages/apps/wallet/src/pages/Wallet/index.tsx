@@ -379,7 +379,7 @@ const WalletPage = () => {
     ? activeEscrows?.out?.data?.filter((nft) => nft.token_id === tokenId)
     : activeEscrows?.out?.data;
 
-  console.log(NFTData);
+  console.log("this is NFTData, ", NFTData);
   return (
     <>
       {loggedIn ? (
