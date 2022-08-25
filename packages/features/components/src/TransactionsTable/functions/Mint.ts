@@ -7,6 +7,7 @@ export const Mint = (
   curr_obj,
   _transaction_type_formatted:string,
 ) => {
+  console.log(obj_transaction)
   const mint: string = 'Mint';
   const from = obj_transaction[_props].from;
   const mint_from  = objPrincipal(from).toText();
