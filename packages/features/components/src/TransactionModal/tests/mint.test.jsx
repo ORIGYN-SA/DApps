@@ -22,11 +22,11 @@ const props = {
 describe('Component/TransactionModal/Mint', () => {
   it('should display MINT transaction values', () => {
     const { getByText } = render(Transaction(props));
-    screen.getByText(props.modalData.mint_to);
-    screen.getByText(props.modalData.mint_from);
-    screen.getByText(props.modalData.type_txn);
-    screen.getByText(props.modalData.sale.amount);
-    screen.getByText(props.modalData.sale.token);
+    expect(screen.getByText(props.modalData.mint_to)).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.mint_from)).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.type_txn)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.sale.amount)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.sale.token)).toBeInTheDocument();
   });
   // the render should match the snapshot
   it('should match the snapshot', () => {

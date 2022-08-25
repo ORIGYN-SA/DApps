@@ -22,21 +22,21 @@ const props = {
 describe('Component/TransactionModal/Sale opened - Conf : Flat', () => {
   it('should display transaction values', () => {
     const { getByText } = render(Transaction(props));
-    screen.getByText(props.modalData.type_txn);
-    screen.getByText(props.modalData.pricing_config.type_of_pricing_config.toUpperCase());
-    screen.getByText(props.modalData.sale_id);
-    
-    screen.getByText(props.modalData.pricing_config.reserve);
-    screen.getByText(props.modalData.pricing_config.buy_now);
-    screen.getByText(props.modalData.pricing_config.min_increase);
-    screen.getByText(props.modalData.pricing_config.start_date);
-    screen.getByText(props.modalData.pricing_config.ending_date);
-    screen.getByText(props.modalData.pricing_config.start_date);
+    expect(screen.getByText(props.modalData.type_txn)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.pricing_config.type_of_pricing_config.toUpperCase())).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.sale_id)).toBeInTheDocument();
+  
+    expect( screen.getByText(props.modalData.pricing_config.reserve)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.pricing_config.buy_now)).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.pricing_config.min_increase)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.pricing_config.start_date)).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.pricing_config.ending_date)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.pricing_config.start_date)).toBeInTheDocument();
 
-    screen.getByText(props.modalData.pricing_config.token.canister_string);
-    screen.getByText(props.modalData.pricing_config.token.fee);
-    screen.getByText(props.modalData.pricing_config.token.decimal);
-    screen.getByText(props.modalData.pricing_config.token.standard);
+    expect( screen.getByText(props.modalData.pricing_config.token.canister_string)).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.pricing_config.token.fee)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.pricing_config.token.decimal)).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.pricing_config.token.standard)).toBeInTheDocument();
 
 
   });

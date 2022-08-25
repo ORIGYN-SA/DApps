@@ -22,12 +22,12 @@ const props = {
 describe('Component/TransactionModal/Sale opened - Conf : Dutch', () => {
   it('should display transaction values', () => {
     const { getByText } = render(Transaction(props));
-    screen.getByText(props.modalData.type_txn);
-    screen.getByText(props.modalData.pricing_config.type_of_pricing_config.toUpperCase());
-    screen.getByText(props.modalData.sale_id);
-    screen.getByText(props.modalData.pricing_config.start_price);
-    screen.getByText(props.modalData.pricing_config.reserve);
-    screen.getByText(props.modalData.pricing_config.decay_per_hour);
+    expect( screen.getByText(props.modalData.type_txn)).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.pricing_config.type_of_pricing_config.toUpperCase())).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.sale_id)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.pricing_config.start_price)).toBeInTheDocument();
+    expect( screen.getByText(props.modalData.pricing_config.reserve)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.pricing_config.decay_per_hour)).toBeInTheDocument();
 
 
   });
