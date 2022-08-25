@@ -1,5 +1,5 @@
-import { getAccountId, Transactions, Sale, objPrincipal } from '@dapp/utils';
-import { TypeTokenSpec,removeDuplicates } from './TableFunctions';
+import { getAccountId, Transactions, Sale } from '@dapp/utils';
+import { TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
 export const Mint = (
   obj_transaction,

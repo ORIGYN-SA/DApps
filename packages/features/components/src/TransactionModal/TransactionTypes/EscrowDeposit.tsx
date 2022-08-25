@@ -6,8 +6,6 @@ import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 export const EscrowDeposit = (props : any) => {
 const { type_txn, buyer, seller, token, token_id, amount, trx_id } = props.data;
 
-const { canister_string, fee, symbol, decimal, standard } = token;
-
 let token_fee = props.data.fee;
 if (!token_fee) {
   token_fee = 'Undefined';
@@ -115,7 +113,7 @@ if (_text) {
             >
               Canister:
             </Typography>
-            <Typography gutterBottom>{canister_string}</Typography>
+            <Typography gutterBottom>{token.canister_string}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -123,7 +121,7 @@ if (_text) {
             >
               Fee:
             </Typography>
-            <Typography gutterBottom>{fee}</Typography>
+            <Typography gutterBottom>{token.fee}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -131,7 +129,7 @@ if (_text) {
             >
               Decimals:
             </Typography>
-            <Typography gutterBottom>{decimal}</Typography>
+            <Typography gutterBottom>{token.decimal}</Typography>
           </Grid>
           <Grid item xs={6} md={6}>
             <Typography
@@ -142,7 +140,7 @@ if (_text) {
               Symbol:
             </Typography>
             <Typography>
-              {symbol === 'OGY' ? (
+              {token.symbol === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -155,7 +153,7 @@ if (_text) {
             >
               Standard:
             </Typography>
-            <Typography gutterBottom>{standard}</Typography>
+            <Typography gutterBottom>{token.standard}</Typography>
           </Grid>
         </Grid>
       </Box>

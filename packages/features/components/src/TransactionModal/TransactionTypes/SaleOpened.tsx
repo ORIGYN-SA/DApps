@@ -16,7 +16,7 @@ export const SaleOpened = (props: any) => {
 
   const type_of_pricing = singleT_pricing.type_of_pricing_config;
   const pricingType = type_of_pricing.toUpperCase();
-
+  const {token} = singleT_pricing;
   const {
     start_price,
     decay_per_hour,
@@ -27,10 +27,8 @@ export const SaleOpened = (props: any) => {
     min_increase,
     start_date,
     ending_date,
-    token,
   } = singleT_pricing;
-
-  const { canister_string, fee, symbol, decimal, standard } = token;
+  
   // Depending on the pricing type I show different data
   // Switch here
 
@@ -100,13 +98,13 @@ export const SaleOpened = (props: any) => {
                 Canister:
               </Typography>
               <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {canister_string}
+                {token.canister_string}
               </Typography>
               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                 Fee:
               </Typography>
               <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {fee}
+                {token.fee}
               </Typography>
             </Grid>
 
@@ -115,7 +113,7 @@ export const SaleOpened = (props: any) => {
                 Symbol:
               </Typography>
               <Typography>
-                {symbol === 'OGY' ? (
+                {token.symbol === 'OGY' ? (
                   <OGYIcon className="token-symbol" />
                 ) : (
                   <ICPIcon className="token-symbol" />
@@ -125,13 +123,13 @@ export const SaleOpened = (props: any) => {
                 Decimals:
               </Typography>
               <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {decimal}
+                {token.decimal}
               </Typography>
               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                 Standard:
               </Typography>
               <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {standard}
+                {token.standard}
               </Typography>
             </Grid>
           </Grid>
@@ -190,7 +188,7 @@ export const SaleOpened = (props: any) => {
                 Symbol:
               </Typography>
               <Typography>
-                {symbol === 'OGY' ? (
+                {token.symbol === 'OGY' ? (
                   <OGYIcon className="token-symbol" />
                 ) : (
                   <ICPIcon className="token-symbol" />
@@ -199,19 +197,19 @@ export const SaleOpened = (props: any) => {
               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                 Canister:
               </Typography>
-              <Typography gutterBottom>{canister_string}</Typography>
+              <Typography gutterBottom>{token.canister_string}</Typography>
               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                 Fee:
               </Typography>
-              <Typography gutterBottom>{fee}</Typography>
+              <Typography gutterBottom>{token.fee}</Typography>
               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                 Decimals:
               </Typography>
-              <Typography gutterBottom>{decimal}</Typography>
+              <Typography gutterBottom>{token.decimal}</Typography>
               <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                 Standard:
               </Typography>
-              <Typography gutterBottom>{standard}</Typography>
+              <Typography gutterBottom>{token.standard}</Typography>
             </Grid>
           </Grid>
         </Box>

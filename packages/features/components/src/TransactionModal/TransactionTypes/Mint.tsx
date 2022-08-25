@@ -39,7 +39,6 @@ export const Mint = (props: any) => {
       </Box>
     );
   } else {
-    const { canister_string, fee, symbol, decimal, standard } = token;
     display_token_config = (
       <Box
         sx={{
@@ -52,19 +51,19 @@ export const Mint = (props: any) => {
               Canister:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {canister_string}
+              {token.canister_string}
             </Typography>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Fee:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {fee}
+              {token.fee}
             </Typography>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Decimals:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {decimal}
+              {token.decimal}
             </Typography>
           </Grid>
           <Grid item xs={6} md={6}>
@@ -72,7 +71,7 @@ export const Mint = (props: any) => {
               Symbol:
             </Typography>
             <Typography>
-              {symbol === 'OGY' ? (
+              {token.symbol === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -82,7 +81,7 @@ export const Mint = (props: any) => {
               Standard:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {standard}
+              {token.standard}
             </Typography>
           </Grid>
         </Grid>

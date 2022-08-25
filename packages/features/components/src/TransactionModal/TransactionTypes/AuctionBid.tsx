@@ -8,8 +8,6 @@ import { OGYIcon } from '@dapp/common-assets';
 export const AuctionBid = (props: any) => {
   const { type_txn, buyer, amount, token, sale_id } = props.data;
 
-  const { canister_string, fee, symbol, decimal, standard } = token;
-
   return (
     <Box>
       <Box
@@ -51,22 +49,22 @@ export const AuctionBid = (props: any) => {
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Canister:
             </Typography>
-            <Typography gutterBottom>{canister_string}</Typography>
+            <Typography gutterBottom>{token.canister_string}</Typography>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Fee:
             </Typography>
-            <Typography gutterBottom>{fee}</Typography>
+            <Typography gutterBottom>{token.fee}</Typography>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Decimals:
             </Typography>
-            <Typography gutterBottom>{decimal}</Typography>
+            <Typography gutterBottom>{token.decimal}</Typography>
           </Grid>
           <Grid item xs={6} md={6}>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Symbol:
             </Typography>
             <Typography>
-              {symbol === 'OGY' ? (
+              {token.symbol === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -75,7 +73,7 @@ export const AuctionBid = (props: any) => {
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Standard:
             </Typography>
-            <Typography gutterBottom>{standard}</Typography>
+            <Typography gutterBottom>{token.standard}</Typography>
           </Grid>
         </Grid>
       </Box>

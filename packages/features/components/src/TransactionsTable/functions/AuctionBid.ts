@@ -1,5 +1,5 @@
-import { getAccountId, Transactions, objPrincipal  } from '@dapp/utils';
-import { TypeAccount, TypeTokenSpec,removeDuplicates } from './TableFunctions';
+import { getAccountId, Transactions} from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
 export const AuctionBid = (
   obj_transaction,
@@ -21,6 +21,7 @@ export const AuctionBid = (
 
   const bid_amount = obj_transaction[_props].amount;
   const bid_token = obj_transaction[_props].token;
+  console.log('TOKEN',bid_token);
   // token specs
   let tokenProps: string;
   for (tokenProps in bid_token) {

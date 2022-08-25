@@ -1,11 +1,6 @@
 
-import {
-  Transactions,
-  TypeTransactionId,
-  getAccountId,
-  objPrincipal
-} from '@dapp/utils';
-import { TypeAccount, TypeTokenSpec,removeDuplicates } from './TableFunctions';
+import {Transactions,TypeTransactionId,getAccountId,} from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
 export const SaleWithdraw = (
   obj_transaction,

@@ -1,4 +1,4 @@
-import { TypeAccount } from '../typeAccount';
+import { TypeAccount } from '../functions/TableFunctions';
 import testData from './data';
 
 const Principal = testData.typeAccount.canister;

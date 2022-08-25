@@ -12,8 +12,6 @@ export const SaleEnded = (props : any) => {
     token
   } = props.data;
 
-  const { canister_string, fee, symbol, decimal, standard } = token;
-
   return (
 
     <Box>
@@ -91,7 +89,7 @@ export const SaleEnded = (props : any) => {
             >
               Canister:
             </Typography>
-            <Typography gutterBottom>{canister_string}</Typography>
+            <Typography gutterBottom>{token.canister_string}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -99,7 +97,7 @@ export const SaleEnded = (props : any) => {
             >
               Fee:
             </Typography>
-            <Typography gutterBottom>{fee}</Typography>
+            <Typography gutterBottom>{token.fee}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -107,7 +105,7 @@ export const SaleEnded = (props : any) => {
             >
               Decimals:
             </Typography>
-            <Typography gutterBottom>{decimal}</Typography>
+            <Typography gutterBottom>{token.decimal}</Typography>
           </Grid>
           <Grid item xs={6} md={6}>
             <Typography
@@ -118,7 +116,7 @@ export const SaleEnded = (props : any) => {
               Symbol:
             </Typography>
             <Typography>
-              {symbol === 'OGY' ? (
+              {token.symbol === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -131,7 +129,7 @@ export const SaleEnded = (props : any) => {
             >
               Standard:
             </Typography>
-            <Typography gutterBottom>{standard}</Typography>
+            <Typography gutterBottom>{token.standard}</Typography>
           </Grid>
         </Grid>
       </Box>

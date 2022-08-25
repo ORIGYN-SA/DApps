@@ -1,5 +1,5 @@
-import { getAccountId, Transactions, objPrincipal } from '@dapp/utils';
-import { TypeAccount, TypeTokenSpec,removeDuplicates } from './TableFunctions';
+import { getAccountId, Transactions } from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
 export const SaleEnded = (
   obj_transaction,

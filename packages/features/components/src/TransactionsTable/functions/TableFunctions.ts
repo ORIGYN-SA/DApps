@@ -26,3 +26,9 @@ export const TypeTokenSpec = (
   const canister_string = Principal.fromUint8Array(thisArray).toText();
   return { canister_string, fee, symbol, decimal, standard };
 }
+
+export const objPrincipal =(_Uint8Array: { principal: { _arr: [] } }) => {
+  const thisArray = Uint8Array.from(Object.values(_Uint8Array.principal._arr));
+  const acc_principal = Principal.fromUint8Array(thisArray);
+  return acc_principal;
+}

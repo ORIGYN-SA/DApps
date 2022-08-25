@@ -1,4 +1,4 @@
-import { TypeTokenSpec } from '../typeToken';
+import { TypeTokenSpec } from '../functions/TableFunctions'
 import testData from './data';
 
 const Canister = testData.typeToken.canister;
