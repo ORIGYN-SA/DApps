@@ -1,4 +1,5 @@
-import { getAccountId, Transactions, TypeTransactionId, TypeAccount, TypeTokenSpec, removeDuplicates, objPrincipal } from '@dapp/utils';
+import { getAccountId, Transactions, TypeTransactionId, objPrincipal } from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec, removeDuplicates } from './TableFunctions';
 
 export const EscrowDeposit = (
   obj_transaction,

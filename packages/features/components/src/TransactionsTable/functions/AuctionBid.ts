@@ -1,4 +1,5 @@
-import { getAccountId, Transactions, removeDuplicates, TypeAccount, TypeTokenSpec, objPrincipal  } from '@dapp/utils';
+import { getAccountId, Transactions, objPrincipal  } from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec,removeDuplicates } from './TableFunctions';
 
 export const AuctionBid = (
   obj_transaction,

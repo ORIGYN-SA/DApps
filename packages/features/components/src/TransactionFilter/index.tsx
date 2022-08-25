@@ -11,7 +11,8 @@ import Switch from '@mui/material/Switch';
 import Collapse from '@mui/material/Collapse';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Autocomplete from '@mui/material/Autocomplete';
-import { removeDuplicates, Filter } from '@dapp/utils'
+import { Filter } from '@dapp/utils'
+
 
 // Select menu styling
 const ITEM_HEIGHT: number = 48;
@@ -27,6 +28,10 @@ const MenuProps = {
 
 // Search into categories
 const search_into = ['All', 'Principal', 'Account', 'Transaction Id'];
+
+const removeDuplicates = (arr: string[]) => {
+  return arr.filter((item, index) => arr.indexOf(item) === index);
+}
 
 export const TransactionFilter = (props : any) => {
   // Collapse - switch btn

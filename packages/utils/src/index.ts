@@ -65,7 +65,4 @@ export * from './principalToAccountID';
 export * from './useLocalStorage';
 export * from './collectionName';
 export * from './interfaces';
-export * from './removeDuplicates';
-export * from './typeAccount';
-export * from './typeToken';
 export * from './objPrincipal';

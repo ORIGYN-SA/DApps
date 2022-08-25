@@ -1,4 +1,5 @@
-import { getAccountId, Transactions, TypeAccount, removeDuplicates } from '@dapp/utils';
+import { getAccountId, Transactions } from '@dapp/utils';
+import { TypeAccount, removeDuplicates } from './TableFunctions';
 
 export const OwnerTransfer = (
   obj_transaction,
