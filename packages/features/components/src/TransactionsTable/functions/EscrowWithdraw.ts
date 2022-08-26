@@ -1,15 +1,7 @@
+import { getAccountId, Transactions, TypeTransactionId } from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec, removeDuplicates, objPrincipal } from './TableFunctions';
 
-import {
-  Transactions,
-  TypeTransactionId,
-  getAccountId,
-  TypeAccount,
-  TypeTokenSpec,
-  removeDuplicates,
-  objPrincipal
-} from '@dapp/utils';
-
-export const SaleWithdraw = (
+export const EscrowWithdraw = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -17,11 +9,12 @@ export const SaleWithdraw = (
   _transaction_type_formatted: string,
 ) => {
   // get buyer and seller objs
-  const sale_wit_buyer = obj_transaction[_props].buyer;
-  const sale_wit_seller = obj_transaction[_props].seller;
+  const wit_buyer = obj_transaction[_props].buyer;
+  const wit_seller = obj_transaction[_props].seller;
   // enter in buyer
-  let buyer_id = sale_wit_buyer.account_id;
-  let buyer_ext = sale_wit_buyer.extensible;
+
+  let buyer_id = wit_buyer.account_id;
+  let buyer_ext = wit_buyer.extensible;
   if (!buyer_id) {
     buyer_id = 'Id undefined';
   }
@@ -30,14 +23,15 @@ export const SaleWithdraw = (
   }
   // account BUYER
   const buyer_account = TypeAccount(
-    sale_wit_buyer.principal,
+    wit_buyer.principal,
     buyer_id,
     buyer_ext,
   );
 
   // enter in seller
-  let seller_id = sale_wit_seller.account_id;
-  let seller_ext = sale_wit_seller.extensible;
+
+  let seller_id = wit_seller.account_id;
+  let seller_ext = wit_seller.extensible;
   if (!seller_id) {
     seller_id = 'Id undefined';
   }
@@ -46,21 +40,21 @@ export const SaleWithdraw = (
   }
   // account SELLER
   const seller_account = TypeAccount(
-    sale_wit_seller.principal,
+    wit_seller.principal,
     seller_id,
     seller_ext,
   );
 
   // token obj
-  const sale_wit_token = obj_transaction[_props].token;
+  const wit_token = obj_transaction[_props].token;
 
   let tokenProps: string;
-  for (tokenProps in sale_wit_token) {
-    var _canister = sale_wit_token[tokenProps].canister;
-    var _fee = sale_wit_token[tokenProps].fee;
-    var _symbol = sale_wit_token[tokenProps].symbol;
-    var _decimals = sale_wit_token[tokenProps].decimals;
-    const _standard = sale_wit_token[tokenProps].standard;
+  for (tokenProps in wit_token) {
+    var _canister = wit_token[tokenProps].canister;
+    var _fee = wit_token[tokenProps].fee;
+    var _symbol = wit_token[tokenProps].symbol;
+    var _decimals = wit_token[tokenProps].decimals;
+    const _standard = wit_token[tokenProps].standard;
 
     for (const prop of Object.keys(_standard)) {
       var token_standard = prop;
@@ -76,32 +70,34 @@ export const SaleWithdraw = (
   );
 
   // trans type
-  const sale_wit_trans = obj_transaction[_props].trx_id;
-  const trans_nat = sale_wit_trans.nat;
-  const trans_text = sale_wit_trans.text;
-  const trans_ext = sale_wit_trans.extensible;
-  // trx id
-  const sale_wit_trx: TypeTransactionId = {
+  const wit_trans = obj_transaction[_props].trx_id;
+  const trans_nat = wit_trans.nat;
+  const trans_text = wit_trans.text;
+  const trans_ext = wit_trans.extensible;
+
+  const wit_trx: TypeTransactionId = {
     _nat: trans_nat,
     _text: trans_text,
     _extensible: trans_ext,
   };
 
+  // SET SELLER,BUYER,TOKEN,TOKEN_ID,AMOUNT,FEE,TRX ID
+
   // Down here the accounts or principals of the transaction.
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
   array_accounts.push(
-    getAccountId(objPrincipal(sale_wit_buyer)),
-    getAccountId(objPrincipal(sale_wit_seller))
+    getAccountId(objPrincipal(wit_buyer)),
+    getAccountId(objPrincipal(wit_seller))
   );
-  console.log(array_accounts);
   const array_principals: string[] = [];
   array_principals.push(obj_token.canister_string);
+
   transactionObj = {
     trans_index: curr_obj.index.toString(),
     token_id: curr_obj.token_id,
     type_txn: _transaction_type_formatted,
-    message: 'Sale withdraw',
+    message: 'Escrow Withdraw',
     accounts: removeDuplicates(array_accounts),
     principals: removeDuplicates(array_principals),
     token: obj_token,
@@ -109,7 +105,7 @@ export const SaleWithdraw = (
     seller: seller_account,
     amount: obj_transaction[_props].amount,
     fee: obj_transaction[_props].fee,
-    trx_id: sale_wit_trx,
+    trx_id: wit_trx,
   };
   return (
     transactionObj

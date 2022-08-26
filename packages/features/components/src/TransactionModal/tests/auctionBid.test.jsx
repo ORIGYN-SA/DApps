@@ -22,15 +22,15 @@ let props = {
 describe('Component/TransactionModal/AuctionBid', () => {
   it('should display OWNER TRANSFER transaction values', () => {
     const { getByText } = render(Transaction(props));
-    screen.getByText(props.modalData.type_txn);
-    screen.getByText(props.modalData.buyer.acc_principal_string);
-    screen.getByText(props.modalData.amount);
-    screen.getByText(props.modalData.token.canister_string);
-    screen.getByText(props.modalData.token.fee);
-    screen.getByText(props.modalData.token.decimal);
-    screen.getByText(props.modalData.token.standard);
-    screen.getByText(props.modalData.amount);
-    screen.getByText(props.modalData.sale_id);
+    expect(screen.getByText(props.modalData.type_txn)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.buyer.acc_principal_string)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.amount)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.token.canister_string)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.token.fee)).toBeInTheDocument();;
+    expect(screen.getByText(props.modalData.token.decimal)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.token.standard)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.amount)).toBeInTheDocument();
+    expect(screen.getByText(props.modalData.sale_id)).toBeInTheDocument();
   });
   // the render should match the snapshot
   it('should match the snapshot', () => {

@@ -12,7 +12,7 @@ const Wrapper = () => {
     transactionType: '',
     update: 0
   }
-  const myTrans={
+  const myTrans=[{
       trans_index: '0',
       token_id: 'bm-1',
       type_txn: 'Mint',
@@ -24,8 +24,9 @@ const Wrapper = () => {
       sale: {
         token: 'Token not defined',
         amount: 'Amount not defined',
-      }
-  }
+      }}
+    ];
+
   const [isLoading,setIsLoading] = useState(false);
   const [indexID,setIndexID] = useState('');
   const [filter, setFilter] = useState(myFilter);
@@ -113,4 +114,14 @@ describe('Components>TransactionsTable', () => {
     cleanup();
   }
   );
+  // Test 9
+  // the wrapper should contain rows
+  test('Rows', () => {
+    const { asFragment } = render(<Wrapper />);
+    const Rows = screen.getAllByRole('row');
+    expect(Rows).toHaveLength(1);
+    cleanup();
+  }
+  );
+
 });

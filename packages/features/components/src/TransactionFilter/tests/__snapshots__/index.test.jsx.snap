@@ -3,7 +3,7 @@
 exports[`Features > Component > TransactionFilter should match the snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-1gpybnd-MuiPaper-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-gjx9le-MuiPaper-root"
   >
     <div>
       <label

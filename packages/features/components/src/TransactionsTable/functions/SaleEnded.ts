@@ -1,4 +1,5 @@
-import { getAccountId, Transactions, TypeAccount, TypeTokenSpec, removeDuplicates, objPrincipal } from '@dapp/utils';
+import { getAccountId, Transactions } from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
 export const SaleEnded = (
   obj_transaction,
@@ -81,7 +82,6 @@ export const SaleEnded = (
 
   const array_principals: string[] = [];
   array_principals.push(obj_token_end.canister_string);
-  console.log('Principal', obj_token_end.canister_string);
 
   transactionObj = {
     trans_index: curr_obj.index.toString(),

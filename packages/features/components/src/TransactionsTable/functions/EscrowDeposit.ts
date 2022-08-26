@@ -1,6 +1,7 @@
-import { getAccountId, Transactions, TypeTransactionId, TypeAccount, TypeTokenSpec, removeDuplicates, objPrincipal } from '@dapp/utils';
+import { getAccountId, Transactions, TypeTransactionId } from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec, removeDuplicates, objPrincipal } from './TableFunctions';
 
-export const EscrowWithdraw = (
+export const EscrowDeposit = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -8,12 +9,13 @@ export const EscrowWithdraw = (
   _transaction_type_formatted: string,
 ) => {
   // get buyer and seller objs
-  const wit_buyer = obj_transaction[_props].buyer;
-  const wit_seller = obj_transaction[_props].seller;
+  const dep_buyer = obj_transaction[_props].buyer;
+  const buyerPrincipal = objPrincipal(dep_buyer);
+  const dep_seller = obj_transaction[_props].seller;
+  const sellerPrincipal = objPrincipal(dep_seller);
   // enter in buyer
-
-  let buyer_id = wit_buyer.account_id;
-  let buyer_ext = wit_buyer.extensible;
+  let buyer_id = dep_buyer.account_id;
+  let buyer_ext = dep_buyer.extensible;
   if (!buyer_id) {
     buyer_id = 'Id undefined';
   }
@@ -22,15 +24,14 @@ export const EscrowWithdraw = (
   }
   // account BUYER
   const buyer_account = TypeAccount(
-    wit_buyer.principal,
+    dep_buyer.principal,
     buyer_id,
     buyer_ext,
   );
 
   // enter in seller
-
-  let seller_id = wit_seller.account_id;
-  let seller_ext = wit_seller.extensible;
+  let seller_id = dep_seller.account_id;
+  let seller_ext = dep_seller.extensible;
   if (!seller_id) {
     seller_id = 'Id undefined';
   }
@@ -39,21 +40,21 @@ export const EscrowWithdraw = (
   }
   // account SELLER
   const seller_account = TypeAccount(
-    wit_seller.principal,
+    dep_seller.principal,
     seller_id,
     seller_ext,
   );
 
   // token obj
-  const wit_token = obj_transaction[_props].token;
+  const dep_token = obj_transaction[_props].token;
 
   let tokenProps: string;
-  for (tokenProps in wit_token) {
-    var _canister = wit_token[tokenProps].canister;
-    var _fee = wit_token[tokenProps].fee;
-    var _symbol = wit_token[tokenProps].symbol;
-    var _decimals = wit_token[tokenProps].decimals;
-    const _standard = wit_token[tokenProps].standard;
+  for (tokenProps in dep_token) {
+    var _canister = dep_token[tokenProps].canister;
+    var _fee = dep_token[tokenProps].fee;
+    var _symbol = dep_token[tokenProps].symbol;
+    var _decimals = dep_token[tokenProps].decimals;
+    const _standard = dep_token[tokenProps].standard;
 
     for (const prop of Object.keys(_standard)) {
       var token_standard = prop;
@@ -69,25 +70,22 @@ export const EscrowWithdraw = (
   );
 
   // trans type
-  const wit_trans = obj_transaction[_props].trx_id;
-  const trans_nat = wit_trans.nat;
-  const trans_text = wit_trans.text;
-  const trans_ext = wit_trans.extensible;
+  const dep_trans = obj_transaction[_props].trx_id;
+  const trans_nat = dep_trans.nat;
+  const trans_text = dep_trans.text;
+  const trans_ext = dep_trans.extensible;
 
-  const wit_trx: TypeTransactionId = {
+  const dep_trx: TypeTransactionId = {
     _nat: trans_nat,
     _text: trans_text,
     _extensible: trans_ext,
   };
 
-  // SET SELLER,BUYER,TOKEN,TOKEN_ID,AMOUNT,FEE,TRX ID
-
-  // Down here the accounts or principals of the transaction.
-  // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
+
   array_accounts.push(
-    getAccountId(objPrincipal(wit_buyer)),
-    getAccountId(objPrincipal(wit_seller))
+    getAccountId(buyerPrincipal),
+    getAccountId(sellerPrincipal)
   );
   const array_principals: string[] = [];
   array_principals.push(obj_token.canister_string);
@@ -96,7 +94,7 @@ export const EscrowWithdraw = (
     trans_index: curr_obj.index.toString(),
     token_id: curr_obj.token_id,
     type_txn: _transaction_type_formatted,
-    message: 'Escrow Withdraw',
+    message: 'Escrow Deposit',
     accounts: removeDuplicates(array_accounts),
     principals: removeDuplicates(array_principals),
     token: obj_token,
@@ -104,9 +102,10 @@ export const EscrowWithdraw = (
     seller: seller_account,
     amount: obj_transaction[_props].amount,
     fee: obj_transaction[_props].fee,
-    trx_id: wit_trx,
+    trx_id: dep_trx,
   };
   return (
     transactionObj
   );
 };
+

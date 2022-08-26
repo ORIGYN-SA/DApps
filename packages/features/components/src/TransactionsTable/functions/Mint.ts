@@ -1,4 +1,5 @@
-import { getAccountId, Transactions, Sale, formatPrincipal, TypeTokenSpec, removeDuplicates, objPrincipal } from '@dapp/utils';
+import { getAccountId, Transactions, Sale } from '@dapp/utils';
+import { TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
 export const Mint = (
   obj_transaction,
@@ -9,9 +10,9 @@ export const Mint = (
 ) => {
   const mint: string = 'Mint';
   const from = obj_transaction[_props].from;
-  const mint_from  = formatPrincipal(from);
+  const mint_from  = objPrincipal(from).toText();
   const to = obj_transaction[_props].to;
-  const mint_to = formatPrincipal(to);
+  const mint_to = objPrincipal(to).toText();
 
   const mint_sale = obj_transaction[_props].sale;
 

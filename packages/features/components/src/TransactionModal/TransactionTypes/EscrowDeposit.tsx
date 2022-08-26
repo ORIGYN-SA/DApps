@@ -3,40 +3,24 @@ import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const EscrowDeposit = (props : any) => {
-  // type
-  const singleT_type = props.data.type_txn;
-  // buyer
-  const account_buyer = props.data.buyer;
-  const buyer_principal = account_buyer.acc_principal_string;
-  // seller
-  const account_seller = props.data.seller;
-  const seller_principal = account_seller.acc_principal_string;
-  // token
-  const dep_token = props.data.token;
-  // token specs
-  const canister = dep_token.canister_string;
-  const {fee} = dep_token;
-  const sym = dep_token.symbol;
-  const decimals = dep_token.decimal;
-  const {standard} = dep_token;
-  // token id
-  const {token_id} = props.data;
-  const {amount} = props.data;
-  let token_fee = props.data.fee;
-  if (!token_fee) {
-    token_fee = 'Undefined';
-  }
-  // trx_id
-  const trans = props.data.trx_id;
-  const {_nat} = trans;
-  const {_text} = trans;
-  let id_trans: string;
-  if (_text) {
-    id_trans = _text;
-  } else {
-    id_trans = _nat.toString();
-  }
+export const EscrowDeposit = (props : any) => {
+const { type_txn, buyer, seller, token, token_id, amount, trx_id } = props.data;
+
+let token_fee = props.data.fee;
+if (!token_fee) {
+  token_fee = 'Undefined';
+}
+// trx_id
+
+const { _nat, _text } = trx_id;
+
+let id_trans;
+
+if (_text) {
+  id_trans = _text;
+} else {
+  id_trans = _nat.toString();
+}
   return (
     <Box>
       <Box
@@ -53,7 +37,7 @@ const EscrowDeposit = (props : any) => {
           Transaction type:
         </Typography>
         <Typography variant="h5" gutterBottom>
-          {singleT_type}
+          {type_txn}
         </Typography>
         <Typography
           sx={{ fontSize: 14 }}
@@ -81,7 +65,7 @@ const EscrowDeposit = (props : any) => {
             >
               Buyer:
             </Typography>
-            <Typography gutterBottom>{buyer_principal}</Typography>
+            <Typography gutterBottom>{buyer.acc_principal_string}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -89,7 +73,7 @@ const EscrowDeposit = (props : any) => {
             >
               Seller:
             </Typography>
-            <Typography gutterBottom>{seller_principal}</Typography>
+            <Typography gutterBottom>{seller.acc_principal_string}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -129,7 +113,7 @@ const EscrowDeposit = (props : any) => {
             >
               Canister:
             </Typography>
-            <Typography gutterBottom>{canister}</Typography>
+            <Typography gutterBottom>{token.canister_string}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -137,7 +121,7 @@ const EscrowDeposit = (props : any) => {
             >
               Fee:
             </Typography>
-            <Typography gutterBottom>{fee}</Typography>
+            <Typography gutterBottom>{token.fee}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -145,7 +129,7 @@ const EscrowDeposit = (props : any) => {
             >
               Decimals:
             </Typography>
-            <Typography gutterBottom>{decimals}</Typography>
+            <Typography gutterBottom>{token.decimal}</Typography>
           </Grid>
           <Grid item xs={6} md={6}>
             <Typography
@@ -156,7 +140,7 @@ const EscrowDeposit = (props : any) => {
               Symbol:
             </Typography>
             <Typography>
-              {sym === 'OGY' ? (
+              {token.symbol === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -169,7 +153,7 @@ const EscrowDeposit = (props : any) => {
             >
               Standard:
             </Typography>
-            <Typography gutterBottom>{standard}</Typography>
+            <Typography gutterBottom>{token.standard}</Typography>
           </Grid>
         </Grid>
       </Box>
@@ -177,4 +161,3 @@ const EscrowDeposit = (props : any) => {
   );
 };
 
-export default EscrowDeposit;

@@ -23,7 +23,7 @@ describe('Select-Autocomplete', () => {
   // Test3
   // test searchbar is rendered and match snapshot
   test('Searchbar is rendered and match snapshot', () => {
-    const { asFragment } = render(<SearchbarNft isLoading={false}/>);
+    const { asFragment } = render(<SearchbarNft isLoading={false} searchBarTokenId={'#myId'}/>);
     expect(asFragment()).toMatchSnapshot();
     cleanup()
   }
