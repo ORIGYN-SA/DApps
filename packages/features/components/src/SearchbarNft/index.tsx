@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, getTokenId } from '@dapp/features-authentication';
 import { Box, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -8,8 +8,9 @@ import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
 // Preloader
 import { CircularProgress } from '@mui/material';
+import { ReplayCircleFilled } from '@mui/icons-material';
 
-export const SearchbarNft = (props : any) => {
+export const SearchbarNft = (props: any) => {
 
   const { tokenId, actor } = useContext(AuthContext);
   const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
@@ -30,22 +31,19 @@ export const SearchbarNft = (props : any) => {
   };
 
   const getNFTCollection = async () => {
-    console.log('tokenIDfromContext',tokenId);
     setSelectTokenIds(['Loading...']);
     const response = await actor?.collection_nft_origyn([]);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
     const number_ids = collectionNFT.token_ids_count[0].toString();
     setIdsNumber(number_ids);
-    let x: string;
     const arrayTokenIds = [];
-    for (x in obj_token_ids) {
+    for (var x in obj_token_ids) {
       var newID = obj_token_ids[x];
       // This is the array created to be filtered with Intersection
       arrayTokenIds.push(newID);
       setSelectTokenIds([...newID]);
     }
-
     // Check if the token Id is in the url
     const splitted_url: string[] = window.location.href.split('/');
     // Empty indexID
@@ -66,8 +64,16 @@ export const SearchbarNft = (props : any) => {
       // setSearchBarTokenId state
       props.setSearchBarTokenId(tokenId);
     } else {
-      // setSearchBarTokenId state
-      props.setSearchBarTokenId('Not selected');
+      if (window.location.href.search('collection')!=-1) {
+        props.setSearchBarTokenId(obj_token_ids[0][0]);
+      } else {
+        // setSearchBarTokenId state
+        props.setSearchBarTokenId(obj_token_ids[0][0]);
+        const curTokenId=await getTokenId();
+        window.location.href = window.location.href.replace(`/${curTokenId}/`, `/${obj_token_ids[0][0]}/`);
+        console.log('HHH',curTokenId);
+      }
+
     }
   };
   // if the actor changes getNftCollection is called
