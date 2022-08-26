@@ -1,31 +1,7 @@
-import { Principal } from '@dfinity/principal';
 import { getAccountId, Transactions, Sale } from '@dapp/utils';
+import { TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
-// Create obj Token
-function TypeTokenSpec(
-  canister: { _arr: [] },
-  fee: string,
-  symbol: string,
-  decimal: string,
-  standard: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(canister._arr));
-  const canister_string = Principal.fromUint8Array(thisArray).toText();
-  return { canister_string, fee, symbol, decimal, standard };
-}
-// format a principal and return a string
-function formatPrincipal(_Uint8Array: { principal: { _arr: [] } }) {
-  const thisArray = Uint8Array.from(Object.values(_Uint8Array.principal._arr));
-  const acc_principal_string = Principal.fromUint8Array(thisArray).toText();
-  return acc_principal_string;
-}
-
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-
-const Mint = (
+export const Mint = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -33,12 +9,10 @@ const Mint = (
   _transaction_type_formatted:string,
 ) => {
   const mint: string = 'Mint';
-
-  const array8uint_from = obj_transaction[_props].from;
-  const mint_from = formatPrincipal(array8uint_from);
-
-  const array8uint_to = obj_transaction[_props].to;
-  const mint_to = formatPrincipal(array8uint_to);
+  const from = obj_transaction[_props].from;
+  const mint_from  = objPrincipal(from).toText();
+  const to = obj_transaction[_props].to;
+  const mint_to = objPrincipal(to).toText();
 
   const mint_sale = obj_transaction[_props].sale;
 
@@ -80,8 +54,8 @@ const Mint = (
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
   array_accounts.push(
-    getAccountId(array8uint_from.principal._arr),
-    getAccountId(array8uint_to.principal._arr),
+    getAccountId(objPrincipal(from)),
+    getAccountId(objPrincipal(to))
   );
   const array_principals: string[] = [];
   array_principals.push();
@@ -101,5 +75,3 @@ const Mint = (
     transactionObj
   );
 };
-
-export default Mint;

@@ -10,6 +10,7 @@ import { collectionName } from '@dapp/utils';
 import { CircularProgress } from '@mui/material';
 
 export const SearchbarNft = (props : any) => {
+
   const { tokenId, actor } = useContext(AuthContext);
   const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
   const [idsNumber, setIdsNumber] = React.useState('');
@@ -29,17 +30,13 @@ export const SearchbarNft = (props : any) => {
   };
 
   const getNFTCollection = async () => {
-    // console.log("PROVA COLL", tokenId);
+    console.log('tokenIDfromContext',tokenId);
     setSelectTokenIds(['Loading...']);
-
     const response = await actor?.collection_nft_origyn([]);
-
     const collectionNFT = response.ok;
-
     const obj_token_ids = collectionNFT.token_ids;
     const number_ids = collectionNFT.token_ids_count[0].toString();
     setIdsNumber(number_ids);
-
     let x: string;
     const arrayTokenIds = [];
     for (x in obj_token_ids) {
@@ -92,7 +89,7 @@ export const SearchbarNft = (props : any) => {
         </Box>
       ) : (
         <FormControl sx={{ m: 1, width: '100%' }}>
-          {tokenId == '' ? (
+          {tokenId == "" ? (
             <div>
               <Typography
                 sx={{
@@ -100,7 +97,7 @@ export const SearchbarNft = (props : any) => {
                   width: '95%',
                 }}
               >
-                Collection name: <b>{collectionName(tokenId)}</b>{' '}
+                Collection name: <b>{collectionName(tokenId)}</b>
               </Typography>
               <Typography
                 sx={{

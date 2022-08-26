@@ -4,21 +4,13 @@ import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import {ICPIcon, OGYIcon} from '@dapp/common-assets';
 
-const SaleEnded = (props : any) => {
-  const end_seller = props.data.seller;
-  const principal_seller = end_seller.acc_principal_string;
-
-  const end_buyer = props.data.buyer;
-  const principal_buyer = end_buyer.acc_principal_string;
-
-  const end_amount = props.data.amount;
-
-  const token_end = props.data.token;
-  const canister = token_end.canister_string;
-  const {fee} = token_end;
-  const sym = token_end.symbol;
-  const decimals = token_end.decimal;
-  const {standard} = token_end;
+export const SaleEnded = (props : any) => {
+  const {
+    seller,
+    buyer,
+    amount,
+    token
+  } = props.data;
 
   return (
 
@@ -63,7 +55,7 @@ const SaleEnded = (props : any) => {
         >
           Amount:
         </Typography>
-        <Typography gutterBottom>{end_amount}</Typography>
+        <Typography gutterBottom>{amount}</Typography>
         <Grid container>
           <Grid item xs={6} md={6}>
             <Typography
@@ -73,7 +65,7 @@ const SaleEnded = (props : any) => {
             >
               Buyer:
             </Typography>
-            <Typography gutterBottom>{principal_buyer}</Typography>
+            <Typography gutterBottom>{buyer.acc_principal_string}</Typography>
           </Grid>
           <Grid item xs={6} md={6}>
             <Typography
@@ -83,7 +75,7 @@ const SaleEnded = (props : any) => {
             >
               Seller:
             </Typography>
-            <Typography gutterBottom>{principal_seller}</Typography>
+            <Typography gutterBottom>{seller.acc_principal_string}</Typography>
           </Grid>
         </Grid>
       </Box>
@@ -97,7 +89,7 @@ const SaleEnded = (props : any) => {
             >
               Canister:
             </Typography>
-            <Typography gutterBottom>{canister}</Typography>
+            <Typography gutterBottom>{token.canister_string}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -105,7 +97,7 @@ const SaleEnded = (props : any) => {
             >
               Fee:
             </Typography>
-            <Typography gutterBottom>{fee}</Typography>
+            <Typography gutterBottom>{token.fee}</Typography>
             <Typography
               sx={{ fontSize: 14 }}
               color="text.secondary"
@@ -113,7 +105,7 @@ const SaleEnded = (props : any) => {
             >
               Decimals:
             </Typography>
-            <Typography gutterBottom>{decimals}</Typography>
+            <Typography gutterBottom>{token.decimal}</Typography>
           </Grid>
           <Grid item xs={6} md={6}>
             <Typography
@@ -124,7 +116,7 @@ const SaleEnded = (props : any) => {
               Symbol:
             </Typography>
             <Typography>
-              {sym === 'OGY' ? (
+              {token.symbol === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
@@ -137,12 +129,10 @@ const SaleEnded = (props : any) => {
             >
               Standard:
             </Typography>
-            <Typography gutterBottom>{standard}</Typography>
+            <Typography gutterBottom>{token.standard}</Typography>
           </Grid>
         </Grid>
       </Box>
     </Box>
   );
 };
-
-export default SaleEnded;

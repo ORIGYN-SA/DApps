@@ -1,34 +1,7 @@
-import { Principal } from '@dfinity/principal';
-import { getAccountId, Transactions } from '@dapp/utils';
+import { getAccountId, Transactions} from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
-// Create obj account
-function TypeAccount(
-  acc_principal: { _arr },
-  acc_id: string,
-  acc_extensible: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(acc_principal._arr));
-  const acc_principal_string = Principal.fromUint8Array(thisArray).toText();
-  return { acc_principal_string, acc_id, acc_extensible };
-}
-// Create obj Token
-function TypeTokenSpec(
-  canister: { _arr: [] },
-  fee: string,
-  symbol: string,
-  decimal: string,
-  standard: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(canister._arr));
-  const canister_string = Principal.fromUint8Array(thisArray).toText();
-  return { canister_string, fee, symbol, decimal, standard };
-}
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-
-const AuctionBid = (
+export const AuctionBid = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -36,25 +9,24 @@ const AuctionBid = (
   _transaction_type_formatted: string,
 ) => {
   const auction = 'Auction bid';
-
   const bid_buyer = obj_transaction[_props].buyer;
-  // account specs
-  const bid_principal = bid_buyer.principal;
   const bid_account_id = bid_buyer.account_id;
   const bid_extensible = bid_buyer.extensible;
   // create account
   const buyer = TypeAccount(
-    bid_principal,
+    bid_buyer.principal,
     bid_account_id,
     bid_extensible,
   );
 
   const bid_amount = obj_transaction[_props].amount;
   const bid_token = obj_transaction[_props].token;
+
   // token specs
   let tokenProps: string;
   for (tokenProps in bid_token) {
     var _canister = bid_token[tokenProps].canister;
+
     var _fee = bid_token[tokenProps].fee;
     var _symbol = bid_token[tokenProps].symbol;
     var _decimals = bid_token[tokenProps].decimals;
@@ -71,14 +43,13 @@ const AuctionBid = (
     _decimals,
     token_standard,
   );
-
   const bid_sale_id = obj_transaction[_props].sale_id;
 
   // Down here the accounts and the principals of the transaction.
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
 
-  array_accounts.push(getAccountId(bid_principal._arr));
+  array_accounts.push(getAccountId(objPrincipal(bid_buyer)));
   const array_principals: string[] = [];
   array_principals.push(bid_obj_token.canister_string);
 
@@ -100,4 +71,3 @@ const AuctionBid = (
   );
 };
 
-export default AuctionBid;

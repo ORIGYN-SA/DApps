@@ -1,31 +1,7 @@
-import { Principal } from '@dfinity/principal';
-
-// Import Interfaces TS
 import { Transactions, PricingConfiguration, WaitForQuiet, formatTime } from '@dapp/utils';
+import { TypeTokenSpec,removeDuplicates } from './TableFunctions';
 
-function TypeTokenSpec(
-  canister: { _arr: [] },
-  fee: string,
-  symbol: string,
-  decimal: string,
-  standard: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(canister._arr));
-  const canister_string = Principal.fromUint8Array(thisArray).toText();
-  return { canister_string, fee, symbol, decimal, standard };
-}
-
-// format data from ns
-function format_data(_date_int: string) {
-  const formatted_data = formatTime(BigInt(_date_int));
-  return formatted_data;
-}
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-
-const SaleOpened = (
+export const SaleOpened = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -68,6 +44,7 @@ const SaleOpened = (
             principals: array_principals,
             pricing_config: InstantData,
             type_of_pricing_config: typeOfPricing,
+            sale_id:_sale_id
           };
 
           break;
@@ -154,7 +131,7 @@ const SaleOpened = (
           var _reserve = obj_pricing[typeOfPricing].reserve;
           var _buyNow = obj_pricing[typeOfPricing].buy_now;
           var _startPrice = obj_pricing[typeOfPricing].start_price;
-          var _startDate = format_data(obj_pricing[typeOfPricing].start_date);
+          var _startDate = formatTime(BigInt(obj_pricing[typeOfPricing].start_date));
 
           var _minIncrease = obj_pricing[typeOfPricing].min_increase;
           var minimum_increase: string;
@@ -167,20 +144,20 @@ const SaleOpened = (
           var _ending = obj_pricing[typeOfPricing].ending;
           var ending_date: string | {};
           if (_ending.hasOwnProperty('date')) {
-            ending_date = format_data(_ending.date);
+            ending_date = formatTime(BigInt(_ending.date));
           } else {
             const { wait_for_quiet } = _ending;
             var wait_props: string;
 
             for (wait_props in wait_for_quiet) {
-              var wfq_date = format_data(wait_for_quiet[wait_props].date);
+              var wfq_date = formatTime(BigInt(wait_for_quiet[wait_props].date));
               var wfq_extention = wait_for_quiet[wait_props].extention;
               var wfq_fade = wait_for_quiet[wait_props].fade;
               var wfq_max = wait_for_quiet[wait_props].max;
             }
 
             const obj_wfq: WaitForQuiet = {
-              date: format_data(wfq_date),
+              date: wfq_date,
               extention: wfq_extention,
               fade: wfq_fade,
               max: wfq_max,
@@ -248,5 +225,3 @@ const SaleOpened = (
   }
   return transactionObj;
 };
-
-export default SaleOpened;

@@ -18,14 +18,14 @@ import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined
 import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
 import { CircularProgress } from '@mui/material';
-import Mint from './functions/Mint';
-import AuctionBid from './functions/AuctionBid';
-import SaleEnded from './functions/SaleEnded';
-import SaleOpened from './functions/SaleOpened';
-import OwnerTransfer from './functions/OwnerTransfer';
-import EscrowDeposit from './functions/EscrowDeposit';
-import EscrowWithdraw from './functions/EscrowWithdraw';
-import SaleWithdraw from './functions/SaleWithdraw';
+import { Mint } from './functions/Mint';
+import {AuctionBid}  from './functions/AuctionBid';
+import { SaleEnded } from './functions/SaleEnded';
+import { SaleOpened } from './functions/SaleOpened';
+import { OwnerTransfer } from './functions/OwnerTransfer';
+import { EscrowDeposit } from './functions/EscrowDeposit';
+import { EscrowWithdraw } from './functions/EscrowWithdraw';
+import { SaleWithdraw } from './functions/SaleWithdraw';
 // Preloader
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
@@ -157,7 +157,6 @@ export const TransactionsTable = (props: any) => {
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
     const response = await actor?.history_nft_origyn(props.searchBarTokenId.toString(), [], []);
-
     // response 2 string
     const string_history = JSON.stringify(
       response,
@@ -198,7 +197,7 @@ export const TransactionsTable = (props: any) => {
           // replace _ with " "
           const replaced = capitalized.replace('_', ' ');
           _transaction_type_formatted += replaced;
-
+          
           switch (_props) {
             case 'auction_bid':
               transactionObj = AuctionBid(
@@ -226,7 +225,7 @@ export const TransactionsTable = (props: any) => {
                 historyNFT[x],
                 _transaction_type_formatted,
               );
-              // console.log(transactionObj);
+              
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
                   setModalData('Loading...');
@@ -615,8 +614,7 @@ export const TransactionsTable = (props: any) => {
           sx={{ margin: 2, width: '100%', padding: 2 }}
         >
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="ogy_data_table">
-            {props.searchBarTokenId == 'Not selected' ||
-            props.searchBarTokenId == 'Not selected' ? (
+            {props.searchBarTokenId == 'Not selected'? (
               <TableHead>
                 <TableRow>
                   <TableCell sx={cell_style}>Select a Token ID</TableCell>

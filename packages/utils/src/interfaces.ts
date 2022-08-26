@@ -67,3 +67,11 @@ export interface TypeTransactionId {
   _text: string;
   _extensible: string;
 }
+
+// Interface for filter
+export interface Filter {
+  searchInputValue: string;
+  categoryToFilter: string;
+  transactionType: string;
+  update: number;
+}

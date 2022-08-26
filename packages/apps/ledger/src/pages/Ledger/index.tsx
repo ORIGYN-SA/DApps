@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import { Box } from '@mui/material';
-import {VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft} from '@dapp/features-components';
+import {VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft } from '@dapp/features-components';
 
 const container_style = {
   size: 'l',
@@ -35,7 +35,7 @@ const Ledger = () => {
         display="flex"
         flexDirection="column"
         alignItems="center"
-      >
+      > 
         <SearchbarNft
           setSearchBarTokenId={setSearchBarTokenId}
           setIndexID={setIndexID}

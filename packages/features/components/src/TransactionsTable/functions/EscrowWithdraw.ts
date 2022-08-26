@@ -1,33 +1,7 @@
-import { Principal } from '@dfinity/principal';
 import { getAccountId, Transactions, TypeTransactionId } from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec, removeDuplicates, objPrincipal } from './TableFunctions';
 
-// Create obj account
-function TypeAccount(
-  acc_principal: { _arr },
-  acc_id: string,
-  acc_extensible: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(acc_principal._arr));
-  const acc_principal_string = Principal.fromUint8Array(thisArray).toText();
-  return { acc_principal_string, acc_id, acc_extensible };
-}
-// Create obj Token
-function TypeTokenSpec(
-  canister: { _arr: [] },
-  fee: string,
-  symbol: string,
-  decimal: string,
-  standard: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(canister._arr));
-  const canister_string = Principal.fromUint8Array(thisArray).toText();
-  return { canister_string, fee, symbol, decimal, standard };
-}
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-const EscrowWithdraw = (
+export const EscrowWithdraw = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -38,7 +12,7 @@ const EscrowWithdraw = (
   const wit_buyer = obj_transaction[_props].buyer;
   const wit_seller = obj_transaction[_props].seller;
   // enter in buyer
-  const buyer_principal = wit_buyer.principal;
+
   let buyer_id = wit_buyer.account_id;
   let buyer_ext = wit_buyer.extensible;
   if (!buyer_id) {
@@ -49,13 +23,13 @@ const EscrowWithdraw = (
   }
   // account BUYER
   const buyer_account = TypeAccount(
-    buyer_principal,
+    wit_buyer.principal,
     buyer_id,
     buyer_ext,
   );
 
   // enter in seller
-  const seller_principal = wit_seller.principal;
+
   let seller_id = wit_seller.account_id;
   let seller_ext = wit_seller.extensible;
   if (!seller_id) {
@@ -66,7 +40,7 @@ const EscrowWithdraw = (
   }
   // account SELLER
   const seller_account = TypeAccount(
-    seller_principal,
+    wit_seller.principal,
     seller_id,
     seller_ext,
   );
@@ -113,8 +87,8 @@ const EscrowWithdraw = (
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
   array_accounts.push(
-    getAccountId(buyer_principal._arr),
-    getAccountId(seller_principal._arr),
+    getAccountId(objPrincipal(wit_buyer)),
+    getAccountId(objPrincipal(wit_seller))
   );
   const array_principals: string[] = [];
   array_principals.push(obj_token.canister_string);
@@ -137,5 +111,3 @@ const EscrowWithdraw = (
     transactionObj
   );
 };
-
-export default EscrowWithdraw;
