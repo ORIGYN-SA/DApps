@@ -68,9 +68,9 @@ export const TransactionFilter = (props : any) => {
     let i: string;
     let k: string;
     const autocompleteArray: string[] = [];
+    const objTransactions = props.transactionData;
     switch (value) {
-      case 'Account':
-        var objTransactions = props.transactionData;
+      case 'Account': 
         for (i in objTransactions) {
           const accountArray: string[] = objTransactions[i].accounts;
           if (accountArray.length >= 1) {
@@ -81,8 +81,7 @@ export const TransactionFilter = (props : any) => {
         }
         setTypedVal('');
         break;
-      case 'Principal':
-        var objTransactions = props.transactionData;
+      case 'Principal':     
         for (i in objTransactions) {
           const principalArray: string[] = objTransactions[i].principals;
           if (principalArray.length >= 1) {
@@ -93,8 +92,7 @@ export const TransactionFilter = (props : any) => {
         }
         setTypedVal('');
         break;
-      case 'Transaction Id':
-        var objTransactions = props.transactionData;
+      case 'Transaction Id':      
         for (i in objTransactions) {
           const id: string = objTransactions[i].trans_index;
           autocompleteArray.push(id);
@@ -118,7 +116,7 @@ export const TransactionFilter = (props : any) => {
 
   const array_types: string[] = props.trans_types;
 
-  // Filter for the ledgfer
+  // Filter for the ledger
   const myFilter: Filter = {
     searchInputValue: typedVal,
     categoryToFilter: searchTrough,
@@ -137,8 +135,7 @@ export const TransactionFilter = (props : any) => {
       elevation={2}
       sx={{ margin: 2, width: '100%', padding: 2 }}
     >
-      {props.searchBarTokenId == 'Not selected'
-      || props.searchBarTokenId == 'Not selected' ? (
+      {props.searchBarTokenId == 'Not selected' ? (
         <div>
           <FormControlLabel
             control={

@@ -25,6 +25,20 @@ describe('Features > Component > TransactionFilter', () => {
       />
     );
   };
+  const FilterUnavailable = () => {
+    const [filter, setFilter] = useState('');
+    const [trans_types, setTrans_types] = useState(['mint', 'auctionBid']);
+    return (
+      <TransactionFilter
+        setFilter={setFilter}
+        setTrans_types={setTrans_types}
+        trans_types={trans_types}
+        isLoading={false}
+        searchBarTokenId = {'Not selected'}
+      />
+    );
+  };
+
 
   // Test1
   // if isLoading is false all the input should be enabled
@@ -43,4 +57,12 @@ describe('Features > Component > TransactionFilter', () => {
         }
     );
 
+  // Test3
+  // if tokenId is not selected the search bar should be disabled
+  it('should be disabled when tokenId is not selected', () => {
+    const { getByLabelText } = render(<FilterUnavailable />);
+    expect(getByLabelText('Filters unavailables, select a Token ID')).toBeInTheDocument();
+    cleanup();
+  }
+  );
 });
