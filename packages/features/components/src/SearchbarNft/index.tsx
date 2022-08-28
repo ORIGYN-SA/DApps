@@ -8,7 +8,6 @@ import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
 // Preloader
 import { CircularProgress } from '@mui/material';
-import { ReplayCircleFilled } from '@mui/icons-material';
 
 export const SearchbarNft = (props: any) => {
 
