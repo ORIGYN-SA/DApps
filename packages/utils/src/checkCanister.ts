@@ -24,24 +24,24 @@ export const checkCanister = async (newCanister) => {
       const agent = new HttpAgent({
         host: 'https://boundary.ic0.app/',
       });
-      const actor = Actor.createActor(phonebookIdl, {
+      const phonebook_actor = Actor.createActor(phonebookIdl, {
         agent: agent,
         canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
       });
       // First check:
       // Check if the Canister is registered in the phone_book.
       // @ts-ignore
-      canisterId = (await actor.lookup(newCanister)).toString();
+      canisterId = (await phonebook_actor.lookup(newCanister)).toString();
       if (canisterId) {
         // Second check:
         // Check if the registered Canister is an NFT canister
-        const newActor = Actor.createActor(origynNftIdl, {
+        const nft_actor = Actor.createActor(origynNftIdl, {
           agent: agent,
           canisterId: canisterId,
         });
 
         try {
-          const hasNFT = await newActor.collection_nft_origyn([]);
+          const hasNFT = await nft_actor.collection_nft_origyn([]);
           if (hasNFT) {
             return canisterId;
           }
@@ -53,12 +53,12 @@ export const checkCanister = async (newCanister) => {
       } else {
         // Third check:
         // If the Canister is not registered in the phone_book, check if it is an NFT canister.
-        const newActor = Actor.createActor(origynNftIdl, {
+        const nft_actor = Actor.createActor(origynNftIdl, {
           agent: agent,
           canisterId: newCanister,
         });
         try {
-          const hasNFT = await newActor.collection_nft_origyn([]);
+          const hasNFT = await nft_actor.collection_nft_origyn([]);
           if (hasNFT) {
             canisterId = newCanister;
             return canisterId;
