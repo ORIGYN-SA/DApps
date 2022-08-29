@@ -2,22 +2,16 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
-import {ICPIcon, OGYIcon} from '@dapp/common-assets';
+import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 
-const Mint = (props : any) => {
-  const singleT_type = props.data.type_txn;
-  const singleT_mint_from = props.data.mint_from;
-  const singleT_mint_to = props.data.mint_to;
-  // enter in sale
-  const singleT_sale = props.data.sale;
-  // inspect sale amount
-  const amount_mint = singleT_sale.amount;
-  // inspect token
-  const token_mint = singleT_sale.token;
+export const Mint = (props: any) => {
+  const { type_txn, mint_from, mint_to, sale } = props.data;
+
+  const { amount, token } = sale;
 
   let display_token_config: any;
 
-  if (token_mint == 'Token not defined') {
+  if (token == 'Token not defined') {
     display_token_config = (
       <Box
         sx={{
@@ -26,38 +20,25 @@ const Mint = (props : any) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Token:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {token_mint}
+              {token}
             </Typography>
           </Grid>
           <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Amount:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {amount_mint}
+              {amount}
             </Typography>
           </Grid>
         </Grid>
       </Box>
     );
   } else {
-    const canister = token_mint.canister_string;
-    const {fee} = token_mint;
-    const sym = token_mint.symbol;
-    const decimals = token_mint.decimal;
-    const {standard} = token_mint;
     display_token_config = (
       <Box
         sx={{
@@ -66,61 +47,41 @@ const Mint = (props : any) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Canister:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {canister}
+              {token.canister_string}
             </Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Fee:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {fee}
+              {token.fee}
             </Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Decimals:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {decimals}
+              {token.decimal}
             </Typography>
           </Grid>
           <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Symbol:
             </Typography>
             <Typography>
-              {sym === 'OGY' ? (
+              {token.symbol === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
               )}
             </Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Standard:
             </Typography>
             <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {standard}
+              {token.standard}
             </Typography>
           </Grid>
         </Grid>
@@ -129,7 +90,6 @@ const Mint = (props : any) => {
   }
 
   return (
-
     <Box>
       <Box
         sx={{
@@ -137,36 +97,24 @@ const Mint = (props : any) => {
           borderBottom: '1px solid',
         }}
       >
-        <Typography
-          sx={{ fontSize: 14 }}
-          color="text.secondary"
-          gutterBottom
-        >
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Transaction type:
         </Typography>
         <Typography variant="h5" gutterBottom>
-          {singleT_type}
+          {type_txn}
         </Typography>
         <Grid container>
           <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Mint from:
             </Typography>
-            <Typography gutterBottom>{singleT_mint_from}</Typography>
+            <Typography gutterBottom>{mint_from}</Typography>
           </Grid>
           <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Mint to:
             </Typography>
-            <Typography gutterBottom>{singleT_mint_to}</Typography>
+            <Typography gutterBottom>{mint_to}</Typography>
           </Grid>
         </Grid>
       </Box>
@@ -174,5 +122,3 @@ const Mint = (props : any) => {
     </Box>
   );
 };
-
-export default Mint;

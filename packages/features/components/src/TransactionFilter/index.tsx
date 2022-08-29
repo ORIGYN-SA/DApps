@@ -11,18 +11,9 @@ import Switch from '@mui/material/Switch';
 import Collapse from '@mui/material/Collapse';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Autocomplete from '@mui/material/Autocomplete';
+import { Filter } from '@dapp/utils'
 
-// Interface for filter
-interface Filter {
-  searchInputValue: string;
-  categoryToFilter: string;
-  transactionType: string;
-  update: number;
-}
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
+
 // Select menu styling
 const ITEM_HEIGHT: number = 48;
 const ITEM_PADDING_TOP: number = 8;
@@ -37,6 +28,10 @@ const MenuProps = {
 
 // Search into categories
 const search_into = ['All', 'Principal', 'Account', 'Transaction Id'];
+
+const removeDuplicates = (arr: string[]) => {
+  return arr.filter((item, index) => arr.indexOf(item) === index);
+}
 
 export const TransactionFilter = (props : any) => {
   // Collapse - switch btn
@@ -73,9 +68,9 @@ export const TransactionFilter = (props : any) => {
     let i: string;
     let k: string;
     const autocompleteArray: string[] = [];
+    const objTransactions = props.transactionData;
     switch (value) {
-      case 'Account':
-        var objTransactions = props.transactionData;
+      case 'Account': 
         for (i in objTransactions) {
           const accountArray: string[] = objTransactions[i].accounts;
           if (accountArray.length >= 1) {
@@ -86,8 +81,7 @@ export const TransactionFilter = (props : any) => {
         }
         setTypedVal('');
         break;
-      case 'Principal':
-        var objTransactions = props.transactionData;
+      case 'Principal':     
         for (i in objTransactions) {
           const principalArray: string[] = objTransactions[i].principals;
           if (principalArray.length >= 1) {
@@ -98,8 +92,7 @@ export const TransactionFilter = (props : any) => {
         }
         setTypedVal('');
         break;
-      case 'Transaction Id':
-        var objTransactions = props.transactionData;
+      case 'Transaction Id':      
         for (i in objTransactions) {
           const id: string = objTransactions[i].trans_index;
           autocompleteArray.push(id);
@@ -123,7 +116,7 @@ export const TransactionFilter = (props : any) => {
 
   const array_types: string[] = props.trans_types;
 
-  // Filter for the ledgfer
+  // Filter for the ledger
   const myFilter: Filter = {
     searchInputValue: typedVal,
     categoryToFilter: searchTrough,
@@ -142,8 +135,7 @@ export const TransactionFilter = (props : any) => {
       elevation={2}
       sx={{ margin: 2, width: '100%', padding: 2 }}
     >
-      {props.searchBarTokenId == 'Not selected'
-      || props.searchBarTokenId == 'Not selected' ? (
+      {props.searchBarTokenId == 'Not selected' ? (
         <div>
           <FormControlLabel
             control={

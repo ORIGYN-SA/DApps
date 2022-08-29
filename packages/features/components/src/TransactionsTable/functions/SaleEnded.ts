@@ -1,35 +1,7 @@
-import { Principal } from '@dfinity/principal';
 import { getAccountId, Transactions } from '@dapp/utils';
+import { TypeAccount, TypeTokenSpec,removeDuplicates, objPrincipal } from './TableFunctions';
 
-// Create obj account
-function TypeAccount(
-  acc_principal: { _arr },
-  acc_id: string,
-  acc_extensible: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(acc_principal._arr));
-  const acc_principal_string = Principal.fromUint8Array(thisArray).toText();
-  return { acc_principal_string, acc_id, acc_extensible };
-}
-// Create obj Token
-function TypeTokenSpec(
-  canister: { _arr: [] },
-  fee: string,
-  symbol: string,
-  decimal: string,
-  standard: string,
-) {
-  const thisArray = Uint8Array.from(Object.values(canister._arr));
-  const canister_string = Principal.fromUint8Array(thisArray).toText();
-  return { canister_string, fee, symbol, decimal, standard };
-}
-
-// array without duplicates
-function removeDuplicates(arr: string[]) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-
-const SaleEnded = (
+export const SaleEnded = (
   obj_transaction,
   _props: string,
   transactionObj: Transactions,
@@ -42,7 +14,6 @@ const SaleEnded = (
   const end_buyer = obj_transaction[_props].buyer;
   const end_token = obj_transaction[_props].token;
   // specs seller
-  const seller_principal = end_seller.principal;
   let seller_id = end_seller.account_id;
   var seller_ext = end_seller.extensible;
   if (!seller_id) {
@@ -53,12 +24,11 @@ const SaleEnded = (
     seller_ext = 'Extensible';
   }
   const seller_account = TypeAccount(
-    seller_principal,
+    end_seller.principal,
     seller_id,
     seller_ext,
   );
   // specs buyer
-  const buyer_principal = end_buyer.principal;
   let buyer_id = end_buyer.account_id;
   if (!buyer_id) {
     buyer_id = 'Id undefined';
@@ -68,7 +38,7 @@ const SaleEnded = (
     buyer_ext = 'Extensible';
   }
   const buyer_account = TypeAccount(
-    buyer_principal,
+    end_buyer.principal,
     buyer_id,
     buyer_ext,
   );
@@ -106,13 +76,12 @@ const SaleEnded = (
   // Need them for filter transaction using principal or account
   const array_accounts: string[] = [];
   array_accounts.push(
-    getAccountId(seller_principal._arr),
-    getAccountId(buyer_principal._arr),
+    getAccountId(objPrincipal(end_buyer)),
+    getAccountId(objPrincipal(end_seller))
   );
 
   const array_principals: string[] = [];
   array_principals.push(obj_token_end.canister_string);
-  console.log('Principal', obj_token_end.canister_string);
 
   transactionObj = {
     trans_index: curr_obj.index.toString(),
@@ -133,4 +102,3 @@ const SaleEnded = (
   );
 };
 
-export default SaleEnded;

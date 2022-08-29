@@ -65,7 +65,7 @@ export const NFTPage = () => {
   const [dialogAction, setDialogAction] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchParams]  = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
   const [modalInitialValues, setModalInitialValues] = React.useState({});
   const [expanded, setExpanded] = React.useState<string | false>('panel1');
@@ -173,7 +173,7 @@ export const NFTPage = () => {
             <img
               width="100%"
               style={{ margin: '0 10px 10px 10px' }}
-              src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}`}
+              src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
             />
             <div>
               <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>

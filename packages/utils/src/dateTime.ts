@@ -65,3 +65,4 @@ export const formatTime = (timestamp: bigint) => {
   const time = `${hour}:${min}`;
   return `${date}/${month}/${year} ${time}${apm}`;
 };
+
