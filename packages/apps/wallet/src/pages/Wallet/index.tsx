@@ -17,6 +17,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { timeConverter } from '@dapp/utils';
 import { ConfirmSalesActionModal, StartAuctionModal } from '@dapp/features-sales-escrows';
+import { getNft, getNftBalance } from 'mintjs';
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext);
@@ -194,7 +195,7 @@ const WalletPage = () => {
   const fetchData = () => {
     if (actor && principal) {
       setIsLoading(true);
-      actor?.balance_of_nft_origyn({ principal }).then((response) => {
+      getNftBalance(principal.toText()).then((response) => {
         console.log('🚀 ~ file: index.tsx ~ line 208 ~ .then ~ response', response);
         const escrows = response?.ok?.escrow;
         const offers = response?.ok?.offers;
@@ -229,7 +230,9 @@ const WalletPage = () => {
               </Tooltip>
             );
 
-            esc.amount = parseFloat((parseInt(escrow.amount) * 1e-8).toString()).toFixed(9);
+            esc.amount = parseFloat((parseInt(escrow.amount.toString()) * 1e-8).toString()).toFixed(
+              9,
+            );
             outEscrow.push(esc);
           });
         }
@@ -259,7 +262,9 @@ const WalletPage = () => {
               </Tooltip>
             );
 
-            esc.amount = parseFloat((parseInt(offer.amount) * 1e-8).toString()).toFixed(9);
+            esc.amount = parseFloat((parseInt(offer.amount.toString()) * 1e-8).toString()).toFixed(
+              9,
+            );
             inEscrow.push(esc);
           });
         }
@@ -284,7 +289,7 @@ const WalletPage = () => {
           out: { columns: outColumns, data: outEscrow },
         });
 
-        Promise.all(response?.ok?.nfts?.map((nft) => actor?.nft_origyn(nft).then((r) => r.ok)))
+        Promise.all(response?.ok?.nfts?.map((nft) => getNft(nft).then((r) => r.ok)))
           .then((data: any) => {
             const rows = [];
             for (const item of data) {
