@@ -67,11 +67,10 @@ export const SearchbarNft = (props: any) => {
         props.setSearchBarTokenId(obj_token_ids[0][0]);
       } else {
         // setSearchBarTokenId state
-       
+        props.setSearchBarTokenId(obj_token_ids[0][0]);
         const curTokenId=await getTokenId();
-        props.setSearchBarTokenId(curTokenId);
-        // window.location.href = window.location.href.replace(`/${curTokenId}/`, `/${obj_token_ids[0][0]}/`);
-        // console.log('HHH',curTokenId);
+        window.location.href = window.location.href.replace(`/${curTokenId}/`, `/${obj_token_ids[0][0]}/`);
+        console.log('HHH',curTokenId);
       }
 
     }

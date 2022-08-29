@@ -32,7 +32,6 @@ export const checkCanister = async (newCanister) => {
       // Check if the Canister is registered in the phone_book.
       // @ts-ignore
       canisterId = (await actor.lookup(newCanister)).toString();
-
       if (canisterId) {
         // Second check:
         // Check if the registered Canister is an NFT canister
