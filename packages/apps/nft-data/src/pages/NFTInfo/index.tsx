@@ -6,6 +6,7 @@ import Tabs from '@mui/material/Tabs';
 import TreeTab from '../../components/nftTabs/TreeTab';
 import RawTab from '../../components/nftTabs/RawTab';
 import FormTab from '../../components/nftTabs/FormTab';
+import FormTab2 from '../../components/nftTabs/FormTab2';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import JSONTab from '../../components/nftTabs/JSONTab';
@@ -53,6 +54,7 @@ const NFTInfo = ({metadata}: any) => {
           <Tab label="Tree"  />
           <Tab label="Raw"  />
           <Tab label="JSON"  />
+          <Tab label="NEW FORM"  />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -66,6 +68,9 @@ const NFTInfo = ({metadata}: any) => {
       </TabPanel>
       <TabPanel value={value} index={3}>
         <JSONTab metadata={metadata} />
+      </TabPanel>
+      <TabPanel value={value} index={4}>
+      <FormTab2 metadata={metadata} />
       </TabPanel>
     </Box>
       </Container>

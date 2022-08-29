@@ -60,7 +60,7 @@ const FormTab = ({ metadata }: any) => {
         </Grid>
       </Grid>
       <Divider />
-      {apps?.map((app, i, index) => {
+      {apps?.map((app, i) => {
         return (
           <Grid sx={{ marginTop: '20px' }} container spacing={2} key={`${app}+${i}`}>
             <Grid item xs={2}></Grid>
@@ -151,7 +151,7 @@ const FormTab = ({ metadata }: any) => {
         );
       })}
       <Divider />
-      {library?.map((lib, i, index) => {
+      {library?.map((lib, i) => {
         let length = Object.keys(lib).length;
         return (
           <Grid key={`${lib}+${i}`} sx={{ marginTop: '20px' }} container spacing={2}>
