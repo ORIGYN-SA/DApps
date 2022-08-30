@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import { Box } from '@mui/material';
 import { VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft, SwitchCanisterCollection } from '@dapp/features-components';
-
 const container_style = {
   size: 'l',
   padding: '12px',

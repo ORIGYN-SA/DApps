@@ -6,24 +6,36 @@ import { Box, Button } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
 import { getCanisterId } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';
-import { toast } from 'react-toastify';
+import { useSnackbar } from 'notistack';
 
 export const SwitchCanisterCollection = () => {
+    const { enqueueSnackbar } = useSnackbar();
     const [switchTo, setSwitchTo] = React.useState('');
     const handleChange = event => {
         setSwitchTo(event.target.value);
     };
-    const [errorText, setErrorText] = React.useState('');
     const changeCanisterCollection = async () => {
         const response: string | boolean = await checkCanister(switchTo.toLowerCase().trim());
         const currentCanisterId = await getCanisterId();
         if (response === false) {
-            setErrorText('Canister not found');
+            enqueueSnackbar('Canister not found', {
+                variant: 'error',
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+              });
         } else {
             const url = window.location.href;
             const new_url = url.replace(currentCanisterId, response.toString());
             window.location.href = new_url;
-            setErrorText('');
+            enqueueSnackbar('Switching Canister...', {
+                variant: 'success',
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+              });
         }
     }
     return (
@@ -41,7 +53,6 @@ export const SwitchCanisterCollection = () => {
                     id="outlined-basic"
                     label="Switch Canister"
                     variant="outlined"
-                    helperText={errorText}
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Switch Canister"
                     inputProps={{ 'aria-label': 'Switch Canister' }}
