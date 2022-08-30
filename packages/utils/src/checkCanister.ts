@@ -1,5 +1,6 @@
 // This function checks if the canister (passed as argument) is valid.
 // If it is not, it returns false.
+// ----------------------------------------------------------------------------
 // Arguments: canister (string)
 // Returns: boolean || string
 // Author: Alessandro
