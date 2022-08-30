@@ -6,6 +6,7 @@ import { Box, Button } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
 import { getCanisterId } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';
+
 export const SwitchCanisterCollection = () => {
   const [switchTo, setSwitchTo] = React.useState('');
   const handleChange = (event) => {
