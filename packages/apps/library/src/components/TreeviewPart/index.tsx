@@ -4,51 +4,36 @@ import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
+import LibraryBox from '../LibraryBox';
 
 const TreeViewPart = ({ children }: any) => {
   const { actor, canisterId } = useContext(AuthContext);
-  const [libData, setLibData] = useState([]);
+  const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
-  const [nftData, setNftData] = useState([]);
-  const [tokenIdSet, setTokenIdSet] = useState();
+
+  const nftCollection = async () => {
+    const response = await actor?.collection_nft_origyn([]);
+    console.log("asta-i ma", response);
+    const collectionNFT = response.ok;
+    const obj_token_ids = collectionNFT.token_ids;
+
+    const arrayTokenIds = [];
+    for (var x in obj_token_ids) {
+      var newID = obj_token_ids[x];
+      arrayTokenIds.push(newID);
+    }
+
+    return setNfts(arrayTokenIds[0]);
+  };
+
+  console.log(nfts)
 
   useEffect(() => {
     if (actor) {
-      actor
-        .collection_nft_origyn([])
-        .then((r) => {
-          setNftData(r);
-          console.log('collection_nft_origyn', r);
-        })
-        .catch("collection_nft_origyn error");
+      nftCollection();
     }
-  }, []);
+  }, [actor]);
 
-  useEffect(() => {
-    if (actor) {
-      actor
-        .nft_origyn(tokenIdSet)
-        .then((r) => {
-          setCurrentNft(r);
-          console.log("nft_origyn", r.thawed.id.value.Text);
-        })
-        .catch("nft_origyn error");
-    }
-  }, []);  
-
-  
-
-  function toJson(data) {
-    if (data !== undefined) {
-      return JSON.stringify(
-        data,
-        (_, v) => (typeof v === "bigint" ? `${v}#bigint` : v),
-        "\t"
-      ).replace(/"(-?\d+)#bigint"/g, (_, a) => a);
-    }
-  }
-
-  console.log("nftdata", toJson(nftData));
 
   return (
     <div>
@@ -59,16 +44,13 @@ const TreeViewPart = ({ children }: any) => {
       >
         <TreeItem nodeId="0" label={canisterId}>
           <TreeItem nodeId="1" label="NFTs">
-            <TreeItem nodeId="22" label="NFT 1"/>
-            <TreeItem nodeId="23" label="NFT 2"/>
-            <TreeItem nodeId="24" label="NFT 3"/>
-            {/* {nftData?.map((nft) => (
-              // AICI TREBUIE SA-I ADAUG UN PREVIEW LA NFT, APOI SA COBOR IAR CU LIBRARII IN TREEVIEW
-              <TreeItem key={nft} nodeId={nft} label={nft.name} onClick={() => setTokenIdSet(nft.id)}>
-                {/* aici cand dau click pe un TreeItem, pot face un Treeitem cu datele NFT */}
-                {/* <TreeItem nodeId={nft} label={currentNft}/>
-              </TreeItem> 
-            ))} */}
+            {nfts?.map((nft, index) => (
+            
+              <TreeItem key={index} nodeId={`${nft}+${index}`} label={nft} onClick={() => setCurrentNft(nft)}>
+                
+                </TreeItem>
+             
+            ))}
           </TreeItem>
           <TreeItem nodeId="2" label="Libraries">
             <TreeItem nodeId="3" label={children} />
