@@ -1,5 +1,6 @@
 // This function checks if the canister (passed as argument) is valid.
 // If it is not, it returns false.
+// ----------------------------------------------------------------------------
 // Arguments: canister (string)
 // Returns: boolean || string
 // Author: Alessandro
@@ -51,24 +52,31 @@ export const checkCanister = async (newCanister) => {
           return canisterId;
         }
       } else {
-        // Third check:
-        // If the Canister is not registered in the phone_book, check if it is an NFT canister.
-        const nft_actor = Actor.createActor(origynNftIdl, {
-          agent: agent,
-          canisterId: newCanister,
-        });
+        // Third-Fourth check:
+        // Check if the unregistered Canister has a valid format and is an NFT canister
         try {
+          Principal.fromText(newCanister);
+          canisterId = newCanister;
+          const nft_actor = Actor.createActor(origynNftIdl, {
+            agent: agent,
+            canisterId: newCanister,
+          });
           const hasNFT = await nft_actor.collection_nft_origyn([]);
           if (hasNFT) {
             canisterId = newCanister;
             return canisterId;
+          } else {
+          // If the canister is not an NFT canister, return false
+            console.log('Not in the phone_book - Not an NFT canister');
+            canisterId = false;
+            return canisterId;
           }
         } catch (e) {
-          console.log('Not in the phone_book - Not an NFT canister');
+          // If the canister is not in the phone_book and not in the correct format, return false
+          console.log('Not a valid canister');
           canisterId = false;
           return canisterId;
         }
-
       }
     }
   }
