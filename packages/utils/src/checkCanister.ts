@@ -67,7 +67,7 @@ export const checkCanister = async (newCanister) => {
             canisterId = newCanister;
             return canisterId;
           } else {
-          // If the canister is not an NFT canister, return false
+            // If the canister is not an NFT canister, return false
             console.log('Not in the phone_book - Not an NFT canister');
             canisterId = false;
             return canisterId;
