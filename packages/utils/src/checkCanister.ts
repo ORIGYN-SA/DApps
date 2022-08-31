@@ -5,6 +5,7 @@
 // Returns: boolean || string
 // Author: Alessandro
 // Date: 2022-08-28
+// ----------------------------------------------------------------------------
 
 import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
