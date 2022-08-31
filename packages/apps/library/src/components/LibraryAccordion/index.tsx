@@ -65,7 +65,7 @@ const LibraryAccordion = () => {
               return res.name === 'library';
             })[0].value.Array.thawed,
           );
-          console.log('R', r);
+          console.log('asta ii Rv', r);
         })
         .catch(console.log);
     }

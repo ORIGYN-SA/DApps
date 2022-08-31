@@ -7,12 +7,14 @@ import TreeItem from '@mui/lab/TreeItem';
 
 import CardContent from '@mui/material/CardContent';
 import Card from '@mui/material/Card';
+import LibraryBox from '../LibraryBox';
 
 const TreeViewPart = ({ children }: any) => {
   const { actor, canisterId , tokenId} = useContext(AuthContext);
   const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
   const [NftData, setNftData] = useState("tacos");
+
 
   const nftCollection = async () => {
     const response = await actor?.collection_nft_origyn([]);
@@ -22,17 +24,12 @@ const TreeViewPart = ({ children }: any) => {
 
     const collectionPreview = response.ok.metadata[0].Class.filter((res) => {
       return res.name === 'primary_asset'})[0].value.Text
-      
+
     setNftData(collectionPreview)
     console.log("🚀 ~ file: index.tsx ~ line 22 ~ collectionPreview ~ collectionPreview", collectionPreview)
     console.log("this is it", NftData)
 
-    useEffect(() => {
-      if (actor) {
-      setNftData(collectionPreview)
-      console.log(NftData)
-      }
-    } , [actor]);
+
 
     const obj_token_ids = collectionNFT.token_ids;
 
@@ -95,6 +92,7 @@ const TreeViewPart = ({ children }: any) => {
                 label={nft}
                 onClick={() => setCurrentNft(nft)}
               >
+                <LibraryBox currentNft={currentNft}/>
                 <Card
                   variant="outlined"
                   sx={{
