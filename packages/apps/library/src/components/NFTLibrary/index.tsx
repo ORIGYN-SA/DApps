@@ -11,7 +11,7 @@ const NFTLibrary = (props: any) => {
   let signed = {
     id: props.currentNft,
   };
-
+//
   const nftLibrariesData = async () => {
     const lib = await actor?.nft_origyn(signed.id);
     console.log('here is library of NFT', lib);
