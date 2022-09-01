@@ -5,6 +5,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
 import NFTBox from '../NFTBox';
+import Grid from '@mui/material/Grid';
+import NFTLibrary from '../NFTLibrary';
 
 const TreeViewPart = ({ children }: any) => {
   const { actor, canisterId } = useContext(AuthContext);
@@ -63,7 +65,14 @@ const TreeViewPart = ({ children }: any) => {
                 label={nft}
                 onClick={() => setCurrentNft(nft)}
               >
-                <NFTBox currentNft={currentNft} />
+                <Grid container spacing={3}>
+                  <Grid item>
+                    <NFTBox currentNft={currentNft} />
+                  </Grid>
+                  <Grid item>
+                    <NFTLibrary currentNft={currentNft} />
+                  </Grid>
+                </Grid>
               </TreeItem>
             ))}
           </TreeItem>
