@@ -7,10 +7,9 @@ import TreeItem from '@mui/lab/TreeItem';
 import NFTBox from '../NFTBox';
 
 const TreeViewPart = ({ children }: any) => {
-  const { actor, canisterId, tokenId } = useContext(AuthContext);
+  const { actor, canisterId } = useContext(AuthContext);
   const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
-  const [NftData, setNftData] = useState('tacos');
 
   const nftCollection = async () => {
     const response = await actor?.collection_nft_origyn([]);
@@ -20,9 +19,6 @@ const TreeViewPart = ({ children }: any) => {
 
     // const collectionPreview = response.ok.metadata[0].Class.filter((res) => {
     //  return res.name === 'primary_asset'})[0].value.Text
-
-    //    console.log("🚀 ~ file: index.tsx ~ line 22 ~ collectionPreview ~ collectionPreview", collectionPreview)
-    console.log('this is it', NftData);
 
     const obj_token_ids = collectionNFT.token_ids;
 
@@ -50,22 +46,6 @@ const TreeViewPart = ({ children }: any) => {
       nftCollection();
     }
   }, [actor]);
-
-  // useEffect(() => {
-  //   if (actor) {
-  //     actor
-  //       .actor?.collection_nft_origyn([])
-  //       .then((response) => {
-  //         setNftData(response.ok.metadata[0].Class.filter((res) => {
-  //           return res.name === 'primary_asset'})[0].value.Text
-  //         );
-
-  //       })
-  //       .catch(console.log);
-  //   }
-  // }, [actor]);
-
-  // console.log("this is NftData 212121", NftData);
 
   return (
     <div>
