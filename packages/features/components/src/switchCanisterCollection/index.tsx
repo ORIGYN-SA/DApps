@@ -10,6 +10,7 @@ import { useSnackbar } from 'notistack';
 
 export const SwitchCanisterCollection = () => {
     const { enqueueSnackbar } = useSnackbar();
+    
     const [switchTo, setSwitchTo] = React.useState('');
     const handleChange = event => {
         setSwitchTo(event.target.value);
@@ -39,7 +40,6 @@ export const SwitchCanisterCollection = () => {
         }
     }
     return (
-
         <Box
             component={Paper}
             elevation={3}
@@ -50,6 +50,7 @@ export const SwitchCanisterCollection = () => {
                 sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}
             >
                 <TextField
+                    data-testid="switch-canister-textfield"
                     id="outlined-basic"
                     label="Switch Canister"
                     variant="outlined"
@@ -65,7 +66,9 @@ export const SwitchCanisterCollection = () => {
                             </InputAdornment>
                         )
                     }} />
-                <Button variant="text"
+                <Button 
+                data-testid="switch-canister-button"
+                variant="text"
                     onClick={changeCanisterCollection}
                 >SWITCH</Button>
             </Paper>
