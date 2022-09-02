@@ -27,9 +27,10 @@ const NFTBox = (props: any) => {
 
   // const nftImage : NFTDATA = nftStuff?.ok?.metadata?.Class.filter((res) => {
   //   return res.name === 'primary_asset';
-  // const nftImage = nftStuff.ok.metadata?.Class.filter((res) => {return res.name === 'library'}).value.Array.thawed[0].Class.filter((res) => {
-    //  return res.name === 'location'}).value.Text
-  // }).value.Text; Class[3]?.value?.Text,
+
+  const nftImage = nftStuff?.ok?.metadata?.Class?.filter((res) => {return res.name === 'library'})?.value?.Array?.thawed[0].Class.filter((res) => {
+     return res.name === 'location'}).value.Text
+
 
   return (
     <div>
@@ -46,7 +47,7 @@ const NFTBox = (props: any) => {
             NFT ID: <b> {nftData.nft_id} </b>
           </Typography>
           <Box>
-            {/* <img src={nftImage} height="300px" alt="NFT Image"></img> */}
+            <img src={nftImage} height="300px" alt="NFT Image"></img>
           </Box>
         </CardContent>
       </Card>

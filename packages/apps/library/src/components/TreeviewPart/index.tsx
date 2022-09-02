@@ -33,14 +33,6 @@ const TreeViewPart = ({ children }: any) => {
     return setNfts(arrayTokenIds[0]);
   };
 
-  useEffect(() => {
-    if (actor) {
-      actor.nft_origyn('bm-1').then((r) => {
-        console.log('🚀 ~ file: index.tsx ~ line 40 ~ useEffect ~ r', r);
-      });
-    }
-  }, []);
-
   console.log(nfts);
 
   useEffect(() => {
