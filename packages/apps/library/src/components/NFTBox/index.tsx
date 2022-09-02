@@ -18,7 +18,7 @@ const NFTBox = (props: any) => {
 
   useEffect(() => {
     if (actor) {
-      actor.nft_origyn(nftData.nft_id).then((r) => {
+      actor.nft_origyn(props.currentNft).then((r) => {
         console.log('nft_origyn NFTBox', r);
         setNftStuff(r);
       });
