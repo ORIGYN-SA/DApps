@@ -16,12 +16,6 @@ const TreeViewPart = ({ children }: any) => {
   const nftCollection = async () => {
     const response = await actor?.collection_nft_origyn([]);
     const collectionNFT = response.ok;
-
-    console.log('🚀 ~ file: index.tsx ~ line 20 ~ nftCollection ~ collectionNFT', collectionNFT);
-
-    // const collectionPreview = response.ok.metadata[0].Class.filter((res) => {
-    //  return res.name === 'primary_asset'})[0].value.Text
-
     const obj_token_ids = collectionNFT.token_ids;
 
     const arrayTokenIds = [];

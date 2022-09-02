@@ -3,11 +3,9 @@ import { AuthContext } from '@dapp/features-authentication';
 import { TreeItem } from '@mui/lab';
 import LibraryBox from '../LibraryBox';
 
-
-
 const NFTLibrary = (props: any) => {
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
-  const [ currentLibrary, setCurrentLibrary ] = useState([]);
+  const [currentLibrary, setCurrentLibrary] = useState([]);
   const { actor } = useContext(AuthContext);
 
   let signed = {
@@ -34,7 +32,7 @@ const NFTLibrary = (props: any) => {
           key={library?.Class[0]?.value?.Text}
           nodeId={library?.Class[0]?.value?.Text}
           label={library?.Class[1]?.value?.Text}
-          onClick={() => (setCurrentLibrary(library))}
+          onClick={() => setCurrentLibrary(library)}
         >
           <LibraryBox currentLibrary={currentLibrary} />
         </TreeItem>

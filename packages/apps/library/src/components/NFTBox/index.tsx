@@ -25,9 +25,6 @@ const NFTBox = (props: any) => {
     }
   }, [actor]);
 
-  // const nftImage : NFTDATA = nftStuff?.ok?.metadata?.Class.filter((res) => {
-  //   return res.name === 'primary_asset';
-
   const nftImage = nftStuff?.ok?.metadata?.Class?.filter((res) => {
     return res.name === 'library';
   })[0].value?.Array?.thawed[0].Class.filter((res) => {
