@@ -46,7 +46,7 @@ const NFTBox = (props: any) => {
             NFT ID: <b> {nftData.nft_id} </b>
           </Typography>
           <Box>
-            <img src={nftImage} height="300px"></img>
+            <img src={nftImage} height="300px" alt="NFT Image"></img>
           </Box>
         </CardContent>
       </Card>

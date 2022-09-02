@@ -1,7 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import { TreeItem } from '@mui/lab';
-import LibraryBox from '../LibraryBox';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+
 
 const NFTLibrary = (props: any) => {
   const { libraryData, setLibraryData } = useState([]);
@@ -36,9 +40,61 @@ const NFTLibrary = (props: any) => {
           nodeId={library?.Class[0]?.value?.Text}
           label={library?.Class[1]?.value?.Text}
           onClick={() => setCurrentLibrary(library)}
+
         >
-          <LibraryBox currentLibrary={currentLibrary} />
-        </TreeItem>
+
+    <Card
+      variant="outlined"
+      sx={{
+        minWidth: 275,
+        borderRadius: '0px',
+      }}
+    >
+      <CardContent>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Typography
+              sx={{
+                m: 2,
+                fontSize: 17,
+                borderBottom: '1px solid',
+                marginBottom: '30px',
+              }}
+              color="text.secondary"
+              gutterBottom
+            >
+              <b>LIBRARY ID:</b> {library?.Class[0]?.value?.Text}
+            </Typography>
+            {console.log("bau", library?.Class[0]?.value?.Text)}
+            <Typography
+              sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
+              color="text.primary"
+              gutterBottom
+            >
+              <b>TITLE:</b> {library?.Class[1]?.value?.Text}
+              <br></br>
+            </Typography>
+            <Typography
+              sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
+              color="text.primary"
+              gutterBottom
+            >
+              <br></br>
+            </Typography>
+
+            <Typography
+              sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
+              color="text.primary"
+              gutterBottom
+            >
+              <br></br>
+            </Typography>
+          </Grid>
+
+        </Grid>
+      </CardContent>
+    </Card>
+       </TreeItem>
       ))}
     </div>
   );
