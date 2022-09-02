@@ -3,33 +3,33 @@ import { Card, CardContent, Typography, Box } from '@mui/material';
 import { AuthContext } from '@dapp/features-authentication';
 
 interface NFTDATA {
-  nft_id: string;
+  nft_id?: string;
   preview?: string;
+  nftImage?: any;
 }
 
 const NFTBox = (props: any) => {
   const { actor } = useContext(AuthContext);
-  const { nftStuff, setNftStuff } = useState({});
+  const [ nftStuff, setNftStuff ] = useState<any>();
 
   let nftData: NFTDATA = {
     nft_id: props.currentNft,
   };
 
-  const nftDetails = async () => {
-    const details = await actor?.nft_origyn(nftData.nft_id);
-    console.log('here me', details);
-    return setNftStuff(details);
-  };
-
   useEffect(() => {
     if (actor) {
-      nftDetails();
+      actor.nft_origyn(nftData.nft_id).then((r) => {
+        console.log('nft_origyn NFTBox', r);
+        setNftStuff(r);
+      });
     }
   }, [actor]);
 
-  const nftImage = nftStuff?.ok?.metadata?.Class.filter((res) => {
-    return res.name === 'primary_asset';
-  }).value.Text;
+  // const nftImage : NFTDATA = nftStuff?.ok?.metadata?.Class.filter((res) => {
+  //   return res.name === 'primary_asset';
+  // const nftImage = nftStuff.ok.metadata?.Class.filter((res) => {return res.name === 'library'}).value.Array.thawed[0].Class.filter((res) => {
+    //  return res.name === 'location'}).value.Text
+  // }).value.Text; Class[3]?.value?.Text,
 
   return (
     <div>
@@ -46,7 +46,7 @@ const NFTBox = (props: any) => {
             NFT ID: <b> {nftData.nft_id} </b>
           </Typography>
           <Box>
-            <img src={nftImage} height="300px" alt="NFT Image"></img>
+            {/* <img src={nftImage} height="300px" alt="NFT Image"></img> */}
           </Box>
         </CardContent>
       </Card>
