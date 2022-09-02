@@ -10,7 +10,7 @@ interface NFTDATA {
 
 const NFTBox = (props: any) => {
   const { actor } = useContext(AuthContext);
-  const [ nftStuff, setNftStuff ] = useState<any>();
+  const [nftStuff, setNftStuff] = useState<any>();
 
   let nftData: NFTDATA = {
     nft_id: props.currentNft,
@@ -28,9 +28,11 @@ const NFTBox = (props: any) => {
   // const nftImage : NFTDATA = nftStuff?.ok?.metadata?.Class.filter((res) => {
   //   return res.name === 'primary_asset';
 
-  const nftImage = nftStuff?.ok?.metadata?.Class?.filter((res) => {return res.name === 'library'})?.value?.Array?.thawed[0].Class.filter((res) => {
-     return res.name === 'location'}).value.Text
-
+  const nftImage = nftStuff?.ok?.metadata?.Class?.filter((res) => {
+    return res.name === 'library';
+  })[0].value?.Array?.thawed[0].Class.filter((res) => {
+    return res.name === 'location';
+  })[0].value.Text;
 
   return (
     <div>
@@ -47,7 +49,7 @@ const NFTBox = (props: any) => {
             NFT ID: <b> {nftData.nft_id} </b>
           </Typography>
           <Box>
-            <img src={nftImage} height="300px" alt="NFT Image"></img>
+            <img src={nftImage} height="300px"></img>
           </Box>
         </CardContent>
       </Card>
