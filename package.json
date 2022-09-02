@@ -16,7 +16,8 @@
     "build:library": "lerna exec --scope @dapp/app-library -- npm run build",
     "build:nft-data": "lerna exec --scope @dapp/app-nft-data -- npm run build",
     "test": "jest --env=./testUtils/testEnv.js",
-    "lint": "eslint packages/**/*.tsx"
+    "lint": "eslint packages/**/*.tsx",
+    "clear_jest": "jest --clearCache"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
