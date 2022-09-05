@@ -2,43 +2,88 @@ import React from 'react';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
 import { getCanisterId } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useSnackbar } from 'notistack';
+import { Principal } from '@dfinity/principal';
+import { Actor, HttpAgent } from '@dfinity/agent';
+import { phonebookIdl } from '@dapp/common-candid';
 
 export const SwitchCanisterCollection = () => {
     const { enqueueSnackbar } = useSnackbar();
-    
     const [switchTo, setSwitchTo] = React.useState('');
-    const handleChange = event => {
+    const handleChange = (event) => {
         setSwitchTo(event.target.value);
     };
+    // Phonebook Agent
+    const agent = new HttpAgent({
+        host: 'https://boundary.ic0.app/',
+    });
+    // Phonebook actor for the current canister name 
+    const phonebook_actor = Actor.createActor(phonebookIdl, {
+        agent: agent,
+        canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
+    });
     const changeCanisterCollection = async () => {
-        const response: string | boolean = await checkCanister(switchTo.toLowerCase().trim());
-        const currentCanisterId = await getCanisterId();
-        if (response === false) {
+        //Transform current url to a string
+        const url = window.location.href.toString();
+        // Get the checked canister
+        const NewCheckedCanister: string | boolean = await checkCanister(switchTo.toLowerCase().trim());
+        // Get the current canisterId from authentification
+        const CurrentCanisterId = await getCanisterId();
+        console.log(CurrentCanisterId);
+        // Get the name of the current canister from the phonebook using reverse_lookup
+        const CurrentCanisterName: any = await phonebook_actor?.reverse_lookup(
+            Principal.fromText(CurrentCanisterId),
+        );
+        if (NewCheckedCanister === false) {
+            // Display error message - SNACKBAR
             enqueueSnackbar('Canister not found', {
                 variant: 'error',
                 anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
+                    vertical: 'top',
+                    horizontal: 'right',
                 },
-              });
+            });
         } else {
-            const url = window.location.href;
-            const new_url = url.replace(currentCanisterId, response.toString());
-            window.location.href = new_url;
+            const NewCanisterName = await phonebook_actor?.reverse_lookup(
+                Principal.fromText(NewCheckedCanister.toString()),
+            );
+            let NewCanister = "";
+            if (NewCanisterName == "") {
+                NewCanister = NewCheckedCanister.toString();
+            } else {
+                NewCanister = NewCanisterName.toString();
+            };
+
+            let new_url = '';
+            if (CurrentCanisterName == "") {
+                new_url = url.replace(CurrentCanisterId, NewCanister);
+            } else {
+                // Search for the canister Name in the url
+                const found = url.includes(CurrentCanisterName);
+                // If found, replace it with the new canister name, if not replace with the new canister string 
+                if (found === true) {
+                    new_url = url.replace(CurrentCanisterName, NewCanister);
+                } else {
+                    new_url = url.replace(CurrentCanisterId, NewCanister);
+                }
+            }
+            // Set the new url
+            document.location.href = new_url;
+            // Display a success message - SNACKBAR
             enqueueSnackbar('Switching Canister...', {
                 variant: 'success',
                 anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
+                    vertical: 'top',
+                    horizontal: 'right',
                 },
-              });
+            });
         }
-    }
+    };
+
     return (
         <Box
             component={Paper}
@@ -64,15 +109,18 @@ export const SwitchCanisterCollection = () => {
                             <InputAdornment position="start">
                                 <ChangeCircleIcon />
                             </InputAdornment>
-                        )
-                    }} />
-                <Button 
-                data-testid="switch-canister-button"
-                variant="text"
+                        ),
+                    }}
+                />
+                <Button
+                    data-testid="switch-canister-button"
+                    variant="text"
                     onClick={changeCanisterCollection}
-                >SWITCH</Button>
+                >
+                    SWITCH
+                </Button>
+
             </Paper>
         </Box>
-
     );
-}
+};
