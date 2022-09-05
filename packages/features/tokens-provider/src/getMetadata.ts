@@ -34,16 +34,10 @@ const extMethod = async (token: Token): Promise<MetadataReponse> => {
   });
   const extensions: any = await actor.extensions();
   if (!extensions.includes('@ext/common'))
-    throw new Error(
-      'The provided canister does not implement commont extension',
-    );
+    throw new Error('The provided canister does not implement commont extension');
   const metadataResult: any = await actor.metadata(token.symbol);
 
   if ('ok' in metadataResult) {
-    console.log(
-      '🚀 ~ file: getMetadata.ts ~ line 45 ~ metadataResult',
-      metadataResult,
-    );
     return metadataResult.ok;
   }
 
@@ -70,10 +64,6 @@ const wicpMethod = async (token: Token): Promise<MetadataReponse> => {
     agent,
   });
   const metadataResult: any = await actor.getMetadata();
-  console.log(
-    '🚀 ~ file: getMetadata.ts ~ line 70 ~ wicpMethod ~ metadataResult',
-    metadataResult,
-  );
   return {
     decimals: metadataResult.decimals,
     fee: metadataResult.fee,
@@ -82,10 +72,7 @@ const wicpMethod = async (token: Token): Promise<MetadataReponse> => {
   };
 };
 
-export const getMetadata = async (
-  canisterId: string,
-  standard: IdlStandard,
-) => {
+export const getMetadata = async (canisterId: string, standard: IdlStandard) => {
   const token: Token = {
     canisterId,
     standard,

@@ -91,10 +91,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
     ),
   };
-  console.log('🚀 ~ file: StartEscrow.tsx ~ line 112 ~ _nft', _nft);
 
   const handleStartEscrow = async (data) => {
-    console.log(data);
     if (
       isNaN(parseFloat(data.priceOffer)) ||
       data.sellerId === 'undefined' ||
@@ -165,7 +163,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
         } else {
           if (!escrowResponse?.ok) throw escrowResponse.err.text;
 
-          console.log('escrowResponse', escrowResponse);
           const bidData = {
             broker_id: [],
             escrow_receipt: escrowResponse?.ok?.receipt,

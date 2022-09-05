@@ -101,7 +101,6 @@ const WalletPage = () => {
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true);
 
   const { tokens } = useTokensContext();
-
   const handleClickOpen = (item, modal = 'auction') => {
     setSelectdNFT(item.metadata);
     if (modal === 'auction') setOpenAuction(true);
@@ -196,7 +195,6 @@ const WalletPage = () => {
     if (actor && principal) {
       setIsLoading(true);
       getNftBalance(principal.toText()).then((response) => {
-        console.log('🚀 ~ file: index.tsx ~ line 208 ~ .then ~ response', response);
         const escrows = response?.ok?.escrow;
         const offers = response?.ok?.offers;
         const inEscrow: any = [];

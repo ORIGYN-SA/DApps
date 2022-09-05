@@ -1,10 +1,11 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Principal } from '@dfinity/principal';
-import { Actor, HttpAgent } from '@dfinity/agent';
+import { Actor, ActorSubclass, HttpAgent } from '@dfinity/agent';
 import { origynNftIdl } from '@dapp/common-candid';
 import { toast } from 'react-toastify';
 import { Preloader } from '@dapp/features-components';
 import { AuthClient } from '@dfinity/auth-client';
+import { OrigynClient } from 'mintjs';
 import usePlug from './plug';
 import useStoic from './stoic';
 import useInternetIdentity from './internedIdentity';
@@ -56,7 +57,9 @@ export const useAuth = () => {
   const connectStoic = useStoic();
   const connectInternetIdentity = useInternetIdentity();
 
-  console.log(actor);
+  const initOrigynClient = (canisterId: string, actor: ActorSubclass<any>) =>
+    OrigynClient.getInstance().init(canisterId, actor);
+
   const logIn = async (wallet?: string) => {
     try {
       setIsLoading(true);
@@ -126,7 +129,6 @@ export const useAuth = () => {
   const getAnonIdentity = async () => {
     const canisterId = await getCanisterId();
 
-    console.log(canisterId);
     const agent = new HttpAgent({
       host: 'https://boundary.ic0.app/',
     });
@@ -142,7 +144,6 @@ export const useAuth = () => {
     if (loggedInStatus && loggedInStatus !== 'false') {
       logIn(loggedInStatus);
     } else {
-      console.log('getAnon');
       getAnonIdentity().then((a) => {
         const tid = getTokenId();
         setTokenId(tid);
@@ -166,6 +167,10 @@ export const useAuth = () => {
       getCanisterId().then((id) => setCanisterId(id));
     }
   }, [window.location.pathname]);
+
+  useEffect(() => {
+    initOrigynClient(canisterId, actor);
+  }, [canisterId, actor]);
 
   return {
     isLoading,
