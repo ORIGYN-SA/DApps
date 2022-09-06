@@ -5,7 +5,7 @@ import { origynNftIdl } from '@dapp/common-candid';
 import { toast } from 'react-toastify';
 import { Preloader } from '@dapp/features-components';
 import { AuthClient } from '@dfinity/auth-client';
-import { OrigynClient } from 'mintjs';
+import { OrigynClient } from '@origyn-sa/mintjs';
 import usePlug from './plug';
 import useStoic from './stoic';
 import useInternetIdentity from './internedIdentity';

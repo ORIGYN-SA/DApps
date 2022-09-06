@@ -17,7 +17,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { timeConverter } from '@dapp/utils';
 import { ConfirmSalesActionModal, StartAuctionModal } from '@dapp/features-sales-escrows';
-import { getNft, getNftBalance } from 'mintjs';
+import { getNft, getNftBalance } from '@origyn-sa/mintjs';
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext);

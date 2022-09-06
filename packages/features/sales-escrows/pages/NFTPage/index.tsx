@@ -27,6 +27,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { getNft } from '@origyn-sa/mintjs';
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -59,7 +60,7 @@ const SymbolWithIcon = ({ symbol }: any) =>
     </>
   );
 export const NFTPage = () => {
-  const { canisterId, principal, actor } = useContext(AuthContext);
+  const { canisterId, principal } = useContext(AuthContext);
   const [currentNFT, setCurrentNFT] = useState<any>({});
   const [openAuction, setOpenAuction] = React.useState(false);
   const [dialogAction, setDialogAction] = useState<any>();
@@ -140,16 +141,13 @@ export const NFTPage = () => {
       setOpenEscrowModal(true);
     }
 
-    if (actor) {
-      actor
-        .nft_origyn(params.nft_id)
-        .then((r) => {
-          console.log(r);
-          setIsLoading(false);
-          setCurrentNFT(r.ok);
-        })
-        .catch(console.log);
-    }
+    getNft(params.nft_id)
+      .then((r) => {
+        console.log(r);
+        setIsLoading(false);
+        setCurrentNFT(r.ok);
+      })
+      .catch(console.log);
   }, []);
 
   if (isLoading) {
