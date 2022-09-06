@@ -2,7 +2,7 @@ import React from 'react';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
 import { getCanisterId } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -14,7 +14,7 @@ import { phonebookIdl } from '@dapp/common-candid';
 export const SwitchCanisterCollection = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [switchTo, setSwitchTo] = React.useState('');
-    const handleChange = (event) => {
+    const getTypedValue = (event) => {
         setSwitchTo(event.target.value);
     };
     // Phonebook Agent
@@ -22,20 +22,19 @@ export const SwitchCanisterCollection = () => {
         host: 'https://boundary.ic0.app/',
     });
     // Phonebook actor for the current canister name 
-    const phonebook_actor = Actor.createActor(phonebookIdl, {
+    const phonebookActor = Actor.createActor(phonebookIdl, {
         agent: agent,
         canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
     });
     const changeCanisterCollection = async () => {
         //Transform current url to a string
-        const url = window.location.href.toString();
+        const currentUrl = window.location.href.toString();
         // Get the checked canister
         const NewCheckedCanister: string | boolean = await checkCanister(switchTo.toLowerCase().trim());
         // Get the current canisterId from authentification
         const CurrentCanisterId = await getCanisterId();
-        console.log(CurrentCanisterId);
         // Get the name of the current canister from the phonebook using reverse_lookup
-        const CurrentCanisterName: any = await phonebook_actor?.reverse_lookup(
+        const CurrentCanisterName: any = await phonebookActor?.reverse_lookup(
             Principal.fromText(CurrentCanisterId),
         );
         if (NewCheckedCanister === false) {
@@ -48,7 +47,7 @@ export const SwitchCanisterCollection = () => {
                 },
             });
         } else {
-            const NewCanisterName = await phonebook_actor?.reverse_lookup(
+            const NewCanisterName = await phonebookActor?.reverse_lookup(
                 Principal.fromText(NewCheckedCanister.toString()),
             );
             let NewCanister = "";
@@ -60,15 +59,15 @@ export const SwitchCanisterCollection = () => {
 
             let new_url = '';
             if (CurrentCanisterName == "") {
-                new_url = url.replace(CurrentCanisterId, NewCanister);
+                new_url = currentUrl.replace(CurrentCanisterId, NewCanister);
             } else {
                 // Search for the canister Name in the url
-                const found = url.includes(CurrentCanisterName);
+                const found = currentUrl.includes(CurrentCanisterName);
                 // If found, replace it with the new canister name, if not replace with the new canister string 
                 if (found === true) {
-                    new_url = url.replace(CurrentCanisterName, NewCanister);
+                    new_url = currentUrl.replace(CurrentCanisterName, NewCanister);
                 } else {
-                    new_url = url.replace(CurrentCanisterId, NewCanister);
+                    new_url = currentUrl.replace(CurrentCanisterId, NewCanister);
                 }
             }
             // Set the new url
@@ -103,7 +102,7 @@ export const SwitchCanisterCollection = () => {
                     placeholder="Switch Canister"
                     inputProps={{ 'aria-label': 'Switch Canister' }}
                     value={switchTo}
-                    onChange={handleChange}
+                    onChange={getTypedValue}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">

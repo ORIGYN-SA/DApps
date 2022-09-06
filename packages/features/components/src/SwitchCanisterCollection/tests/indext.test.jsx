@@ -2,15 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { SwitchCanisterCollection } from '../index';
 import {
-  render,
-  fireEvent,
-  waitFor,
-  screen,
-  cleanup,
-  getByText,
-  getByDisplayValue,
-  getByRole,
-  getByTestId,
+  render, waitFor
 } from '../../../../../../testUtils';
 import { SnackbarProvider } from 'notistack';
 
@@ -25,8 +17,6 @@ global.window.location = {
 };
 
 const NEWCANISTER = 'frfol-iqaaa-aaaaj-acogq-cai';
-
-const log = jest.spyOn(console, "log").mockImplementation(() => {});
 
 const Wrapper = () => {
   return (
@@ -60,46 +50,31 @@ describe('Features > Component > SwitchCanisterCollection', () => {
     const button = getByTestId('switch-canister-button');
     expect(button).toBeInTheDocument();
   });
-
+  async function getUrl(){
+    return window.location.href;
+  }
+  async function fireButton(){
+    const { getByTestId } = render(<Wrapper />);
+    const button = getByTestId('switch-canister-button');
+    return button.click();
+  }
+  
   // test3
-  // fire click event on button
-  test('Fire button', async () => {
-    const { getByTestId } = render(<Wrapper />);
-    expect(async () => await fireEvent.click(getByTestId('switch-canister-button'))).toBeTruthy();
-  });
-
+  // Test if URL is mocked
+  test('The Url is mocked', async () => {
+    return getUrl().then((data) => {
+      expect(data).toBe('http://localhost:8080/-/s32s7-zqaaa-aaaaj-afksa-cai/-/ledger');
+    });
+  })
   // test4
-  // if nothing is fired, console.log must be empty
+  // If the canister is not valid and button is clicked, URL should not change
+  test('The Url is not changed if canister is invalid', async () => {
+    await fireButton();
+    await getUrl();
+    return getUrl().then(async (data) => {
+      expect(data).toBe('http://localhost:8080/-/s32s7-zqaaa-aaaaj-afksa-cai/-/ledger');
+    }
+    );
+  });  
 
-  test('No log if nothing is fired', async () => {
-    // TODO: test something that should not log
-    await expect(log).not.toHaveBeenCalled();
-  });
-
-  // test5
-  // if button is fired with wrong canister console.log must be called
-  test('Call log when canister is wrong', async () => {
-    const { getByTestId } = render(<Wrapper />);
-    fireEvent.click(getByTestId('switch-canister-button'));
-    await waitFor(() => expect(log).toHaveBeenCalled());
-  });
-
-  // test6
-  // if button is fired, console.log must be called with the correct message
-  // example invalid canister
-  test('Call log with correct message', async () => {
-    const { getByTestId } = render(<Wrapper />);
-    fireEvent.click(getByTestId('switch-canister-button'));
-    await waitFor(() => expect(log).toHaveBeenCalledWith('Not a valid canister'));
-  });
-
-  // test7
-  // if we have correct canister console.log must be not called
-  test('No log when canister is correct', async () => {
-    const { getByTestId } = render(<Wrapper />);
-    const textField = getByTestId('switch-canister-textfield');
-    textField.value = NEWCANISTER;
-    async () => fireEvent.click(getByTestId('switch-canister-button'));
-    await waitFor(() => expect(log).not.toHaveBeenCalled());
-  });
 });
