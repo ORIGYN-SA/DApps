@@ -10,6 +10,7 @@ import LibraryImage from '../LibraryImage';
 import LibraryVideo from '../LibraryVideo';
 import LibraryText from '../LibraryText';
 import LibraryDefault from '../LibraryDefault';
+import { getNft } from '@origyn-sa/mintjs';
 
 const NFTLibrary = (props: any) => {
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
@@ -22,7 +23,7 @@ const NFTLibrary = (props: any) => {
 
   useEffect(() => {
     if (actor) {
-      actor.nft_origyn(signed.id).then((r) => {
+      getNft(signed.id).then((r) => {
         console.log('nft_origyn NFTLibrary', r);
         setLibraryData(
           r.ok.metadata.Class.filter((res) => {

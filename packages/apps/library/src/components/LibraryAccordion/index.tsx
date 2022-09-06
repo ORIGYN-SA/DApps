@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import LibraryBox from '../LibraryBox';
 import { TreeItem } from '@mui/lab';
+import { getNft } from '@origyn-sa/mintjs';
 
 const LibraryAccordion = () => {
   const { tokenId, actor } = useContext(AuthContext);
@@ -10,8 +11,7 @@ const LibraryAccordion = () => {
 
   useEffect(() => {
     if (actor) {
-      actor
-        .nft_origyn(tokenId)
+      getNft(tokenId)
         .then((r) => {
           console.log(r);
           setLibData(

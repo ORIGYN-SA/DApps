@@ -7,6 +7,7 @@ import TreeItem from '@mui/lab/TreeItem';
 import NFTBox from '../NFTBox';
 import Grid from '@mui/material/Grid';
 import NFTLibrary from '../NFTLibrary';
+import { getNftCollection } from '@origyn-sa/mintjs';
 
 const TreeViewPart = ({ children }: any) => {
   const { actor, canisterId } = useContext(AuthContext);
@@ -14,7 +15,7 @@ const TreeViewPart = ({ children }: any) => {
   const [currentNft, setCurrentNft] = useState();
 
   const nftCollection = async () => {
-    const response = await actor?.collection_nft_origyn([]);
+    const response = await getNftCollection([]);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
 

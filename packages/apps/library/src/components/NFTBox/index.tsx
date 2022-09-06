@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import { AuthContext } from '@dapp/features-authentication';
-
+import {getNft} from '@origyn-sa/mintjs';
 interface NFTDATA {
   nft_id?: string;
   preview?: string;
@@ -18,7 +18,7 @@ const NFTBox = (props: any) => {
 
   useEffect(() => {
     if (actor) {
-      actor.nft_origyn(props.currentNft).then((r) => {
+      getNft(props.currentNft).then((r) => {
         console.log('nft_origyn NFTBox', r);
         setNftStuff(r);
       });
