@@ -14,7 +14,6 @@ import { getNft } from '@origyn-sa/mintjs';
 
 const NFTLibrary = (props: any) => {
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
-  const [currentLibrary, setCurrentLibrary] = useState([]);
   const { actor } = useContext(AuthContext);
 
   let signed = {
@@ -51,7 +50,7 @@ const NFTLibrary = (props: any) => {
           key={library?.Class[0]?.value?.Text}
           nodeId={library?.Class[0]?.value?.Text}
           label={library?.Class[1]?.value?.Text}
-          onClick={() => setCurrentLibrary(library)}
+
         >
           <Card
       variant="outlined"
