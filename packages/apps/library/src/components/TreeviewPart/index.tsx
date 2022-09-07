@@ -86,6 +86,7 @@ const TreeViewPart = ({ children }: any) => {
             </ListItemButton>
           </ListItem>
         </Grid>
+         
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Grid item >
             <ListItem
@@ -114,8 +115,22 @@ const TreeViewPart = ({ children }: any) => {
             </ListItem>
             </Grid>
           </Collapse>
+               <Grid item >
+          <ListItem
+            sx={{
+              border: '1px solid black',
+            }}>
+            <ListItemButton onClick={handleClick}>
+              <ListItemText primary="Libraries" />
+              {open ? <ChevronLeft /> : <ChevronRight />}
+            </ListItemButton>
+          </ListItem>
+        </Grid>
       </List>
     </Grid>
+    
+    // add here colapse for Library and redesign
+    
     // <div>
     //   <TreeView
     //     aria-label="file system navigator"
