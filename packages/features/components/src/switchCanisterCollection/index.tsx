@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography, Grid } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
 import { getCanisterId } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -14,9 +14,23 @@ import { phonebookIdl } from '@dapp/common-candid';
 export const SwitchCanisterCollection = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [switchTo, setSwitchTo] = React.useState('');
+    const [CurrentCanisterName, setCurrentCanisterName] = React.useState('');
+    const [CurrentCanisterId, SetCurrentCanisterId] = React.useState('');
     const getTypedValue = (event) => {
         setSwitchTo(event.target.value);
     };
+    const GetCanisterName = async () => {
+        const canisterId = await getCanisterId();
+        const QueryName : any = await phonebookActor?.reverse_lookup(
+            Principal.fromText(canisterId),
+        );
+        if(QueryName=="" || QueryName==null){
+            setCurrentCanisterName("Unknown");
+        }else{
+            setCurrentCanisterName(QueryName);
+        }
+    }
+    console.log(CurrentCanisterName);
     // Phonebook Agent
     const agent = new HttpAgent({
         host: 'https://boundary.ic0.app/',
@@ -26,13 +40,14 @@ export const SwitchCanisterCollection = () => {
         agent: agent,
         canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
     });
+    const GetCurrentCanisterId = async () => {
+        SetCurrentCanisterId(await getCanisterId());
+    };
     const changeCanisterCollection = async () => {
         //Transform current url to a string
         const currentUrl = window.location.href.toString();
         // Get the checked canister
         const NewCheckedCanister: string | boolean = await checkCanister(switchTo.toLowerCase().trim());
-        // Get the current canisterId from authentification
-        const CurrentCanisterId = await getCanisterId();
         // Get the name of the current canister from the phonebook using reverse_lookup
         const CurrentCanisterName: any = await phonebookActor?.reverse_lookup(
             Principal.fromText(CurrentCanisterId),
@@ -82,12 +97,16 @@ export const SwitchCanisterCollection = () => {
             });
         }
     };
+    useEffect(() => {
+        GetCurrentCanisterId();
+        GetCanisterName();
+    }, [Actor]);
 
     return (
         <Box
             component={Paper}
             elevation={3}
-            sx={{ margin: 2, width: '100%', padding: 2, textAlign: 'center' }}
+            sx={{ margin: 2, width: '100%', padding: 2 }}
         >
             <Paper
                 component="form"
@@ -118,8 +137,19 @@ export const SwitchCanisterCollection = () => {
                 >
                     SWITCH
                 </Button>
-
             </Paper>
+            <Grid container spacing={2}>
+                <Grid item xs={6}>
+                    <Typography sx={{ m: 2, fontSize: 13 }}>
+                        Current Canister: <b>{CurrentCanisterId}</b>
+                    </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                    <Typography sx={{ m: 2, fontSize: 13 }}>
+                        Canister Name: <b>{CurrentCanisterName}</b>
+                    </Typography>
+                </Grid>
+            </Grid>
         </Box>
     );
 };
