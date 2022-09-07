@@ -37,7 +37,7 @@ const NFTBox = (props: any) => {
         variant="outlined"
         sx={{
           minWidth: 275,
-          width: '30rem',
+          
           borderRadius: '0px',
         }}
       >
