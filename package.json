@@ -106,6 +106,7 @@
     "ethereum-blockies-base64": "^1.0.2",
     "ic-stoic-identity": "^2.0.0",
     "json-bigint": "^1.0.0",
+    "mintjs": "file:../mintjs",
     "moment": "^2.29.3",
     "notistack": "^2.0.5",
     "react-hook-form": "^7.33.0",
