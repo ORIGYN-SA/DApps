@@ -65,9 +65,11 @@ const TreeViewPart = ({ children }: any) => {
   }, [actor]);
 
   return (
-    <Grid container sx = {{p:1}}>
+    <Grid container >
       <List className={classes.horizontal}>
+        
         <Grid item >
+          
           <ListItem
             sx={{
               border: '1px solid black',
@@ -75,6 +77,8 @@ const TreeViewPart = ({ children }: any) => {
             <ListItemText primary={canisterId} />
           </ListItem>
         </Grid>
+        <Grid container>
+          <Grid item xs={12}>
         <Grid item >
           <ListItem
             sx={{
@@ -85,7 +89,24 @@ const TreeViewPart = ({ children }: any) => {
               {open ? <ChevronLeft /> : <ChevronRight />}
             </ListItemButton>
           </ListItem>
+          </Grid>
+          </Grid>
+          <Grid item xs={12}>
+          <Grid item >
+          <ListItem
+            sx={{
+              border: '1px solid black',
+            }}>
+            <ListItemButton onClick={handleClick}>
+              <ListItemText primary="Libraries" />
+              {open ? <ChevronLeft /> : <ChevronRight />}
+            </ListItemButton>
+          </ListItem>
+
         </Grid>
+        </Grid>
+        </Grid>
+      
          
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Grid item >
@@ -95,7 +116,7 @@ const TreeViewPart = ({ children }: any) => {
                 border: '1px solid black',
               }}>
               {nfts?.map((nft, index) => (
-                <ListItemButton onClick={()=>handleClick1(nft)}>
+                <ListItemButton key={index} onClick={()=>handleClick1(nft)}>
                   <ListItemText primary={nft} />
                   {open1 ? <ChevronLeft /> : <ChevronRight />}
                 </ListItemButton>
@@ -116,15 +137,7 @@ const TreeViewPart = ({ children }: any) => {
             </Grid>
           </Collapse>
                <Grid item >
-          <ListItem
-            sx={{
-              border: '1px solid black',
-            }}>
-            <ListItemButton onClick={handleClick}>
-              <ListItemText primary="Libraries" />
-              {open ? <ChevronLeft /> : <ChevronRight />}
-            </ListItemButton>
-          </ListItem>
+
         </Grid>
       </List>
     </Grid>
