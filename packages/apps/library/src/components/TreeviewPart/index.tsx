@@ -24,8 +24,6 @@ const useStyles = makeStyles(() => ({
   },
   vertical: {
     flexDirection: 'column',
-    
-    
   },
 }));
 
@@ -87,35 +85,30 @@ const TreeViewPart = ({ children }: any) => {
           </ListItem> */}
           </Grid>
           <Grid container>
-            
             <Grid item xs={12}>
-              
-                <ListItem
-                  sx={{
-                    border: '1px solid black',
-                  }}
-                >
-                  <ListItemButton onClick={handleClick}>
-                    <ListItemText primary="NFTs" />
-                    {open ? <ChevronLeft /> : <ChevronRight />}
-                  </ListItemButton>
-                </ListItem>
-             
+              <ListItem
+                sx={{
+                  border: '1px solid black',
+                }}
+              >
+                <ListItemButton onClick={handleClick}>
+                  <ListItemText primary="NFTs" />
+                  {open ? <ChevronLeft /> : <ChevronRight />}
+                </ListItemButton>
+              </ListItem>
             </Grid>
 
             <Grid item xs={12}>
-           
-                <ListItem
-                  sx={{
-                    border: '1px solid black',
-                  }}
-                >
-                  <ListItemButton onClick={handleClickLib}>
-                    <ListItemText primary="Libraries" />
-                    {openLib ? <ChevronLeft /> : <ChevronRight />}
-                  </ListItemButton>
-                </ListItem>
-             
+              <ListItem
+                sx={{
+                  border: '1px solid black',
+                }}
+              >
+                <ListItemButton onClick={handleClickLib}>
+                  <ListItemText primary="Libraries" />
+                  {openLib ? <ChevronLeft /> : <ChevronRight />}
+                </ListItemButton>
+              </ListItem>
             </Grid>
           </Grid>
 
@@ -158,10 +151,10 @@ const TreeViewPart = ({ children }: any) => {
           <Collapse in={openLib} timeout="auto" unmountOnExit>
             <Grid item>
               <ListItem>
-              <ListItemButton onClick={() => handleClickLib()}>
-                   {children} 
-                {openLib ? <ChevronLeft /> : <ChevronRight />}
-              </ListItemButton>
+                <ListItemButton onClick={() => handleClickLib()}>
+                  {children}
+                  {openLib ? <ChevronLeft /> : <ChevronRight />}
+                </ListItemButton>
               </ListItem>
             </Grid>
           </Collapse>

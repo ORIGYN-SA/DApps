@@ -3,11 +3,17 @@ import { AuthContext } from '@dapp/features-authentication';
 import LibraryBox from '../LibraryBox';
 import { getNft } from '@origyn-sa/mintjs';
 import { List, ListItem, ListItemText, ListItemButton } from '@mui/material';
+import Collapse from '@mui/material/Collapse';
 
 const LibraryAccordion = () => {
   const { tokenId, actor } = useContext(AuthContext);
   const [libData, setLibData] = useState([]);
   const [currentLibrary, setCurrentLibrary] = useState();
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   useEffect(() => {
     if (actor) {
@@ -29,15 +35,24 @@ const LibraryAccordion = () => {
     <div>
       <List>
         {libData?.map((library, index) => (
-          <ListItem key={index}>
-
-            <ListItemButton  onClick={() => setCurrentLibrary(library)}>
-              <ListItemText   primary={library?.Class[0]?.value?.Text} />
-              <LibraryBox currentLibrary={currentLibrary} /> 
+          <ListItem
+            key={index}
+            sx={{
+              border: '1px solid black',
+            }}
+          >
+            <ListItemButton
+              onClick={() => {
+                setCurrentLibrary(library);
+                handleClick();
+              }}
+            >
+              <ListItemText primary={library?.Class[0]?.value?.Text} />
             </ListItemButton>
-
-            </ListItem>
-
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <LibraryBox currentLibrary={currentLibrary} />
+            </Collapse>
+          </ListItem>
         ))}
       </List>
     </div>
