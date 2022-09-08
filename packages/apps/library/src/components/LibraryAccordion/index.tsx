@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import LibraryBox from '../LibraryBox';
-import { TreeItem } from '@mui/lab';
 import { getNft } from '@origyn-sa/mintjs';
+import { List, ListItem, ListItemText, ListItemButton } from '@mui/material';
 
 const LibraryAccordion = () => {
   const { tokenId, actor } = useContext(AuthContext);
@@ -27,16 +27,19 @@ const LibraryAccordion = () => {
 
   return (
     <div>
-      {libData?.map((library) => (
-        <TreeItem
-          key={library?.Class[0]?.value?.Text}
-          nodeId={library?.Class[0]?.value?.Text}
-          label={library?.Class[1]?.value?.Text}
-          onClick={() => setCurrentLibrary(library)}
-        >
-          <LibraryBox currentLibrary={currentLibrary} />
-        </TreeItem>
-      ))}
+      <List>
+        {libData?.map((library, index) => (
+          <ListItem key={index}>
+
+            <ListItemButton  onClick={() => setCurrentLibrary(library)}>
+              <ListItemText   primary={library?.Class[0]?.value?.Text} />
+              <LibraryBox currentLibrary={currentLibrary} /> 
+            </ListItemButton>
+
+            </ListItem>
+
+        ))}
+      </List>
     </div>
   );
 };

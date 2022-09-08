@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-import TreeView from '@mui/lab/TreeView';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import TreeItem from '@mui/lab/TreeItem';
+// import TreeView from '@mui/lab/TreeView';
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+// import TreeItem from '@mui/lab/TreeItem';
 import NFTBox from '../NFTBox';
 import Grid from '@mui/material/Grid';
 import NFTLibrary from '../NFTLibrary';
 import { getNftCollection } from '@origyn-sa/mintjs';
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
@@ -16,29 +16,39 @@ import Collapse from '@mui/material/Collapse';
 import { ListItemButton } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   horizontal: {
-    display: "flex",
-    flexDirection: "row",
-    padding: 0
+    display: 'flex',
+    flexDirection: 'row',
+    padding: 0,
   },
   vertical: {
-    flexDirection: "column"
-  }
+    flexDirection: 'column',
+    
+    
+  },
 }));
 
 const TreeViewPart = ({ children }: any) => {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
+  const [openLib, setOpenLib] = React.useState(false);
+
   const handleClick = () => {
     setOpen(!open);
   };
+
   const handleClick1 = (nft) => {
     setOpen1(!open1);
     setCurrentNft(nft);
   };
+
+  const handleClickLib = () => {
+    setOpenLib(!open);
+  };
+
   const classes = useStyles();
-  const { actor, canisterId } = useContext(AuthContext);
+  const { actor } = useContext(AuthContext);
   const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
 
@@ -65,85 +75,102 @@ const TreeViewPart = ({ children }: any) => {
   }, [actor]);
 
   return (
-    <Grid container >
-      <List className={classes.horizontal}>
-        
-        <Grid item >
-          
-          <ListItem
+    <div>
+      <Grid container>
+        <List className={classes.horizontal}>
+          <Grid item>
+            {/* <ListItem
             sx={{
               border: '1px solid black',
             }}>
             <ListItemText primary={canisterId} />
-          </ListItem>
-        </Grid>
-        <Grid container>
-          <Grid item xs={12}>
-        <Grid item >
-          <ListItem
-            sx={{
-              border: '1px solid black',
-            }}>
-            <ListItemButton onClick={handleClick}>
-              <ListItemText primary="NFTs" />
-              {open ? <ChevronLeft /> : <ChevronRight />}
-            </ListItemButton>
-          </ListItem>
+          </ListItem> */}
           </Grid>
-          </Grid>
-          <Grid item xs={12}>
-          <Grid item >
-          <ListItem
-            sx={{
-              border: '1px solid black',
-            }}>
-            <ListItemButton onClick={handleClick}>
-              <ListItemText primary="Libraries" />
-              {open ? <ChevronLeft /> : <ChevronRight />}
-            </ListItemButton>
-          </ListItem>
+          <Grid container>
+            
+            <Grid item xs={12}>
+              
+                <ListItem
+                  sx={{
+                    border: '1px solid black',
+                  }}
+                >
+                  <ListItemButton onClick={handleClick}>
+                    <ListItemText primary="NFTs" />
+                    {open ? <ChevronLeft /> : <ChevronRight />}
+                  </ListItemButton>
+                </ListItem>
+             
+            </Grid>
 
-        </Grid>
-        </Grid>
-        </Grid>
-      
-         
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <Grid item >
-            <ListItem
-              className={classes.vertical}
-              sx={{
-                border: '1px solid black',
-              }}>
-              {nfts?.map((nft, index) => (
-                <ListItemButton key={index} onClick={()=>handleClick1(nft)}>
-                  <ListItemText primary={nft} />
-                  {open1 ? <ChevronLeft /> : <ChevronRight />}
-                </ListItemButton>
-              ))}
-            </ListItem>
+            <Grid item xs={12}>
+           
+                <ListItem
+                  sx={{
+                    border: '1px solid black',
+                  }}
+                >
+                  <ListItemButton onClick={handleClickLib}>
+                    <ListItemText primary="Libraries" />
+                    {openLib ? <ChevronLeft /> : <ChevronRight />}
+                  </ListItemButton>
+                </ListItem>
+             
+            </Grid>
           </Grid>
-        </Collapse>
-        <Collapse  in={open1} timeout="auto" unmountOnExit>
+
+          {/* collapse for NFTs List */}
+
+          <Collapse in={open} timeout="auto" unmountOnExit>
             <Grid item>
-            <ListItem
-              className={classes.horizontal}
-              sx={{
-                border: '1px solid black',
-              }}>
-            <NFTBox currentNft={currentNft} />
-            <NFTLibrary currentNft={currentNft} />
-            </ListItem>
+              <ListItem
+                className={classes.vertical}
+                sx={{
+                  border: '1px solid black',
+                }}
+              >
+                {nfts?.map((nft, index) => (
+                  <ListItemButton key={index} onClick={() => handleClick1(nft)}>
+                    <ListItemText primary={nft} />
+                    {open1 ? <ChevronLeft /> : <ChevronRight />}
+                  </ListItemButton>
+                ))}
+              </ListItem>
             </Grid>
           </Collapse>
-               <Grid item >
 
-        </Grid>
-      </List>
-    </Grid>
-    
+          {/* collapse for NFTBox and NFTLibrary */}
+
+          <Collapse in={open1} timeout="auto" unmountOnExit>
+            <Grid item>
+              <ListItem
+                className={classes.horizontal}
+                sx={{
+                  border: '1px solid black',
+                }}
+              >
+                <NFTBox currentNft={currentNft} />
+                <NFTLibrary currentNft={currentNft} />
+              </ListItem>
+            </Grid>
+          </Collapse>
+
+          <Collapse in={openLib} timeout="auto" unmountOnExit>
+            <Grid item>
+              <ListItem>
+              <ListItemButton onClick={() => handleClickLib()}>
+                   {children} 
+                {openLib ? <ChevronLeft /> : <ChevronRight />}
+              </ListItemButton>
+              </ListItem>
+            </Grid>
+          </Collapse>
+        </List>
+      </Grid>
+    </div>
+
     // add here colapse for Library and redesign
-    
+
     // <div>
     //   <TreeView
     //     aria-label="file system navigator"
