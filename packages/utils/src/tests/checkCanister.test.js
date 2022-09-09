@@ -9,4 +9,10 @@ describe("utils > CheckCanister", () => {
     const checkedCanister = await checkCanister(VALID_CANISTER);
   expect(checkedCanister).toBe("s32s7-zqaaa-aaaaj-afksa-cai");
   });
+  // test2
+  it('Should return false if canister string is invalid', async () => {
+    const checkedCanister = await checkCanister(INVALID_CANISTER);
+  expect(checkedCanister).toBeFalsy;
+  }
+  );
 });

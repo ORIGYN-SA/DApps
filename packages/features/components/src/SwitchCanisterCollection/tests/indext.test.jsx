@@ -76,5 +76,6 @@ describe('Features > Component > SwitchCanisterCollection', () => {
     }
     );
   });  
+  
 
 });
