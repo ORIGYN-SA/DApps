@@ -9,15 +9,4 @@ describe("utils > CheckCanister", () => {
     const checkedCanister = await checkCanister(VALID_CANISTER);
   expect(checkedCanister).toBe("s32s7-zqaaa-aaaaj-afksa-cai");
   });
-  // test2
-  it('Should return false if the argument (canister) is invalid', async () => {
-    const checkedCanister = await checkCanister(INVALID_CANISTER);
-  expect(checkedCanister).toBeFalsy();
-  });
-
-  // test3
-  it('Should return false if the argument (canister) is not an NFT canister', async () => {
-    const checkedCanister = await checkCanister(OGY_NONFT_CANISTER);
-  expect(checkedCanister).toBeFalsy();
-  });
 });

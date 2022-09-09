@@ -34,7 +34,6 @@ const Ledger = () => {
     setIsLoading(true);
   }, [actor]);
 
-
   return (
     <Container sx={container_style}>
       <Box
