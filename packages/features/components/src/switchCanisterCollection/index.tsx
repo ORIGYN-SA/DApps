@@ -141,7 +141,7 @@ export const SwitchCanisterCollection = () => {
             <Grid container spacing={2}>
                 <Grid item xs={6}>
                     <Typography sx={{ m: 2, fontSize: 13 }}>
-                        Current Canister: <b>{CurrentCanisterId}</b>
+                        Current Canister String: <b>{CurrentCanisterId}</b>
                     </Typography>
                 </Grid>
                 <Grid item xs={6}>
