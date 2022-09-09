@@ -85,6 +85,7 @@ const TreeViewPart = ({ children }: any) => {
                 }}
               >
                 <ListItemText primary={canisterId} />
+                <ChevronRight />
               </ListItem>
             </Grid>
 
