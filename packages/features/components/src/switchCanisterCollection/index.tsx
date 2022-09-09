@@ -16,9 +16,11 @@ export const SwitchCanisterCollection = () => {
     const [switchTo, setSwitchTo] = React.useState('');
     const [CurrentCanisterName, setCurrentCanisterName] = React.useState('');
     const [CurrentCanisterId, SetCurrentCanisterId] = React.useState('');
+
     const getTypedValue = (event) => {
         setSwitchTo(event.target.value);
     };
+
     const GetCanisterName = async () => {
         const canisterId = await getCanisterId();
         const QueryName : any = await phonebookActor?.reverse_lookup(
@@ -29,8 +31,7 @@ export const SwitchCanisterCollection = () => {
         }else{
             setCurrentCanisterName(QueryName);
         }
-    }
-    console.log(CurrentCanisterName);
+    };
     // Phonebook Agent
     const agent = new HttpAgent({
         host: 'https://boundary.ic0.app/',
