@@ -27,7 +27,7 @@ import { EscrowDeposit } from './functions/EscrowDeposit';
 import { EscrowWithdraw } from './functions/EscrowWithdraw';
 import { SaleWithdraw } from './functions/SaleWithdraw';
 // mintjs
-import { getNftHistory} from 'mintjs';
+import { getNftHistory} from '@origyn-sa/mintjs';
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
 // Table style

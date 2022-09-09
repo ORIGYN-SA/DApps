@@ -6,7 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
-import { getNftCollection, OrigynClient } from 'mintjs';
+import { getNftCollection, OrigynClient } from '@origyn-sa/mintjs';
 // Preloader
 import { CircularProgress } from '@mui/material';
 

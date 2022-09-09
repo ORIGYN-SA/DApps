@@ -11,7 +11,7 @@ import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { phonebookIdl } from '@dapp/common-candid';
 // mintjs
-import { OrigynClient, getNftCollection } from 'mintjs';
+import { OrigynClient, getNftCollection } from '@origyn-sa/mintjs';
 
 export const checkCanister = async (newCanister) => {
   let canisterId: string | boolean;
