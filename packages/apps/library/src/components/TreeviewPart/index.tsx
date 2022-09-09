@@ -15,6 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import Collapse from '@mui/material/Collapse';
 import { ListItemButton } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Box } from '@mui/system';
 
 const useStyles = makeStyles(() => ({
   horizontal: {
@@ -46,7 +47,7 @@ const TreeViewPart = ({ children }: any) => {
   };
 
   const classes = useStyles();
-  const { actor } = useContext(AuthContext);
+  const { actor, canisterId } = useContext(AuthContext);
   const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
 
@@ -74,92 +75,98 @@ const TreeViewPart = ({ children }: any) => {
 
   return (
     <div>
-      <Grid container>
-        <List className={classes.horizontal}>
-          <Grid item>
-            {/* <ListItem
-            sx={{
-              border: '1px solid black',
-            }}>
-            <ListItemText primary={canisterId} />
-          </ListItem> */}
-          </Grid>
-          <Grid container>
-            <Grid item xs={12}>
-              <ListItem
-                sx={{
-                  border: '1px solid black',
-                }}
-              >
-                <ListItemButton onClick={handleClick}>
-                  <ListItemText primary="NFTs" />
-                  {open ? <ChevronLeft /> : <ChevronRight />}
-                </ListItemButton>
-              </ListItem>
-            </Grid>
-
-            <Grid item xs={12}>
-              <ListItem
-                sx={{
-                  border: '1px solid black',
-                }}
-              >
-                <ListItemButton onClick={handleClickLib}>
-                  <ListItemText primary="Libraries" />
-                  {openLib ? <ChevronLeft /> : <ChevronRight />}
-                </ListItemButton>
-              </ListItem>
-            </Grid>
-          </Grid>
-
-          {/* collapse for NFTs List */}
-
-          <Collapse in={open} timeout="auto" unmountOnExit>
+      <Box sx={{ marginLeft: '1rem', border: '2px black' }}>
+        <Grid container>
+          <List className={classes.horizontal}>
             <Grid item>
               <ListItem
-                className={classes.vertical}
                 sx={{
                   border: '1px solid black',
                 }}
               >
-                {nfts?.map((nft, index) => (
-                  <ListItemButton key={index} onClick={() => handleClick1(nft)}>
-                    <ListItemText primary={nft} />
-                    {open1 ? <ChevronLeft /> : <ChevronRight />}
+                <ListItemText primary={canisterId} />
+              </ListItem>
+            </Grid>
+
+            <Box sx={{ border: '1px black' }}>
+              <Grid container>
+                <Grid item xs={12}>
+                  <ListItem
+                    sx={{
+                      border: '1px solid black',
+                    }}
+                  >
+                    <ListItemButton onClick={handleClick}>
+                      <ListItemText primary="NFTs" />
+                      {open ? <ChevronLeft /> : <ChevronRight />}
+                    </ListItemButton>
+                  </ListItem>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <ListItem
+                    sx={{
+                      border: '1px solid black',
+                    }}
+                  >
+                    <ListItemButton onClick={handleClickLib}>
+                      <ListItemText primary="Libraries" />
+                      {openLib ? <ChevronLeft /> : <ChevronRight />}
+                    </ListItemButton>
+                  </ListItem>
+                </Grid>
+              </Grid>
+            </Box>
+
+            {/* collapse for NFTs List */}
+
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Grid item>
+                <ListItem
+                  className={classes.vertical}
+                  sx={{
+                    border: '1px solid black',
+                  }}
+                >
+                  {nfts?.map((nft, index) => (
+                    <ListItemButton key={index} onClick={() => handleClick1(nft)}>
+                      <ListItemText primary={nft} />
+                      {open1 ? <ChevronLeft /> : <ChevronRight />}
+                    </ListItemButton>
+                  ))}
+                </ListItem>
+              </Grid>
+            </Collapse>
+
+            {/* collapse for NFTBox and NFTLibrary */}
+
+            <Collapse in={open1} timeout="auto" unmountOnExit>
+              <Grid item>
+                <ListItem
+                  className={classes.horizontal}
+                  sx={{
+                    border: '1px solid black',
+                  }}
+                >
+                  <NFTBox currentNft={currentNft} />
+                  <NFTLibrary currentNft={currentNft} />
+                </ListItem>
+              </Grid>
+            </Collapse>
+
+            <Collapse in={openLib} timeout="auto" unmountOnExit>
+              <Grid item>
+                <ListItem>
+                  <ListItemButton onClick={() => handleClickLib()}>
+                    {children}
+                    {openLib ? <ChevronLeft /> : <ChevronRight />}
                   </ListItemButton>
-                ))}
-              </ListItem>
-            </Grid>
-          </Collapse>
-
-          {/* collapse for NFTBox and NFTLibrary */}
-
-          <Collapse in={open1} timeout="auto" unmountOnExit>
-            <Grid item>
-              <ListItem
-                className={classes.horizontal}
-                sx={{
-                  border: '1px solid black',
-                }}
-              >
-                <NFTBox currentNft={currentNft} />
-                <NFTLibrary currentNft={currentNft} />
-              </ListItem>
-            </Grid>
-          </Collapse>
-
-          <Collapse in={openLib} timeout="auto" unmountOnExit>
-            <Grid item>
-              <ListItem>
-                <ListItemButton onClick={() => handleClickLib()}>
-                  {children}
-                  {openLib ? <ChevronLeft /> : <ChevronRight />}
-                </ListItemButton>
-              </ListItem>
-            </Grid>
-          </Collapse>
-        </List>
-      </Grid>
+                </ListItem>
+              </Grid>
+            </Collapse>
+          </List>
+        </Grid>
+      </Box>
     </div>
 
     // add here colapse for Library and redesign

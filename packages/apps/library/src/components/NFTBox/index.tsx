@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import { AuthContext } from '@dapp/features-authentication';
-import {getNft} from '@origyn-sa/mintjs';
+import { getNft } from '@origyn-sa/mintjs';
 interface NFTDATA {
   nft_id?: string;
   preview?: string;
@@ -37,7 +37,7 @@ const NFTBox = (props: any) => {
         variant="outlined"
         sx={{
           minWidth: 275,
-          
+
           borderRadius: '0px',
         }}
       >

@@ -13,6 +13,8 @@ import LibraryDefault from '../LibraryDefault';
 import { getNft } from '@origyn-sa/mintjs';
 import { ListItemText, ListItem, ListItemButton } from '@mui/material';
 import Collapse from '@mui/material/Collapse';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+
 
 const NFTLibrary = (props: any) => {
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
@@ -61,6 +63,7 @@ const NFTLibrary = (props: any) => {
           >
             <ListItemButton onClick={handleClick}>
               <ListItemText primary={library?.Class[1]?.value?.Text} />
+              {open ? <ChevronLeft /> : <ChevronRight />}
 
               <Collapse in={open} timeout="auto" unmountOnExit>
                 <Card
