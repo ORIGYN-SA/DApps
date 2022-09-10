@@ -110,6 +110,8 @@ const ColumnView = ({ children }: any) => {
             </Grid>
 
             <Box sx={{ border: '1px black' }}>
+
+              {/* List item for NFTs */}
               <Grid container>
                 <Grid item xs={12}>
                   <ListItem
@@ -123,6 +125,8 @@ const ColumnView = ({ children }: any) => {
                     </ListItemButton>
                   </ListItem>
                 </Grid>
+
+                {/* List item "Libraries" */}
 
                 <Grid item xs={12}>
                   <ListItem
@@ -139,7 +143,7 @@ const ColumnView = ({ children }: any) => {
               </Grid>
             </Box>
 
-            {/* collapse for NFTs List */}
+            {/* Collapse for NFTs List */}
 
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Grid item>
@@ -159,7 +163,7 @@ const ColumnView = ({ children }: any) => {
               </Grid>
             </Collapse>
 
-            {/* collapse for NFTBox and NFTLibrary */}
+            {/* Collapse for NFT Box  */}
 
             <Collapse in={open1} timeout="auto" unmountOnExit>
               <Grid item>
@@ -187,16 +191,22 @@ const ColumnView = ({ children }: any) => {
               </Grid>
             </Collapse>
 
+            {/* Collpase for NFT Libraries */}
+
+            {/* Main issue with NFT Box and NFT Library, NFT Librray is geerating whole componnet with hooks etc, NFT Box is just a card component */}
+
             <Collapse in={openDetails} timeout="auto" unmountOnExit>
               <ListItem className={classes.vertical}>
                 <NFTLibrary currentNft={currentNft} />
               </ListItem>
             </Collapse>
 
+            {/* Collapse for Library */}
+
             <Collapse in={openLib} timeout="auto" unmountOnExit>
               <Grid item>
-                <ListItem sx={{padding: 0}}>
-                  <ListItemButton sx={{padding: 0}} onClick={() => handleClickLib()}>
+                <ListItem sx={{ padding: 0 }}>
+                  <ListItemButton sx={{ padding: 0 }} onClick={() => handleClickLib()}>
                     {children}
                     {openLib ? <ChevronLeft /> : <ChevronRight />}
                   </ListItemButton>
@@ -207,41 +217,6 @@ const ColumnView = ({ children }: any) => {
         </Grid>
       </Box>
     </div>
-
-    // add here colapse for Library and redesign
-
-    // <div>
-    //   <TreeView
-    //     aria-label="file system navigator"
-    //     defaultCollapseIcon={<ExpandMoreIcon />}
-    //     defaultExpandIcon={<ChevronRightIcon />}
-    //   >
-    //     <TreeItem nodeId="0" label={canisterId}>
-    //       <TreeItem nodeId="1" label="NFTs">
-    //         {nfts?.map((nft, index) => (
-    //           <TreeItem
-    //             key={index}
-    //             nodeId={`${nft}+${index}`}
-    //             label={nft}
-    //             onClick={() => setCurrentNft(nft)}
-    //           >
-    //             <Grid container spacing={3}>
-    //               <Grid item>
-    //                 <NFTBox currentNft={currentNft} />
-    //               </Grid>
-    //               <Grid item>
-    //                 <NFTLibrary currentNft={currentNft} />
-    //               </Grid>
-    //             </Grid>
-    //           </TreeItem>
-    //         ))}
-    //       </TreeItem>
-    //       <TreeItem nodeId="2" label="Libraries">
-    //         <TreeItem nodeId="3" label={children} />
-    //       </TreeItem>
-    //     </TreeItem>
-    //   </TreeView>
-    // </div>
   );
 };
 
