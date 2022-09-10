@@ -195,8 +195,8 @@ const TreeViewPart = ({ children }: any) => {
 
             <Collapse in={openLib} timeout="auto" unmountOnExit>
               <Grid item>
-                <ListItem>
-                  <ListItemButton onClick={() => handleClickLib()}>
+                <ListItem sx={{padding: 0}}>
+                  <ListItemButton sx={{padding: 0}} onClick={() => handleClickLib()}>
                     {children}
                     {openLib ? <ChevronLeft /> : <ChevronRight />}
                   </ListItemButton>
