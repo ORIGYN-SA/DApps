@@ -9,6 +9,7 @@ import { collectionName } from '@dapp/utils';
 import { getNftCollection, OrigynClient } from '@origyn-sa/mintjs';
 // Preloader
 import { CircularProgress } from '@mui/material';
+import { compareIssueLocations } from 'fork-ts-checker-webpack-plugin/lib/issue';
 
 export const SearchbarNft = (props: any) => {
   const { tokenId, actor,canisterId } = useContext(AuthContext);
@@ -28,9 +29,10 @@ export const SearchbarNft = (props: any) => {
     );
   };
 
-  const getNFTCollection = async () => {
+  const NFTCollection = async () => {
     setSelectTokenIds(['Loading...']);
     const response = await getNftCollection();
+    console.log(response);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
     const number_ids = collectionNFT.token_ids_count[0].toString();
@@ -77,7 +79,7 @@ export const SearchbarNft = (props: any) => {
   useEffect(() => {
     if (actor) {
       OrigynClient.getInstance().init(canisterId);
-      getNFTCollection();
+      NFTCollection();
     }
   }, [actor]);
 

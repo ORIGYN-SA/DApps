@@ -25,57 +25,48 @@ const Wrapper = () => {
     </SnackbarProvider>
   );
 };
-describe('Features > Component > SwitchCanisterCollection', () => {
- 
-  beforeEach(() => jest.resetAllMocks());
 
-  afterAll(() => {
-    console.log = console.log; // restore original console.log after all tests
-  });
+async function getUrl(){
+  return window.location.href;
+}
+
+describe('Features > Component > SwitchCanisterCollection', () => {
+  afterAll(() => {})
+  beforeEach(() => jest.resetAllMocks());
+  const { getByLabelText,getByRole } = render(<Wrapper />);
+  const textField = getByLabelText('Switch Canister');
+  const button = getByRole('button');
 
   // test1
-  // check if textField is rendered
   test('SwitchCanisterCollection renders', async () => {
-    const { getByLabelText } = render(<Wrapper />);
-    const textField = getByLabelText('Switch Canister');
     textField.value = NEWCANISTER;
     expect(textField).toBeInTheDocument();
     expect(textField).toBeEnabled();
   });
-
   // test2
-  // check if button is rendered
-  test('SwitchCanisterCollection renders', () => {
-    const { getByTestId } = render(<Wrapper />);
-    const button = getByTestId('switch-canister-button');
-    expect(button).toBeInTheDocument();
-  });
-  async function getUrl(){
-    return window.location.href;
-  }
-  async function fireButton(){
-    const { getByTestId } = render(<Wrapper />);
-    const button = getByTestId('switch-canister-button');
-    return button.click();
-  }
-  
-  // test3
-  // Test if URL is mocked
   test('The Url is mocked', async () => {
     return getUrl().then((data) => {
       expect(data).toBe('http://localhost:8080/-/s32s7-zqaaa-aaaaj-afksa-cai/-/ledger');
     });
   })
-  // test4
-  // If the canister is not valid and button is clicked, URL should not change
+  // test3
   test('The Url is not changed if canister is invalid', async () => {
-    await fireButton();
-    await getUrl();
+    button.click();
     return getUrl().then(async (data) => {
       expect(data).toBe('http://localhost:8080/-/s32s7-zqaaa-aaaaj-afksa-cai/-/ledger');
     }
     );
   });  
-  
-
+  // test4
+  test('If user write in the input a valid canister and click the switch button, the URL should be updated', async () => {
+    textField.value = NEWCANISTER;
+    button.click();
+    const CUR_URL = await getUrl();
+    waitFor(async () => {
+      expect(textField.value).toBe(NEWCANISTER);
+      expect(button).toBeEnabled();
+      expect(CUR_URL).toBe('http://localhost:8080/-/frfol-iqaaa-aaaaj-acogq-cai/-/ledger');
+    }
+    );
+  }); 
 });
