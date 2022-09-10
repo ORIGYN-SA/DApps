@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const TreeViewPart = ({ children }: any) => {
+const ColumnView = ({ children }: any) => {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [openLib, setOpenLib] = React.useState(false);
@@ -245,4 +245,4 @@ const TreeViewPart = ({ children }: any) => {
   );
 };
 
-export default TreeViewPart;
+export default ColumnView;
