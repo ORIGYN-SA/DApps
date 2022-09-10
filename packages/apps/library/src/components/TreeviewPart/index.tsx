@@ -52,6 +52,20 @@ const TreeViewPart = ({ children }: any) => {
     setOpenDetails(!openDetails);
   };
 
+  const [isHover, setIsHover] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHover(true);
+  };
+  const handleMouseLeave = () => {
+    setIsHover(false);
+  };
+
+  const boxStyle = {
+    //...
+    backgroundColor: isHover ? 'gray' : '',
+  };
+
   const classes = useStyles();
   const { actor, canisterId } = useContext(AuthContext);
   const [nfts, setNfts] = useState([]);
@@ -152,9 +166,20 @@ const TreeViewPart = ({ children }: any) => {
                 <ListItem className={classes.vertical}>
                   <NFTBox currentNft={currentNft} />
 
-                  <ListItem onClick={handleDetails} sx={{ border: '1px solid black' }}>
+                  <ListItem
+                    style={boxStyle}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={handleDetails}
+                    sx={{ border: '1px solid black' }}
+                  >
                     <ListItemText
-                      sx={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}
+                      sx={{
+                        justifyContent: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        hover: 'gray',
+                      }}
                       primary="Open NFT Libraries >"
                     />
                   </ListItem>
