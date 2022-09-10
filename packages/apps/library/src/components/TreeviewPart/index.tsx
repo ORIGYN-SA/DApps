@@ -25,6 +25,7 @@ const useStyles = makeStyles(() => ({
   },
   vertical: {
     flexDirection: 'column',
+    padding: 0,
   },
 }));
 
@@ -32,6 +33,7 @@ const TreeViewPart = ({ children }: any) => {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [openLib, setOpenLib] = React.useState(false);
+  const [openDetails, setOpenDetails] = React.useState(false);
 
   const handleClick = () => {
     setOpen(!open);
@@ -43,7 +45,11 @@ const TreeViewPart = ({ children }: any) => {
   };
 
   const handleClickLib = () => {
-    setOpenLib(!open);
+    setOpenLib(!openLib);
+  };
+
+  const handleDetails = () => {
+    setOpenDetails(!openDetails);
   };
 
   const classes = useStyles();
@@ -143,16 +149,23 @@ const TreeViewPart = ({ children }: any) => {
 
             <Collapse in={open1} timeout="auto" unmountOnExit>
               <Grid item>
-                <ListItem
-                  className={classes.horizontal}
-                  sx={{
-                    border: '1px solid black',
-                  }}
-                >
+                <ListItem className={classes.vertical}>
                   <NFTBox currentNft={currentNft} />
-                  <NFTLibrary currentNft={currentNft} />
+
+                  <ListItem onClick={handleDetails} sx={{ border: '1px solid black' }}>
+                    <ListItemText
+                      sx={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}
+                      primary="Open NFT Libraries >"
+                    />
+                  </ListItem>
                 </ListItem>
               </Grid>
+            </Collapse>
+
+            <Collapse in={openDetails} timeout="auto" unmountOnExit>
+              <ListItem className={classes.vertical}>
+                <NFTLibrary currentNft={currentNft} />
+              </ListItem>
             </Collapse>
 
             <Collapse in={openLib} timeout="auto" unmountOnExit>
