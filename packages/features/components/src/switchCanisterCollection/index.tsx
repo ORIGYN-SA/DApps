@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import { Box, Button, Typography, Grid } from '@mui/material';
+import { Box, Button, Typography, Grid, Switch } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
 import { getCanisterId } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -16,9 +16,11 @@ export const SwitchCanisterCollection = () => {
     const [switchTo, setSwitchTo] = React.useState('');
     const [CurrentCanisterName, setCurrentCanisterName] = React.useState('');
     const [CurrentCanisterId, SetCurrentCanisterId] = React.useState('');
+
     const getTypedValue = (event) => {
         setSwitchTo(event.target.value);
     };
+
     const GetCanisterName = async () => {
         const canisterId = await getCanisterId();
         const QueryName : any = await phonebookActor?.reverse_lookup(
@@ -29,8 +31,7 @@ export const SwitchCanisterCollection = () => {
         }else{
             setCurrentCanisterName(QueryName);
         }
-    }
-    console.log(CurrentCanisterName);
+    };
     // Phonebook Agent
     const agent = new HttpAgent({
         host: 'https://boundary.ic0.app/',
@@ -141,7 +142,7 @@ export const SwitchCanisterCollection = () => {
             <Grid container spacing={2}>
                 <Grid item xs={6}>
                     <Typography sx={{ m: 2, fontSize: 13 }}>
-                        Current Canister: <b>{CurrentCanisterId}</b>
+                        Current Canister String: <b>{CurrentCanisterId}</b>
                     </Typography>
                 </Grid>
                 <Grid item xs={6}>
