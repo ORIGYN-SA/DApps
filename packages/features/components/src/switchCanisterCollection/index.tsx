@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import { Box, Button, Typography, Grid, Switch } from '@mui/material';
+import { Box, Button, Typography, Grid } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
 import { getCanisterId } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';

@@ -9,7 +9,6 @@ import { collectionName } from '@dapp/utils';
 import { getNftCollection, OrigynClient } from '@origyn-sa/mintjs';
 // Preloader
 import { CircularProgress } from '@mui/material';
-import { compareIssueLocations } from 'fork-ts-checker-webpack-plugin/lib/issue';
 
 export const SearchbarNft = (props: any) => {
   const { tokenId, actor,canisterId } = useContext(AuthContext);
