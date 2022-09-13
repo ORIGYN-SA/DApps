@@ -1,13 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-// import TreeView from '@mui/lab/TreeView';
-// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-// import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-// import TreeItem from '@mui/lab/TreeItem';
 import NFTBox from '../NFTBox';
 import Grid from '@mui/material/Grid';
 import NFTLibrary from '../NFTLibrary';
-import { getNftCollection } from '@origyn-sa/mintjs';
+import { getNftCollection, getNft } from '@origyn-sa/mintjs';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
@@ -34,12 +30,16 @@ const ColumnView = ({ children }: any) => {
   const [open1, setOpen1] = React.useState(false);
   const [openLib, setOpenLib] = React.useState(false);
   const [openDetails, setOpenDetails] = React.useState(false);
+  const [libraryData, setLibraryData] = useState<Array<any>>([]);
+  const [openDeta, setOpenDeta] = useState(false);
+  const [libDet, setLibDet] = useState();
+  const [opera, setOpera] = useState(false);
 
   const handleClick = () => {
     setOpen(!open);
   };
 
-  const handleClick1 = (nft) => {
+  const handleClick1 = async (nft) => {
     setOpen1(!open1);
     setCurrentNft(nft);
   };
@@ -48,8 +48,17 @@ const ColumnView = ({ children }: any) => {
     setOpenLib(!openLib);
   };
 
+  const handleClickLib1 = () => {
+    setOpera(!opera);
+  };
+
   const handleDetails = () => {
     setOpenDetails(!openDetails);
+  };
+
+  const handleDeta = async (lib) => {
+    setOpenDeta(!openDeta);
+    setLibDet(lib);
   };
 
   const [isHover, setIsHover] = useState(false);
@@ -93,6 +102,21 @@ const ColumnView = ({ children }: any) => {
     }
   }, [actor]);
 
+  useEffect(() => {
+    if (actor) {
+      getNft(currentNft).then((r) => {
+        console.log('nft_origyn NFTLibrary', r);
+        setLibraryData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }
+  }, [handleDeta]);
+
+  console.log('this is current NFT, ', currentNft);
+
   return (
     <div>
       <Box sx={{ marginLeft: '1rem', border: '2px black' }}>
@@ -110,7 +134,6 @@ const ColumnView = ({ children }: any) => {
             </Grid>
 
             <Box sx={{ border: '1px black' }}>
-
               {/* List item for NFTs */}
               <Grid container>
                 <Grid item xs={12}>
@@ -147,12 +170,7 @@ const ColumnView = ({ children }: any) => {
 
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Grid item>
-                <ListItem
-                  className={classes.vertical}
-                  sx={{
-                    border: '1px solid black',
-                  }}
-                >
+                <ListItem className={classes.vertical} sx={{ border: '1px solid black' }}>
                   {nfts?.map((nft, index) => (
                     <ListItemButton key={index} onClick={() => handleClick1(nft)}>
                       <ListItemText primary={nft} />
@@ -196,21 +214,35 @@ const ColumnView = ({ children }: any) => {
             {/* Main issue with NFT Box and NFT Library, NFT Librray is geerating whole componnet with hooks etc, NFT Box is just a card component */}
 
             <Collapse in={openDetails} timeout="auto" unmountOnExit>
-              <ListItem className={classes.vertical}>
-                <NFTLibrary currentNft={currentNft} />
-              </ListItem>
+              {libraryData?.map((library, index) => (
+                <ListItem
+                  key={index}
+                  sx={{
+                    border: '1px solid black',
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemText
+                      primary={library?.Class[1]?.value?.Text}
+                      onClick={() => handleDeta(library)}
+                    />
+                    {openDeta ? <ChevronLeft /> : <ChevronRight />}
+                  </ListItemButton>
+                </ListItem>
+              ))}
             </Collapse>
+
+            <Grid item>
+              <Collapse in={openDeta} timeout="auto" unmountOnExit>
+                <NFTLibrary libDet={libDet} />
+              </Collapse>
+            </Grid>
 
             {/* Collapse for Library */}
 
             <Collapse in={openLib} timeout="auto" unmountOnExit>
-              <Grid item>
-                <ListItem sx={{ padding: 0 }}>
-                  <ListItemButton sx={{ padding: 0 }} onClick={() => handleClickLib()}>
-                    {children}
-                    {openLib ? <ChevronLeft /> : <ChevronRight />}
-                  </ListItemButton>
-                </ListItem>
+              <Grid item onClick={handleClickLib1}>
+                {children}
               </Grid>
             </Collapse>
           </List>
