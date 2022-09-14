@@ -12,6 +12,7 @@ import Collapse from '@mui/material/Collapse';
 import { ListItemButton } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box } from '@mui/system';
+import LibraryBox from '../LibraryBox';
 
 const useStyles = makeStyles(() => ({
   horizontal: {
@@ -25,7 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ColumnView = ({ children }: any) => {
+const ColumnView = () => {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [openLib, setOpenLib] = React.useState(false);
@@ -34,6 +35,14 @@ const ColumnView = ({ children }: any) => {
   const [openDeta, setOpenDeta] = useState(false);
   const [libDet, setLibDet] = useState();
   const [opera, setOpera] = useState(false);
+  const [isHover, setIsHover] = useState(false);
+  const [libData3, setLibData3] = useState([]);
+  const [library3, setLibrary3] = useState();
+  const [openDub, setOpenDub] = useState(false);
+  const classes = useStyles();
+  const { actor, canisterId, tokenId } = useContext(AuthContext);
+  const [nfts, setNfts] = useState([]);
+  const [currentNft, setCurrentNft] = useState();
 
   const handleClick = () => {
     setOpen(!open);
@@ -61,8 +70,6 @@ const ColumnView = ({ children }: any) => {
     setLibDet(lib);
   };
 
-  const [isHover, setIsHover] = useState(false);
-
   const handleMouseEnter = () => {
     setIsHover(true);
   };
@@ -70,15 +77,14 @@ const ColumnView = ({ children }: any) => {
     setIsHover(false);
   };
 
-  const boxStyle = {
-    //...
-    backgroundColor: isHover ? 'gray' : '',
+  const handleClick3 = (lib3) => {
+    setOpenDub(!open);
+    setLibrary3(lib3);
   };
 
-  const classes = useStyles();
-  const { actor, canisterId } = useContext(AuthContext);
-  const [nfts, setNfts] = useState([]);
-  const [currentNft, setCurrentNft] = useState();
+  const boxStyle = {
+    backgroundColor: isHover ? 'gray' : '',
+  };
 
   const nftCollection = async () => {
     const response = await getNftCollection([]);
@@ -94,7 +100,21 @@ const ColumnView = ({ children }: any) => {
     return setNfts(arrayTokenIds[0]);
   };
 
-  console.log(nfts);
+  useEffect(() => {
+    if (actor) {
+      getNft(tokenId)
+        .then((r) => {
+          console.log(r);
+          setLibData3(
+            r.ok.metadata.Class.filter((res) => {
+              return res.name === 'library';
+            })[0].value.Array.thawed,
+          );
+          console.log('asta ii Rv', r);
+        })
+        .catch(console.log);
+    }
+  }, [actor]);
 
   useEffect(() => {
     if (actor) {
@@ -115,8 +135,6 @@ const ColumnView = ({ children }: any) => {
     }
   }, [handleDeta]);
 
-  console.log('this is current NFT, ', currentNft);
-
   return (
     <div>
       <Box sx={{ marginLeft: '1rem', border: '2px black' }}>
@@ -134,7 +152,6 @@ const ColumnView = ({ children }: any) => {
             </Grid>
 
             <Box sx={{ border: '1px black' }}>
-              {/* List item for NFTs */}
               <Grid container>
                 <Grid item xs={12}>
                   <ListItem
@@ -148,8 +165,6 @@ const ColumnView = ({ children }: any) => {
                     </ListItemButton>
                   </ListItem>
                 </Grid>
-
-                {/* List item "Libraries" */}
 
                 <Grid item xs={12}>
                   <ListItem
@@ -166,8 +181,6 @@ const ColumnView = ({ children }: any) => {
               </Grid>
             </Box>
 
-            {/* Collapse for NFTs List */}
-
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Grid item>
                 <ListItem className={classes.vertical} sx={{ border: '1px solid black' }}>
@@ -180,8 +193,6 @@ const ColumnView = ({ children }: any) => {
                 </ListItem>
               </Grid>
             </Collapse>
-
-            {/* Collapse for NFT Box  */}
 
             <Collapse in={open1} timeout="auto" unmountOnExit>
               <Grid item>
@@ -208,10 +219,7 @@ const ColumnView = ({ children }: any) => {
                 </ListItem>
               </Grid>
             </Collapse>
-
-            {/* Collpase for NFT Libraries */}
-
-            {/* Main issue with NFT Box and NFT Library, NFT Librray is geerating whole componnet with hooks etc, NFT Box is just a card component */}
+            {/* bun */}
 
             <Collapse in={openDetails} timeout="auto" unmountOnExit>
               {libraryData?.map((library, index) => (
@@ -238,11 +246,28 @@ const ColumnView = ({ children }: any) => {
               </Collapse>
             </Grid>
 
-            {/* Collapse for Library */}
-
             <Collapse in={openLib} timeout="auto" unmountOnExit>
               <Grid item onClick={handleClickLib1}>
-                {children}
+                {libData3?.map((library, index) => (
+                  <ListItemButton
+                    key={index}
+                    sx={{
+                      border: '1px solid black',
+                    }}
+                  >
+                    <ListItemText
+                      primary={library?.Class[0]?.value?.Text}
+                      onClick={() => handleClick3(library)}
+                    />
+                    {openDub ? <ChevronLeft /> : <ChevronRight />}
+                  </ListItemButton>
+                ))}
+              </Grid>
+            </Collapse>
+
+            <Collapse in={openDub} timeout="auto">
+              <Grid item>
+                <LibraryBox library3={library3} />
               </Grid>
             </Collapse>
           </List>

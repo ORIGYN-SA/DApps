@@ -29,12 +29,12 @@ function formatBytes(bytes, decimals = 2) {
 
 const LibraryBox = (props: any) => {
   let objLibraryData: curLibraryData = {
-    library_id: props.library?.Class[0]?.value?.Text,
-    title: props.library?.Class[1]?.value?.Text,
-    content_type: props.library?.Class[4]?.value?.Text,
-    location: props.library?.Class[3]?.value?.Text,
-    location_type: props.library?.Class[2]?.value?.Text,
-    size: props.library?.Class[6]?.value?.Nat,
+    library_id: props.library3?.Class[0]?.value?.Text,
+    title: props.library3?.Class[1]?.value?.Text,
+    content_type: props.library3?.Class[4]?.value?.Text,
+    location: props.library3?.Class[3]?.value?.Text,
+    location_type: props.library3?.Class[2]?.value?.Text,
+    size: props.library3?.Class[6]?.value?.Nat,
   };
 
   return (
@@ -43,6 +43,7 @@ const LibraryBox = (props: any) => {
       sx={{
         minWidth: 275,
         borderRadius: '0px',
+        border:'1px solid black' 
       }}
     >
       <CardContent>
