@@ -46,23 +46,42 @@ const ColumnView = () => {
 
   const handleClick = () => {
     setOpen(!open);
+    setOpen1(false);
+    setOpenLib(false);
+    setOpera(false);
+    setOpenDetails(false);
+    setOpenDub(false);
+    setOpenDeta(false);
   };
 
   const handleClick1 = async (nft) => {
     setOpen1(!open1);
     setCurrentNft(nft);
+    setOpenLib(false);
+    setOpera(false);
+    setOpenDetails(false);
+    setOpenDeta(false);
   };
 
   const handleClickLib = () => {
     setOpenLib(!openLib);
+    setOpen(false);
+    setOpen1(false);
+    setOpera(false);
+    setOpenDetails(false);
+    setOpenDeta(false);
+    setOpenDub(false);
   };
 
   const handleClickLib1 = () => {
     setOpera(!opera);
+    setOpenDetails(false);
+    setOpenDeta(false);
   };
 
   const handleDetails = () => {
     setOpenDetails(!openDetails);
+    setOpenDeta(false);
   };
 
   const handleDeta = async (lib) => {
