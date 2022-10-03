@@ -148,7 +148,7 @@ const WalletPage = () => {
       rows.id = <Link href={`#/${rows.id}`}>{rows.id}</Link>;
       rows.preview = (
         <img
-          src={`https://${canisterId}.raw.ic0.app/-/${rows.raw_id}`}
+          src={`https://${canisterId}.raw.ic0.app/-/${rows.raw_id}/preview`}
           style={{ height: '50px', borderRadius: '5px' }}
         />
       );

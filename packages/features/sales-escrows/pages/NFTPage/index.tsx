@@ -352,9 +352,7 @@ export const NFTPage = () => {
                         <strong>
                           {' '}
                           {timeConverter(
-                            BigInt(
-                              parseInt(currentOpenAuction?.sale_type?.auction?.end_date) * 1e9,
-                            ),
+                            BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)),
                           )}
                         </strong>
                       </Typography>
