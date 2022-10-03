@@ -9,9 +9,9 @@ const Home = () => {
   const [data, setData] = useState();
 
   const submitData = async () => {
-    const updateData = await actor.update_app_nft_origyn({
+    await actor.update_app_nft_origyn({
       update: {
-        token_id: "ogy",
+        token_id: 'currentToken?.Class?.find(({ name }) => name === 'id').value.Text',
         update: {
           id: "IDL.Text",
           update: data,
@@ -22,6 +22,8 @@ const Home = () => {
 
     console.log(data);
   };
+
+  // update_app_nft_origyn(#replace{token_id= "1"; data = new_data})
 
   useEffect(() => {
     const getData = async () => {
