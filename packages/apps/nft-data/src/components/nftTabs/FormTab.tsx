@@ -31,7 +31,7 @@ const FormTab = ({ metadata }: any) => {
         <Grid item xs={2}>
           Info
         </Grid>
-        <Grid item xs={10} sx={{}}>
+        <Grid item xs={10}>
           <List>
             <ListItem secondaryAction={<ListItemText primary={owner} />}>
               <ListItemText primary={'owner'} />
@@ -60,11 +60,11 @@ const FormTab = ({ metadata }: any) => {
         </Grid>
       </Grid>
       <Divider />
-      {apps?.map((app, i, index) => {
+      {apps?.map((app, i) => {
         return (
-          <Grid sx={{ marginTop: '20px' }} container spacing={2} key={`${app}+${index}`}>
+          <Grid sx={{ marginTop: '20px' }} container spacing={2} key={`${app}+${i}`}>
             <Grid item xs={2}></Grid>
-            <Grid item xs={2} sx={{}}>{`app ${i + 1}`}</Grid>
+            <Grid item xs={2} >{`app ${i + 1}`}</Grid>
             <Grid item xs={8}>
               <List>
                 <ListItem secondaryAction={<ListItemText primary={app.app_id} />}>
@@ -78,13 +78,13 @@ const FormTab = ({ metadata }: any) => {
 
                 <ListItem
                   secondaryAction={
-                    <List sx={{}}>
+                    <List>
                       <ListItem secondaryAction={<ListItemText primary={app.write.type} />}>
                         <ListItemText primary={'type'} />
                       </ListItem>{' '}
                       <Divider />
                       {app.write.list.map((item) => (
-                        <ListItem key={`${item}+${index}`}>
+                        <ListItem key={`${item}+${i}`}>
                           <ListItemText primary={item} />
                         </ListItem>
                       ))}
@@ -106,7 +106,7 @@ const FormTab = ({ metadata }: any) => {
                       </ListItem>{' '}
                       <Divider />
                       {app.permissions.list.map((item) => (
-                        <ListItem key={`${item}}+${index}`}>
+                        <ListItem key={`${item}}+${i}`}>
                           <ListItemText primary={item} />
                         </ListItem>
                       ))}
@@ -122,9 +122,9 @@ const FormTab = ({ metadata }: any) => {
 
                 <ListItem
                   secondaryAction={
-                    <List sx={{ width: '700px' }}>
+                    <List  sx={{ width: '700px' }}>
                       {Object.keys(app.data).map((item, i) => (
-                        <>
+                        <div key={i}>
                           {' '}
                           <ListItem
                             secondaryAction={
@@ -134,7 +134,7 @@ const FormTab = ({ metadata }: any) => {
                             <ListItemText sx={{}} primary={item} />
                           </ListItem>
                           {i < Object.keys(app.data).length - 1 ? <Divider /> : null}
-                        </>
+                        </div>
                       ))}
                       {}
                     </List>
@@ -151,21 +151,21 @@ const FormTab = ({ metadata }: any) => {
         );
       })}
       <Divider />
-      {library?.map((lib, i, index) => {
+      {library?.map((lib, i) => {
         let length = Object.keys(lib).length;
         return (
-          <Grid key={`${lib}+${index}`} sx={{ marginTop: '20px' }} container spacing={2}>
+          <Grid key={`${lib}+${i}`} sx={{ marginTop: '20px' }} container spacing={2}>
             <Grid item xs={2}></Grid>
-            <Grid item xs={2} sx={{}}>{`ibrary ${i + 1}`}</Grid>
+            <Grid item xs={2}>{`library ${i + 1}`}</Grid>
             <Grid item xs={8}>
               <List>
                 {Object.keys(lib).map((item, j) => (
-                  <>
+                  <div key={j}>
                     <ListItem secondaryAction={<ListItemText primary={lib[item]} />}>
                       <ListItemText primary={item} />
                     </ListItem>
                     {j < length - 1 ? <Divider /> : null}
-                  </>
+                  </div>
                 ))}
               </List>
             </Grid>
