@@ -1,20 +1,39 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
-import NFTInfo from '../NFTInfo';
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@dapp/features-authentication";
+import NFTInfo from "../NFTInfo";
+import { Button, TextField } from "@mui/material";
 
 const Home = () => {
   const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState();
+  const [data, setData] = useState();
+
+  const submitData = async () => {
+    const updateData = await actor.update_app_nft_origyn({
+      update: {
+        token_id: "ogy",
+        update: {
+          id: "IDL.Text",
+          update: data,
+        },
+        app_id: "nft-data",
+      },
+    });
+
+    console.log(data);
+  };
 
   useEffect(() => {
     const getData = async () => {
       if (actor && canisterId) {
         if (tokenId) {
           try {
-            const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
+            const response = await fetch(
+              `https://${canisterId}.raw.ic0.app/-/${tokenId}/info`
+            );
             const result = await response.text();
             if (result.search('"is_soulbound":,')) {
-              setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
+              setNFTData(JSON.parse(result.replace('"is_soulbound":,', "")));
             } else {
               setNFTData(JSON.parse(result));
             }
@@ -23,10 +42,12 @@ const Home = () => {
           }
         } else {
           try {
-            const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
+            const response = await fetch(
+              `https://${canisterId}.raw.ic0.app/collection/info`
+            );
             const result = await response.text();
             if (result.search('"is_soulbound":,')) {
-              setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
+              setNFTData(JSON.parse(result.replace('"is_soulbound":,', "")));
             } else {
               setNFTData(JSON.parse(result));
             }
@@ -48,13 +69,25 @@ const Home = () => {
         <p>
           Token(NFT) ID: <b>{tokenId}</b>
         </p>
-        <p>
-          You principal: <b>{principal?.toText()}</b>
-        </p>
         <div>
           <p>
-            <b>NFT Data:</b>
+            <p>
+              {" "}
+              Write data to NFT:{" "}
+              <TextField
+                variant="standard"
+                type="text"
+                onChange={(textData) => setData(textData.target.value)}
+              />{" "}
+            </p>
           </p>
+          <Button variant="contained" onClick={submitData}>
+            {" "}
+            Add Data{" "}
+          </Button>
+          <br />
+          <br />
+          <b>NFT Data:</b>
           {NFTData ? <NFTInfo metadata={NFTData} /> : null}
         </div>
       </div>
