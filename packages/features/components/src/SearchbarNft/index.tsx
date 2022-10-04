@@ -6,7 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
-import { getNftCollection, OrigynClient } from '@origyn-sa/mintjs';
+import { getNftCollection, OrigynClient, getNft } from '@origyn-sa/mintjs';
 // Preloader
 import { CircularProgress } from '@mui/material';
 
@@ -28,6 +28,14 @@ export const SearchbarNft = (props: any) => {
     );
   };
 
+  const NFTobj = async () => {
+    const nft = await getNft(tokenId);
+    console.log('nft', nft);
+  };
+
+  useEffect(() => {
+    NFTobj();
+  }, []);
   const NFTCollection = async () => {
     setSelectTokenIds(['Loading...']);
     const response = await getNftCollection();

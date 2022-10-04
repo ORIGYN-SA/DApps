@@ -3,7 +3,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import NFTBox from '../NFTBox';
 import Grid from '@mui/material/Grid';
 import NFTLibrary from '../NFTLibrary';
-import { getNftCollection, getNft } from '@origyn-sa/mintjs';
+import { getNftCollection, getNft, OrigynClient } from '@origyn-sa/mintjs';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
@@ -26,6 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+
 const ColumnView = () => {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
@@ -43,7 +44,6 @@ const ColumnView = () => {
   const { actor, canisterId, tokenId } = useContext(AuthContext);
   const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
-
   const handleClick = () => {
     setOpen(!open);
     setOpen1(false);
@@ -106,6 +106,7 @@ const ColumnView = () => {
   };
 
   const nftCollection = async () => {
+    OrigynClient.getInstance().init(canisterId);
     const response = await getNftCollection([]);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
@@ -120,6 +121,7 @@ const ColumnView = () => {
   };
 
   useEffect(() => {
+    //console.log("tokenId", tokenId);
     if (actor) {
       getNft(tokenId)
         .then((r) => {
@@ -144,7 +146,7 @@ const ColumnView = () => {
   useEffect(() => {
     if (actor) {
       getNft(currentNft).then((r) => {
-        console.log('nft_origyn NFTLibrary', r);
+       // console.log('nft_origyn', r);
         setLibraryData(
           r.ok.metadata.Class.filter((res) => {
             return res.name === 'library';
