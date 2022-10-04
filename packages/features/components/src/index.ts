@@ -12,7 +12,7 @@ export * from './TransactionFilter'
 export * from './TransactionModal'
 export * from './TransactionsTable'
 export * from './VLabel'
-export * from './switchCanisterCollection'
+export * from './SwitchCanisterCollection'
 
 
 
