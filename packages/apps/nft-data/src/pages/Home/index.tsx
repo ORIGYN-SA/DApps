@@ -8,20 +8,20 @@ const Home = () => {
   const [NFTData, setNFTData] = useState();
   const [data, setData] = useState();
 
-  const submitData = async () => {
-    await actor.update_app_nft_origyn({
-      update: {
-        token_id: 'currentToken?.Class?.find(({ name }) => name === 'id').value.Text',
-        update: {
-          id: "IDL.Text",
-          update: data,
-        },
-        app_id: "nft-data",
-      },
-    });
+  const submitData = () => {
+    // await actor.update_app_nft_origyn({
+    //   replace: {
+    //     token_id: 1,
+    //     data: data,
+    //   },
+    // });
 
     console.log(data);
   };
+
+  // 'item?.metadata?.Class?.find(({ name }) => name === 'id').value.Text'
+
+  //onClick, setTokenID => upddate_app_nft, replace the data
 
   // update_app_nft_origyn(#replace{token_id= "1"; data = new_data})
 
@@ -61,6 +61,8 @@ const Home = () => {
     };
     getData();
   }, [actor, canisterId]);
+
+  console.log(NFTData);
 
   return (
     <div>
