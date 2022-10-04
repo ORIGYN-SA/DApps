@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, getTokenId } from '@dapp/features-authentication';
 import NFTBox from '../NFTBox';
 import Grid from '@mui/material/Grid';
 import NFTLibrary from '../NFTLibrary';
@@ -41,7 +41,7 @@ const ColumnView = () => {
   const [library3, setLibrary3] = useState();
   const [openDub, setOpenDub] = useState(false);
   const classes = useStyles();
-  const { actor, canisterId, tokenId } = useContext(AuthContext);
+  const { actor, canisterId } = useContext(AuthContext);
   const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
   const handleClick = () => {
@@ -110,20 +110,17 @@ const ColumnView = () => {
     const response = await getNftCollection([]);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
-
     const arrayTokenIds = [];
     for (var x in obj_token_ids) {
-      var newID = obj_token_ids[x];
-      arrayTokenIds.push(newID);
+      arrayTokenIds.push( obj_token_ids[x]);
     }
-
     return setNfts(arrayTokenIds[0]);
   };
 
   useEffect(() => {
-    //console.log("tokenId", tokenId);
     if (actor) {
-      getNft(tokenId)
+      nftCollection();
+      getNft(getTokenId())
         .then((r) => {
           console.log(r);
           setLibData3(
@@ -134,12 +131,6 @@ const ColumnView = () => {
           console.log('asta ii Rv', r);
         })
         .catch(console.log);
-    }
-  }, [actor]);
-
-  useEffect(() => {
-    if (actor) {
-      nftCollection();
     }
   }, [actor]);
 
