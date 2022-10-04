@@ -44,6 +44,7 @@ const ColumnView = () => {
   const { actor, canisterId } = useContext(AuthContext);
   const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
+
   const handleClick = () => {
     setOpen(!open);
     setOpen1(false);
@@ -112,7 +113,7 @@ const ColumnView = () => {
     const obj_token_ids = collectionNFT.token_ids;
     const arrayTokenIds = [];
     for (var x in obj_token_ids) {
-      arrayTokenIds.push( obj_token_ids[x]);
+      arrayTokenIds.push(obj_token_ids[x]);
     }
     return setNfts(arrayTokenIds[0]);
   };
@@ -137,7 +138,7 @@ const ColumnView = () => {
   useEffect(() => {
     if (actor) {
       getNft(currentNft).then((r) => {
-       // console.log('nft_origyn', r);
+         console.log('nft_origyn', r);
         setLibraryData(
           r.ok.metadata.Class.filter((res) => {
             return res.name === 'library';
