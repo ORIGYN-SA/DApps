@@ -76,7 +76,7 @@ const Home = () => {
           Token(NFT) ID: <b>{tokenId}</b>
         </p>
         <div>
-          <p>
+          {/* <p>
             <p>
               {" "}
               Write data to NFT:{" "}
@@ -90,7 +90,7 @@ const Home = () => {
           <Button variant="contained" onClick={submitData}>
             {" "}
             Add Data{" "}
-          </Button>
+          </Button> */}
           <br />
           <br />
           <b>NFT Data:</b>
