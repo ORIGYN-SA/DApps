@@ -124,7 +124,7 @@ const FormTab2 = ({ metadata }: any) => {
                     variant="outlined"
                     name="app_id"
                     value={app.app_id}
-                    onChange={(textData) => setData(textData.target.value)}
+                    onChange={(evt) => handleAppsChange(index, evt)}
                   />
                   <Button variant="contained" onClick={submitData}>
                     {' '}
@@ -140,6 +140,7 @@ const FormTab2 = ({ metadata }: any) => {
                     name="read"
                     value={app.read}
                     onChange={(textData) => setData(textData.target.value)}
+                    // onChange={(evt) => handleAppsChange(index, evt)}
                   />
                   <Button variant="contained" onClick={submitData}>
                     {' '}
