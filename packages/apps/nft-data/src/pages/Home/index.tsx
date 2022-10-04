@@ -8,21 +8,23 @@ const Home = () => {
   const [NFTData, setNFTData] = useState();
   const [data, setData] = useState();
 
-  const submitData = () => {
-    // await actor.update_app_nft_origyn({
-    //   replace: {
-    //     token_id: 1,
-    //     data: data,
-    //   },
-    // });
+  const submitData = async () => {
+    await actor.update_app_nft_origyn({
+      replace: {
+        token_id: "1",
+        data: data,
+      },
+    });
 
     console.log(data);
   };
 
-  // 'item?.metadata?.Class?.find(({ name }) => name === 'id').value.Text'
+  // replace from token_id with: 'item?.metadata?.Class?.find(({ name }) => name === 'id').value.Text'
 
-  //onClick, setTokenID => upddate_app_nft, replace the data
+  //Tips: update_app_nft_origyn changes the data from a specific input, ICP blockchain allows for data chnage without the need for a trx, to be implemneted as:
+  // onClick, setTokenID => upddate_app_nft, replace the data
 
+  // ex from origyn_nft_reference:
   // update_app_nft_origyn(#replace{token_id= "1"; data = new_data})
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const Home = () => {
               setNFTData(JSON.parse(result));
             }
           } catch (err) {
-            console.log(err);
+            console.log("err1", err);
           }
         } else {
           try {
@@ -54,7 +56,7 @@ const Home = () => {
               setNFTData(JSON.parse(result));
             }
           } catch (err) {
-            console.log(err);
+            console.log("err2", err);
           }
         }
       }
@@ -62,7 +64,7 @@ const Home = () => {
     getData();
   }, [actor, canisterId]);
 
-  console.log(NFTData);
+  console.log("this is nftdata", NFTData);
 
   return (
     <div>
