@@ -100,13 +100,13 @@ const NewForm = ({ metadata }: any) => {
   const [data, setData] = useState();
 
   const submitData = async () => {
+    console.log('this is data', data);
     await actor.update_app_nft_origyn({
       replace: {
         token_id: tokenId,
         data: data,
       },
     });
-    console.log(data);
   };
 
   const inputData = (evt, index) => {
