@@ -2,6 +2,11 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import { AuthContext } from '@dapp/features-authentication';
 import { getNft } from '@origyn-sa/mintjs';
+import LibraryImage from '../LibraryImage';
+import LibraryVideo from '../LibraryVideo';
+import LibraryText from '../LibraryText';
+import LibraryDefault from '../LibraryDefault';
+
 interface NFTDATA {
   nft_id?: string;
   preview?: string;
@@ -25,7 +30,14 @@ const NFTBox = (props: any) => {
     }
   }, [actor]);
 
-  const nftImage = nftStuff?.ok?.metadata?.Class?.filter((res) => {
+  const nftContentType = nftStuff?.ok?.metadata?.Class?.filter((res) => {
+    return res.name === 'library';})[0].value?.Array?.thawed[0].Class.filter((res) => {
+      return res.name === 'content_type';
+    })[0].value.Text;
+
+  console.log('nft_origyn NFTBox nftContentType', nftContentType);
+
+  const nftLocation = nftStuff?.ok?.metadata?.Class?.filter((res) => {
     return res.name === 'library';
   })[0].value?.Array?.thawed[0].Class.filter((res) => {
     return res.name === 'location';
@@ -48,7 +60,21 @@ const NFTBox = (props: any) => {
             NFT ID: <b> {nftData.nft_id} </b>
           </Typography>
           <Box>
-            <img src={nftImage} height="300px"></img>
+          {(() => {
+                switch (nftContentType) {
+                  case 'image/png' || 'image/jpg':
+                    return <LibraryImage source={nftLocation} />;
+
+                  case 'video/mp4' || 'video/html5':
+                    return <LibraryVideo source={nftLocation} />;
+
+                  case 'text/html':
+                    return <LibraryText source={nftLocation} />;
+
+                  default:
+                    return <LibraryDefault source={nftLocation} />;
+                }
+              })()}
           </Box>
         </CardContent>
       </Card>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext, getTokenId } from '@dapp/features-authentication';
+import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
 import NFTBox from '../NFTBox';
 import Grid from '@mui/material/Grid';
 import NFTLibrary from '../NFTLibrary';
@@ -26,12 +26,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-
 const ColumnView = () => {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [openLib, setOpenLib] = React.useState(false);
   const [openDetails, setOpenDetails] = React.useState(false);
+  // General Library -- tokenId empty
+  const [defaultLibraryData, setDefaultLibraryData] = useState<Array<any>>([]);
+  // Specific library -- tokenId from URL or from clicked item
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
   const [openDeta, setOpenDeta] = useState(false);
   const [libDet, setLibDet] = useState();
@@ -45,6 +47,11 @@ const ColumnView = () => {
   const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
 
+  const currentCanisterId = async () => {
+    const canisterId = await getCanisterId();
+    return canisterId;
+  }
+
   const handleClick = () => {
     setOpen(!open);
     setOpen1(false);
@@ -53,6 +60,18 @@ const ColumnView = () => {
     setOpenDetails(false);
     setOpenDub(false);
     setOpenDeta(false);
+    nftCollection();
+    getNft(getTokenId())
+      .then((r) => {
+        console.log(r);
+        setLibData3(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+        console.log('This is R', r);
+      })
+
   };
 
   const handleClick1 = async (nft) => {
@@ -64,7 +83,7 @@ const ColumnView = () => {
     setOpenDeta(false);
   };
 
-  const handleClickLib = () => {
+  const handleClickLib = async () => {
     setOpenLib(!openLib);
     setOpen(false);
     setOpen1(false);
@@ -72,6 +91,17 @@ const ColumnView = () => {
     setOpenDetails(false);
     setOpenDeta(false);
     setOpenDub(false);
+    // As default-general view of libraries the tokenId is empty
+    if (actor) {
+      getNft('').then((r) => {
+        setDefaultLibraryData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }
+
   };
 
   const handleClickLib1 = () => {
@@ -83,6 +113,16 @@ const ColumnView = () => {
   const handleDetails = () => {
     setOpenDetails(!openDetails);
     setOpenDeta(false);
+    if (actor) {
+      getNft(currentNft).then((r) => {
+        console.log('nft_origyn', r);
+        setLibraryData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }
   };
 
   const handleDeta = async (lib) => {
@@ -106,8 +146,16 @@ const ColumnView = () => {
     backgroundColor: isHover ? 'gray' : '',
   };
 
+  const openSpecificNft = async () => {
+    if (getTokenId() !== '') {
+      await handleClick();
+      await handleClick1(getTokenId());
+    }
+  };
+
   const nftCollection = async () => {
-    OrigynClient.getInstance().init(canisterId);
+    setNfts(['']);
+    OrigynClient.getInstance().init(await currentCanisterId());
     const response = await getNftCollection([]);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
@@ -115,38 +163,24 @@ const ColumnView = () => {
     for (var x in obj_token_ids) {
       arrayTokenIds.push(obj_token_ids[x]);
     }
+
+  // In case we have URL with tokenID and we change canister, 
+  // We need to check if the tokenID is in the new canister
+  // If not, we need to clear the URL and show the first tokenID in the new Canister
+
+    if(!arrayTokenIds[0].includes(getTokenId())){
+      let Url = window.location.href;
+      Url = Url.replace(getTokenId(), arrayTokenIds[0][0]);
+      window.location.href = Url;
+    }
     return setNfts(arrayTokenIds[0]);
   };
 
-  useEffect(() => {
-    if (actor) {
-      nftCollection();
-      getNft(getTokenId())
-        .then((r) => {
-          console.log(r);
-          setLibData3(
-            r.ok.metadata.Class.filter((res) => {
-              return res.name === 'library';
-            })[0].value.Array.thawed,
-          );
-          console.log('asta ii Rv', r);
-        })
-        .catch(console.log);
-    }
-  }, [actor]);
 
+  // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
-    if (actor) {
-      getNft(currentNft).then((r) => {
-         console.log('nft_origyn', r);
-        setLibraryData(
-          r.ok.metadata.Class.filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array.thawed,
-        );
-      });
-    }
-  }, [handleDeta]);
+    openSpecificNft();
+  }, []);
 
   return (
     <div>
@@ -211,25 +245,24 @@ const ColumnView = () => {
               <Grid item>
                 <ListItem className={classes.vertical}>
                   <NFTBox currentNft={currentNft} />
-
-                  <ListItem
-                    style={boxStyle}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={handleDetails}
-                    sx={{ border: '1px solid black' }}
-                  >
-                    <ListItemText
-                      sx={{
-                        justifyContent: 'center',
-                        display: 'flex',
-                        alignItems: 'center',
-                        hover: 'gray',
-                      }}
-                      primary="Open NFT Libraries >"
-                    />
-                  </ListItem>
                 </ListItem>
+                <ListItemButton
+                  style={boxStyle}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={handleDetails}
+                  sx={{ border: '1px solid black' }}
+                >
+                  <ListItemText
+                    sx={{
+                      justifyContent: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
+                      hover: 'gray',
+                    }}
+                    primary="Open NFT Libraries >"
+                  />
+                </ListItemButton>
               </Grid>
             </Collapse>
             {/* bun */}
@@ -261,7 +294,7 @@ const ColumnView = () => {
 
             <Collapse in={openLib} timeout="auto" unmountOnExit>
               <Grid item onClick={handleClickLib1}>
-                {libData3?.map((library, index) => (
+                {defaultLibraryData?.map((library, index) => (
                   <ListItemButton
                     key={index}
                     sx={{
