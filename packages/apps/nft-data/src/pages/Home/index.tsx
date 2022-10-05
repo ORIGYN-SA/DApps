@@ -8,25 +8,6 @@ const Home = () => {
   const [NFTData, setNFTData] = useState();
   const [data, setData] = useState();
 
-  const submitData = async () => {
-    await actor.update_app_nft_origyn({
-      replace: {
-        token_id: "1",
-        data: data,
-      },
-    });
-
-    console.log(data);
-  };
-
-  // replace from token_id with: 'item?.metadata?.Class?.find(({ name }) => name === 'id').value.Text'
-
-  //Tips: update_app_nft_origyn changes the data from a specific input, ICP blockchain allows for data chnage without the need for a trx, to be implemneted as:
-  // onClick, setTokenID => upddate_app_nft, replace the data
-
-  // ex from origyn_nft_reference:
-  // update_app_nft_origyn(#replace{token_id= "1"; data = new_data})
-
   useEffect(() => {
     const getData = async () => {
       if (actor && canisterId) {

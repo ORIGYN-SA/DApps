@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-
 import { AuthContext } from '@dapp/features-authentication';
-
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import {
@@ -16,6 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import pick from 'lodash/pick';
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -23,7 +22,8 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
-const FormTab2 = ({ metadata }: any) => {
+
+const NewForm = ({ metadata }: any) => {
   console.log(metadata);
 
   const [owner, setOwner] = useState('');
@@ -40,10 +40,12 @@ const FormTab2 = ({ metadata }: any) => {
                 'com.bm.sample.app.creator_principal': ''
     }} */
   ]);
+
   const [library, setLibrary] = useState([]);
   const [libraryFields, setLibraryFields] = useState([
     /*   {library_id: '', title: '', location_type: '', location: '', content_type: '', content_hash: '', size: '', sort: '', read: ''} */
   ]);
+
   const handleAppsChange = (index, event, i = 0) => {
     if (event.target.name == 'app_id' || event.target.name == 'read') {
       let data = [...apps];
@@ -77,6 +79,7 @@ const FormTab2 = ({ metadata }: any) => {
     data[index][event.target.name] = event.target.value;
     setLibraryFields(data);
   };
+
   useEffect(() => {
     if (Object.entries(metadata).length) {
       setOwner(pick(metadata, ['owner']).owner);
@@ -96,16 +99,22 @@ const FormTab2 = ({ metadata }: any) => {
   const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
   const [data, setData] = useState();
 
-  const submitData = () => {
-    // await actor.update_app_nft_origyn({
-    //   replace: {
-    //     token_id: '1',
-    //     data: data,
-    //   },
-    // });
-
+  const submitData = async () => {
+    await actor.update_app_nft_origyn({
+      replace: {
+        token_id: tokenId,
+        data: data,
+      },
+    });
     console.log(data);
   };
+
+  const inputData = (evt, index) => {
+    handleAppsChange(index, evt);
+    setData(evt);
+  };
+
+  //   <Button variant="contained" onClick={submitData}> Save </Button>
   // <--------------------------------
 
   return (
@@ -124,11 +133,11 @@ const FormTab2 = ({ metadata }: any) => {
                     variant="outlined"
                     name="app_id"
                     value={app.app_id}
-                    onChange={(evt) => handleAppsChange(index, evt)}
+                    onChange={(evt) => inputData(evt, index)}
                   />
                   <Button variant="contained" onClick={submitData}>
                     {' '}
-                    Add Data{' '}
+                    Save{' '}
                   </Button>
                 </Item>
               </Grid>
@@ -139,13 +148,8 @@ const FormTab2 = ({ metadata }: any) => {
                     variant="outlined"
                     name="read"
                     value={app.read}
-                    onChange={(textData) => setData(textData.target.value)}
-                    // onChange={(evt) => handleAppsChange(index, evt)}
+                    onChange={(evt) => handleAppsChange(index, evt)}
                   />
-                  <Button variant="contained" onClick={submitData}>
-                    {' '}
-                    Add Data{' '}
-                  </Button>
                 </Item>
               </Grid>
               <Grid xs={4} sx={{ marginTop: '10px' }}>
@@ -284,7 +288,7 @@ const FormTab2 = ({ metadata }: any) => {
                     variant="outlined"
                     name="title"
                     value={lib.title}
-                    onChange={(evt) => handleLibraryChange(index, evt)}
+                    onChange={(evt) => handleAppsChange(index, evt)}
                   />
                 </Item>
               </Grid>
@@ -373,4 +377,4 @@ const FormTab2 = ({ metadata }: any) => {
   );
 };
 
-export default FormTab2;
+export default NewForm;
