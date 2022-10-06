@@ -9,10 +9,30 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import Collapse from '@mui/material/Collapse';
-import { ListItemButton } from '@mui/material';
+import { ListItemButton, ListItemIcon } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box } from '@mui/system';
 import LibraryBox from '../LibraryBox';
+// Preloader
+import { Preloader } from '@dapp/features-components';
+// Icons for NFT's in the library
+import ImageIcon from '@mui/icons-material/Image';
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
+import HtmlIcon from '@mui/icons-material/Html';
+const Icons = {
+  'image/png': <ImageIcon />,
+  'image/jpeg': <ImageIcon />,
+  'image/gif': <ImageIcon />,
+  'video/mp4': <VideoLibraryIcon />,
+  'video/html5': <VideoLibraryIcon />,
+  'text/html': <HtmlIcon />,
+}
+
+type ListNftIconsType = {
+  'nft_id': string,
+  'content_type': string,
+  'nft_icon': any,
+}
 
 const useStyles = makeStyles(() => ({
   horizontal: {
@@ -44,8 +64,8 @@ const ColumnView = () => {
   const [openDub, setOpenDub] = useState(false);
   const classes = useStyles();
   const { actor, canisterId } = useContext(AuthContext);
-  const [nfts, setNfts] = useState([]);
   const [currentNft, setCurrentNft] = useState();
+  const [listNft, setListNft] = useState<ListNftIconsType[]>([]);
 
   const currentCanisterId = async () => {
     const canisterId = await getCanisterId();
@@ -154,32 +174,46 @@ const ColumnView = () => {
   };
 
   const nftCollection = async () => {
-    setNfts(['']);
+    setListNft([]);
     OrigynClient.getInstance().init(await currentCanisterId());
     const response = await getNftCollection([]);
     const collectionNFT = response.ok;
-    const obj_token_ids = collectionNFT.token_ids;
+    const obj_token_ids: any = collectionNFT.token_ids[0];
+    //console.log('obj_token_ids', obj_token_ids);
     const arrayTokenIds = [];
-    for (var x in obj_token_ids) {
-      arrayTokenIds.push(obj_token_ids[x]);
+    const nftList = [];
+    let item: any;
+    for (item in obj_token_ids) {
+      arrayTokenIds.push(obj_token_ids[item]);
+      let nft_to_list: ListNftIconsType = {
+        'nft_id': '',
+        'content_type': '',
+        'nft_icon': '',
+      };
+      nft_to_list.nft_id = obj_token_ids[item];
+      nft_to_list.content_type = await (await getNft(obj_token_ids[item]))?.ok?.metadata?.Class?.filter((res) => {
+        return res.name === 'library';
+      })[0].value?.Array?.thawed[0].Class.filter((res) => {
+        return res.name === 'content_type';
+      })[0].value.Text;
+      nft_to_list.nft_icon = Icons[nft_to_list.content_type];
+      nftList.push(nft_to_list);
     }
-
-  // In case we have URL with tokenID and we change canister, 
-  // We need to check if the tokenID is in the new canister
-  // If not, we need to clear the URL and show the first tokenID in the new Canister
-
-    if(!arrayTokenIds[0].includes(getTokenId())){
+    setListNft(nftList);
+    // In case we have URL with tokenID and we change canister, 
+    // We need to check if the tokenID is in the new canister
+    // If not, we need to clear the URL and show the first tokenID in the new Canister
+    if (!arrayTokenIds.includes(getTokenId()) && getTokenId() !== '') {
       let Url = window.location.href;
-      Url = Url.replace(getTokenId(), arrayTokenIds[0][0]);
+      Url = Url.replace(getTokenId(), arrayTokenIds[0]);
       window.location.href = Url;
     }
-    return setNfts(arrayTokenIds[0]);
   };
-
 
   // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
     openSpecificNft();
+    console.log('getTOken', getTokenId());
   }, []);
 
   return (
@@ -230,14 +264,25 @@ const ColumnView = () => {
 
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Grid item>
-                <ListItem className={classes.vertical} sx={{ border: '1px solid black' }}>
-                  {nfts?.map((nft, index) => (
-                    <ListItemButton key={index} onClick={() => handleClick1(nft)}>
-                      <ListItemText primary={nft} />
-                      {open1 ? <ChevronLeft /> : <ChevronRight />}
-                    </ListItemButton>
-                  ))}
-                </ListItem>
+                {
+                  (listNft.length == 0) ? (
+                    <ListItem className={classes.vertical} sx={{ border: '1px solid black' }}>
+                      <ListItemText primary="Loading data..." />
+                    </ListItem>
+                  ) : (
+                    <ListItem className={classes.vertical} sx={{ border: '1px solid black' }}>
+                      {listNft?.map((nft, index) => (
+                        <ListItemButton key={index} onClick={() => handleClick1(nft.nft_id)}>
+                          <ListItemIcon>
+                            {nft.nft_icon}
+                          </ListItemIcon>
+                          <ListItemText primary={nft.nft_id} />
+                          {open1 ? <ChevronLeft /> : <ChevronRight />}
+                        </ListItemButton>
+                      ))}
+                    </ListItem>
+                  )
+                }
               </Grid>
             </Collapse>
 
