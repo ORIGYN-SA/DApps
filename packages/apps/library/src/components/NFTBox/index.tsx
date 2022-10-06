@@ -64,10 +64,10 @@ const NFTBox = (props: any) => {
                 switch (nftContentType) {
                   case 'image/png' || 'image/jpg':
                     return <LibraryImage source={nftLocation} />;
-
+                  case 'image/jpeg' || 'image/gif':
+                    return <LibraryImage source={nftLocation} />;
                   case 'video/mp4' || 'video/html5':
                     return <LibraryVideo source={nftLocation} />;
-
                   case 'text/html':
                     return <LibraryText source={nftLocation} />;
 

@@ -113,6 +113,7 @@ const ColumnView = () => {
     setOpenDub(false);
     // As default-general view of libraries the tokenId is empty
     if (actor) {
+      OrigynClient.getInstance().init(await currentCanisterId());
       getNft('').then((r) => {
         setDefaultLibraryData(
           r.ok.metadata.Class.filter((res) => {

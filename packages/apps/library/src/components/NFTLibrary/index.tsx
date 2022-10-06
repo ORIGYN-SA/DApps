@@ -9,8 +9,19 @@ import LibraryVideo from '../LibraryVideo';
 import LibraryText from '../LibraryText';
 import LibraryDefault from '../LibraryDefault';
 
+
+export const layouts = { 
+  "image/jpeg": (props) => <LibraryImage source={props} />,
+  "image/png": (props) => <LibraryImage source={props} />,
+  "image/gif": (props) => <LibraryImage source={props} />,
+  "video/mp4": (props) => <LibraryVideo source={props} />,
+  "video/html5": (props) => <LibraryVideo source={props} />,
+  "text/html": (props) => <LibraryText source={props} />,
+};
+
 const NFTLibrary = (props: any) => {
   let library = props.libDet;
+  console.log(library);
 
   function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
@@ -82,21 +93,13 @@ const NFTLibrary = (props: any) => {
             </Grid>
             <Grid item xs={6}>
               <Box sx={{ m: 2 }}>
-                {(() => {
-                  switch (library?.Class[4]?.value?.Text) {
-                    case 'image/png' || 'image/jpg':
-                      return <LibraryImage source={library?.Class[3]?.value?.Text} />;
-
-                    case 'video/mp4' || 'video/html5':
-                      return <LibraryVideo source={library?.Class[3]?.value?.Text} />;
-
-                    case 'text/html':
-                      return <LibraryText source={library?.Class[3]?.value?.Text} />;
-
-                    default:
-                      return <LibraryDefault source={library?.Class[3]?.value?.Text} />;
-                  }
-                })()}
+                {
+                  (library?.Class[4]?.value?.Text in layouts) ? (
+                    layouts[library?.Class[4]?.value?.Text](library.Class[3]?.value.Text)
+                  ): (
+                    <LibraryDefault source={library.Class[3]?.value.Text} />
+                  )
+                }
               </Box>
             </Grid>
           </Grid>
