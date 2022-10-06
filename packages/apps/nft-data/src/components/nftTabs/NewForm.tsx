@@ -148,8 +148,12 @@ const NewForm = ({ metadata }: any) => {
                     variant="outlined"
                     name="read"
                     value={app.read}
-                    onChange={(evt) => handleAppsChange(index, evt)}
+                    onChange={(evt) => inputData(evt, index)}
                   />
+                  <Button variant="contained" onClick={submitData}>
+                    {' '}
+                    Save{' '}
+                  </Button>
                 </Item>
               </Grid>
               <Grid xs={4} sx={{ marginTop: '10px' }}>
