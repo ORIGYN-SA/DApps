@@ -98,7 +98,7 @@ const NewForm = ({ metadata }: any) => {
   // <----------------------------
 
   const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
-  const [data, setData] = useState();
+  const [data2, setData] = useState<any>('brain 1');
   const [nft, setNft] = useState<any>({});
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const NewForm = ({ metadata }: any) => {
         name: 'write',
         value: {
           Class: [
-            { name: 'type', value: { Text: 'deny' }, immutable: false },
+            { name: 'type', value: { Text: 'allow' }, immutable: false },
             {
               name: 'list',
               value: {
@@ -192,6 +192,8 @@ const NewForm = ({ metadata }: any) => {
       data: data,
     };
 
+
+
     console.log("this is upData", upData);
     console.log('this is app', apps);
     console.log('this is nftId', nftId);
@@ -204,6 +206,11 @@ const NewForm = ({ metadata }: any) => {
       console.log('replace wrong', repData);
     }
   };
+
+  const stateText = (text, index) => {
+    handleAppsChange(text, index);
+    setData(text)
+  }
 
   // <--------------------------------
 
@@ -225,10 +232,7 @@ const NewForm = ({ metadata }: any) => {
                     value={app.app_id}
                     onChange={(evt) => handleAppsChange(index, evt)}
                   />
-                  <Button variant="contained" onClick={submitData}>
-                    {' '}
-                    Save{' '}
-                  </Button>
+
                 </Item>
               </Grid>
               <Grid xs={6} sx={{ marginTop: '10px' }}>
@@ -240,10 +244,7 @@ const NewForm = ({ metadata }: any) => {
                     value={app.read}
                     onChange={(evt) => handleAppsChange(index, evt)}
                   />
-                  <Button variant="contained" onClick={submitData}>
-                    {' '}
-                    Save{' '}
-                  </Button>
+
                 </Item>
               </Grid>
               <Grid xs={4} sx={{ marginTop: '10px' }}>
