@@ -14,6 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import pick from 'lodash/pick';
+import { Principal } from '@dfinity/principal'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -197,7 +198,7 @@ const NewForm = ({ metadata }: any) => {
       },
     ];
 
-    const data4 = [
+    const data4 = { "Class" :[
       {
         "name": "app_id",
         "value": {
@@ -221,7 +222,7 @@ const NewForm = ({ metadata }: any) => {
               name: 'list',
               value: {
                 Array: {
-                  thawed: [{ Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe' }],
+                  thawed: [{ Principal: Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe') }],
                 },
               },
               immutable: false,
@@ -239,7 +240,7 @@ const NewForm = ({ metadata }: any) => {
               name: 'list',
               value: {
                 Array: {
-                  thawed: [{ Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe' }],
+                  thawed: [{ Principal: Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe') }],
                 },
               },
               immutable: false,
@@ -253,21 +254,20 @@ const NewForm = ({ metadata }: any) => {
         value: {
           Class: [
             { name: 'com.bm.sample.app.name', value: { Text: 'brain 1' }, immutable: false },
-            { name: 'com.bm.sample.app.total_in_collection', value: { Nat: '16' }, immutable: false },
+            { name: 'com.bm.sample.app.total_in_collection', value: { Nat: 16n }, immutable: false },
             { name: 'com.bm.sample.app.creator_name', value: { Text: 'bm' }, immutable: false },
             {
               name: 'com.bm.sample.app.creator_principal',
               value: {
-                Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
+                Principal: Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe'),
               },
               immutable: false,
             }
           ],
         },
         immutable: false,
-      },
-
-    ];
+      }
+    ]};
 
     const upData = {
       token_id: nftId,
@@ -283,7 +283,7 @@ const NewForm = ({ metadata }: any) => {
     if (repData.ok) {
       console.log('replace success');
     } else {
-      console.log('replace wrong');
+      console.log('replace wrong', repData);
     }
   };
 
