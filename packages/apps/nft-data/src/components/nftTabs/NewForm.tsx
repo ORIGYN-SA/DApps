@@ -98,23 +98,195 @@ const NewForm = ({ metadata }: any) => {
 
   const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
   const [data, setData] = useState();
+  const [nft, setNft] = useState<any>({});
+
+  useEffect(() => {
+    if (actor) {
+      actor
+        .nft_origyn(tokenId)
+        .then((r) => {
+          console.log(r);
+          setNft(r.ok);
+        })
+        .catch(console.log);
+    }
+  }, []);
 
   const submitData = async () => {
-    console.log('this is data', data);
-    await actor.update_app_nft_origyn({
-      replace: {
-        token_id: tokenId,
-        data: data,
+    const nftId = nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text;
+
+    const data1 = { 'com.bm.sample.app.name': 'brain2' };
+    const data2 = {
+      Class: [{ name: 'com.bm.sample.app.name', value: { Text: 'brain2' }, immutable: false }],
+    };
+
+    const data3 = [
+      {
+        "name": "app_id",
+        "value": {
+          "Text": "com.bm.sample.app.name"
+        },
+        "immutable": true
       },
-    });
+      {
+        name: 'data',
+        value: {
+          Class: [
+            { name: 'com.bm.sample.app.name', value: { Text: 'brain 1' }, immutable: false },
+            {
+              name: 'com.bm.sample.app.total_in_collection',
+              value: { Nat: '16' },
+              immutable: false,
+            },
+            { name: 'com.bm.sample.app.creator_name', value: { Text: 'bm' }, immutable: false },
+            {
+              name: 'com.bm.sample.app.creator_principal',
+              value: {
+                Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
+              },
+              immutable: false,
+            },
+            {
+              name: 'com..bm.sample.app.private_id',
+              value: {
+                Class: [
+                  { name: 'data', value: { Text: "you shouldn't see this" }, immutable: false },
+                  {
+                    name: 'read',
+                    value: {
+                      Class: [
+                        { name: 'type', value: { Text: 'allow' }, immutable: false },
+                        {
+                          name: 'list',
+                          value: {
+                            Array: {
+                              thawed: [{ Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe' }],
+                            },
+                          },
+                          immutable: false,
+                        },
+                      ],
+                    },
+                    immutable: false,
+                  },
+                  {
+                    name: 'write',
+                    value: {
+                      Class: [
+                        { name: 'type', value: { Text: 'allow' }, immutable: false },
+                        {
+                          name: 'list',
+                          value: {
+                            Array: {
+                              thawed: [{ Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe' }],
+                            },
+                          },
+                          immutable: false,
+                        },
+                      ],
+                    },
+                    immutable: false,
+                  },
+                ],
+              },
+              immutable: false,
+            },
+          ],
+        },
+        immutable: false,
+      },
+    ];
+
+    const data4 = [
+      {
+        "name": "app_id",
+        "value": {
+          "Text": "com.bm.sample.app.name"
+        },
+        "immutable": true
+      },
+      {
+        "name": "read",
+        "value": {
+          "Text": "public"
+        },
+        "immutable": true
+      },
+      {
+        name: 'write',
+        value: {
+          Class: [
+            { name: 'type', value: { Text: 'allow' }, immutable: false },
+            {
+              name: 'list',
+              value: {
+                Array: {
+                  thawed: [{ Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe' }],
+                },
+              },
+              immutable: false,
+            },
+          ],
+        },
+        immutable: false,
+      },
+      {
+        name: 'permissions',
+        value: {
+          Class: [
+            { name: 'type', value: { Text: 'allow' }, immutable: false },
+            {
+              name: 'list',
+              value: {
+                Array: {
+                  thawed: [{ Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe' }],
+                },
+              },
+              immutable: false,
+            },
+          ],
+        },
+        immutable: false,
+      },
+      {
+        name: 'data',
+        value: {
+          Class: [
+            { name: 'com.bm.sample.app.name', value: { Text: 'brain 1' }, immutable: false },
+            { name: 'com.bm.sample.app.total_in_collection', value: { Nat: '16' }, immutable: false },
+            { name: 'com.bm.sample.app.creator_name', value: { Text: 'bm' }, immutable: false },
+            {
+              name: 'com.bm.sample.app.creator_principal',
+              value: {
+                Principal: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
+              },
+              immutable: false,
+            }
+          ],
+        },
+        immutable: false,
+      },
+
+    ];
+
+    const upData = {
+      token_id: nftId,
+      data: data4,
+    };
+
+    console.log(upData);
+    console.log('this is app', apps);
+    console.log('this is nftId', nftId);
+
+    const repData = await actor.update_app_nft_origyn({ replace: upData });
+
+    if (repData.ok) {
+      console.log('replace success');
+    } else {
+      console.log('replace wrong');
+    }
   };
 
-  const inputData = (evt, index) => {
-    handleAppsChange(index, evt);
-    setData(evt);
-  };
-
-  //   <Button variant="contained" onClick={submitData}> Save </Button>
   // <--------------------------------
 
   return (
@@ -133,7 +305,7 @@ const NewForm = ({ metadata }: any) => {
                     variant="outlined"
                     name="app_id"
                     value={app.app_id}
-                    onChange={(evt) => inputData(evt, index)}
+                    onChange={(evt) => handleAppsChange(index, evt)}
                   />
                   <Button variant="contained" onClick={submitData}>
                     {' '}
@@ -148,7 +320,7 @@ const NewForm = ({ metadata }: any) => {
                     variant="outlined"
                     name="read"
                     value={app.read}
-                    onChange={(evt) => inputData(evt, index)}
+                    onChange={(evt) => handleAppsChange(index, evt)}
                   />
                   <Button variant="contained" onClick={submitData}>
                     {' '}
@@ -229,6 +401,10 @@ const NewForm = ({ metadata }: any) => {
                     onChange={(evt) => handleAppsChange(index, evt)}
                   />
                 </Item>
+                <Button variant="contained" onClick={submitData}>
+                  {' '}
+                  update{' '}
+                </Button>
               </Grid>
               <Grid xs={3} sx={{ marginTop: '10px' }}>
                 <Item>
