@@ -13,18 +13,6 @@ import { ListItemButton, ListItemIcon } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box } from '@mui/system';
 import LibraryBox from '../LibraryBox';
-// Icons for NFT's in the library
-import ImageIcon from '@mui/icons-material/Image';
-import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-import HtmlIcon from '@mui/icons-material/Html';
-const Icons = {
-  'image/png': <ImageIcon />,
-  'image/jpeg': <ImageIcon />,
-  'image/gif': <ImageIcon />,
-  'video/mp4': <VideoLibraryIcon />,
-  'video/html5': <VideoLibraryIcon />,
-  'text/html': <HtmlIcon />,
-}
 
 const useStyles = makeStyles(() => ({
   horizontal: {
@@ -50,13 +38,10 @@ const ColumnView = () => {
   const [openDeta, setOpenDeta] = useState(false);
   const [libDet, setLibDet] = useState();
   const [opera, setOpera] = useState(false);
-  const [isHover, setIsHover] = useState(false);
-  const [libData3, setLibData3] = useState([]);
   const [library3, setLibrary3] = useState();
   const [openDub, setOpenDub] = useState(false);
   const classes = useStyles();
   const { actor, canisterId } = useContext(AuthContext);
-  const [currentNft, setCurrentNft] = useState();
   const [collectionNft, setCollectionNft] = useState([]);
 
   const currentCanisterId = async () => {
@@ -73,27 +58,16 @@ const ColumnView = () => {
     setOpenDub(false);
     setOpenDeta(false);
     nftCollection();
-    getNft(getTokenId())
-      .then((r) => {
-        console.log(r);
-        setLibData3(
-          r.ok.metadata.Class.filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array.thawed,
-        );
-        console.log('This is R', r);
-      })
-
   };
 
   const handleClick1 = async (nft) => {
     setOpen1(!open1);
-    setCurrentNft(nft);
     setOpenLib(false);
     setOpera(false);
     setOpenDetails(false);
     setOpenDeta(false);
-    handleDetails()
+    handleDetails();
+    OrigynClient.getInstance().init(await currentCanisterId());
     getNft(nft).then((r) => {
       console.log('nft_origyn', r);
       setLibraryData(
@@ -142,20 +116,9 @@ const ColumnView = () => {
     setLibDet(lib);
   };
 
-  const handleMouseEnter = () => {
-    setIsHover(true);
-  };
-  const handleMouseLeave = () => {
-    setIsHover(false);
-  };
-
   const handleClick3 = (lib3) => {
     setOpenDub(!open);
     setLibrary3(lib3);
-  };
-
-  const boxStyle = {
-    backgroundColor: isHover ? 'gray' : '',
   };
 
   const openSpecificNft = async () => {
@@ -166,13 +129,12 @@ const ColumnView = () => {
   };
 
   const nftCollection = async () => {
-    setCollectionNft([''])
+    setCollectionNft([])
     OrigynClient.getInstance().init(await currentCanisterId());
     const response = await getNftCollection([]);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
-    console.log('obj_token_ids', obj_token_ids);
-
+ 
     setCollectionNft(obj_token_ids);
 
     // In case we have URL with tokenID and we change canister, 
@@ -188,9 +150,9 @@ const ColumnView = () => {
   // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
     openSpecificNft();
-    console.log('getTOken', getTokenId());
   }, []);
 
+  
   return (
     <div>
       <Box sx={{ marginLeft: '1rem', border: '2px black' }}>
