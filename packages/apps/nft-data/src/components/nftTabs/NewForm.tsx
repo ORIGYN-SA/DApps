@@ -171,7 +171,7 @@ const NewForm = ({ metadata }: any) => {
         name: 'data',
         value: {
           Class: [
-            { name: 'com.bm.sample.app.name', value: { Text: 'brain 1' }, immutable: false },
+            { name: 'com.bm.sample.app.name', value: { Text: data2 }, immutable: false },
             { name: 'com.bm.sample.app.total_in_collection', value: { Nat: 16n }, immutable: false },
             { name: 'com.bm.sample.app.creator_name', value: { Text: 'bm' }, immutable: false },
             {
@@ -318,6 +318,7 @@ const NewForm = ({ metadata }: any) => {
                     name="com.bm.sample.app.name"
                     value={app.data['com.bm.sample.app.name']}
                     onChange={(evt) => handleAppsChange(index, evt)}
+                    onInput={text => setData(text.target.value)}
                   />
                 </Item>
                 <Button variant="contained" onClick={submitData}>
