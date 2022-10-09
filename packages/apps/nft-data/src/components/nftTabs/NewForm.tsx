@@ -98,7 +98,7 @@ const NewForm = ({ metadata }: any) => {
   // <----------------------------
 
   const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
-  const [data2, setData] = useState<any>('brain 1');
+  const [data2, setData] = useState<string>('brain 1');
   const [nft, setNft] = useState<any>({});
 
   useEffect(() => {
@@ -318,7 +318,8 @@ const NewForm = ({ metadata }: any) => {
                     name="com.bm.sample.app.name"
                     value={app.data['com.bm.sample.app.name']}
                     onChange={(evt) => handleAppsChange(index, evt)}
-                    onInput={text => setData(text.target.value)}
+                    onInput={text => setData((event.target as HTMLInputElement).value)}  //here you can set the data you want to pass
+                   // onInput={text => setData((event.target as HTMLInputElement).value)}  this removes the error with EventTarget
                   />
                 </Item>
                 <Button variant="contained" onClick={submitData}>
