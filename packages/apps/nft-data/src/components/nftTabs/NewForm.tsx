@@ -318,7 +318,7 @@ const NewForm = ({ metadata }: any) => {
                     name="com.bm.sample.app.name"
                     value={app.data['com.bm.sample.app.name']}
                     onChange={(evt) => handleAppsChange(index, evt)}
-                    onInput={text => setData((event.target as HTMLInputElement).value)}  //here you can set the data you want to pass
+                    onInput={text => setData(text.target.value)}  //here you can set the data you want to pass
                    // onInput={text => setData((event.target as HTMLInputElement).value)}  this removes the error with EventTarget
                   />
                 </Item>
