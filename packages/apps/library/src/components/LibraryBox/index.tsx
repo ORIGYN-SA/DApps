@@ -1,26 +1,9 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import LibraryImage from '../LibraryImage';
-import LibraryVideo from '../LibraryVideo';
-import LibraryTextHtml from '../LibraryTextHtml';
-import LibraryDefault from '../LibraryDefault';
-import LibraryFont from '../LibraryFont';
-
-export const layouts = {
-  "image/jpeg": (props) => <LibraryImage source={props} />,
-  "image/png": (props) => <LibraryImage source={props} />,
-  "image/gif": (props) => <LibraryImage source={props} />,
-  "video/mp4": (props) => <LibraryVideo source={props} />,
-  "video/html5": (props) => <LibraryVideo source={props} />,
-  "text/html": (props) => <LibraryTextHtml source={props} />,
-  "font/ttf": (props) => <LibraryFont source={props} />,
-  "font/otf": (props) => <LibraryFont source={props} />,
-  "font/woff": (props) => <LibraryFont source={props} />,
-};
+import {Layouts} from '../LayoutsType';
+import LibraryDefault from '../LayoutsType/LibraryDefault';
 
 interface curLibraryData {
   library_id: string;
@@ -62,8 +45,8 @@ const LibraryBox = (props: any) => {
       <Grid item xs={12}>
         <Box>
           {
-            (objLibraryData.content_type in layouts) ? (
-              layouts[objLibraryData.content_type](objLibraryData.location)
+            (objLibraryData.content_type in Layouts) ? (
+              Layouts[objLibraryData.content_type](objLibraryData.location)
             ) : (
               <LibraryDefault source={objLibraryData.location} />
             )

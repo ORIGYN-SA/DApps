@@ -469,6 +469,7 @@ const ColumnView = () => {
               <Box
                 minHeight={300}
                 borderRight={1}
+                className={classes.styledScroll}
               >
                 <Grid
                   item

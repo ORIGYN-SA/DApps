@@ -2,23 +2,8 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import LibraryImage from '../LibraryImage';
-import LibraryVideo from '../LibraryVideo';
-import LibraryTextHtml from '../LibraryTextHtml';
-import LibraryDefault from '../LibraryDefault';
-import LibraryFont from '../LibraryFont';
-
-export const layouts = {
-  "image/jpeg": (props) => <LibraryImage source={props} />,
-  "image/png": (props) => <LibraryImage source={props} />,
-  "image/gif": (props) => <LibraryImage source={props} />,
-  "video/mp4": (props) => <LibraryVideo source={props} />,
-  "video/html5": (props) => <LibraryVideo source={props} />,
-  "text/html": (props) => <LibraryTextHtml source={props} />,
-  "font/ttf": (props) => <LibraryFont source={props} />,
-  "font/otf": (props) => <LibraryFont source={props} />,
-  "font/woff": (props) => <LibraryFont source={props} />,
-};
+import LibraryDefault from '../LayoutsType/LibraryDefault';
+import {Layouts} from '../LayoutsType';
 
 const NFTLibrary = (props: any) => {
   let library = props.libDet;
@@ -47,8 +32,8 @@ const NFTLibrary = (props: any) => {
         <Grid item xs={12}>
           <Box>
             {
-              (library?.Class[4]?.value?.Text in layouts) ? (
-                layouts[library?.Class[4]?.value?.Text](library.Class[3]?.value.Text)
+              (library?.Class[4]?.value?.Text in Layouts) ? (
+                Layouts[library?.Class[4]?.value?.Text](library.Class[3]?.value.Text)
               ) : (
                 <LibraryDefault source={library.Class[3]?.value.Text} />
               )
