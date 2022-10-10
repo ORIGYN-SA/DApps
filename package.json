@@ -113,6 +113,7 @@
     "react-hook-form": "^7.33.0",
     "react-is": "^18.2.0",
     "react-json-to-table": "^0.1.7",
+    "react-json-view": "^1.21.3",
     "react-toastify": "^8.1.0",
     "react-tooltip": "^4.2.21",
     "yup": "^0.32.11"
