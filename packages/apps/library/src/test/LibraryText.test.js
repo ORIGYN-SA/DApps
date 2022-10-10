@@ -1,5 +1,5 @@
 import React from 'react';
-import LibraryTextHtml from '../components/LibraryTextHtml';
+import LibraryTextHtml from '../components/LayoutsType/LibraryTextHtml';
 import { render, screen, cleanup, test } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
