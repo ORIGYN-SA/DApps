@@ -4,7 +4,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { getNft } from '@origyn-sa/mintjs';
 import LibraryImage from '../LibraryImage';
 import LibraryVideo from '../LibraryVideo';
-import LibraryText from '../LibraryText';
+import LibraryTextHtml from '../LibraryTextHtml';
 import LibraryDefault from '../LibraryDefault';
 
 interface NFTDATA {
@@ -69,7 +69,7 @@ const NFTBox = (props: any) => {
                   case 'video/mp4' || 'video/html5':
                     return <LibraryVideo source={nftLocation} />;
                   case 'text/html':
-                    return <LibraryText source={nftLocation} />;
+                    return <LibraryTextHtml source={nftLocation} />;
 
                   default:
                     return <LibraryDefault source={nftLocation} />;

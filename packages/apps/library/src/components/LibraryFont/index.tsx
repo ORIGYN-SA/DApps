@@ -1,6 +1,6 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import FontDownloadIcon from '@mui/icons-material/FontDownload';
 import Tooltip from '@mui/material/Tooltip'
 
 const linkStyle = {
@@ -10,14 +10,14 @@ const linkStyle = {
   m: 2,
 }
 
-const LibraryDefault = (props: any) => {
+const LibraryFont = (props: any) => {
   return (
     <Box sx={linkStyle}>
       <Tooltip title={props.source}>
-        <InsertDriveFileIcon sx={{ fontSize: 50 }} />
+        <FontDownloadIcon sx={{ fontSize: 50 }} />
       </Tooltip>
     </Box>
   )
 }
 
-export default LibraryDefault
+export default LibraryFont;

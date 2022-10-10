@@ -1,13 +1,13 @@
 import React from 'react';
-import LibraryText from '../components/LibraryText';
+import LibraryTextHtml from '../components/LibraryTextHtml';
 import { render, screen, cleanup, test } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-const { asFragment } = render(<LibraryText />);
+const { asFragment } = render(<LibraryTextHtml />);
 
 describe('LibraryText', () => {
   test('should return LibraryText rendered', () => {
-    render(<LibraryText />);
+    render(<LibraryTextHtml />);
     expect(screen.getByText('Library')).toBeInTheDocument();
     cleanup();
   });

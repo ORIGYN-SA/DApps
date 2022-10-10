@@ -1,22 +1,23 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import LibraryImage from '../LibraryImage';
 import LibraryVideo from '../LibraryVideo';
-import LibraryText from '../LibraryText';
+import LibraryTextHtml from '../LibraryTextHtml';
 import LibraryDefault from '../LibraryDefault';
+import LibraryFont from '../LibraryFont';
 
-
-export const layouts = { 
+export const layouts = {
   "image/jpeg": (props) => <LibraryImage source={props} />,
   "image/png": (props) => <LibraryImage source={props} />,
   "image/gif": (props) => <LibraryImage source={props} />,
   "video/mp4": (props) => <LibraryVideo source={props} />,
   "video/html5": (props) => <LibraryVideo source={props} />,
-  "text/html": (props) => <LibraryText source={props} />,
+  "text/html": (props) => <LibraryTextHtml source={props} />,
+  "font/ttf": (props) => <LibraryFont source={props} />,
+  "font/otf": (props) => <LibraryFont source={props} />,
+  "font/woff": (props) => <LibraryFont source={props} />,
 };
 
 const NFTLibrary = (props: any) => {
@@ -33,79 +34,59 @@ const NFTLibrary = (props: any) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
+  function capitalizeString(param){
+    return param.charAt(0).toUpperCase() + param.slice(1);
+  }
+
   return (
-    <div>
-      <Card
-        variant="outlined"
-        sx={{
-          minWidth: 275,
-          borderRadius: '0px',
-          border: '1px solid black',
-        }}
+      <Grid 
+      container
+      maxHeight={300}
+      width={'max-content'}
       >
-        <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  m: 2,
-                  fontSize: 17,
-                  borderBottom: '1px solid',
-                  marginBottom: '30px',
-                }}
-                color="text.secondary"
-                gutterBottom
-              >
-                <b>LIBRARY ID:</b> {library?.Class[0]?.value?.Text + ''}
-              </Typography>
-              <Typography
-                sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-                color="text.primary"
-                gutterBottom
-              >
-                <b>TITLE:</b> {library?.Class[1]?.value?.Text}
-                <br></br>
-              </Typography>
-              <Typography
-                sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-                color="text.primary"
-                gutterBottom
-              >
-                <b>LOCATION TYPE:</b> {library?.Class[2]?.value?.Text}
-                <br></br>
-              </Typography>
-              <Typography
-                sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-                color="text.primary"
-                gutterBottom
-              >
-                <b>CONTENT TYPE:</b> {library?.Class[4]?.value?.Text}
-                <br></br>
-              </Typography>
-              <Typography
-                sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-                color="text.primary"
-                gutterBottom
-              >
-                <b>SIZE:</b> {formatBytes(Number(library?.Class[6]?.value?.Nat))}
-                <br></br>
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Box sx={{ m: 2 }}>
-                {
-                  (library?.Class[4]?.value?.Text in layouts) ? (
-                    layouts[library?.Class[4]?.value?.Text](library.Class[3]?.value.Text)
-                  ): (
-                    <LibraryDefault source={library.Class[3]?.value.Text} />
-                  )
-                }
-              </Box>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-    </div>
+        <Grid item xs={12}>
+          <Box>
+            {
+              (library?.Class[4]?.value?.Text in layouts) ? (
+                layouts[library?.Class[4]?.value?.Text](library.Class[3]?.value.Text)
+              ) : (
+                <LibraryDefault source={library.Class[3]?.value.Text} />
+              )
+            }
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
+            color="text.primary"
+            gutterBottom
+          >
+            <b>{library?.Class[1]?.value?.Text}</b>
+            <br></br>
+            <b>{library?.Class[4]?.value?.Text}</b> - {formatBytes(Number(library?.Class[6]?.value?.Nat))}
+          </Typography>
+          <Typography
+            sx={{
+              m: 2,
+              fontSize: 14,
+              borderBottom: '1px solid',
+            }}
+            color="text.secondary"
+            gutterBottom
+          >
+            <b>Information</b>
+          </Typography>
+          <Typography
+            sx={{ m: 2, fontSize: 14, marginBottom: '10px' }}
+            color="text.primary"
+            gutterBottom
+          >
+            <b>Library Id: </b>{library?.Class[0]?.value?.Text + ''}
+            <br></br> 
+            <b>Location type: </b>{capitalizeString(library?.Class[2]?.value?.Text)}     
+          </Typography>
+        </Grid>
+      </Grid>
   );
 };
 

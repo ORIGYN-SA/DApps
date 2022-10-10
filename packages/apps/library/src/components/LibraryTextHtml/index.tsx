@@ -10,7 +10,7 @@ const linkStyle = {
   m: 2,
 }
 
-const LibraryDefault = (props: any) => {
+const LibraryTextHtml = (props: any) => {
   return (
     <Box sx={linkStyle}>
       <Tooltip title={props.source}>
@@ -20,4 +20,4 @@ const LibraryDefault = (props: any) => {
   )
 }
 
-export default LibraryDefault
+export default LibraryTextHtml;

@@ -10,7 +10,7 @@ const LibraryImage = (props: any) => {
         textAlign: 'center',
       }}
     >
-      <img src={props.source} height="300px"></img>
+      <img src={props.source} height="200px"></img>
     </Box>
   );
 };
