@@ -41,6 +41,12 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
+const Sizes = {
+  maxHeight: 400,
+  minHeight: 400,
+  minWidth: 300,
+}
+
 const ListItemButton = withStyles({
   root: {
     "&.Mui-selected, &.Mui-selected:hover": {
@@ -237,38 +243,41 @@ const ColumnView = () => {
       >
         <Grid
           container
-          minHeight={300}
+          minHeight={Sizes.minHeight}
           overflow={'scroll'}
           className={classes.styledScroll}
         >
           <List
             className={classes.horizontal}>
             <Box
-              minHeight={300}
+              minHeight={Sizes.minHeight}
               borderRight={1}
             >
               <Grid
                 container
-                minWidth={250}>
+                minWidth={Sizes.minWidth}>
                 <Grid item xs={12}>
                   <ListItem
                     className={
                       classes.noPadding
                     }>
                     <ListItemText
-                      primary={canisterId} />
+                      primary={canisterId} 
+                      sx={{ fontStyle: 'italic' }} 
+                      />
                   </ListItem>
                 </Grid>
               </Grid>
             </Box>
 
             <Box
-              minHeight={300}
+              minHeight={Sizes.minHeight}
               borderRight={1}
+              className={classes.styledScroll}
             >
               <Grid
                 container
-                minWidth={250}>
+                minWidth={Sizes.minWidth}>
                 <Grid
                   item
                   xs={12}>
@@ -308,18 +317,18 @@ const ColumnView = () => {
               timeout="auto"
               unmountOnExit>
               <Box
-                minHeight={300}
+                minHeight={Sizes.minHeight}
                 borderRight={1}
                 className={classes.styledScroll}
               >
                 <Grid
                   container
-                  minWidth={250}>
+                  minWidth={Sizes.minWidth}>
                   {
                     (collectionNft.length <= 0) ? (
                       <Grid
                         container
-                        minWidth={250}>
+                        minWidth={Sizes.minWidth}>
                         <Grid
                           item
                           xs={12}>
@@ -335,8 +344,8 @@ const ColumnView = () => {
 
                       <Grid
                         container
-                        minWidth={250}
-                        maxHeight={300}
+                        minWidth={Sizes.minWidth}
+                        maxHeight={Sizes.maxHeight}
                       >
                         <Grid
                           item
@@ -370,13 +379,13 @@ const ColumnView = () => {
               timeout="auto"
               unmountOnExit>
               <Box
-                minHeight={300}
+                minHeight={Sizes.minHeight}
                 borderRight={1}
                 className={classes.styledScroll}
               >
                 <Grid
                   container
-                  minWidth={250}>
+                  minWidth={Sizes.minWidth}>
                   <Grid
                     item
                     xs={12}>
@@ -407,13 +416,14 @@ const ColumnView = () => {
               timeout="auto"
               unmountOnExit>
               <Box
-                maxHeight={300}
+                maxHeight={Sizes.maxHeight}
+                minHeight={Sizes.minHeight}
                 borderRight={1}
                 className={classes.styledScroll}
               >
                 <Grid
                   container
-                  minWidth={250}>
+                  minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
                   <NFTLibrary
                     libDet={libDet} />
@@ -429,14 +439,13 @@ const ColumnView = () => {
               timeout="auto"
               unmountOnExit>
               <Box
-                minHeight={300}
+                minHeight={Sizes.minHeight}
                 borderRight={1}
                 className={classes.styledScroll}
               >
                 <Grid
                   container
-
-                  maxHeight={300}
+                  maxHeight={Sizes.maxHeight}
                 >
                   <Grid
                     onClick={handleClickLib1}
@@ -467,7 +476,7 @@ const ColumnView = () => {
               in={openDub}
               timeout="auto">
               <Box
-                minHeight={300}
+                minHeight={Sizes.minHeight}
                 borderRight={1}
                 className={classes.styledScroll}
               >
