@@ -12,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import MuiListItemButton from '@mui/material/ListItemButton';
 import { Box } from '@mui/system';
 import LibraryBox from '../LibraryBox';
+import { StageLibraryForm } from '../StageForm';
 
 const useStyles = makeStyles(() => ({
   horizontal: {
@@ -32,7 +33,7 @@ const useStyles = makeStyles(() => ({
       width: '0.4em',
     },
     '&::-webkit-scrollbar-track': {
-      backgroundColor: '#ffffff'
+      backgroundColor: 'transparent',
     },
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: '#9a9a9a',
@@ -79,7 +80,7 @@ const ColumnView = () => {
   const [library3, setLibrary3] = useState();
   const [openDub, setOpenDub] = useState(false);
   const classes = useStyles();
-  const { actor, canisterId } = useContext(AuthContext);
+  const { actor, canisterId,loggedIn,loggedWallet } = useContext(AuthContext);
   const [collectionNft, setCollectionNft] = useState([]);
 
   const currentCanisterId = async () => {
@@ -140,6 +141,7 @@ const ColumnView = () => {
     if (actor) {
       OrigynClient.getInstance().init(await currentCanisterId());
       getNft('').then((r) => {
+        console.log('RRRR', r);
         setDefaultLibraryData(
           r.ok.metadata.Class.filter((res) => {
             return res.name === 'library';
@@ -233,6 +235,10 @@ const ColumnView = () => {
     openSpecificNft();
   }, []);
 
+  useEffect(() => {
+    console.log('loggedIn', loggedIn);
+    console.log('loggedWallet', loggedWallet);
+  }, []);
 
   return (
     <div>
@@ -440,6 +446,7 @@ const ColumnView = () => {
               unmountOnExit>
               <Box
                 minHeight={Sizes.minHeight}
+                minWidth={Sizes.minWidth}
                 borderRight={1}
                 className={classes.styledScroll}
               >
@@ -491,6 +498,20 @@ const ColumnView = () => {
           </List>
         </Grid>
       </Box>
+      {
+        (loggedIn)  ? (
+          <StageLibraryForm/>
+        ) : (
+          <Box
+          component={Paper}
+          elevation={2}
+          sx={{ margin: 2, width: '100%', padding: 2 }}
+          >
+            <p>Not logged In</p>
+          </Box>
+        )
+      }
+      
     </div>
   );
 };
