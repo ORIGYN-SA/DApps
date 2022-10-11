@@ -179,7 +179,7 @@ function Tree({ metadata }: any) {
     </TreeItem>
   );
   return (
-    <Box margin="6rem 0 0 0">
+    <Box margin="1rem 0 0 0">
       <FormControlLabel
         control={<Switch onChange={handleExpandAll} checked={all} />}
         label="Expand All"
