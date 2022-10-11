@@ -1,3 +1,12 @@
+// This function replace the CanisterId with the name of the canister
+// if the canister name is not defined nothing will be replaced
+// ----------------------------------------------------------------------------
+// Arguments: canister (string) | Link (URL)
+// Returns:  string
+// Author: Alessandro
+// Date: 2022-10-11
+// ----------------------------------------------------------------------------
+
 import { phonebookIdl } from '@dapp/common-candid';
 import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
