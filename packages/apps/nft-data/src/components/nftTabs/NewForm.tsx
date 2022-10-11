@@ -19,7 +19,6 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const NewForm = ({ metadata }: any) => {
-  console.log(metadata);
 
   const [owner, setOwner] = useState('');
   const [hiddenAsset, setHiddenAsset] = useState('');

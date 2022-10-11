@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, Grid, Divider } from '@mui/material';
 import pick from 'lodash/pick';
 const FormTab = ({ metadata }: any) => {
-  console.log(metadata);
 
   const [owner, setOwner] = useState('');
   const [hiddenAsset, setHiddenAsset] = useState('');

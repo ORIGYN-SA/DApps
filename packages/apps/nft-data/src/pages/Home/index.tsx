@@ -43,8 +43,6 @@ const Home = () => {
     getData();
   }, [actor, canisterId]);
 
-  console.log("this is nftdata", NFTData);
-
   return (
     <div>
       <div>
