@@ -12,7 +12,6 @@ import Paper from '@mui/material/Paper';
 import MuiListItemButton from '@mui/material/ListItemButton';
 import { Box } from '@mui/system';
 import LibraryBox from '../LibraryBox';
-import { StageLibraryForm } from '../StageForm';
 
 const useStyles = makeStyles(() => ({
   horizontal: {
@@ -62,6 +61,7 @@ const ListItemButton = withStyles({
 })(MuiListItemButton);
 
 const ColumnView = () => {
+  const [owner, setOwner] = useState<any>(undefined);
   const [selectedIndex, setSelectedIndex] = React.useState(null);
   const [selectedNft, setSelectedNft] = React.useState(0);
   const [selectedMeta, setSelectedMeta] = React.useState(0);
@@ -230,15 +230,20 @@ const ColumnView = () => {
     return obj_token_ids;
   };
 
+  const checkOwner = async () => {
+    OrigynClient.getInstance().init(await currentCanisterId());
+    const owner =  (await getNft('').then((r) => {
+        r.ok.metadata.Class.filter((res) => {
+          return res.name === 'owner';
+        })[0].value;
+    }));
+  
+  };
   // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
     openSpecificNft();
   }, []);
 
-  useEffect(() => {
-    console.log('loggedIn', loggedIn);
-    console.log('loggedWallet', loggedWallet);
-  }, []);
 
   return (
     <div>
@@ -500,7 +505,7 @@ const ColumnView = () => {
       </Box>
       {
         (loggedIn)  ? (
-          <StageLibraryForm/>
+          <p>Logged</p>
         ) : (
           <Box
           component={Paper}
