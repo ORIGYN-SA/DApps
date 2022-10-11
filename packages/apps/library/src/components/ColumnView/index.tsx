@@ -12,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import MuiListItemButton from '@mui/material/ListItemButton';
 import { Box } from '@mui/system';
 import LibraryBox from '../LibraryBox';
+import { checkOwner } from '@dapp/utils';
 
 const useStyles = makeStyles(() => ({
   horizontal: {
@@ -61,7 +62,7 @@ const ListItemButton = withStyles({
 })(MuiListItemButton);
 
 const ColumnView = () => {
-  const [owner, setOwner] = useState<any>(undefined);
+  const [owner, setOwner] = useState<Promise<boolean>>();
   const [selectedIndex, setSelectedIndex] = React.useState(null);
   const [selectedNft, setSelectedNft] = React.useState(0);
   const [selectedMeta, setSelectedMeta] = React.useState(0);
@@ -80,7 +81,7 @@ const ColumnView = () => {
   const [library3, setLibrary3] = useState();
   const [openDub, setOpenDub] = useState(false);
   const classes = useStyles();
-  const { actor, canisterId,loggedIn,loggedWallet } = useContext(AuthContext);
+  const { actor, canisterId,loggedIn,principal } = useContext(AuthContext);
   const [collectionNft, setCollectionNft] = useState([]);
 
   const currentCanisterId = async () => {
@@ -230,20 +231,20 @@ const ColumnView = () => {
     return obj_token_ids;
   };
 
-  const checkOwner = async () => {
-    OrigynClient.getInstance().init(await currentCanisterId());
-    const owner =  (await getNft('').then((r) => {
-        r.ok.metadata.Class.filter((res) => {
-          return res.name === 'owner';
-        })[0].value;
-    }));
-  
-  };
   // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
     openSpecificNft();
   }, []);
 
+  useEffect(() => {
+   if(loggedIn){
+
+   setOwner(checkOwner(principal,currentCanisterId()));
+
+   }else{
+    console.log('not loggedIn')
+   }
+  }, [loggedIn]);
 
   return (
     <div>
@@ -504,15 +505,15 @@ const ColumnView = () => {
         </Grid>
       </Box>
       {
-        (loggedIn)  ? (
-          <p>Logged</p>
+        (owner)  ? (
+          <p>You are the owner</p>
         ) : (
           <Box
           component={Paper}
           elevation={2}
           sx={{ margin: 2, width: '100%', padding: 2 }}
           >
-            <p>Not logged In</p>
+            <p>Ops, you aren't the owner</p>
           </Box>
         )
       }
