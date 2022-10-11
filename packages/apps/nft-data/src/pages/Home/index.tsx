@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@dapp/features-authentication";
 import NFTInfo from "../NFTInfo";
-import { Button, TextField } from "@mui/material";
 
 const Home = () => {
-  const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
+  const { tokenId, canisterId, actor } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState();
-  const [data, setData] = useState();
 
   useEffect(() => {
     const getData = async () => {

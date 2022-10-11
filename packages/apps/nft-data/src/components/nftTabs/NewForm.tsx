@@ -3,11 +3,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import {
-  List,
-  ListItem,
-  ListItemText,
   Grid,
-  Divider,
   TextField,
   Button,
   Box,
@@ -34,17 +30,9 @@ const NewForm = ({ metadata }: any) => {
   const [experienceAsset, setExperienceAsset] = useState('');
   const [id, setId] = useState('');
   const [apps, setApps] = useState([
-    /* {app_id: '', read: '', write: { type: '', list: []}, permissions: { type: '', list: []}, data: {
-      'com.bm.sample.app.name': '',
-      'com.bm.sample.app.total_in_collection': '',
-                'com.bm.sample.app.creator_name': '',
-                'com.bm.sample.app.creator_principal': ''
-    }} */
   ]);
 
-  const [library, setLibrary] = useState([]);
   const [libraryFields, setLibraryFields] = useState([
-    /*   {library_id: '', title: '', location_type: '', location: '', content_type: '', content_hash: '', size: '', sort: '', read: ''} */
   ]);
 
   const handleAppsChange = (index, event, i = 0) => {
@@ -90,14 +78,13 @@ const NewForm = ({ metadata }: any) => {
       setExperienceAsset(pick(metadata, ['experience_asset']).experience_asset);
       setId(pick(metadata, ['id']).id);
       setApps(pick(metadata, ['__apps']).__apps);
-      /* setLibrary(pick(metadata, ['library']).library); */
       setLibraryFields(pick(metadata, ['library']).library);
     }
   }, [metadata]);
 
   // <----------------------------
 
-  const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
+  const { tokenId, actor } = useContext(AuthContext);
   const [data2, setData] = useState<string>('brain 1');
   const [nft, setNft] = useState<any>({});
 
@@ -191,8 +178,6 @@ const NewForm = ({ metadata }: any) => {
       token_id: nftId,
       data: data,
     };
-
-
 
     console.log("this is upData", upData);
     console.log('this is app', apps);
