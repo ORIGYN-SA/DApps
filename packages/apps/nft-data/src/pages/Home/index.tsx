@@ -55,24 +55,8 @@ const Home = () => {
           Token(NFT) ID: <b>{tokenId}</b>
         </p>
         <div>
-          {/* <p>
-            <p>
-              {" "}
-              Write data to NFT:{" "}
-              <TextField
-                variant="standard"
-                type="text"
-                onChange={(textData) => setData(textData.target.value)}
-              />{" "}
-            </p>
-          </p>
-          <Button variant="contained" onClick={submitData}>
-            {" "}
-            Add Data{" "}
-          </Button> */}
           <br />
-          <br />
-          <b>NFT Data:</b>
+          <b>NFT Data</b>
           {NFTData ? <NFTInfo metadata={NFTData} /> : null}
         </div>
       </div>

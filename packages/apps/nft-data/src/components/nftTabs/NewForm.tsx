@@ -5,12 +5,10 @@ import Paper from '@mui/material/Paper';
 import {
   Grid,
   TextField,
-  Button,
   Box,
   Typography,
 } from '@mui/material';
 import pick from 'lodash/pick';
-import { Principal } from '@dfinity/principal'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -82,122 +80,6 @@ const NewForm = ({ metadata }: any) => {
     }
   }, [metadata]);
 
-  // <----------------------------
-
-  const { tokenId, actor } = useContext(AuthContext);
-  const [data2, setData] = useState<string>('brain 1');
-  const [nft, setNft] = useState<any>({});
-
-  useEffect(() => {
-    if (actor) {
-      actor
-        .nft_origyn(tokenId)
-        .then((r) => {
-          console.log(r);
-          setNft(r.ok);
-        })
-        .catch(console.log);
-    }
-  }, []);
-
-  const submitData = async () => {
-    const nftId = nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text;
-
-    const data = { "Class" :[
-      {
-        "name": "app_id",
-        "value": {
-          "Text": "com.bm.sample.app.name"
-        },
-        "immutable": true
-      },
-      {
-        "name": "read",
-        "value": {
-          "Text": "public"
-        },
-        "immutable": true
-      },
-      {
-        name: 'write',
-        value: {
-          Class: [
-            { name: 'type', value: { Text: 'allow' }, immutable: false },
-            {
-              name: 'list',
-              value: {
-                Array: {
-                  thawed: [{ Principal: Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe') }],
-                },
-              },
-              immutable: false,
-            },
-          ],
-        },
-        immutable: false,
-      },
-      {
-        name: 'permissions',
-        value: {
-          Class: [
-            { name: 'type', value: { Text: 'allow' }, immutable: false },
-            {
-              name: 'list',
-              value: {
-                Array: {
-                  thawed: [{ Principal: Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe') }],
-                },
-              },
-              immutable: false,
-            },
-          ],
-        },
-        immutable: false,
-      },
-      {
-        name: 'data',
-        value: {
-          Class: [
-            { name: 'com.bm.sample.app.name', value: { Text: data2 }, immutable: false },
-            { name: 'com.bm.sample.app.total_in_collection', value: { Nat: 16n }, immutable: false },
-            { name: 'com.bm.sample.app.creator_name', value: { Text: 'bm' }, immutable: false },
-            {
-              name: 'com.bm.sample.app.creator_principal',
-              value: {
-                Principal: Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe'),
-              },
-              immutable: false,
-            }
-          ],
-        },
-        immutable: false,
-      }
-    ]};
-
-    const upData = {
-      token_id: nftId,
-      data: data,
-    };
-
-    console.log("this is upData", upData);
-    console.log('this is app', apps);
-    console.log('this is nftId', nftId);
-
-    const repData = await actor.update_app_nft_origyn({ replace: upData });
-
-    if (repData.ok) {
-      console.log('replace success');
-    } else {
-      console.log('replace wrong', repData);
-    }
-  };
-
-  const stateText = (text, index) => {
-    handleAppsChange(text, index);
-    setData(text)
-  }
-
-  // <--------------------------------
 
   return (
     <div>
@@ -252,6 +134,7 @@ const NewForm = ({ metadata }: any) => {
                 <Item>
                   {app.write.list.map((item, i) => (
                     <TextField
+                      key={i}
                       label="List"
                       variant="outlined"
                       name="write_list"
@@ -281,6 +164,7 @@ const NewForm = ({ metadata }: any) => {
                 <Item>
                   {app.permissions.list.map((item, i) => (
                     <TextField
+                      key={i}
                       label="List"
                       variant="outlined"
                       name="permissions_list"
@@ -303,14 +187,9 @@ const NewForm = ({ metadata }: any) => {
                     name="com.bm.sample.app.name"
                     value={app.data['com.bm.sample.app.name']}
                     onChange={(evt) => handleAppsChange(index, evt)}
-                    onInput={text => setData(text.target.value)}  //here you can set the data you want to pass
-                   // onInput={text => setData((event.target as HTMLInputElement).value)}  this removes the error with EventTarget
                   />
                 </Item>
-                <Button variant="contained" onClick={submitData}>
-                  {' '}
-                  update{' '}
-                </Button>
+
               </Grid>
               <Grid xs={3} sx={{ marginTop: '10px' }}>
                 <Item>
