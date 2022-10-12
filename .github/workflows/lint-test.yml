@@ -21,13 +21,10 @@ jobs:
         with:
           node-version: 16.x
 
-      - name: Setup access to Github Packages
-        run: echo "//@origyn-sa:registry=https://npm.pkg.github.com/:_authToken=${{secrets.GITHUB_TOKEN}}" > .npmrc
-
       - name: Install Dependencies
         run: npm install
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GPR_READ_TOKEN }}
 
       - name: Bootstrap Packages
         run: npm run bootstrap
