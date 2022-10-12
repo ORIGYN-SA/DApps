@@ -5,8 +5,11 @@ import ReactJson from 'react-json-view';
 import JSONbig from 'json-bigint';
 import './TestApp.css';
 import { useForm } from 'react-hook-form';
+import { Buffer } from 'buffer';
 
 export const TestApp = () => {
+  const [canisterId, setCanisterId] = useState('2t4kb-eiaaa-aaaan-qaqfa-cai');
+  const [isProd, setIsProd] = useState(true);
   const [nfts, setNfts] = useState<any>([]);
   const [collection, setCollection] = useState<any>([]);
   const [dapps, setDapps] = useState<any>([]);
@@ -16,8 +19,8 @@ export const TestApp = () => {
 
   const { register, handleSubmit } = useForm({
     defaultValues: {
-      canisterId: 'rrkah-fqaaa-aaaaa-aaaaq-cai',
-      isLocalEnv: true,
+      canisterId: canisterId,
+      isLocalEnv: !isProd,
       isSoulbound: true,
       collectionName: '',
       collectionId: '',
@@ -27,7 +30,7 @@ export const TestApp = () => {
 
   const handleButtonClick = async (data) => {
     console.log('🚀 ~ file: TestApp.tsx ~ line 27 ~ handleButtonClick ~ data', data);
-    await OrigynClient.getInstance().init(false, 'rrkah-fqaaa-aaaaa-aaaaq-cai', {
+    await OrigynClient.getInstance().init(isProd, canisterId, {
       key: {
         seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
       },
@@ -41,77 +44,78 @@ export const TestApp = () => {
 
     let i = 0;
     const collectionNameSplit = data.collectionName.split(' ');
-    const stageConfig = {
-      environment: data.isLocalEnv ? 'local' : 'prod',
-      nftCanisterId: data.canisterId,
-      collectionId: data.collectionId,
-      collectionDisplayName: data.collectionName,
-      tokenPrefix: `${data.collectionId}-`,
-      creatorPrincipal: data.creatorPrincipal,
-      namespace: collectionNameSplit.map((word) => word.toLowerCase()).join('.'),
-      // assets: [{ primary: 'nft*.png' }, { hidden: 'louie_anderson.jpg' }],
-      soulbound: data.isSoulbound,
-      nftOwnerId: data.creatorPrincipal,
-      files: [
-        ...[...collection].map((file) => {
-          return {
-            type: 'collection' as 'collection',
-            fileObj: {
-              filename: file.name,
-              index: i++,
-              path: file.path ?? `${file.size}+${file.name}`,
-              size: file.size,
-              webFile: file,
-            },
-          };
-        }),
-        ...[...dapps].map((file) => {
-          return {
-            type: 'dapp' as 'dapp',
-            fileObj: {
-              filename: file.name,
-              index: i++,
-              path: file.path ?? `${file.size}+${file.name}`,
-              size: file.size,
-              webFile: file,
-            },
-          };
-        }),
-      ],
-      nfts: [
-        ...[...nfts].map((file) => {
-          return {
-            quantity: 1,
-            files: [
-              {
+    const getStageConfig = async () => {
+      return {
+        environment: data.isLocalEnv ? 'local' : 'prod',
+        nftCanisterId: data.canisterId,
+        collectionId: data.collectionId,
+        collectionDisplayName: data.collectionName,
+        tokenPrefix: `${data.collectionId}-`,
+        creatorPrincipal: data.creatorPrincipal,
+        namespace: collectionNameSplit.map((word) => word.toLowerCase()).join('.'),
+        soulbound: data.isSoulbound,
+        nftOwnerId: data.creatorPrincipal,
+        collectionFiles: [
+          ...(await Promise.all(
+            [...collection].map(async (file) => {
+              return {
+                category: 'collection' as 'collection',
                 filename: file.name,
                 index: i++,
                 path: file.path ?? `${file.size}+${file.name}`,
                 size: file.size,
-                webFile: file,
-              },
-            ],
-            collectionFiles: [
-              {
-                filename: collection[0].name,
-                path: collection[0].path ?? `${collection[0].path}+${collection[0].name}`,
-                size: collection[0].size,
-              },
-            ],
-          };
-        }),
-      ],
+                type: file.type,
+                rawFile: await readFileAsync(file),
+              };
+            }),
+          )),
+          ...(await Promise.all(
+            [...dapps].map(async (file) => {
+              return {
+                category: 'dapp' as 'dapp',
+                filename: file.name,
+                index: i++,
+                path: file.path ?? `${file.size}+${file.name}`,
+                size: file.size,
+                type: file.type,
+                rawFile: await readFileAsync(file),
+              };
+            }),
+          )),
+        ],
+        nfts: [
+          ...(await Promise.all(
+            [...nfts].map(async (file) => {
+              return {
+                quantity: 1,
+                files: [
+                  {
+                    filename: file.name,
+                    index: i++,
+                    path: file.path ?? `${file.size}+${file.name}`,
+                    size: file.size,
+                    type: file.type,
+                    rawFile: await readFileAsync(file),
+                    assetType: 'preview' as 'preview', // Just make the first file of the NFT as preview asset, needs to be removed in the future
+                  },
+                ],
+                collectionFileReferences: [collection[0].name, dapps[0].name],
+              };
+            }),
+          )),
+        ],
+      };
     };
 
-    console.log('🚀 ~ file: TestApp.tsx ~ line 80 ~ handleButtonClick ~ stageConfig', stageConfig);
-
+    const stageConfig = await getStageConfig();
+    console.log('🚀 ~ file: TestApp.tsx ~ line 113 ~ handleButtonClick ~ stageConfig', stageConfig);
     const stageResult = await stageNft(stageConfig);
     setTokenId(`${stageConfig.tokenPrefix}0`);
     console.log('🚀 ~ file: TestApp.tsx ~ line 79 ~ handleButtonClick ~ stageResult', stageResult);
   };
 
   const handleMintClick = async () => {
-    await OrigynClient.getInstance().init(false, 'rrkah-fqaaa-aaaaa-aaaaq-cai', {
+    await OrigynClient.getInstance().init(isProd, canisterId, {
       key: {
         seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
       },
@@ -120,7 +124,7 @@ export const TestApp = () => {
     console.log('🚀 ~ file: TestApp.tsx ~ line 96 ~ handleMintClick ~ mintResponse', mintResponse);
   };
   const handleNftDataClick = async () => {
-    await OrigynClient.getInstance().init(false, 'rrkah-fqaaa-aaaaa-aaaaq-cai', {
+    await OrigynClient.getInstance().init(isProd, canisterId, {
       key: {
         seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
       },
@@ -130,7 +134,7 @@ export const TestApp = () => {
     console.log('🚀 ~ file: TestApp.tsx ~ line 107 ~ handleNftDataClick ~ nftData', nftData);
   };
   const handleNftCollectionClick = async () => {
-    await OrigynClient.getInstance().init(false, 'rrkah-fqaaa-aaaaa-aaaaq-cai', {
+    await OrigynClient.getInstance().init(isProd, canisterId, {
       key: {
         seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
       },
@@ -138,6 +142,26 @@ export const TestApp = () => {
     const res = await getNftCollection([]);
     console.log('🚀 ~ file: TestApp.tsx ~ line 134 ~ handleNftCollectionClick ~ res', res);
     setJsonView(JSON.parse(JSONbig.stringify(res)));
+  };
+
+  // Functions needed for file to Buffer
+  const arrayToBuffer = (arrayBuffer) => {
+    const buffer = Buffer.alloc(arrayBuffer.byteLength);
+    const view = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < buffer.length; ++i) {
+      buffer[i] = view[i];
+    }
+    return buffer;
+  };
+  const readFileAsync = (file: File): Promise<Buffer> => {
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader();
+      reader.onload = () => {
+        resolve(arrayToBuffer(reader.result));
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
   };
   return (
     <>
@@ -160,7 +184,12 @@ export const TestApp = () => {
           }}
         >
           <div>
-            <input placeholder="Canister ID" name="CanisterId" {...register('canisterId')} />
+            <input
+              placeholder="Canister ID"
+              name="CanisterId"
+              onChange={(e) => setCanisterId(e.target.value)}
+              {...register('canisterId')}
+            />
           </div>
           <br />
           <div>
@@ -188,6 +217,7 @@ export const TestApp = () => {
               type="checkbox"
               placeholder="Local Environment"
               name="Local Environment"
+              onChange={(e) => setIsProd(!e.target.checked)}
               {...register('isLocalEnv')}
             />
             <label> Local Environment</label>
