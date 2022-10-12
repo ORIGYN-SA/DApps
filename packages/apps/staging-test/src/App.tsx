@@ -120,7 +120,7 @@ const App = () => {
   const handleMintClick = async () => {
     await OrigynClient.getInstance().init(isProd, canisterId, {
       key: {
-        seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
+        seed: TEST_IDENTITY.seed,
       },
     });
     const mintResponse = await mintNft(tokenId);
@@ -130,7 +130,7 @@ const App = () => {
   const handleNftDataClick = async () => {
     await OrigynClient.getInstance().init(isProd, canisterId, {
       key: {
-        seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
+        seed: TEST_IDENTITY.seed,
       },
     });
     const nftData = await getNft(tokenId);
@@ -141,7 +141,7 @@ const App = () => {
   const handleNftCollectionClick = async () => {
     await OrigynClient.getInstance().init(isProd, canisterId, {
       key: {
-        seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
+        seed: TEST_IDENTITY.seed,
       },
     });
     const res = await getNftCollection([]);
