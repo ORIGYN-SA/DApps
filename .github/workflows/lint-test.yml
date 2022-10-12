@@ -21,10 +21,11 @@ jobs:
         with:
           node-version: 16.x
 
+      - name: Authenticate with private NPM package
+        run: echo "//npm.pkg.github.com//:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+
       - name: Install Dependencies
         run: npm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GPR_READ_TOKEN }}
 
       - name: Bootstrap Packages
         run: npm run bootstrap
