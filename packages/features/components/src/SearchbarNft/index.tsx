@@ -6,15 +6,14 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
+import { getNftCollection, OrigynClient, getNft } from '@origyn-sa/mintjs';
 // Preloader
 import { CircularProgress } from '@mui/material';
 
 export const SearchbarNft = (props: any) => {
-
-  const { tokenId, actor } = useContext(AuthContext);
+  const { tokenId, actor,canisterId } = useContext(AuthContext);
   const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
   const [idsNumber, setIdsNumber] = React.useState('');
-
   const handleSelectIds = (event, value) => {
     // setSearchBarTokenId state
     if (value == null) {
@@ -29,9 +28,18 @@ export const SearchbarNft = (props: any) => {
     );
   };
 
-  const getNFTCollection = async () => {
+  const NFTobj = async () => {
+    const nft = await getNft(tokenId);
+    console.log('nft', nft);
+  };
+
+  useEffect(() => {
+    NFTobj();
+  }, []);
+  const NFTCollection = async () => {
     setSelectTokenIds(['Loading...']);
-    const response = await actor?.collection_nft_origyn([]);
+    const response = await getNftCollection();
+    console.log(response);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
     const number_ids = collectionNFT.token_ids_count[0].toString();
@@ -70,7 +78,6 @@ export const SearchbarNft = (props: any) => {
         props.setSearchBarTokenId(obj_token_ids[0][0]);
         const curTokenId=await getTokenId();
         window.location.href = window.location.href.replace(`/${curTokenId}/`, `/${obj_token_ids[0][0]}/`);
-        console.log('HHH',curTokenId);
       }
 
     }
@@ -78,7 +85,8 @@ export const SearchbarNft = (props: any) => {
   // if the actor changes getNftCollection is called
   useEffect(() => {
     if (actor) {
-      getNFTCollection();
+      OrigynClient.getInstance().init(canisterId);
+      NFTCollection();
     }
   }, [actor]);
 

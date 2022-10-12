@@ -1,4 +1,10 @@
+const { TextDecoder, TextEncoder } = require('util')
+
 module.exports = {
+  globals: {
+    TextDecoder: TextDecoder,
+    TextEncoder: TextEncoder,
+  },
   moduleNameMapper: {
     '\\.(scss|svg|css)$': '<rootDir>/testUtils/fileMock.js',
     '@testUtils': '<rootDir>/testUtils/index.js',

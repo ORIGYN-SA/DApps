@@ -1,5 +1,5 @@
 import React from 'react';
-import LibraryImage from '../components/LibraryImage';
+import LibraryImage from '../components/LayoutsType/LibraryImage';
 import { render, screen, cleanup, test } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
