@@ -3,7 +3,7 @@ import { AuthContext, getCanisterId } from '@dapp/features-authentication'
 import NFTInfo from '../NFTInfo';
 
 const Home = () => {
-  const { tokenId, principal, actor } = useContext(AuthContext);
+  const { tokenId, principal } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState();
   const [canisterId, setCanisterId] = useState("");
 
