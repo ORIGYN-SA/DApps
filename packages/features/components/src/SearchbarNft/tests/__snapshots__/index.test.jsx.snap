@@ -3,7 +3,7 @@
 exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-gjx9le-MuiPaper-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-1gpybnd-MuiPaper-root"
   >
     <div
       class="MuiFormControl-root css-78me8v-MuiFormControl-root"
@@ -25,13 +25,13 @@ exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
         </em>
       </p>
       <div
-        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-60y2nb-MuiAutocomplete-root"
+        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-blzlv8-MuiAutocomplete-root"
       >
         <div
           class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
         >
           <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
             data-shrink="true"
             for="combo-box-demo"
             id="combo-box-demo-label"
@@ -107,7 +107,7 @@ exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
               class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-1in441m"
+                class="css-14lo706"
               >
                 <span>
                   Other tokens IDS
@@ -125,7 +125,7 @@ exports[`Select-Autocomplete Searchbar is rendered and match snapshot 1`] = `
 exports[`Select-Autocomplete Searchbar is rendered with the token ID 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-gjx9le-MuiPaper-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-1gpybnd-MuiPaper-root"
   >
     <div
       class="MuiFormControl-root css-78me8v-MuiFormControl-root"
@@ -147,13 +147,13 @@ exports[`Select-Autocomplete Searchbar is rendered with the token ID 1`] = `
         </em>
       </p>
       <div
-        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-60y2nb-MuiAutocomplete-root"
+        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-blzlv8-MuiAutocomplete-root"
       >
         <div
           class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
         >
           <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
             data-shrink="true"
             for="combo-box-demo"
             id="combo-box-demo-label"
@@ -229,7 +229,7 @@ exports[`Select-Autocomplete Searchbar is rendered with the token ID 1`] = `
               class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-1in441m"
+                class="css-14lo706"
               >
                 <span>
                   Other tokens IDS
@@ -247,7 +247,7 @@ exports[`Select-Autocomplete Searchbar is rendered with the token ID 1`] = `
 exports[`Select-Autocomplete Take a snapshot of the component 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-gjx9le-MuiPaper-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-1gpybnd-MuiPaper-root"
   >
     <div
       class="MuiFormControl-root css-78me8v-MuiFormControl-root"
@@ -269,13 +269,13 @@ exports[`Select-Autocomplete Take a snapshot of the component 1`] = `
         </em>
       </p>
       <div
-        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-60y2nb-MuiAutocomplete-root"
+        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-blzlv8-MuiAutocomplete-root"
       >
         <div
           class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
         >
           <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
             data-shrink="true"
             for="combo-box-demo"
             id="combo-box-demo-label"
@@ -351,7 +351,7 @@ exports[`Select-Autocomplete Take a snapshot of the component 1`] = `
               class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-1in441m"
+                class="css-14lo706"
               >
                 <span>
                   Other tokens IDS
@@ -369,7 +369,7 @@ exports[`Select-Autocomplete Take a snapshot of the component 1`] = `
 exports[`Select-Autocomplete The snapshot should match 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-gjx9le-MuiPaper-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiBox-root css-1gpybnd-MuiPaper-root"
   >
     <div
       class="MuiFormControl-root css-78me8v-MuiFormControl-root"
@@ -391,13 +391,13 @@ exports[`Select-Autocomplete The snapshot should match 1`] = `
         </em>
       </p>
       <div
-        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-60y2nb-MuiAutocomplete-root"
+        class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon MuiAutocomplete-hasPopupIcon css-blzlv8-MuiAutocomplete-root"
       >
         <div
           class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
         >
           <label
-            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
+            class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
             data-shrink="true"
             for="combo-box-demo"
             id="combo-box-demo-label"
@@ -473,7 +473,7 @@ exports[`Select-Autocomplete The snapshot should match 1`] = `
               class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
             >
               <legend
-                class="css-1in441m"
+                class="css-14lo706"
               >
                 <span>
                   Other tokens IDS
