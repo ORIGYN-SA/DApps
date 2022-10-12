@@ -27,7 +27,7 @@ export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
         Principal.fromText(currCanisterId));
 
     let formattedLink: string = '';
-
+try{
     if (QueryName == "" || QueryName == null) {
         formattedLink = linkToFormat.replace(currCanisterId, currCanisterId);
     } else {
@@ -35,4 +35,7 @@ export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
     }
 
     return formattedLink;
+} catch (e) {
+    console.log('Error during formatting link ' + e);
+}
 };
