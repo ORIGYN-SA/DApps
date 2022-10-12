@@ -52,13 +52,14 @@ export const useAuth = () => {
   const [actor, setActor] = useState<any>();
   const [ogyActor, setOgyActor] = useState<any>();
   const [currentWalletAccount, setCurrentWalletAccount] = useState<any>();
+  const [useMainnet, setUseMainnet] = useState(true);
 
   const connectPlug = usePlug();
   const connectStoic = useStoic();
   const connectInternetIdentity = useInternetIdentity();
 
   const initOrigynClient = (canisterId: string, actor: ActorSubclass<any>) =>
-    OrigynClient.getInstance().init(canisterId, actor);
+    OrigynClient.getInstance().init(useMainnet, canisterId, actor);
 
   const logIn = async (wallet?: string) => {
     try {
@@ -187,6 +188,8 @@ export const useAuth = () => {
     walletType,
     accounts: walletAccounts,
     account: currentWalletAccount,
+    useMainnet,
+    setUseMainnet,
   };
 };
 
