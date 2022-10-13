@@ -1,69 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
-import Grid from '@mui/material/Grid';
-import NFTLibrary from '../NFTLibrary';
 import { getNftCollection, getNft, OrigynClient } from '@origyn-sa/mintjs';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { checkOwner } from '@dapp/utils';
+// Import from style.tsx
+import { useStyles, Sizes, ListItemButton } from './style';
+import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import Collapse from '@mui/material/Collapse';
 import Paper from '@mui/material/Paper';
-import MuiListItemButton from '@mui/material/ListItemButton';
 import { Box } from '@mui/system';
+// Library components
 import LibraryBox from '../LibraryBox';
-import { checkOwner } from '@dapp/utils';
+import NFTLibrary from '../NFTLibrary';
 // List Icons
 import ListItemIcon from '@mui/material/ListItemIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-const useStyles = makeStyles(() => ({
-  horizontal: {
-    display: 'flex',
-    flexDirection: 'row',
-    padding: 0,
-  },
-  vertical: {
-    flexDirection: 'column',
-    padding: 0,
-  },
-  noPadding: {
-    padding: 0,
-  },
-  styledScroll: {
-    overflow: 'scroll',
-    '&::-webkit-scrollbar': {
-      width: '0.4em',
-    },
-    '&::-webkit-scrollbar-track': {
-      backgroundColor: 'transparent',
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: '#9a9a9a',
-      borderRadius: '5px',
-    },
-  },
-}));
-
-const Sizes = {
-  maxHeight: 400,
-  minHeight: 400,
-  minWidth: 300,
-};
-
-const ListItemButton = withStyles({
-  root: {
-    '&.Mui-selected, &.Mui-selected:hover': {
-      backgroundColor: '#151515',
-      color: '#ffffff',
-    },
-    '&$selected, &$selected:hover': {
-      backgroundColor: '#151515',
-      color: '#ffffff',
-    },
-  },
-})(MuiListItemButton);
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -405,20 +359,37 @@ const ColumnView = () => {
               >
                 <Grid container maxHeight={Sizes.maxHeight}>
                   <Grid onClick={handleClickLib1} item xs={12}>
-                    {defaultLibraryData?.map((library, index) => (
-                      <ListItem className={classes.noPadding} key={index}>
+                    {
+                      (defaultLibraryData?.length <= 0) || defaultLibraryData === undefined ? (
+                        <ListItem className={classes.noPadding} >
                         <ListItemButton
-                          selected={selectedLibrary === index}
-                          onClick={(event) => handleClick3(library, event, index)}
                           className={classes.noPadding}
                         >
                           <ListItemText
                             sx={{ paddingLeft: 1 }}
-                            primary={library?.Class[0]?.value?.Text}
+                            primary='No default libraries at the moment'
                           />
                         </ListItemButton>
                       </ListItem>
-                    ))}
+                      ) : (
+                        <>
+                        {defaultLibraryData?.map((library, index) => (
+                          <ListItem className={classes.noPadding} key={index}>
+                            <ListItemButton
+                              selected={selectedLibrary === index}
+                              onClick={(event) => handleClick3(library, event, index)}
+                              className={classes.noPadding}
+                            >
+                              <ListItemText
+                                sx={{ paddingLeft: 1 }}
+                                primary={library?.Class[0]?.value?.Text}
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        ))}
+                        </> 
+                      )
+                    }
                   </Grid>
                 </Grid>
               </Box>
