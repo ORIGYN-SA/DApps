@@ -6,6 +6,7 @@ import Tabs from '@mui/material/Tabs';
 import TreeTab from '../../components/nftTabs/TreeTab';
 import RawTab from '../../components/nftTabs/RawTab';
 import FormTab from '../../components/nftTabs/FormTab';
+import NewForm from '../../components/nftTabs/NewForm';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import JSONTab from '../../components/nftTabs/JSONTab';
@@ -36,40 +37,43 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const NFTInfo = ({metadata}: any) => {
-    const [value, setValue] = React.useState(1);
+const NFTInfo = ({ metadata }: any) => {
+  const [value, setValue] = React.useState(1);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-    
-    return (
-      <Container maxWidth="xl">
 
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Form"  />
-          <Tab label="Tree"  />
-          <Tab label="Raw"  />
-          <Tab label="JSON"  />
-        </Tabs>
+  return (
+    <Container maxWidth="xl">
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+            <Tab label="Form" />
+            <Tab label="Tree" />
+            <Tab label="Raw" />
+            <Tab label="JSON" />
+            <Tab label="NEW FORM" />
+          </Tabs>
+        </Box>
+        <TabPanel value={value} index={0}>
+          <FormTab metadata={metadata} />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <TreeTab metadata={metadata} />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <RawTab metadata={metadata} />
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <JSONTab metadata={metadata} />
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <NewForm metadata={metadata} />
+        </TabPanel>
       </Box>
-      <TabPanel value={value} index={0}>
-      <FormTab metadata={metadata} />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-      <TreeTab metadata={metadata} />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <RawTab metadata={metadata} />
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        <JSONTab metadata={metadata} />
-      </TabPanel>
-    </Box>
-      </Container>
-    );
-  };
-  
-  export default NFTInfo;
+    </Container>
+  );
+};
+
+export default NFTInfo;
