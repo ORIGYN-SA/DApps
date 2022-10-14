@@ -18,6 +18,7 @@ import NFTLibrary from '../NFTLibrary';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { idlLabelToId } from '@dfinity/candid';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -204,6 +205,23 @@ const ColumnView = () => {
       checkAndSetOwner();
     }
   }, [canisterId, currentTokenId]);
+
+  // const addFiles = async (content,token_id,i,library_id) => {
+  //   await actor.stage_library_nft_origyn({
+  //     content: content,
+  //     token_id: token_id,
+  //     chunk: i,
+  //     filedata: { Empty: null },
+  //     library_id: library_id,
+  // })
+  // };
+
+  // useEffect(() => {
+  //   if(actor){
+  //     addFiles('content',currentTokenId,0,0);
+  //   }
+  // }, [actor]);
+
 
   return (
     <div>
