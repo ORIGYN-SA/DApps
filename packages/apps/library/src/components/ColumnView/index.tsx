@@ -206,23 +206,6 @@ const ColumnView = () => {
     }
   }, [canisterId, currentTokenId]);
 
-  // const addFiles = async (content,token_id,i,library_id) => {
-  //   await actor.stage_library_nft_origyn({
-  //     content: content,
-  //     token_id: token_id,
-  //     chunk: i,
-  //     filedata: { Empty: null },
-  //     library_id: library_id,
-  // })
-  // };
-
-  // useEffect(() => {
-  //   if(actor){
-  //     addFiles('content',currentTokenId,0,0);
-  //   }
-  // }, [actor]);
-
-
   return (
     <div>
       <Box component={Paper} elevation={2} sx={{ margin: 2, width: '100%', padding: 2 }}>
@@ -235,9 +218,9 @@ const ColumnView = () => {
           <List className={classes.horizontal}>
             <Box minHeight={Sizes.minHeight} borderRight={1}>
               <Grid container minWidth={Sizes.minWidth}>
-                <Grid item xs={12}>
+                <Grid item xs={12} marginRight={1}>
                   <ListItem className={classes.noPadding}>
-                    <ListItemText primary={canisterId} sx={{ fontStyle: 'italic' }} />
+                    <ListItemText primary={canisterId}/>
                   </ListItem>
                 </Grid>
               </Grid>

@@ -33,7 +33,7 @@ export const useStyles = makeStyles(() => ({
 export const Sizes = {
     maxHeight: 400,
     minHeight: 400,
-    minWidth: 300,
+    minWidth: 100,
   };
   
 export  const ListItemButton = withStyles({
