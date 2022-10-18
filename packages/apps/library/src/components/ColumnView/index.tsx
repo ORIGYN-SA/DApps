@@ -18,6 +18,7 @@ import NFTLibrary from '../NFTLibrary';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Typography } from '@mui/material';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -35,10 +36,10 @@ const ColumnView = () => {
   // Specific library -- tokenId from URL or from clicked item
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
   const [openDeta, setOpenDeta] = useState(false);
+  const [openDub, setOpenDub] = useState(false);
   const [libDet, setLibDet] = useState();
   const [opera, setOpera] = useState(false);
   const [library3, setLibrary3] = useState();
-  const [openDub, setOpenDub] = useState(false);
   const classes = useStyles();
   const { actor, canisterId, loggedIn, principal } = useContext(AuthContext);
   const [collectionNft, setCollectionNft] = useState([]);
@@ -205,6 +206,7 @@ const ColumnView = () => {
     }
   }, [canisterId, currentTokenId]);
 
+
   return (
     <div>
       <Box component={Paper} elevation={2} sx={{ margin: 2, width: '100%', padding: 2 }}>
@@ -215,16 +217,6 @@ const ColumnView = () => {
           className={classes.styledScroll}
         >
           <List className={classes.horizontal}>
-            <Box minHeight={Sizes.minHeight} borderRight={1}>
-              <Grid container minWidth={Sizes.minWidth}>
-                <Grid item xs={12} marginRight={1}>
-                  <ListItem className={classes.noPadding}>
-                    <ListItemText primary={canisterId} sx={{width:'max-content'}}/>
-                  </ListItem>
-                </Grid>
-              </Grid>
-            </Box>
-
             <Box minHeight={Sizes.minHeight} borderRight={1}>
               <Grid container minWidth={Sizes.minWidth}>
                 <Grid item xs={12}>
@@ -238,33 +230,29 @@ const ColumnView = () => {
                     </ListItemButton>
                   </ListItem>
                 </Grid>
-
-                <Grid item xs={12}>
-                  <ListItem className={classes.noPadding}>
-                    <ListItemButton
-                      selected={selectedIndex === 1}
-                      onClick={(event) => handleClickLib(event, 1)}
-                      className={classes.noPadding}
-                    >
-                      <ListItemText sx={{ paddingLeft: 1 }} primary="Libraries" />
-                    </ListItemButton>
-                  </ListItem>
-                </Grid>
+                {
+                  (collectionNft.length <= 0) ? (
+                   <></>
+                  ):(
+                    <Grid item xs={12}>
+                    <ListItem className={classes.noPadding}>
+                      <ListItemButton
+                        selected={selectedIndex === 1}
+                        onClick={(event) => handleClickLib(event, 1)}
+                        className={classes.noPadding}
+                      >
+                        <ListItemText sx={{ paddingLeft: 1 }} primary="Libraries" />
+                      </ListItemButton>
+                    </ListItem>
+                  </Grid>
+                  )
+                }
               </Grid>
             </Box>
 
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
-                <Grid container minWidth={Sizes.minWidth}>
-                  {collectionNft.length <= 0 ? (
-                    <Grid container minWidth={Sizes.minWidth}>
-                      <Grid item xs={12}>
-                        <ListItem className={classes.noPadding}>
-                          <ListItemText sx={{ paddingLeft: 1 }} primary="Loading data..." />
-                        </ListItem>
-                      </Grid>
-                    </Grid>
-                  ) : (
+                <Grid container minWidth={Sizes.minWidth}>                
                     <Grid container minWidth={Sizes.minWidth} maxHeight={Sizes.maxHeight}>
                       <Grid item xs={12}>
                         {collectionNft?.map((nft, index) => (
@@ -279,8 +267,7 @@ const ColumnView = () => {
                           </ListItem>
                         ))}
                       </Grid>
-                    </Grid>
-                  )}
+                    </Grid>                 
                 </Grid>
               </Box>
             </Collapse>
