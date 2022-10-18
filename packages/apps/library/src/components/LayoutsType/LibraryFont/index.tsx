@@ -20,7 +20,9 @@ const LibraryFont = (props: any) => {
     setLink(link);
   }
   useEffect(() => {
+    if(canisterId) {
     formattedLink();
+    }
   }, []);
 
   return (

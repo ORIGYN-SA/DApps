@@ -20,7 +20,9 @@ const LibraryTextHtml = (props: any) => {
     setLink(link);
   }
   useEffect(() => {
-    formattedLink();
+    if(canisterId){
+      formattedLink();
+    }
   }, []);
 
   return (

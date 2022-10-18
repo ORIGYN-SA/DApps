@@ -18,7 +18,6 @@ import NFTLibrary from '../NFTLibrary';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { idlLabelToId } from '@dfinity/candid';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -220,7 +219,7 @@ const ColumnView = () => {
               <Grid container minWidth={Sizes.minWidth}>
                 <Grid item xs={12} marginRight={1}>
                   <ListItem className={classes.noPadding}>
-                    <ListItemText primary={canisterId}/>
+                    <ListItemText primary={canisterId} sx={{width:'max-content'}}/>
                   </ListItem>
                 </Grid>
               </Grid>
@@ -275,7 +274,7 @@ const ColumnView = () => {
                               onClick={(event) => handleClick1(nft, event, index)}
                               className={classes.noPadding}
                             >
-                              <ListItemText sx={{ paddingLeft: 1 }} primary={nft} />
+                              <ListItemText primary={nft} sx={{width:'max-content',paddingLeft: 1 }}/>                           
                             </ListItemButton>
                           </ListItem>
                         ))}
@@ -300,8 +299,8 @@ const ColumnView = () => {
                               onClick={(event) => handleDeta(library, event, index)}
                             >
                               <ListItemText
-                                sx={{ paddingLeft: 1 }}
                                 primary={library?.Class[1]?.value?.Text}
+                                sx={{width:'max-content', paddingLeft: 1 }}
                               />
                             <ListItemIcon sx={{color:"#cacaca;"}}>
                               <EditIcon></EditIcon>
@@ -323,7 +322,7 @@ const ColumnView = () => {
                               onClick={(event) => handleDeta(library, event, index)}
                             >
                               <ListItemText
-                                sx={{ paddingLeft: 1 }}
+                                sx={{width:'max-content', paddingLeft: 1 }}
                                 primary={library?.Class[1]?.value?.Text}
                               />
                             </ListItemButton>
@@ -368,7 +367,7 @@ const ColumnView = () => {
                         >
                           <ListItemText
                             sx={{ paddingLeft: 1 }}
-                            primary='No default libraries at the moment'
+                            primary='Loading data...'
                           />
                         </ListItemButton>
                       </ListItem>
@@ -382,9 +381,10 @@ const ColumnView = () => {
                               className={classes.noPadding}
                             >
                               <ListItemText
-                                sx={{ paddingLeft: 1 }}
+                                sx={{ paddingLeft: 1, width:'max-content' }}
                                 primary={library?.Class[0]?.value?.Text}
                               />
+
                             </ListItemButton>
                           </ListItem>
                         ))}
