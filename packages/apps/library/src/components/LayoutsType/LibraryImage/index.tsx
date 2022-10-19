@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
 import Box from '@mui/material/Box';
-import { Modal } from '@mui/material';
+import { Modal, Typography } from '@mui/material';
 
 const style = {
   position: 'absolute' as 'absolute',
