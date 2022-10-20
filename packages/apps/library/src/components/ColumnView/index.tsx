@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
-import { getNftCollection, getNft, OrigynClient } from '@origyn-sa/mintjs';
+import { getNft, OrigynClient, getNftCollectionMeta, stageLibraryAsset } from '@origyn-sa/mintjs';
 import { checkOwner } from '@dapp/utils';
 // Import from style.tsx
 import { useStyles, Sizes, ListItemButton } from './style';
@@ -11,6 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import Collapse from '@mui/material/Collapse';
 import Paper from '@mui/material/Paper';
 import { Box } from '@mui/system';
+import {Button} from '@mui/material';
 // Library components
 import LibraryBox from '../LibraryBox';
 import NFTLibrary from '../NFTLibrary';
@@ -18,7 +19,6 @@ import NFTLibrary from '../NFTLibrary';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Typography } from '@mui/material';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -74,7 +74,7 @@ const ColumnView = () => {
     handleDetails();
     setSelectedNft(index);
     setCurrentTokenId(nft);
-    OrigynClient.getInstance().init(await currentCanisterId());
+    OrigynClient.getInstance().init(true, await currentCanisterId());
     getNft(nft).then((r) => {
       console.log('nft_origyn', r);
       setLibraryData(
@@ -99,7 +99,7 @@ const ColumnView = () => {
     setSelectedIndex(index);
     // As default-general view of libraries the tokenId is empty
     if (actor) {
-      OrigynClient.getInstance().init(await currentCanisterId());
+      OrigynClient.getInstance().init(true, await currentCanisterId());
       getNft('').then((r) => {
         console.log('RRRR', r);
         setDefaultLibraryData(
@@ -154,7 +154,7 @@ const ColumnView = () => {
       setOpen1(!open1);
       handleDetails();
 
-      OrigynClient.getInstance().init(await currentCanisterId());
+      OrigynClient.getInstance().init(true, await currentCanisterId());
       const curTokenId = await getTokenId();
       setCurrentTokenId(curTokenId);
       setSelectedIndex(0);
@@ -171,8 +171,9 @@ const ColumnView = () => {
 
   const nftCollection = async () => {
     setCollectionNft([]);
-    OrigynClient.getInstance().init(await currentCanisterId());
-    const response = await getNftCollection([]);
+    OrigynClient.getInstance().init(true, await currentCanisterId());
+    const response = await getNftCollectionMeta([]);
+    //console.log('response', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
@@ -206,7 +207,6 @@ const ColumnView = () => {
     }
   }, [canisterId, currentTokenId]);
 
-
   return (
     <div>
       <Box component={Paper} elevation={2} sx={{ margin: 2, width: '100%', padding: 2 }}>
@@ -230,11 +230,10 @@ const ColumnView = () => {
                     </ListItemButton>
                   </ListItem>
                 </Grid>
-                {
-                  (collectionNft.length <= 0) ? (
-                   <></>
-                  ):(
-                    <Grid item xs={12}>
+                {collectionNft.length <= 0 ? (
+                  <></>
+                ) : (
+                  <Grid item xs={12}>
                     <ListItem className={classes.noPadding}>
                       <ListItemButton
                         selected={selectedIndex === 1}
@@ -245,29 +244,31 @@ const ColumnView = () => {
                       </ListItemButton>
                     </ListItem>
                   </Grid>
-                  )
-                }
+                )}
               </Grid>
             </Box>
 
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
-                <Grid container minWidth={Sizes.minWidth}>                
-                    <Grid container minWidth={Sizes.minWidth} maxHeight={Sizes.maxHeight}>
-                      <Grid item xs={12}>
-                        {collectionNft?.map((nft, index) => (
-                          <ListItem className={classes.noPadding} key={index}>
-                            <ListItemButton
-                              selected={selectedNft === index}
-                              onClick={(event) => handleClick1(nft, event, index)}
-                              className={classes.noPadding}
-                            >
-                              <ListItemText primary={nft} sx={{width:'max-content',paddingLeft: 1 }}/>                           
-                            </ListItemButton>
-                          </ListItem>
-                        ))}
-                      </Grid>
-                    </Grid>                 
+                <Grid container minWidth={Sizes.minWidth}>
+                  <Grid container minWidth={Sizes.minWidth} maxHeight={Sizes.maxHeight}>
+                    <Grid item xs={12}>
+                      {collectionNft?.map((nft, index) => (
+                        <ListItem className={classes.noPadding} key={index}>
+                          <ListItemButton
+                            selected={selectedNft === index}
+                            onClick={(event) => handleClick1(nft, event, index)}
+                            className={classes.noPadding}
+                          >
+                            <ListItemText
+                              primary={nft}
+                              sx={{ width: 'max-content', paddingLeft: 1 }}
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Box>
             </Collapse>
@@ -287,14 +288,14 @@ const ColumnView = () => {
                             >
                               <ListItemText
                                 primary={library?.Class[1]?.value?.Text}
-                                sx={{width:'max-content', paddingLeft: 1 }}
+                                sx={{ width: 'max-content', paddingLeft: 1 }}
                               />
-                            <ListItemIcon sx={{color:"#cacaca;"}}>
-                              <EditIcon></EditIcon>
-                            </ListItemIcon>
-                            <ListItemIcon sx={{color:"#cacaca;"}}>
-                              <DeleteIcon></DeleteIcon>
-                            </ListItemIcon>
+                              <ListItemIcon sx={{ color: '#cacaca;' }}>
+                                <EditIcon></EditIcon>
+                              </ListItemIcon>
+                              <ListItemIcon sx={{ color: '#cacaca;' }}>
+                                <DeleteIcon></DeleteIcon>
+                              </ListItemIcon>
                             </ListItemButton>
                           </ListItem>
                         ))}
@@ -309,7 +310,7 @@ const ColumnView = () => {
                               onClick={(event) => handleDeta(library, event, index)}
                             >
                               <ListItemText
-                                sx={{width:'max-content', paddingLeft: 1 }}
+                                sx={{ width: 'max-content', paddingLeft: 1 }}
                                 primary={library?.Class[1]?.value?.Text}
                               />
                             </ListItemButton>
@@ -346,20 +347,14 @@ const ColumnView = () => {
               >
                 <Grid container maxHeight={Sizes.maxHeight}>
                   <Grid onClick={handleClickLib1} item xs={12}>
-                    {
-                      (defaultLibraryData?.length <= 0) || defaultLibraryData === undefined ? (
-                        <ListItem className={classes.noPadding} >
-                        <ListItemButton
-                          className={classes.noPadding}
-                        >
-                          <ListItemText
-                            sx={{ paddingLeft: 1 }}
-                            primary='Loading data...'
-                          />
+                    {defaultLibraryData?.length <= 0 || defaultLibraryData === undefined ? (
+                      <ListItem className={classes.noPadding}>
+                        <ListItemButton className={classes.noPadding}>
+                          <ListItemText sx={{ paddingLeft: 1 }} primary="Loading data..." />
                         </ListItemButton>
                       </ListItem>
-                      ) : (
-                        <>
+                    ) : (
+                      <>
                         {defaultLibraryData?.map((library, index) => (
                           <ListItem className={classes.noPadding} key={index}>
                             <ListItemButton
@@ -368,16 +363,14 @@ const ColumnView = () => {
                               className={classes.noPadding}
                             >
                               <ListItemText
-                                sx={{ paddingLeft: 1, width:'max-content' }}
+                                sx={{ paddingLeft: 1, width: 'max-content' }}
                                 primary={library?.Class[0]?.value?.Text}
                               />
-
                             </ListItemButton>
                           </ListItem>
                         ))}
-                        </> 
-                      )
-                    }
+                      </>
+                    )}
                   </Grid>
                 </Grid>
               </Box>

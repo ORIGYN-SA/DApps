@@ -11,7 +11,9 @@ import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { phonebookIdl } from '@dapp/common-candid';
 // mintjs
-import { OrigynClient, getNftCollection } from '@origyn-sa/mintjs';
+import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
+
+const ISPROD = true;
 
 export const checkCanister = async (newCanister) => {
   let canisterId: string | boolean;
@@ -39,9 +41,9 @@ export const checkCanister = async (newCanister) => {
       if (canisterId) {
         // Second check:
         // Check if the registered Canister is an NFT canister
-        OrigynClient.getInstance().init(canisterId);
+        OrigynClient.getInstance().init(ISPROD,canisterId);
         try {
-          const hasNFT = await getNftCollection();
+          const hasNFT = await getNftCollectionMeta();
           if (hasNFT.ok) {
             return canisterId;
           }else{
@@ -59,8 +61,8 @@ export const checkCanister = async (newCanister) => {
         try {
           Principal.fromText(newCanister);
           canisterId = newCanister;
-          OrigynClient.getInstance().init(canisterId.toString());
-          const hasNFT = await getNftCollection()
+          OrigynClient.getInstance().init(ISPROD,canisterId.toString());
+          const hasNFT = await getNftCollectionMeta()
           if (hasNFT.ok) {
             canisterId = newCanister;
             return canisterId;
