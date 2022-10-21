@@ -17,7 +17,7 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
     OrigynClient.getInstance().init(currCanisterId);
 
 
-    // LIBRARY OWNER
+    // DEFAULT LIBRARIES OWNER
     const LibraryOwner: Principal = await getNft('').then((r) =>
         r.ok.metadata.Class.filter((res) => {
             console.log('response', r);

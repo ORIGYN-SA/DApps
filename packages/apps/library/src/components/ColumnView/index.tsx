@@ -19,6 +19,7 @@ import NFTLibrary from '../NFTLibrary';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 // Form
 
 import { AddForm } from '../Form';
@@ -280,6 +281,14 @@ const ColumnView = () => {
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
                 <Grid container minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
+                    <ListItem className={classes.noPadding}>
+                      <ListItemButton className={classes.noPadding}>
+                        <ListItemText
+                          sx={{ width: 'max-content', paddingLeft: 1 }}
+                          primary="+ Add Library"
+                        />
+                      </ListItemButton>
+                    </ListItem>
                     {owner ? (
                       <>
                         {libraryData?.map((library, index) => (
@@ -358,6 +367,14 @@ const ColumnView = () => {
                       </ListItem>
                     ) : (
                       <>
+                        <ListItem className={classes.noPadding}>
+                          <ListItemButton className={classes.noPadding}>
+                            <ListItemText
+                              sx={{ width: 'max-content', paddingLeft: 1 }}
+                              primary="+ Add Library"
+                            />
+                          </ListItemButton>
+                        </ListItem>
                         {defaultLibraryData?.map((library, index) => (
                           <ListItem className={classes.noPadding} key={index}>
                             <ListItemButton
@@ -389,9 +406,7 @@ const ColumnView = () => {
           </List>
         </Grid>
       </Box>
-      <AddForm
-       canisterId={canisterId}
-      />
+      <AddForm canisterId={canisterId} />
     </div>
   );
 };

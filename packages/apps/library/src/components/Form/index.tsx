@@ -8,7 +8,6 @@ import { Box } from '@mui/system';
 
 export const AddForm = (props) => {
   const [library, setLibraries] = useState<any>([]);
-
   // Functions needed for file to Buffer
   const arrayToBuffer = (arrayBuffer) => {
     const buffer = Buffer.alloc(arrayBuffer.byteLength);
@@ -35,7 +34,7 @@ export const AddForm = (props) => {
       ...(await Promise.all(
         [...library].map(async (file) => {
           return {
-            token_id: 'ts-0',
+            token_id: 'bm-0',
             files: [
               {
                 filename: file.name,
@@ -52,7 +51,8 @@ export const AddForm = (props) => {
       )),
     };
 
-    console.log('payload',payload);
+    console.log('payload', payload);
+
     const stage = await stageLibraryAsset(payload[0].files, payload[0].token_id);
     console.log('stage',stage);
   };
