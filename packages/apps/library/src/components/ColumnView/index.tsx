@@ -11,7 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import Collapse from '@mui/material/Collapse';
 import Paper from '@mui/material/Paper';
 import { Box } from '@mui/system';
-import {Button} from '@mui/material';
+import { Button } from '@mui/material';
 // Library components
 import LibraryBox from '../LibraryBox';
 import NFTLibrary from '../NFTLibrary';
@@ -19,6 +19,9 @@ import NFTLibrary from '../NFTLibrary';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+// Form
+
+import { AddForm } from '../Form';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -173,7 +176,7 @@ const ColumnView = () => {
     setCollectionNft([]);
     OrigynClient.getInstance().init(true, await currentCanisterId());
     const response = await getNftCollectionMeta([]);
-    //console.log('response', response);
+    console.log('response', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
@@ -386,6 +389,9 @@ const ColumnView = () => {
           </List>
         </Grid>
       </Box>
+      <AddForm
+       canisterId={canisterId}
+      />
     </div>
   );
 };
