@@ -72,17 +72,30 @@ export const LibraryForm = (props: any) => {
         )),
       ],
     };
-    console.log('🚀 ~ file: App.tsx ~ line 179 ~ handleStageLibraryAssetClick ~ payload', payload);
-    const stage = await stageLibraryAsset(payload.files, false, payload.token_id);
-    console.log('🚀 ~ file: App.tsx ~ line 175 ~ handleStageLibraryAssetClick ~ stage', stage);
-    // Display a success message - SNACKBAR
-    enqueueSnackbar('Library staged!', {
-      variant: 'success',
-      anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-      },
-  });
+    try{
+      console.log('🚀 ~ file: App.tsx ~ line 179 ~ handleStageLibraryAssetClick ~ payload', payload);
+      const stage = await stageLibraryAsset(payload.files, false, payload.token_id);
+      console.log('🚀 ~ file: App.tsx ~ line 175 ~ handleStageLibraryAssetClick ~ stage', stage);
+      // Display a success message - SNACKBAR
+      enqueueSnackbar('Library staged!', {
+        variant: 'success',
+        anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+        },
+    });
+    }
+    catch(error){
+      // Display a error message - SNACKBAR
+      enqueueSnackbar('Something went wrong', {
+        variant: 'error',
+        anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+        },
+    });
+    }
+
   };
 
   // Functions needed for file to Buffer
