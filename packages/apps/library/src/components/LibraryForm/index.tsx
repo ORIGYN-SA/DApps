@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { getCanisterId } from '@dapp/features-authentication';
+import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
@@ -21,6 +22,7 @@ const currentCanisterId = async () => {
 };
 
 export const LibraryForm = (props: any) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [canisterId, setCanisterId] = useState(currentCanisterId());
   const [isProd, setIsProd] = useState(true);
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
@@ -46,7 +48,7 @@ export const LibraryForm = (props: any) => {
   });
 
   const stageLibrary = async () => {
-    console.log('token id is', props.currentTokenId);
+    console.log('token id is ', props.currentTokenId);
     await OrigynClient.getInstance().init(isProd, await canisterId, {
       key: {
         seed: TEST_IDENTITY.seed,
@@ -73,6 +75,14 @@ export const LibraryForm = (props: any) => {
     console.log('🚀 ~ file: App.tsx ~ line 179 ~ handleStageLibraryAssetClick ~ payload', payload);
     const stage = await stageLibraryAsset(payload.files, false, payload.token_id);
     console.log('🚀 ~ file: App.tsx ~ line 175 ~ handleStageLibraryAssetClick ~ stage', stage);
+    // Display a success message - SNACKBAR
+    enqueueSnackbar('Library staged!', {
+      variant: 'success',
+      anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+      },
+  });
   };
 
   // Functions needed for file to Buffer
