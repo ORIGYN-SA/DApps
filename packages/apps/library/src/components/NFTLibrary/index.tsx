@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import {Layouts} from '../LayoutsType';
 
-const NFTLibrary = (props: any) => {
+export const NFTLibrary = (props: any) => {
   let library = props.libDet;
   console.log(library);
 
@@ -75,4 +75,3 @@ const NFTLibrary = (props: any) => {
   );
 };
 
-export default NFTLibrary;

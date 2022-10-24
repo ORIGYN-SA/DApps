@@ -25,7 +25,7 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 
-const LibraryBox = (props: any) => {
+export const LibraryBox = (props: any) => {
   
   let objLibraryData: curLibraryData = {
     library_id: props.library3?.Class[0]?.value?.Text,
@@ -87,5 +87,3 @@ const LibraryBox = (props: any) => {
     </Grid>
   );
 };
-
-export default LibraryBox;

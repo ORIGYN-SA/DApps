@@ -32,14 +32,33 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
             return res.name === 'owner';
         })[0].value.Principal.toText(),);
 
+    // WRITE PERMISSIONS
+    const ArrayAllowed  = await getNft(currTokenId).then((r) =>
+    r.ok.metadata.Class.filter((res) => {
+        console.log('response NFT', r);
+        return res.name === '__apps';
+    })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed);
+    let i : any; 
+    const AllowedUsers = () => {
+    for(i in ArrayAllowed){
+        let AllowedPrincipal = ArrayAllowed[i].Principal.toText();
+        console.log('ALLOWEDPRINCIPAL', AllowedPrincipal);
+        if(AllowedPrincipal === UserPrincipal){
+            return true;
+        }
+    }
+    }
+
+
     console.log(' LIBRARY OWNER', LibraryOwner);
     console.log('USERPRINCIPAL', UserPrincipal);
     console.log('CURRENT SELECTED NFT : ', currTokenId);
     console.log('NFT OWNER', NftOwner);
 
-    if (UserPrincipal === LibraryOwner.toString()) {
+    if ((UserPrincipal === LibraryOwner.toString()) || (AllowedUsers() === true)) {
         return true;
     } else {
         return false;
     }
+
 }
