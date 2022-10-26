@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
-import { getNft, OrigynClient, getNftCollectionMeta, stageLibraryAsset } from '@origyn-sa/mintjs';
+import { getNft, OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { checkOwner } from '@dapp/utils';
 // Import from style.tsx
 import { useStyles, Sizes, ListItemButton } from './style';
@@ -15,10 +15,7 @@ import { Box } from '@mui/system';
 import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../LibraryForm';
-// List Icons
-import ListItemIcon from '@mui/material/ListItemIcon';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+
 // Form
 import App from '../Form2';
 
