@@ -9,7 +9,7 @@ import FormTab from '../../components/nftTabs/FormTab';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import JSONTab from '../../components/nftTabs/JSONTab';
-
+import NewForm from '../../components/nftTabs/NewForm';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -53,6 +53,7 @@ const NFTInfo = ({metadata}: any) => {
           <Tab label="Tree"  />
           <Tab label="Raw"  />
           <Tab label="JSON"  />
+          <Tab label="Update"  />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -66,6 +67,9 @@ const NFTInfo = ({metadata}: any) => {
       </TabPanel>
       <TabPanel value={value} index={3}>
         <JSONTab metadata={metadata} />
+      </TabPanel>
+      <TabPanel value={value} index={4}>
+        <NewForm metadata={metadata} />
       </TabPanel>
     </Box>
       </Container>
