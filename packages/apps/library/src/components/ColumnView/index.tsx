@@ -197,7 +197,7 @@ const ColumnView = () => {
     setCollectionNft([]);
     OrigynClient.getInstance().init(true, await currentCanisterId());
     const response = await getNftCollectionMeta([]);
-    console.log('response', response);
+    //console.log('response', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
