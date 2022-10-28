@@ -218,7 +218,6 @@ export type CandyValue = { 'Int' : bigint } |
       { 'frozen' : Array<CandyValue> }
   } |
   { 'Class' : Array<Property> };
-  
 export type ChunkContent = {
     'remote' : { 'args' : ChunkRequest, 'canister' : Principal }
   } |

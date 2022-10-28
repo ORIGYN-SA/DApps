@@ -9,6 +9,7 @@ import usePlug from './plug';
 import useStoic from './stoic';
 import useInternetIdentity from './internedIdentity';
 import { getCanisterId, getTokenId } from './getRoute';
+import { _SERVICE } from '../../../apps/nft-data/src/components/nftTabs/types/origyn_nft_reference.did';
 
 interface authContextType {
   isLoading: boolean;
@@ -18,7 +19,7 @@ interface authContextType {
   tokenId?: string;
   canisterId?: string;
   principal?: Principal;
-  actor?: any;
+  actor?: _SERVICE;
   ogyActor?: any;
   logOut: () => void;
   walletType?: string;
@@ -48,7 +49,7 @@ export const useAuth = () => {
   const [tokenId, setTokenId] = useState<string | undefined>();
   const [walletAccounts, setWalletAccounts] = useState<any>();
   const [loggedWallet, setLoggedWallet] = useState<any>();
-  const [actor, setActor] = useState<any>();
+  const [actor, setActor] = useState<_SERVICE>();
   const [ogyActor, setOgyActor] = useState<any>();
   const [currentWalletAccount, setCurrentWalletAccount] = useState<any>();
 

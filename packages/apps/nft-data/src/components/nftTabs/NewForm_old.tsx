@@ -9,20 +9,18 @@ import { NFTUpdateRequest, UpdateRequest, CandyValue } from './types/origyn_nft_
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
+
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-// mintJs
-import { getNft, getNftCollectionInfo, OrigynClient } from '@origyn-sa/mintjs';
-import { ControlPointSharp } from '@mui/icons-material';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -100,7 +98,20 @@ const NewForm = ({ metadata }: any) => {
     setLibraryFields(data);
   };
 
-  const { tokenId, actor, canisterId } = useContext(AuthContext);
+  useEffect(() => {
+    if (Object.entries(metadata).length) {
+      setOwner(pick(metadata, ['owner']).owner);
+      setHiddenAsset(pick(metadata, ['hidden_asset']).hidden_asset);
+      setPreviewAsset(pick(metadata, ['preview_asset']).preview_asset);
+      setPrimaryAsset(pick(metadata, ['primary_asset']).primary_asset);
+      setExperienceAsset(pick(metadata, ['experience_asset']).experience_asset);
+      setId(pick(metadata, ['id']).id);
+      setApps(pick(metadata, ['__apps']).__apps);
+      setLibraryFields(pick(metadata, ['library']).library);
+    }
+  }, [metadata]);
+
+  const { tokenId, actor } = useContext(AuthContext);
   const [nft, setNft] = useState<any>({});
 
   const [nftName, setNftName] = useState<string>('brain 1');
@@ -116,41 +127,11 @@ const NewForm = ({ metadata }: any) => {
         .nft_origyn(tokenId)
         .then((r) => {
           console.log(r);
-          setNft(r);
+          setNft(r.ok);
         })
         .catch(console.log);
     }
   }, []);
-
-  const getAssets = async () => {
-    await OrigynClient.getInstance().init(true, canisterId);
-    const response = await getNft('');
-    const r2= await getNftCollectionInfo();
-    console.log('response222', response);
-    if (response.ok) {
-      const { metadata } = response.ok;
-      console.log('METADATA2', metadata);
-      const ownerField = metadata?.find((data) => data.name === 'owner');
-      console.log(ownerField.value.Principal.toText());
-      // This will output the principal id of the owner of the NFT.
-    } else if (response.err) {
-      console.log(response.err);
-    }
-  };
-
-  useEffect(() => {
-    getAssets();
-    if (Object.entries(metadata).length) {
-      setOwner(pick(metadata, ['owner']).owner);
-      setHiddenAsset(pick(metadata, ['hidden_asset']).hidden_asset);
-      setPreviewAsset(pick(metadata, ['preview_asset']).preview_asset);
-      setPrimaryAsset(pick(metadata, ['primary_asset']).primary_asset);
-      setExperienceAsset(pick(metadata, ['experience_asset']).experience_asset);
-      setId(pick(metadata, ['id']).id);
-      setApps(pick(metadata, ['__apps']).__apps);
-      setLibraryFields(pick(metadata, ['library']).library);
-    }
-  }, [metadata]);
 
   const submitData = async () => {
     const nftId = nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text;
@@ -290,161 +271,192 @@ const NewForm = ({ metadata }: any) => {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <List component="div">
               <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handleHiddenAssets}
-                >
+                <IconButton edge="start" color="inherit" aria-label="edit" onClick={handleHiddenAssets}>
                   <EditIcon />
                 </IconButton>
-                <ListItemText>
-                  <em>Hidden asset - </em>
-                  <b>{hiddenAsset}</b>
-                </ListItemText>
+                  <ListItemText>
+                    <em>Hidden asset - </em>
+                    {hiddenAsset}
+                  </ListItemText>
               </ListItem>
             </List>
             <Collapse in={openHidden}>
               <Box m={2}>
                 <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
+                  <Grid item xs={12}>
+                    <Stack direction="row" spacing={1}>
+                      <Typography>{hiddenAsset}</Typography>
+                      <Chip label="Edit" />
+                    </Stack>
                   </Grid>
                 </Grid>
               </Box>
             </Collapse>
             <List component="div">
               <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handlePreviewAssets}
-                >
+                <IconButton edge="start" color="inherit" aria-label="edit"  onClick={handlePreviewAssets}>
                   <EditIcon />
                 </IconButton>
-                <ListItemText>
-                  <em>Preview asset - </em>
-                  <b>{previewAsset}</b>
-                </ListItemText>
+                  <ListItemText>
+                    <em>Preview asset - </em>
+                    {previewAsset}
+                  </ListItemText>
               </ListItem>
             </List>
             <Collapse in={openPreview}>
               <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
+                <Typography variant="body2" component="p">
+                  {previewAsset}
+                </Typography>
               </Box>
             </Collapse>
             <List component="div">
               <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handlePrimaryAssets}
-                >
+                <IconButton edge="start" color="inherit" aria-label="edit"  onClick={handlePrimaryAssets}>
                   <EditIcon />
                 </IconButton>
-                <ListItemText>
-                  <em>Primary asset - </em>
-                  <b>{primaryAsset}</b>
-                </ListItemText>
+                  <ListItemText>
+                    <em>Primary asset - </em>
+                    {primaryAsset}
+                  </ListItemText>
+                
               </ListItem>
             </List>
             <Collapse in={openPrimary}>
               <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
+                <Typography variant="body2" component="p">
+                  {primaryAsset}
+                </Typography>
               </Box>
             </Collapse>
             <List component="div">
               <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handleExperienceAssets}
-                >
+                <IconButton edge="start" color="inherit" aria-label="edit" onClick={handleExperienceAssets}>
                   <EditIcon />
                 </IconButton>
-                <ListItemText>
-                  <em>Experience asset - </em> <b>{experienceAsset}</b>
-                </ListItemText>
+                  <ListItemText>
+                    <em>Experience asset - </em> {experienceAsset}
+                  </ListItemText>
               </ListItem>
             </List>
             <Collapse in={openExperience}>
               <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
+                <Typography variant="body2" component="p">
+                  {experienceAsset}
+                </Typography>
               </Box>
             </Collapse>
           </Collapse>
         </List>
+
+        <Typography variant="h4">Library</Typography>
+        {libraryFields.map((lib, index) => (
+          <>
+            {' '}
+            Library {index + 1}
+            <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="ID"
+                    variant="outlined"
+                    name="library_id"
+                    value={lib.library_id}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Title"
+                    variant="outlined"
+                    name="title"
+                    value={lib.title}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Location Type"
+                    variant="outlined"
+                    name="location_type"
+                    value={lib.location_type}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Location"
+                    variant="outlined"
+                    name="location"
+                    value={lib.location}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="COntent Type"
+                    variant="outlined"
+                    name="content_type"
+                    value={lib.content_type}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="COntent Hash"
+                    variant="outlined"
+                    name="content_hash"
+                    value={lib.content_hash}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Size"
+                    variant="outlined"
+                    name="size"
+                    value={lib.size}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Sort"
+                    variant="outlined"
+                    name="sort"
+                    value={lib.sort}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Read"
+                    variant="outlined"
+                    name="read"
+                    value={lib.read}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+            </Grid>
+          </>
+        ))}
       </Box>
     </div>
   );
