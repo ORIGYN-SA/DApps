@@ -32,13 +32,20 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+type Asset = {
+  id: string;
+  immutable: boolean;
+};
+
 const NewForm = ({ metadata }: any) => {
-  console.log('METADATA', metadata);
+  // array with ids of libraries for the current token
+  const [librariesIDS, setLibrariesIDS] = useState<any>([]);
   const [owner, setOwner] = useState('');
-  const [hiddenAsset, setHiddenAsset] = useState('');
-  const [previewAsset, setPreviewAsset] = useState('');
-  const [primaryAsset, setPrimaryAsset] = useState('');
-  const [experienceAsset, setExperienceAsset] = useState('');
+  const [hiddenAsset, setHiddenAsset] = useState<Asset>();
+  const [previewAsset, setPreviewAsset] = useState<Asset>();
+  const [primaryAsset, setPrimaryAsset] = useState<Asset>();
+  const [experienceAsset, setExperienceAsset] = useState<Asset>();
+
   const [id, setId] = useState('');
   const [apps, setApps] = useState([]);
   const [libraryFields, setLibraryFields] = useState([]);
@@ -122,30 +129,76 @@ const NewForm = ({ metadata }: any) => {
     }
   }, []);
 
-  const getAssets = async () => {
+  const getLibrariesIds = async () => {
     await OrigynClient.getInstance().init(true, canisterId);
-    const response = await getNft('');
-    const r2= await getNftCollectionInfo();
-    console.log('response222', response);
+    const response = await getNft(tokenId);
+    console.log('rrrr', response);
     if (response.ok) {
-      const { metadata } = response.ok;
-      console.log('METADATA2', metadata);
-      const ownerField = metadata?.find((data) => data.name === 'owner');
-      console.log(ownerField.value.Principal.toText());
-      // This will output the principal id of the owner of the NFT.
+      const libraries = response.ok.metadata.Class.filter((res) => {
+        return res.name === 'library';
+      })[0].value.Array.thawed;
+      let arrayIDS = [];
+      console.log('library', libraries);
+      libraries.forEach((library: any) => {
+        arrayIDS.push(library.Class[0].value.Text);
+      });
+      setLibrariesIDS(arrayIDS);
+    } else if (response.err) {
+      console.log(response.err);
+    }
+  };
+
+  const getAsset = async () => {
+    await OrigynClient.getInstance().init(true, canisterId);
+    const response = await getNft(tokenId);
+    if (response.ok) {
+      const obj_preview_asset: Asset = {
+        id: await response.ok.metadata.Class.filter((res) => {
+          return res.name === 'preview_asset';
+        })[0].value.Text,
+        immutable: await response.ok.metadata.Class.filter((res) => {
+          return res.name === 'preview_asset';
+        })[0].immutable,
+      };
+      const obj_hidden_asset: Asset = {
+        id: await response.ok.metadata.Class.filter((res) => {
+          return res.name === 'hidden_asset';
+        })[0].value.Text,
+        immutable: await response.ok.metadata.Class.filter((res) => {
+          return res.name === 'hidden_asset';
+        })[0].immutable,
+      };
+      const obj_primary_asset: Asset = {
+        id: await response.ok.metadata.Class.filter((res) => {
+          return res.name === 'primary_asset';
+        })[0].value.Text,
+        immutable: await response.ok.metadata.Class.filter((res) => {
+          return res.name === 'primary_asset';
+        })[0].immutable,
+      };
+      const obj_experience_asset: Asset = {
+        id: await response.ok.metadata.Class.filter((res) => {
+          return res.name === 'experience_asset';
+        })[0].value.Text,
+        immutable: await response.ok.metadata.Class.filter((res) => {
+          return res.name === 'experience_asset';
+        })[0].immutable,
+      };
+      setPreviewAsset(obj_preview_asset);
+      setHiddenAsset(obj_hidden_asset);
+      setPrimaryAsset(obj_primary_asset);
+      setExperienceAsset(obj_experience_asset);
     } else if (response.err) {
       console.log(response.err);
     }
   };
 
   useEffect(() => {
-    getAssets();
+    getLibrariesIds();
+    getAsset();
+    console.log('token', tokenId);
+    console.log('canister', canisterId);
     if (Object.entries(metadata).length) {
-      setOwner(pick(metadata, ['owner']).owner);
-      setHiddenAsset(pick(metadata, ['hidden_asset']).hidden_asset);
-      setPreviewAsset(pick(metadata, ['preview_asset']).preview_asset);
-      setPrimaryAsset(pick(metadata, ['primary_asset']).primary_asset);
-      setExperienceAsset(pick(metadata, ['experience_asset']).experience_asset);
       setId(pick(metadata, ['id']).id);
       setApps(pick(metadata, ['__apps']).__apps);
       setLibraryFields(pick(metadata, ['library']).library);
@@ -290,17 +343,21 @@ const NewForm = ({ metadata }: any) => {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <List component="div">
               <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handleHiddenAssets}
-                >
-                  <EditIcon />
-                </IconButton>
+                {hiddenAsset?.immutable ? (
+                  <></>
+                ) : (
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="edit"
+                    onClick={handleHiddenAssets}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                )}
                 <ListItemText>
                   <em>Hidden asset - </em>
-                  <b>{hiddenAsset}</b>
+                  <b>{hiddenAsset?.id}</b>
                 </ListItemText>
               </ListItem>
             </List>
@@ -309,15 +366,18 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                      <InputLabel id="demo-simple-select-label">Available Libraries</InputLabel>
                       <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
+                        labelId="hidden-assets-select-label"
+                        id="hidden-assets-select"
+                        label="Available libraries"
+                        defaultValue={hiddenAsset?.id}
                       >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {librariesIDS.map((id, i) => (
+                          <MenuItem value={id} key={i}>
+                            {id}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   </Grid>
@@ -329,17 +389,23 @@ const NewForm = ({ metadata }: any) => {
             </Collapse>
             <List component="div">
               <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handlePreviewAssets}
-                >
-                  <EditIcon />
-                </IconButton>
+                {
+                  previewAsset?.immutable ? (
+                    <></>
+                  ) : (
+                    <IconButton
+                      edge="start"
+                      color="inherit"
+                      aria-label="edit"
+                      onClick={handlePreviewAssets}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  )
+                }
                 <ListItemText>
                   <em>Preview asset - </em>
-                  <b>{previewAsset}</b>
+                  <b>{previewAsset?.id}</b>
                 </ListItemText>
               </ListItem>
             </List>
@@ -348,15 +414,18 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                      <InputLabel id="demo-simple-select-label">Available Libraries</InputLabel>
                       <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
+                        labelId="hidden-assets-select-label"
+                        id="hidden-assets-select"
+                        label="Available libraries"
+                        defaultValue={previewAsset?.id}
                       >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {librariesIDS.map((id, i) => (
+                          <MenuItem value={id} key={i}>
+                            {id}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   </Grid>
@@ -368,17 +437,23 @@ const NewForm = ({ metadata }: any) => {
             </Collapse>
             <List component="div">
               <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handlePrimaryAssets}
-                >
-                  <EditIcon />
-                </IconButton>
+                {
+                  primaryAsset?.immutable ? (
+                    <></>
+                  ) : (
+                    <IconButton
+                      edge="start"
+                      color="inherit"
+                      aria-label="edit"
+                      onClick={handlePrimaryAssets}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  )
+                }
                 <ListItemText>
                   <em>Primary asset - </em>
-                  <b>{primaryAsset}</b>
+                  <b>{primaryAsset?.id}</b>
                 </ListItemText>
               </ListItem>
             </List>
@@ -387,15 +462,18 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                      <InputLabel id="demo-simple-select-label">Available Libraries</InputLabel>
                       <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
+                        labelId="hidden-assets-select-label"
+                        id="hidden-assets-select"
+                        label="Available libraries"
+                        defaultValue={primaryAsset?.id}
                       >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {librariesIDS.map((id, i) => (
+                          <MenuItem value={id} key={i}>
+                            {id}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   </Grid>
@@ -416,7 +494,7 @@ const NewForm = ({ metadata }: any) => {
                   <EditIcon />
                 </IconButton>
                 <ListItemText>
-                  <em>Experience asset - </em> <b>{experienceAsset}</b>
+                  <em>Experience asset - </em> <b>{experienceAsset?.id}</b>
                 </ListItemText>
               </ListItem>
             </List>
@@ -425,15 +503,18 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                      <InputLabel id="demo-simple-select-label">Available Libraries</InputLabel>
                       <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
+                        labelId="hidden-assets-select-label"
+                        id="hidden-assets-select"
+                        label="Available libraries"
+                        defaultValue={experienceAsset?.id}
                       >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {librariesIDS.map((id, i) => (
+                          <MenuItem value={id} key={i}>
+                            {id}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   </Grid>
