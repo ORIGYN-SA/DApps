@@ -18,48 +18,11 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     border: '1px solid #dadde9',
   },
 }));
-
 const linkStyle = {
   width: 'auto',
   height: 'auto',
   textAlign: 'center',
   m: 2,
-};
-
-const ContentsType = {
-  "youtube": (props) => <YouTube htmlContent={props} />
-};
-
-const YouTube = (props: any) => {
-  const [embedLink, setEmbedLink] = React.useState('');
-  function getEmbedLink(url) {
-    var ID = '';
-    url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-    if (url[2] !== undefined) {
-      ID = url[2].split(/[^0-9a-z_\-]/i);
-      ID = ID[0];
-    } else {
-      ID = url;
-    }
-    return "https://www.youtube.com/embed/"+ID;
-  }
-  useEffect(() => {
-    setEmbedLink(getEmbedLink(props.htmlContent));
-  }, [props.htmlContent]);
-
-  return (
-    <div>
-      <iframe
-        width="560"
-        height="315"
-        src={embedLink}
-        title="YouTube video player"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-      />
-    </div>
-  );
 };
 
 const LibraryTextHtml = (props: any) => {
