@@ -1,5 +1,5 @@
-import React, { useEffect, useContext } from 'react'
-import Box from '@mui/material/Box'
+import React, { useEffect, useContext } from 'react';
+import Box from '@mui/material/Box';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { AuthContext } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
@@ -24,7 +24,43 @@ const linkStyle = {
   height: 'auto',
   textAlign: 'center',
   m: 2,
-}
+};
+
+const ContentsType = {
+  "youtube": (props) => <YouTube htmlContent={props} />
+};
+
+const YouTube = (props: any) => {
+  const [embedLink, setEmbedLink] = React.useState('');
+  function getEmbedLink(url) {
+    var ID = '';
+    url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+    if (url[2] !== undefined) {
+      ID = url[2].split(/[^0-9a-z_\-]/i);
+      ID = ID[0];
+    } else {
+      ID = url;
+    }
+    return "https://www.youtube.com/embed/"+ID;
+  }
+  useEffect(() => {
+    setEmbedLink(getEmbedLink(props.htmlContent));
+  }, [props.htmlContent]);
+
+  return (
+    <div>
+      <iframe
+        width="560"
+        height="315"
+        src={embedLink}
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      />
+    </div>
+  );
+};
 
 const LibraryTextHtml = (props: any) => {
   const { canisterId } = useContext(AuthContext);
@@ -32,27 +68,33 @@ const LibraryTextHtml = (props: any) => {
   const formattedLink = async () => {
     const link = await GetFormattedLink(canisterId, props.source);
     setLink(link);
-  }
+  };
+
   useEffect(() => {
-    if(canisterId){
+    if (canisterId) {
       formattedLink();
     }
   }, []);
 
   return (
     <Box sx={linkStyle}>
-        <HtmlTooltip
+      <HtmlTooltip
         title={
           <React.Fragment>
             <Typography color="inherit">Text/Html Type</Typography>
-            <em>{link}</em> <br></br><b><a href={link} target='_blank'>{'Open Link '}</a></b>{' '}
+            <em>{link}</em> <br></br>
+            <b>
+              <a href={link} target="_blank">
+                {'Open Link '}
+              </a>
+            </b>{' '}
           </React.Fragment>
         }
       >
         <InsertDriveFileIcon sx={{ fontSize: 50 }} />
       </HtmlTooltip>
     </Box>
-  )
-}
+  );
+};
 
 export default LibraryTextHtml;
