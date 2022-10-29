@@ -337,7 +337,9 @@ const NewForm = ({ metadata }: any) => {
       <Box>
         <List>
           <ListItemButton onClick={handleAssets}>
-            <ListItemText primary="Assets" />
+            <ListItemText>
+              <b>Assets</b>
+            </ListItemText>
             {open ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={open} timeout="auto" unmountOnExit>
