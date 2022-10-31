@@ -609,7 +609,7 @@ const NewForm = ({ metadata }: any) => {
                       id="outlined-basic" 
                       label="Name" 
                       variant="outlined"
-                      onInput={text => setNftName((event.target as HTMLInputElement).value)}
+                      onInput={text => setNftName(text.target.value)}
                        />
                     </FormControl>
                   </Grid>
