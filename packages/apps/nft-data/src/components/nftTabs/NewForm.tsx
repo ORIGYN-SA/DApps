@@ -45,16 +45,28 @@ const NewForm = ({ metadata }: any) => {
 
   //---------| 1. List - Collapse |---------//
   const [open, setOpen] = React.useState(false);
+  const [openApp, setOpenApp] = React.useState(false);
   const [openHidden, setOpenHidden] = React.useState(false);
   const [openPreview, setOpenPreview] = React.useState(false);
   const [openPrimary, setOpenPrimary] = React.useState(false);
   const [openExperience, setOpenExperience] = React.useState(false);
+  const [openName, setOpenName] = React.useState(false);
+  const [openCreator, setOpenCreator] = React.useState(false);
+  const [openPrincipal, setOpenPrincipal] = React.useState(false);
+  const [openTotal, setOpenTotal] = React.useState(false);
+
 
   const handleAssets = () => {
     setOpen(!open);
   };
+  const handleApps = () => {
+    setOpenApp(!openApp)
+  };
   const handleHiddenAssets = () => {
     setOpenHidden(!openHidden);
+  };
+  const handleCreator = () => {
+    setOpenCreator(!openCreator);
   };
   const handlePreviewAssets = () => {
     setOpenPreview(!openPreview);
@@ -64,6 +76,15 @@ const NewForm = ({ metadata }: any) => {
   };
   const handleExperienceAssets = () => {
     setOpenExperience(!openExperience);
+  };
+  const handleName = () => {
+    setOpenName(!openName)
+  };
+  const handlePrincipal = () => {
+    setOpenPrincipal(!openPrincipal);
+  };
+  const handleTotal = () => {
+    setOpenTotal(!openTotal);
   };
 
   const handleAppsChange = (index, event, i = 0) => {
@@ -279,6 +300,8 @@ const NewForm = ({ metadata }: any) => {
     }
   };
 
+  console.log("apps",apps)
+  
   return (
     <div>
       <Box>
@@ -444,6 +467,160 @@ const NewForm = ({ metadata }: any) => {
               </Box>
             </Collapse>
           </Collapse>
+          <ListItemButton onClick={handleApps}>
+            <ListItemText primary="Apps" />
+            {openApp ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openApp} timeout="auto" unmountOnExit>
+          <ListItem>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="edit"
+                  onClick={handleCreator}
+                >
+                  <EditIcon />
+                </IconButton>
+                <ListItemText>
+                  <em>Creator: {"  "}</em>
+                  <b>{apps[0]?.data['com.bm.sample.app.creator_name']}</b>
+                </ListItemText>
+          </ListItem>
+          <Collapse in={openCreator}>
+              <Box m={2}>
+                <Grid>
+                  <Grid item xl={6} m={1}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Creator</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Age"
+                      >
+                        <MenuItem value={10}>Creator1</MenuItem>
+                        <MenuItem value={20}>Creator2</MenuItem>
+                        <MenuItem value={30}>Creator3</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xl={6} m={1}>
+                    <Button variant="contained">Save</Button>
+                  </Grid>
+                </Grid>
+              </Box>
+             </Collapse>
+             <ListItem>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="edit"
+                  onClick={handleName}
+                >
+                  <EditIcon />
+                </IconButton>
+                <ListItemText>
+                  <em>Name: {"  "}</em>
+                  <b>{apps[0]?.data['com.bm.sample.app.name']}</b>
+                </ListItemText>
+          </ListItem>
+          <Collapse in={openName}>
+              <Box m={2}>
+                <Grid>
+                  <Grid item xl={6} m={1}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Name</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Age"
+                      >
+                        <MenuItem value={10}>Name1</MenuItem>
+                        <MenuItem value={20}>Name2</MenuItem>
+                        <MenuItem value={30}>Name3</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xl={6} m={1}>
+                    <Button variant="contained">Save</Button>
+                  </Grid>
+                </Grid>
+              </Box>
+             </Collapse>
+             <ListItem>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="edit"
+                  onClick={handlePrincipal}
+                >
+                  <EditIcon />
+                </IconButton>
+                <ListItemText>
+                  <em>Principal: {"  "}</em>
+                  <b>{apps[0]?.data['com.bm.sample.app.creator_principal']}</b>
+                </ListItemText>
+          </ListItem>
+          <Collapse in={openPrincipal}>
+              <Box m={2}>
+                <Grid>
+                  <Grid item xl={6} m={1}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Principal</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Age"
+                      >
+                        <MenuItem value={10}>Principal1</MenuItem>
+                        <MenuItem value={20}>Principal2</MenuItem>
+                        <MenuItem value={30}>Principal3</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xl={6} m={1}>
+                    <Button variant="contained">Save</Button>
+                  </Grid>
+                </Grid>
+              </Box>
+             </Collapse>
+             <ListItem>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="edit"
+                  onClick={handleTotal}
+                >
+                  <EditIcon />
+                </IconButton>
+                <ListItemText>
+                  <em>Collection total: {"  "}</em>
+                  <b>{apps[0]?.data['com.bm.sample.app.total_in_creation']}</b>
+                </ListItemText>
+          </ListItem>
+          <Collapse in={openTotal}>
+              <Box m={2}>
+                <Grid>
+                  <Grid item xl={6} m={1}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Total</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Age"
+                      >
+                        <MenuItem value={10}>Total1</MenuItem>
+                        <MenuItem value={20}>Total2</MenuItem>
+                        <MenuItem value={30}>Total3</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xl={6} m={1}>
+                    <Button variant="contained">Save</Button>
+                  </Grid>
+                </Grid>
+              </Box>
+             </Collapse>
+            </Collapse>
         </List>
       </Box>
     </div>
@@ -451,3 +628,4 @@ const NewForm = ({ metadata }: any) => {
 };
 
 export default NewForm;
+
