@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext,getTokenId,getCanisterId } from '@dapp/features-authentication';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import { Grid, TextField, Button, Box, Typography, Icon } from '@mui/material';
+import { Grid, TextField, Button, Box } from '@mui/material';
 import pick from 'lodash/pick';
 import { Principal } from '@dfinity/principal';
 import { NFTUpdateRequest, UpdateRequest, CandyValue } from './types/origyn_nft_reference.did';
@@ -22,7 +22,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 // mintJs
 import { getNft, getNftCollectionInfo, OrigynClient } from '@origyn-sa/mintjs';
-import { ControlPointSharp } from '@mui/icons-material';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -128,9 +127,8 @@ const NewForm = ({ metadata }: any) => {
     setLibraryFields(data);
   };
 
-  const { tokenId, actor, canisterId } = useContext(AuthContext);
+  const { actor } = useContext(AuthContext);
   const [nft, setNft] = useState<any>({});
-
   const [nftName, setNftName] = useState<string>('brain 1');
   const [nftCol, setNftCol] = useState<BigInt>(16n);
   const [nftOwner, setNftOwner] = useState<string>(
@@ -140,8 +138,9 @@ const NewForm = ({ metadata }: any) => {
 
   useEffect(() => {
     if (actor) {
+      console.log('currtoken',getTokenId());
       actor
-        .nft_origyn(tokenId)
+        .nft_origyn(getTokenId())
         .then((r) => {
           console.log(r);
           setNft(r);
@@ -151,8 +150,8 @@ const NewForm = ({ metadata }: any) => {
   }, []);
 
   const getLibrariesIds = async () => {
-    await OrigynClient.getInstance().init(true, canisterId);
-    const response = await getNft(tokenId);
+    await OrigynClient.getInstance().init(true,await getCanisterId());
+    const response = await getNft(getTokenId());
     console.log('rrrr', response);
     if (response.ok) {
       const libraries = response.ok.metadata.Class.filter((res) => {
@@ -170,8 +169,8 @@ const NewForm = ({ metadata }: any) => {
   };
 
   const getAsset = async () => {
-    await OrigynClient.getInstance().init(true, canisterId);
-    const response = await getNft(tokenId);
+    await OrigynClient.getInstance().init(true, await getCanisterId());
+    const response = await getNft(getTokenId());
     if (response.ok) {
       const obj_preview_asset: Asset = {
         id: await response.ok.metadata.Class.filter((res) => {
@@ -217,8 +216,6 @@ const NewForm = ({ metadata }: any) => {
   useEffect(() => {
     getLibrariesIds();
     getAsset();
-    console.log('token', tokenId);
-    console.log('canister', canisterId);
     if (Object.entries(metadata).length) {
       setId(pick(metadata, ['id']).id);
       setApps(pick(metadata, ['__apps']).__apps);
@@ -227,7 +224,6 @@ const NewForm = ({ metadata }: any) => {
   }, [metadata]);
 
   const submitData = async () => {
-    const nftId = nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text;
 
     let myCandy: CandyValue = {
       Class: [
@@ -326,18 +322,18 @@ const NewForm = ({ metadata }: any) => {
     console.log('this is myCandy', myCandy);
 
     let ObjUpdateRequest: UpdateRequest = {
-      id: nftId,
+      id: getTokenId(),
       update: [],
     };
 
     let ObjNftUpdateRequest: NFTUpdateRequest = {
       update: {
-        token_id: nftId,
+        token_id: getTokenId(),
         update: ObjUpdateRequest,
         app_id: 'com.bm.sample.app.name',
       },
       replace: {
-        token_id: nftId,
+        token_id: getTokenId(),
         data: myCandy,
       },
     };
