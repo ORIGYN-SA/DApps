@@ -551,7 +551,9 @@ const NewForm = ({ metadata }: any) => {
             </Collapse>
           </Collapse>
           <ListItemButton onClick={handleApps}>
-            <ListItemText primary="Apps" />
+            <ListItemText>
+              <b>Apps</b>
+            </ListItemText>
             {openApp ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openApp} timeout="auto" unmountOnExit>
