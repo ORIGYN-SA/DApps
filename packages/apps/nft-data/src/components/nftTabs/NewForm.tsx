@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { AuthContext,getTokenId,getCanisterId } from '@dapp/features-authentication';
+import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import { Grid, TextField, Button, Box } from '@mui/material';
@@ -22,6 +22,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 // mintJs
 import { getNft, getNftCollectionInfo, OrigynClient } from '@origyn-sa/mintjs';
+import { ConnectingAirportsOutlined } from '@mui/icons-material';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -44,6 +45,7 @@ const NewForm = ({ metadata }: any) => {
   const [previewAsset, setPreviewAsset] = useState<Asset>();
   const [primaryAsset, setPrimaryAsset] = useState<Asset>();
   const [experienceAsset, setExperienceAsset] = useState<Asset>();
+  const [appsNames, setAppsNames] = useState<any>([]);
 
   const [id, setId] = useState('');
   const [apps, setApps] = useState([]);
@@ -61,12 +63,11 @@ const NewForm = ({ metadata }: any) => {
   const [openPrincipal, setOpenPrincipal] = React.useState(false);
   const [openTotal, setOpenTotal] = React.useState(false);
 
-
   const handleAssets = () => {
     setOpen(!open);
   };
   const handleApps = () => {
-    setOpenApp(!openApp)
+    setOpenApp(!openApp);
   };
   const handleHiddenAssets = () => {
     setOpenHidden(!openHidden);
@@ -84,7 +85,7 @@ const NewForm = ({ metadata }: any) => {
     setOpenExperience(!openExperience);
   };
   const handleName = () => {
-    setOpenName(!openName)
+    setOpenName(!openName);
   };
   const handlePrincipal = () => {
     setOpenPrincipal(!openPrincipal);
@@ -138,7 +139,6 @@ const NewForm = ({ metadata }: any) => {
 
   useEffect(() => {
     if (actor) {
-      console.log('currtoken',getTokenId());
       actor
         .nft_origyn(getTokenId())
         .then((r) => {
@@ -150,7 +150,7 @@ const NewForm = ({ metadata }: any) => {
   }, []);
 
   const getLibrariesIds = async () => {
-    await OrigynClient.getInstance().init(true,await getCanisterId());
+    await OrigynClient.getInstance().init(true, await getCanisterId());
     const response = await getNft(getTokenId());
     console.log('rrrr', response);
     if (response.ok) {
@@ -172,42 +172,72 @@ const NewForm = ({ metadata }: any) => {
     await OrigynClient.getInstance().init(true, await getCanisterId());
     const response = await getNft(getTokenId());
     if (response.ok) {
-      const obj_preview_asset: Asset = {
-        id: await response.ok.metadata.Class.filter((res) => {
-          return res.name === 'preview_asset';
-        })[0].value.Text,
-        immutable: await response.ok.metadata.Class.filter((res) => {
-          return res.name === 'preview_asset';
-        })[0].immutable,
-      };
-      const obj_hidden_asset: Asset = {
-        id: await response.ok.metadata.Class.filter((res) => {
-          return res.name === 'hidden_asset';
-        })[0].value.Text,
-        immutable: await response.ok.metadata.Class.filter((res) => {
-          return res.name === 'hidden_asset';
-        })[0].immutable,
-      };
-      const obj_primary_asset: Asset = {
-        id: await response.ok.metadata.Class.filter((res) => {
-          return res.name === 'primary_asset';
-        })[0].value.Text,
-        immutable: await response.ok.metadata.Class.filter((res) => {
-          return res.name === 'primary_asset';
-        })[0].immutable,
-      };
-      const obj_experience_asset: Asset = {
-        id: await response.ok.metadata.Class.filter((res) => {
-          return res.name === 'experience_asset';
-        })[0].value.Text,
-        immutable: await response.ok.metadata.Class.filter((res) => {
-          return res.name === 'experience_asset';
-        })[0].immutable,
-      };
-      setPreviewAsset(obj_preview_asset);
-      setHiddenAsset(obj_hidden_asset);
-      setPrimaryAsset(obj_primary_asset);
-      setExperienceAsset(obj_experience_asset);
+      // Preview Asset
+      try {
+        const obj_preview_asset: Asset = {
+          id: await response.ok.metadata.Class.filter((res) => {
+            return res.name === 'preview_asset';
+          })[0].value.Text,
+          immutable: await response.ok.metadata.Class.filter((res) => {
+            return res.name === 'preview_asset';
+          })[0].immutable,
+        };
+        setPreviewAsset(obj_preview_asset);
+      } catch (e) {
+        console.log(e);
+      }
+      // Hidden Asset
+      try {
+        const obj_hidden_asset: Asset = {
+          id: await response.ok.metadata.Class.filter((res) => {
+            return res.name === 'hidden_asset';
+          })[0].value.Text,
+          immutable: await response.ok.metadata.Class.filter((res) => {
+            return res.name === 'hidden_asset';
+          })[0].immutable,
+        };
+        setHiddenAsset(obj_hidden_asset);
+      } catch (e) {
+        console.log(e);
+      }
+      // Primary Asset
+      try {
+        const obj_primary_asset: Asset = {
+          id: await response.ok.metadata.Class.filter((res) => {
+            return res.name === 'primary_asset';
+          })[0].value.Text,
+          immutable: await response.ok.metadata.Class.filter((res) => {
+            return res.name === 'primary_asset';
+          })[0].immutable,
+        };
+        setPrimaryAsset(obj_primary_asset);
+      } catch (e) {
+        console.log(e);
+      }
+      // Experience Asset
+      try {
+        const obj_experience_asset: Asset = {
+          id: await response.ok.metadata.Class.filter((res) => {
+            return res.name === 'experience_asset';
+          })[0].value.Text,
+          immutable: await response.ok.metadata.Class.filter((res) => {
+            return res.name === 'experience_asset';
+          })[0].immutable,
+        };
+        setExperienceAsset(obj_experience_asset);
+      } catch (e) {
+        console.log(e);
+      }
+
+      // Data Names
+      try {
+        const DataNames = await response.ok.metadata.Class.filter((res) => {
+          return res.name === '__apps';
+        })[0].value.Array.thawed[0].Class[4].value.Class;
+        setAppsNames(DataNames);
+      } catch (e) {
+        console.log(e);
+      }
     } else if (response.err) {
       console.log(response.err);
     }
@@ -215,22 +245,23 @@ const NewForm = ({ metadata }: any) => {
 
   useEffect(() => {
     getLibrariesIds();
-    getAsset();
     if (Object.entries(metadata).length) {
       setId(pick(metadata, ['id']).id);
       setApps(pick(metadata, ['__apps']).__apps);
       setLibraryFields(pick(metadata, ['library']).library);
     }
-  }, [metadata]);
+  }, [metadata, actor]);
+  useEffect(() => {
+    getAsset();
+  }, []);
 
   const submitData = async () => {
-
     let myCandy: CandyValue = {
       Class: [
         {
           name: 'app_id',
           value: {
-            Text: 'com.bm.sample.app.name',
+            Text: appsNames[0].value.Text,
           },
           immutable: true,
         },
@@ -293,19 +324,19 @@ const NewForm = ({ metadata }: any) => {
           name: 'data',
           value: {
             Class: [
-              { name: 'com.bm.sample.app.name', value: { Text: nftName }, immutable: false },
+              { name: appsNames[0].name, value: { Text: nftName }, immutable: false },
               {
-                name: 'com.bm.sample.app.total_in_collection',
+                name: appsNames[1].name,
                 value: { Nat: 16n },
                 immutable: false,
               },
               {
-                name: 'com.bm.sample.app.creator_name',
+                name: appsNames[2].name,
                 value: { Text: nftCreator },
                 immutable: false,
               },
               {
-                name: 'com.bm.sample.app.creator_principal',
+                name: appsNames[3].name,
                 value: {
                   Principal: Principal.fromText(nftOwner),
                 },
@@ -330,7 +361,7 @@ const NewForm = ({ metadata }: any) => {
       update: {
         token_id: getTokenId(),
         update: ObjUpdateRequest,
-        app_id: 'com.bm.sample.app.name',
+        app_id: appsNames[0].value.Text,
       },
       replace: {
         token_id: getTokenId(),
@@ -349,9 +380,6 @@ const NewForm = ({ metadata }: any) => {
     }
   };
 
-  console.log("apps",apps)
-
-  
   return (
     <div>
       <Box>
@@ -411,20 +439,18 @@ const NewForm = ({ metadata }: any) => {
             </Collapse>
             <List component="div">
               <ListItem>
-                {
-                  previewAsset?.immutable ? (
-                    <></>
-                  ) : (
-                    <IconButton
-                      edge="start"
-                      color="inherit"
-                      aria-label="edit"
-                      onClick={handlePreviewAssets}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  )
-                }
+                {previewAsset?.immutable ? (
+                  <></>
+                ) : (
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="edit"
+                    onClick={handlePreviewAssets}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                )}
                 <ListItemText>
                   <em>Preview asset - </em>
                   <b>{previewAsset?.id}</b>
@@ -459,20 +485,18 @@ const NewForm = ({ metadata }: any) => {
             </Collapse>
             <List component="div">
               <ListItem>
-                {
-                  primaryAsset?.immutable ? (
-                    <></>
-                  ) : (
-                    <IconButton
-                      edge="start"
-                      color="inherit"
-                      aria-label="edit"
-                      onClick={handlePrimaryAssets}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  )
-                }
+                {primaryAsset?.immutable ? (
+                  <></>
+                ) : (
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="edit"
+                    onClick={handlePrimaryAssets}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                )}
                 <ListItemText>
                   <em>Primary asset - </em>
                   <b>{primaryAsset?.id}</b>
@@ -507,14 +531,18 @@ const NewForm = ({ metadata }: any) => {
             </Collapse>
             <List component="div">
               <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handleExperienceAssets}
-                >
-                  <EditIcon />
-                </IconButton>
+                {experienceAsset?.immutable ? (
+                  <></>
+                ) : (
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="edit"
+                    onClick={handleExperienceAssets}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                )}
                 <ListItemText>
                   <em>Experience asset - </em> <b>{experienceAsset?.id}</b>
                 </ListItemText>
@@ -554,31 +582,26 @@ const NewForm = ({ metadata }: any) => {
             {openApp ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openApp} timeout="auto" unmountOnExit>
-          <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handleCreator}
-                >
-                  <EditIcon />
-                </IconButton>
-                <ListItemText>
-                  <em>Creator: {"  "}</em>
-                  <b>{apps[0]?.data['com.bm.sample.app.creator_name']}</b>
-                </ListItemText>
-          </ListItem>
-          <Collapse in={openCreator}>
+            <ListItem>
+              <IconButton edge="start" color="inherit" aria-label="edit" onClick={handleCreator}>
+                <EditIcon />
+              </IconButton>
+              <ListItemText>
+                <em>Creator: {'  '}</em>
+                <b>{apps[0]?.data[appsNames[2]?.name]}</b>
+              </ListItemText>
+            </ListItem>
+            <Collapse in={openCreator}>
               <Box m={2}>
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                    <TextField 
-                    id="outlined-basic" 
-                    label="Creator" 
-                    variant="outlined"
-                    onInput={text => setNftCreator(text.target.value)}
-                    />
+                      <TextField
+                        id="outlined-basic"
+                        label="Creator"
+                        variant="outlined"
+                        onInput={(text) => setNftCreator(text.target.value)}
+                      />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
@@ -586,110 +609,94 @@ const NewForm = ({ metadata }: any) => {
                   </Grid>
                 </Grid>
               </Box>
-             </Collapse>
-             <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handleName}
-                >
-                  <EditIcon />
-                </IconButton>
-                <ListItemText>
-                  <em>Name: {"  "}</em>
-                  <b>{apps[0]?.data['com.bm.sample.app.name']}</b>
-                </ListItemText>
-          </ListItem>
-          <Collapse in={openName}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <TextField 
-                      id="outlined-basic" 
-                      label="Name" 
-                      variant="outlined"
-                      onInput={text => setNftName(text.target.value)}
-                       />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button 
-                    variant="contained"
-                    onClick={submitData}
-                    >Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-             </Collapse>
-             <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handlePrincipal}
-                >
-                  <EditIcon />
-                </IconButton>
-                <ListItemText>
-                  <em>Principal: {"  "}</em>
-                  <b>{apps[0]?.data['com.bm.sample.app.creator_principal']}</b>
-                </ListItemText>
-          </ListItem>
-          <Collapse in={openPrincipal}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                    <TextField 
-                    id="outlined-basic" 
-                    label="Principal" 
-                    variant="outlined"
-                    onInput={text => setNftOwner(text.target.value)}
-                    />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-             </Collapse>
-             <ListItem>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="edit"
-                  onClick={handleTotal}
-                >
-                  <EditIcon />
-                </IconButton>
-                <ListItemText>
-                  <em>Collection total: {"  "}</em>
-                  <b>{apps[0]?.data['com.bm.sample.app.total_in_collection']}</b>
-                </ListItemText>
-          </ListItem>
-          <Collapse in={openTotal}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                    <TextField 
-                    id="outlined-basic" 
-                    label="Total" 
-                    variant="outlined"
-                    onInput={text => setNftCol(text.target.value)}
-                    />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-             </Collapse>
             </Collapse>
+            <ListItem>
+              <IconButton edge="start" color="inherit" aria-label="edit" onClick={handleName}>
+                <EditIcon />
+              </IconButton>
+              <ListItemText>
+                <em>Name: {'  '}</em>
+                <b>{appsNames[0]?.value.Text}</b>
+              </ListItemText>
+            </ListItem>
+            <Collapse in={openName}>
+              <Box m={2}>
+                <Grid>
+                  <Grid item xl={6} m={1}>
+                    <FormControl fullWidth>
+                      <TextField
+                        id="outlined-basic"
+                        label="Name"
+                        variant="outlined"
+                        onInput={(text) => setNftName(text.target.value)}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xl={6} m={1}>
+                    <Button variant="contained" onClick={submitData}>
+                      Save
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Collapse>
+            <ListItem>
+              <IconButton edge="start" color="inherit" aria-label="edit" onClick={handlePrincipal}>
+                <EditIcon />
+              </IconButton>
+              <ListItemText>
+                <em>Principal: {'  '}</em>
+                <b>{apps[0]?.data[appsNames[3]?.name]}</b>
+              </ListItemText>
+            </ListItem>
+            <Collapse in={openPrincipal}>
+              <Box m={2}>
+                <Grid>
+                  <Grid item xl={6} m={1}>
+                    <FormControl fullWidth>
+                      <TextField
+                        id="outlined-basic"
+                        label="Principal"
+                        variant="outlined"
+                        onInput={(text) => setNftOwner(text.target.value)}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xl={6} m={1}>
+                    <Button variant="contained">Save</Button>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Collapse>
+            <ListItem>
+              <IconButton edge="start" color="inherit" aria-label="edit" onClick={handleTotal}>
+                <EditIcon />
+              </IconButton>
+              <ListItemText>
+                <em>Collection total: {'  '}</em>
+                <b>{apps[0]?.data[appsNames[1]?.name]}</b>
+              </ListItemText>
+            </ListItem>
+            <Collapse in={openTotal}>
+              <Box m={2}>
+                <Grid>
+                  <Grid item xl={6} m={1}>
+                    <FormControl fullWidth>
+                      <TextField
+                        id="outlined-basic"
+                        label="Total"
+                        variant="outlined"
+                        onInput={(text) => setNftCol(text.target.value)}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xl={6} m={1}>
+                    <Button variant="contained">Save</Button>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Collapse>
+          </Collapse>
         </List>
       </Box>
     </div>
@@ -697,4 +704,3 @@ const NewForm = ({ metadata }: any) => {
 };
 
 export default NewForm;
-
