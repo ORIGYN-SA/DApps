@@ -605,11 +605,19 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <TextField id="outlined-basic" label="Name" variant="outlined" />
+                      <TextField 
+                      id="outlined-basic" 
+                      label="Name" 
+                      variant="outlined"
+                      onInput={text => setNftName((event.target as HTMLInputElement).value)}
+                       />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
+                    <Button 
+                    variant="contained"
+                    onClick={submitData}
+                    >Save</Button>
                   </Grid>
                 </Grid>
               </Box>
