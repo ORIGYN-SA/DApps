@@ -577,7 +577,12 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                    <TextField id="outlined-basic" label="Creator" variant="outlined" />
+                    <TextField 
+                    id="outlined-basic" 
+                    label="Creator" 
+                    variant="outlined"
+                    onInput={text => setNftCreator(text.target.value)}
+                    />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
@@ -641,7 +646,12 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                    <TextField id="outlined-basic" label="Principal" variant="outlined" />
+                    <TextField 
+                    id="outlined-basic" 
+                    label="Principal" 
+                    variant="outlined"
+                    onInput={text => setNftOwner(text.target.value)}
+                    />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
@@ -669,7 +679,12 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                    <TextField id="outlined-basic" label="Total" variant="outlined" />
+                    <TextField 
+                    id="outlined-basic" 
+                    label="Total" 
+                    variant="outlined"
+                    onInput={text => setNftCol(text.target.value)}
+                    />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
