@@ -354,6 +354,7 @@ const NewForm = ({ metadata }: any) => {
   };
 
   console.log("apps",apps)
+
   
   return (
     <div>
@@ -677,7 +678,7 @@ const NewForm = ({ metadata }: any) => {
                 </IconButton>
                 <ListItemText>
                   <em>Collection total: {"  "}</em>
-                  <b>{apps[0]?.data['com.bm.sample.app.total_in_creation']}</b>
+                  <b>{apps[0]?.data['com.bm.sample.app.total_in_collection']}</b>
                 </ListItemText>
           </ListItem>
           <Collapse in={openTotal}>
