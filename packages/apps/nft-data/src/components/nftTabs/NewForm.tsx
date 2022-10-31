@@ -575,16 +575,7 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Creator</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
-                      >
-                        <MenuItem value={10}>Creator1</MenuItem>
-                        <MenuItem value={20}>Creator2</MenuItem>
-                        <MenuItem value={30}>Creator3</MenuItem>
-                      </Select>
+                    <TextField id="outlined-basic" label="Creator" variant="outlined" />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
@@ -612,16 +603,7 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Name</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
-                      >
-                        <MenuItem value={10}>Name1</MenuItem>
-                        <MenuItem value={20}>Name2</MenuItem>
-                        <MenuItem value={30}>Name3</MenuItem>
-                      </Select>
+                      <TextField id="outlined-basic" label="Name" variant="outlined" />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
@@ -649,16 +631,7 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Principal</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
-                      >
-                        <MenuItem value={10}>Principal1</MenuItem>
-                        <MenuItem value={20}>Principal2</MenuItem>
-                        <MenuItem value={30}>Principal3</MenuItem>
-                      </Select>
+                    <TextField id="outlined-basic" label="Principal" variant="outlined" />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
@@ -686,16 +659,7 @@ const NewForm = ({ metadata }: any) => {
                 <Grid>
                   <Grid item xl={6} m={1}>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Total</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Age"
-                      >
-                        <MenuItem value={10}>Total1</MenuItem>
-                        <MenuItem value={20}>Total2</MenuItem>
-                        <MenuItem value={30}>Total3</MenuItem>
-                      </Select>
+                    <TextField id="outlined-basic" label="Total" variant="outlined" />
                     </FormControl>
                   </Grid>
                   <Grid item xl={6} m={1}>
