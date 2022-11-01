@@ -21,8 +21,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 // mintJs
-import { getNft, getNftCollectionInfo, OrigynClient } from '@origyn-sa/mintjs';
-import { ConnectingAirportsOutlined } from '@mui/icons-material';
+import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -152,7 +152,6 @@ const NewForm = ({ metadata }: any) => {
   const getLibrariesIds = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId());
     const response = await getNft(getTokenId());
-    console.log('rrrr', response);
     if (response.ok) {
       const libraries = response.ok.metadata.Class.filter((res) => {
         return res.name === 'library';
@@ -170,6 +169,7 @@ const NewForm = ({ metadata }: any) => {
 
   const getAsset = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId());
+    if(getTokenId() !== ''){
     const response = await getNft(getTokenId());
     if (response.ok) {
       // Preview Asset
@@ -241,6 +241,21 @@ const NewForm = ({ metadata }: any) => {
     } else if (response.err) {
       console.log(response.err);
     }
+  }else{
+    console.log('no token id - collectionMetadata');
+    console.log('collectionMetadata', await getNftCollectionMeta());
+
+    const response = await getNftCollectionMeta();
+     // Data Names
+     try {
+      const DataNames = await response.ok.metadata[0].Class.filter((res) => {
+        return res.name === '__apps';
+      })[0].value.Array.thawed[0].Class[4].value.Class;
+      setAppsNames(DataNames);
+    } catch (e) {
+      console.log(e);
+    }
+  }
   };
 
   useEffect(() => {
@@ -697,6 +712,11 @@ const NewForm = ({ metadata }: any) => {
               </Box>
             </Collapse>
           </Collapse>
+          <ListItemButton>
+            <ListItemText>
+              <b>Libraries</b>
+            </ListItemText>
+          </ListItemButton>
         </List>
       </Box>
     </div>

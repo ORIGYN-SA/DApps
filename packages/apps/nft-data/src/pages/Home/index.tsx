@@ -12,6 +12,10 @@ const currentCanisterId = async () => {
   const canisterId = await getCanisterId();
   return canisterId;
 };
+const currTokenId = async () => {
+  const tokenId = await getTokenId();
+  return tokenId;
+};
 
 const Home = () => {
   const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
@@ -48,10 +52,12 @@ const Home = () => {
       if (actor && canisterId) {
         if (tokenId) {
           try {
-            const response = await fetch(`https://${await currentCanisterId()}.raw.ic0.app/-/${tokenId}/info`);
-            const result = await response.text();
-            if (result.search('"is_soulbound":,')) {
-              setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
+            const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId }/info`);
+            const result = await (await response.text()).toString();
+            // if there are empty values (formatted in the wrong way) 
+            // we replace them with an empty string
+            if (result.search(':,')) {
+              setNFTData(JSON.parse(result.replaceAll(':,', ':"",')));
             } else {
               setNFTData(JSON.parse(result));
             }
@@ -62,8 +68,9 @@ const Home = () => {
           try {
             const response = await fetch(`https://${await currentCanisterId()}.raw.ic0.app/collection/info`);
             const result = await response.text();
-            if (result.search('"is_soulbound":,')) {
-              setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
+            console.log('result', JSON.parse(result));
+            if (result.search(':,')) {
+              setNFTData(JSON.parse(result.replaceAll(':,', ':"",')));
             } else {
               setNFTData(JSON.parse(result));
             }
