@@ -53,6 +53,11 @@ const ColumnView = () => {
     const canisterId = await getCanisterId();
     return canisterId;
   };
+  const currentUrlTokenId = async () => {
+    const tokenId = await getTokenId();
+    return tokenId;
+  };
+
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
     setOpen(!open);
@@ -221,7 +226,7 @@ const ColumnView = () => {
   }, []);
 
   const checkAndSetOwner = async () => {
-    const checked = await checkOwner(principal, await currentCanisterId(), currentTokenId);
+    const checked = await checkOwner(principal, await currentCanisterId(),  await currentUrlTokenId());
     setOwner(checked);
   };
 

@@ -9,7 +9,6 @@
 
 import { Principal } from '@dfinity/principal';
 import { getNft,getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
-
 export const checkOwner = async (principal: Principal, currCanisterId, currTokenId) => {
 
     const UserPrincipal = principal.toText();
@@ -23,13 +22,13 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
           })[0].value.Text);
 
     // SELECTED NFT OWNER
-    const NftOwner: Principal = await getNft(currTokenId).then((r) =>
+    const NftOwner: Principal = await getNft(await currTokenId).then((r) =>
         r.ok.metadata.Class.filter((res) => {
             return res.name === 'owner';
         })[0].value.Principal.toText(),);
 
     // WRITE PERMISSIONS SELECTED NFT
-    const ArrayAllowed  = await getNft(currTokenId).then((r) =>
+    const ArrayAllowed  = await getNft(await currTokenId).then((r) =>
     r.ok.metadata.Class.filter((res) => {
         return res.name === '__apps';
     })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed);
