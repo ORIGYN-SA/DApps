@@ -156,7 +156,7 @@ const FormTab = ({ metadata }: any) => {
         return (
           <Grid key={`${lib}+${index}`} sx={{ marginTop: '20px' }} container spacing={2}>
             <Grid item xs={2}></Grid>
-            <Grid item xs={2} sx={{}}>{`ibrary ${i + 1}`}</Grid>
+            <Grid item xs={2} sx={{}}>{`library ${i + 1}`}</Grid>
             <Grid item xs={8}>
               <List>
                 {Object.keys(lib).map((item, j) => (
