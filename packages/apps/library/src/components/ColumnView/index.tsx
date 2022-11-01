@@ -109,10 +109,10 @@ const ColumnView = () => {
     // As default-general view of libraries the tokenId is empty
     if (actor) {
       OrigynClient.getInstance().init(true, await currentCanisterId());
-      getNft('').then((r) => {
-        console.log('RRRR', r);
+      getNftCollectionMeta().then((r) => {
+        console.log('CollMeta', r);
         setDefaultLibraryData(
-          r.ok.metadata.Class.filter((res) => {
+          r.ok.metadata[0].Class.filter((res) => {
             return res.name === 'library';
           })[0].value.Array.thawed,
         );
@@ -197,7 +197,7 @@ const ColumnView = () => {
     setCollectionNft([]);
     OrigynClient.getInstance().init(true, await currentCanisterId());
     const response = await getNftCollectionMeta([]);
-    //console.log('response', response);
+    console.log('responseCollectionMeta', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
@@ -264,7 +264,7 @@ const ColumnView = () => {
                         onClick={(event) => handleClickLib(event, 1)}
                         className={classes.noPadding}
                       >
-                        <ListItemText sx={{ paddingLeft: 1 }} primary="Libraries" />
+                        <ListItemText sx={{ paddingLeft: 1 }} primary="Collection" />
                       </ListItemButton>
                     </ListItem>
                   </Grid>
