@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import { Grid, TextField, Button, Box } from '@mui/material';
+import { Grid, TextField, Button, Box, Divider } from '@mui/material';
 import pick from 'lodash/pick';
 import { Principal } from '@dfinity/principal';
 import { NFTUpdateRequest, UpdateRequest, CandyValue } from './types/origyn_nft_reference.did';
@@ -15,14 +15,10 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
+
 // mintJs
 import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
-
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -37,18 +33,25 @@ type Asset = {
   immutable: boolean;
 };
 
+type App = {
+  name : string;
+  value : string | number;
+  immutable : boolean;
+}
+
 const NewForm = ({ metadata }: any) => {
   // array with ids of libraries for the current token
   const [librariesIDS, setLibrariesIDS] = useState<any>([]);
+  // object with all the data
   const [owner, setOwner] = useState('');
   const [hiddenAsset, setHiddenAsset] = useState<Asset>();
   const [previewAsset, setPreviewAsset] = useState<Asset>();
   const [primaryAsset, setPrimaryAsset] = useState<Asset>();
   const [experienceAsset, setExperienceAsset] = useState<Asset>();
   const [appsNames, setAppsNames] = useState<any>([]);
-
   const [id, setId] = useState('');
-  const [apps, setApps] = useState([]);
+  const [apps, setApps] = useState<App[]>([]);
+  const [appId, setAppId] = useState('');
   const [libraryFields, setLibraryFields] = useState([]);
 
   //---------| 1. List - Collapse |---------//
@@ -143,7 +146,6 @@ const NewForm = ({ metadata }: any) => {
         .nft_origyn(getTokenId())
         .then((r) => {
           console.log(r);
-          setNft(r);
         })
         .catch(console.log);
     }
@@ -169,16 +171,160 @@ const NewForm = ({ metadata }: any) => {
 
   const getAsset = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId());
-    if(getTokenId() !== ''){
-    const response = await getNft(getTokenId());
-    if (response.ok) {
+    if (getTokenId()) {
+      const response = await getNft(getTokenId());
+      if (response.ok) {
+        // Id
+        try {
+          setId(
+            await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'id';
+            })[0].value.Text,
+          );
+        } catch (e) {
+          console.log(e);
+        }
+        // Owner
+        try {
+          setOwner(
+            await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'owner';
+            })[0].value.Principal.toText(),
+          );
+        } catch (e) {
+          console.log(e);
+        }
+        // Preview Asset
+        try {
+          const obj_preview_asset: Asset = {
+            id: await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'preview_asset';
+            })[0].value.Text,
+            immutable: await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'preview_asset';
+            })[0].immutable,
+          };
+          setPreviewAsset(obj_preview_asset);
+        } catch (e) {
+          console.log(e);
+        }
+        // Hidden Asset
+        try {
+          const obj_hidden_asset: Asset = {
+            id: await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'hidden_asset';
+            })[0].value.Text,
+            immutable: await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'hidden_asset';
+            })[0].immutable,
+          };
+          setHiddenAsset(obj_hidden_asset);
+        } catch (e) {
+          console.log(e);
+        }
+        // Primary Asset
+        try {
+          const obj_primary_asset: Asset = {
+            id: await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'primary_asset';
+            })[0].value.Text,
+            immutable: await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'primary_asset';
+            })[0].immutable,
+          };
+          setPrimaryAsset(obj_primary_asset);
+        } catch (e) {
+          console.log(e);
+        }
+        // Experience Asset
+        try {
+          const obj_experience_asset: Asset = {
+            id: await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'experience_asset';
+            })[0].value.Text,
+            immutable: await response.ok.metadata.Class.filter((res) => {
+              return res.name === 'experience_asset';
+            })[0].immutable,
+          };
+          setExperienceAsset(obj_experience_asset);
+        } catch (e) {
+          console.log(e);
+        }
+
+        // Data Names
+        try {
+          setAppsNames(
+            await response.ok.metadata.Class.filter((res) => {
+              return res.name === '__apps';
+            })[0].value.Array.thawed[0].Class[4].value.Class,
+          );
+        } catch (e) {
+          console.log(e);
+        }
+      } else if (response.err) {
+        console.log(response.err);
+      }
+
+      // Apps
+      try {
+        const apps = await response.ok.metadata.Class.filter((res) => {
+          return res.name === '__apps';
+        })[0].value.Array.thawed[0].Class[4].value.Class;
+        let i; 
+        let appsArray : App[]= [];
+        for(i in apps) {
+
+          console.log(apps[i]);
+          if(apps[i].value.hasOwnProperty('Principal')) {
+            appsArray.push({
+              name: apps[i].name,
+              value: apps[i].value.Principal.toText(),
+              immutable: apps[i].immutable,
+            })
+          }else if(apps[i].value.hasOwnProperty('Nat')){
+            appsArray.push({
+              name: apps[i].name,
+              value: apps[i].value.Nat.toString(),
+              immutable: apps[i].immutable,
+            })
+          }else{
+              appsArray.push({
+                name: apps[i].name,
+                value: apps[i].value.Text,
+                immutable: apps[i].immutable,
+              })
+            }
+            
+          }
+          console.log(appsArray);
+          setApps(appsArray);
+      } catch (e) {
+        console.log(e);
+      }
+
+      // App id 
+      try {
+        setAppId(
+          await response.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'app_id';
+          })[0].value.Text,
+        );
+      } catch (e) {
+        console.log(e);
+      }
+
+    } else {
+      console.log('no token id - collectionMetadata');
+      console.log('collectionMetadata', await getNftCollectionMeta());
+
+      const response = await getNftCollectionMeta();
       // Preview Asset
       try {
         const obj_preview_asset: Asset = {
-          id: await response.ok.metadata.Class.filter((res) => {
+          id: await response.ok.metadata[0].Class.filter((res) => {
             return res.name === 'preview_asset';
           })[0].value.Text,
-          immutable: await response.ok.metadata.Class.filter((res) => {
+          immutable: await response.ok.metadata[0].Class.filter((res) => {
             return res.name === 'preview_asset';
           })[0].immutable,
         };
@@ -189,10 +335,10 @@ const NewForm = ({ metadata }: any) => {
       // Hidden Asset
       try {
         const obj_hidden_asset: Asset = {
-          id: await response.ok.metadata.Class.filter((res) => {
+          id: await response.ok.metadata[0].Class.filter((res) => {
             return res.name === 'hidden_asset';
           })[0].value.Text,
-          immutable: await response.ok.metadata.Class.filter((res) => {
+          immutable: await response.ok.metadata[0].Class.filter((res) => {
             return res.name === 'hidden_asset';
           })[0].immutable,
         };
@@ -200,13 +346,14 @@ const NewForm = ({ metadata }: any) => {
       } catch (e) {
         console.log(e);
       }
+
       // Primary Asset
       try {
         const obj_primary_asset: Asset = {
-          id: await response.ok.metadata.Class.filter((res) => {
+          id: await response.ok.metadata[0].Class.filter((res) => {
             return res.name === 'primary_asset';
           })[0].value.Text,
-          immutable: await response.ok.metadata.Class.filter((res) => {
+          immutable: await response.ok.metadata[0].Class.filter((res) => {
             return res.name === 'primary_asset';
           })[0].immutable,
         };
@@ -214,13 +361,14 @@ const NewForm = ({ metadata }: any) => {
       } catch (e) {
         console.log(e);
       }
+
       // Experience Asset
       try {
         const obj_experience_asset: Asset = {
-          id: await response.ok.metadata.Class.filter((res) => {
+          id: await response.ok.metadata[0].Class.filter((res) => {
             return res.name === 'experience_asset';
           })[0].value.Text,
-          immutable: await response.ok.metadata.Class.filter((res) => {
+          immutable: await response.ok.metadata[0].Class.filter((res) => {
             return res.name === 'experience_asset';
           })[0].immutable,
         };
@@ -228,44 +376,80 @@ const NewForm = ({ metadata }: any) => {
       } catch (e) {
         console.log(e);
       }
-
       // Data Names
       try {
-        const DataNames = await response.ok.metadata.Class.filter((res) => {
-          return res.name === '__apps';
-        })[0].value.Array.thawed[0].Class[4].value.Class;
-        setAppsNames(DataNames);
+        setAppsNames(
+          await response.ok.metadata[0].Class.filter((res) => {
+            return res.name === '__apps';
+          })[0].value.Array.thawed[0].Class[4].value.Class,
+        );
       } catch (e) {
         console.log(e);
       }
-    } else if (response.err) {
-      console.log(response.err);
-    }
-  }else{
-    console.log('no token id - collectionMetadata');
-    console.log('collectionMetadata', await getNftCollectionMeta());
 
-    const response = await getNftCollectionMeta();
-     // Data Names
-     try {
-      const DataNames = await response.ok.metadata[0].Class.filter((res) => {
-        return res.name === '__apps';
-      })[0].value.Array.thawed[0].Class[4].value.Class;
-      setAppsNames(DataNames);
-    } catch (e) {
-      console.log(e);
+      // Owner
+      try {
+        setOwner(
+          await response.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'owner';
+          })[0].value.Principal.toText(),
+        );
+      } catch (e) {
+        console.log(e);
+      }
+
+      // Id
+      try {
+        setId(
+          await response.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'id';
+          })[0].value.Text,
+        );
+      } catch (e) {
+        console.log(e);
+      }
+
+      // Apps
+      try {
+        const apps = await response.ok.metadata[0].Class.filter((res) => {
+          return res.name === '__apps';
+        })[0].value.Array.thawed[0].Class[4].value.Class;
+        let i; 
+        let appsArray : App[]= [];
+        for(i in apps) {
+
+          console.log(apps[i]);
+          if(apps[i].value.hasOwnProperty('Principal')) {
+            appsArray.push({
+              name: apps[i].name,
+              value: apps[i].value.Principal.toText(),
+              immutable: apps[i].immutable,
+            })
+          }else if(apps[i].value.hasOwnProperty('Nat')){
+            appsArray.push({
+              name: apps[i].name,
+              value: apps[i].value.Nat.toString(),
+              immutable: apps[i].immutable,
+            })
+          }else{
+              appsArray.push({
+                name: apps[i].name,
+                value: apps[i].value.Text,
+                immutable: apps[i].immutable,
+              })
+            }
+            
+          }
+          console.log(appsArray);
+          setApps(appsArray);
+        } catch (e) {
+        console.log(e);
+      }
+
+
     }
-  }
   };
 
-  useEffect(() => {
-    getLibrariesIds();
-    if (Object.entries(metadata).length) {
-      setId(pick(metadata, ['id']).id);
-      setApps(pick(metadata, ['__apps']).__apps);
-      setLibraryFields(pick(metadata, ['library']).library);
-    }
-  }, [metadata, actor]);
   useEffect(() => {
     getAsset();
   }, []);
@@ -398,326 +582,79 @@ const NewForm = ({ metadata }: any) => {
   return (
     <div>
       <Box>
-        <List>
-          <ListItemButton onClick={handleAssets}>
-            <ListItemText>
-              <b>Assets</b>
-            </ListItemText>
-            {open ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <List component="div">
-              <ListItem>
-                {hiddenAsset?.immutable ? (
-                  <></>
-                ) : (
-                  <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="edit"
-                    onClick={handleHiddenAssets}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                )}
-                <ListItemText>
-                  <em>Hidden asset - </em>
-                  <b>{hiddenAsset?.id}</b>
-                </ListItemText>
+        <Grid container spacing={2} marginTop={2}>
+          <Grid item xs={2}>
+            Info
+          </Grid>
+          <Grid item xs={10} sx={{}}>
+            <List>
+              <ListItem secondaryAction={<ListItemText primary={owner} />}>
+                <ListItemText primary={'owner'} />
               </ListItem>
-            </List>
-            <Collapse in={openHidden}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Available Libraries</InputLabel>
-                      <Select
-                        labelId="hidden-assets-select-label"
-                        id="hidden-assets-select"
-                        label="Available libraries"
-                        defaultValue={hiddenAsset?.id}
-                      >
-                        {librariesIDS.map((id, i) => (
-                          <MenuItem value={id} key={i}>
-                            {id}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Collapse>
-            <List component="div">
-              <ListItem>
-                {previewAsset?.immutable ? (
-                  <></>
-                ) : (
-                  <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="edit"
-                    onClick={handlePreviewAssets}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                )}
-                <ListItemText>
-                  <em>Preview asset - </em>
-                  <b>{previewAsset?.id}</b>
-                </ListItemText>
+              <Divider />
+              <ListItem secondaryAction={<ListItemText primary={id} />}>
+                <ListItemText primary={'id'} />
               </ListItem>
-            </List>
-            <Collapse in={openPreview}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Available Libraries</InputLabel>
-                      <Select
-                        labelId="hidden-assets-select-label"
-                        id="hidden-assets-select"
-                        label="Available libraries"
-                        defaultValue={previewAsset?.id}
-                      >
-                        {librariesIDS.map((id, i) => (
-                          <MenuItem value={id} key={i}>
-                            {id}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Collapse>
-            <List component="div">
-              <ListItem>
-                {primaryAsset?.immutable ? (
-                  <></>
-                ) : (
-                  <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="edit"
-                    onClick={handlePrimaryAssets}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                )}
-                <ListItemText>
-                  <em>Primary asset - </em>
-                  <b>{primaryAsset?.id}</b>
-                </ListItemText>
+              <Divider />
+              <ListItem secondaryAction={<ListItemText primary={hiddenAsset?.id} />}>
+                <ListItemText primary={'hidden_asset'} />
               </ListItem>
-            </List>
-            <Collapse in={openPrimary}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Available Libraries</InputLabel>
-                      <Select
-                        labelId="hidden-assets-select-label"
-                        id="hidden-assets-select"
-                        label="Available libraries"
-                        defaultValue={primaryAsset?.id}
-                      >
-                        {librariesIDS.map((id, i) => (
-                          <MenuItem value={id} key={i}>
-                            {id}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Collapse>
-            <List component="div">
-              <ListItem>
-                {experienceAsset?.immutable ? (
-                  <></>
-                ) : (
-                  <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="edit"
-                    onClick={handleExperienceAssets}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                )}
-                <ListItemText>
-                  <em>Experience asset - </em> <b>{experienceAsset?.id}</b>
-                </ListItemText>
+              <Divider />
+              <ListItem secondaryAction={<ListItemText primary={previewAsset?.id} />}>
+                <ListItemText primary={'preview_asset'} />
               </ListItem>
+              <Divider />
+              <ListItem secondaryAction={<ListItemText primary={primaryAsset?.id} />}>
+                <ListItemText primary={'primary_asset'} />
+              </ListItem>
+              <Divider />
+              <ListItem secondaryAction={<ListItemText primary={experienceAsset?.id} />}>
+                <ListItemText primary={'experience_asset'} />
+              </ListItem>
+              <Divider />
             </List>
-            <Collapse in={openExperience}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Available Libraries</InputLabel>
-                      <Select
-                        labelId="hidden-assets-select-label"
-                        id="hidden-assets-select"
-                        label="Available libraries"
-                        defaultValue={experienceAsset?.id}
-                      >
-                        {librariesIDS.map((id, i) => (
-                          <MenuItem value={id} key={i}>
-                            {id}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Collapse>
-          </Collapse>
-          <ListItemButton onClick={handleApps}>
-            <ListItemText>
-              <b>Apps</b>
-            </ListItemText>
-            {openApp ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={openApp} timeout="auto" unmountOnExit>
-            <ListItem>
-              <IconButton edge="start" color="inherit" aria-label="edit" onClick={handleCreator}>
-                <EditIcon />
-              </IconButton>
-              <ListItemText>
-                <em>Creator: {'  '}</em>
-                <b>{apps[0]?.data[appsNames[2]?.name]}</b>
-              </ListItemText>
-            </ListItem>
-            <Collapse in={openCreator}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <TextField
-                        id="outlined-basic"
-                        label="Creator"
-                        variant="outlined"
-                        onInput={(text) => setNftCreator(text.target.value)}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Collapse>
-            <ListItem>
-              <IconButton edge="start" color="inherit" aria-label="edit" onClick={handleName}>
-                <EditIcon />
-              </IconButton>
-              <ListItemText>
-                <em>Name: {'  '}</em>
-                <b>{appsNames[0]?.value.Text}</b>
-              </ListItemText>
-            </ListItem>
-            <Collapse in={openName}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <TextField
-                        id="outlined-basic"
-                        label="Name"
-                        variant="outlined"
-                        onInput={(text) => setNftName(text.target.value)}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained" onClick={submitData}>
-                      Save
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Collapse>
-            <ListItem>
-              <IconButton edge="start" color="inherit" aria-label="edit" onClick={handlePrincipal}>
-                <EditIcon />
-              </IconButton>
-              <ListItemText>
-                <em>Principal: {'  '}</em>
-                <b>{apps[0]?.data[appsNames[3]?.name]}</b>
-              </ListItemText>
-            </ListItem>
-            <Collapse in={openPrincipal}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <TextField
-                        id="outlined-basic"
-                        label="Principal"
-                        variant="outlined"
-                        onInput={(text) => setNftOwner(text.target.value)}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Collapse>
-            <ListItem>
-              <IconButton edge="start" color="inherit" aria-label="edit" onClick={handleTotal}>
-                <EditIcon />
-              </IconButton>
-              <ListItemText>
-                <em>Collection total: {'  '}</em>
-                <b>{apps[0]?.data[appsNames[1]?.name]}</b>
-              </ListItemText>
-            </ListItem>
-            <Collapse in={openTotal}>
-              <Box m={2}>
-                <Grid>
-                  <Grid item xl={6} m={1}>
-                    <FormControl fullWidth>
-                      <TextField
-                        id="outlined-basic"
-                        label="Total"
-                        variant="outlined"
-                        onInput={(text) => setNftCol(text.target.value)}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xl={6} m={1}>
-                    <Button variant="contained">Save</Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Collapse>
-          </Collapse>
-          <ListItemButton>
-            <ListItemText>
-              <b>Libraries</b>
-            </ListItemText>
-          </ListItemButton>
-        </List>
+          </Grid>
+        </Grid>
+        <Divider />
+        <Grid container spacing={2} marginTop={2}>
+          <Grid item xs={2}>
+            Apps
+          </Grid>
+          <Grid item xs={10} sx={{}}>
+            <List>
+            {
+              apps?.map((app, index) => {
+                return (
+                  <ListItem key={index} secondaryAction={<ListItemText primary={app.value} />}>
+                    <ListItemText primary={app.name} />
+                  </ListItem>
+                )
+            }
+            )}
+            </List>
+          </Grid>
+        </Grid>
+        <Divider />
+        <Grid container spacing={2} marginTop={2}>
+          <Grid item xs={2}>
+            Apps
+          </Grid>
+          <Grid item xs={10} sx={{}}>
+            
+            <List>
+            {
+              apps?.map((app, index) => {
+                return (
+                  <ListItem key={index} secondaryAction={<ListItemText primary={app.value} />}>
+                    <ListItemText primary={app.name} />
+                  </ListItem>
+                )
+            }
+            )}
+            </List>
+          </Grid>
+        </Grid>
+
       </Box>
     </div>
   );

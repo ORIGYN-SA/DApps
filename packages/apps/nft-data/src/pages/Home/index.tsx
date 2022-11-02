@@ -68,7 +68,6 @@ const Home = () => {
           try {
             const response = await fetch(`https://${await currentCanisterId()}.raw.ic0.app/collection/info`);
             const result = await response.text();
-            console.log('result', JSON.parse(result));
             if (result.search(':,')) {
               setNFTData(JSON.parse(result.replaceAll(':,', ':"",')));
             } else {
