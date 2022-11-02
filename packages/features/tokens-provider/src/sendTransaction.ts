@@ -12,18 +12,22 @@ const sendICP = async (actor: any, token: Token, to: any, amount: number) => {
     memo: BigInt(0),
   };
 
-  const response = await actor.send_dfx({
-    to:
-      // @ts-ignore
-      typeof to === 'string' ? getAccountId(Principal.fromText(to)) : toHex(to),
-    fee: { e8s: token?.fee || defaultArgs.fee },
-    amount: { e8s: BigInt(amount) },
-    memo: defaultArgs.memo,
-    from_subaccount: [],
-    created_at_time: [],
-  });
+  try {
+    const response = await actor.send_dfx({
+      to:
+        // @ts-ignore
+        typeof to === 'string' ? getAccountId(Principal.fromText(to)) : toHex(to),
+      fee: { e8s: token?.fee || defaultArgs.fee },
+      amount: { e8s: BigInt(amount) },
+      memo: defaultArgs.memo,
+      from_subaccount: [],
+      created_at_time: [],
+    });
 
-  return await response.toString();
+    return response.toString();
+  } catch (e) {
+    throw Error(e.message);
+  }
 };
 
 // DIP20 and WICP
@@ -76,15 +80,19 @@ export const sendTransaction = async (
   from?: string,
 ) => {
   const actor = await createWalletActor(walletType, token.canisterId, token.standard);
-  switch (token.standard) {
-    case IdlStandard.ICP:
-      return sendICP(actor, token, to, amount);
-    case IdlStandard.WICP:
-    case IdlStandard.DIP20:
-      return sendWICP(actor, to, amount);
-    case IdlStandard.XTC:
-      return sendXTC(actor, to, amount);
-    case IdlStandard.EXT:
-      return sendEXT(actor, token, to, from, amount);
+  try {
+    switch (token.standard) {
+      case IdlStandard.ICP:
+        return { ok: await sendICP(actor, token, to, amount) };
+      case IdlStandard.WICP:
+      case IdlStandard.DIP20:
+        return { ok: await sendWICP(actor, to, amount) };
+      case IdlStandard.XTC:
+        return { ok: await sendXTC(actor, to, amount) };
+      case IdlStandard.EXT:
+        return { ok: await sendEXT(actor, token, to, from, amount) };
+    }
+  } catch (e) {
+    return { err: e.message };
   }
 };

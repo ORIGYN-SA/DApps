@@ -62,7 +62,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
   }, [initialValues]);
 
   const customSubmit = (data) => {
-    console.log(data);
     handleStartEscrow(data);
   };
   React.useEffect(() => {
@@ -117,35 +116,39 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
       const { account_id } = saleInfo?.ok?.deposit_info ?? {};
 
-      const transactionHeight = await sendTransaction(
-        walletType,
-        tokens[token],
-        new Uint8Array(account_id),
-        amount,
-      );
-      const escrowData = {
-        token_id: _nft.id,
-        deposit: {
-          token: {
-            ic: {
-              fee: BigInt(tokens[token].fee ?? 200_000),
-              decimals: BigInt(tokens[token].decimals ?? 8),
-              canister: Principal.fromText(tokens[token].canisterId),
-              standard: { Ledger: null },
-              symbol: tokens[token].symbol,
-            },
-          },
-          trx_id: [{ nat: BigInt(transactionHeight) }],
-          seller: {
-            principal: Principal.fromText(_nft.seller),
-          },
-          buyer: { principal },
-          amount: BigInt(amount),
-          sale_id: _nft?.openAuction?.sale_id ? [_nft?.openAuction?.sale_id] : [],
-        },
-        lock_to_date: [],
-      };
       try {
+        const transactionHeight = await sendTransaction(
+          walletType,
+          tokens[token],
+          new Uint8Array(account_id),
+          amount,
+        );
+        if (transactionHeight.err) {
+          setIsLoading(false);
+          throw Error(transactionHeight.err);
+        }
+        const escrowData = {
+          token_id: _nft.id,
+          deposit: {
+            token: {
+              ic: {
+                fee: BigInt(tokens[token].fee ?? 200_000),
+                decimals: BigInt(tokens[token].decimals ?? 8),
+                canister: Principal.fromText(tokens[token].canisterId),
+                standard: { Ledger: null },
+                symbol: tokens[token].symbol,
+              },
+            },
+            trx_id: [{ nat: BigInt(transactionHeight.ok) }],
+            seller: {
+              principal: Principal.fromText(_nft.seller),
+            },
+            buyer: { principal },
+            amount: BigInt(amount),
+            sale_id: _nft?.openAuction?.sale_id ? [_nft?.openAuction?.sale_id] : [],
+          },
+          lock_to_date: [],
+        };
         const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
         if (!_nft.openAuction) {
           if (escrowResponse.ok) {
@@ -165,7 +168,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
         } else {
           if (!escrowResponse?.ok) throw escrowResponse.err.text;
 
-          console.log('escrowResponse', escrowResponse);
           const bidData = {
             broker_id: [],
             escrow_receipt: escrowResponse?.ok?.receipt,
