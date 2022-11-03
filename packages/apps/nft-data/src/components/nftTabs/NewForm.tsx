@@ -19,6 +19,10 @@ import FormControl from '@mui/material/FormControl';
 
 // mintJs
 import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+// data
+import { getData, getPermissions, Nft_Data, Permission } from './data/data';
+// inputs 
+import { Input } from './inputs';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -34,68 +38,20 @@ type Asset = {
 };
 
 type App = {
-  name : string;
-  value : string | number;
-  immutable : boolean;
-}
+  name: string;
+  value: string | number;
+  immutable: boolean;
+};
 
 const NewForm = ({ metadata }: any) => {
   // array with ids of libraries for the current token
   const [librariesIDS, setLibrariesIDS] = useState<any>([]);
   // object with all the data
-  const [owner, setOwner] = useState('');
-  const [hiddenAsset, setHiddenAsset] = useState<Asset>();
-  const [previewAsset, setPreviewAsset] = useState<Asset>();
-  const [primaryAsset, setPrimaryAsset] = useState<Asset>();
-  const [experienceAsset, setExperienceAsset] = useState<Asset>();
   const [appsNames, setAppsNames] = useState<any>([]);
-  const [id, setId] = useState('');
   const [apps, setApps] = useState<App[]>([]);
-  const [appId, setAppId] = useState('');
   const [libraryFields, setLibraryFields] = useState([]);
-
-  //---------| 1. List - Collapse |---------//
-  const [open, setOpen] = React.useState(false);
-  const [openApp, setOpenApp] = React.useState(false);
-  const [openHidden, setOpenHidden] = React.useState(false);
-  const [openPreview, setOpenPreview] = React.useState(false);
-  const [openPrimary, setOpenPrimary] = React.useState(false);
-  const [openExperience, setOpenExperience] = React.useState(false);
-  const [openName, setOpenName] = React.useState(false);
-  const [openCreator, setOpenCreator] = React.useState(false);
-  const [openPrincipal, setOpenPrincipal] = React.useState(false);
-  const [openTotal, setOpenTotal] = React.useState(false);
-
-  const handleAssets = () => {
-    setOpen(!open);
-  };
-  const handleApps = () => {
-    setOpenApp(!openApp);
-  };
-  const handleHiddenAssets = () => {
-    setOpenHidden(!openHidden);
-  };
-  const handleCreator = () => {
-    setOpenCreator(!openCreator);
-  };
-  const handlePreviewAssets = () => {
-    setOpenPreview(!openPreview);
-  };
-  const handlePrimaryAssets = () => {
-    setOpenPrimary(!openPrimary);
-  };
-  const handleExperienceAssets = () => {
-    setOpenExperience(!openExperience);
-  };
-  const handleName = () => {
-    setOpenName(!openName);
-  };
-  const handlePrincipal = () => {
-    setOpenPrincipal(!openPrincipal);
-  };
-  const handleTotal = () => {
-    setOpenTotal(!openTotal);
-  };
+  const [data, setData] = useState<Nft_Data[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
 
   const handleAppsChange = (index, event, i = 0) => {
     if (event.target.name == 'app_id' || event.target.name == 'read') {
@@ -169,289 +125,23 @@ const NewForm = ({ metadata }: any) => {
     }
   };
 
-  const getAsset = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId());
-    if (getTokenId()) {
-      const response = await getNft(getTokenId());
-      if (response.ok) {
-        // Id
-        try {
-          setId(
-            await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'id';
-            })[0].value.Text,
-          );
-        } catch (e) {
-          console.log(e);
-        }
-        // Owner
-        try {
-          setOwner(
-            await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'owner';
-            })[0].value.Principal.toText(),
-          );
-        } catch (e) {
-          console.log(e);
-        }
-        // Preview Asset
-        try {
-          const obj_preview_asset: Asset = {
-            id: await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'preview_asset';
-            })[0].value.Text,
-            immutable: await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'preview_asset';
-            })[0].immutable,
-          };
-          setPreviewAsset(obj_preview_asset);
-        } catch (e) {
-          console.log(e);
-        }
-        // Hidden Asset
-        try {
-          const obj_hidden_asset: Asset = {
-            id: await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'hidden_asset';
-            })[0].value.Text,
-            immutable: await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'hidden_asset';
-            })[0].immutable,
-          };
-          setHiddenAsset(obj_hidden_asset);
-        } catch (e) {
-          console.log(e);
-        }
-        // Primary Asset
-        try {
-          const obj_primary_asset: Asset = {
-            id: await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'primary_asset';
-            })[0].value.Text,
-            immutable: await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'primary_asset';
-            })[0].immutable,
-          };
-          setPrimaryAsset(obj_primary_asset);
-        } catch (e) {
-          console.log(e);
-        }
-        // Experience Asset
-        try {
-          const obj_experience_asset: Asset = {
-            id: await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'experience_asset';
-            })[0].value.Text,
-            immutable: await response.ok.metadata.Class.filter((res) => {
-              return res.name === 'experience_asset';
-            })[0].immutable,
-          };
-          setExperienceAsset(obj_experience_asset);
-        } catch (e) {
-          console.log(e);
-        }
-
-        // Data Names
-        try {
-          setAppsNames(
-            await response.ok.metadata.Class.filter((res) => {
-              return res.name === '__apps';
-            })[0].value.Array.thawed[0].Class[4].value.Class,
-          );
-        } catch (e) {
-          console.log(e);
-        }
-      } else if (response.err) {
-        console.log(response.err);
-      }
-
-      // Apps
-      try {
-        const apps = await response.ok.metadata.Class.filter((res) => {
-          return res.name === '__apps';
-        })[0].value.Array.thawed[0].Class[4].value.Class;
-        let i; 
-        let appsArray : App[]= [];
-        for(i in apps) {
-
-          console.log(apps[i]);
-          if(apps[i].value.hasOwnProperty('Principal')) {
-            appsArray.push({
-              name: apps[i].name,
-              value: apps[i].value.Principal.toText(),
-              immutable: apps[i].immutable,
-            })
-          }else if(apps[i].value.hasOwnProperty('Nat')){
-            appsArray.push({
-              name: apps[i].name,
-              value: apps[i].value.Nat.toString(),
-              immutable: apps[i].immutable,
-            })
-          }else{
-              appsArray.push({
-                name: apps[i].name,
-                value: apps[i].value.Text,
-                immutable: apps[i].immutable,
-              })
-            }
-            
-          }
-          console.log(appsArray);
-          setApps(appsArray);
-      } catch (e) {
-        console.log(e);
-      }
-
-      // App id 
-      try {
-        setAppId(
-          await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'app_id';
-          })[0].value.Text,
-        );
-      } catch (e) {
-        console.log(e);
-      }
-
-    } else {
-      console.log('no token id - collectionMetadata');
-      console.log('collectionMetadata', await getNftCollectionMeta());
-
-      const response = await getNftCollectionMeta();
-      // Preview Asset
-      try {
-        const obj_preview_asset: Asset = {
-          id: await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'preview_asset';
-          })[0].value.Text,
-          immutable: await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'preview_asset';
-          })[0].immutable,
-        };
-        setPreviewAsset(obj_preview_asset);
-      } catch (e) {
-        console.log(e);
-      }
-      // Hidden Asset
-      try {
-        const obj_hidden_asset: Asset = {
-          id: await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'hidden_asset';
-          })[0].value.Text,
-          immutable: await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'hidden_asset';
-          })[0].immutable,
-        };
-        setHiddenAsset(obj_hidden_asset);
-      } catch (e) {
-        console.log(e);
-      }
-
-      // Primary Asset
-      try {
-        const obj_primary_asset: Asset = {
-          id: await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'primary_asset';
-          })[0].value.Text,
-          immutable: await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'primary_asset';
-          })[0].immutable,
-        };
-        setPrimaryAsset(obj_primary_asset);
-      } catch (e) {
-        console.log(e);
-      }
-
-      // Experience Asset
-      try {
-        const obj_experience_asset: Asset = {
-          id: await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'experience_asset';
-          })[0].value.Text,
-          immutable: await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'experience_asset';
-          })[0].immutable,
-        };
-        setExperienceAsset(obj_experience_asset);
-      } catch (e) {
-        console.log(e);
-      }
-      // Data Names
-      try {
-        setAppsNames(
-          await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === '__apps';
-          })[0].value.Array.thawed[0].Class[4].value.Class,
-        );
-      } catch (e) {
-        console.log(e);
-      }
-
-      // Owner
-      try {
-        setOwner(
-          await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'owner';
-          })[0].value.Principal.toText(),
-        );
-      } catch (e) {
-        console.log(e);
-      }
-
-      // Id
-      try {
-        setId(
-          await response.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'id';
-          })[0].value.Text,
-        );
-      } catch (e) {
-        console.log(e);
-      }
-
-      // Apps
-      try {
-        const apps = await response.ok.metadata[0].Class.filter((res) => {
-          return res.name === '__apps';
-        })[0].value.Array.thawed[0].Class[4].value.Class;
-        let i; 
-        let appsArray : App[]= [];
-        for(i in apps) {
-
-          console.log(apps[i]);
-          if(apps[i].value.hasOwnProperty('Principal')) {
-            appsArray.push({
-              name: apps[i].name,
-              value: apps[i].value.Principal.toText(),
-              immutable: apps[i].immutable,
-            })
-          }else if(apps[i].value.hasOwnProperty('Nat')){
-            appsArray.push({
-              name: apps[i].name,
-              value: apps[i].value.Nat.toString(),
-              immutable: apps[i].immutable,
-            })
-          }else{
-              appsArray.push({
-                name: apps[i].name,
-                value: apps[i].value.Text,
-                immutable: apps[i].immutable,
-              })
-            }
-            
-          }
-          console.log(appsArray);
-          setApps(appsArray);
-        } catch (e) {
-        console.log(e);
-      }
-
-
+  const getArrayData = async () => {
+    const response = await getData();
+    console.log('arraydata', response);
+    if (response) {
+      setData(response);
     }
   };
-
+  const getArrayPermissions = async () => {
+    const response = await getPermissions();
+    console.log('arraypermissions', response);
+    if (response) {
+      setPermissions(response);
+    }
+  };
   useEffect(() => {
-    getAsset();
+    getArrayData();
+    getArrayPermissions();
   }, []);
 
   const submitData = async () => {
@@ -584,77 +274,109 @@ const NewForm = ({ metadata }: any) => {
       <Box>
         <Grid container spacing={2} marginTop={2}>
           <Grid item xs={2}>
-            Info
+            <b>Info</b>
           </Grid>
           <Grid item xs={10} sx={{}}>
             <List>
-              <ListItem secondaryAction={<ListItemText primary={owner} />}>
-                <ListItemText primary={'owner'} />
-              </ListItem>
-              <Divider />
-              <ListItem secondaryAction={<ListItemText primary={id} />}>
-                <ListItemText primary={'id'} />
-              </ListItem>
-              <Divider />
-              <ListItem secondaryAction={<ListItemText primary={hiddenAsset?.id} />}>
-                <ListItemText primary={'hidden_asset'} />
-              </ListItem>
-              <Divider />
-              <ListItem secondaryAction={<ListItemText primary={previewAsset?.id} />}>
-                <ListItemText primary={'preview_asset'} />
-              </ListItem>
-              <Divider />
-              <ListItem secondaryAction={<ListItemText primary={primaryAsset?.id} />}>
-                <ListItemText primary={'primary_asset'} />
-              </ListItem>
-              <Divider />
-              <ListItem secondaryAction={<ListItemText primary={experienceAsset?.id} />}>
-                <ListItemText primary={'experience_asset'} />
-              </ListItem>
-              <Divider />
+              {
+                data?.map((item, index) => {
+                  return (
+                  item.immutable===true ? (
+                    <>
+                    <ListItem key={index + item.name}>
+                      <ListItemText primary={item.name} secondary={item.value} />
+                    </ListItem>
+                    <Divider />
+                    </>
+                  ):(
+                    <>
+                     <ListItem key={index + item.name}>
+                      <ListItemText primary={item.name} secondary={item.value} />
+                    </ListItem>
+                    {
+                      Input[item.level]
+                    }
+                    <Divider />
+                    </>
+                  ))}
+                )
+              }
             </List>
           </Grid>
         </Grid>
-        <Divider />
         <Grid container spacing={2} marginTop={2}>
           <Grid item xs={2}>
-            Apps
+            <b>Permissions</b>
           </Grid>
           <Grid item xs={10} sx={{}}>
             <List>
-            {
-              apps?.map((app, index) => {
-                return (
-                  <ListItem key={index} secondaryAction={<ListItemText primary={app.value} />}>
-                    <ListItemText primary={app.name} />
-                  </ListItem>
+              { 
+                permissions?.map((item, index) => {
+                  return (
+                  item.immutable===true ? (
+                  
+                      item.name== 'list' ? (                 
+                        <>
+                          <ListItem key={index}>
+                            <ListItemText primary={item.type+' '+item.name} secondary={
+                              item.list.map((item, index) => {
+                                return (
+                                  <div key={index}>
+                                    <span>{item}</span>
+                                  </div>
+                                );                         
+                              })
+                            } />
+                          </ListItem>
+                          <Divider />
+                        </>
+                      ) : (
+                        <>
+                          <ListItem key={index}>
+                            <ListItemText primary={<b>{item.type}</b>} secondary={item.value}/>
+                          </ListItem>
+                          <Divider />
+                        </>
+                      )
+                      
+                  ):(
+                    item.name== 'list' ? (                 
+                      <>
+                        <ListItem key={index}>
+                          <ListItemText primary={item.type+' '+item.name} secondary={
+                            item.list.map((item, index) => {
+                              return (
+                                <div key={index}>
+                                  <span>{item}</span>
+                                </div>
+                              );                         
+                            })
+                          } />
+                        </ListItem>
+                        {
+                          Input[item.level]
+                        }
+                        <Divider />
+                      </>
+                    ) : (
+                      <>
+                        <ListItem key={index}>
+                          <ListItemText primary={<b>{item.type}</b>} secondary={item.value}/>
+                        </ListItem>
+                        {
+                          Input[item.level]
+                        }
+                        <Divider />
+                      </>
+                    )
+                  ))}
                 )
-            }
-            )}
-            </List>
-          </Grid>
-        </Grid>
-        <Divider />
-        <Grid container spacing={2} marginTop={2}>
-          <Grid item xs={2}>
-            Apps
-          </Grid>
-          <Grid item xs={10} sx={{}}>
-            
-            <List>
-            {
-              apps?.map((app, index) => {
-                return (
-                  <ListItem key={index} secondaryAction={<ListItemText primary={app.value} />}>
-                    <ListItemText primary={app.name} />
-                  </ListItem>
-                )
-            }
-            )}
-            </List>
-          </Grid>
-        </Grid>
+              }
 
+            </List>
+          </Grid>
+        </Grid>
+        <Divider />
       </Box>
     </div>
   );
