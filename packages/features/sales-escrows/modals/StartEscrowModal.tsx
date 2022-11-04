@@ -144,7 +144,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               principal: Principal.fromText(_nft.seller),
             },
             buyer: { principal },
-            amount: BigInt(BigInt(amount) * 2n),
+            amount: BigInt(amount),
             sale_id: _nft?.openAuction?.sale_id ? [_nft?.openAuction?.sale_id] : [],
           },
           lock_to_date: [],
