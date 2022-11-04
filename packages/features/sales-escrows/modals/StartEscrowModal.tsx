@@ -121,7 +121,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
           walletType,
           tokens[token],
           new Uint8Array(account_id),
-          amount,
+          amount + tokens[token].fee,
         );
         if (transactionHeight.err) {
           setIsLoading(false);
