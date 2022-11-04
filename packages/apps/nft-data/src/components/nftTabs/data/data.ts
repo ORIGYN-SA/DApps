@@ -156,7 +156,7 @@ export const getData = async () => {
             value: await response.ok.metadata[0].Class.filter((res) => {
               return res.name === 'id';
             })[0].value.Text,
-            immutable: await response.ok.metadata.Class.filter((res) => {
+            immutable: await response.ok.metadata[0].Class.filter((res) => {
               return res.name === 'id';
             })[0].immutable,
             level: 'Id',
