@@ -1,5 +1,5 @@
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, getCanisterId } from '@dapp/features-authentication'
 import { NatPrice } from '@dapp/features-components';
 import {
   ConfirmSalesActionModal,
@@ -59,8 +59,9 @@ const SymbolWithIcon = ({ symbol }: any) =>
     </>
   );
 export const NFTPage = () => {
-  const { canisterId, principal, actor } = useContext(AuthContext);
+  const { principal, actor } = useContext(AuthContext);
   const [currentNFT, setCurrentNFT] = useState<any>({});
+  const [canisterId, setCanisterId] = useState("");
   const [openAuction, setOpenAuction] = React.useState(false);
   const [dialogAction, setDialogAction] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
@@ -150,9 +151,15 @@ export const NFTPage = () => {
         })
         .catch(console.log);
     }
+  }, [actor]);
+
+  useEffect(() => {
+    getCanisterId().then((r) => {
+      setCanisterId(r);
+    });
   }, []);
 
-  if (isLoading) {
+  if (isLoading || !canisterId) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
