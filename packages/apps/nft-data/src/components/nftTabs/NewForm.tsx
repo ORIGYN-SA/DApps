@@ -22,7 +22,7 @@ import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 // data
 import { getData, getPermissions, Nft_Data, Permission } from './data/data';
 // inputs 
-import { Input } from './inputs';
+import { Inputs } from './inputs/index';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -293,9 +293,11 @@ const NewForm = ({ metadata }: any) => {
                      <ListItem key={index + item.name}>
                       <ListItemText primary={item.name} secondary={item.value} />
                     </ListItem>
+                    <>
                     {
-                      Input[item.level]
+                      Inputs[item.level](item)
                     }
+                    </>
                     <Divider />
                     </>
                   ))}
@@ -353,9 +355,11 @@ const NewForm = ({ metadata }: any) => {
                             })
                           } />
                         </ListItem>
+                        <>
                         {
-                          Input[item.level]
+                          Inputs[item.level](item)
                         }
+                        </>
                         <Divider />
                       </>
                     ) : (
@@ -363,9 +367,11 @@ const NewForm = ({ metadata }: any) => {
                         <ListItem key={index}>
                           <ListItemText primary={<b>{item.type}</b>} secondary={item.value}/>
                         </ListItem>
+                        <>
                         {
-                          Input[item.level]
+                          Inputs[item.level](item)
                         }
+                        </>
                         <Divider />
                       </>
                     )
