@@ -21,7 +21,20 @@ import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 
 const Permission = (props : any) => {
-  return <TextField id="outlined-basic"  label={"Change "+props.item.name} variant="standard" sx={{marginBottom:1}} />;
+
+    const name = props.item.name;
+    const [arrayPrincipals, setArrayPrincipals] = useState([]);
+
+    useEffect(() => {
+        if (name==="list") {
+            setArrayPrincipals(props.item.list);
+        }
+    }, [props.item]);
+
+    
+  return (
+    <TextField id="outlined-basic"  label={"Change "+props.item.name} variant="standard" sx={{marginBottom:1}} />
+  )
 };
 
 export default Permission;
