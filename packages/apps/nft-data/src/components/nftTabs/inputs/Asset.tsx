@@ -1,27 +1,19 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, createContext } from 'react';
 import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { getTokenId, getCanisterId } from '@dapp/features-authentication';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import { Grid, TextField, Button, Box, Divider, Select, SelectChangeEvent } from '@mui/material';
-import pick from 'lodash/pick';
-import { Principal } from '@dfinity/principal';
-import { NFTUpdateRequest, UpdateRequest, CandyValue } from '../types/origyn_nft_reference.did';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
-import FormControl from '@mui/material/FormControl';
+import { Grid, TextField, Button, Box, Divider, Select, SelectChangeEvent, FormControl } from '@mui/material';
+// Context
+import { MetadataContext } from '../context';
+const Asset = (props: any) => {
 
-const Asset = (props : any) => {
   const [librariesFromMeta, setLibrariesFromMeta] = useState([]);
+  // use the context
+  const { setMetatype } = useContext(MetadataContext);
+
   const getLibrariesFromMeta = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId());
     let getMeta = [];
@@ -43,6 +35,10 @@ const Asset = (props : any) => {
     setLibrariesFromMeta(arrayIDS);
   };
 
+  const handleChange = (event: SelectChangeEvent) => {
+    setMetatype(props.item.name, event.target.value);
+  };
+
   useEffect(() => {
     getLibrariesFromMeta();
   }, []);
@@ -51,10 +47,16 @@ const Asset = (props : any) => {
     <>
       <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
         <InputLabel id="select-asset">Change {props.item.name} Asset</InputLabel>
-        <Select labelId={"Change "+props.item.name+" Asset"} id="select-asset" label="Change Asset" value={props.item.value}>
+        <Select
+          labelId={'Change ' + props.item.name + ' Asset'}
+          id="select-asset"
+          label="Change Asset"
+          value={props.item.value}
+          onChange={handleChange}
+        >
           {librariesFromMeta.map((library, index) => {
             return (
-              <MenuItem key={library+index} value={library}>
+              <MenuItem key={library + index} value={library}>
                 {library}
               </MenuItem>
             );

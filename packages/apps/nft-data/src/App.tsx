@@ -7,6 +7,7 @@ import { AuthProvider } from '@dapp/features-authentication';
 import 'react-toastify/dist/ReactToastify.css';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import { SnackbarProvider } from 'notistack';
+import { MetaProvider } from './components/nftTabs/context';
 
 const App = () => {
   return (
@@ -15,11 +16,13 @@ const App = () => {
         <SiteProvider>
           <TokensContextProvider>
             <SnackbarProvider maxSnack={3}>
-              <Layout>
-                <Routes>
-                  <Route path="*" element={<Home />} />
-                </Routes>
-              </Layout>
+              <MetaProvider>
+                <Layout>
+                  <Routes>
+                    <Route path="*" element={<Home />} />
+                  </Routes>
+                </Layout>
+              </MetaProvider>
             </SnackbarProvider>
           </TokensContextProvider>
         </SiteProvider>

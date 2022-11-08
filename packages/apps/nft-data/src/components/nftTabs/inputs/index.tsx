@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import Permission from "./Permission";
 import App from "./App";
 import Asset from "./Asset";
@@ -10,4 +10,3 @@ export const Inputs = {
   "Asset": (props) => <Asset item={props} />,
   "Id": (props) => <Id item={props} />,
 };
-

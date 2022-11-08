@@ -19,9 +19,30 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
+// Context
+import { MetadataContext } from '../context';
 
-const App = (props : any) => {
-  return <TextField id="outlined-basic"  label={"Change "+props.item.name} variant="standard" sx={{marginBottom:1}}/>;
+const App = (props: any) => {
+
+  const { setMetatype } = useContext(MetadataContext);
+
+  const handleChange = (event) => {
+    setMetatype(props.item.name,event.target.value);
+  };
+
+  useEffect(() => {
+    setMetatype(props.item.name,props.item.value);
+  }, []);
+
+  return (
+    <TextField
+      id="outlined-basic"
+      label={'Change ' + props.item.name}
+      variant="standard"
+      sx={{ marginBottom: 1 }}
+      onChange={handleChange}
+    />
+  );
 };
 
 export default App;

@@ -2,27 +2,20 @@ import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import { Grid, TextField, Button, Box, Divider } from '@mui/material';
-import pick from 'lodash/pick';
+import { Grid, Box, Divider, Button } from '@mui/material';
 import { Principal } from '@dfinity/principal';
 import { NFTUpdateRequest, UpdateRequest, CandyValue } from './types/origyn_nft_reference.did';
 import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
-import FormControl from '@mui/material/FormControl';
-
 // mintJs
-import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { getNft, OrigynClient } from '@origyn-sa/mintjs';
 // data
 import { getData, getPermissions, Nft_Data, Permission } from './data/data';
-// inputs 
+// inputs
 import { Inputs } from './inputs/index';
+// Context
+import { MetadataContext } from './context';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -52,6 +45,8 @@ const NewForm = ({ metadata }: any) => {
   const [libraryFields, setLibraryFields] = useState([]);
   const [data, setData] = useState<Nft_Data[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
+  // use the context
+  const { id, owner, app_id } = useContext(MetadataContext);
 
   const handleAppsChange = (index, event, i = 0) => {
     if (event.target.name == 'app_id' || event.target.name == 'read') {
@@ -106,24 +101,6 @@ const NewForm = ({ metadata }: any) => {
         .catch(console.log);
     }
   }, []);
-
-  const getLibrariesIds = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId());
-    const response = await getNft(getTokenId());
-    if (response.ok) {
-      const libraries = response.ok.metadata.Class.filter((res) => {
-        return res.name === 'library';
-      })[0].value.Array.thawed;
-      let arrayIDS = [];
-      console.log('library', libraries);
-      libraries.forEach((library: any) => {
-        arrayIDS.push(library.Class[0].value.Text);
-      });
-      setLibrariesIDS(arrayIDS);
-    } else if (response.err) {
-      console.log(response.err);
-    }
-  };
 
   const getArrayData = async () => {
     const response = await getData();
@@ -235,7 +212,8 @@ const NewForm = ({ metadata }: any) => {
           },
           immutable: false,
         },
-        { name: 'owner', value: { Principal: Principal.fromText(nftOwner) }, immutable: false },
+        { name: 'owner', 
+        value: { Principal: Principal.fromText(nftOwner) }, immutable: false },
         { name: 'is_soulbound', value: { Bool: false }, immutable: false },
       ],
     };
@@ -278,31 +256,24 @@ const NewForm = ({ metadata }: any) => {
           </Grid>
           <Grid item xs={10} sx={{}}>
             <List>
-              {
-                data?.map((item, index) => {
-                  return (
-                  item.immutable===true ? (
-                    <>
+              {data?.map((item, index) => {
+                return item.immutable === true ? (
+                  <>
                     <ListItem key={index + item.name}>
                       <ListItemText primary={item.name} secondary={item.value} />
                     </ListItem>
                     <Divider />
-                    </>
-                  ):(
-                    <>
-                     <ListItem key={index + item.name}>
+                  </>
+                ) : (
+                  <>
+                    <ListItem key={index + item.name}>
                       <ListItemText primary={item.name} secondary={item.value} />
                     </ListItem>
-                    <>
-                    {
-                      Inputs[item.level](item)
-                    }
-                    </>
+                    <>{Inputs[item.level](item)}</>
                     <Divider />
-                    </>
-                  ))}
-                )
-              }
+                  </>
+                );
+              })}
             </List>
           </Grid>
         </Grid>
@@ -312,77 +283,64 @@ const NewForm = ({ metadata }: any) => {
           </Grid>
           <Grid item xs={10} sx={{}}>
             <List>
-              { 
-                permissions?.map((item, index) => {
-                  return (
-                  item.immutable===true ? (
-                  
-                      item.name== 'list' ? (                 
-                        <>
-                          <ListItem key={index}>
-                            <ListItemText primary={item.type+' '+item.name} secondary={
-                              item.list.map((item, index) => {
-                                return (
-                                  <div key={index}>
-                                    <span>{item}</span>
-                                  </div>
-                                );                         
-                              })
-                            } />
-                          </ListItem>
-                          <Divider />
-                        </>
-                      ) : (
-                        <>
-                          <ListItem key={index}>
-                            <ListItemText primary={<b>{item.type}</b>} secondary={item.value}/>
-                          </ListItem>
-                          <Divider />
-                        </>
-                      )
-                      
-                  ):(
-                    item.name== 'list' ? (                 
-                      <>
-                        <ListItem key={index}>
-                          <ListItemText primary={item.type+' '+item.name} secondary={
-                            item.list.map((item, index) => {
-                              return (
-                                <div key={index}>
-                                  <span>{item}</span>
-                                </div>
-                              );                         
-                            })
-                          } />
-                        </ListItem>
-                        <>
-                        {
-                          Inputs[item.level](item)
-                        }
-                        </>
-                        <Divider />
-                      </>
-                    ) : (
-                      <>
-                        <ListItem key={index}>
-                          <ListItemText primary={<b>{item.type}</b>} secondary={item.value}/>
-                        </ListItem>
-                        <>
-                        {
-                          Inputs[item.level](item)
-                        }
-                        </>
-                        <Divider />
-                      </>
-                    )
-                  ))}
-                )
-              }
-
+              {permissions?.map((item, index) => {
+                return item.immutable === true ? (
+                  item.name == 'list' ? (
+                    <>
+                      <ListItem key={index}>
+                        <ListItemText
+                          primary={item.type + ' ' + item.name}
+                          secondary={item.list.map((item, index) => {
+                            return (
+                              <div key={index}>
+                                <span>{item}</span>
+                              </div>
+                            );
+                          })}
+                        />
+                      </ListItem>
+                      <Divider />
+                    </>
+                  ) : (
+                    <>
+                      <ListItem key={index}>
+                        <ListItemText primary={<b>{item.type}</b>} secondary={item.value} />
+                      </ListItem>
+                      <Divider />
+                    </>
+                  )
+                ) : item.name == 'list' ? (
+                  <>
+                    <ListItem key={index}>
+                      <ListItemText
+                        primary={item.type + ' ' + item.name}
+                        secondary={item.list.map((item, index) => {
+                          return (
+                            <div key={index}>
+                              <span>{item}</span>
+                            </div>
+                          );
+                        })}
+                      />
+                    </ListItem>
+                    <>{Inputs[item.level](item)}</>
+                    <Divider />
+                  </>
+                ) : (
+                  <>
+                    <ListItem key={index}>
+                      <ListItemText primary={<b>{item.type}</b>} secondary={item.value} />
+                    </ListItem>
+                    <>{Inputs[item.level](item)}</>
+                    <Divider />
+                  </>
+                );
+              })}
             </List>
           </Grid>
         </Grid>
         <Divider />
+      <Button onClick={submitData}>Update</Button>
       </Box>
     </div>
   );
