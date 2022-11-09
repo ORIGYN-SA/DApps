@@ -83,13 +83,11 @@ export const useAuth = (client: any, canisterId: string, tokenId: string) => {
           });
       } else {
         console.log('useAuth > not loggedIn');
-        if (!browserLoggedIn || browserLoggedIn === 'false') {
-          getAnonIdentity().then((nftActor) => {
-            setActor(nftActor);
-            setIsLoading(false);
-            localStorage.setItem('loggedIn', 'false');
-          });
-        }
+        getAnonIdentity().then((nftActor) => {
+          setActor(nftActor);
+          setIsLoading(false);
+          localStorage.setItem('loggedIn', 'false');
+        });
       }
     }
   }, [principal, isInitializing]);
