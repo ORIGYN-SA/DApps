@@ -9,6 +9,7 @@ export interface metadataContextType {
   id : MetaType;
   owner : MetaType;
   app_id : MetaType;
+  read : MetaType;
 }
 
 // create a context with an array of items and a function to add items
@@ -43,6 +44,10 @@ export const MetadataContext = createContext<metadataContextType>({
     name : '',
     value : '',
   },
+  read : {
+    name : '',
+    value : '',
+  },
 });
 
 export const useMetaContext = () => useContext(MetadataContext);
@@ -60,6 +65,7 @@ export const useMeta = () => {
   const [owner, setOwner] = useState<MetaType>();
   const [id, setId] = useState<MetaType>();
   const [app_id, setApp_id] = useState<MetaType>();
+  const [read, setRead] = useState<MetaType>();
 
   const setMetatype = (name: string, value: any) => {
     switch (name) {
@@ -84,6 +90,9 @@ export const useMeta = () => {
       case 'App_Id' : 
         setApp_id({ name, value });
         break;
+      case 'Read' :
+        setRead({ name, value });
+        break;
       default:
         break;
     }
@@ -97,6 +106,8 @@ export const useMeta = () => {
     hidden,
     id,
     owner,
+    app_id,
+    read,
   };
 }
 

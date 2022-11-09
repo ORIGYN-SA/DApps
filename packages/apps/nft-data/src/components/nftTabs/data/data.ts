@@ -25,11 +25,13 @@ const getMetadata = async () => {
     console.log('token id - getNft');
     const response = await getNft(getTokenId());
     const metadata = await response.ok.metadata.Class;
+    console.log('metadataNft', metadata);
     return metadata;
   } else {
     console.log('no token id - getNftCollectionMeta');
-    const response = await await getNftCollectionMeta();
+    const response = await getNftCollectionMeta();
     const metadata = await response.ok.metadata[0].Class;
+    console.log('collectionMeta', metadata);
     return metadata;
   }
 }
@@ -55,51 +57,11 @@ export const getData = async () => {
           name: 'Owner',
           value: await Metadata.filter((res) => {
             return res.name === 'owner';
-          })[0].value.Principal.toText(),
+          })[0].value.Text,
           immutable: await Metadata.filter((res) => {
             return res.name === 'owner';
           })[0].immutable,
           level: 'Id',
-        },
-        {
-          name: 'Preview',
-          value: await Metadata.filter((res) => {
-            return res.name === 'preview_asset';
-          })[0].value.Text,
-          immutable: await Metadata.filter((res) => {
-            return res.name === 'preview_asset';
-          })[0].immutable,
-          level: 'Asset',
-        },
-        {
-          name: 'Hidden',
-          value: await Metadata.filter((res) => {
-            return res.name === 'hidden_asset';
-          })[0].value.Text,
-          immutable: await Metadata.filter((res) => {
-            return res.name === 'hidden_asset';
-          })[0].immutable,
-          level: 'Asset',
-        },
-        {
-          name: 'Primary',
-          value: await Metadata.filter((res) => {
-            return res.name === 'primary_asset';
-          })[0].value.Text,
-          immutable: await Metadata.filter((res) => {
-            return res.name === 'primary_asset';
-          })[0].immutable,
-          level: 'Asset',
-        },
-        {
-          name: 'Experience',
-          value: await Metadata.filter((res) => {
-            return res.name === 'experience_asset';
-          })[0].value.Text,
-          immutable: await Metadata.filter((res) => {
-            return res.name === 'experience_asset';
-          })[0].immutable,
-          level: 'Asset',
         },
         {
           name: 'App_Id',
@@ -122,7 +84,51 @@ export const getData = async () => {
           level: 'Permission',
         }
       );
-
+      // Assets level - Only for NFTs, Not for collecrion 
+        if(getTokenId()){
+          Data_Array.push(
+          {
+            name: 'Preview',
+            value: await Metadata.filter((res) => {
+              return res.name === 'preview_asset';
+            })[0].value.Text,
+            immutable: await Metadata.filter((res) => {
+              return res.name === 'preview_asset';
+            })[0].immutable,
+            level: 'Asset',
+          },
+          {
+            name: 'Hidden',
+            value: await Metadata.filter((res) => {
+              return res.name === 'hidden_asset';
+            })[0].value.Text,
+            immutable: await Metadata.filter((res) => {
+              return res.name === 'hidden_asset';
+            })[0].immutable,
+            level: 'Asset',
+          },
+          {
+            name: 'Primary',
+            value: await Metadata.filter((res) => {
+              return res.name === 'primary_asset';
+            })[0].value.Text,
+            immutable: await Metadata.filter((res) => {
+              return res.name === 'primary_asset';
+            })[0].immutable,
+            level: 'Asset',
+          },
+          {
+            name: 'Experience',
+            value: await Metadata.filter((res) => {
+              return res.name === 'experience_asset';
+            })[0].value.Text,
+            immutable: await Metadata.filter((res) => {
+              return res.name === 'experience_asset';
+            })[0].immutable,
+            level: 'Asset',
+          },
+          );
+        }
       // Apps level 
       const apps = await Metadata.filter((res) => {
         return res.name === '__apps';

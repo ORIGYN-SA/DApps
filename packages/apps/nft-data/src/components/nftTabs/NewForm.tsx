@@ -8,14 +8,14 @@ import { NFTUpdateRequest, UpdateRequest, CandyValue } from './types/origyn_nft_
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-// mintJs
-import { getNft, OrigynClient } from '@origyn-sa/mintjs';
 // data
 import { getData, getPermissions, Nft_Data, Permission } from './data/data';
 // inputs
 import { Inputs } from './inputs/index';
 // Context
 import { MetadataContext } from './context';
+// CheckOwner
+import { checkOwner } from '@dapp/utils';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -37,16 +37,18 @@ type App = {
 };
 
 const NewForm = ({ metadata }: any) => {
+  // IsOWNER
+  const [isOwner, setIsOwner] = useState(false);
   // array with ids of libraries for the current token
   const [librariesIDS, setLibrariesIDS] = useState<any>([]);
   // object with all the data
-  const [appsNames, setAppsNames] = useState<any>([]);
   const [apps, setApps] = useState<App[]>([]);
   const [libraryFields, setLibraryFields] = useState([]);
   const [data, setData] = useState<Nft_Data[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   // use the context
   const { id, owner, app_id } = useContext(MetadataContext);
+  const { actor, principal, loggedIn } = useContext(AuthContext);
 
   const handleAppsChange = (index, event, i = 0) => {
     if (event.target.name == 'app_id' || event.target.name == 'read') {
@@ -82,7 +84,6 @@ const NewForm = ({ metadata }: any) => {
     setLibraryFields(data);
   };
 
-  const { actor } = useContext(AuthContext);
   const [nft, setNft] = useState<any>({});
   const [nftName, setNftName] = useState<string>('brain 1');
   const [nftCol, setNftCol] = useState<BigInt>(16n);
@@ -90,17 +91,6 @@ const NewForm = ({ metadata }: any) => {
     '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
   );
   const [nftCreator, setNftCreator] = useState<string>('bm');
-
-  useEffect(() => {
-    if (actor) {
-      actor
-        .nft_origyn(getTokenId())
-        .then((r) => {
-          console.log(r);
-        })
-        .catch(console.log);
-    }
-  }, []);
 
   const getArrayData = async () => {
     const response = await getData();
@@ -127,7 +117,7 @@ const NewForm = ({ metadata }: any) => {
         {
           name: 'app_id',
           value: {
-            Text: appsNames[0].value.Text,
+            Text: app_id.value.toString(),
           },
           immutable: true,
         },
@@ -190,19 +180,21 @@ const NewForm = ({ metadata }: any) => {
           name: 'data',
           value: {
             Class: [
-              { name: appsNames[0].name, value: { Text: nftName }, immutable: false },
+              { name: 'com.bm.sample.app',
+                value: { Text: nftName }, 
+                immutable: false },
               {
-                name: appsNames[1].name,
+                name: 'com.bm.sample.app',
                 value: { Nat: 16n },
                 immutable: false,
               },
               {
-                name: appsNames[2].name,
+                name: 'com.bm.sample.app',
                 value: { Text: nftCreator },
                 immutable: false,
               },
               {
-                name: appsNames[3].name,
+                name: 'com.bm.sample.app',
                 value: {
                   Principal: Principal.fromText(nftOwner),
                 },
@@ -228,7 +220,7 @@ const NewForm = ({ metadata }: any) => {
       update: {
         token_id: getTokenId(),
         update: ObjUpdateRequest,
-        app_id: appsNames[0].value.Text,
+        app_id: app_id.value.toString(),
       },
       replace: {
         token_id: getTokenId(),
@@ -247,6 +239,20 @@ const NewForm = ({ metadata }: any) => {
     }
   };
 
+  const checkOwnerAndPermissions = async () => {
+    const checked = await checkOwner(principal, await getCanisterId(), getTokenId());
+    setIsOwner(checked);
+    console.log('isOwner', checked);
+  };
+
+  useEffect(() => {
+    if(loggedIn){
+      checkOwnerAndPermissions();
+    }else{
+      setIsOwner(false);
+      console.log('not logged in');
+    }
+  }, [loggedIn]);
   return (
     <div>
       <Box>
@@ -265,13 +271,19 @@ const NewForm = ({ metadata }: any) => {
                     <Divider />
                   </>
                 ) : (
-                  <>
+                  isOwner ? (
+                    <>
                     <ListItem key={index + item.name}>
                       <ListItemText primary={item.name} secondary={item.value} />
                     </ListItem>
                     <>{Inputs[item.level](item)}</>
                     <Divider />
                   </>
+                  ) :(
+                    <>
+                  </>
+                  )
+                  
                 );
               })}
             </List>
@@ -310,6 +322,7 @@ const NewForm = ({ metadata }: any) => {
                     </>
                   )
                 ) : item.name == 'list' ? (
+                  isOwner ? (
                   <>
                     <ListItem key={index}>
                       <ListItemText
@@ -328,13 +341,20 @@ const NewForm = ({ metadata }: any) => {
                   </>
                 ) : (
                   <>
+                  </>
+                )) : (
+                  isOwner ? (
+                  <>
                     <ListItem key={index}>
                       <ListItemText primary={<b>{item.type}</b>} secondary={item.value} />
                     </ListItem>
                     <>{Inputs[item.level](item)}</>
                     <Divider />
                   </>
-                );
+                ) : (
+                  <>
+                  </>
+                ));
               })}
             </List>
           </Grid>

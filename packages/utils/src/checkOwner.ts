@@ -8,7 +8,7 @@
 // ----------------------------------------------------------------------------
 
 import { Principal } from '@dfinity/principal';
-import { getNft, OrigynClient } from '@origyn-sa/mintjs';
+import { getNft, OrigynClient,getNftCollectionMeta } from '@origyn-sa/mintjs';
 
 export const checkOwner = async (principal: Principal, currCanisterId, currTokenId) => {
 
@@ -18,23 +18,25 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
 
 
     // DEFAULT LIBRARIES OWNER
-    const LibraryOwner: Principal = await getNft('').then((r) =>
-        r.ok.metadata.Class.filter((res) => {
+    const LibraryOwner: Principal = await getNftCollectionMeta().then((r) =>
+        r.ok.metadata[0].Class.filter((res) => {
             console.log('response', r);
             return res.name === 'owner';
-        })[0].value.Principal.toText(),
+        })[0].value.Text,
     );
 
+    if(currTokenId){
     // NFT OWNER
     const NftOwner: Principal = await getNft(currTokenId).then((r) =>
         r.ok.metadata.Class.filter((res) => {
             console.log('response NFT', r);
             return res.name === 'owner';
         })[0].value.Principal.toText(),);
-
+    }
+    
     // WRITE PERMISSIONS
-    const ArrayAllowed  = await getNft(currTokenId).then((r) =>
-    r.ok.metadata.Class.filter((res) => {
+    const ArrayAllowed  = await getNftCollectionMeta().then((r) =>
+    r.ok.metadata[0].Class.filter((res) => {
         console.log('response NFT', r);
         return res.name === '__apps';
     })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed);
@@ -53,7 +55,6 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
     console.log(' LIBRARY OWNER', LibraryOwner);
     console.log('USERPRINCIPAL', UserPrincipal);
     console.log('CURRENT SELECTED NFT : ', currTokenId);
-    console.log('NFT OWNER', NftOwner);
 
     if ((UserPrincipal === LibraryOwner.toString()) || (AllowedUsers() === true)) {
         return true;

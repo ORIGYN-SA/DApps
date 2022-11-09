@@ -24,14 +24,16 @@ import { MetadataContext } from '../context';
 
 const App = (props: any) => {
 
-  const { setMetatype } = useContext(MetadataContext);
+  const { setMetatype,app_id } = useContext(MetadataContext);
 
   const handleChange = (event) => {
     setMetatype(props.item.name,event.target.value);
+    console.log('app_id',app_id);
   };
 
   useEffect(() => {
     setMetatype(props.item.name,props.item.value);
+
   }, []);
 
   return (
