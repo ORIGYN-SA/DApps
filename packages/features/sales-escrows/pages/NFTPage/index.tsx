@@ -1,5 +1,5 @@
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { AuthContext, getCanisterId } from '@dapp/features-authentication'
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { NatPrice } from '@dapp/features-components';
 import {
   ConfirmSalesActionModal,
@@ -61,7 +61,7 @@ const SymbolWithIcon = ({ symbol }: any) =>
 export const NFTPage = () => {
   const { principal, actor } = useContext(AuthContext);
   const [currentNFT, setCurrentNFT] = useState<any>({});
-  const [canisterId, setCanisterId] = useState("");
+  const [canisterId, setCanisterId] = useState('');
   const [openAuction, setOpenAuction] = React.useState(false);
   const [dialogAction, setDialogAction] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
@@ -154,8 +154,8 @@ export const NFTPage = () => {
   }, [actor]);
 
   useEffect(() => {
-    getCanisterId().then((r) => {
-      setCanisterId(r);
+    useRoute().then(({ canisterId }) => {
+      setCanisterId(canisterId);
     });
   }, []);
 

@@ -1,7 +1,11 @@
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { AuthClient } from '@dfinity/auth-client';
 import { IdlStandard, getIdl } from '@dapp/utils';
-
+declare global {
+  interface Window {
+    ic?: any;
+  }
+}
 const plugActor = async (canisterId: string, standard: IdlStandard) => {
   if (!(await window.ic.plug.isConnected())) {
     return undefined;

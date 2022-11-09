@@ -11,19 +11,17 @@ import { SnackbarProvider } from 'notistack';
 const App = () => {
   return (
     <HashRouter>
-      <AuthProvider>
-        <SiteProvider>
-          <TokensContextProvider>
-            <SnackbarProvider maxSnack={3}>
-              <Layout>
-                <Routes>
-                  <Route path="*" element={<Home />} />
-                </Routes>
-              </Layout>
-            </SnackbarProvider>
-          </TokensContextProvider>
-        </SiteProvider>
-      </AuthProvider>
+      <SiteProvider>
+        <TokensContextProvider>
+          <SnackbarProvider maxSnack={3}>
+            <Layout>
+              <Routes>
+                <Route path="*" element={<Home />} />
+              </Routes>
+            </Layout>
+          </SnackbarProvider>
+        </TokensContextProvider>
+      </SiteProvider>
     </HashRouter>
   );
 };

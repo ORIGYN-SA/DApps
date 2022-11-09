@@ -1,4 +1,3 @@
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import {
   Box,
   Button,
@@ -19,8 +18,6 @@ import { timeConverter } from '@dapp/utils';
 import { ConfirmSalesActionModal, StartAuctionModal } from '@dapp/features-sales-escrows';
 
 const GuestContainer = () => {
-  const { logIn } = useContext(AuthContext);
-
   return (
     <Box
       component="main"
@@ -60,13 +57,6 @@ const GuestContainer = () => {
               }}
             />
           </Box>
-          <Button
-            onClick={() => logIn('plug')}
-            startIcon={<AccountBalanceWalletIcon fontSize="small" />}
-            variant="contained"
-          >
-            Connect wallet
-          </Button>
         </Box>
       </Container>
     </Box>
@@ -194,6 +184,8 @@ const WalletPage = () => {
 
   const fetchData = () => {
     if (actor && principal) {
+      console.log('🚀 ~ file: index.tsx ~ line 187 ~ fetchData ~ principal', principal);
+      console.log('🚀 ~ file: index.tsx ~ line 187 ~ fetchData ~ actor', actor);
       setIsLoading(true);
       actor?.balance_of_nft_origyn({ principal }).then((response) => {
         console.log('🚀 ~ file: index.tsx ~ line 208 ~ .then ~ response', response);

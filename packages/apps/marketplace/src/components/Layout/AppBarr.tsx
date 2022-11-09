@@ -13,13 +13,22 @@ import { AuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { OrigynLogo as Logo } from '@dapp/common-assets';
 import { TokenIcon, WalletTokens } from '@dapp/features-components';
+import { useConnect, Connect2ICContext, useProviders } from '@connect2ic/react';
 
 const ResponsiveAppBar = () => {
-  const { logIn, loggedIn, logOut } = React.useContext(AuthContext);
+  const providers = useProviders();
+  const { loggedIn } = React.useContext(AuthContext);
+  const { client, dialog } = React.useContext(Connect2ICContext);
+  const { isConnected, disconnect, principal, connect, activeProvider } = useConnect({
+    onConnect: () => {
+      // Signed in
+    },
+    onDisconnect: () => {
+      // Signed out
+    },
+  });
   const { tokens } = useTokensContext();
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null,
-  );
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -55,7 +64,6 @@ const ResponsiveAppBar = () => {
               >
                 <MenuItem
                   onClick={() => {
-                    logIn('plug');
                     handleCloseUserMenu();
                   }}
                 >
@@ -63,7 +71,6 @@ const ResponsiveAppBar = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    logIn('ii');
                     handleCloseUserMenu();
                   }}
                 >
@@ -111,7 +118,7 @@ const ResponsiveAppBar = () => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  <MenuItem onClick={logOut}>
+                  <MenuItem>
                     <Typography textAlign="center">Logout</Typography>
                   </MenuItem>
                 </Menu>

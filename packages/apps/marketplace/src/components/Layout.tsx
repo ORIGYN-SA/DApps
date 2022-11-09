@@ -7,14 +7,13 @@ import ThemeConfig from '@dapp/features-theme';
 import ResponsiveAppBar from './Layout/AppBarr';
 
 const Layout = ({ children }: any) => {
+  // const { tokens, refreshAllBalances } = useTokensContext();
 
-  const { tokens, refreshAllBalances } = useTokensContext();
-
-  useEffect(() => {
-    if (tokens.OGY.balance === -1) {
-      refreshAllBalances();
-    }
-  }, [tokens]);
+  // useEffect(() => {
+  //   if (tokens.OGY.balance === -1) {
+  //     refreshAllBalances();
+  //   }
+  // }, [tokens]);
   return (
     <ThemeConfig>
       <ResponsiveAppBar />

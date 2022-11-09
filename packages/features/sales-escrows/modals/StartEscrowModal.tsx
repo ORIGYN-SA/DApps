@@ -161,7 +161,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             });
             setIsLoading(false);
             handleCustomClose(true);
-            refreshAllBalances();
+            refreshAllBalances(principal);
           } else {
             throw escrowResponse.err.text;
           }
@@ -184,7 +184,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             });
             setIsLoading(false);
             handleCustomClose(true);
-            refreshAllBalances();
+            refreshAllBalances(principal);
           } else {
             throw bidResponse.err;
           }

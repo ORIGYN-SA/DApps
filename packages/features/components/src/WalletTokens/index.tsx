@@ -20,13 +20,14 @@ import { IdlStandard } from '@dapp/utils';
 import { TabPanel } from '../TabPanel';
 import { TokenIcon } from '../TokenIcon';
 import { LoadingContainer } from '../LoadingContainer';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useAuthContext } from '@dapp/features-authentication';
 
 export const WalletTokens = ({ children }: any) => {
+  const { principal } = useAuthContext();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [selectedStandard, setSelectedStandard] = useState<string>(
-    IdlStandard.DIP20.toString(),
-  );
+  const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
   const [inputCanisterId, setInputCanisterId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { tokens, addToken, toggleToken, refreshAllBalances } = useTokensContext();
@@ -34,21 +35,15 @@ export const WalletTokens = ({ children }: any) => {
   const handleAddButton = async () => {
     if (isLoading) return;
     setIsLoading(true);
-    const tokenResponse = await addToken(
-      inputCanisterId,
-      IdlStandard[selectedStandard],
-    );
+    const tokenResponse = await addToken(inputCanisterId, IdlStandard[selectedStandard], principal);
     if (typeof tokenResponse !== 'string') {
-      enqueueSnackbar(
-        `You have successfully added token ${tokenResponse.symbol}.`,
-        {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+      enqueueSnackbar(`You have successfully added token ${tokenResponse.symbol}.`, {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
         },
-      );
+      });
     } else {
       enqueueSnackbar(tokenResponse, {
         variant: 'error',
@@ -66,7 +61,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    refreshAllBalances();
+    refreshAllBalances(principal);
   };
   const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
     setSelectedTab(tab);
@@ -89,11 +84,7 @@ export const WalletTokens = ({ children }: any) => {
         <DialogTitle id="alert-dialog-title">Add Tokens</DialogTitle>
         <DialogContent>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs
-              value={selectedTab}
-              onChange={handleTabChange}
-              aria-label="basic tabs example"
-            >
+            <Tabs value={selectedTab} onChange={handleTabChange} aria-label="basic tabs example">
               <Tab label="Current Tokens" {...a11yProps(0)} />
               <Tab label="Custom Token" {...a11yProps(1)} />
             </Tabs>
@@ -106,14 +97,14 @@ export const WalletTokens = ({ children }: any) => {
                 return (
                   <ListItem
                     key={`${token.symbol}-${token.enabled}`}
-                    secondaryAction={(
+                    secondaryAction={
                       <Checkbox
                         edge="end"
                         onChange={() => onTokenCheck(token.symbol)}
                         checked={token.enabled}
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
-                    )}
+                    }
                     disablePadding
                   >
                     <ListItemButton>
@@ -123,7 +114,7 @@ export const WalletTokens = ({ children }: any) => {
                         style={{ marginLeft: '5px' }}
                         primary={token.symbol}
                       />
-                      {token.balance}
+                      {token.balance > -1 ? token.balance : <CircularProgress size={10} />}
                     </ListItemButton>
                   </ListItem>
                 );

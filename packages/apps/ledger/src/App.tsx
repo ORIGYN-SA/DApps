@@ -10,19 +10,17 @@ import { SnackbarProvider } from 'notistack';
 
 const App = () => (
   <HashRouter>
-    <AuthProvider>
-      <SiteProvider>
-        <TokensContextProvider>
-          <SnackbarProvider maxSnack={3}>
-            <Layout>
-              <Routes>
-                <Route path="*" element={<Ledger />} />
-              </Routes>
-            </Layout>
-          </SnackbarProvider>
-        </TokensContextProvider>
-      </SiteProvider>
-    </AuthProvider>
+    <SiteProvider>
+      <TokensContextProvider>
+        <SnackbarProvider maxSnack={3}>
+          <Layout>
+            <Routes>
+              <Route path="*" element={<Ledger />} />
+            </Routes>
+          </Layout>
+        </SnackbarProvider>
+      </TokensContextProvider>
+    </SiteProvider>
   </HashRouter>
 );
 

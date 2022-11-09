@@ -1,6 +1,6 @@
 import React from 'react';
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { AuthContext, getCanisterId } from '@dapp/features-authentication'
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { NatPrice } from '@dapp/features-components';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -65,7 +65,7 @@ const SymbolWithIcon = ({ symbol }: any) =>
 
 const Marketplace = () => {
   const { actor } = useContext(AuthContext);
-  const [canisterId, setCanisterId] = useState("");
+  const [canisterId, setCanisterId] = useState('');
   const [NFTData, setNFTData] = useState<any>();
   const [filteredNFTs, setFilteredNFTs] = useState([]);
   //const [isLoading, setIsLoading] = useState(true);
@@ -100,10 +100,10 @@ const Marketplace = () => {
   };
 
   useEffect(() => {
-    getCanisterId().then((r) => {
-      setCanisterId(r);
+    useRoute().then(({ canisterId }) => {
+      setCanisterId(canisterId);
     });
-  }, [])
+  }, []);
 
   useEffect(() => {
     fetchData();

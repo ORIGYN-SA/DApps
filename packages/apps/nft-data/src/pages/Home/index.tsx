@@ -1,46 +1,45 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext, getCanisterId } from '@dapp/features-authentication'
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import NFTInfo from '../NFTInfo';
 
 const Home = () => {
   const { tokenId, principal } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState();
-  const [canisterId, setCanisterId] = useState("");
-
+  const [canisterId, setCanisterId] = useState('');
 
   const getData = async () => {
-      if (tokenId) {
-        try {
-          const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
-          const result = await response.text();
-          if (result.search('"is_soulbound":,')) {
-            setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
-          } else {
-            setNFTData(JSON.parse(result));
-          }
-        } catch (err) {
-          console.log(err);
+    if (tokenId) {
+      try {
+        const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
+        const result = await response.text();
+        if (result.search('"is_soulbound":,')) {
+          setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
+        } else {
+          setNFTData(JSON.parse(result));
         }
-      } else {
-        try {
-          const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
-          const result = await response.text();
-          if (result.search('"is_soulbound":,')) {
-            setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
-          } else {
-            setNFTData(JSON.parse(result));
-          }
-        } catch (err) {
-          console.log(err);
-        }
+      } catch (err) {
+        console.log(err);
       }
+    } else {
+      try {
+        const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
+        const result = await response.text();
+        if (result.search('"is_soulbound":,')) {
+          setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
+        } else {
+          setNFTData(JSON.parse(result));
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 
   useEffect(() => {
-    getCanisterId().then((r) => {
-      setCanisterId(r);
+    useRoute().then(({ canisterId }) => {
+      setCanisterId(canisterId);
     });
-  }, [])
+  }, []);
   useEffect(() => {
     if (canisterId) {
       getData();

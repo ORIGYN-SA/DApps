@@ -14,6 +14,7 @@
     "skipLibCheck": true,
     "rootDir": ".",
     "lib": ["es5", "es6", "esnext", "dom", "dom.iterable"],
+    "typeRoots": ["./node_modules/@types", "./types"],
     "paths": {
       "@dapp/app-wallet": [
         "./packages/apps/wallet/src/index.tsx"
@@ -53,7 +54,7 @@
       ],
       "@dapp/common-assets": [
         "./packages/common/assets/src/index.ts"
-      ],
+      ]
     }
   },
   "include": [

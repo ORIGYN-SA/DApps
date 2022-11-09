@@ -2,17 +2,17 @@ import { SnackbarProvider } from 'notistack';
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from '@dapp/features-components';
-import { AuthProvider } from '@dapp/features-authentication';
 import { NFTPage } from '@dapp/features-sales-escrows';
 import { SiteProvider } from '@dapp/features-theme';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import Wallet from './pages/Wallet';
+import { Connect2ICWrap } from '@dapp/features-authentication';
 
 const App = () => (
   <HashRouter>
-    <AuthProvider>
-      <SiteProvider>
-        <TokensContextProvider>
+    <SiteProvider>
+      <TokensContextProvider>
+        <Connect2ICWrap>
           <SnackbarProvider maxSnack={3}>
             <Layout>
               <Routes>
@@ -21,9 +21,9 @@ const App = () => (
               </Routes>
             </Layout>
           </SnackbarProvider>
-        </TokensContextProvider>
-      </SiteProvider>
-    </AuthProvider>
+        </Connect2ICWrap>
+      </TokensContextProvider>
+    </SiteProvider>
   </HashRouter>
 );
 

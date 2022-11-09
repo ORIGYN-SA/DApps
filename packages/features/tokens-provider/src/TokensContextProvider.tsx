@@ -65,11 +65,15 @@ export type TokensContext = {
   tokens: {
     [key: string]: Token;
   };
-  addToken?: (canisterId: string, standard: IdlStandard) => Promise<Token | string>;
+  addToken?: (
+    canisterId: string,
+    standard: IdlStandard,
+    principal: Principal,
+  ) => Promise<Token | string>;
   getBalance?: (principal: Principal, token: Token) => Promise<number>;
   toggleToken?: (symbol: string) => void;
-  refreshBalance?: (symbol: string) => void;
-  refreshAllBalances?: () => void;
+  refreshBalance?: (principal: Principal, symbol: string) => void;
+  refreshAllBalances?: (principal: Principal) => void;
 };
 
 const defaultTokensMapped = () => {
@@ -104,9 +108,8 @@ export const useTokensContext = () => {
 
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
-  const { principal } = useAuthContext();
 
-  const addToken = async (canisterId: string, standard: IdlStandard) => {
+  const addToken = async (canisterId: string, standard: IdlStandard, principal: Principal) => {
     const metadata: any = await getMetadata(canisterId, standard);
     const { symbol, fee, decimals, icon } = metadata || {};
 
@@ -148,7 +151,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  const refreshBalance = async (symbol: string) => {
+  const refreshBalance = async (principal: Principal, symbol: string) => {
     const balance = await getBalance(principal, tokens[symbol]);
     setTokens((pTokens) => {
       pTokens[symbol].balance = balance;
@@ -156,9 +159,17 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
   };
 
-  const refreshAllBalances = () => {
+  const refreshAllBalances = async (principal: Principal) => {
+    console.log('refreshAllBalances > calling');
+    // Refresh icon
     const _tokens = tokens;
-    Promise.all(
+    Object.keys(_tokens).map((symbol) => {
+      _tokens[symbol].balance = -2;
+    });
+    setTokens(() => ({ ..._tokens }));
+
+    // Actual balance
+    return Promise.all(
       Object.keys(_tokens).map(async (symbol) => {
         _tokens[symbol].balance = await getBalance(principal, _tokens[symbol]);
       }),
