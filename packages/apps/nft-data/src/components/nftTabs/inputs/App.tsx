@@ -28,7 +28,6 @@ const App = (props: any) => {
 
   const handleChange = (event) => {
     setMetatype(props.item.name,event.target.value);
-    console.log('app_id',app_id);
   };
 
   useEffect(() => {

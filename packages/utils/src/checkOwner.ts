@@ -18,7 +18,7 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
 
 
     // DEFAULT LIBRARIES OWNER
-    const LibraryOwner: Principal = await getNftCollectionMeta().then((r) =>
+    const LibraryOwner = await getNftCollectionMeta().then((r) =>
         r.ok.metadata[0].Class.filter((res) => {
             console.log('response', r);
             return res.name === 'owner';
@@ -56,7 +56,7 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
     console.log('USERPRINCIPAL', UserPrincipal);
     console.log('CURRENT SELECTED NFT : ', currTokenId);
 
-    if ((UserPrincipal === LibraryOwner.toString()) || (AllowedUsers() === true)) {
+    if ((UserPrincipal === LibraryOwner) || (AllowedUsers() === true)) {
         return true;
     } else {
         return false;

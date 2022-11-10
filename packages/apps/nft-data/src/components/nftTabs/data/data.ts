@@ -24,12 +24,14 @@ const getMetadata = async () => {
   if (getTokenId()) {
     console.log('token id - getNft');
     const response = await getNft(getTokenId());
+    console.log('responseNFT', response);
     const metadata = await response.ok.metadata.Class;
     console.log('metadataNft', metadata);
     return metadata;
   } else {
     console.log('no token id - getNftCollectionMeta');
     const response = await getNftCollectionMeta();
+    console.log('responseCollection', response);
     const metadata = await response.ok.metadata[0].Class;
     console.log('collectionMeta', metadata);
     return metadata;

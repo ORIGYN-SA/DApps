@@ -119,7 +119,7 @@ const NewForm = ({ metadata }: any) => {
           value: {
             Text: app_id.value.toString(),
           },
-          immutable: true,
+          immutable: false,
         },
         {
           name: 'read',
@@ -233,7 +233,7 @@ const NewForm = ({ metadata }: any) => {
     const repData = await actor.update_app_nft_origyn({ replace: ObjNftUpdateRequest['replace'] });
 
     if (repData) {
-      console.log('replace success');
+      console.log('replace success', repData);    
     } else {
       console.log('replace wrong', repData);
     }
