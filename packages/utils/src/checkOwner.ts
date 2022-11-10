@@ -20,6 +20,7 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
     const CollectionOwner= await getNftCollectionMeta().then((r) => r.ok.metadata[0].Class.filter((res) => {
             return res.name === 'owner';
           })[0].value.Text);
+    console.log('CollectionOwner',CollectionOwner);
 
     // SELECTED NFT OWNER
     const NftOwner: Principal = await getNft(await currTokenId).then((r) =>
@@ -46,10 +47,10 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
 
     console.log('🚀 - COLLECTION OWNER', CollectionOwner); 
     console.log('🚀 - USERPRINCIPAL', UserPrincipal);
-    console.log('🚀 - CURRENT SELECTED NFT : ', currTokenId);
+    console.log('🚀 - CURRENT SELECTED NFT : ', await currTokenId);
     console.log('🚀 - NFT OWNER', NftOwner);
 
-    if ((UserPrincipal === CollectionOwner.toString()) || (AllowedUsers() === true)) {
+    if ((UserPrincipal === CollectionOwner) || (AllowedUsers() === true)) {
         return true;
     } else {
         return false;

@@ -47,7 +47,7 @@ const LibraryTextHtml = (props: any) => {
             <Typography color="inherit">Text/Html Type</Typography>
             <em>{link}</em> <br></br>
             <b>
-              <a href={link} target="_blank">
+              <a href={link} target="_blank" rel="noreferrer">
                 {'Open Link '}
               </a>
             </b>{' '}

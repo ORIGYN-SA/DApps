@@ -7,9 +7,18 @@ import Button from '@mui/material/Button';
 import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
-import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
+import { OrigynClient, stageLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
+import Collapse from '@mui/material/Collapse';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
 
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
@@ -21,13 +30,20 @@ const currentCanisterId = async () => {
   return canisterId;
 };
 
-export const LibraryForm = (props: any) => {
+export const LibraryForm = async (props: any) => {
   const { enqueueSnackbar } = useSnackbar();
-  const [canisterId, setCanisterId] = useState(currentCanisterId());
-  const [isProd, setIsProd] = useState(true);
+  const isProd = true;
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
   const [file, setFile] = useState<any>();
   const [type, setType] = useState<any>();
+  const [selectedLibrary, setSelectedLibrary] = React.useState('');
+  const [radioValue, setRadioValue] = React.useState('Canister');
+  const [openFileInput, setOpenFileInput] = React.useState(false);
+  const [openSelectInput, setOpenSelectInput] = React.useState(false);
+  const [libraries, setLibraries] = React.useState<any>([]);
+  const canisterId = async () => {
+    return await currentCanisterId();
+  };
   function handleInputChange(e) {
     console.log(e.target.files);
     setLibraryAssets(e.target.files);
@@ -35,6 +51,43 @@ export const LibraryForm = (props: any) => {
     console.log(e.target.files[0].type);
     setType(e.target.files[0].type);
   }
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setSelectedLibrary(event.target.value as string);
+  };
+  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRadioValue((event.target as HTMLInputElement).value);
+  };
+
+  const getLibraries = async () => {
+    await OrigynClient.getInstance().init(true, await getCanisterId());
+    const response = await getNftCollectionMeta();
+    const library = await response.ok.metadata[0].Class.filter((res) => {
+      return res.name === 'library';
+    })[0].value.Array.thawed;
+    console.log('responseCollection', library);
+    let libraries = [];
+    let i: any;
+    for (i in library) {
+      libraries.push(
+        library[i].Class.filter((res) => {
+          return res.name === 'library_id';
+        })[0].value.Text,
+      );
+    }
+    setLibraries(libraries);
+    setSelectedLibrary(libraries[0]);
+  };
+
+  useEffect(() => {
+    if (radioValue === 'Canister') {
+      setOpenFileInput(true);
+      setOpenSelectInput(false);
+    } else {
+      setOpenFileInput(false);
+      setOpenSelectInput(true);
+      getLibraries();
+    }
+  }, [radioValue]);
 
   const { register, handleSubmit } = useForm({
     defaultValues: {
@@ -49,7 +102,7 @@ export const LibraryForm = (props: any) => {
 
   const stageLibrary = async () => {
     console.log('token id is ', props.currentTokenId);
-    await OrigynClient.getInstance().init(isProd, await canisterId, {
+    await OrigynClient.getInstance().init(isProd, await canisterId(), {
       key: {
         seed: TEST_IDENTITY.seed,
       },
@@ -72,30 +125,31 @@ export const LibraryForm = (props: any) => {
         )),
       ],
     };
-    try{
-      console.log('🚀 ~ file: App.tsx ~ line 179 ~ handleStageLibraryAssetClick ~ payload', payload);
+    try {
+      console.log(
+        '🚀 ~ file: App.tsx ~ line 179 ~ handleStageLibraryAssetClick ~ payload',
+        payload,
+      );
       const stage = await stageLibraryAsset(payload.files, false, payload.token_id);
       console.log('🚀 ~ file: App.tsx ~ line 175 ~ handleStageLibraryAssetClick ~ stage', stage);
       // Display a success message - SNACKBAR
       enqueueSnackbar('Library staged!', {
         variant: 'success',
         anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
+          vertical: 'top',
+          horizontal: 'right',
         },
-    });
-    }
-    catch(error){
+      });
+    } catch (error) {
       // Display a error message - SNACKBAR
       enqueueSnackbar('Something went wrong', {
         variant: 'error',
         anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
+          vertical: 'top',
+          horizontal: 'right',
         },
-    });
+      });
     }
-
   };
 
   // Functions needed for file to Buffer
@@ -118,6 +172,10 @@ export const LibraryForm = (props: any) => {
     });
   };
 
+  useEffect(() => {
+    console.log('TOKEN ID FROM FORM', props.currentTokenId);
+  }, [props.currentTokenId]);
+
   return (
     <Grid container maxHeight={300} width={'max-content'}>
       <Grid item xs={12}>
@@ -131,40 +189,126 @@ export const LibraryForm = (props: any) => {
           gutterBottom
         >
           {props.currentTokenId === '' ? (
-            <b>Stage a default library</b>
+            <>
+              <b>Stage a library for the collection</b>
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    m: 2,
+                  }}
+                >
+                  <input type="file" id="library" name="library" onChange={handleInputChange} />
+                </Box>
+                {file === undefined ? (
+                  <></>
+                ) : (
+                  <Box
+                    sx={{
+                      m: 2,
+                    }}
+                  >
+                    {type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}
+                  </Box>
+                )}
+                <Box
+                  sx={{
+                    m: 2,
+                    textAlign: 'right',
+                  }}
+                >
+                  <Button variant="outlined" onClick={stageLibrary}>
+                    Stage Library
+                  </Button>
+                </Box>
+              </Grid>
+            </>
           ) : (
-            <b>Stage a library for: {props.currentTokenId} </b>
+            <>
+              <b>Stage a library for: {props.currentTokenId} </b>
+              <Grid>
+                <Box
+                  sx={{
+                    m: 2,
+                  }}
+                >
+                  <Grid item xs={12}>
+                    <FormControl>
+                      <FormLabel id="radio-location-type">Location Type</FormLabel>
+                      <RadioGroup
+                        aria-labelledby="radio-location-type"
+                        defaultValue="Canister"
+                        name="radio-location-type"
+                        onChange={handleRadioChange}
+                        value={radioValue}
+                      >
+                        <FormControlLabel value="Canister" control={<Radio />} label="Canister" />
+                        <FormControlLabel
+                          value="Collection"
+                          control={<Radio />}
+                          label="Collection"
+                        />{' '}
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                  <Collapse in={openSelectInput} timeout="auto" unmountOnExit>
+                    <Grid item xs={12} m={2}>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Select</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={selectedLibrary}
+                          label="Select"
+                          onChange={handleSelectChange}
+                        >
+                          {libraries.map((library, index) => {
+                            return (
+                              <MenuItem key={library + index} value={library}>
+                                {library}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Collapse>
+                  <Collapse in={openFileInput} timeout="auto" unmountOnExit>
+                    <Grid item xs={12} m={2}>
+                      <input type="file" id="library" name="library" onChange={handleInputChange} />
+                    </Grid>
+                  </Collapse>
+                </Box>
+                {file === undefined ? (
+                  <></>
+                ) : (
+                  <Box
+                    sx={{
+                      m: 2,
+                    }}
+                  >
+                    {type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}
+                  </Box>
+                )}
+                <Box
+                  sx={{
+                    m: 2,
+                    textAlign: 'right',
+                  }}
+                >
+                  {radioValue === 'Canister' ? (
+                    <Button variant="outlined" onClick={stageLibrary}>
+                      Stage Library
+                    </Button>
+                  ) : (
+                    <Button variant="outlined" onClick={stageLibrary} disabled={true}>
+                      IN PROGRESS...
+                    </Button>
+                  )}
+                </Box>
+              </Grid>
+            </>
           )}
         </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Box
-          sx={{
-            m: 2,
-          }}
-        >
-          <input type="file" id="library" name="library" onChange={handleInputChange} />
-        </Box>
-        {file === undefined ? (
-          <></>
-        ) : (
-          <Box
-            sx={{
-              m: 2,
-            }}
-          >
-            {type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}
-          </Box>
-        )}
-        <Box
-          sx={{
-            m: 2,
-          }}
-        >
-          <Button variant="outlined" onClick={stageLibrary}>
-            Stage Library
-          </Button>
-        </Box>
       </Grid>
     </Grid>
   );

@@ -45,7 +45,7 @@ const LibraryDefault = (props: any) => {
         title={
           <React.Fragment>
             <Typography color="inherit"></Typography>
-            <em>{link}</em> <br></br><b><a href={link} target='_blank'>{'Open Link'}</a></b>{' '}
+            <em>{link}</em> <br></br><b><a href={link} rel="noreferrer" target='_blank'>{'Open Link'}</a></b>{' '}
           </React.Fragment>
         }
       >

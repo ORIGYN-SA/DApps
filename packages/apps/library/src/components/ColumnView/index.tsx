@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
-import { getNft, OrigynClient, getNftCollectionMeta, stageLibraryAsset } from '@origyn-sa/mintjs';
+import { getNft, OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { checkOwner } from '@dapp/utils';
 // Import from style.tsx
 import { useStyles, Sizes, ListItemButton } from './style';
@@ -15,12 +15,7 @@ import { Box } from '@mui/system';
 import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../LibraryForm';
-// List Icons
-import ListItemIcon from '@mui/material/ListItemIcon';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-// Form
-import App from '../Form2';
+
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -58,7 +53,6 @@ const ColumnView = () => {
     return tokenId;
   };
 
-
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
     setOpen(!open);
     setOpen1(false);
@@ -68,6 +62,7 @@ const ColumnView = () => {
     setOpenDub(false);
     setOpenDeta(false);
     setOpenForm(false);
+    setOpenFormDefault(false);
     nftCollection();
     setSelectedIndex(index);
   };
@@ -226,7 +221,11 @@ const ColumnView = () => {
   }, []);
 
   const checkAndSetOwner = async () => {
-    const checked = await checkOwner(principal, await currentCanisterId(),  await currentUrlTokenId());
+    const checked = await checkOwner(
+      principal,
+      await currentCanisterId(),
+      await currentUrlTokenId(),
+    );
     setOwner(checked);
   };
 
@@ -259,24 +258,19 @@ const ColumnView = () => {
                     </ListItemButton>
                   </ListItem>
                 </Grid>
-                {collectionNft.length <= 0 ? (
-                  <></>
-                ) : (
-                  <Grid item xs={12}>
-                    <ListItem className={classes.noPadding}>
-                      <ListItemButton
-                        selected={selectedIndex === 1}
-                        onClick={(event) => handleClickLib(event, 1)}
-                        className={classes.noPadding}
-                      >
-                        <ListItemText sx={{ paddingLeft: 1 }} primary="Collection" />
-                      </ListItemButton>
-                    </ListItem>
-                  </Grid>
-                )}
+                <Grid item xs={12}>
+                  <ListItem className={classes.noPadding}>
+                    <ListItemButton
+                      selected={selectedIndex === 1}
+                      onClick={(event) => handleClickLib(event, 1)}
+                      className={classes.noPadding}
+                    >
+                      <ListItemText sx={{ paddingLeft: 1 }} primary="Collection" />
+                    </ListItemButton>
+                  </ListItem>
+                </Grid>
               </Grid>
             </Box>
-
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
                 <Grid container minWidth={Sizes.minWidth}>

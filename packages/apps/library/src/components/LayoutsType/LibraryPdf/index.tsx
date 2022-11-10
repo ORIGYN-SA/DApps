@@ -44,7 +44,7 @@ const LibraryPdf = (props: any) => {
         title={
           <React.Fragment>
             <Typography color="inherit">PDF</Typography>
-            <em>{link}</em> <br></br><b><a href={link} target='_blank'>{'View PDF '}</a></b>{' '}
+            <em>{link}</em> <br></br><b><a href={link} target='_blank' rel="noreferrer" >{'View PDF '}</a></b>{' '}
           </React.Fragment>
         }
       >
