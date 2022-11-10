@@ -180,9 +180,7 @@ const NewForm = ({ metadata }: any) => {
           name: 'data',
           value: {
             Class: [
-              { name: 'com.bm.sample.app',
-                value: { Text: nftName }, 
-                immutable: false },
+              { name: 'com.bm.sample.app', value: { Text: nftName }, immutable: false },
               {
                 name: 'com.bm.sample.app',
                 value: { Nat: 16n },
@@ -204,8 +202,7 @@ const NewForm = ({ metadata }: any) => {
           },
           immutable: false,
         },
-        { name: 'owner', 
-        value: { Principal: Principal.fromText(nftOwner) }, immutable: false },
+        { name: 'owner', value: { Principal: Principal.fromText(nftOwner) }, immutable: false },
         { name: 'is_soulbound', value: { Bool: false }, immutable: false },
       ],
     };
@@ -233,7 +230,7 @@ const NewForm = ({ metadata }: any) => {
     const repData = await actor.update_app_nft_origyn({ replace: ObjNftUpdateRequest['replace'] });
 
     if (repData) {
-      console.log('replace success', repData);    
+      console.log('replace success', repData);
     } else {
       console.log('replace wrong', repData);
     }
@@ -246,9 +243,9 @@ const NewForm = ({ metadata }: any) => {
   };
 
   useEffect(() => {
-    if(loggedIn){
+    if (loggedIn) {
       checkOwnerAndPermissions();
-    }else{
+    } else {
       setIsOwner(false);
       console.log('not logged in');
     }
@@ -270,20 +267,16 @@ const NewForm = ({ metadata }: any) => {
                     </ListItem>
                     <Divider />
                   </>
-                ) : (
-                  isOwner ? (
-                    <>
+                ) : isOwner ? (
+                  <>
                     <ListItem key={index + item.name}>
                       <ListItemText primary={item.name} secondary={item.value} />
                     </ListItem>
                     <>{Inputs[item.level](item)}</>
                     <Divider />
                   </>
-                  ) :(
-                    <>
-                  </>
-                  )
-                  
+                ) : (
+                  <></>
                 );
               })}
             </List>
@@ -323,27 +316,40 @@ const NewForm = ({ metadata }: any) => {
                   )
                 ) : item.name == 'list' ? (
                   isOwner ? (
-                  <>
-                    <ListItem key={index}>
-                      <ListItemText
-                        primary={item.type + ' ' + item.name}
-                        secondary={item.list.map((item, index) => {
-                          return (
-                            <div key={index}>
-                              <span>{item}</span>
-                            </div>
-                          );
-                        })}
-                      />
-                    </ListItem>
-                    <>{Inputs[item.level](item)}</>
-                    <Divider />
-                  </>
-                ) : (
-                  <>
-                  </>
-                )) : (
-                  isOwner ? (
+                    <>
+                      <ListItem key={index}>
+                        <ListItemText
+                          primary={item.type + ' ' + item.name}
+                          secondary={item.list.map((item, index) => {
+                            return (
+                              <div key={index}>
+                                <span>{item}</span>
+                              </div>
+                            );
+                          })}
+                        />
+                      </ListItem>
+                      <>{Inputs[item.level](item)}</>
+                      <Divider />
+                    </>
+                  ) : (
+                    <>
+                      <ListItem key={index}>
+                        <ListItemText
+                          primary={item.type + ' ' + item.name}
+                          secondary={item.list.map((item, index) => {
+                            return (
+                              <div key={index}>
+                                <span>{item}</span>
+                              </div>
+                            );
+                          })}
+                        />
+                      </ListItem>
+                      <Divider />
+                    </>
+                  )
+                ) : isOwner ? (
                   <>
                     <ListItem key={index}>
                       <ListItemText primary={<b>{item.type}</b>} secondary={item.value} />
@@ -353,14 +359,18 @@ const NewForm = ({ metadata }: any) => {
                   </>
                 ) : (
                   <>
+                    <ListItem key={index}>
+                      <ListItemText primary={<b>{item.type}</b>} secondary={item.value} />
+                    </ListItem>
+                    <Divider />
                   </>
-                ));
+                );
               })}
             </List>
           </Grid>
         </Grid>
         <Divider />
-      <Button onClick={submitData}>Update</Button>
+        <Button onClick={submitData}>Update</Button>
       </Box>
     </div>
   );
