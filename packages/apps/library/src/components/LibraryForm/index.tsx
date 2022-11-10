@@ -30,7 +30,7 @@ const currentCanisterId = async () => {
   return canisterId;
 };
 
-export const LibraryForm = async (props: any) => {
+export const LibraryForm =  (props: any) => {
   const { enqueueSnackbar } = useSnackbar();
   const isProd = true;
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
