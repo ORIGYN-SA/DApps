@@ -53,7 +53,7 @@ const NFTInfo = ({metadata}: any) => {
           <Tab label="Tree"  />
           <Tab label="Raw"  />
           <Tab label="JSON"  />
-          <Tab label="Update"  />
+          <Tab label="Update" disabled={true} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>

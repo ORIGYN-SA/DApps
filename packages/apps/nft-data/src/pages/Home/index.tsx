@@ -3,7 +3,7 @@ import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentic
 import NFTInfo from '../NFTInfo';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { SwitchCanisterCollection, SearchbarNft } from '@dapp/features-components';
+import { SwitchCanisterCollection } from '@dapp/features-components';
 import Paper from '@mui/material/Paper';
 import { OrigynClient, getNftCollectionMeta} from '@origyn-sa/mintjs';
 
@@ -12,26 +12,17 @@ const currentCanisterId = async () => {
   const canisterId = await getCanisterId();
   return canisterId;
 };
-const currTokenId = async () => {
-  const tokenId = await getTokenId();
-  return tokenId;
-};
 
 const Home = () => {
-  const { tokenId, canisterId, principal, actor } = useContext(AuthContext);
-  const [collectionNft, setCollectionNft] = useState([]);
-  const [currentTokenId, setCurrentTokenId] = useState('');
+  const { tokenId, canisterId, actor } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState();
 
   const nftCollection = async () => {
-    setCollectionNft([]);
     OrigynClient.getInstance().init(true, await currentCanisterId());
     const response = await getNftCollectionMeta([]);
     console.log('response', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
-
-    setCollectionNft(obj_token_ids);
 
     // In case we have URL with tokenID and we change canister,
     // We need to check if the tokenID is in the new canister
@@ -40,7 +31,6 @@ const Home = () => {
       let Url = window.location.href;
       Url = Url.replace(getTokenId(), obj_token_ids[0]);
       window.location.href = Url;
-      setCurrentTokenId(obj_token_ids[0]);
     }
     return obj_token_ids;
   };

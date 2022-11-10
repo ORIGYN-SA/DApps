@@ -16,8 +16,6 @@ import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../LibraryForm';
 
-// Form
-import App from '../Form2';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);

@@ -3,9 +3,7 @@ import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { getTokenId, getCanisterId } from '@dapp/features-authentication';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
-import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
-import { Grid, TextField, Button, Box, Divider, Select, SelectChangeEvent, FormControl } from '@mui/material';
+import { Select, SelectChangeEvent, FormControl } from '@mui/material';
 // Context
 import { MetadataContext } from '../context';
 const Asset = (props: any) => {

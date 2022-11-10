@@ -17,18 +17,6 @@ import { MetadataContext } from './context';
 // CheckOwner
 import { checkOwner } from '@dapp/utils';
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}));
-
-type Asset = {
-  id: string;
-  immutable: boolean;
-};
 
 type App = {
   name: string;
@@ -39,15 +27,14 @@ type App = {
 const NewForm = ({ metadata }: any) => {
   // IsOWNER
   const [isOwner, setIsOwner] = useState(false);
-  // array with ids of libraries for the current token
-  const [librariesIDS, setLibrariesIDS] = useState<any>([]);
+
   // object with all the data
   const [apps, setApps] = useState<App[]>([]);
   const [libraryFields, setLibraryFields] = useState([]);
   const [data, setData] = useState<Nft_Data[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   // use the context
-  const { id, owner, app_id } = useContext(MetadataContext);
+  const { app_id } = useContext(MetadataContext);
   const { actor, principal, loggedIn } = useContext(AuthContext);
 
   const handleAppsChange = (index, event, i = 0) => {
