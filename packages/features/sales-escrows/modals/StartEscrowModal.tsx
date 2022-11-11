@@ -1,6 +1,7 @@
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
+import { isLocal } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -24,7 +25,7 @@ import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
 export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
-  const { actor, ogyActor, principal } = React.useContext(AuthContext);
+  const { actor, ogyActor, principal, localDevelopment } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -90,7 +91,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
     ),
   };
-  console.log('🚀 ~ file: StartEscrow.tsx ~ line 112 ~ _nft', _nft);
 
   const handleStartEscrow = async (data) => {
     console.log(data);
@@ -118,6 +118,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
 
       try {
         const transactionHeight = await sendTransaction(
+          localDevelopment && isLocal(),
           walletType,
           tokens[token],
           new Uint8Array(account_id),
@@ -161,7 +162,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             });
             setIsLoading(false);
             handleCustomClose(true);
-            refreshAllBalances(principal);
+            refreshAllBalances(isLocal() && localDevelopment, principal);
           } else {
             throw escrowResponse.err.text;
           }
@@ -184,7 +185,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             });
             setIsLoading(false);
             handleCustomClose(true);
-            refreshAllBalances(principal);
+            refreshAllBalances(isLocal() && localDevelopment, principal);
           } else {
             throw bidResponse.err;
           }

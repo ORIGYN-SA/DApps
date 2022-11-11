@@ -1,29 +1,30 @@
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { AuthClient } from '@dfinity/auth-client';
-import { IdlStandard, getIdl } from '@dapp/utils';
+import { getIdl } from '@dapp/utils';
+import { Token } from '../../tokens-provider/src/TokensContextProvider';
 declare global {
   interface Window {
     ic?: any;
   }
 }
-const plugActor = async (canisterId: string, standard: IdlStandard) => {
+const plugActor = async (localDeveopment: boolean, token: Token) => {
   if (!(await window.ic.plug.isConnected())) {
     return undefined;
   }
-
+  const ledgerCanisterId = localDeveopment ? token.localCanisterId : token.canisterId;
   await window.ic.plug.createAgent({
-    whitelist: [canisterId],
-    host: 'https://boundary.ic0.app',
+    whitelist: [ledgerCanisterId],
+    host: localDeveopment ? 'http://localhost:8000' : 'https://boundary.ic0.app',
   });
 
   const actor = await window.ic.plug.createActor({
-    canisterId: canisterId,
-    interfaceFactory: getIdl(standard),
+    canisterId: ledgerCanisterId,
+    interfaceFactory: getIdl(token.standard),
   });
   return actor;
 };
 
-const iiActor = async (canisterId: string, standard: IdlStandard) => {
+const iiActor = async (localDeveopment: boolean, token: Token) => {
   const authClient = await AuthClient.create();
   if (!(await authClient.isAuthenticated())) {
     return undefined;
@@ -33,26 +34,27 @@ const iiActor = async (canisterId: string, standard: IdlStandard) => {
 
   const airdropAgent = new HttpAgent({
     identity,
-    host: 'https://boundary.ic0.app/',
+    host: localDeveopment ? 'http://localhost:8000' : 'https://boundary.ic0.app',
   });
+  const ledgerCanisterId = localDeveopment ? token.localCanisterId : token.canisterId;
 
-  const actor = Actor.createActor(getIdl(standard), {
+  const actor = Actor.createActor(getIdl(token.standard), {
     agent: airdropAgent,
-    canisterId: canisterId,
+    canisterId: ledgerCanisterId,
   });
 
   return actor;
 };
 
 export const createWalletActor = async (
+  localDevelopment: boolean,
   walletType: string,
-  canisterId: string,
-  standard: IdlStandard,
+  token: Token,
 ) => {
   switch (walletType) {
     case 'plug':
-      return await plugActor(canisterId, standard);
+      return await plugActor(localDevelopment, token);
     case 'ii':
-      return await iiActor(canisterId, standard);
+      return await iiActor(localDevelopment, token);
   }
 };

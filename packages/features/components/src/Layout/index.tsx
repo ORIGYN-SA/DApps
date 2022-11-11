@@ -5,19 +5,23 @@ import CheckIcon from '@mui/icons-material/Check';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import {
   Box,
   Divider,
   Drawer,
   Hidden,
+  Link,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
-import { Connect2ICWrap, useAuthContext } from '@dapp/features-authentication';
+import { isLocal } from '@dapp/utils';
+import { useAuthContext, useSessionContext } from '@dapp/features-authentication';
 import { ConnectButton, ConnectDialog, useConnect } from '@connect2ic/react';
 import ThemeConfig, { SiteContext } from '@dapp/features-theme';
 import { useTokensContext } from '@dapp/features-tokens-provider';
@@ -26,6 +30,8 @@ import { WalletTokens } from '../WalletTokens';
 import { TokenIcon } from '../TokenIcon';
 import CircularProgress from '@mui/material/CircularProgress';
 import './connect2ic.css';
+import { LocalDevelopmentModal } from '../LocalDevelopmentModal';
+import { Principal } from '@dfinity/principal';
 
 const initialMenuItems: MenuItem[] = [
   {
@@ -50,6 +56,8 @@ export const Layout = ({ menuItems, children }: LayoutProps) => {
 
   const { loggedIn, principal, handleLogOut } = useAuthContext();
   const { tokens, refreshAllBalances } = useTokensContext();
+  const { localDevelopment } = useSessionContext();
+
   const toggleTheme = () => {
     const t = themeMode === 'light' ? 'dark' : 'light';
     onChangeMode(t);
@@ -60,11 +68,11 @@ export const Layout = ({ menuItems, children }: LayoutProps) => {
       window.location.href.substr(0, window.location.href.lastIndexOf('\\') + 1) + i.page;
   };
 
-  // useEffect(() => {
-  //   if (tokens.OGY.balance === -1) {
-  //     refreshAllBalances();
-  //   }
-  // }, [tokens]);
+  useEffect(() => {
+    if (principal && principal.toText() !== '2vxsx-fae') {
+      refreshAllBalances(isLocal() && localDevelopment, principal);
+    }
+  }, [principal]);
 
   return (
     <>
@@ -94,8 +102,16 @@ export const Layout = ({ menuItems, children }: LayoutProps) => {
                     <List>
                       {!loggedIn ? (
                         <>
-                          <ListItem button style={{ justifyContent: 'center' }}>
+                          <ListItem
+                            button
+                            style={{ justifyContent: 'center', flexDirection: 'column' }}
+                          >
                             <ConnectButton />
+                            {isLocal && (
+                              <LocalDevelopmentModal>
+                                <Link>Local Development Settings</Link>
+                              </LocalDevelopmentModal>
+                            )}
                           </ListItem>
                         </>
                       ) : (
@@ -127,6 +143,11 @@ export const Layout = ({ menuItems, children }: LayoutProps) => {
                               </div>
                             ))}
                           </WalletTokens>
+                          {isLocal && (
+                            <LocalDevelopmentModal>
+                              <Link>Local Development Settings</Link>
+                            </LocalDevelopmentModal>
+                          )}
                         </ListItem>
                       )}
                       <Divider />

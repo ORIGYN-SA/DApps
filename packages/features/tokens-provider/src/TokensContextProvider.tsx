@@ -1,4 +1,4 @@
-import { useAuthContext } from '@dapp/features-authentication';
+import { useSessionContext } from '@dapp/features-authentication';
 import { IdlStandard } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 import JSONBig from 'json-bigint';
@@ -46,6 +46,7 @@ const defaultTokens = {
 
 export type Token = {
   balance?: number;
+  localCanisterId?: string;
   canisterId: string;
   decimals?: number;
   enabled?: boolean;
@@ -66,14 +67,16 @@ export type TokensContext = {
     [key: string]: Token;
   };
   addToken?: (
+    isLocal: boolean,
     canisterId: string,
     standard: IdlStandard,
     principal: Principal,
   ) => Promise<Token | string>;
-  getBalance?: (principal: Principal, token: Token) => Promise<number>;
+  getBalance?: (isLocal: boolean, principal: Principal, token: Token) => Promise<number>;
   toggleToken?: (symbol: string) => void;
-  refreshBalance?: (principal: Principal, symbol: string) => void;
-  refreshAllBalances?: (principal: Principal) => void;
+  refreshBalance?: (isLocal: boolean, principal: Principal, symbol: string) => void;
+  refreshAllBalances?: (isLocal: boolean, principal: Principal) => void;
+  setLocalCanisterId?: (symbol: string, cansterId: string) => void;
 };
 
 const defaultTokensMapped = () => {
@@ -108,9 +111,15 @@ export const useTokensContext = () => {
 
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
+  const { setOgyLedgerCanisterId } = useSessionContext();
 
-  const addToken = async (canisterId: string, standard: IdlStandard, principal: Principal) => {
-    const metadata: any = await getMetadata(canisterId, standard);
+  const addToken = async (
+    isLocal: boolean,
+    canisterId: string,
+    standard: IdlStandard,
+    principal: Principal,
+  ) => {
+    const metadata: any = await getMetadata(isLocal, canisterId, standard);
     const { symbol, fee, decimals, icon } = metadata || {};
 
     if (tokens[symbol]) return AddTokenError.ALREADY_EXIST;
@@ -125,7 +134,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       decimals,
     };
 
-    token.balance = await getBalance(principal, token);
+    token.balance = await getBalance(isLocal, principal, token);
     const _tokens = tokens;
     _tokens[token.symbol] = token;
     setTokens(_tokens);
@@ -142,24 +151,24 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
   };
 
-  const getBalance = async (principal: Principal, token: Token) => {
+  const getBalance = async (isLocal: boolean, principal: Principal, token: Token) => {
     try {
-      const balance = await getBalanceFromCanister(principal, token);
+      const balance = await getBalanceFromCanister(isLocal, principal, token);
       return balance.value / 10 ** balance.decimals;
     } catch {
       return 0;
     }
   };
 
-  const refreshBalance = async (principal: Principal, symbol: string) => {
-    const balance = await getBalance(principal, tokens[symbol]);
+  const refreshBalance = async (isLocal: boolean, principal: Principal, symbol: string) => {
+    const balance = await getBalance(isLocal, principal, tokens[symbol]);
     setTokens((pTokens) => {
       pTokens[symbol].balance = balance;
       return { ...pTokens };
     });
   };
 
-  const refreshAllBalances = async (principal: Principal) => {
+  const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
     console.log('refreshAllBalances > calling');
     // Refresh icon
     const _tokens = tokens;
@@ -171,13 +180,26 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     // Actual balance
     return Promise.all(
       Object.keys(_tokens).map(async (symbol) => {
-        _tokens[symbol].balance = await getBalance(principal, _tokens[symbol]);
+        _tokens[symbol].balance = await getBalance(isLocal, principal, _tokens[symbol]);
       }),
     ).then(() => {
       setTokens(() => ({ ..._tokens }));
     });
   };
 
+  const setLocalCanisterId = (symbol: string, canisterId: string) => {
+    setTokens((pTokens) => {
+      pTokens[symbol].localCanisterId = canisterId;
+      return { ...pTokens };
+    });
+    if (symbol === 'OGY') {
+      console.log(
+        '🚀 ~ file: TokensContextProvider.tsx ~ line 197 ~ setLocalCanisterId ~ canisterId',
+        canisterId,
+      );
+      setOgyLedgerCanisterId(canisterId);
+    }
+  };
   useEffect(() => {
     localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
   }, [tokens]);
@@ -185,12 +207,13 @@ export const TokensContextProvider: React.FC = ({ children }) => {
   return (
     <TokensContext.Provider
       value={{
-        tokens,
         addToken,
-        toggleToken,
         getBalance,
-        refreshBalance,
         refreshAllBalances,
+        refreshBalance,
+        setLocalCanisterId,
+        toggleToken,
+        tokens,
       }}
     >
       {children}

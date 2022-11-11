@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { IdlStandard } from '@dapp/utils';
+import { IdlStandard, isLocal } from '@dapp/utils';
 import { TabPanel } from '../TabPanel';
 import { TokenIcon } from '../TokenIcon';
 import { LoadingContainer } from '../LoadingContainer';
@@ -24,7 +24,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useAuthContext } from '@dapp/features-authentication';
 
 export const WalletTokens = ({ children }: any) => {
-  const { principal } = useAuthContext();
+  const { principal, localDevelopment } = useAuthContext();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
@@ -35,7 +35,12 @@ export const WalletTokens = ({ children }: any) => {
   const handleAddButton = async () => {
     if (isLoading) return;
     setIsLoading(true);
-    const tokenResponse = await addToken(inputCanisterId, IdlStandard[selectedStandard], principal);
+    const tokenResponse = await addToken(
+      isLocal() && localDevelopment,
+      inputCanisterId,
+      IdlStandard[selectedStandard],
+      principal,
+    );
     if (typeof tokenResponse !== 'string') {
       enqueueSnackbar(`You have successfully added token ${tokenResponse.symbol}.`, {
         variant: 'success',
@@ -61,7 +66,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    refreshAllBalances(principal);
+    refreshAllBalances(isLocal() && localDevelopment, principal);
   };
   const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
     setSelectedTab(tab);

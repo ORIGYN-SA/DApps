@@ -6,23 +6,25 @@ import { SiteProvider } from '@dapp/features-theme';
 import 'react-toastify/dist/ReactToastify.css';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import { SnackbarProvider } from 'notistack';
-import { Connect2ICWrap } from '@dapp/features-authentication';
+import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
 
 const App = () => {
   return (
     <HashRouter>
       <SiteProvider>
-        <TokensContextProvider>
-          <Connect2ICWrap>
-            <SnackbarProvider maxSnack={3}>
-              <Layout>
-                <Routes>
-                  <Route path="*" element={<Home />} />
-                </Routes>
-              </Layout>
-            </SnackbarProvider>
-          </Connect2ICWrap>
-        </TokensContextProvider>
+        <SessionProvider>
+          <TokensContextProvider>
+            <AuthProvider>
+              <SnackbarProvider maxSnack={3}>
+                <Layout>
+                  <Routes>
+                    <Route path="*" element={<Home />} />
+                  </Routes>
+                </Layout>
+              </SnackbarProvider>
+            </AuthProvider>
+          </TokensContextProvider>
+        </SessionProvider>
       </SiteProvider>
     </HashRouter>
   );

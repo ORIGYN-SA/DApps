@@ -73,13 +73,14 @@ export const sendEXT = async (actor: any, token: Token, to: any, from: string, a
   throw new Error(Object.keys(transferResult.err)[0]);
 };
 export const sendTransaction = async (
+  localDevelopment: boolean,
   walletType: string,
   token: Token,
   to: any,
   amount: number,
   from?: string,
 ) => {
-  const actor = await createWalletActor(walletType, token.canisterId, token.standard);
+  const actor = await createWalletActor(localDevelopment, walletType, token);
   try {
     switch (token.standard) {
       case IdlStandard.ICP:

@@ -1,13 +1,15 @@
 import { Principal } from '@dfinity/principal';
 
 export type AuthContextType = {
-  isLoading: boolean;
-  loggedIn: boolean;
-  isAuthorized?: boolean;
-  tokenId?: string;
-  canisterId?: string;
-  principal?: Principal;
   actor?: any;
-  ogyActor?: any;
+  canisterId?: string;
   handleLogOut?: () => void;
+  isAuthorized?: boolean;
+  isLoading: boolean;
+  localDevelopment?: boolean;
+  loggedIn: boolean;
+  ogyActor?: any;
+  principal?: Principal;
+  setLocalDevelopment?: (value: boolean) => void;
+  tokenId?: string;
 };
