@@ -15,7 +15,7 @@ export const useSessionContext = () => useContext(SessionContext);
 
 export const SessionProvider: React.FC = ({ children }) => {
   const savedLocalDevelopment = localStorage.getItem('localDevelopment') ?? '';
-  const [canisterId, setCanisterId] = useState('frfol-iqaaa-aaaaj-acogq-cai');
+  const [canisterId, setCanisterId] = useState('loading');
   const [localDevelopment, setLocalDevelopment] = useState(savedLocalDevelopment === 'true');
   const [ogyLedgerCanisterId, setOgyLedgerCanisterId] = useState(
     localDevelopment ? LOCAL_OGY_LEDGER_CANSITER : MAINNET_OGY_LEDGER_CANSITER,
@@ -46,6 +46,7 @@ export const SessionProvider: React.FC = ({ children }) => {
     localStorage.setItem('localDevelopment', localDevelopment.toString());
   }, [localDevelopment]);
 
+  if (canisterId === 'loading') return <></>;
   return (
     <SessionContext.Provider
       value={{
@@ -74,7 +75,7 @@ export const SessionProvider: React.FC = ({ children }) => {
             // The host
             host:
               isLocal && localDevelopment ? 'http://localhost:8000' : 'https://boundary.ic0.app',
-            dev: isLocal && localDevelopment,
+            dev: true,
             whitelist: [canisterId, ogyLedgerCanisterId],
           },
         })}

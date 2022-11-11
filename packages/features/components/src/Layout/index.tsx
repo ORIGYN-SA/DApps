@@ -1,3 +1,9 @@
+import React from 'react';
+import { ConnectButton } from '@connect2ic/react';
+import { useAuthContext, useSessionContext } from '@dapp/features-authentication';
+import ThemeConfig, { SiteContext } from '@dapp/features-theme';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { isLocal } from '@dapp/utils';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import DarkIcon from '@mui/icons-material/Brightness4Rounded';
 import LightIcon from '@mui/icons-material/Brightness7Rounded';
@@ -5,8 +11,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import {
   Box,
   Divider,
@@ -18,20 +22,14 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
-import 'react-toastify/dist/ReactToastify.css';
-import { isLocal } from '@dapp/utils';
-import { useAuthContext, useSessionContext } from '@dapp/features-authentication';
-import { ConnectButton, ConnectDialog, useConnect } from '@connect2ic/react';
-import ThemeConfig, { SiteContext } from '@dapp/features-theme';
-import { useTokensContext } from '@dapp/features-tokens-provider';
-import { ThemeLogo } from '../Logo';
-import { WalletTokens } from '../WalletTokens';
-import { TokenIcon } from '../TokenIcon';
 import CircularProgress from '@mui/material/CircularProgress';
-import './connect2ic.css';
+import { useContext, useEffect } from 'react';
+import 'react-toastify/dist/ReactToastify.css';
 import { LocalDevelopmentModal } from '../LocalDevelopmentModal';
-import { Principal } from '@dfinity/principal';
+import { ThemeLogo } from '../Logo';
+import { TokenIcon } from '../TokenIcon';
+import { WalletTokens } from '../WalletTokens';
+import './connect2ic.css';
 
 const initialMenuItems: MenuItem[] = [
   {
@@ -119,35 +117,37 @@ export const Layout = ({ menuItems, children }: LayoutProps) => {
                           <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
                             <CheckIcon style={{ color: '#00b400' }} />
                           </ListItemIcon>
-                          <WalletTokens>
-                            <ListItemText
-                              primary="WALLET CONNECTED"
-                              secondary={`${principal?.toText().substring(0, 25)}...`}
-                            />
-                            {['OGY', 'ICP'].map((token, index) => (
-                              <div key={`${token}+${index}`}>
-                                <TokenIcon symbol={token} />{' '}
-                                <span
-                                  style={{
-                                    color: 'white',
-                                    marginRight: '5px',
-                                    marginBottom: '-3px',
-                                  }}
-                                >
-                                  {tokens[token]?.balance > -1 ? (
-                                    tokens[token]?.balance
-                                  ) : (
-                                    <CircularProgress size={10} />
-                                  )}
-                                </span>
-                              </div>
-                            ))}
-                          </WalletTokens>
-                          {isLocal && (
-                            <LocalDevelopmentModal>
-                              <Link>Local Development Settings</Link>
-                            </LocalDevelopmentModal>
-                          )}
+                          <div style={{ flexDirection: 'row', display: 'flex', flexWrap: 'wrap' }}>
+                            <WalletTokens>
+                              <ListItemText
+                                primary="WALLET CONNECTED"
+                                secondary={`${principal?.toText().substring(0, 25)}...`}
+                              />
+                              {['OGY', 'ICP'].map((token, index) => (
+                                <div key={`${token}+${index}`}>
+                                  <TokenIcon symbol={token} />{' '}
+                                  <span
+                                    style={{
+                                      color: 'white',
+                                      marginRight: '5px',
+                                      marginBottom: '-3px',
+                                    }}
+                                  >
+                                    {tokens[token]?.balance > -1 ? (
+                                      tokens[token]?.balance
+                                    ) : (
+                                      <CircularProgress size={10} />
+                                    )}
+                                  </span>
+                                </div>
+                              ))}
+                            </WalletTokens>
+                            {isLocal && (
+                              <LocalDevelopmentModal>
+                                <Link>Local Development Settings</Link>
+                              </LocalDevelopmentModal>
+                            )}
+                          </div>
                         </ListItem>
                       )}
                       <Divider />

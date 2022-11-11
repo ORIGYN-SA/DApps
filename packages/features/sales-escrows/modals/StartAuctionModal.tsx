@@ -26,7 +26,7 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { TokenIcon } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-
+import { useCanister } from '@connect2ic/react';
 export function StartAuctionModal({ currentToken, open, handleClose }: any) {
   const { actor } = React.useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
@@ -92,6 +92,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
         });
         handleClose(true);
       } else {
+        console.log(resp);
         enqueueSnackbar('There was an error when starting your auction.', {
           variant: 'error',
           anchorOrigin: {

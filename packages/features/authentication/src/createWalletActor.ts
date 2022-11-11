@@ -12,6 +12,10 @@ const plugActor = async (localDeveopment: boolean, token: Token) => {
     return undefined;
   }
   const ledgerCanisterId = localDeveopment ? token.localCanisterId : token.canisterId;
+  console.log(
+    '🚀 ~ file: createWalletActor.ts ~ line 15 ~ plugActor ~ ledgerCanisterId',
+    ledgerCanisterId,
+  );
   await window.ic.plug.createAgent({
     whitelist: [ledgerCanisterId],
     host: localDeveopment ? 'http://localhost:8000' : 'https://boundary.ic0.app',
@@ -21,6 +25,7 @@ const plugActor = async (localDeveopment: boolean, token: Token) => {
     canisterId: ledgerCanisterId,
     interfaceFactory: getIdl(token.standard),
   });
+  console.log('🚀 ~ file: createWalletActor.ts ~ line 25 ~ plugActor ~ actor', actor);
   return actor;
 };
 

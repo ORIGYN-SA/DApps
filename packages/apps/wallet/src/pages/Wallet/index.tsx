@@ -12,7 +12,7 @@ import {
 import Link from '@mui/material/Link';
 import React, { useContext, useEffect, useState } from 'react';
 import { TabPanel, TokenIcon, Table, NatPrice, LoadingContainer } from '@dapp/features-components';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useSessionContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { timeConverter } from '@dapp/utils';
 import { ConfirmSalesActionModal, StartAuctionModal } from '@dapp/features-sales-escrows';
@@ -74,7 +74,8 @@ const WalletPage = () => {
     { id: 'end_date', label: 'End Date' },
     { id: 'actions', label: 'Actions' },
   ];
-  const { loggedIn, tokenId, canisterId, principal, actor } = useContext(AuthContext);
+  const { tokenId, canisterId } = useSessionContext();
+  const { loggedIn, principal, actor } = useContext(AuthContext);
 
   const [openAuction, setOpenAuction] = React.useState(false);
   const [openConfirmation, setOpenConfirmation] = React.useState(false);

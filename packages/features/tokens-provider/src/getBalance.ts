@@ -3,13 +3,6 @@ import { Principal } from '@dfinity/principal';
 import { IdlStandard, getIdl, getAccountId } from '@dapp/utils';
 import { Token } from './TokensContextProvider';
 
-const ROSETTA_URL = 'https://rosetta-api.internetcomputer.org';
-
-const NET_ID = {
-  blockchain: 'Internet Computer',
-  network: '00000000000000020101',
-};
-
 type BalanceResponse = {
   value: number;
   decimals?: number;
@@ -20,27 +13,25 @@ const createAgent = (isLocal: boolean) =>
     host: isLocal ? 'http://localhost:8000' : 'https://boundary.ic0.app/',
   });
 
-const icpMethod = async (isLocal: boolean, principal: Principal): Promise<BalanceResponse> => {
-  const accountId = getAccountId(principal);
-  const response = await fetch(`${ROSETTA_URL}/account/balance`, {
-    method: 'POST',
-    body: JSON.stringify({
-      network_identifier: NET_ID,
-      account_identifier: {
-        address: accountId,
-      },
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: '*/*',
-    },
-  });
-  if (!response.ok) {
-    return { value: 0 };
+const icpMethod = async (
+  isLocal: boolean,
+  principal: Principal,
+  token: Token,
+): Promise<BalanceResponse> => {
+  try {
+    const account = getAccountId(principal);
+    const actor = Actor.createActor(getIdl(IdlStandard.ICP), {
+      canisterId: isLocal ? token.localCanisterId : token.canisterId,
+      agent: createAgent(isLocal),
+    });
+    const balance: any = await actor.account_balance_dfx({ account });
+    return { value: balance.e8s.toString(), decimals: 8 };
+  } catch (e) {
+    return {
+      value: 0,
+      decimals: 8,
+    };
   }
-  const { balances } = await response.json();
-  const [{ value, currency }] = balances;
-  return { value, decimals: currency.decimals };
 };
 
 const dip20Method = async (
@@ -115,7 +106,6 @@ const ogyMethod = async (
     account,
     token: token.symbol,
   });
-  console.log('🚀 ~ file: getBalance.ts ~ line 118 ~ value', value);
   return { value: parseFloat(value?.e8s?.toString()), decimals: 8 };
 };
 
@@ -123,7 +113,7 @@ export const getBalance = async (isLocal: boolean, principal: Principal, token: 
   switch (token.standard) {
     case IdlStandard.ICP:
       if (token.symbol === 'OGY') return ogyMethod(isLocal, principal, token);
-      return icpMethod(isLocal, principal);
+      return icpMethod(isLocal, principal, token);
     case IdlStandard.DIP20:
       return dip20Method(isLocal, principal, token);
     case IdlStandard.EXT:
