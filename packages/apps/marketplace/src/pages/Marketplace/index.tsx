@@ -1,6 +1,6 @@
 import React from 'react';
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authentication';
 import { NatPrice } from '@dapp/features-components';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -31,6 +31,7 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 // import { useSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
+import { isLocal } from '@dapp/utils';
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -64,6 +65,7 @@ const SymbolWithIcon = ({ symbol }: any) =>
   );
 
 const Marketplace = () => {
+  const { localDevelopment } = useSessionContext();
   const { actor } = useContext(AuthContext);
   const [canisterId, setCanisterId] = useState('');
   const [NFTData, setNFTData] = useState<any>();
@@ -122,7 +124,7 @@ const Marketplace = () => {
       }
       return true;
     });
-    console.log(filtered);
+    // console.log(filtered);
     setFilteredNFTs(filtered);
   }, [onSale, minPrice, maxPrice, NFTData]);
 
@@ -252,7 +254,11 @@ const Marketplace = () => {
                     <Card variant="outlined">
                       <CardMedia
                         component="img"
-                        image={`https://${canisterId}.raw.ic0.app/-/${nftID}/preview`}
+                        image={
+                          isLocal() && localDevelopment
+                            ? `http://${canisterId}.localhost:8000/-/${nftID}/preview`
+                            : `https://${canisterId}.raw.ic0.app/-/${nftID}/preview`
+                        }
                         alt={nftID}
                       />
                       <CardContent>

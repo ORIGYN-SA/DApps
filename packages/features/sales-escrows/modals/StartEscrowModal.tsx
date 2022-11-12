@@ -25,7 +25,8 @@ import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
 export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
-  const { actor, ogyActor, principal, localDevelopment } = React.useContext(AuthContext);
+  const { actor, principal, localDevelopment, activeWalletProvider } =
+    React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -109,17 +110,22 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       return;
     }
     if (isLoading) return;
-    if (ogyActor) {
+
+    if (activeWalletProvider) {
       setIsLoading(true);
       const amount = data.priceOffer * 1e8;
-      const walletType = localStorage.getItem('loggedIn');
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
       const { account_id } = saleInfo?.ok?.deposit_info ?? {};
-
+      console.log(tokens[token]);
+      const amountWithFee = amount + tokens[token].fee;
+      console.log(
+        '🚀 ~ file: StartEscrowModal.tsx ~ line 121 ~ handleStartEscrow ~ amountWithFee',
+        amountWithFee,
+      );
       try {
         const transactionHeight = await sendTransaction(
-          localDevelopment && isLocal(),
-          walletType,
+          isLocal() && localDevelopment,
+          activeWalletProvider,
           tokens[token],
           new Uint8Array(account_id),
           amount + tokens[token].fee,
@@ -135,7 +141,9 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               ic: {
                 fee: BigInt(tokens[token].fee ?? 200_000),
                 decimals: BigInt(tokens[token].decimals ?? 8),
-                canister: Principal.fromText(tokens[token].canisterId),
+                canister: Principal.fromText(
+                  isLocal ? tokens[token].localCanisterId : tokens[token].canisterId,
+                ),
                 standard: { Ledger: null },
                 symbol: tokens[token].symbol,
               },

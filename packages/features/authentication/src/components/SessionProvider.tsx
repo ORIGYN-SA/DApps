@@ -1,13 +1,10 @@
 import { createClient } from '@connect2ic/core';
-import { Connect2ICProvider } from '@connect2ic/react';
 import { defaultProviders } from '@connect2ic/core/providers';
-import { origynNftIdl, origynLedgerIdl } from '@dapp/common-candid';
+import { Connect2ICProvider } from '@connect2ic/react';
+import { origynNftIdl } from '@dapp/common-candid';
+import { isLocal } from '@dapp/utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRoute } from '../hooks/useRoute';
-import { isLocal } from '@dapp/utils';
-
-const MAINNET_OGY_LEDGER_CANSITER = 'jwcfb-hyaaa-aaaaj-aac4q-cai';
-const LOCAL_OGY_LEDGER_CANSITER = 'rno2w-sqaaa-aaaaa-aaacq-cai';
 
 export const SessionContext = createContext(undefined);
 
@@ -17,9 +14,7 @@ export const SessionProvider: React.FC = ({ children }) => {
   const savedLocalDevelopment = localStorage.getItem('localDevelopment') ?? '';
   const [canisterId, setCanisterId] = useState('loading');
   const [localDevelopment, setLocalDevelopment] = useState(savedLocalDevelopment === 'true');
-  const [ogyLedgerCanisterId, setOgyLedgerCanisterId] = useState(
-    localDevelopment ? LOCAL_OGY_LEDGER_CANSITER : MAINNET_OGY_LEDGER_CANSITER,
-  );
+  // const [dev, setDev] = useState(isLocal() && localDevelopment);
   const [tokenId, setTokenId] = useState('');
 
   useEffect(() => {
@@ -46,25 +41,21 @@ export const SessionProvider: React.FC = ({ children }) => {
     localStorage.setItem('localDevelopment', localDevelopment.toString());
   }, [localDevelopment]);
 
+const dev = isLocal() && localDevelopment;
+
   if (canisterId === 'loading') return <></>;
   return (
     <SessionContext.Provider
       value={{
         canisterId,
-        ogyLedgerCanisterId,
         tokenId,
         localDevelopment,
-        setOgyLedgerCanisterId,
         setLocalDevelopment,
       }}
     >
       <Connect2ICProvider
         client={createClient({
           canisters: {
-            ledger: {
-              canisterId: ogyLedgerCanisterId,
-              idlFactory: origynLedgerIdl,
-            },
             nft: {
               canisterId,
               idlFactory: origynNftIdl,
@@ -72,11 +63,9 @@ export const SessionProvider: React.FC = ({ children }) => {
           },
           providers: defaultProviders,
           globalProviderConfig: {
-            // The host
-            host:
-              isLocal && localDevelopment ? 'http://localhost:8000' : 'https://boundary.ic0.app',
-            dev: true,
-            whitelist: [canisterId, ogyLedgerCanisterId],
+            host: dev ? 'http://localhost:8000' : 'https://boundary.ic0.app',
+            dev,
+            whitelist: [canisterId],
           },
         })}
       >

@@ -32,7 +32,6 @@ export const ConfirmSalesActionModal = ({
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
-  console.log(escrow, action);
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
       if (isLoading) return;

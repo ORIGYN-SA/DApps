@@ -1,4 +1,3 @@
-import { useSessionContext } from '@dapp/features-authentication';
 import { IdlStandard } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 import JSONBig from 'json-bigint';
@@ -34,14 +33,14 @@ const defaultTokens = {
     enabled: false,
     balance: -1,
   },
-  // WICP: {
-  //   symbol: "WICP",
-  //   canisterId: "utozz-siaaa-aaaam-qaaxq-cai",
-  //   fee: 200000,
-  //   standard: IdlStandard.WICP,
-  //   icon: "https://storageapi.fleek.co/fleek-team-bucket/logos/wicp-logo.png",
-  //   enabled: false,
-  // },
+  WICP: {
+    symbol: 'WICP',
+    canisterId: 'utozz-siaaa-aaaam-qaaxq-cai',
+    fee: 200000,
+    standard: IdlStandard.WICP,
+    icon: 'https://storageapi.fleek.co/fleek-team-bucket/logos/wicp-logo.png',
+    enabled: false,
+  },
 };
 
 export type Token = {
@@ -111,7 +110,6 @@ export const useTokensContext = () => {
 
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
-  const { setOgyLedgerCanisterId } = useSessionContext();
 
   const addToken = async (
     isLocal: boolean,
@@ -192,14 +190,8 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       pTokens[symbol].localCanisterId = canisterId;
       return { ...pTokens };
     });
-    if (symbol === 'OGY') {
-      console.log(
-        '🚀 ~ file: TokensContextProvider.tsx ~ line 197 ~ setLocalCanisterId ~ canisterId',
-        canisterId,
-      );
-      setOgyLedgerCanisterId(canisterId);
-    }
   };
+
   useEffect(() => {
     localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
   }, [tokens]);

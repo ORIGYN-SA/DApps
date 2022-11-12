@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -12,22 +12,19 @@ import {
   FormControlLabel,
   Button,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { TokenIcon } from '../TokenIcon';
 import { useSessionContext } from '@dapp/features-authentication';
 
 export const LocalDevelopmentModal = ({ children }: any) => {
   const { tokens, setLocalCanisterId } = useTokensContext();
-  const initialCanisterIds = { ...tokens };
+  const initialCanisterIds = { ...tokens } as any;
   Object.keys(initialCanisterIds).forEach(
     (symbol) => (initialCanisterIds[symbol] = initialCanisterIds[symbol].localCanisterId ?? ''),
   );
-  console.log('🚀 ~ file: index.tsx ~ line 22 ~ LocalDevelopmentModal ~ tokens', tokens);
 
   const { localDevelopment, setLocalDevelopment } = useSessionContext();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { enqueueSnackbar } = useSnackbar();
   const [localCanisters, setLocalCanisters] = useState(initialCanisterIds);
 
   const updateLocalCanister = (symbol: string, canisterId: string) => {

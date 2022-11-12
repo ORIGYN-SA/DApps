@@ -1,32 +1,32 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import { Principal } from '@dfinity/principal';
-import DialogTitle from '@mui/material/DialogTitle';
 import { AuthContext } from '@dapp/features-authentication';
+import { TokenIcon } from '@dapp/features-components';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { Principal } from '@dfinity/principal';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Backdrop,
   CircularProgress,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
   TextField,
   Typography,
-  Grid,
 } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useSnackbar } from 'notistack';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { TokenIcon } from '@dapp/features-components';
-import { useTokensContext } from '@dapp/features-tokens-provider';
-import { useCanister } from '@connect2ic/react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useSnackbar } from 'notistack';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+
 export function StartAuctionModal({ currentToken, open, handleClose }: any) {
   const { actor } = React.useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();

@@ -3,7 +3,7 @@ import { ConnectButton } from '@connect2ic/react';
 import { useAuthContext, useSessionContext } from '@dapp/features-authentication';
 import ThemeConfig, { SiteContext } from '@dapp/features-theme';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { isLocal } from '@dapp/utils';
+import { currencyFormat, isLocal } from '@dapp/utils';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import DarkIcon from '@mui/icons-material/Brightness4Rounded';
 import LightIcon from '@mui/icons-material/Brightness7Rounded';
@@ -134,7 +134,7 @@ export const Layout = ({ menuItems, children }: LayoutProps) => {
                                     }}
                                   >
                                     {tokens[token]?.balance > -1 ? (
-                                      tokens[token]?.balance
+                                      currencyFormat(tokens[token]?.balance)
                                     ) : (
                                       <CircularProgress size={10} />
                                     )}
