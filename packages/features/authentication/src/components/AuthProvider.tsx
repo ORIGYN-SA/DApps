@@ -26,26 +26,6 @@ export const useAuth = () => {
 
   const [actor] = useCanister('nft');
 
-  // useEffect(() => {
-  //   if (principal && principal !== '2vxsx-fae') {
-  //     setLoggedIn(true);
-  //     setIsLoading(false);
-  //     localStorage.setItem('loggedIn', 'true');
-  //   } else {
-  //     if (loggedIn) {
-  //       if (!principal || principal === '2vxsx-fae') {
-  //         setLoggedIn(false);
-  //         setIsLoading(false);
-  //         localStorage.setItem('loggedIn', 'false');
-  //       }
-  //     } else {
-  //       setIsLoading(false);
-  //       setLoggedIn(false);
-  //       localStorage.setItem('loggedIn', 'false');
-  //     }
-  //   }
-  // }, [principal]);
-
   return {
     activeWalletProvider,
     actor,
