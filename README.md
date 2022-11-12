@@ -37,7 +37,7 @@ In order to connect the dApps to the local environment, you will need the follow
 The local development settings will be visible on the left menu if the web origin is localhost.
 In order to make your dApp connect to local canisters, you will need to:
 
-- Click `Local Development Settings` on the side bootstrap
+- Click `Local Development Settings` on the side bar
 - Check `Use Local Network (http://localhost:8000)`
 - (optional) Fill the canister id of the local ledger replica for each token you have in your dApp. You will need this to get balance and send transactions.
 
