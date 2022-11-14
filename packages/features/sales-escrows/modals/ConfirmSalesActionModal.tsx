@@ -38,7 +38,7 @@ export const ConfirmSalesActionModal = ({
       setIsLoading(true);
       const tokenId = currentToken?.Class?.find(({ name }) => name === 'id').value.Text;
       if (action === 'endSale') {
-        const endSaleResponse = await actor.end_sale_nft_origyn(tokenId);
+        const endSaleResponse = await actor.sale_nft_origyn({end_sale: tokenId});
         if (endSaleResponse.ok) {
           enqueueSnackbar(`You have successfully ended the sale for ${tokenId}.`, {
             variant: 'success',

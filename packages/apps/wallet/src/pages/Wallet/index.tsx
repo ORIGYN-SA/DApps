@@ -188,9 +188,11 @@ const WalletPage = () => {
   };
 
   const fetchData = () => {
+    console.log("datttee now",Date.now())
     if (actor && principal && principal.toText() !== '2vxsx-fae') {
       setIsLoading(true);
       actor?.balance_of_nft_origyn({ principal }).then((response) => {
+        console.log("🚀 ~ file: index.tsx ~ line 195 ~ actor?.balance_of_nft_origyn ~ response", response)
         const escrows = response?.ok?.escrow;
         const offers = response?.ok?.offers;
         const inEscrow: any = [];
@@ -310,12 +312,12 @@ const WalletPage = () => {
                     highest_bid: <NatPrice value={current_bid_amount} />,
                     end_date: timeConverter(BigInt(ending.date)),
                     actions:
-                      ~~(Date.now() * 1e6) > parseInt(ending.date) ? (
+                      (Date.now() * 1e6) > parseInt(ending.date) ? (
                         <Button onClick={() => handleClickOpen(item, 'confirmEnd')}>
                           End Sale
                         </Button>
                       ) : (
-                        '-'
+                        `${ending.date}`
                       ),
                   });
                 }

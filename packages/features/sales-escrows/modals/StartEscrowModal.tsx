@@ -176,12 +176,14 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
           }
         } else {
           if (!escrowResponse?.ok) throw escrowResponse.err.text;
+          console.log("🚀 ~ file: StartEscrowModal.tsx ~ line 179 ~ handleStartEscrow ~ escrowResponse", escrowResponse)
 
           const bidData = {
             broker_id: [],
-            escrow_receipt: escrowResponse?.ok?.receipt,
+            escrow_receipt: escrowResponse?.ok?.escrow_deposit.receipt,
             sale_id: _nft.openAuction?.sale_id,
           };
+          console.log("bid data", bidData);
           const bidResponse = await actor.sale_nft_origyn({ bid: bidData });
           if (bidResponse.ok) {
             enqueueSnackbar('Your bid has been successfully placed.', {

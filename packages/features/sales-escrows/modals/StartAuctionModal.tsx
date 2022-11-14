@@ -2,6 +2,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { TokenIcon } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
+import { isLocal } from '@dapp/utils';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Backdrop,
@@ -60,7 +61,9 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
                 ic: {
                   fee: BigInt(tokens[token]?.fee ?? 200000),
                   decimals: BigInt(tokens[token]?.decimals ?? 8),
-                  canister: Principal.fromText(tokens[token]?.canisterId),
+                  canister: Principal.fromText(
+                    isLocal ? tokens[token].localCanisterId : tokens[token].canisterId,
+                  ),
                   standard: { Ledger: null },
                   symbol: tokens[token]?.symbol,
                 },
