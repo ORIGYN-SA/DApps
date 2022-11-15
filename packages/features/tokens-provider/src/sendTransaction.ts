@@ -5,9 +5,10 @@ import { Token } from './TokensContextProvider';
 import { getAccountId } from '@dapp/utils';
 import { toHex } from '@dfinity/agent/lib/esm/utils/buffer';
 
+// OGY and ICP
 const sendICP = async (actor: any, token: Token, to: any, amount: number) => {
   const defaultArgs = {
-    fee: BigInt(200_000),
+    fee: token?.symbol === 'OGY' ? BigInt(200_000) : BigInt(10_000),
     memo: BigInt(0),
   };
 
@@ -46,23 +47,14 @@ export const sendXTC = async (actor: any, to: any, amount: number) => {
 
   throw new Error(Object.keys(transferResult.Err)[0]);
 };
-export const sendEXT = async (
-  actor: any,
-  token: Token,
-  to: any,
-  from: string,
-  amount: number,
-) => {
+export const sendEXT = async (actor: any, token: Token, to: any, from: string, amount: number) => {
   const dummyMemmo = new Array(32).fill(0);
-  const _to =
-    typeof to === 'string'
-      ? { principal: Principal.fromText(to) }
-      : { account_id: to };
+  const _to = typeof to === 'string' ? { principal: Principal.fromText(to) } : { account_id: to };
 
   const data = {
     to: _to,
     from: { principal: Principal.from(from) },
-    amount,
+    amount: BigInt(amount),
     token: token.symbol,
     memo: dummyMemmo,
     notify: false,
@@ -83,11 +75,7 @@ export const sendTransaction = async (
   amount: number,
   from?: string,
 ) => {
-  const actor = await createWalletActor(
-    walletType,
-    token.canisterId,
-    token.standard,
-  );
+  const actor = await createWalletActor(walletType, token.canisterId, token.standard);
   switch (token.standard) {
     case IdlStandard.ICP:
       return sendICP(actor, token, to, amount);
