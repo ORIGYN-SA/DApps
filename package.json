@@ -95,7 +95,7 @@
     "@mui/lab": "^5.0.0-alpha.94",
     "@mui/material": "^5.8.5",
     "@mui/x-date-pickers": "^5.0.0-alpha.7",
-    "@origyn-sa/mintjs": "^1.2.1",
+    "@origyn-sa/mintjs": "^1.2.4",
     "@svgr/webpack": "^6.2.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^17.0.19",

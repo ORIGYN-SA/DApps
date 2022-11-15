@@ -130,7 +130,7 @@ export const LibraryForm =  (props: any) => {
         '🚀 ~ file: App.tsx ~ line 179 ~ handleStageLibraryAssetClick ~ payload',
         payload,
       );
-      const stage = await stageLibraryAsset(payload.files, false, payload.token_id);
+      const stage = await stageLibraryAsset(payload.files, payload.token_id);
       console.log('🚀 ~ file: App.tsx ~ line 175 ~ handleStageLibraryAssetClick ~ stage', stage);
       // Display a success message - SNACKBAR
       enqueueSnackbar('Library staged!', {
