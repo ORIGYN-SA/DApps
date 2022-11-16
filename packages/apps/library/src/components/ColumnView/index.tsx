@@ -388,7 +388,7 @@ const ColumnView = () => {
             <Collapse
               in={openForm}
               timeout="auto"
-              style={{ display: { openForm } ? 'block' : 'none' }}
+              style={{ display:  openForm ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
@@ -402,7 +402,7 @@ const ColumnView = () => {
               in={openDeta}
               timeout="auto"
               unmountOnExit
-              style={{ display: { openDeta } ? 'block' : 'none' }}
+              style={{ display: openDeta ? 'block' : 'none' }}
             >
               <Box
                 maxHeight={Sizes.maxHeight}
@@ -421,7 +421,7 @@ const ColumnView = () => {
             <Collapse
               in={openDub}
               timeout="auto"
-              style={{ display: { openDub } ? 'block' : 'none' }}
+              style={{ display: openDub ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
@@ -434,7 +434,7 @@ const ColumnView = () => {
             <Collapse
               in={openFormDefault}
               timeout="auto"
-              style={{ display: { openFormDefault } ? 'block' : 'none' }}
+              style={{ display: openFormDefault ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -42,7 +41,8 @@ export const LibraryForm =  (props: any) => {
   const [openSelectInput, setOpenSelectInput] = React.useState(false);
   const [libraries, setLibraries] = React.useState<any>([]);
   const canisterId = async () => {
-    return await currentCanisterId();
+    const r = await currentCanisterId()
+    return r;
   };
   function handleInputChange(e) {
     console.log(e.target.files);
@@ -89,16 +89,16 @@ export const LibraryForm =  (props: any) => {
     }
   }, [radioValue]);
 
-  const { register, handleSubmit } = useForm({
-    defaultValues: {
-      canisterId: canisterId,
-      isProduction: isProd,
-      isSoulbound: true,
-      collectionName: '',
-      collectionId: '',
-      creatorPrincipal: TEST_IDENTITY.principalId,
-    },
-  });
+  // const { register, handleSubmit } = useForm({
+  //   defaultValues: {
+  //     canisterId: canisterId,
+  //     isProduction: isProd,
+  //     isSoulbound: true,
+  //     collectionName: '',
+  //     collectionId: '',
+  //     creatorPrincipal: TEST_IDENTITY.principalId,
+  //   },
+  // });
 
   const stageLibrary = async () => {
     console.log('token id is ', props.currentTokenId);
