@@ -1,10 +1,11 @@
-// This function replace the CanisterId with the name of the canister
-// if the canister name is not defined nothing will be replaced
 // ----------------------------------------------------------------------------
-// Arguments: canister (string) | Link (URL)
+// This function Formats the links from canisters to be displayed in the UI
+// • currentCanisterId: The canisterId of the current canister
+// • linkToFormat: The link to be formatted
+// ----------------------------------------------------------------------------
 // Returns:  string
 // Author: Alessandro
-// Date: 2022-10-11
+// Date: 2022-11-17
 // ----------------------------------------------------------------------------
 
 import { phonebookIdl } from '@dapp/common-candid';
@@ -30,7 +31,7 @@ export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
     try {
         if (await QueryName == "" || await QueryName == null) {
             formattedLink = (HasRoot) ?
-                (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat.replace(currCanisterId, currCanisterId));
+                (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat);
                 return formattedLink;
         } else {
             if(HasRoot) {
@@ -40,11 +41,11 @@ export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
                 formattedLink = PrptlLink;
                 return formattedLink;
             }else{
-                formattedLink = 'https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat.replace(currCanisterId, QueryName);
+                formattedLink = 'https://prptl.io/-/' + QueryName +'/-/'+ linkToFormat;
                 return formattedLink;
             }
         }
     } catch (e) {
-        console.log('Error during formatting link ' + e);
+        console.log('Error: ', e);
     }
 };
