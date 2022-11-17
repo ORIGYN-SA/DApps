@@ -26,7 +26,8 @@ import { OwnerTransfer } from './functions/OwnerTransfer';
 import { EscrowDeposit } from './functions/EscrowDeposit';
 import { EscrowWithdraw } from './functions/EscrowWithdraw';
 import { SaleWithdraw } from './functions/SaleWithdraw';
-// Preloader
+// mintjs
+import { getNftHistory} from '@origyn-sa/mintjs';
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
 // Table style
@@ -156,7 +157,8 @@ export const TransactionsTable = (props: any) => {
     // array for dynamyc Select values
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
-    const response = await actor?.history_nft_origyn(props.searchBarTokenId.toString(), [], []);
+    const response = await getNftHistory(props.searchBarTokenId.toString());
+    //console.log(response);
     // response 2 string
     const string_history = JSON.stringify(
       response,
@@ -168,7 +170,7 @@ export const TransactionsTable = (props: any) => {
 
     // enter in the obj
     const historyNFT = json_history.ok;
-    // console.log("!!!", actor);
+    //console.log("!!!", actor);
     let x: string;
     let _props: string;
 

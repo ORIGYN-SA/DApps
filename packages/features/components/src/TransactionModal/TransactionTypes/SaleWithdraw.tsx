@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 
 export const SaleWithdraw = (props: any) => {
   const { type_txn, buyer, seller, token, token_id, amount, trx_id } = props.data;
@@ -95,7 +96,13 @@ export const SaleWithdraw = (props: any) => {
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Symbol:
             </Typography>
-            <Typography gutterBottom>{token.symbol}</Typography>
+            <Typography gutterBottom>
+            {token.symbol === 'OGY' ? (
+                  <OGYIcon className="token-symbol" />
+                ) : (
+                  <ICPIcon className="token-symbol" />
+                )}
+            </Typography>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Standard:
             </Typography>

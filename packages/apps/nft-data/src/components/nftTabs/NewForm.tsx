@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import pick from 'lodash/pick';
 import { Principal } from '@dfinity/principal'
-import {updateApp, OrigynClient} from '@origyn-sa/mintjs'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -33,6 +32,7 @@ const NewForm = ({ metadata }: any) => {
   const [apps, setApps] = useState([
   ]);
 
+  console.log(owner, hiddenAsset, previewAsset, primaryAsset, experienceAsset, id);
   const [libraryFields, setLibraryFields] = useState([
   ]);
 
@@ -43,23 +43,23 @@ const NewForm = ({ metadata }: any) => {
       setApps(data);
     } else if (event.target.name == 'write_type') {
       let data = [...apps];
-      data[index]['write']['type'] = event.target.value;
+      data[index].write.type = event.target.value;
       setApps(data);
     } else if (event.target.name == 'write_list') {
       let data = [...apps];
-      data[index]['write']['list'][i] = event.target.value;
+      data[index].write.list[i] = event.target.value;
       setApps(data);
     } else if (event.target.name == 'permissions_type') {
       let data = [...apps];
-      data[index]['permissions']['type'] = event.target.value;
+      data[index].permissions.type = event.target.value;
       setApps(data);
     } else if (event.target.name == 'permissions_list') {
       let data = [...apps];
-      data[index]['permissions']['list'][i] = event.target.value;
+      data[index].permissions.list[i] = event.target.value;
       setApps(data);
     } else if (event.target.name.search('com.bm.sample.app') > -1) {
       let data = [...apps];
-      data[index]['data'][event.target.name] = event.target.value;
+      data[index].data[event.target.name] = event.target.value;
       setApps(data);
     }
   };
@@ -92,7 +92,7 @@ const NewForm = ({ metadata }: any) => {
   const [nftCol, setNftCol] = useState<BigInt>(16n);
   const [nftOwner, setNftOwner] = useState<string>('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe')
   const [nftCreator, setNftCreator] = useState<string>('bm');
-
+  console.log(nftCol);
   useEffect(() => {
     if (actor) {
       actor
@@ -179,118 +179,6 @@ const NewForm = ({ metadata }: any) => {
       }
     ]};
 
-    const data5 = {
-      "Class": [
-        {
-          "value": {
-            "Text": "com.bm.sample.app.name"
-          },
-          "name": "app_id",
-          "immutable": false
-        },
-        {
-          "value": {
-            "Text": "public"
-          },
-          "name": "read",
-          "immutable": false
-        },
-        {
-          "value": {
-            "Class": [
-              {
-                "value": {
-                  "Text": "allow"
-                },
-                "name": "type",
-                "immutable": false
-              },
-              {
-                "value": {
-                  "Array": {
-                    "thawed": [
-                      {
-                        "Principal": Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe'),
-                      }
-                    ]
-                  }
-                },
-                "name": "list",
-                "immutable": false
-              }
-            ]
-          },
-          "name": "write",
-          "immutable": false
-        },
-        {
-          "value": {
-            "Class": [
-              {
-                "value": {
-                  "Text": "allow"
-                },
-                "name": "type",
-                "immutable": false
-              },
-              {
-                "value": {
-                  "Array": {
-                    "thawed": [
-                      {
-                        "Principal": Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe'),
-                      }
-                    ]
-                  }
-                },
-                "name": "list",
-                "immutable": false
-              }
-            ]
-          },
-          "name": "permissions",
-          "immutable": false
-        },
-        {
-          "value": {
-            "Class": [
-              {
-                "value": {
-                  "Text": "brain2"
-                },
-                "name": "com.bm.sample.app.name",
-                "immutable": false
-              },
-              {
-                "value": {
-                  "Nat": "16"
-                },
-                "name": "com.bm.sample.app.total_in_collection",
-                "immutable": false
-              },
-              {
-                "value": {
-                  "Text": "bm"
-                },
-                "name": "com.bm.sample.app.creator_name",
-                "immutable": false
-              },
-              {
-                "value": {
-                  "Principal": Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe'),
-                },
-                "name": 'com.bm.sample.app.creator_principal',
-                "immutable": false
-              }
-            ]
-          },
-          "name": "data",
-          "immutable": false
-        }
-      ]
-    }
-
-
     const upData = {
       token_id: nftId,
       data: data,
@@ -366,6 +254,7 @@ const NewForm = ({ metadata }: any) => {
                 <Item>
                   {app.write.list.map((item, i) => (
                     <TextField
+                      key={item.id}
                       label="List"
                       variant="outlined"
                       name="write_list"
@@ -395,6 +284,7 @@ const NewForm = ({ metadata }: any) => {
                 <Item>
                   {app.permissions.list.map((item, i) => (
                     <TextField
+                      key={item.id}
                       label="List"
                       variant="outlined"
                       name="permissions_list"
@@ -478,7 +368,7 @@ const NewForm = ({ metadata }: any) => {
       <Box>
         <Typography variant="h4">Library</Typography>
         {libraryFields.map((lib, index) => (
-          <>
+          <div key={lib.id}>
             {' '}
             Library {index + 1}
             <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
@@ -582,7 +472,7 @@ const NewForm = ({ metadata }: any) => {
                 </Item>
               </Grid>
             </Grid>
-          </>
+          </div>
         ))}
       </Box>
     </div>

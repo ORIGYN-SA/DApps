@@ -12,11 +12,20 @@ import {
 } from '@mui/material';
 import Link from '@mui/material/Link';
 import React, { useContext, useEffect, useState } from 'react';
-import { TabPanel, TokenIcon, Table, NatPrice, LoadingContainer } from '@dapp/features-components';
+import {
+  TabPanel,
+  TokenIcon,
+  Table,
+  NatPrice,
+  LoadingContainer,
+} from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { timeConverter } from '@dapp/utils';
-import { ConfirmSalesActionModal, StartAuctionModal } from '@dapp/features-sales-escrows';
+import {
+  ConfirmSalesActionModal,
+  StartAuctionModal,
+} from '@dapp/features-sales-escrows';
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext);
@@ -118,7 +127,7 @@ const WalletPage = () => {
       fetchData();
     }
   };
-
+  
   const createTableData = (data) => {
     const columns = [
       { id: 'id', label: 'id' },
@@ -139,12 +148,11 @@ const WalletPage = () => {
       });
 
       const sale_type = item?.current_sale.length > 0 ? item?.current_sale[0].sale_type : {};
-      rows.sale =
-        (
-          <Tooltip title={item?.current_sale[0]?.sale_id}>
-            <p>{item?.current_sale[0]?.sale_id?.substring(0, 8)}...</p>
-          </Tooltip>
-        ) || 'No sales';
+      rows.sale = (
+        <Tooltip title={item?.current_sale[0]?.sale_id}>
+          <p>{item?.current_sale[0]?.sale_id?.substring(0, 8)}...</p>
+        </Tooltip>
+      ) || 'No sales';
       rows.raw_id = rows.id;
       rows.id = <Link href={`#/${rows.id}`}>{rows.id}</Link>;
       rows.preview = (
@@ -155,8 +163,8 @@ const WalletPage = () => {
       );
       rows.saleStatus = Object.keys(sale_type?.auction?.status || {})[0] || 'No sales';
 
-      const isAuctionStarted =
-        !sale_type?.auction?.status?.hasOwnProperty('closed') && sale_type?.auction;
+      const isAuctionStarted = !sale_type?.auction?.status?.hasOwnProperty('closed')
+        && sale_type?.auction;
       // @ts-ignore
       rows.actions = isAuctionStarted ? (
         <span style={{ color: 'orange' }}>AUCTION STARTED</span>
@@ -195,148 +203,160 @@ const WalletPage = () => {
   const fetchData = () => {
     if (actor && principal) {
       setIsLoading(true);
-      actor?.balance_of_nft_origyn({ principal }).then((response) => {
-        console.log('🚀 ~ file: index.tsx ~ line 208 ~ .then ~ response', response);
-        const escrows = response?.ok?.escrow;
-        const offers = response?.ok?.offers;
-        const inEscrow: any = [];
-        const outEscrow: any = [];
-        if (escrows) {
-          escrows.forEach((escrow, index) => {
-            const esc: any = {};
-            esc.token_id = escrow.token_id;
-            esc.actions = (
-              <Button
-                onClick={() => withdrawEscrow(response?.ok?.escrow[index])}
-                variant="contained"
-              >
-                Withdraw
-              </Button>
-            );
-            esc.symbol = (
-              <>
-                <TokenIcon symbol={tokens[escrow?.token?.ic?.symbol]?.icon} />
-                {escrow?.token?.ic?.symbol}
-              </>
-            );
-            esc.buyer = (
-              <Tooltip title={escrow.buyer.principal.toText()}>
-                <p>{escrow.buyer.principal.toText().substring(0, 8)}...</p>
-              </Tooltip>
-            );
-            esc.seller = (
-              <Tooltip title={escrow.seller.principal.toText()}>
-                <p>{escrow.seller.principal.toText().substring(0, 8)}...</p>
-              </Tooltip>
-            );
+      actor
+        ?.balance_of_nft_origyn({ principal })
+        .then((response) => {
+          const escrows = response?.ok?.escrow;
+          const offers = response?.ok?.offers;
+          const inEscrow: any = [];
+          const outEscrow: any = [];
+          console.log("balance of", response);
+          if (escrows) {
+            escrows.forEach((escrow, index) => {
+              const esc: any = {};
+              esc.token_id = escrow.token_id;
+              esc.actions = (
+                <Button
+                  onClick={() => withdrawEscrow(response?.ok?.escrow[index])}
+                  variant="contained"
+                >
+                  Withdraw
+                </Button>
+              );
+              esc.symbol = (
+                <>
+                  <TokenIcon symbol={tokens[escrow?.token?.ic?.symbol]?.icon} />
+                  {escrow?.token?.ic?.symbol}
+                </>
+              );
+              esc.buyer = (
+                <Tooltip title={escrow.buyer.principal.toText()}>
+                  <p>{escrow.buyer.principal.toText().substring(0, 8)}...</p>
+                </Tooltip>
+              );
+              esc.seller = (
+                <Tooltip title={escrow.seller.principal.toText()}>
+                  <p>{escrow.seller.principal.toText().substring(0, 8)}...</p>
+                </Tooltip>
+              );
 
-            esc.amount = parseFloat((parseInt(escrow.amount) * 1e-8).toString()).toFixed(9);
-            outEscrow.push(esc);
+              esc.amount = parseFloat(
+                (parseInt(escrow.amount) * 1e-8).toString(),
+              ).toFixed(9);
+              outEscrow.push(esc);
+            });
+          }
+          if (offers) {
+            offers.forEach((offer, index) => {
+              const esc: any = {};
+              esc.token_id = offer.token_id;
+              esc.actions = (
+                <Button
+                  onClick={() => rejectEscrow(response?.ok?.offers[index])}
+                  variant="contained"
+                >
+                  Reject
+                </Button>
+              );
+              esc.symbol = (
+                <>
+                  <TokenIcon symbol={tokens[offer?.token?.ic?.symbol]?.icon} />
+                  {offer?.token?.ic?.symbol}
+                </>
+              );
+              esc.buyer = (
+                <Tooltip title={offer.buyer.principal.toText()}>
+                  <p>{offer.buyer.principal.toText().substring(0, 8)}...</p>
+                </Tooltip>
+              );
+              esc.seller = (
+                <Tooltip title={offer.seller.principal.toText()}>
+                  <p>{offer.seller.principal.toText().substring(0, 8)}...</p>
+                </Tooltip>
+              );
+
+              esc.amount = parseFloat(
+                (parseInt(offer.amount) * 1e-8).toString(),
+              ).toFixed(9);
+              inEscrow.push(esc);
+            });
+          }
+          const inColumns = [
+            { id: 'token_id', label: 'Id' },
+            { id: 'buyer', label: 'Buyer' },
+            { id: 'symbol', label: 'Token' },
+            { id: 'amount', label: 'Amount' },
+            { id: 'lockDate', label: 'Lock Date' },
+            { id: 'actions', label: 'Actions' },
+          ];
+          const outColumns = [
+            { id: 'token_id', label: 'Id' },
+            { id: 'seller', label: 'Seller' },
+            { id: 'symbol', label: 'Token' },
+            { id: 'amount', label: 'Amount' },
+            { id: 'lockDate', label: 'Lock Date' },
+            { id: 'actions', label: 'Actions' },
+          ];
+          setActiveEscrows({
+            in: { columns: inColumns, data: inEscrow },
+            out: { columns: outColumns, data: outEscrow },
           });
-        }
-        if (offers) {
-          offers.forEach((offer, index) => {
-            const esc: any = {};
-            esc.token_id = offer.token_id;
-            esc.actions = (
-              <Button onClick={() => rejectEscrow(response?.ok?.offers[index])} variant="contained">
-                Reject
-              </Button>
-            );
-            esc.symbol = (
-              <>
-                <TokenIcon symbol={tokens[offer?.token?.ic?.symbol]?.icon} />
-                {offer?.token?.ic?.symbol}
-              </>
-            );
-            esc.buyer = (
-              <Tooltip title={offer.buyer.principal.toText()}>
-                <p>{offer.buyer.principal.toText().substring(0, 8)}...</p>
-              </Tooltip>
-            );
-            esc.seller = (
-              <Tooltip title={offer.seller.principal.toText()}>
-                <p>{offer.seller.principal.toText().substring(0, 8)}...</p>
-              </Tooltip>
-            );
 
-            esc.amount = parseFloat((parseInt(offer.amount) * 1e-8).toString()).toFixed(9);
-            inEscrow.push(esc);
-          });
-        }
-        const inColumns = [
-          { id: 'token_id', label: 'Id' },
-          { id: 'buyer', label: 'Buyer' },
-          { id: 'symbol', label: 'Token' },
-          { id: 'amount', label: 'Amount' },
-          { id: 'lockDate', label: 'Lock Date' },
-          { id: 'actions', label: 'Actions' },
-        ];
-        const outColumns = [
-          { id: 'token_id', label: 'Id' },
-          { id: 'seller', label: 'Seller' },
-          { id: 'symbol', label: 'Token' },
-          { id: 'amount', label: 'Amount' },
-          { id: 'lockDate', label: 'Lock Date' },
-          { id: 'actions', label: 'Actions' },
-        ];
-        setActiveEscrows({
-          in: { columns: inColumns, data: inEscrow },
-          out: { columns: outColumns, data: outEscrow },
-        });
+          Promise.all(
+            response?.ok?.nfts?.map((nft) => actor?.nft_origyn(nft).then((r) => r.ok)),
+          )
+            .then((data: any) => {
+              const rows = [];
+              for (const item of data) {
+                for (const sale of item.current_sale) {
+                  console.log(sale);
+                  const { start_price, buy_now, token, ending } = sale?.sale_type?.auction?.config?.auction || {};
+                  const { status, current_bid_amount } = sale?.sale_type?.auction || {};
 
-        Promise.all(response?.ok?.nfts?.map((nft) => actor?.nft_origyn(nft).then((r) => r.ok)))
-          .then((data: any) => {
-            const rows = [];
-            for (const item of data) {
-              for (const sale of item.current_sale) {
-                console.log(sale);
-                const { start_price, buy_now, token, ending } =
-                  sale?.sale_type?.auction?.config?.auction || {};
-                const { status, current_bid_amount } = sale?.sale_type?.auction || {};
-
-                if (!status?.hasOwnProperty('closed')) {
-                  rows.push({
-                    key: sale.token_id,
-                    token_id: sale.token_id,
-                    sale_id: (
-                      <Tooltip title={sale.sale_id}>
-                        <p>{sale.sale_id.substring(0, 8)}...</p>
-                      </Tooltip>
-                    ),
-
-                    symbol: (
-                      <>
-                        <TokenIcon symbol={tokens[token?.ic?.symbol]?.icon} />
-                        {token?.ic?.symbol}
-                      </>
-                    ),
-                    start_price: <NatPrice value={start_price} />,
-                    buy_now: <NatPrice value={buy_now[0] ?? 0} />,
-                    highest_bid: <NatPrice value={current_bid_amount} />,
-                    end_date: timeConverter(BigInt(ending.date)),
-                    actions:
-                      ~~(Date.now() * 1e6) > parseInt(ending.date) ? (
-                        <Button onClick={() => handleClickOpen(item, 'confirmEnd')}>
-                          End Sale
-                        </Button>
-                      ) : (
-                        '-'
+                  if (!status?.hasOwnProperty('closed')) {
+                    rows.push({
+                      key: sale.token_id,
+                      token_id: sale.token_id,
+                      sale_id: (
+                        <Tooltip title={sale.sale_id}>
+                          <p>{sale.sale_id.substring(0, 8)}...</p>
+                        </Tooltip>
                       ),
-                  });
+
+                      symbol: (
+                        <>
+                          <TokenIcon symbol={tokens[token?.ic?.symbol]?.icon} />
+                          {token?.ic?.symbol}
+                        </>
+                      ),
+                      start_price: <NatPrice value={start_price} />,
+                      buy_now: <NatPrice value={buy_now[0] ?? 0} />,
+                      highest_bid: <NatPrice value={current_bid_amount} />,
+                      end_date: timeConverter(BigInt(ending.date)),
+                      actions:
+                        ~~(Date.now() * 1e6) > parseInt(ending.date) ? (
+                          <Button
+                            onClick={() => handleClickOpen(item, 'confirmEnd')}
+                          >
+                            End Sale
+                          </Button>
+                        ) : (
+                          '-'
+                        ),
+                    });
+                  }
                 }
               }
-            }
 
-            setActiveSales((prev) => ({ columns: prev.columns, rows }));
-            setIsLoading(false);
-            setNFTData(createTableData(data));
-          })
-          .catch((err) => {
-            setIsLoading(false);
-            console.log(err);
-          });
-      });
+              setActiveSales((prev) => ({ columns: prev.columns, rows }));
+              setIsLoading(false);
+              setNFTData(createTableData(data));
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              console.log(err);
+            });
+        });
     }
   };
 
@@ -344,27 +364,23 @@ const WalletPage = () => {
     fetchData();
   }, [actor, principal]);
 
-  const FilteredNFTData =
-    tokenId && showOnlyTokenEntries
-      ? NFTData?.rows?.filter((nft) => nft.raw_id === tokenId)
-      : NFTData?.rows;
+  const FilteredNFTData = tokenId && showOnlyTokenEntries
+    ? NFTData?.rows?.filter((nft) => nft.raw_id === tokenId)
+    : NFTData?.rows;
 
-  const FilteredActiveSales =
-    tokenId && showOnlyTokenEntries
-      ? activeSales?.rows?.filter((nft) => nft.token_id === tokenId)
-      : activeSales?.rows;
+  const FilteredActiveSales = tokenId && showOnlyTokenEntries
+    ? activeSales?.rows?.filter((nft) => nft.token_id === tokenId)
+    : activeSales?.rows;
 
-  const FilteredActiveEscrowsIn =
-    tokenId && showOnlyTokenEntries
-      ? activeEscrows?.in?.data?.filter((nft) => nft.token_id === tokenId)
-      : activeEscrows?.in?.data;
+  const FilteredActiveEscrowsIn = tokenId && showOnlyTokenEntries
+    ? activeEscrows?.in?.data?.filter((nft) => nft.token_id === tokenId)
+    : activeEscrows?.in?.data;
 
-  const FilteredActiveEscrowsOut =
-    tokenId && showOnlyTokenEntries
-      ? activeEscrows?.out?.data?.filter((nft) => nft.token_id === tokenId)
-      : activeEscrows?.out?.data;
+  const FilteredActiveEscrowsOut = tokenId && showOnlyTokenEntries
+    ? activeEscrows?.out?.data?.filter((nft) => nft.token_id === tokenId)
+    : activeEscrows?.out?.data;
 
-  console.log(NFTData);
+  console.log("this is NFTData, ", NFTData);
   return (
     <>
       {loggedIn ? (
@@ -396,28 +412,30 @@ const WalletPage = () => {
             {tokenId && (
               <FormControlLabel
                 style={{ float: 'right' }}
-                control={
+                control={(
                   <Checkbox
                     checked={showOnlyTokenEntries}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setShowOnlyTokenEntries(e.target.checked)
-                    }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShowOnlyTokenEntries(e.target.checked)}
                   />
-                }
-                label={
+                )}
+                label={(
                   <>
                     Show only entries for <b>{tokenId}</b>
                   </>
-                }
+                )}
               />
             )}
-            <Tabs value={selectedTab} onChange={handleChange} aria-label="basic tabs example">
+            <Tabs
+              value={selectedTab}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
               <Tab label="My NFTs" {...a11yProps(0)} />
               <Tab label="Active Sales" {...a11yProps(1)} />
               <Tab label="Active Escrows" {...a11yProps(2)} />
             </Tabs>
           </Box>
-          <TabPanel value={selectedTab} index={0}>
+          <TabPanel value={selectedTab} index={0} aria-label="Tabs">
             {isLoading ? (
               <LoadingContainer />
             ) : NFTData?.rows?.length > 0 && NFTData?.columns ? (
@@ -447,26 +465,33 @@ const WalletPage = () => {
           <TabPanel value={selectedTab} index={2}>
             {isLoading ? (
               <LoadingContainer />
-            ) : activeEscrows?.in?.data?.length > 0 || activeEscrows?.out?.data?.length > 0 ? (
-              <>
-                {activeEscrows?.in?.data?.length > 0 && (
+            ) : activeEscrows?.in?.data?.length > 0
+              || activeEscrows?.out?.data?.length > 0 ? (
+                <>
+                  {activeEscrows?.in?.data?.length > 0 && (
                   <div style={{ marginBottom: 5 }}>
                     Received escrows
-                    <Table columns={activeEscrows.in.columns} rows={FilteredActiveEscrowsIn} />
+                    <Table
+                      columns={activeEscrows.in.columns}
+                      rows={FilteredActiveEscrowsIn}
+                    />
                   </div>
-                )}
-                {activeEscrows?.out?.data?.length > 0 && (
+                  )}
+                  {activeEscrows?.out?.data?.length > 0 && (
                   <>
                     Sent escrows
-                    <Table columns={activeEscrows.out.columns} rows={FilteredActiveEscrowsOut} />
+                    <Table
+                      columns={activeEscrows.out.columns}
+                      rows={FilteredActiveEscrowsOut}
+                    />
                   </>
-                )}
-              </>
-            ) : (
-              <Typography variant="h5" style={{ textAlign: 'center' }}>
-                You do not have any active escrow at this moment
-              </Typography>
-            )}
+                  )}
+                </>
+              ) : (
+                <Typography variant="h5" style={{ textAlign: 'center' }}>
+                  You do not have any active escrow at this moment
+                </Typography>
+              )}
           </TabPanel>
         </div>
       ) : (
