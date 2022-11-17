@@ -9,8 +9,8 @@ import { getMetadata } from './getMetadata';
 const defaultTokens = {
   ICP: {
     symbol: 'ICP',
-    canisterId: 'jwcfb-hyaaa-aaaaj-aac4q-cai',
-    fee: 200000,
+    canisterId: 'ryjl3-tyaaa-aaaaa-aaaba-cai',
+    fee: 10000,
     standard: IdlStandard.ICP,
     decimals: 8,
     enabled: true,

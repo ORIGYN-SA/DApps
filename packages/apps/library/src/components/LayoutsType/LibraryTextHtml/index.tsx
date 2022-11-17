@@ -1,5 +1,5 @@
-import React, { useEffect, useContext } from 'react'
-import Box from '@mui/material/Box'
+import React, { useEffect, useContext } from 'react';
+import Box from '@mui/material/Box';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { AuthContext } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
@@ -18,13 +18,12 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     border: '1px solid #dadde9',
   },
 }));
-
 const linkStyle = {
   width: 'auto',
   height: 'auto',
   textAlign: 'center',
   m: 2,
-}
+};
 
 const LibraryTextHtml = (props: any) => {
   const { canisterId } = useContext(AuthContext);
@@ -32,27 +31,33 @@ const LibraryTextHtml = (props: any) => {
   const formattedLink = async () => {
     const link = await GetFormattedLink(canisterId, props.source);
     setLink(link);
-  }
+  };
+
   useEffect(() => {
-    if(canisterId){
+    if (canisterId) {
       formattedLink();
     }
   }, []);
 
   return (
     <Box sx={linkStyle}>
-        <HtmlTooltip
+      <HtmlTooltip
         title={
           <React.Fragment>
             <Typography color="inherit">Text/Html Type</Typography>
-            <em>{link}</em> <br></br><b><a href={link} target='_blank'>{'Open Link '}</a></b>{' '}
+            <em>{link}</em> <br></br>
+            <b>
+              <a href={link} target="_blank" rel="noreferrer">
+                {'Open Link '}
+              </a>
+            </b>{' '}
           </React.Fragment>
         }
       >
         <InsertDriveFileIcon sx={{ fontSize: 50 }} />
       </HtmlTooltip>
     </Box>
-  )
-}
+  );
+};
 
 export default LibraryTextHtml;

@@ -29,15 +29,13 @@ import { useTokensContext } from '@dapp/features-tokens-provider';
 
 export function StartAuctionModal({ currentToken, open, handleClose }: any) {
   const { actor } = React.useContext(AuthContext);
-  const { enqueueSnackbar} = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const [token, setToken] = React.useState('OGY');
   const [inProgress, setInProgress] = React.useState(false);
   const [buyNowPrice, setBuyNowPrice] = React.useState<any>();
   const [startPrice, setStartPrice] = React.useState<any>();
   const [priceStep, setPriceStep] = React.useState<any>();
-  const [endDate, setEndDate] = React.useState<any>(
-    new Date().toJSON().slice(0, 19),
-  );
+  const [endDate, setEndDate] = React.useState<any>(new Date().toJSON().slice(0, 19));
   const { tokens } = useTokensContext();
 
   const handleChange = (event) => {
@@ -53,8 +51,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
     setInProgress(true);
     try {
       const resp = await actor.market_transfer_nft_origyn({
-        token_id: currentToken?.Class?.find(({ name }) => name === 'id').value
-          .Text,
+        token_id: currentToken?.Class?.find(({ name }) => name === 'id').value.Text,
         sales_config: {
           pricing: {
             auction: {
@@ -81,6 +78,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
               },
             },
           },
+          broker_id: [],
           escrow_receipt: [],
         },
       });
@@ -124,14 +122,8 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
       .typeError('This must be a number')
       .nullable()
       .typeError('This cannot be a nullable number')
-      .moreThan(
-        Yup.ref('startPrice'),
-        'Instant buy price must be greater than the start price',
-      ),
-    endDate: Yup.date().min(
-      new Date(),
-      'The end date needs to be in the future!',
-    ),
+      .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
+    endDate: Yup.date().min(new Date(), 'The end date needs to be in the future!'),
   });
 
   const {
@@ -142,7 +134,6 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
     resolver: yupResolver(validationSchema),
   });
   const customSubmit = (data) => {
-    console.log(data);
     handleStartAuction(data);
   };
   return (
@@ -154,8 +145,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          Start auction for{' '}
-          {currentToken?.Class?.find(({ name }) => name === 'id').value.Text}?
+          Start auction for {currentToken?.Class?.find(({ name }) => name === 'id').value.Text}?
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={3} mt={2}>
@@ -218,11 +208,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
                     setEndDate(newValue);
                   }}
                   renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      {...register('endDate')}
-                      error={!!errors.endDate}
-                    />
+                    <TextField {...params} {...register('endDate')} error={!!errors.endDate} />
                   )}
                 />
               </LocalizationProvider>

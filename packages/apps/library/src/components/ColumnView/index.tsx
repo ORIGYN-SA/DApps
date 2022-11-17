@@ -48,6 +48,10 @@ const ColumnView = () => {
     const canisterId = await getCanisterId();
     return canisterId;
   };
+  const currentUrlTokenId = async () => {
+    const tokenId = await getTokenId();
+    return tokenId;
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
     setOpen(!open);
@@ -58,6 +62,7 @@ const ColumnView = () => {
     setOpenDub(false);
     setOpenDeta(false);
     setOpenForm(false);
+    setOpenFormDefault(false);
     nftCollection();
     setSelectedIndex(index);
   };
@@ -104,10 +109,10 @@ const ColumnView = () => {
     // As default-general view of libraries the tokenId is empty
     if (actor) {
       OrigynClient.getInstance().init(true, await currentCanisterId());
-      getNft('').then((r) => {
-        console.log('RRRR', r);
+      getNftCollectionMeta().then((r) => {
+        console.log('CollMeta', r);
         setDefaultLibraryData(
-          r.ok.metadata.Class.filter((res) => {
+          r.ok.metadata[0].Class.filter((res) => {
             return res.name === 'library';
           })[0].value.Array.thawed,
         );
@@ -192,7 +197,7 @@ const ColumnView = () => {
     setCollectionNft([]);
     OrigynClient.getInstance().init(true, await currentCanisterId());
     const response = await getNftCollectionMeta([]);
-    console.log('response', response);
+    console.log('responseCollectionMeta', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
@@ -216,7 +221,11 @@ const ColumnView = () => {
   }, []);
 
   const checkAndSetOwner = async () => {
-    const checked = await checkOwner(principal, await currentCanisterId(), currentTokenId);
+    const checked = await checkOwner(
+      principal,
+      await currentCanisterId(),
+      await currentUrlTokenId(),
+    );
     setOwner(checked);
   };
 
@@ -249,24 +258,19 @@ const ColumnView = () => {
                     </ListItemButton>
                   </ListItem>
                 </Grid>
-                {collectionNft.length <= 0 ? (
-                  <></>
-                ) : (
-                  <Grid item xs={12}>
-                    <ListItem className={classes.noPadding}>
-                      <ListItemButton
-                        selected={selectedIndex === 1}
-                        onClick={(event) => handleClickLib(event, 1)}
-                        className={classes.noPadding}
-                      >
-                        <ListItemText sx={{ paddingLeft: 1 }} primary="Libraries" />
-                      </ListItemButton>
-                    </ListItem>
-                  </Grid>
-                )}
+                <Grid item xs={12}>
+                  <ListItem className={classes.noPadding}>
+                    <ListItemButton
+                      selected={selectedIndex === 1}
+                      onClick={(event) => handleClickLib(event, 1)}
+                      className={classes.noPadding}
+                    >
+                      <ListItemText sx={{ paddingLeft: 1 }} primary="Collection" />
+                    </ListItemButton>
+                  </ListItem>
+                </Grid>
               </Grid>
             </Box>
-
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
                 <Grid container minWidth={Sizes.minWidth}>
@@ -384,7 +388,7 @@ const ColumnView = () => {
             <Collapse
               in={openForm}
               timeout="auto"
-              style={{ display: { openForm } ? 'block' : 'none' }}
+              style={{ display:  openForm ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
@@ -398,7 +402,7 @@ const ColumnView = () => {
               in={openDeta}
               timeout="auto"
               unmountOnExit
-              style={{ display: { openDeta } ? 'block' : 'none' }}
+              style={{ display: openDeta ? 'block' : 'none' }}
             >
               <Box
                 maxHeight={Sizes.maxHeight}
@@ -417,7 +421,7 @@ const ColumnView = () => {
             <Collapse
               in={openDub}
               timeout="auto"
-              style={{ display: { openDub } ? 'block' : 'none' }}
+              style={{ display: openDub ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>
@@ -430,7 +434,7 @@ const ColumnView = () => {
             <Collapse
               in={openFormDefault}
               timeout="auto"
-              style={{ display: { openFormDefault } ? 'block' : 'none' }}
+              style={{ display: openFormDefault ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.styledScroll}>

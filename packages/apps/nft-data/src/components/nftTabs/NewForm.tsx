@@ -1,41 +1,40 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import { Grid, Box, Divider, Button } from '@mui/material';
-import { Principal } from '@dfinity/principal';
-import { NFTUpdateRequest, UpdateRequest, CandyValue } from './types/origyn_nft_reference.did';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-// data
-import { getData, getPermissions, Nft_Data, Permission } from './data/data';
-// inputs
-import { Inputs } from './inputs/index';
-// Context
-import { MetadataContext } from './context';
-// CheckOwner
-import { checkOwner } from '@dapp/utils';
+import {
+  Grid,
+  TextField,
+  Button,
+  Box,
+  Typography,
+} from '@mui/material';
+import pick from 'lodash/pick';
+import { Principal } from '@dfinity/principal'
 
-
-type App = {
-  name: string;
-  value: string | number;
-  immutable: boolean;
-};
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const NewForm = ({ metadata }: any) => {
-  // IsOWNER
-  const [isOwner, setIsOwner] = useState(false);
+  console.log(metadata);
 
-  // object with all the data
-  const [apps, setApps] = useState<App[]>([]);
-  const [libraryFields, setLibraryFields] = useState([]);
-  const [data, setData] = useState<Nft_Data[]>([]);
-  const [permissions, setPermissions] = useState<Permission[]>([]);
-  // use the context
-  const { app_id } = useContext(MetadataContext);
-  const { actor, principal, loggedIn } = useContext(AuthContext);
+  const [owner, setOwner] = useState('');
+  const [hiddenAsset, setHiddenAsset] = useState('');
+  const [previewAsset, setPreviewAsset] = useState('');
+  const [primaryAsset, setPrimaryAsset] = useState('');
+  const [experienceAsset, setExperienceAsset] = useState('');
+  const [id, setId] = useState('');
+  const [apps, setApps] = useState([
+  ]);
+
+  console.log(owner, hiddenAsset, previewAsset, primaryAsset, experienceAsset, id);
+  const [libraryFields, setLibraryFields] = useState([
+  ]);
 
   const handleAppsChange = (index, event, i = 0) => {
     if (event.target.name == 'app_id' || event.target.name == 'read') {
@@ -44,23 +43,23 @@ const NewForm = ({ metadata }: any) => {
       setApps(data);
     } else if (event.target.name == 'write_type') {
       let data = [...apps];
-      data[index]['write']['type'] = event.target.value;
+      data[index].write.type = event.target.value;
       setApps(data);
     } else if (event.target.name == 'write_list') {
       let data = [...apps];
-      data[index]['write']['list'][i] = event.target.value;
+      data[index].write.list[i] = event.target.value;
       setApps(data);
     } else if (event.target.name == 'permissions_type') {
       let data = [...apps];
-      data[index]['permissions']['type'] = event.target.value;
+      data[index].permissions.type = event.target.value;
       setApps(data);
     } else if (event.target.name == 'permissions_list') {
       let data = [...apps];
-      data[index]['permissions']['list'][i] = event.target.value;
+      data[index].permissions.list[i] = event.target.value;
       setApps(data);
     } else if (event.target.name.search('com.bm.sample.app') > -1) {
       let data = [...apps];
-      data[index]['data'][event.target.name] = event.target.value;
+      data[index].data[event.target.name] = event.target.value;
       setApps(data);
     }
   };
@@ -71,293 +70,410 @@ const NewForm = ({ metadata }: any) => {
     setLibraryFields(data);
   };
 
+  useEffect(() => {
+    if (Object.entries(metadata).length) {
+      setOwner(pick(metadata, ['owner']).owner);
+      setHiddenAsset(pick(metadata, ['hidden_asset']).hidden_asset);
+      setPreviewAsset(pick(metadata, ['preview_asset']).preview_asset);
+      setPrimaryAsset(pick(metadata, ['primary_asset']).primary_asset);
+      setExperienceAsset(pick(metadata, ['experience_asset']).experience_asset);
+      setId(pick(metadata, ['id']).id);
+      setApps(pick(metadata, ['__apps']).__apps);
+      setLibraryFields(pick(metadata, ['library']).library);
+    }
+  }, [metadata]);
+
+  // <----------------------------
+
+  const { tokenId, actor } = useContext(AuthContext);
   const [nft, setNft] = useState<any>({});
+
   const [nftName, setNftName] = useState<string>('brain 1');
   const [nftCol, setNftCol] = useState<BigInt>(16n);
-  const [nftOwner, setNftOwner] = useState<string>(
-    '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
-  );
+  const [nftOwner, setNftOwner] = useState<string>('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe')
   const [nftCreator, setNftCreator] = useState<string>('bm');
-
-  const getArrayData = async () => {
-    const response = await getData();
-    console.log('arraydata', response);
-    if (response) {
-      setData(response);
-    }
-  };
-  const getArrayPermissions = async () => {
-    const response = await getPermissions();
-    console.log('arraypermissions', response);
-    if (response) {
-      setPermissions(response);
-    }
-  };
+  console.log(nftCol);
   useEffect(() => {
-    getArrayData();
-    getArrayPermissions();
+    if (actor) {
+      actor
+        .nft_origyn(tokenId)
+        .then((r) => {
+          console.log(r);
+          setNft(r.ok);
+        })
+        .catch(console.log);
+    }
   }, []);
 
   const submitData = async () => {
-    let myCandy: CandyValue = {
-      Class: [
-        {
-          name: 'app_id',
-          value: {
-            Text: app_id.value.toString(),
-          },
-          immutable: false,
-        },
-        {
-          name: 'read',
-          value: {
-            Text: 'public',
-          },
-          immutable: true,
-        },
-        {
-          name: 'write',
-          value: {
-            Class: [
-              { name: 'type', value: { Text: 'allow' }, immutable: false },
-              {
-                name: 'list',
-                value: {
-                  Array: {
-                    thawed: [
-                      {
-                        Principal: Principal.fromText(
-                          '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
-                        ),
-                      },
-                    ],
-                  },
-                },
-                immutable: false,
-              },
-            ],
-          },
-          immutable: false,
-        },
-        {
-          name: 'permissions',
-          value: {
-            Class: [
-              { name: 'type', value: { Text: 'allow' }, immutable: false },
-              {
-                name: 'list',
-                value: {
-                  Array: {
-                    thawed: [
-                      {
-                        Principal: Principal.fromText(
-                          '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
-                        ),
-                      },
-                    ],
-                  },
-                },
-                immutable: false,
-              },
-            ],
-          },
-          immutable: false,
-        },
-        {
-          name: 'data',
-          value: {
-            Class: [
-              { name: 'com.bm.sample.app', value: { Text: nftName }, immutable: false },
-              {
-                name: 'com.bm.sample.app',
-                value: { Nat: 16n },
-                immutable: false,
-              },
-              {
-                name: 'com.bm.sample.app',
-                value: { Text: nftCreator },
-                immutable: false,
-              },
-              {
-                name: 'com.bm.sample.app',
-                value: {
-                  Principal: Principal.fromText(nftOwner),
-                },
-                immutable: false,
-              },
-            ],
-          },
-          immutable: false,
-        },
-        { name: 'owner', value: { Principal: Principal.fromText(nftOwner) }, immutable: false },
-        { name: 'is_soulbound', value: { Bool: false }, immutable: false },
-      ],
-    };
-    console.log('this is myCandy', myCandy);
+    const nftId = nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text;
 
-    let ObjUpdateRequest: UpdateRequest = {
-      id: getTokenId(),
-      update: [],
-    };
-
-    let ObjNftUpdateRequest: NFTUpdateRequest = {
-      update: {
-        token_id: getTokenId(),
-        update: ObjUpdateRequest,
-        app_id: app_id.value.toString(),
+    const data = { "Class" :[
+      {
+        "name": "app_id",
+        "value": {
+          "Text": "com.bm.sample.app.name"
+        },
+        "immutable": true
       },
-      replace: {
-        token_id: getTokenId(),
-        data: myCandy,
+      {
+        "name": "read",
+        "value": {
+          "Text": "public"
+        },
+        "immutable": true
       },
+      {
+        name: 'write',
+        value: {
+          Class: [
+            { name: 'type', value: { Text: 'allow' }, immutable: false },
+            {
+              name: 'list',
+              value: {
+                Array: {
+                  thawed: [{ Principal: Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe') }],
+                },
+              },
+              immutable: false,
+            },
+          ],
+        },
+        immutable: false,
+      },
+      {
+        name: 'permissions',
+        value: {
+          Class: [
+            { name: 'type', value: { Text: 'allow' }, immutable: false },
+            {
+              name: 'list',
+              value: {
+                Array: {
+                  thawed: [{ Principal: Principal.fromText('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe') }],
+                },
+              },
+              immutable: false,
+            },
+          ],
+        },
+        immutable: false,
+      },
+      {
+        name: 'data',
+        value: {
+          Class: [
+            { name: 'com.bm.sample.app.name', value: { Text: nftName }, immutable: false },
+            { name: 'com.bm.sample.app.total_in_collection', value: { Nat: 12 }, immutable: false },
+            { name: 'com.bm.sample.app.creator_name', value: { Text: nftCreator }, immutable: false },
+            {
+              name: 'com.bm.sample.app.creator_principal',
+              value: {
+                Principal: Principal.fromText(nftOwner),
+              },
+              immutable: false,
+            }
+          ],
+        },
+        immutable: false,
+      }
+    ]};
+
+    const upData = {
+      token_id: nftId,
+      data: data,
     };
 
-    console.log('this is ObjNftUpdateRequest', ObjNftUpdateRequest['replace']);
+    console.log("this is upData", upData);
+    console.log('this is app', apps);
+    console.log('this is nftId', nftId);
+    console.log("this is data", data);
 
-    const repData = await actor.update_app_nft_origyn({ replace: ObjNftUpdateRequest['replace'] });
+    const repData = await actor.update_app_nft_origyn({ replace: upData });
 
-    if (repData) {
-      console.log('replace success', repData);
+    if (repData.ok) {
+      console.log('replace success');
     } else {
       console.log('replace wrong', repData);
     }
   };
 
-  const checkOwnerAndPermissions = async () => {
-    const checked = await checkOwner(principal, await getCanisterId(), getTokenId());
-    setIsOwner(checked);
-    console.log('isOwner', checked);
-  };
 
-  useEffect(() => {
-    if (loggedIn) {
-      checkOwnerAndPermissions();
-    } else {
-      setIsOwner(false);
-      console.log('not logged in');
-    }
-  }, [loggedIn]);
+  // <--------------------------------
+
   return (
     <div>
       <Box>
-        <Grid container spacing={2} marginTop={2}>
-          <Grid item xs={2}>
-            <b>Info</b>
-          </Grid>
-          <Grid item xs={10} sx={{}}>
-            <List>
-              {data?.map((item, index) => {
-                return item.immutable === true ? (
-                  <>
-                    <ListItem key={index + item.name}>
-                      <ListItemText primary={item.name} secondary={item.value} />
-                    </ListItem>
-                    <Divider />
-                  </>
-                ) : isOwner ? (
-                  <>
-                    <ListItem key={index + item.name}>
-                      <ListItemText primary={item.name} secondary={item.value} />
-                    </ListItem>
-                    <>{Inputs[item.level](item)}</>
-                    <Divider />
-                  </>
-                ) : (
-                  <></>
-                );
-              })}
-            </List>
-          </Grid>
-        </Grid>
-        <Grid container spacing={2} marginTop={2}>
-          <Grid item xs={2}>
-            <b>Permissions</b>
-          </Grid>
-          <Grid item xs={10} sx={{}}>
-            <List>
-              {permissions?.map((item, index) => {
-                return item.immutable === true ? (
-                  item.name == 'list' ? (
-                    <>
-                      <ListItem key={index}>
-                        <ListItemText
-                          primary={item.type + ' ' + item.name}
-                          secondary={item.list.map((item, index) => {
-                            return (
-                              <div key={index}>
-                                <span>{item}</span>
-                              </div>
-                            );
-                          })}
-                        />
-                      </ListItem>
-                      <Divider />
-                    </>
-                  ) : (
-                    <>
-                      <ListItem key={index}>
-                        <ListItemText primary={<b>{item.type}</b>} secondary={item.value} />
-                      </ListItem>
-                      <Divider />
-                    </>
-                  )
-                ) : item.name == 'list' ? (
-                  isOwner ? (
-                    <>
-                      <ListItem key={index}>
-                        <ListItemText
-                          primary={item.type + ' ' + item.name}
-                          secondary={item.list.map((item, index) => {
-                            return (
-                              <div key={index}>
-                                <span>{item}</span>
-                              </div>
-                            );
-                          })}
-                        />
-                      </ListItem>
-                      <>{Inputs[item.level](item)}</>
-                      <Divider />
-                    </>
-                  ) : (
-                    <>
-                      <ListItem key={index}>
-                        <ListItemText
-                          primary={item.type + ' ' + item.name}
-                          secondary={item.list.map((item, index) => {
-                            return (
-                              <div key={index}>
-                                <span>{item}</span>
-                              </div>
-                            );
-                          })}
-                        />
-                      </ListItem>
-                      <Divider />
-                    </>
-                  )
-                ) : isOwner ? (
-                  <>
-                    <ListItem key={index}>
-                      <ListItemText primary={<b>{item.type}</b>} secondary={item.value} />
-                    </ListItem>
-                    <>{Inputs[item.level](item)}</>
-                    <Divider />
-                  </>
-                ) : (
-                  <>
-                    <ListItem key={index}>
-                      <ListItemText primary={<b>{item.type}</b>} secondary={item.value} />
-                    </ListItem>
-                    <Divider />
-                  </>
-                );
-              })}
-            </List>
-          </Grid>
-        </Grid>
-        <Divider />
-        <Button onClick={submitData}>Update</Button>
+        <Typography variant="h4">Apps</Typography>
+        {apps.map((app, index) => (
+          <>
+            {' '}
+            App {index + 1}
+            <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
+              <Grid xs={6} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="App ID"
+                    variant="outlined"
+                    name="app_id"
+                    value={app.app_id}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                  />
+
+                </Item>
+              </Grid>
+              <Grid xs={6} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Read"
+                    variant="outlined"
+                    name="read"
+                    value={app.read}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                  />
+
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <Typography variant="h4">{'Write'}</Typography>
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Type"
+                    variant="outlined"
+                    name="write_type"
+                    value={app.write.type}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  {app.write.list.map((item, i) => (
+                    <TextField
+                      key={item.id}
+                      label="List"
+                      variant="outlined"
+                      name="write_list"
+                      value={app.write.list[i]}
+                      onChange={(evt) => handleAppsChange(index, evt, i)}
+                    />
+                  ))}
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <Typography variant="h4">{'Permissions'}</Typography>
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Type"
+                    variant="outlined"
+                    name="permissions_type"
+                    value={app.permissions.type}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  {app.permissions.list.map((item, i) => (
+                    <TextField
+                      key={item.id}
+                      label="List"
+                      variant="outlined"
+                      name="permissions_list"
+                      value={app.permissions.list[i]}
+                      onChange={(evt) => handleAppsChange(index, evt, i)}
+                    />
+                  ))}
+                </Item>
+              </Grid>
+              <Grid xs={12} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <Typography variant="h4">{'Data'}</Typography>
+                  
+                </Item>
+              </Grid>
+              <Grid xs={3} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Name"
+                    variant="outlined"
+                    name="com.bm.sample.app.name"
+                    value={app.data['com.bm.sample.app.name']}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                    onInput={text => setNftName(text.target.value)}  //here you can set the data you want to pass
+                   // onInput={text => setData((event.target as HTMLInputElement).value)}  this removes the error with EventTarget
+                  />
+                </Item>
+
+              </Grid>
+              <Grid xs={3} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Total"
+                    variant="outlined"
+                    name="com.bm.sample.app.total_in_collection"
+                    value={app.data['com.bm.sample.app.total_in_collection']}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                    onInput={text => setNftCol(text.target.value)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={3} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Creator Name"
+                    variant="outlined"
+                    name="com.bm.sample.app.creator_name"
+                    value={app.data['com.bm.sample.app.creator_name']}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                    onInput={text => setNftCreator(text.target.value)}  //here you can set the data you want to pass
+
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={3} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Principal"
+                    variant="outlined"
+                    name="com.bm.sample.app.creator_principal"
+                    value={app.data['com.bm.sample.app.creator_principal']}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                    onInput={text => setNftOwner(text.target.value)}  //here you can set the data you want to pass
+
+                  />
+                  
+                </Item>
+              </Grid>
+
+            </Grid>
+            <div style={{display:'flex', justifyContent:"center", alignItems:"center"}}>
+              <Button  variant="contained" onClick={submitData}>
+                  {' '}
+                  update{' '}
+                </Button>
+                </div>
+            
+          </>
+        ))}
+      </Box>
+      <Box>
+        <Typography variant="h4">Library</Typography>
+        {libraryFields.map((lib, index) => (
+          <div key={lib.id}>
+            {' '}
+            Library {index + 1}
+            <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="ID"
+                    variant="outlined"
+                    name="library_id"
+                    value={lib.library_id}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Title"
+                    variant="outlined"
+                    name="title"
+                    value={lib.title}
+                    onChange={(evt) => handleAppsChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Location Type"
+                    variant="outlined"
+                    name="location_type"
+                    value={lib.location_type}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Location"
+                    variant="outlined"
+                    name="location"
+                    value={lib.location}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="COntent Type"
+                    variant="outlined"
+                    name="content_type"
+                    value={lib.content_type}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="COntent Hash"
+                    variant="outlined"
+                    name="content_hash"
+                    value={lib.content_hash}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Size"
+                    variant="outlined"
+                    name="size"
+                    value={lib.size}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Sort"
+                    variant="outlined"
+                    name="sort"
+                    value={lib.sort}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+              <Grid xs={4} sx={{ marginTop: '10px' }}>
+                <Item>
+                  <TextField
+                    label="Read"
+                    variant="outlined"
+                    name="read"
+                    value={lib.read}
+                    onChange={(evt) => handleLibraryChange(index, evt)}
+                  />
+                </Item>
+              </Grid>
+            </Grid>
+          </div>
+        ))}
       </Box>
     </div>
   );

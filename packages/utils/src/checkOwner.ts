@@ -8,8 +8,7 @@
 // ----------------------------------------------------------------------------
 
 import { Principal } from '@dfinity/principal';
-import { getNft, OrigynClient,getNftCollectionMeta } from '@origyn-sa/mintjs';
-
+import { getNft,getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 export const checkOwner = async (principal: Principal, currCanisterId, currTokenId) => {
 
     const UserPrincipal = principal.toText();
@@ -17,34 +16,29 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
     OrigynClient.getInstance().init(currCanisterId);
 
 
-    // DEFAULT LIBRARIES OWNER
-    const LibraryOwner = await getNftCollectionMeta().then((r) =>
-        r.ok.metadata[0].Class.filter((res) => {
-            console.log('response', r);
+    // COLLECTION OWNER
+    const CollectionOwner= await getNftCollectionMeta().then((r) => r.ok.metadata[0].Class.filter((res) => {
             return res.name === 'owner';
-        })[0].value.Text,
-    );
+          })[0].value.Text);
+    console.log('CollectionOwner',CollectionOwner);
 
-    if(currTokenId){
-    // NFT OWNER
-    const NftOwner: Principal = await getNft(currTokenId).then((r) =>
+    // SELECTED NFT OWNER
+    const NftOwner: Principal = await getNft(await currTokenId).then((r) =>
         r.ok.metadata.Class.filter((res) => {
-            console.log('response NFT', r);
             return res.name === 'owner';
         })[0].value.Principal.toText(),);
-    }
-    
-    // WRITE PERMISSIONS
-    const ArrayAllowed  = await getNftCollectionMeta().then((r) =>
-    r.ok.metadata[0].Class.filter((res) => {
-        console.log('response NFT', r);
+
+
+    // WRITE PERMISSIONS SELECTED NFT
+    const ArrayAllowed  = await getNft(await currTokenId).then((r) =>
+    r.ok.metadata.Class.filter((res) => {
         return res.name === '__apps';
     })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed);
     let i : any; 
     const AllowedUsers = () => {
     for(i in ArrayAllowed){
         let AllowedPrincipal = ArrayAllowed[i].Principal.toText();
-        console.log('ALLOWEDPRINCIPAL', AllowedPrincipal);
+        console.log(' 🔏 - PERMISSION LIST - WRITE', AllowedPrincipal);
         if(AllowedPrincipal === UserPrincipal){
             return true;
         }
@@ -52,11 +46,12 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
     }
 
 
-    console.log(' LIBRARY OWNER', LibraryOwner);
-    console.log('USERPRINCIPAL', UserPrincipal);
-    console.log('CURRENT SELECTED NFT : ', currTokenId);
+    console.log('🚀 - COLLECTION OWNER', CollectionOwner); 
+    console.log('🚀 - USERPRINCIPAL', UserPrincipal);
+    console.log('🚀 - CURRENT SELECTED NFT : ', await currTokenId);
+    console.log('🚀 - NFT OWNER', NftOwner);
 
-    if ((UserPrincipal === LibraryOwner) || (AllowedUsers() === true)) {
+    if ((UserPrincipal === CollectionOwner) || (AllowedUsers() === true)) {
         return true;
     } else {
         return false;
