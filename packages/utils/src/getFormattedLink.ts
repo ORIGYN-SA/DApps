@@ -11,8 +11,8 @@ import { phonebookIdl } from '@dapp/common-candid';
 import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
 
- // Phonebook Agent
- const agent = new HttpAgent({
+// Phonebook Agent
+const agent = new HttpAgent({
     host: 'https://boundary.ic0.app/',
 });
 // Phonebook actor for the current canister name 
@@ -23,19 +23,28 @@ const phonebookActor = Actor.createActor(phonebookIdl, {
 
 export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
 
-    const QueryName: any = await phonebookActor?.reverse_lookup(
-        Principal.fromText(currCanisterId));
+    const QueryName: any = await phonebookActor?.reverse_lookup(Principal.fromText(currCanisterId));
+    const HasRoot = linkToFormat.includes(currCanisterId || QueryName);
 
     let formattedLink: string = '';
-try{
-    if (QueryName == "" || QueryName == null) {
-        formattedLink = linkToFormat.replace(currCanisterId, currCanisterId);
-    } else {
-        formattedLink = linkToFormat.replace(currCanisterId, QueryName);
+    try {
+        if (await QueryName == "" || await QueryName == null) {
+            formattedLink = (HasRoot) ?
+                (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat.replace(currCanisterId, currCanisterId));
+                return formattedLink;
+        } else {
+            if(HasRoot) {
+                let NewLink = new URL(linkToFormat);
+                let HostString = NewLink.hostname;
+                let PrptlLink = linkToFormat.replace(HostString, 'prptl.io/-/' + QueryName);
+                formattedLink = PrptlLink;
+                return formattedLink;
+            }else{
+                formattedLink = 'https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat.replace(currCanisterId, QueryName);
+                return formattedLink;
+            }
+        }
+    } catch (e) {
+        console.log('Error during formatting link ' + e);
     }
-
-    return formattedLink;
-} catch (e) {
-    console.log('Error during formatting link ' + e);
-}
 };
