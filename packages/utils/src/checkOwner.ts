@@ -28,6 +28,7 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
             return res.name === 'owner';
         })[0].value.Principal.toText(),);
 
+
     // WRITE PERMISSIONS SELECTED NFT
     const ArrayAllowed  = await getNft(await currTokenId).then((r) =>
     r.ok.metadata.Class.filter((res) => {

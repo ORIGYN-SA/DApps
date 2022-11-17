@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, Grid, Divider } from '@mui/material';
 import pick from 'lodash/pick';
 const FormTab = ({ metadata }: any) => {
-  console.log(metadata);
 
   const [owner, setOwner] = useState('');
   const [hiddenAsset, setHiddenAsset] = useState('');
@@ -22,6 +21,7 @@ const FormTab = ({ metadata }: any) => {
       setId(pick(metadata, ['id']).id);
       setApps(pick(metadata, ['__apps']).__apps);
       setLibrary(pick(metadata, ['library']).library);
+      console.log('metadata is ', metadata);
     }
   }, [metadata]);
 
@@ -156,7 +156,7 @@ const FormTab = ({ metadata }: any) => {
         return (
           <Grid key={`${lib}+${index}`} sx={{ marginTop: '20px' }} container spacing={2}>
             <Grid item xs={2}></Grid>
-            <Grid item xs={2} sx={{}}>{`ibrary ${i + 1}`}</Grid>
+            <Grid item xs={2} sx={{}}>{`library ${i + 1}`}</Grid>
             <Grid item xs={8}>
               <List>
                 {Object.keys(lib).map((item, j) => (
