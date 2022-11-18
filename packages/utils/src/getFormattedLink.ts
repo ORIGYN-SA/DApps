@@ -27,9 +27,10 @@ export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
     const QueryName: any = await phonebookActor?.reverse_lookup(Principal.fromText(currCanisterId));
     const HasRoot = linkToFormat.includes(currCanisterId || QueryName);
     const HasLocalHost = linkToFormat.includes('localhost');
+    const HasBlob = linkToFormat.includes('blob:');
     let formattedLink: string = '';
     try {
-        if (HasLocalHost) {
+        if (HasLocalHost || HasBlob) {
             formattedLink = linkToFormat;
             return formattedLink;
         } else {
