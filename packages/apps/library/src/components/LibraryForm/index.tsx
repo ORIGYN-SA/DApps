@@ -29,7 +29,7 @@ const currentCanisterId = async () => {
   return canisterId;
 };
 
-export const LibraryForm =  (props: any) => {
+export const LibraryForm = (props: any) => {
   const { enqueueSnackbar } = useSnackbar();
   const isProd = true;
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
@@ -41,7 +41,7 @@ export const LibraryForm =  (props: any) => {
   const [openSelectInput, setOpenSelectInput] = React.useState(false);
   const [libraries, setLibraries] = React.useState<any>([]);
   const canisterId = async () => {
-    const r = await currentCanisterId()
+    const r = await currentCanisterId();
     return r;
   };
   function handleInputChange(e) {
@@ -132,14 +132,24 @@ export const LibraryForm =  (props: any) => {
       );
       const stage = await stageLibraryAsset(payload.files, payload.token_id);
       console.log('🚀 ~ file: App.tsx ~ line 175 ~ handleStageLibraryAssetClick ~ stage', stage);
-      // Display a success message - SNACKBAR
-      enqueueSnackbar('Library staged!', {
-        variant: 'success',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      if (stage.ok) {
+        // Display a success message - SNACKBAR
+        enqueueSnackbar('Library staged!', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      } else {
+        enqueueSnackbar('Library not staged!', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
     } catch (error) {
       // Display a error message - SNACKBAR
       enqueueSnackbar('Something went wrong', {
@@ -197,7 +207,20 @@ export const LibraryForm =  (props: any) => {
                     m: 2,
                   }}
                 >
-                  <input type="file" id="library" name="library" onChange={handleInputChange} />
+                  <Grid item xs={12} m={2}>
+                    <Typography>Choose a File</Typography>
+                    <input type="file" id="library" name="library" onChange={handleInputChange} />
+                  </Grid>
+                  <Grid item xs={12}  m={2}>
+                    <Typography>Enter a URL</Typography>
+                    <input
+                      type="URL"
+                      id="url"
+                      name="url"
+                      placeholder="https://example.com"
+                      onChange={handleInputChange}
+                    />
+                  </Grid>
                 </Box>
                 {file === undefined ? (
                   <></>
@@ -273,8 +296,19 @@ export const LibraryForm =  (props: any) => {
                     </Grid>
                   </Collapse>
                   <Collapse in={openFileInput} timeout="auto" unmountOnExit>
-                    <Grid item xs={12} m={2}>
+                    <Grid item xs={12}  m={2}>
+                      <Typography>Choose a File</Typography>
                       <input type="file" id="library" name="library" onChange={handleInputChange} />
+                    </Grid>
+                    <Grid item xs={12}  m={2}>
+                      <Typography>Enter a URL</Typography>
+                      <input
+                        type="URL"
+                        id="url"
+                        name="url"
+                        placeholder="https://example.com"
+                        onChange={handleInputChange}
+                      />
                     </Grid>
                   </Collapse>
                 </Box>

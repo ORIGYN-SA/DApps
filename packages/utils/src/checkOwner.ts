@@ -18,19 +18,18 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
 
     // COLLECTION OWNER
     const CollectionOwner= await getNftCollectionMeta().then((r) => r.ok.metadata[0].Class.filter((res) => {
-            return res.name === 'owner';
-          })[0].value.Text);
+        return res.name === 'owner';
+      })[0].value.Principal.toText());
     console.log('CollectionOwner',CollectionOwner);
 
     // SELECTED NFT OWNER
-    const NftOwner: Principal = await getNft(await currTokenId).then((r) =>
-        r.ok.metadata.Class.filter((res) => {
-            return res.name === 'owner';
-        })[0].value.Principal.toText(),);
-
+    const NftOwner = await getNft(currTokenId).then((r) =>
+    r.ok.metadata.Class.filter((res) => {
+        return res.name === 'owner';
+    })[0].value.Principal.toText(),);
 
     // WRITE PERMISSIONS SELECTED NFT
-    const ArrayAllowed  = await getNft(await currTokenId).then((r) =>
+    const ArrayAllowed  = await getNft(currTokenId).then((r) =>
     r.ok.metadata.Class.filter((res) => {
         return res.name === '__apps';
     })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed);
