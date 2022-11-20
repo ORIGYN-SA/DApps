@@ -218,6 +218,7 @@ const ColumnView = () => {
   // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
     openSpecificNft();
+    console.log('actor', actor);
   }, []);
 
   const checkAndSetOwner = async () => {

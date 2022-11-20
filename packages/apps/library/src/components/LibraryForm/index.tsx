@@ -31,7 +31,7 @@ const currentCanisterId = async () => {
 
 export const LibraryForm = (props: any) => {
   const { enqueueSnackbar } = useSnackbar();
-  const isProd = true;
+  const isProd = false;
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
   const [file, setFile] = useState<any>();
   const [type, setType] = useState<any>();
