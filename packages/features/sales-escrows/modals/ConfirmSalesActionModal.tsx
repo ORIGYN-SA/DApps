@@ -32,14 +32,13 @@ export const ConfirmSalesActionModal = ({
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
-  console.log(escrow, action);
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
       if (isLoading) return;
       setIsLoading(true);
       const tokenId = currentToken?.Class?.find(({ name }) => name === 'id').value.Text;
       if (action === 'endSale') {
-        const endSaleResponse = await actor.end_sale_nft_origyn(tokenId);
+        const endSaleResponse = await actor.sale_nft_origyn({end_sale: tokenId});
         if (endSaleResponse.ok) {
           enqueueSnackbar(`You have successfully ended the sale for ${tokenId}.`, {
             variant: 'success',

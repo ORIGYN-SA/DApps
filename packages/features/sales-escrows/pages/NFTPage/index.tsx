@@ -1,12 +1,12 @@
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { AuthContext, getCanisterId } from '@dapp/features-authentication'
+import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authentication';
 import { NatPrice } from '@dapp/features-components';
 import {
   ConfirmSalesActionModal,
   StartAuctionModal,
   StartEscrowModal,
 } from '@dapp/features-sales-escrows';
-import { eToNumber, timeConverter } from '@dapp/utils';
+import { eToNumber, timeConverter, isLocal } from '@dapp/utils';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
@@ -60,8 +60,9 @@ const SymbolWithIcon = ({ symbol }: any) =>
   );
 export const NFTPage = () => {
   const { principal, actor } = useContext(AuthContext);
+  const { localDevelopment } = useSessionContext();
   const [currentNFT, setCurrentNFT] = useState<any>({});
-  const [canisterId, setCanisterId] = useState("");
+  const [canisterId, setCanisterId] = useState('');
   const [openAuction, setOpenAuction] = React.useState(false);
   const [dialogAction, setDialogAction] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
@@ -154,8 +155,8 @@ export const NFTPage = () => {
   }, [actor]);
 
   useEffect(() => {
-    getCanisterId().then((r) => {
-      setCanisterId(r);
+    useRoute().then(({ canisterId }) => {
+      setCanisterId(canisterId);
     });
   }, []);
 
@@ -180,7 +181,11 @@ export const NFTPage = () => {
             <img
               width="100%"
               style={{ margin: '0 10px 10px 10px' }}
-              src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
+              src={
+                isLocal() && localDevelopment
+                  ? `http://${canisterId}.localhost:8000/-/${params.nft_id}/preview`
+                  : `https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`
+              }
             />
             <div>
               <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>

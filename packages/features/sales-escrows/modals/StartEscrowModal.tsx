@@ -1,6 +1,7 @@
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
+import { isLocal } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -24,7 +25,8 @@ import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
 export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
-  const { actor, ogyActor, principal } = React.useContext(AuthContext);
+  const { actor, principal, localDevelopment, activeWalletProvider } =
+    React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -90,7 +92,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
     ),
   };
-  console.log('🚀 ~ file: StartEscrow.tsx ~ line 112 ~ _nft', _nft);
 
   const handleStartEscrow = async (data) => {
     console.log(data);
@@ -109,16 +110,22 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       return;
     }
     if (isLoading) return;
-    if (ogyActor) {
+
+    if (activeWalletProvider) {
       setIsLoading(true);
       const amount = data.priceOffer * 1e8;
-      const walletType = localStorage.getItem('loggedIn');
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
       const { account_id } = saleInfo?.ok?.deposit_info ?? {};
-
+      console.log(tokens[token]);
+      const amountWithFee = amount + tokens[token].fee;
+      console.log(
+        '🚀 ~ file: StartEscrowModal.tsx ~ line 121 ~ handleStartEscrow ~ amountWithFee',
+        amountWithFee,
+      );
       try {
         const transactionHeight = await sendTransaction(
-          walletType,
+          isLocal() && localDevelopment,
+          activeWalletProvider,
           tokens[token],
           new Uint8Array(account_id),
           amount + tokens[token].fee,
@@ -134,7 +141,9 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               ic: {
                 fee: BigInt(tokens[token].fee ?? 200_000),
                 decimals: BigInt(tokens[token].decimals ?? 8),
-                canister: Principal.fromText(tokens[token].canisterId),
+                canister: Principal.fromText(
+                  isLocal ? tokens[token].localCanisterId : tokens[token].canisterId,
+                ),
                 standard: { Ledger: null },
                 symbol: tokens[token].symbol,
               },
@@ -161,18 +170,20 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             });
             setIsLoading(false);
             handleCustomClose(true);
-            refreshAllBalances();
+            refreshAllBalances(isLocal() && localDevelopment, principal);
           } else {
             throw escrowResponse.err.text;
           }
         } else {
           if (!escrowResponse?.ok) throw escrowResponse.err.text;
+          console.log("🚀 ~ file: StartEscrowModal.tsx ~ line 179 ~ handleStartEscrow ~ escrowResponse", escrowResponse)
 
           const bidData = {
             broker_id: [],
-            escrow_receipt: escrowResponse?.ok?.receipt,
+            escrow_receipt: escrowResponse?.ok?.escrow_deposit.receipt,
             sale_id: _nft.openAuction?.sale_id,
           };
+          console.log("bid data", bidData);
           const bidResponse = await actor.sale_nft_origyn({ bid: bidData });
           if (bidResponse.ok) {
             enqueueSnackbar('Your bid has been successfully placed.', {
@@ -184,7 +195,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             });
             setIsLoading(false);
             handleCustomClose(true);
-            refreshAllBalances();
+            refreshAllBalances(isLocal() && localDevelopment, principal);
           } else {
             throw bidResponse.err;
           }

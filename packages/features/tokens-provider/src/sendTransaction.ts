@@ -1,6 +1,5 @@
-import { IdlStandard } from '@dapp/utils';
+import { getIdl, IdlStandard } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
-import { createWalletActor } from '@dapp/features-authentication';
 import { Token } from './TokensContextProvider';
 import { getAccountId } from '@dapp/utils';
 import { toHex } from '@dfinity/agent/lib/esm/utils/buffer';
@@ -73,13 +72,16 @@ export const sendEXT = async (actor: any, token: Token, to: any, from: string, a
   throw new Error(Object.keys(transferResult.err)[0]);
 };
 export const sendTransaction = async (
-  walletType: string,
+  isLocal: boolean,
+  activeWalletProvider: any,
   token: Token,
   to: any,
   amount: number,
   from?: string,
 ) => {
-  const actor = await createWalletActor(walletType, token.canisterId, token.standard);
+  const ledgerCanisterId = isLocal ? token.localCanisterId : token.canisterId;
+  const ledgerIdl = getIdl(token.standard);
+  const { value: actor } = await activeWalletProvider.createActor(ledgerCanisterId, ledgerIdl);
   try {
     switch (token.standard) {
       case IdlStandard.ICP:
