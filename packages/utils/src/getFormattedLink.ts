@@ -22,36 +22,33 @@ const phonebookActor = Actor.createActor(phonebookIdl, {
     canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
 });
 
-export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
+export const GetFormattedLink = async (currCanisterId : string, linkToFormat : string) => {
 
     const QueryName: any = (await phonebookActor)?.reverse_lookup(Principal.fromText(currCanisterId));
     const HasRoot = linkToFormat.includes(currCanisterId || QueryName);
-    const HasLocalHost = linkToFormat.includes('localhost');
-    const HasBlob = linkToFormat.includes('blob:');
     let formattedLink: string = '';
     try {
-        if (HasLocalHost || HasBlob) {
+        const isValidUrl = new URL(linkToFormat);
+        if (isValidUrl) {
             formattedLink = linkToFormat;
+        }
+        return formattedLink;
+    } catch (err) {
+        if (QueryName) {
+            formattedLink = (HasRoot) ?
+                (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat);
             return formattedLink;
         } else {
-            if (QueryName) {
-                formattedLink = (HasRoot) ?
-                    (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat);
+            if (HasRoot) {
+                let NewLink = new URL(linkToFormat);
+                let HostString = NewLink.hostname;
+                let PrptlLink = linkToFormat.replace(HostString, 'prptl.io/-/' + QueryName);
+                formattedLink = PrptlLink;
                 return formattedLink;
             } else {
-                if (HasRoot) {
-                    let NewLink = new URL(linkToFormat);
-                    let HostString = NewLink.hostname;
-                    let PrptlLink = linkToFormat.replace(HostString, 'prptl.io/-/' + QueryName);
-                    formattedLink = PrptlLink;
-                    return formattedLink;
-                } else {
-                    formattedLink = 'https://prptl.io/-/' + QueryName + '/-/' + linkToFormat;
-                    return formattedLink;
-                }
+                formattedLink = 'https://prptl.io/-/' + QueryName + '/-/' + linkToFormat;
+                return formattedLink;
             }
         }
-    } catch (e) {
-        console.log('Error: ', e);
     }
 };
