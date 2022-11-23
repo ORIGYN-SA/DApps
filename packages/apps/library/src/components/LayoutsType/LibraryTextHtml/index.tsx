@@ -1,23 +1,10 @@
 import React, { useEffect, useContext } from 'react';
 import Box from '@mui/material/Box';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { AuthContext } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
-import { styled } from '@mui/material/styles';
-import { Typography } from '@mui/material';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import { WebContentsType } from './HtmlContents';
+import LibraryDefault from '../LibraryDefault';
 
-const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: '#f5f5f9',
-    color: 'rgba(0, 0, 0, 0.87)',
-    maxWidth: 220,
-    fontSize: theme.typography.pxToRem(12),
-    border: '1px solid #dadde9',
-  },
-}));
 const linkStyle = {
   width: 'auto',
   height: 'auto',
@@ -28,34 +15,38 @@ const linkStyle = {
 const LibraryTextHtml = (props: any) => {
   const { canisterId } = useContext(AuthContext);
   const [link, setLink] = React.useState('');
-  const formattedLink = async () => {
-    const link = await GetFormattedLink(canisterId, props.source);
-    setLink(link);
+  const [content, setContent] = React.useState('');
+
+  const getContent = async () => {
+    const arrayFromContentsType = Object.getOwnPropertyNames(WebContentsType);
+    console.log('arrayFromContentsType', arrayFromContentsType);
+    let FormattedLink = await GetFormattedLink(canisterId, props.source);
+    let i: any;
+    for (i in arrayFromContentsType) {
+      if (FormattedLink.includes(arrayFromContentsType[i])) {
+        setContent(arrayFromContentsType[i]);
+        console.log('content', arrayFromContentsType[i]);
+        break;
+      }
+    }
+    setLink(FormattedLink);
   };
 
   useEffect(() => {
     if (canisterId) {
-      formattedLink();
+      getContent();
     }
   }, []);
 
   return (
     <Box sx={linkStyle}>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Text/Html Type</Typography>
-            <em>{link}</em> <br></br>
-            <b>
-              <a href={link} target="_blank" rel="noreferrer">
-                {'Open Link '}
-              </a>
-            </b>{' '}
-          </React.Fragment>
-        }
-      >
-        <InsertDriveFileIcon sx={{ fontSize: 50 }} />
-      </HtmlTooltip>
+      <>
+        {WebContentsType[content] ? (
+          WebContentsType[content](link)
+        ) : (
+          <LibraryDefault source={props.source} />
+        )}
+      </>
     </Box>
   );
 };

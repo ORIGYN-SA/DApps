@@ -2,10 +2,10 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import {Layouts} from '../LayoutsType';
+import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 
-interface curLibraryData {
+interface FileType {
   library_id: string;
   title: string;
   content_type: string;
@@ -24,33 +24,59 @@ function formatBytes(bytes, decimals = 2) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-
 export const LibraryBox = (props: any) => {
-  
-  let objLibraryData: curLibraryData = {
-    library_id: props.library3?.Class[0]?.value?.Text,
-    title: props.library3?.Class[1]?.value?.Text,
-    content_type: props.library3?.Class[4]?.value?.Text,
-    location: props.library3?.Class[3]?.value?.Text,
-    location_type: props.library3?.Class[2]?.value?.Text,
-    size: props.library3?.Class[6]?.value?.Nat,
-  };
+  console.log('props', props);
+  const LocationType = props.library3.Class.filter((item) => item.name === 'location_type')[0].value
+    .Text;
+  console.log('LocationType', LocationType);
+  let objLibraryData: FileType;
+  switch (LocationType) {
+    case 'canister':
+      objLibraryData = {
+        library_id: props.library3?.Class[0]?.value?.Text,
+        title: props.library3?.Class[1]?.value?.Text,
+        content_type: props.library3?.Class[4]?.value?.Text,
+        location: props.library3?.Class[3]?.value?.Text,
+        location_type: LocationType,
+        size: props.library3?.Class[6]?.value?.Nat,
+      };
+      break;
+    case 'collection':
+      objLibraryData = {
+        library_id: props.library3?.Class.filter((item) => item.name === 'library_id')[0].value
+          .Text,
+        title: props.library3?.Class.filter((item) => item.name === 'title')[0].value.Text,
+        content_type: props.library3?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
+        location: props.library3?.Class.filter((item) => item.name === 'location')[0].value.Text,
+        location_type: LocationType,
+        size: props.library3?.Class.filter((item) => item.name === 'size')[0].value.Nat,
+      };
+      break;
+    case 'web':
+      objLibraryData = {
+        library_id: props.library3?.Class.filter((item) => item.name === 'library_id')[0].value
+          .Text,
+        title: props.library3?.Class.filter((item) => item.name === 'title')[0].value.Text,
+        content_type: 'URL',
+        location: props.library3?.Class.filter((item) => item.name === 'location')[0].value.Text,
+        location_type: LocationType,
+        size: 0,
+      };
+      break;
+  }
+
+  console.log('objLibraryData', objLibraryData.size);
+
 
   return (
-    <Grid 
-    container
-    maxHeight={300}
-    width={'max-content'}
-    >
+    <Grid container maxHeight={300} width={'max-content'}>
       <Grid item xs={12}>
         <Box>
-          {
-            (objLibraryData.content_type in Layouts) ? (
-              Layouts[objLibraryData.content_type](objLibraryData.location)
-            ) : (
-              <LibraryDefault source={objLibraryData.location} />
-            )
-          }
+          {objLibraryData.content_type in Layouts ? (
+            Layouts[objLibraryData.content_type](objLibraryData.location)
+          ) : (
+            <LibraryDefault source={objLibraryData.location} />
+          )}
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -79,9 +105,11 @@ export const LibraryBox = (props: any) => {
           color="text.primary"
           gutterBottom
         >
-          <b>Library Id: </b>{objLibraryData.library_id}
-          <br></br> 
-          <b>Location type: </b>{objLibraryData.location_type}
+          <b>Library Id: </b>
+          {objLibraryData.library_id}
+          <br></br>
+          <b>Location type: </b>
+          {objLibraryData.location_type}
         </Typography>
       </Grid>
     </Grid>
