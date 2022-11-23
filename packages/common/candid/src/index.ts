@@ -15,5 +15,5 @@ export {
   icpIdl,
   origynLedgerIdl,
   origynNftIdl,
-  phonebookIdl,
+  phonebookIdl
 }

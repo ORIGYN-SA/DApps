@@ -65,4 +65,18 @@ describe('Select-Autocomplete', () => {
     fireEvent.focus(Searchbar);
     expect(Searchbar.value).toBe('Not selected');
   });
+  // Test8
+  test('Take a snapshot of the component', () => {
+    const { asFragment } = render(<SearchbarNft isLoading={false} searchBarTokenId={'Not selected'} />);
+    expect(asFragment()).toMatchSnapshot();
+    cleanup();
+  }
+  );
+  // Test9
+  test('The snapshot should match', () => {
+    const { asFragment } = render(<SearchbarNft isLoading={false} searchBarTokenId={'Not selected'} />);
+    expect(asFragment()).toMatchSnapshot();
+    cleanup();
+  }
+  );
 });

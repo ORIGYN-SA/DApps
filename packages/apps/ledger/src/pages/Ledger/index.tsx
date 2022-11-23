@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Container from '@mui/material/Container';
 import { Box } from '@mui/material';
-import {VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft } from '@dapp/features-components';
-
+import { AuthContext } from '@dapp/features-authentication';
+import { VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft, SwitchCanisterCollection } from '@dapp/features-components';
 const container_style = {
   size: 'l',
   padding: '12px',
@@ -10,7 +10,8 @@ const container_style = {
 
 const Ledger = () => {
   const ledgerVersion: string = '0.1.0';
-  const [isLoading, setIsLoading] = useState(false);
+  const { actor } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
   const [indexID, setIndexID] = React.useState('');
   const [filter, setFilter] = useState<{
@@ -28,6 +29,11 @@ const Ledger = () => {
   const [transactionData, setTransactionData] = useState([]);
   const [trans_types, setTrans_types] = React.useState([]);
 
+  useEffect(() => {
+    setSearchBarTokenId('');
+    setIsLoading(true);
+  }, [actor]);
+
   return (
     <Container sx={container_style}>
       <Box
@@ -36,13 +42,13 @@ const Ledger = () => {
         flexDirection="column"
         alignItems="center"
       > 
+        <SwitchCanisterCollection/>
         <SearchbarNft
           setSearchBarTokenId={setSearchBarTokenId}
           setIndexID={setIndexID}
           searchBarTokenId={searchBarTokenId}
           isLoading={isLoading}
         />
-
         <TransactionFilter
           isLoading={isLoading}
           setFilter={setFilter}

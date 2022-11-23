@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config')
 
 const appConfig = {
   name: 'wallet',
-  openPage: '-/baycdev/-/bayc-1/-/wallet',
+  openPage: '-/bmdev/-/bm-1/-/wallet',
 }
 
 module.exports = (env, argv) => {

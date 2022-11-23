@@ -5,7 +5,7 @@ const JSONTab = ({ metadata }: any) => {
 
   return (
     <div>
-      <pre>{JSON.stringify(metadata, null, 2)}</pre>
+      <>{JSON.stringify(metadata, null, 2)}</>
     </div>
   );
 };
