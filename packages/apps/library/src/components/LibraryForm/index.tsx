@@ -132,6 +132,7 @@ export const LibraryForm =  (props: any) => {
       );
       const stage = await stageLibraryAsset(payload.files, payload.token_id);
       console.log('🚀 ~ file: App.tsx ~ line 175 ~ handleStageLibraryAssetClick ~ stage', stage);
+      if(stage.ok) {
       // Display a success message - SNACKBAR
       enqueueSnackbar('Library staged!', {
         variant: 'success',
@@ -140,6 +141,15 @@ export const LibraryForm =  (props: any) => {
           horizontal: 'right',
         },
       });
+      } else {
+        enqueueSnackbar('Library not staged!', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
     } catch (error) {
       // Display a error message - SNACKBAR
       enqueueSnackbar('Something went wrong', {

@@ -125,6 +125,6 @@ module.exports = (env, argv, dAppConfig) => ({
     disableHostCheck: true,
     openPage: dAppConfig?.openPage
       ? dAppConfig.openPage
-      : '-/baycdev/-/bayc-1/-/',
+      : '-/bmdev/-/bm-1/-/',
   },
 })
