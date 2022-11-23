@@ -22,19 +22,19 @@ const phonebookActor = Actor.createActor(phonebookIdl, {
     canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
 });
 
-export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
+export const GetFormattedLink = async (currCanisterId : string, linkToFormat : string) => {
 
-    const QueryName: any = await phonebookActor?.reverse_lookup(Principal.fromText(currCanisterId));
+    const QueryName: any = (await phonebookActor)?.reverse_lookup(Principal.fromText(currCanisterId));
     const HasRoot = linkToFormat.includes(currCanisterId || QueryName);
     let formattedLink: string = '';
     try {
-        const IsValidUrl = new URL(linkToFormat);
-        if (IsValidUrl) {
+        const isValidUrl = new URL(linkToFormat);
+        if (isValidUrl) {
             formattedLink = linkToFormat;
-            return formattedLink;
         }
-    } catch (error) {
-        if (await QueryName == "" || await QueryName == null) {
+        return formattedLink;
+    } catch (err) {
+        if (QueryName) {
             formattedLink = (HasRoot) ?
                 (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat);
             return formattedLink;
