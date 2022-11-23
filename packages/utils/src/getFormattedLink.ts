@@ -26,32 +26,29 @@ export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
 
     const QueryName: any = await phonebookActor?.reverse_lookup(Principal.fromText(currCanisterId));
     const HasRoot = linkToFormat.includes(currCanisterId || QueryName);
-    const HasLocalHost = linkToFormat.includes('localhost');
-    const HasBlob = linkToFormat.includes('blob:');
     let formattedLink: string = '';
     try {
-        if (HasLocalHost || HasBlob) {
+        const IsValidUrl = new URL(linkToFormat);
+        if (IsValidUrl) {
             formattedLink = linkToFormat;
             return formattedLink;
+        }
+    } catch (error) {
+        if (await QueryName == "" || await QueryName == null) {
+            formattedLink = (HasRoot) ?
+                (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat);
+            return formattedLink;
         } else {
-            if (await QueryName == "" || await QueryName == null) {
-                formattedLink = (HasRoot) ?
-                    (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat);
+            if (HasRoot) {
+                let NewLink = new URL(linkToFormat);
+                let HostString = NewLink.hostname;
+                let PrptlLink = linkToFormat.replace(HostString, 'prptl.io/-/' + QueryName);
+                formattedLink = PrptlLink;
                 return formattedLink;
             } else {
-                if (HasRoot) {
-                    let NewLink = new URL(linkToFormat);
-                    let HostString = NewLink.hostname;
-                    let PrptlLink = linkToFormat.replace(HostString, 'prptl.io/-/' + QueryName);
-                    formattedLink = PrptlLink;
-                    return formattedLink;
-                } else {
-                    formattedLink = 'https://prptl.io/-/' + QueryName + '/-/' + linkToFormat;
-                    return formattedLink;
-                }
+                formattedLink = 'https://prptl.io/-/' + QueryName + '/-/' + linkToFormat;
+                return formattedLink;
             }
         }
-    } catch (e) {
-        console.log('Error: ', e);
     }
 };
