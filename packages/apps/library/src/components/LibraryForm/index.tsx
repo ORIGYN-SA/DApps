@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import TextField  from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { getCanisterId } from '@dapp/features-authentication';
@@ -39,6 +40,7 @@ export const LibraryForm =  (props: any) => {
   const [radioValue, setRadioValue] = React.useState('Canister');
   const [openFileInput, setOpenFileInput] = React.useState(false);
   const [openSelectInput, setOpenSelectInput] = React.useState(false);
+  const [openWebInput, setOpenWebInput] = React.useState(false);
   const [libraries, setLibraries] = React.useState<any>([]);
   const canisterId = async () => {
     const r = await currentCanisterId()
@@ -79,13 +81,23 @@ export const LibraryForm =  (props: any) => {
   };
 
   useEffect(() => {
-    if (radioValue === 'Canister') {
-      setOpenFileInput(true);
-      setOpenSelectInput(false);
-    } else {
-      setOpenFileInput(false);
-      setOpenSelectInput(true);
-      getLibraries();
+    switch (radioValue) {
+      case 'Canister':
+        setOpenFileInput(true);
+        setOpenSelectInput(false);
+        setOpenWebInput(false);
+        break;
+      case 'Web':
+        setOpenFileInput(false);
+        setOpenSelectInput(false);
+        setOpenWebInput(true);
+        break;
+      case 'Collection':
+        setOpenFileInput(false);
+        setOpenSelectInput(true);
+        setOpenWebInput(false);
+        getLibraries();
+        break;
     }
   }, [radioValue]);
 
@@ -246,7 +258,12 @@ export const LibraryForm =  (props: any) => {
                           value="Collection"
                           control={<Radio />}
                           label="Collection"
-                        />{' '}
+                        />
+                        <FormControlLabel
+                          value="Web"
+                          control={<Radio />}
+                          label="Web"
+                        />
                       </RadioGroup>
                     </FormControl>
                   </Grid>
@@ -275,6 +292,16 @@ export const LibraryForm =  (props: any) => {
                   <Collapse in={openFileInput} timeout="auto" unmountOnExit>
                     <Grid item xs={12} m={2}>
                       <input type="file" id="library" name="library" onChange={handleInputChange} />
+                    </Grid>
+                  </Collapse>
+                  <Collapse in={openWebInput} timeout="auto" unmountOnExit>
+                    <Grid item xs={12} m={2}>
+                      <TextField
+                        id="web"
+                        label="Web"
+                        variant="outlined"
+                        placeholder='https://www.example.com'
+                      />
                     </Grid>
                   </Collapse>
                 </Box>
