@@ -1,18 +1,19 @@
-// This function replace the CanisterId with the name of the canister
-// if the canister name is not defined nothing will be replaced
 // ----------------------------------------------------------------------------
-// Arguments: canister (string) | Link (URL)
+// This function Formats the links from canisters to be displayed in the UI
+// • currentCanisterId: The canisterId of the current canister
+// • linkToFormat: The link to be formatted
+// ----------------------------------------------------------------------------
 // Returns:  string
 // Author: Alessandro
-// Date: 2022-10-11
+// Date: 2022-11-17
 // ----------------------------------------------------------------------------
 
 import { phonebookIdl } from '@dapp/common-candid';
 import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
 
- // Phonebook Agent
- const agent = new HttpAgent({
+// Phonebook Agent
+const agent = new HttpAgent({
     host: 'https://boundary.ic0.app/',
 });
 // Phonebook actor for the current canister name 
@@ -21,21 +22,33 @@ const phonebookActor = Actor.createActor(phonebookIdl, {
     canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
 });
 
-export const GetFormattedLink = async (currCanisterId, linkToFormat) => {
+export const GetFormattedLink = async (currCanisterId : string, linkToFormat : string) => {
 
-    const QueryName: any = await phonebookActor?.reverse_lookup(
-        Principal.fromText(currCanisterId));
-
+    const QueryName: any = (await phonebookActor)?.reverse_lookup(Principal.fromText(currCanisterId));
+    const HasRoot = linkToFormat.includes(currCanisterId || QueryName);
     let formattedLink: string = '';
-try{
-    if (QueryName == "" || QueryName == null) {
-        formattedLink = linkToFormat.replace(currCanisterId, currCanisterId);
-    } else {
-        formattedLink = linkToFormat.replace(currCanisterId, QueryName);
+    try {
+        const isValidUrl = new URL(linkToFormat);
+        if (isValidUrl) {
+            formattedLink = linkToFormat;
+        }
+        return formattedLink;
+    } catch (err) {
+        if (QueryName) {
+            formattedLink = (HasRoot) ?
+                (linkToFormat) : ('https://' + currCanisterId + '.raw.ic0.app/' + linkToFormat);
+            return formattedLink;
+        } else {
+            if (HasRoot) {
+                let NewLink = new URL(linkToFormat);
+                let HostString = NewLink.hostname;
+                let PrptlLink = linkToFormat.replace(HostString, 'prptl.io/-/' + QueryName);
+                formattedLink = PrptlLink;
+                return formattedLink;
+            } else {
+                formattedLink = 'https://prptl.io/-/' + QueryName + '/-/' + linkToFormat;
+                return formattedLink;
+            }
+        }
     }
-
-    return formattedLink;
-} catch (e) {
-    console.log('Error during formatting link ' + e);
-}
 };
