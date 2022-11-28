@@ -144,7 +144,11 @@ export const NFTPage = () => {
         .then((r) => {
           console.log(r);
           setIsLoading(false);
-          setCurrentNFT(r.ok);
+
+          if ('err' in r)
+            throw new Error(Object.keys(r.err)[0]);
+
+          setCurrentNFT(r?.ok);
         })
         .catch(console.log);
     }

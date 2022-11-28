@@ -72,7 +72,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
               },
               allow_list: [],
               buy_now: [BigInt(buyNowPrice * 1e8)],
-              end_date: BigInt(new Date(endDate).getTime() * 1e6),
+              // end_date: BigInt(new Date(endDate).getTime() * 1e6), TODO: figure this out
               ending: {
                 date: BigInt(new Date(endDate).getTime() * 1e6),
               },
@@ -82,7 +82,16 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
           escrow_receipt: [],
         },
       });
-      if (resp.ok) {
+
+      if ('err' in resp) {
+        enqueueSnackbar('There was an error when starting your auction.', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      } else {
         enqueueSnackbar('Your auction has been started.', {
           variant: 'success',
           anchorOrigin: {
@@ -91,14 +100,6 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
           },
         });
         handleClose(true);
-      } else {
-        enqueueSnackbar('There was an error when starting your auction.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
       }
     } catch (e) {
       console.log(e);

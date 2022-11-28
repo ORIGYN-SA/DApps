@@ -115,6 +115,13 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       const amount = data.priceOffer * 1e8;
       const walletType = localStorage.getItem('loggedIn');
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
+
+      if ('err' in saleInfo)
+        throw new Error(Object.keys(saleInfo.err)[0]);
+
+      if (!('deposit_info' in saleInfo.ok))
+        throw new Error();
+
       const { account_id } = saleInfo?.ok?.deposit_info ?? {};
 
       const transactionHeight = await sendTransaction(
@@ -144,11 +151,14 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
           sale_id: _nft?.openAuction?.sale_id ? [_nft?.openAuction?.sale_id] : [],
         },
         lock_to_date: [],
-      };
+      } as any;
       try {
         const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
+
+        if ('err' in escrowResponse)
+          throw new Error(Object.keys(escrowResponse.err)[0]);
+
         if (!_nft.openAuction) {
-          if (escrowResponse.ok) {
             enqueueSnackbar('Your escrow has been successfully sent.', {
               variant: 'success',
               anchorOrigin: {
@@ -159,20 +169,21 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             setIsLoading(false);
             handleCustomClose(true);
             refreshAllBalances();
-          } else {
-            throw escrowResponse.err.text;
-          }
         } else {
-          if (!escrowResponse?.ok) throw escrowResponse.err.text;
-
           console.log('escrowResponse', escrowResponse);
+
+          if (!('receipt' in escrowResponse.ok))
+            throw new Error();
+
           const bidData = {
             broker_id: [],
             escrow_receipt: escrowResponse?.ok?.receipt,
             sale_id: _nft.openAuction?.sale_id,
           };
-          const bidResponse = await actor.sale_nft_origyn({ bid: bidData });
-          if (bidResponse.ok) {
+          const bidResponse = await actor.sale_nft_origyn({ bid: bidData } as any); // TODO: fix this
+
+          if ('err' in bidResponse)
+            throw new Error(Object.keys(bidResponse.err)[0]);
             enqueueSnackbar('Your bid has been successfully placed.', {
               variant: 'success',
               anchorOrigin: {
@@ -183,9 +194,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             setIsLoading(false);
             handleCustomClose(true);
             refreshAllBalances();
-          } else {
-            throw bidResponse.err;
-          }
         }
       } catch (e) {
         console.log(e?.message ?? e);

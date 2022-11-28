@@ -83,8 +83,16 @@ const Marketplace = () => {
       actor?.collection_nft_origyn([]).then((response) => {
         console.log(response);
 
+        if ('err' in response)
+          throw new Error(Object.keys(response.err)[0]);
+
         Promise.all(
-          response?.ok?.token_ids[0]?.map((nft) => actor?.nft_origyn(nft).then((r) => r.ok)),
+          response?.ok?.token_ids[0]?.map((nft) => actor?.nft_origyn(nft).then((r) => {
+            if ('err' in r)
+              throw new Error(Object.keys(r.err)[0]);
+
+            return r.ok
+          })),
         )
           .then((data: any) => {
             //setIsLoading(false);

@@ -48,7 +48,7 @@ export const useAuth = () => {
   const [tokenId, setTokenId] = useState<string | undefined>();
   const [walletAccounts, setWalletAccounts] = useState<any>();
   const [loggedWallet, setLoggedWallet] = useState<any>();
-  const [actor, setActor] = useState<_SERVICE>();
+  const [actor, setActor] = useState<any>(); // TODO: fix actor type
   const [ogyActor, setOgyActor] = useState<any>();
   const [currentWalletAccount, setCurrentWalletAccount] = useState<any>();
 

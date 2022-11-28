@@ -110,7 +110,12 @@ const NFTPage = () => {
 
   useEffect(() => {
     console.log(actor);
-    actor?.nft_origyn(tokenId).then((data) => {
+    // TODO: fix any data
+    actor?.nft_origyn(tokenId).then((data: any) => {
+
+      if ('err' in data)
+        throw new Error(Object.keys(data.err)[0]);
+
       const meta = data?.ok?.metadata.Class;
       const apps = meta?.find((data) => data.name === '__apps');
       const publicApp = apps.value.Array.thawed.find(

@@ -912,7 +912,7 @@ export type SaleInfoRequest = { 'status' : string } |
   { 'active' : [] | [[bigint, bigint]] } |
   { 'deposit_info' : [] | [Account] } |
   { 'history' : [] | [[bigint, bigint]] };
-export type SaleInfoResponse = { 'status' : [] | [SaleStatusStable] } |
+export type sale_nft_origynSaleInfoResponse = { 'status' : [] | [SaleStatusStable] } |
   {
     'active' : {
       'eof' : boolean,

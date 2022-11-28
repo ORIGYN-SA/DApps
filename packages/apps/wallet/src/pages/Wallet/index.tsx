@@ -206,13 +206,18 @@ const WalletPage = () => {
       actor
         ?.balance_of_nft_origyn({ principal })
         .then((response) => {
+
+          if ('err' in response)
+            throw new Error(Object.keys(response.err)[0]);
+
           const escrows = response?.ok?.escrow;
           const offers = response?.ok?.offers;
           const inEscrow: any = [];
           const outEscrow: any = [];
           console.log("balance of", response);
           if (escrows) {
-            escrows.forEach((escrow, index) => {
+            // TODO: fix escrow type
+            escrows.forEach((escrow: any, index) => {
               const esc: any = {};
               esc.token_id = escrow.token_id;
               esc.actions = (
@@ -247,7 +252,8 @@ const WalletPage = () => {
             });
           }
           if (offers) {
-            offers.forEach((offer, index) => {
+            // TODO: fix offer type
+            offers.forEach((offer: any, index) => {
               const esc: any = {};
               esc.token_id = offer.token_id;
               esc.actions = (
@@ -303,7 +309,12 @@ const WalletPage = () => {
           });
 
           Promise.all(
-            response?.ok?.nfts?.map((nft) => actor?.nft_origyn(nft).then((r) => r.ok)),
+            response?.ok?.nfts?.map((nft) => actor?.nft_origyn(nft).then((r) => {
+              if ('err' in r)
+                throw new Error(Object.keys(r.err)[0]);
+
+              return r.ok;
+            })),
           )
             .then((data: any) => {
               const rows = [];
