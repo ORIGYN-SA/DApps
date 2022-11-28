@@ -3,7 +3,6 @@ import { Principal } from '@dfinity/principal';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { origynNftIdl } from '@dapp/common-candid';
 import { toast } from 'react-toastify';
-import { Preloader } from '@dapp/features-components';
 import { AuthClient } from '@dfinity/auth-client';
 import usePlug from './plug';
 import useStoic from './stoic';
@@ -191,7 +190,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   return (
     <AuthContext.Provider value={auth}>
-      {auth.isLoading ? <Preloader /> : children}
+      {auth.isLoading ? <div>Tmp preloader</div> : children}
     </AuthContext.Provider>
   );
 };

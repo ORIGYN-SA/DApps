@@ -1,11 +1,9 @@
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 import { AuthContext } from '@dapp/features-authentication';
 import { NatPrice } from '@dapp/features-components';
-import {
-  ConfirmSalesActionModal,
-  StartAuctionModal,
-  StartEscrowModal,
-} from '@dapp/features-sales-escrows';
+import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
+import { StartAuctionModal } from '../../modals/StartAuctionModal';
+import { StartEscrowModal } from '../../modals/StartEscrowModal';
 import { eToNumber, timeConverter } from '@dapp/utils';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
