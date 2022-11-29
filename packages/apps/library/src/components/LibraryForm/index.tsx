@@ -20,6 +20,10 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 
+import { WebLocation } from './web_location';
+import { CollectionLocation } from './collection_location';
+import { CanisterLocation } from './canister_location';
+
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
   seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
@@ -101,17 +105,6 @@ export const LibraryForm =  (props: any) => {
     }
   }, [radioValue]);
 
-  // const { register, handleSubmit } = useForm({
-  //   defaultValues: {
-  //     canisterId: canisterId,
-  //     isProduction: isProd,
-  //     isSoulbound: true,
-  //     collectionName: '',
-  //     collectionId: '',
-  //     creatorPrincipal: TEST_IDENTITY.principalId,
-  //   },
-  // });
-
   const stageLibrary = async () => {
     console.log('token id is ', props.currentTokenId);
     await OrigynClient.getInstance().init(isProd, await canisterId(), {
@@ -142,7 +135,7 @@ export const LibraryForm =  (props: any) => {
         '🚀 ~ file: App.tsx ~ line 179 ~ handleStageLibraryAssetClick ~ payload',
         payload,
       );
-      const stage = await stageLibraryAsset(payload.files, payload.token_id);
+      const stage = await stageLibraryAsset(payload.files[0], payload.token_id, "Library For Test");
       console.log('🚀 ~ file: App.tsx ~ line 175 ~ handleStageLibraryAssetClick ~ stage', stage);
       if(stage.ok) {
       // Display a success message - SNACKBAR
@@ -219,7 +212,9 @@ export const LibraryForm =  (props: any) => {
                     m: 2,
                   }}
                 >
-                  <input type="file" id="library" name="library" onChange={handleInputChange} />
+                  <CanisterLocation
+                  tokenId={''}
+                  />
                 </Box>
                 {file === undefined ? (
                   <></>
@@ -232,16 +227,6 @@ export const LibraryForm =  (props: any) => {
                     {type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}
                   </Box>
                 )}
-                <Box
-                  sx={{
-                    m: 2,
-                    textAlign: 'right',
-                  }}
-                >
-                  <Button variant="outlined" onClick={stageLibrary}>
-                    Stage Library
-                  </Button>
-                </Box>
               </Grid>
             </>
           ) : (
@@ -278,69 +263,20 @@ export const LibraryForm =  (props: any) => {
                     </FormControl>
                   </Grid>
                   <Collapse in={openSelectInput} timeout="auto" unmountOnExit>
-                    <Grid item xs={12} m={2}>
-                      <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Select</InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          value={selectedLibrary}
-                          label="Select"
-                          onChange={handleSelectChange}
-                        >
-                          {libraries.map((library, index) => {
-                            return (
-                              <MenuItem key={library + index} value={library}>
-                                {library}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                      </FormControl>
-                    </Grid>
+                    <CollectionLocation
+                    tokenId={props.currentTokenId}
+                    />
                   </Collapse>
                   <Collapse in={openFileInput} timeout="auto" unmountOnExit>
-                    <Grid item xs={12} m={2}>
-                      <input type="file" id="library" name="library" onChange={handleInputChange} />
-                    </Grid>
+                   <CanisterLocation
+                   tokenId={props.currentTokenId}
+                   />
                   </Collapse>
                   <Collapse in={openWebInput} timeout="auto" unmountOnExit>
-                    <Grid item xs={12} m={2}>
-                      <TextField
-                        id="web"
-                        label="Web"
-                        variant="outlined"
-                        placeholder='https://www.example.com'
-                      />
-                    </Grid>
+                    <WebLocation
+                    tokenId = {props.currentTokenId}
+                    />
                   </Collapse>
-                </Box>
-                {file === undefined ? (
-                  <></>
-                ) : (
-                  <Box
-                    sx={{
-                      m: 2,
-                    }}
-                  >
-                    {type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}
-                  </Box>
-                )}
-                <Box
-                  sx={{
-                    m: 2,
-                    textAlign: 'right',
-                  }}
-                >
-                  {radioValue === 'Canister' ? (
-                    <Button variant="outlined" onClick={stageLibrary}>
-                      Stage Library
-                    </Button>
-                  ) : (
-                    <Button variant="outlined" onClick={stageLibrary} disabled={true}>
-                      IN PROGRESS...
-                    </Button>
-                  )}
                 </Box>
               </Grid>
             </>

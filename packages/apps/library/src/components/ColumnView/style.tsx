@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui';
 export const Sizes = {
     maxHeight: 400,
     minHeight: 400,
-    minWidth: 100,
+    minWidth: 200,
   };
 
   export const useStyles = makeStyles()(() => {
