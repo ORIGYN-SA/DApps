@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -8,17 +7,7 @@ import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageWebLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import { Layouts } from '../LayoutsType';
-import LibraryDefault from '../LayoutsType/LibraryDefault';
-import Collapse from '@mui/material/Collapse';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
 
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
@@ -26,6 +15,9 @@ const TEST_IDENTITY = {
 };
 
 export const WebLocation = (props: any) => {
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const [typedUrl, setTypedUrl] = useState('');
   const [typedTitle, setTypedTitle] = useState('');
 
@@ -45,8 +37,25 @@ export const WebLocation = (props: any) => {
     });
 
     try {
-      const response = stageWebLibraryAsset(props.tokenId, typedTitle, typedUrl);
-      console.log(await response);
+      const response = await stageWebLibraryAsset(props.tokenId, typedTitle, typedUrl);
+      if (response.ok) {
+        // Display a success message - SNACKBAR
+        enqueueSnackbar('Library staged!', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      } else {
+        enqueueSnackbar('Library not staged!', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
     } catch (e) {
       console.log(e);
     }

@@ -7,7 +7,7 @@ import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import TextField from '@mui/material/TextField';
-
+import { useSnackbar } from 'notistack';
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
   seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
@@ -19,6 +19,7 @@ const currentCanisterId = async () => {
 };
 
 export const CanisterLocation = (props: any) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
   const [file, setFile] = useState<any>();
   const [type, setType] = useState<any>();
@@ -80,8 +81,26 @@ export const CanisterLocation = (props: any) => {
         )),
       ],
     };
-    console.log('payload is ', await payload);
-      const response = await stageLibraryAsset(await payload.files[0], props.tokenId, typedTitle);
+    console.log('payload is ',payload);
+      const response = await stageLibraryAsset(payload.files[0], props.tokenId, typedTitle);
+      if (response.ok) {
+        // Display a success message - SNACKBAR
+        enqueueSnackbar('Library staged!', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      } else {
+        enqueueSnackbar('Library not staged!', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
       console.log(response);
     } catch (e) {
       console.log(e);

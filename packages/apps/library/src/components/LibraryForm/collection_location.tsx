@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -8,14 +7,7 @@ import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import { Layouts } from '../LayoutsType';
-import LibraryDefault from '../LayoutsType/LibraryDefault';
-import Collapse from '@mui/material/Collapse';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
@@ -26,6 +18,8 @@ const TEST_IDENTITY = {
 };
 
 export const CollectionLocation = (props: any) => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const [libraries, setLibraries] = React.useState<any>([]);
   const [selectedLibrary, setSelectedLibrary] = React.useState('');
   const [typedTitle, setTypedTitle] = useState('');
@@ -60,11 +54,28 @@ export const CollectionLocation = (props: any) => {
         seed: TEST_IDENTITY.seed,
       },
     });
-    try{
-    const response = stageCollectionLibraryAsset(props.tokenId,typedTitle,selectedLibrary);
-    console.log('response', await response);
-    }catch(e){
-      console.log('error',e);
+    try {
+      const response = await stageCollectionLibraryAsset(props.tokenId, typedTitle, selectedLibrary);
+      if (response.ok) {
+        // Display a success message - SNACKBAR
+        enqueueSnackbar('Library staged!', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      } else {
+        enqueueSnackbar('Library not staged!', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
+    } catch (e) {
+      console.log('error', e);
     }
   };
   const handleSelectChange = (event: SelectChangeEvent) => {
@@ -93,25 +104,25 @@ export const CollectionLocation = (props: any) => {
           onChange={getTypedTitle}
         />
       </Box>
-    <FormControl fullWidth>
-      <InputLabel id="demo-simple-select-label">Select</InputLabel>
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={selectedLibrary}
-        label="Select"
-        onChange={handleSelectChange}
-      >
-        {libraries.map((library, index) => {
-          return (
-            <MenuItem key={library + index} value={library}>
-              {library}
-            </MenuItem>
-          );
-        })}
-      </Select>
-    </FormControl>
-    <Box
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Select</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={selectedLibrary}
+          label="Select"
+          onChange={handleSelectChange}
+        >
+          {libraries.map((library, index) => {
+            return (
+              <MenuItem key={library + index} value={library}>
+                {library}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </FormControl>
+      <Box
         sx={{
           textAlign: 'right',
           mt: 2,
@@ -121,6 +132,6 @@ export const CollectionLocation = (props: any) => {
           STAGE LIBRARY
         </Button>
       </Box>
-  </Grid>
+    </Grid>
   );
 };
