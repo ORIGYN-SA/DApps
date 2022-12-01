@@ -25,11 +25,11 @@ const Home = () => {
     // In case we have URL with tokenID and we change canister,
     // We need to check if the tokenID is in the new canister
     // If not, we need to clear the URL and show the first tokenID in the new Canister
-    if (!obj_token_ids.includes(tokenId) && tokenId !== '') {
-      let Url = window.location.href;
-      Url = Url.replace(tokenId, obj_token_ids[0]);
-      window.location.href = Url;
-    }
+    // if (!obj_token_ids.includes(tokenId) && tokenId !== '') {
+    //   let Url = window.location.href;
+    //   Url = Url.replace(tokenId, obj_token_ids[0]);
+    //   window.location.href = Url;
+    // }
     return obj_token_ids;
   };
 
