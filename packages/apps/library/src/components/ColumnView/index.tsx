@@ -95,6 +95,7 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
+    
     setOpenLib(!openLib);
     setOpen(false);
     setOpen1(false);
