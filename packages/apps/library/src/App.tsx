@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import { SiteProvider } from '@dapp/features-theme';
 import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
+import { RouteProvider } from '@dapp/features-authentication';
 import 'react-toastify/dist/ReactToastify.css';
 // OLD HEADER PART
 //import HeaderPart from './components/Header';
@@ -16,6 +17,7 @@ const App = () => {
           <SessionProvider>
             <AuthProvider>
                 <TokensContextProvider>
+                <RouteProvider>
                 <SnackbarProvider maxSnack={3}>
                   <Layout>
                     <Routes>
@@ -23,6 +25,7 @@ const App = () => {
                     </Routes>
                   </Layout>
                 </SnackbarProvider>
+                </RouteProvider>
                 </TokensContextProvider>
             </AuthProvider>
           </SessionProvider>

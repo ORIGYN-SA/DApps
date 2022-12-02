@@ -12,7 +12,6 @@ export interface metadataContextType {
   read : MetaType;
 }
 
-// create a context with an array of items and a function to add items
 export const MetadataContext = createContext<metadataContextType>({
   setMetatype : (value : any) => {},
   preview : {
@@ -110,7 +109,6 @@ export const useMeta = () => {
     read,
   };
 }
-
 
 export const MetaProvider: React.FC = ({ children }) => {
   const auth  = useMeta();
