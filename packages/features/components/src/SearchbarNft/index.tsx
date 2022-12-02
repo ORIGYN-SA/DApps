@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Box, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
@@ -7,10 +8,12 @@ import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
+
 // Preloader
 import { CircularProgress } from '@mui/material';
 const ISPROD = true;
 export const SearchbarNft = (props: any) => {
+  let navigate = useNavigate();
   const { actor } = useContext(AuthContext);
   const [tokenId, setTokenId] = useState('');
   const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
@@ -21,12 +24,16 @@ export const SearchbarNft = (props: any) => {
       value = '';
     }
     props.setSearchBarTokenId(value);
-    // replace the tokenId in the searchBar
+
+    let newPath = window.location.pathname.replace(`/-/${props.searchBarTokenId}/-/`, `/-/${value}/-/`);
+
     window.history.pushState(
       '',
       '',
-      window.location.href.replace(`/${props.searchBarTokenId}/`, `/${value}/`),
+      window.location.href.replace(window.location.pathname,newPath)
     );
+
+    
   };
 
   const NFTobj = async () => {

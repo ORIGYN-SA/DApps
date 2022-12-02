@@ -8,6 +8,7 @@ import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import { SnackbarProvider } from 'notistack';
 import { MetaProvider } from './components/nftTabs/context';
 import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
+import { RouteProvider } from '@dapp/features-authentication';
 
 const App = () => {
   return (

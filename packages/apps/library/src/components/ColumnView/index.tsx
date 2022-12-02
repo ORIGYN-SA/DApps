@@ -15,9 +15,10 @@ import { Box } from '@mui/system';
 import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../LibraryForm';
-
+import { RouteContext } from '@dapp/features-authentication';
 
 const ColumnView = () => {
+  const { setRoute, CanisterId, TokenId } = useContext(RouteContext);
   const [owner, setOwner] = React.useState<boolean>(false);
   const [currentTokenId, setCurrentTokenId] = useState('');
   const [selectedIndex, setSelectedIndex] = React.useState(null);
@@ -150,6 +151,7 @@ const ColumnView = () => {
     setOpenFormDefault(false);
   };
 
+
   const handleForm = () => {
     setOpenForm(!openForm);
   };
@@ -213,7 +215,6 @@ const ColumnView = () => {
   // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
     openSpecificNft();
-
     useRoute().then(({ canisterId, tokenId }) => {
       setCanisterId(canisterId);
     });
@@ -235,6 +236,14 @@ const ColumnView = () => {
       checkAndSetOwner();
     }
   }, [canisterId, currentTokenId]);
+
+  const myObj = {
+    TokenId: 'TokenParam',
+  };
+
+  useEffect(() => {
+    setRoute();
+  }, []);
 
   return (
     <div>
