@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, HashRouter } from 'react-router-dom';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
 import { SiteProvider } from '@dapp/features-theme';
 import Ledger from './pages/Ledger';
@@ -11,7 +11,7 @@ import { RouteProvider } from '@dapp/features-authentication';
 
 
 const App = () => (
-  <HashRouter>
+  <BrowserRouter>
     <SiteProvider>
       <SessionProvider>
         <TokensContextProvider>
@@ -29,7 +29,7 @@ const App = () => (
         </TokensContextProvider>
       </SessionProvider>
     </SiteProvider>
-  </HashRouter>
+  </BrowserRouter>
 );
 
 export default App;

@@ -27,11 +27,16 @@ export const SearchbarNft = (props: any) => {
 
     let newPath = window.location.pathname.replace(`/-/${props.searchBarTokenId}/-/`, `/-/${value}/-/`);
 
-    window.history.pushState(
-      '',
-      '',
-      window.location.href.replace(window.location.pathname,newPath)
-    );
+    console.log(newPath);
+
+    navigate(newPath, {
+      replace: false
+    });
+    // window.history.pushState(
+    //   '',
+    //   '',
+    //   window.location.href.replace(window.location.pathname,newPath)
+    // );
 
     
   };
