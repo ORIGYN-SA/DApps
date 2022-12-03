@@ -32,13 +32,7 @@ export const SearchbarNft = (props: any) => {
     navigate(newPath, {
       replace: false
     });
-    // window.history.pushState(
-    //   '',
-    //   '',
-    //   window.location.href.replace(window.location.pathname,newPath)
-    // );
-
-    
+ 
   };
 
   const NFTobj = async () => {

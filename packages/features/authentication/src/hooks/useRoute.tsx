@@ -32,7 +32,7 @@ export const useRoutee = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log('location triggered navigate',location);
+   setRoute();
   }, [location]);
    
   const setRoute = async (Obj?: RouteValues) => {
