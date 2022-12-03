@@ -14,7 +14,8 @@ import { Box } from '@mui/system';
 // Library components
 import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
-import { LibraryForm } from '../LibraryForm';
+import { LibraryForm } from '../AddLibrary';
+import { DeleteLibrary } from '../DeleteLibrary';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -32,6 +33,7 @@ const ColumnView = () => {
   // Specific library -- tokenId from URL or from clicked item
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
   const [openForm, setOpenForm] = React.useState(false);
+  const [openFormDelete, setOpenFormDelete] = React.useState(false);
   const [openDeta, setOpenDeta] = useState(false);
   const [openDub, setOpenDub] = useState(false);
   const [libDet, setLibDet] = useState();
@@ -157,12 +159,22 @@ const ColumnView = () => {
 
   const handleForm = () => {
     setOpenForm(!openForm);
+    setOpenFormDelete(false);
     setOpenLib(false);
     setOpera(false);
     setOpenDetails(false);
     setOpenDub(false);
     setOpenDeta(false);
   };
+
+  const handleFormDelete = () => {
+    setOpenFormDelete(!openFormDelete);
+    setOpenForm(false);
+    setOpenLib(false);
+    setOpera(false);
+    setOpenDetails(false);
+    setOpenDub(false);
+  }
 
   const handleForm1 = () => {
     setOpenFormDefault(!openFormDefault);
@@ -318,17 +330,31 @@ const ColumnView = () => {
                 <Grid container minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
                     {owner && loggedIn ? (
+                      <> 
                       <ListItem className={classes.classes['noPadding']}>
                         <ListItemButton
                           className={classes.classes['noPadding']}
                           onClick={() => handleForm()}
                         >
                           <ListItemText
-                            sx={{ width: 'max-content', paddingLeft: 1 }}
-                            primary="+ Add Library"
+                            sx={{ width: 'max-content', paddingLeft: 1 , fontWeight: 'bold'}}
+                            primary="+ Add a Library"
                           />
                         </ListItemButton>
                       </ListItem>
+                      <ListItem className={classes.classes['noPadding']}>
+                      <ListItemButton
+                        className={classes.classes['noPadding']}
+                        onClick={() => handleFormDelete()}
+                      >
+                        <ListItemText
+                          sx={{ width: 'max-content', paddingLeft: 1, fontWeight: 'bold' }}
+                          primary="- Delete a Library"
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                      </>
+                      
                     ) : (
                       <></>
                     )}
@@ -418,6 +444,23 @@ const ColumnView = () => {
               >
                 <Grid item xs={12}>
                   <LibraryForm currentTokenId={currentTokenId} />
+                </Grid>
+              </Box>
+            </Collapse>
+
+            <Collapse
+              in={openFormDelete}
+              timeout="auto"
+              style={{ display: openFormDelete? 'block' : 'none' }}
+              unmountOnExit
+            >
+              <Box
+                minHeight={Sizes.minHeight}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
+                <Grid item xs={12}>
+                  <DeleteLibrary currentTokenId={currentTokenId} />
                 </Grid>
               </Box>
             </Collapse>

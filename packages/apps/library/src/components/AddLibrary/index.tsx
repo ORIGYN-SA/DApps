@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
-import { OrigynClient, stageLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import Collapse from '@mui/material/Collapse';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
