@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
-import { OrigynClient, deleteLibraryAsset, getNft } from '@origyn-sa/mintjs';
+import { OrigynClient, deleteLibraryAsset, getNft, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -24,32 +24,65 @@ export const DeleteLibrary = (props: any) => {
   const [libraries, setLibraries] = React.useState<any>([]);
   const [selectedLibrary, setSelectedLibrary] = React.useState('');
 
-  const getLibraries = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId());
-    const response = await getNft(props.currentTokenId);
-    console.log('responseCollection', response);
-    let libraries = [];
-    try{
-    let LibArrayFromMeta = response.ok.metadata.Class.filter((res) => {
-        return res.name === 'library';
-    })[0].value.Array.thawed;
-    console.log('LibArrayFromMeta', LibArrayFromMeta);
-    let i: any;
-    for(i in LibArrayFromMeta){
-        libraries.push(
-        LibArrayFromMeta[i].Class.filter((res) => {
-            return res.name === 'library_id';
-        })[0].value.Text,
-        );
-    }
-    console.log('libraries', libraries);
-    } catch (e) {
-        console.log('error', e);
-    }
+  async function getLibraries() {
 
+    await OrigynClient.getInstance().init(true, await getCanisterId());
+    let libraries = [];
+
+    if(props.currentTokenId == ''){
+      const response = await getNftCollectionMeta();
+      try{
+        let CollectionLibArrayFromMeta = response.ok.metadata[0].Class.filter((res) => {
+          return res.name === 'library';
+        })[0].value.Array.thawed;
+        console.log('CollectionLibArrayFromMeta', CollectionLibArrayFromMeta);
+        let i: any;
+        for (i in CollectionLibArrayFromMeta) {
+          const Immutable = CollectionLibArrayFromMeta[i].Class.filter((res) => {
+            return res.name === 'com.origyn.immutable_library';
+          })[0];
+          console.log(Immutable);
+          if (!Immutable) {
+            libraries.push(
+              CollectionLibArrayFromMeta[i].Class.filter((res) => {
+                return res.name === 'library_id';
+              })[0].value.Text,
+            );
+          }
+        }
+        console.log('libraries', libraries);
+      } catch (e) {
+        console.log('Error while creating Libraries from Collection Array', e);
+      }
+    }else{
+      const response = await getNft(props.currentTokenId);
+      try {
+        let LibArrayFromMeta = response.ok.metadata.Class.filter((res) => {
+          return res.name === 'library';
+        })[0].value.Array.thawed;
+        console.log('LibArrayFromMeta', LibArrayFromMeta);
+        let i: any;
+        for (i in LibArrayFromMeta) {
+          const Immutable = LibArrayFromMeta[i].Class.filter((res) => {
+            return res.name === 'com.origyn.immutable_library';
+          })[0];
+          console.log(Immutable);
+          if (!Immutable) {
+            libraries.push(
+              LibArrayFromMeta[i].Class.filter((res) => {
+                return res.name === 'library_id';
+              })[0].value.Text,
+            );
+          }
+        }
+        console.log('libraries', libraries);
+      } catch (e) {
+        console.log('Error while creating Libraries Array', e);
+      }
+    }
     setLibraries(libraries);
     setSelectedLibrary(libraries[0]);
-  };
+  }
 
   const StageCollectionLibrary = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId(), {
@@ -100,11 +133,9 @@ export const DeleteLibrary = (props: any) => {
         }}
       >
         <Typography gutterBottom component="div">
-           <b>Token ID: {props.currentTokenId}</b>
+          <b>Token ID: {props.currentTokenId}</b>
         </Typography>
-        <Typography>
-            Select a Library to delete
-        </Typography>
+        <Typography>Select a Library to delete</Typography>
       </Box>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Select</InputLabel>
