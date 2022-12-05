@@ -281,7 +281,7 @@ const Navbar = ({ children }) => {
       <NavigationTop>
         <NavigationTopText>Vault</NavigationTopText>
         <div style={{marginRight: '120px'}}>
-        <ConnectButton/>
+        <ConnectButton style={{ background: '#70237D'}}/>
         </div>
       </NavigationTop>
       <ChildrenContainer>{children}</ChildrenContainer>

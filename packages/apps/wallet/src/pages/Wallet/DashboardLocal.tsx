@@ -195,7 +195,7 @@ const TKButtonText1 = styled.span`
   align-items: center;
   text-align: center;
   letter-spacing: -0.15px;
-  color: ${(props) => props.theme.colors.BLACK};
+  color: ${(props) => props.theme.colors.WHITE};
 `;
 
 const WBText1 = styled.span`
@@ -542,7 +542,7 @@ const UnWalletBalances = () => {
     <>
       <UnWalletBalancesCSS>
         <WBText1>Wallet Balances</WBText1>
-        <ConnectButton>
+        <ConnectButton style={{color: '#70237D', background: '#70237D'}}>
           <TKButtonText1>Connect Wallet</TKButtonText1>
         </ConnectButton>
       </UnWalletBalancesCSS>
