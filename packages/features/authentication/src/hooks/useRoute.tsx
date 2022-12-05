@@ -31,10 +31,6 @@ export const useRoutee = () => {
   const [TokenId, setTokenId] = useState<string>(null);
   const location = useLocation();
 
-  useEffect(() => {
-   setRoute();
-  }, [location]);
-   
   const setRoute = async (Obj?: RouteValues) => {
     const ids = window.location.pathname.split('/');
     const RouteVals = Obj || {};
@@ -58,7 +54,6 @@ export const useRoutee = () => {
       if (TokenId === null) TokenId = ids[2];
       return { canisterId: subdomain, TokenId };
     } catch (e) {
-      console.log('token id', TokenId);
       if (TokenId === null) TokenId = ids[4];
       if (CanisterId === '') {
         try {
@@ -81,12 +76,17 @@ export const useRoutee = () => {
     setTokenId(TokenId);
   };
 
+  useEffect(() => {
+    setRoute();
+  }, [location]);
+    
   return {
     setRoute,
     CanisterId,
     TokenId,
   };
 };
+
 
 export const RouteProvider = ({ children }) => {
   const Route = useRoutee();
