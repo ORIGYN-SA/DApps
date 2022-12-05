@@ -102,7 +102,10 @@ export const DeleteLibrary = (props: any) => {
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose}>Back</Button>
-                <Button onClick={DeleteMutableLibrary} autoFocus>
+                <Button 
+                onClick={DeleteMutableLibrary} 
+                color="warning"
+                autoFocus>
                   Delete
                 </Button>
               </DialogActions>
