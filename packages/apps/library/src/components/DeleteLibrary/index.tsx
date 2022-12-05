@@ -9,12 +9,14 @@ import { OrigynClient, deleteLibraryAsset } from '@origyn-sa/mintjs';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from '@mui/material/Stack';
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 // Dialog
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Typography } from '@mui/material';
 
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
@@ -72,7 +74,6 @@ export const DeleteLibrary = (props: any) => {
     <Grid item xs={12} m={2}>
       <Box
         sx={{
-          textAlign: 'right',
           mt: 2,
         }}
       >
@@ -112,7 +113,15 @@ export const DeleteLibrary = (props: any) => {
             </Dialog>
           </>
         ) : (
-          <></>
+          <>
+        
+        <DoDisturbIcon/>
+        <Typography
+        sx={{
+          fontSize: 10,
+        }}
+        >This library is immutable and can not be deleted</Typography>
+          </>
         )}
       </Box>
     </Grid>

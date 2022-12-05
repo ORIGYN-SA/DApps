@@ -117,7 +117,7 @@ export const LibraryBox = (props: any) => {
       <Grid item xs={12}>
         <DeleteLibrary 
         libraryId={objLibraryData.library_id} 
-        currentTokenId={props.currentTokenId}
+        currentTokenId={''}
         isMutable={isMutable}
         />
       </Grid>

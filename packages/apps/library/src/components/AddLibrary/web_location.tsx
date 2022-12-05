@@ -5,10 +5,13 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
-// mint.js
-import { OrigynClient, stageWebLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-
+import FormLabel from '@mui/material/FormLabel';
+// mint.js
+import { OrigynClient, stageWebLibraryAsset } from '@origyn-sa/mintjs';
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
   seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
@@ -20,6 +23,13 @@ export const WebLocation = (props: any) => {
 
   const [typedUrl, setTypedUrl] = useState('');
   const [typedTitle, setTypedTitle] = useState('');
+
+  const [immutable, setImmutable] = React.useState(false);
+  const handleChange = (event) => {
+    setImmutable(event.target.value);
+    console.log(event.target.value)
+  };
+
 
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
@@ -37,7 +47,7 @@ export const WebLocation = (props: any) => {
     });
 
     try {
-      const response = await stageWebLibraryAsset(props.tokenId, typedTitle, typedUrl);
+      const response = await stageWebLibraryAsset(props.tokenId, typedTitle, typedUrl,immutable);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {
@@ -80,6 +90,27 @@ export const WebLocation = (props: any) => {
         />
         </FormControl>
       </Box>
+      <Box
+          sx={{
+            mt: 2,
+          }}
+        >
+          <Grid item xs={12} m={2}>
+            <FormControl>
+              <FormLabel id="demo-radio-buttons-group-label">Make library mutable or not</FormLabel>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="Mutable"
+                name="radio-buttons-group"
+                value={immutable}
+                onChange={handleChange}
+              >
+                <FormControlLabel value={false}control={<Radio />} label="Mutable" />
+                <FormControlLabel value={true} control={<Radio />} label="Immutable" />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+        </Box>
       <Box
         sx={{
           textAlign: 'right',
