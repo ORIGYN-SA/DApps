@@ -26,8 +26,8 @@ const palette = {
       hint: grey.A200,
     },
     background: {
-      paper: '#fff',
-      default: '#fafafa',
+      paper: '#151515',
+      default: '#151515',
     },
     donut: {
       bg: '#d2d3d4',
@@ -39,11 +39,11 @@ const palette = {
   dark: {
     ...COMMON,
     primary: {
-      main: '#49a540',
+      main: '#white',
       contrast: '#fff',
     },
     secondary: {
-      main: '#177bba',
+      main: '#000000',
       contrast: '#fff',
     },
     neutral: {
@@ -57,14 +57,14 @@ const palette = {
       hint: grey.A200,
     },
     background: {
-      paper: '#222639',
-      default: '#1B1E2E',
+      paper: '#000000',
+      default: '#151515',
     },
     donut: {
       bg: '#383b4c',
     },
     cellBorder: {
-      color: 'rgba(255, 255, 255, 0.54)',
+      color: '#242424',
     },
   },
 };

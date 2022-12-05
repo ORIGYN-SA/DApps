@@ -1,14 +1,13 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
-
 import Tabs from '@mui/material/Tabs';
 import TreeTab from '../../components/nftTabs/TreeTab';
 import RawTab from '../../components/nftTabs/RawTab';
 import FormTab from '../../components/nftTabs/FormTab';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import JSONTab from '../../components/nftTabs/JSONTab';
+import NewForm from '../../components/nftTabs/NewForm';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -36,16 +35,13 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const NFTInfo = ({metadata}: any) => {
-    const [value, setValue] = React.useState(1);
+const NFTInfo = ({ metadata }: any) => {
+  const [value, setValue] = React.useState(1);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-    
-    return (
-      <Container maxWidth="xl">
-
+return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -53,6 +49,7 @@ const NFTInfo = ({metadata}: any) => {
           <Tab label="Tree"  />
           <Tab label="Raw"  />
           <Tab label="JSON"  />
+          <Tab label="Update" disabled={true}/>
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -67,8 +64,11 @@ const NFTInfo = ({metadata}: any) => {
       <TabPanel value={value} index={3}>
         <JSONTab metadata={metadata} />
       </TabPanel>
+      <TabPanel value={value} index={4}>   
+        <NewForm metadata={metadata} />
+      </TabPanel>
     </Box>
-      </Container>
+   
     );
   };
   

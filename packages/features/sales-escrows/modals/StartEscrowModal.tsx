@@ -1,6 +1,7 @@
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
+import { isLocal } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -24,7 +25,8 @@ import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
 export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
-  const { actor, ogyActor, principal } = React.useContext(AuthContext);
+  const { actor, principal, activeWalletProvider } =
+    React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [token, setToken] = React.useState('OGY');
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -90,7 +92,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
     ),
   };
-  console.log('🚀 ~ file: StartEscrow.tsx ~ line 112 ~ _nft', _nft);
 
   const handleStartEscrow = async (data) => {
     console.log(data);
@@ -109,16 +110,29 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
       return;
     }
     if (isLoading) return;
-    if (ogyActor) {
+
+    if (activeWalletProvider) {
       setIsLoading(true);
       const amount = data.priceOffer * 1e8;
-      const walletType = localStorage.getItem('loggedIn');
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
-      const { account_id } = saleInfo?.ok?.deposit_info ?? {};
 
+      if ('err' in saleInfo)
+        throw new Error(Object.keys(saleInfo.err)[0]);
+
+      if (!('deposit_info' in saleInfo.ok))
+        throw new Error();
+
+      const { account_id } = saleInfo?.ok?.deposit_info ?? {};
+      console.log(tokens[token]);
+      const amountWithFee = amount + tokens[token].fee;
+      console.log(
+        '🚀 ~ file: StartEscrowModal.tsx ~ line 121 ~ handleStartEscrow ~ amountWithFee',
+        amountWithFee,
+      );
       try {
         const transactionHeight = await sendTransaction(
-          walletType,
+          false,
+          activeWalletProvider,
           tokens[token],
           new Uint8Array(account_id),
           amount + tokens[token].fee,
@@ -134,7 +148,9 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               ic: {
                 fee: BigInt(tokens[token].fee ?? 200_000),
                 decimals: BigInt(tokens[token].decimals ?? 8),
-                canister: Principal.fromText(tokens[token].canisterId),
+                canister: Principal.fromText(
+                  isLocal ? tokens[token].localCanisterId : tokens[token].canisterId,
+                ),
                 standard: { Ledger: null },
                 symbol: tokens[token].symbol,
               },
@@ -147,60 +163,73 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             amount: BigInt(amount),
             sale_id: _nft?.openAuction?.sale_id ? [_nft?.openAuction?.sale_id] : [],
           },
-          lock_to_date: [],
-        };
-        const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
-        if (!_nft.openAuction) {
-          if (escrowResponse.ok) {
-            enqueueSnackbar('Your escrow has been successfully sent.', {
-              variant: 'success',
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-            });
-            setIsLoading(false);
-            handleCustomClose(true);
-            refreshAllBalances();
-          } else {
-            throw escrowResponse.err.text;
-          }
-        } else {
-          if (!escrowResponse?.ok) throw escrowResponse.err.text;
-
-          const bidData = {
-            broker_id: [],
-            escrow_receipt: escrowResponse?.ok?.receipt,
-            sale_id: _nft.openAuction?.sale_id,
-          };
-          const bidResponse = await actor.sale_nft_origyn({ bid: bidData });
-          if (bidResponse.ok) {
-            enqueueSnackbar('Your bid has been successfully placed.', {
-              variant: 'success',
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-            });
-            setIsLoading(false);
-            handleCustomClose(true);
-            refreshAllBalances();
-          } else {
-            throw bidResponse.err;
-          }
-        }
-      } catch (e) {
-        console.log(e?.message ?? e);
-
-        enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
+          trx_id: [{ nat: BigInt(transactionHeight.ok) }],
+          seller: {
+            principal: Principal.fromText(_nft.seller),
           },
-        });
+          buyer: { principal },
+          amount: BigInt(amount),
+          sale_id: _nft?.openAuction?.sale_id ? [_nft?.openAuction?.sale_id] : [],
+          lock_to_date: [],
+        }
+        try {
+          const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
+
+          if ('err' in escrowResponse)
+            throw new Error(Object.keys(escrowResponse.err)[0]);
+
+          if (!_nft.openAuction) {
+              enqueueSnackbar('Your escrow has been successfully sent.', {
+                variant: 'success',
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+              });
+              setIsLoading(false);
+              handleCustomClose(true);
+              refreshAllBalances(false, principal);
+          } else {
+            console.log('escrowResponse', escrowResponse);
+
+            if (!('receipt' in escrowResponse.ok))
+              throw new Error();
+
+            const bidData = {
+              broker_id: [],
+              escrow_receipt: escrowResponse?.ok?.escrow_deposit.receipt,
+              sale_id: _nft.openAuction?.sale_id,
+            };
+            const bidResponse = await actor.sale_nft_origyn({ bid: bidData } as any); // TODO: fix this
+
+            if ('err' in bidResponse)
+              throw new Error(Object.keys(bidResponse.err)[0]);
+              enqueueSnackbar('Your bid has been successfully placed.', {
+                variant: 'success',
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+              });
+              setIsLoading(false);
+              handleCustomClose(true);
+              refreshAllBalances(false, principal);
+          }
+        } catch (e) {
+          console.log(e?.message ?? e);
+
+          enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        }
+        setIsLoading(false);
+      }  catch (e) {
+        console.log(e);
       }
-      setIsLoading(false);
     }
   };
   return (

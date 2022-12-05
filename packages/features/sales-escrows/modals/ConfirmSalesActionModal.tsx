@@ -10,6 +10,19 @@ import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useSnackbar } from 'notistack';
+import styled from 'styled-components';
+
+const ConfirmButton = styled.button`
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 9px 16px 9px 20px;
+background: #F2F2F2;
+border-radius: 999px;
+width: 141px;
+height: 40px;
+`
 
 const Transition = React.forwardRef(
   (
@@ -32,14 +45,13 @@ export const ConfirmSalesActionModal = ({
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
-  console.log(escrow, action);
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
       if (isLoading) return;
       setIsLoading(true);
       const tokenId = currentToken?.Class?.find(({ name }) => name === 'id').value.Text;
       if (action === 'endSale') {
-        const endSaleResponse = await actor.end_sale_nft_origyn(tokenId);
+        const endSaleResponse = await (actor).end_sale_nft_origyn(tokenId);
         if (endSaleResponse.ok) {
           enqueueSnackbar(`You have successfully ended the sale for ${tokenId}.`, {
             variant: 'success',
@@ -73,7 +85,16 @@ export const ConfirmSalesActionModal = ({
             },
           },
         });
-        if (withdrawResponse.ok) {
+
+        if ('err' in withdrawResponse) {
+          enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
           enqueueSnackbar('Your escrow has been successfully withdrawn.', {
             variant: 'success',
             anchorOrigin: {
@@ -84,13 +105,7 @@ export const ConfirmSalesActionModal = ({
           setIsLoading(false);
           return handleClose(true);
         }
-        enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+
         setIsLoading(false);
         return handleClose(false);
       }
@@ -105,7 +120,16 @@ export const ConfirmSalesActionModal = ({
             },
           },
         });
-        if (rejectResponse.ok) {
+
+        if ('err' in rejectResponse) {
+          enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
           enqueueSnackbar('The escrow has been rejected.', {
             variant: 'success',
             anchorOrigin: {
@@ -116,13 +140,6 @@ export const ConfirmSalesActionModal = ({
           setIsLoading(false);
           return handleClose(true);
         }
-        enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
         setIsLoading(false);
         return handleClose(false);
       }
@@ -171,9 +188,9 @@ export const ConfirmSalesActionModal = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={() => _handleClose(false)}>Cancel</Button>
-          <Button onClick={() => _handleClose(true)} variant="contained">
+          <ConfirmButton onClick={() => _handleClose(true)}>
             Confirm
-          </Button>
+            </ConfirmButton>
         </DialogActions>
       </Dialog>
     </div>

@@ -1,31 +1,32 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import { Principal } from '@dfinity/principal';
-import DialogTitle from '@mui/material/DialogTitle';
 import { AuthContext } from '@dapp/features-authentication';
+import { TokenIcon } from '@dapp/features-components';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { Principal } from '@dfinity/principal';
+import { isLocal } from '@dapp/utils';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Backdrop,
   CircularProgress,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
   TextField,
   Typography,
-  Grid,
 } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useSnackbar } from 'notistack';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { TokenIcon } from '@dapp/features-components';
-import { useTokensContext } from '@dapp/features-tokens-provider';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useSnackbar } from 'notistack';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 export function StartAuctionModal({ currentToken, open, handleClose }: any) {
   const { actor } = React.useContext(AuthContext);
@@ -60,7 +61,9 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
                 ic: {
                   fee: BigInt(tokens[token]?.fee ?? 200000),
                   decimals: BigInt(tokens[token]?.decimals ?? 8),
-                  canister: Principal.fromText(tokens[token]?.canisterId),
+                  canister: Principal.fromText(
+                    tokens[token].canisterId,
+                  ),
                   standard: { Ledger: null },
                   symbol: tokens[token]?.symbol,
                 },
@@ -72,7 +75,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
               },
               allow_list: [],
               buy_now: [BigInt(buyNowPrice * 1e8)],
-              end_date: BigInt(new Date(endDate).getTime() * 1e6),
+              // end_date: BigInt(new Date(endDate).getTime() * 1e6), TODO: figure this out
               ending: {
                 date: BigInt(new Date(endDate).getTime() * 1e6),
               },
@@ -82,7 +85,16 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
           escrow_receipt: [],
         },
       });
-      if (resp.ok) {
+
+      if ('err' in resp) {
+        enqueueSnackbar('There was an error when starting your auction.', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      } else {
         enqueueSnackbar('Your auction has been started.', {
           variant: 'success',
           anchorOrigin: {
@@ -91,14 +103,6 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
           },
         });
         handleClose(true);
-      } else {
-        enqueueSnackbar('There was an error when starting your auction.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
       }
     } catch (e) {
       console.log(e);

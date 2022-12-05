@@ -1,12 +1,10 @@
-import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { AuthContext, getCanisterId } from '@dapp/features-authentication'
+
+import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authentication';
 import { NatPrice } from '@dapp/features-components';
-import {
-  ConfirmSalesActionModal,
-  StartAuctionModal,
-  StartEscrowModal,
-} from '@dapp/features-sales-escrows';
-import { eToNumber, timeConverter } from '@dapp/utils';
+import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
+import { StartAuctionModal } from '../../modals/StartAuctionModal';
+import { StartEscrowModal } from '../../modals/StartEscrowModal';
+import { eToNumber, timeConverter, isLocal } from '@dapp/utils';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
@@ -27,6 +25,108 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import styled from 'styled-components';
+import { ICPIcon, OGYIcon, QuestionIcon } from '@dapp/common-assets';
+
+const MainBox = styled.div`
+  width:100%;
+  height:auto;
+  padding-top: 80px;
+  padding-left: 24px;
+  border-radius: 16px 0px 0px 0px;
+`;
+const TopContainer = styled.div`
+width:100%;
+`;
+const TopBox1 = styled.div`
+  width: 50%;
+  position:relative;
+  float:left;
+  text-align:center;
+`;
+const TopBox2 = styled.div`
+width: 50%;
+position:relative;
+float:left;
+`;
+
+const LeftContainer = styled.div`
+width: 525px;
+padding:16px;
+`;
+
+const DetailsContainer = styled.div`
+height: 80px;
+padding:24px 0px 24px 0px;
+/* Primary/800: border (dark) */
+border-width: 1px 0px;
+border-style: solid;
+border-color: #242424;
+margin-top:32px;
+margin-bottom:32px;
+`;
+const IconsDetailsContainer = styled.div`
+width:49%;
+height:32px;
+position:relative;
+float:left;
+padding:0px 16px 0px 16px;
+
+`;
+const VerticalSeparator = styled.div`
+width:1px;
+height:32px;
+position:relative;
+float:left;
+background-color: #242424;
+`;
+
+const AuctionBTN = styled.button`
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 17px 24px;
+width: 493px;
+height: 56px;
+color: ${(props) => props.theme.colors.PURE_BLACK};
+background: #70237D;
+border-radius: 999px;
+border: none;
+`;
+
+const AuctionBTNtext = styled.span`
+  font-family: ${(props) => props.theme.font.FONT_FAMILY_1};
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: -0.15px;
+  color: ${(props) => props.theme.colors.WHITE};
+`;
+
+const NftName = styled.span`
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -1px;
+  color: #fefefe;
+`;
+
+const BottomBox = styled.div`
+  background: rgba(0, 0, 0, 0.3);
+  heigth: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+`;
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -60,8 +160,9 @@ const SymbolWithIcon = ({ symbol }: any) =>
   );
 export const NFTPage = () => {
   const { principal, actor } = useContext(AuthContext);
+  const { localDevelopment } = useSessionContext();
   const [currentNFT, setCurrentNFT] = useState<any>({});
-  const [canisterId, setCanisterId] = useState("");
+  const [canisterId, setCanisterId] = useState('');
   const [openAuction, setOpenAuction] = React.useState(false);
   const [dialogAction, setDialogAction] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
@@ -148,18 +249,33 @@ export const NFTPage = () => {
           console.log(r);
           setIsLoading(false);
           setCurrentNFT(r.ok);
+          setNftName(
+            r.ok.metadata.Class.find(
+              ({ name }) => name === '__apps',
+            ).value.Array.thawed[0].Class.find(({ name }) => name === 'data').value.Class[0].value
+              .Text,
+          );
+          setnftCol(
+            r.ok.metadata.Class.find(
+              ({ name }) => name === '__apps',
+            ).value.Array.thawed[0].Class.find(({ name }) => name === 'data').value.Class[2].value
+              .Text,
+          );
         })
         .catch(console.log);
     }
   }, [actor]);
 
   useEffect(() => {
-    getCanisterId().then((r) => {
-      setCanisterId(r);
+    useRoute().then(({ canisterId }) => {
+      setCanisterId(canisterId);
     });
   }, []);
 
-  if (isLoading || !canisterId) {
+  const [nftName, setNftName] = useState();
+  const [nftCol, setnftCol] = useState();
+
+  if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
@@ -167,330 +283,81 @@ export const NFTPage = () => {
     );
   }
   return (
-    <div>
-      <StartEscrowModal
-        open={openEscrowModal}
-        handleClose={handleCloseEscrow}
-        nft={currentNFT}
-        initialValues={modalInitialValues}
-      />
-      <Container sx={{ mt: 4, mb: 4 }}>
-        <Grid container spacing={4}>
-          <Grid item xs={6} md={5}>
-            <img
-              width="100%"
-              style={{ margin: '0 10px 10px 10px' }}
-              src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
-            />
-            <div>
-              <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-                <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                  <Typography>Description</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Typography>
-                    {currentNFT?.metadata?.Class?.find(({ name }) => name === 'description')?.value
-                      ?.Text || <b>No description provided</b>}
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-              <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-                  <Typography>Properties</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Typography>
-                    {currentNFT?.metadata?.Class?.find(({ name }) => name === '__apps')
-                      ?.value?.Array?.thawed[0].Class.find(({ name }) => name === 'data')
-                      .value.Class.map(({ name, value, index }) => (
-                        <div key={`${name}+${index}`}>
-                          {name}: <b>{Object.values(value)[0].toString()}</b>
-                        </div>
-                      )) || <b>No properties available</b>}
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-            </div>
-          </Grid>
-          <Grid
-            item
-            xs={6}
-            md={7}
-            style={{
-              display: 'flex',
-              gap: '5px',
-              flexWrap: 'wrap',
-              flexDirection: 'column',
-            }}
-          >
-            <Typography variant="h5">{params.nft_id}</Typography>
-            <Typography>
-              Owned by{' '}
-              <Link href="#">
-                {currentNFT?.metadata?.Class?.find(
-                  ({ name }) => name === 'owner',
-                ).value.Principal.toText()}
-              </Link>
-            </Typography>
-            {currentNFT?.metadata?.Class?.find(
-              ({ name }) => name === 'owner',
-            ).value.Principal.toText() === principal?.toText() ? (
+    <>
+    <MainBox>
+      <TopContainer>
+        <TopBox1>
+          <img
+            width="465px"
+            style={{ borderRadius: '12px' }}
+            src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
+          />
+        </TopBox1>
+        <TopBox2>
+          <LeftContainer>
+          <div style={{display:'flex', justifyContent:'space-between', flexDirection:'column', height:'360px'}}>
+          <div style={{display:'flex', flexDirection:'column'}}>
+          <span>{nftCol}</span>
+          
+          <NftName>{nftName}</NftName>
+          <span style={{marginTop:'20px'}}>
+          {currentNFT?.metadata?.Class?.find(
+          ({ name }) => name === '__apps',
+        )?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')?.value?.Class?.find(({ name }) => name === 'description')?.value?.Text || (
+            <b>No description provided</b>
+          )}
+          </span>
+          </div>
+          <DetailsContainer>
+            <IconsDetailsContainer>
+              <div style={{position:'relative', float:'left'}}>
+              <OGYIcon/>             
+               </div>
               <div>
-                {currentOpenAuction ? (
-                  <Accordion expanded>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Grid container direction="row" alignItems="center">
-                        <AccessTimeIcon style={{ marginRight: 2 }} /> There is an active auction for
-                        this NFT
-                      </Grid>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography>
-                        Sale ends on{' '}
-                        <strong>
-                          {' '}
-                          {timeConverter(
-                            BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)),
-                          )}
-                        </strong>
-                      </Typography>
-                      <Typography>
-                        Token:{' '}
-                        <SymbolWithIcon
-                          symbol={
-                            currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic
-                              ?.symbol
-                          }
-                        />
-                      </Typography>
-                      <Typography>
-                        Start price:{' '}
-                        <strong>
-                          <NatPrice
-                            value={
-                              currentOpenAuction?.sale_type?.auction?.config?.auction?.start_price
-                            }
-                          />
-                        </strong>
-                      </Typography>
-                      <Typography>
-                        Minimum step:{' '}
-                        <strong>
-                          <NatPrice
-                            value={
-                              currentOpenAuction?.sale_type?.auction?.config?.auction?.min_increase
-                                ?.amount
-                            }
-                          />
-                        </strong>
-                      </Typography>
-                      <Typography>
-                        Highest bid:{' '}
-                        <strong>
-                          <NatPrice
-                            value={currentOpenAuction?.sale_type?.auction?.current_bid_amount}
-                          />
-                        </strong>
-                      </Typography>
-                      {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
-                        0 && (
-                        <Typography>
-                          Buy now:{' '}
-                          <strong>
-                            <NatPrice
-                              value={
-                                currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]
-                              }
-                            />
-                          </strong>
-                        </Typography>
-                      )}
-                      <div style={{ display: 'flex', gap: 5, marginTop: 5 }} />
-                    </AccordionDetails>
-                  </Accordion>
-                ) : (
-                  <Accordion expanded>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Grid container direction="row" alignItems="center">
-                        <PendingIcon style={{ marginRight: 2 }} /> This NFT is not listed for a
-                        public sale.
-                      </Grid>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      You can start an Auction for this NFT.
-                      <div style={{ display: 'flex', gap: 5, marginTop: 5 }}>
-                        <Button
-                          variant="outlined"
-                          onClick={handleClickOpen}
-                          startIcon={<LocalOfferOutlinedIcon />}
-                        >
-                          Start Auction
-                        </Button>
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
-                )}
+                <span style={{position:'relative', float:'left'}}>
+                  OGY
+                </span>
               </div>
-            ) : (
-              <div>
-                {currentOpenAuction ? (
-                  <Accordion expanded>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Grid container direction="row" alignItems="center">
-                        <AccessTimeIcon style={{ marginRight: 2 }} /> There is an active auction for
-                        this NFT
-                      </Grid>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography>
-                        Sale ends on{' '}
-                        <strong>
-                          {' '}
-                          {timeConverter(
-                            BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)),
-                          )}
-                        </strong>
-                      </Typography>
-                      <Typography>
-                        Token:{' '}
-                        <SymbolWithIcon
-                          symbol={
-                            currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic
-                              ?.symbol
-                          }
-                        />
-                      </Typography>
-                      <Typography>
-                        Start price:{' '}
-                        <strong>
-                          <NatPrice
-                            value={
-                              currentOpenAuction?.sale_type?.auction?.config?.auction?.start_price
-                            }
-                          />
-                        </strong>
-                      </Typography>
-                      <Typography>
-                        Minimum step:{' '}
-                        <strong>
-                          <NatPrice
-                            value={
-                              currentOpenAuction?.sale_type?.auction?.config?.auction?.min_increase
-                                ?.amount
-                            }
-                          />
-                        </strong>
-                      </Typography>
-                      <Typography>
-                        Highest bid:{' '}
-                        <strong>
-                          <NatPrice
-                            value={currentOpenAuction?.sale_type?.auction?.current_bid_amount}
-                          />
-                        </strong>
-                      </Typography>
-                      {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
-                        0 && (
-                        <Typography>
-                          Buy now:{' '}
-                          <strong>
-                            <NatPrice
-                              value={
-                                currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]
-                              }
-                            />
-                          </strong>
-                        </Typography>
-                      )}
-                      <div style={{ display: 'flex', gap: 5, marginTop: 5 }}>
-                        {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
-                          0 && (
-                          <Button
-                            variant="contained"
-                            onClick={() => handleOpen('buyNow')}
-                            startIcon={<ShoppingCartOutlinedIcon />}
-                          >
-                            Buy now
-                          </Button>
-                        )}
-                        <Button
-                          variant="outlined"
-                          onClick={() => handleOpen('bid')}
-                          startIcon={<LocalOfferOutlinedIcon />}
-                        >
-                          Make a bid
-                        </Button>
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
-                ) : (
-                  <Accordion expanded>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Grid container direction="row" alignItems="center">
-                        <PendingIcon style={{ marginRight: 2 }} /> This NFT is not listed for a
-                        public sale.
-                      </Grid>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      You can still make an offer for this NFT by sending an escrow.
-                      <div style={{ display: 'flex', gap: 5, marginTop: 5 }}>
-                        <Button
-                          variant="outlined"
-                          onClick={handleOpen}
-                          startIcon={<LocalOfferOutlinedIcon />}
-                        >
-                          Make an offer
-                        </Button>
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
-                )}
+            </IconsDetailsContainer>
+            <VerticalSeparator></VerticalSeparator>
+            <IconsDetailsContainer>
+
+            </IconsDetailsContainer>
+          </DetailsContainer>
+          <div>
+          <AuctionBTN onClick={handleClickOpen}><AuctionBTNtext>Start an Auction</AuctionBTNtext></AuctionBTN>
+          </div>
+          </div>
+          </LeftContainer>
+        </TopBox2>
+        </TopContainer>
+    </MainBox>
+
+    <BottomBox>
+        Properties
+        <br />
+        <br/>
+        <Typography>
+          {currentNFT?.metadata?.Class?.find(({ name }) => name === '__apps')
+            ?.value?.Array?.thawed[0].Class.find(({ name }) => name === 'data')
+            .value.Class.map(({ name, value, index }) => (
+              <div key={`${name}+${index}`}>
+                <br/>
+                <span style={{fontSize: '24px', fontFamily: 'Montserrat'}}>{name}: <b>{Object.values(value)[0].toString()}</b></span>
               </div>
-            )}
-            <div hidden>
-              <Accordion expanded>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel2a-content"
-                  id="panel2a-header"
-                >
-                  <Grid container direction="row" alignItems="center">
-                    <HistoryOutlinedIcon style={{ marginRight: 2 }} /> Transaction history
-                  </Grid>
-                </AccordionSummary>
-                <AccordionDetails>There is no history for this NFT.</AccordionDetails>
-              </Accordion>
-            </div>
-          </Grid>
-        </Grid>
-        <ConfirmSalesActionModal
-          open={openConfirmation}
-          handleClose={handleClose}
-          currentToken={currentNFT}
-          action={dialogAction}
-        />
-        <StartAuctionModal
-          open={openAuction}
-          handleClose={handleClose}
-          currentToken={currentNFT?.metadata}
-        />
-      </Container>
-    </div>
+            )) || <b>No properties available</b>}
+        </Typography>
+        <br />
+        <br />
+        <br />
+        <br />
+      </BottomBox>
+   
+<StartAuctionModal
+open={openAuction}
+handleClose={handleClose}
+currentToken={currentNFT?.metadata}
+/>
+</>
   );
 };

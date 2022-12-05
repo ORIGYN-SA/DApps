@@ -3,27 +3,32 @@ import { Routes, Route, HashRouter } from 'react-router-dom';
 import Home from './pages/Home';
 import { Layout } from '@dapp/features-components';
 import { SiteProvider } from '@dapp/features-theme';
-import { AuthProvider } from '@dapp/features-authentication';
 import 'react-toastify/dist/ReactToastify.css';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import { SnackbarProvider } from 'notistack';
+import { MetaProvider } from './components/nftTabs/context';
+import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
 
 const App = () => {
   return (
     <HashRouter>
-      <AuthProvider>
-        <SiteProvider>
+      <SiteProvider>
+        <SessionProvider>
           <TokensContextProvider>
-            <SnackbarProvider maxSnack={3}>
-              <Layout>
-                <Routes>
-                  <Route path="*" element={<Home />} />
-                </Routes>
-              </Layout>
-            </SnackbarProvider>
+            <AuthProvider>
+              <SnackbarProvider maxSnack={3}>
+                <MetaProvider>
+                  <Layout>
+                    <Routes>
+                      <Route path="*" element={<Home />} />
+                    </Routes>
+                  </Layout>
+                </MetaProvider>
+              </SnackbarProvider>
+            </AuthProvider>
           </TokensContextProvider>
-        </SiteProvider>
-      </AuthProvider>
+        </SessionProvider>
+      </SiteProvider>
     </HashRouter>
   );
 };
