@@ -34,7 +34,6 @@ const ColumnView = () => {
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
   const [openForm, setOpenForm] = React.useState(false);
   const [openFormDelete, setOpenFormDelete] = React.useState(false);
-  const [openFormDelete1, setOpenFormDelete1] = React.useState(false);
   const [openDeta, setOpenDeta] = useState(false);
   const [openDub, setOpenDub] = useState(false);
   const [libDet, setLibDet] = useState();
@@ -168,15 +167,6 @@ const ColumnView = () => {
     setOpenDeta(false);
   };
 
-  const handleFormDelete = () => {
-    setOpenFormDelete(!openFormDelete);
-    setOpenForm(false);
-    setOpenLib(false);
-    setOpera(false);
-    setOpenDetails(false);
-    setOpenDub(false);
-  }
-
   const handleForm1 = () => {
     setOpenFormDefault(!openFormDefault);
     setOpenLib(false);
@@ -185,14 +175,6 @@ const ColumnView = () => {
     setOpenDub(false);
     setOpenDeta(false);
   };
-  const handleFormDelete1 = () => {
-    setOpenFormDelete1(!openFormDelete1);
-    setOpenLib(false);
-    setOpera(false);
-    setOpenDetails(false);
-    setOpenDub(false);
-    setOpenDeta(false);
-  }
 
   const openSpecificNft = async () => {
     if (getTokenId() !== '') {
@@ -351,17 +333,6 @@ const ColumnView = () => {
                           />
                         </ListItemButton>
                       </ListItem>
-                      <ListItem className={classes.classes['noPadding']}>
-                      <ListItemButton
-                        className={classes.classes['noPadding']}
-                        onClick={() => handleFormDelete()}
-                      >
-                        <ListItemText
-                          sx={{ width: 'max-content', paddingLeft: 1, fontWeight: 'bold' }}
-                          primary="- Delete a Library"
-                        />
-                      </ListItemButton>
-                    </ListItem>
                       </>
                       
                     ) : (
@@ -416,17 +387,6 @@ const ColumnView = () => {
                               />
                             </ListItemButton>
                           </ListItem>
-                          <ListItem className={classes.classes['noPadding']}>
-                          <ListItemButton
-                            className={classes.classes['noPadding']}
-                            onClick={() => handleFormDelete1()}
-                          >
-                            <ListItemText
-                              sx={{ width: 'max-content', paddingLeft: 1, fontWeight: 'bold' }}
-                              primary="- Delete a Library"
-                            />
-                          </ListItemButton>
-                        </ListItem>
                         </>
                         ) : (
                           <></>
@@ -501,7 +461,10 @@ const ColumnView = () => {
               >
                 <Grid container minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
-                    <NFTLibrary libDet={libDet} />
+                    <NFTLibrary 
+                    libDet={libDet}
+                    currentTokenId={currentTokenId}
+                  />
                   </Grid>
                 </Grid>
               </Box>
@@ -537,22 +500,6 @@ const ColumnView = () => {
               >
                 <Grid item xs={12}>
                   <LibraryForm currentTokenId={''} />
-                </Grid>
-              </Box>
-            </Collapse>
-            <Collapse
-              in={openFormDelete1}
-              timeout="auto"
-              style={{ display: openFormDelete1 ? 'block' : 'none' }}
-              unmountOnExit
-            >
-              <Box
-                minHeight={Sizes.minHeight}
-                borderRight={1}
-                className={classes.classes['styledScroll']}
-              >
-                <Grid item xs={12}>
-                  <DeleteLibrary currentTokenId={''} />
                 </Grid>
               </Box>
             </Collapse>

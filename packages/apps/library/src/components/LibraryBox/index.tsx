@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
+import { DeleteLibrary } from '../DeleteLibrary';
 
 interface FileType {
   library_id: string;
@@ -28,17 +29,18 @@ export const LibraryBox = (props: any) => {
   console.log('props', props);
   const LocationType = props.library3.Class.filter((item) => item.name === 'location_type')[0].value
     .Text;
-  console.log('LocationType', LocationType);
+    const isMutable = props.library3.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0];
   let objLibraryData: FileType;
   switch (LocationType) {
     case 'canister':
       objLibraryData = {
-        library_id: props.library3?.Class[0]?.value?.Text,
-        title: props.library3?.Class[1]?.value?.Text,
-        content_type: props.library3?.Class[4]?.value?.Text,
-        location: props.library3?.Class[3]?.value?.Text,
+        library_id: props.library3?.Class.filter((item) => item.name === 'library_id')[0].value
+          .Text,
+        title: props.library3?.Class.filter((item) => item.name === 'title')[0].value.Text,
+        content_type: props.library3?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
+        location: props.library3?.Class.filter((item) => item.name === 'location')[0].value.Text,
         location_type: LocationType,
-        size: props.library3?.Class[6]?.value?.Nat,
+        size: props.library3?.Class.filter((item) => item.name === 'size')[0].value.Nat,
       };
       break;
     case 'collection':
@@ -111,6 +113,13 @@ export const LibraryBox = (props: any) => {
           <b>Location type: </b>
           {objLibraryData.location_type}
         </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <DeleteLibrary 
+        libraryId={objLibraryData.library_id} 
+        currentTokenId={props.currentTokenId}
+        isMutable={isMutable}
+        />
       </Grid>
     </Grid>
   );

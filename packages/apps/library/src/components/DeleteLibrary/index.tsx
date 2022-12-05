@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
-import { OrigynClient, deleteLibraryAsset, getNft, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import { Typography } from '@mui/material';
+import { OrigynClient, deleteLibraryAsset } from '@origyn-sa/mintjs';
+// Button delete
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Stack from '@mui/material/Stack';
+// Dialog
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
@@ -19,79 +22,25 @@ const TEST_IDENTITY = {
 };
 
 export const DeleteLibrary = (props: any) => {
+  // Snackbar
   const { enqueueSnackbar } = useSnackbar();
+  // Dialog
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-  const [libraries, setLibraries] = React.useState<any>([]);
-  const [selectedLibrary, setSelectedLibrary] = React.useState('');
-
-  async function getLibraries() {
-
-    await OrigynClient.getInstance().init(true, await getCanisterId());
-    let libraries = [];
-
-    if(props.currentTokenId == ''){
-      const response = await getNftCollectionMeta();
-      try{
-        let CollectionLibArrayFromMeta = response.ok.metadata[0].Class.filter((res) => {
-          return res.name === 'library';
-        })[0].value.Array.thawed;
-        console.log('CollectionLibArrayFromMeta', CollectionLibArrayFromMeta);
-        let i: any;
-        for (i in CollectionLibArrayFromMeta) {
-          const Immutable = CollectionLibArrayFromMeta[i].Class.filter((res) => {
-            return res.name === 'com.origyn.immutable_library';
-          })[0];
-          console.log(Immutable);
-          if (!Immutable) {
-            libraries.push(
-              CollectionLibArrayFromMeta[i].Class.filter((res) => {
-                return res.name === 'library_id';
-              })[0].value.Text,
-            );
-          }
-        }
-        console.log('libraries', libraries);
-      } catch (e) {
-        console.log('Error while creating Libraries from Collection Array', e);
-      }
-    }else{
-      const response = await getNft(props.currentTokenId);
-      try {
-        let LibArrayFromMeta = response.ok.metadata.Class.filter((res) => {
-          return res.name === 'library';
-        })[0].value.Array.thawed;
-        console.log('LibArrayFromMeta', LibArrayFromMeta);
-        let i: any;
-        for (i in LibArrayFromMeta) {
-          const Immutable = LibArrayFromMeta[i].Class.filter((res) => {
-            return res.name === 'com.origyn.immutable_library';
-          })[0];
-          console.log(Immutable);
-          if (!Immutable) {
-            libraries.push(
-              LibArrayFromMeta[i].Class.filter((res) => {
-                return res.name === 'library_id';
-              })[0].value.Text,
-            );
-          }
-        }
-        console.log('libraries', libraries);
-      } catch (e) {
-        console.log('Error while creating Libraries Array', e);
-      }
-    }
-    setLibraries(libraries);
-    setSelectedLibrary(libraries[0]);
-  }
-
-  const StageCollectionLibrary = async () => {
+  const DeleteMutableLibrary = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId(), {
       key: {
         seed: TEST_IDENTITY.seed,
       },
     });
     try {
-      const response = await deleteLibraryAsset(props.currentTokenId, selectedLibrary);
+      const response = await deleteLibraryAsset(props.currentTokenId, props.libraryId);
       console.log('resp', response);
       if (response.ok) {
         // Display a success message - SNACKBAR
@@ -102,6 +51,7 @@ export const DeleteLibrary = (props: any) => {
             horizontal: 'right',
           },
         });
+        handleClose();
       } else {
         enqueueSnackbar('Something went wrong', {
           variant: 'error',
@@ -110,60 +60,57 @@ export const DeleteLibrary = (props: any) => {
             horizontal: 'right',
           },
         });
+        handleClose();
       }
     } catch (e) {
       console.log('error', e);
+      handleClose();
     }
   };
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    setSelectedLibrary(event.target.value as string);
-  };
-
-  useEffect(() => {
-    getLibraries();
-  }, [props.currentTokenId]);
 
   return (
     <Grid item xs={12} m={2}>
-      <Box
-        sx={{
-          textAlign: 'Left',
-          mt: 2,
-          mb: 2,
-        }}
-      >
-        <Typography gutterBottom component="div">
-          <b>Token ID: {props.currentTokenId}</b>
-        </Typography>
-        <Typography>Select a Library to delete</Typography>
-      </Box>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Select</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={selectedLibrary}
-          label="Select"
-          onChange={handleSelectChange}
-        >
-          {libraries.map((library, index) => {
-            return (
-              <MenuItem key={library + index} value={library}>
-                {library}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
       <Box
         sx={{
           textAlign: 'right',
           mt: 2,
         }}
       >
-        <Button variant="outlined" onClick={() => StageCollectionLibrary()}>
-          DELETE LIB
-        </Button>
+        {!props.isMutable ? (
+          <>
+            <Stack direction="row" spacing={2}>
+              <Button
+                onClick={handleClickOpen}
+                color="error"
+                variant="outlined"
+                startIcon={<DeleteIcon />}
+              >
+                Delete this Library
+              </Button>
+            </Stack>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">{"Delete library "}{props.libraryId}</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to delete this library? <br/><b>This action is irreversible.</b>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Back</Button>
+                <Button onClick={DeleteMutableLibrary} autoFocus>
+                  Delete
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        ) : (
+          <></>
+        )}
       </Box>
     </Grid>
   );
