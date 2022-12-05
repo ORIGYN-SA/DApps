@@ -1,4 +1,3 @@
-
 import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authentication';
 import { NatPrice } from '@dapp/features-components';
 import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
@@ -261,6 +260,7 @@ export const NFTPage = () => {
             ).value.Array.thawed[0].Class.find(({ name }) => name === 'data').value.Class[2].value
               .Text,
           );
+
         })
         .catch(console.log);
     }
@@ -313,6 +313,7 @@ export const NFTPage = () => {
               <div style={{position:'relative', float:'left'}}>
               <OGYIcon/>             
                </div>
+
               <div>
                 <span style={{position:'relative', float:'left'}}>
                   OGY
