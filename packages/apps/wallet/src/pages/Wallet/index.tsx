@@ -16,7 +16,7 @@ import { AuthContext, useSessionContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { isLocal, timeConverter } from '@dapp/utils';
 import { ConfirmSalesActionModal, StartAuctionModal } from '@dapp/features-sales-escrows';
-import impossibleThingsImage from './impossible-things-image.js';
+
 
 const GuestContainer = () => {
   return (
@@ -44,18 +44,8 @@ const GuestContainer = () => {
             Connect to your wallet using a Chrome extension for Plug.
           </Typography>
           <Box sx={{ textAlign: 'center' }}>
-            <img
-              alt="Under development"
-              src={impossibleThingsImage}
-              style={{
-                marginTop: 30,
-                marginBottom: 30,
-                display: 'inline-block',
-                maxWidth: '100%',
-                width: 500,
-                borderRadius: 5,
-              }}
-            />
+
+            
           </Box>
         </Box>
       </Container>

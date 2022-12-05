@@ -363,9 +363,11 @@ const MainBox = styled.div`
   padding: 48px 24px;
   gap: 24px;
   width: 100%;
-  height: 240px;
+  height: 190px;  
   background: ${(props) => props.theme.colors.BLACK};
 `;
+
+//width: 240px for MainBox
 
 const MainBoxTitle = styled.span`
   font-family: ${(props) => props.theme.font.FONT_FAMILY_1};
@@ -405,7 +407,7 @@ const ContentBox = styled.div`
   margin-top: 89px;
 `;
 const ReadMoreSection = styled.div`
-  margin-top: 8px;
+
   font-family: 'Montserrat';
   font-style: normal;
   font-weight: 600;
@@ -747,7 +749,7 @@ const WalletPage = () => {
   const [dataArray, setDataArray] = useState([]);
   const [nftCreator1, setNftCreator1] = useState('unknown');
   const [nftCollection1, setNftCollection1] = useState('X');
-  const [image, setImage] = useState();
+  const [image, setImage] = useState('https://global-uploads.webflow.com/62389d118e225af7f581a554/623c85290116665a5b438d06_ORIGYN_Foundation_horizontal_white_RGB-p-500.png');
   const [collectionName, setCollectionName] = useState('Collection');
   const [nftDescription, setNftDescription] = useState('This is the NFT Description')
 
@@ -814,7 +816,7 @@ const WalletPage = () => {
   const nftCollection = async () => {
     const filterData: any = Number(arrayt2[0].collection);
     setNftCollection1(filterData);
-    setImage(arrayt2[0].image);
+    setImage(`${'https://'}${canisterId}${'.raw.ic0.app/-/'}${arrayt2[0].id}${'/preview'}`);
     setCollectionName(`${arrayt2[0].collection_name}${' '}${'Collection'}`)
     setNftCreator1(arrayt2[0].creator)
     setNftDescription(arrayt2[0].description)
@@ -826,7 +828,7 @@ const WalletPage = () => {
     nftCollection();
     Balance();
     NFTData();
-  }, [dataArray]);
+  }, [actor, dataArray]);
 
   return (
     <>
@@ -851,7 +853,7 @@ const WalletPage = () => {
             {/* -----------------Grid Main 2----------------------- */}
             <GridMain2>
               <MainBox>
-                <MainImage src={`${'https://'}${canisterId}${'.raw.ic0.app/'}${image}`} />
+                <MainImage src={image} />
                 <MainSection>
                   <MainBoxTitle>{collectionName}</MainBoxTitle>
                   <span style={{ paddingBottom: '8px', color: 'white' }}>
@@ -897,7 +899,7 @@ const WalletPage = () => {
                     <a key={index} style={{ textDecoration: 'none' }} href={`#/${nfts.id}`}>
                       <NftsContainer>
                         <MyNftsImage>
-                          <img height="307px" style={{ borderRadius: '12px' }} src={`${'https://'}${canisterId}${'.raw.ic0.app/'}${nfts.image}`} />
+                          <img height="307px" style={{ borderRadius: '12px' }} src={`https://${canisterId}.raw.ic0.app/-/${nfts.id}/preview`} />
                         </MyNftsImage>
                         <NftsTextContainer>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
