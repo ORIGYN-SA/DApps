@@ -5,7 +5,6 @@ import { Layout } from '@dapp/features-components';
 import { NFTPage } from '@dapp/features-sales-escrows';
 import { SiteProvider } from '@dapp/features-theme';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
-
 import Wallet from './pages/Wallet/DashboardLocal';
 import NFTCollectables from './components/NFTCollectabels';
 import Collection from './components/Collection';
@@ -13,8 +12,8 @@ import Activity from './components/Activity';
 import Theme from '../../../features/theme/src/styles/Theme';
 import styled from "styled-components"
 import Navbar from '../../../features/components/src/Layout/Navigation/Navbar';
+import { SessionProvider, AuthProvider } from '@dapp/features-authentication';
 
-import Wallet from './pages/Wallet';
 
 
 const App = () => (
