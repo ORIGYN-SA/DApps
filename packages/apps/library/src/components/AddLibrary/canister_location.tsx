@@ -8,6 +8,12 @@ import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import TextField from '@mui/material/TextField';
 import { useSnackbar } from 'notistack';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
   seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
@@ -25,6 +31,11 @@ export const CanisterLocation = (props: any) => {
   const [type, setType] = useState<any>();
   const [typedTitle, setTypedTitle] = useState<any>();
 
+  const [immutable, setImmutable] = React.useState(false);
+  const handleChange = (event) => {
+    setImmutable(event.target.value);
+    console.log(event.target.value)
+  };
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
   };
@@ -64,25 +75,25 @@ export const CanisterLocation = (props: any) => {
       },
     });
     try {
-    let i = 0;
-    const payload = {
-      files: [
-        ...(await Promise.all(
-          [...libraryAssets].map(async (file) => {
-            return {
-              filename: file.name,
-              index: i++,
-              path: file.path ?? `${file.size}+${file.name}`,
-              size: file.size,
-              type: file.type,
-              rawFile: await readFileAsync(file),
-            };
-          }),
-        )),
-      ],
-    };
-    console.log('payload is ',payload);
-      const response = await stageLibraryAsset(payload.files[0], props.tokenId, typedTitle);
+      let i = 0;
+      const payload = {
+        files: [
+          ...(await Promise.all(
+            [...libraryAssets].map(async (file) => {
+              return {
+                filename: file.name,
+                index: i++,
+                path: file.path ?? `${file.size}+${file.name}`,
+                size: file.size,
+                type: file.type,
+                rawFile: await readFileAsync(file),
+              };
+            }),
+          )),
+        ],
+      };
+      console.log('payload is ', payload);
+      const response = await stageLibraryAsset(payload.files[0], props.tokenId, typedTitle, immutable);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {
@@ -137,6 +148,27 @@ export const CanisterLocation = (props: any) => {
               onChange={handleInputChange}
               multiple={false}
             />
+          </Grid>
+        </Box>
+        <Box
+          sx={{
+            mt: 2,
+          }}
+        >
+          <Grid item xs={12} m={2}>
+            <FormControl>
+              <FormLabel id="demo-radio-buttons-group-label">Make library mutable or not</FormLabel>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="Mutable"
+                name="radio-buttons-group"
+                value={immutable}
+                onChange={handleChange}
+              >
+                <FormControlLabel value={false}control={<Radio />} label="Mutable" />
+                <FormControlLabel value={true} control={<Radio />} label="Immutable" />
+              </RadioGroup>
+            </FormControl>
           </Grid>
         </Box>
         {file === undefined ? (

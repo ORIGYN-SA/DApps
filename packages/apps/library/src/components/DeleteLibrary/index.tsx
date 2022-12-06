@@ -9,6 +9,7 @@ import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from '@mui/material/Stack';
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 // Dialog
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -114,7 +115,6 @@ export const DeleteLibrary = (props: any) => {
     <Grid item xs={12} m={2}>
       <Box
         sx={{
-          textAlign: 'right',
           mt: 2,
         }}
       >
