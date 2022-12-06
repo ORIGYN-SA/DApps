@@ -15,13 +15,16 @@ const theme = {
       SECONDARY_TEXT:'#5F5F5F',
       INACTIVE_BG: '#E3E3E3',
       BG: 'E3E3E3',
-      BG_TEXT: '#FEFEFE',
+      BG_TEXT: '#FFFFFF',
       GRAY: '#9A9A9A',
-      DARK_GRAY:'#6F6F6F'
+      DARK_GRAY:'#6F6F6F',
+      MAGENTA: '#70237D'
     },
     font: {
-      FONT_FAMILY_1: 'Montserrat'
-  
+      FONT_FAMILY_1: 'Montserrat',
+      FONT_WEIGHT_MEDIUM: 500,
+      FONT_WEIGHT_NORMAL: 400, 
+      FONT_WEIGHT_REGULAR: 400,
     },
     spacing: {
   

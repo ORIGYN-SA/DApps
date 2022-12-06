@@ -373,7 +373,7 @@ const MainBoxTitle = styled.span`
   font-family: ${(props) => props.theme.font.FONT_FAMILY_1};
   font-style: normal;
   font-weight: 600;
-  font-size: 32px;
+  font-size: 32pt;
   line-height: 40px;
   letter-spacing: -0.75px;
   color: ${(props) => props.theme.colors.BG_TEXT};
