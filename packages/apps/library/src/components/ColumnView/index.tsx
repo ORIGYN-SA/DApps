@@ -490,6 +490,7 @@ const ColumnView = () => {
                   loggedIn = {loggedIn}
                   library3={library3} 
                   owner = {owner}
+                  currentTokenId={''}
                   />
                 </Grid>
               </Box>
