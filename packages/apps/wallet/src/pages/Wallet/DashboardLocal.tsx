@@ -372,10 +372,10 @@ const MainBox = styled.div`
 const MainBoxTitle = styled.span`
   font-family: ${(props) => props.theme.font.FONT_FAMILY_1};
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 32pt;
   line-height: 40px;
-  letter-spacing: -0.75px;
+  letter-spacing: -1px;
   color: ${(props) => props.theme.colors.BG_TEXT};
   mix-blend-mode: normal;
   flex: none;
