@@ -17,6 +17,7 @@ import Dialog from '@mui/material/Dialog';
 import Modal from '@origyn-sa/origyn-art-ui';
 import { ConnectButton } from '@connect2ic/react';
 import { useAuthContext, useSessionContext } from '@dapp/features-authentication';
+import { DappMainBox, Button1 } from '../../../../../features/components/src/StyledComponents';
 
 const VaultBox = styled.div`
   height: 136px;
@@ -835,9 +836,9 @@ const WalletPage = () => {
       {loggedIn ? (
         <>
           {/* -----------------Vault Box----------------------- */}
-          <VaultBox>
+          <DappMainBox>
             <VaultBoxTitle>Vault Dashboard</VaultBoxTitle>
-          </VaultBox>
+          </DappMainBox>
 
           {/* -----------------Grid----------------------- */}
 
@@ -866,6 +867,9 @@ const WalletPage = () => {
                         {nftCollection1}
                       </span>
                       <span style={{ paddingRight: '48px', fontWeight: '600' }}>Main Items</span>
+                    </MainSection>
+                    <MainSection>
+                      <Button1 style={{width: '100'}}> test </Button1>
                     </MainSection>
                     <MainSection>
                       <span style={{ paddingRight: '48px', color: 'white', fontWeight: '600' }}>
