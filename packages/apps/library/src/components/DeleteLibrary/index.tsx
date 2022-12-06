@@ -15,6 +15,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Typography } from '@mui/material';
 
 const TEST_IDENTITY = {
   principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
@@ -76,44 +77,58 @@ export const DeleteLibrary = (props: any) => {
           mt: 2,
         }}
       >
-        {!props.isMutable ? (
-          <>
-            <Stack direction="row" spacing={2}>
-              <Button
-                onClick={handleClickOpen}
-                color="error"
-                variant="outlined"
-                startIcon={<DeleteIcon />}
-              >
-                Delete this Library
-              </Button>
-            </Stack>
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">{"Delete library "}{props.libraryId}</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to delete this library? <br/><b>This action is irreversible.</b>
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Back</Button>
-                <Button 
-                onClick={DeleteMutableLibrary} 
-                color="warning"
-                autoFocus>
-                  Delete
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </>
-        ) : (
-          <></>
-        )}
+        <>
+          {props.loggedIn ? (
+            <>
+              {!props.isMutable ? (
+                <>
+                  <Stack direction="row" spacing={2}>
+                    <Button
+                      onClick={handleClickOpen}
+                      color="error"
+                      variant="outlined"
+                      startIcon={<DeleteIcon />}
+                    >
+                      Delete this Library
+                    </Button>
+                  </Stack>
+                  <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                  >
+                    <DialogTitle id="alert-dialog-title">
+                      {'Delete library '}
+                      {props.libraryId}
+                    </DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to delete this library? <br />
+                        <b>This action is irreversible.</b>
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleClose}>Back</Button>
+                      <Button onClick={DeleteMutableLibrary} color="warning" autoFocus>
+                        Delete
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </>
+              ) : (
+                <></>
+              )}
+            </>
+          ) : (
+            <>
+            <Typography
+              fontSize={10}
+            >Not Logged In
+            </Typography>
+            </>
+          )}
+        </>
       </Box>
     </Grid>
   );

@@ -425,7 +425,10 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm currentTokenId={currentTokenId} />
+                  <LibraryForm 
+                  currentTokenId={currentTokenId} 
+                  loggedIn = {loggedIn}
+                  />
                 </Grid>
               </Box>
             </Collapse>
@@ -499,7 +502,9 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm currentTokenId={''} />
+                  <LibraryForm 
+                  loggedIn = {loggedIn}
+                  currentTokenId={''} />
                 </Grid>
               </Box>
             </Collapse>
