@@ -427,7 +427,6 @@ const ColumnView = () => {
                 <Grid item xs={12}>
                   <LibraryForm 
                   currentTokenId={currentTokenId} 
-                  loggedIn = {loggedIn}
                   />
                 </Grid>
               </Box>
@@ -467,6 +466,7 @@ const ColumnView = () => {
                     <NFTLibrary 
                     libDet={libDet}
                     currentTokenId={currentTokenId}
+                    loggedIn = {loggedIn}
                   />
                   </Grid>
                 </Grid>
@@ -485,7 +485,9 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryBox library3={library3} />
+                  <LibraryBox 
+                  loggedIn = {loggedIn}
+                  library3={library3} />
                 </Grid>
               </Box>
             </Collapse>
