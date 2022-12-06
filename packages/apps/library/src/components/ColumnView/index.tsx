@@ -467,6 +467,7 @@ const ColumnView = () => {
                     libDet={libDet}
                     currentTokenId={currentTokenId}
                     loggedIn = {loggedIn}
+                    owner = {owner}
                   />
                   </Grid>
                 </Grid>
@@ -487,7 +488,9 @@ const ColumnView = () => {
                 <Grid item xs={12}>
                   <LibraryBox 
                   loggedIn = {loggedIn}
-                  library3={library3} />
+                  library3={library3} 
+                  owner = {owner}
+                  />
                 </Grid>
               </Box>
             </Collapse>

@@ -123,6 +123,7 @@ export const NFTLibrary = (props: any) => {
         currentTokenId={props.currentTokenId}
         isMutable={isMutable}
         loggedIn = {props.loggedIn}
+        owner = {props.owner}
         />
       </Grid>
     </Grid>

@@ -80,7 +80,7 @@ export const DeleteLibrary = (props: any) => {
         <>
           {props.loggedIn ? (
             <>
-              {!props.isMutable ? (
+              {!props.isMutable && props.owner ? (
                 <>
                   <Stack direction="row" spacing={2}>
                     <Button
