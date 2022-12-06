@@ -117,7 +117,7 @@ export const DeleteLibrary = (props: any) => {
                   </Dialog>
                 </>
               ) : (
-                <></>
+                <>This library is immutable and can not be deleted</>
               )}
             </>
           ) : (
