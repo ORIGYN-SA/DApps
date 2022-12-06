@@ -503,6 +503,80 @@ const SVGItems = styled.div`
   border-radius: 8px;
 `;
 
+const TransferModal1 = styled.div`
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 48px 0px 32px;
+gap: 32px;
+width: 634px;
+height: 350px;
+left: 403px;
+top: 160px;
+background: #151515;
+border-radius: 24px;
+`
+
+const Transfermodal1TitleBox = styled.div`
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 24px;
+width: 538px;
+height: 36px;
+background: #151515;
+border-radius: 0px;
+`
+
+const Transfermodal1Title = styled.span`
+font-family: 'Montserrat';
+font-style: normal;
+font-weight: 600;
+font-size: 28px;
+line-height: 36px;
+display: flex;
+align-items: center;
+letter-spacing: -0.5px;
+color: #FEFEFE;
+`
+
+const Transfermodal1Subitle = styled.span`
+font-family: 'Montserrat';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+display: flex;
+align-items: center;
+letter-spacing: -0.2px;
+color: #9A9A9A;
+`
+
+const Transfermodal1ContentTitleBox = styled.div`
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 48px;
+gap: 24px;
+width: 634px;
+height: 26px;
+background: #151515;
+border-radius: 0px;
+`
+
+const Transfermodal1ContentTitle = styled.span`
+font-family: 'Montserrat';
+font-style: normal;
+font-weight: 600;
+font-size: 18px;
+line-height: 26px;
+display: flex;
+align-items: center;
+letter-spacing: -0.1px;
+color: #FEFEFE;
+`
+
 const LargeItems = () => {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
