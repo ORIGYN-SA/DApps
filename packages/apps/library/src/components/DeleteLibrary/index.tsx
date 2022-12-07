@@ -9,7 +9,6 @@ import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from '@mui/material/Stack';
-import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 // Dialog
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -31,10 +30,11 @@ export const DeleteLibrary = (props: any) => {
   const [numberLibraries, setNumberLibraries] = useState(null);
   const [messageLoadingStatus, setMessageLoadingStatus] = useState(null);
   const handleClickOpen = () => {setOpen(true);};
-  const handleClose = () => {setOpen(false);};
+  const handleClose = () => {setOpen(false)};
+  // Token that use the selected collection level library
+  const [tokensThatUseSelectedLibrary, setTokensThatUseSelectedLibrary] = useState<string[]>([]);
 
-  const startCount = async () => {
-
+  const CheckLibraries = async () => {
     setMessageLoadingStatus(false);
     await OrigynClient.getInstance().init(true, await getCanisterId(), {
       key: {
@@ -46,6 +46,7 @@ export const DeleteLibrary = (props: any) => {
 
       let i,j: any;
       let count: number = 0;
+      let arrayForTokens : string[] = [];
 
       let TokenArray : string[] = await getNftCollectionMeta().then((r) => {
         return r.ok.token_ids[0];
@@ -60,10 +61,12 @@ export const DeleteLibrary = (props: any) => {
             .value.Text;
           if (LibraryId === props.libraryId) {
             count++;
+            arrayForTokens.push(TokenArray[i]);
           }
         }
         setNumberLibraries(count);
         setMessageLoadingStatus(true);
+        setTokensThatUseSelectedLibrary(arrayForTokens);
       }
     } else {
       setMessageLoadingStatus(true);
@@ -71,10 +74,11 @@ export const DeleteLibrary = (props: any) => {
   };
 
   useEffect(() => {
-    startCount();
-  }, []);
+    CheckLibraries();
+  }, [props.libraryId]);
 
   const DeleteMutableLibrary = async () => {
+    console.log('tokensThatUseSelectedLibrary', tokensThatUseSelectedLibrary);
     // Init origyn client
     await OrigynClient.getInstance().init(true, await getCanisterId(), {
       key: {
