@@ -1,72 +1,25 @@
-import { Flex, Navbar } from '@origyn-sa/origyn-art-ui';
-import { Icons } from "@origyn-sa/origyn-art-ui";
+import { Flex, Navbar, SecondaryNav } from '@origyn-sa/origyn-art-ui'
+import { Icons, theme } from "@origyn-sa/origyn-art-ui";
 import React, { useContext, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuthContext } from '@dapp/features-authentication';
-import ThemeConfig, { SiteContext } from '@dapp/features-theme';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { ThemeProvider, createGlobalStyle } from "styled-components";
 
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
   {
-    href: 'ledger',
+    href: 'Home',
     title: 'Ledger',
-    icon: Icons.SafeIcon
-  },
-  {
-    href: 'data',
-    title: 'NFT info',
     icon: Icons.ProfileIcon
   },
   {
-    href: 'wallet',
-    title: 'Wallet',
-    icon: Icons.TransactionIcon
+    href: 'Vault',
+    title: 'NFT info',
+    icon: Icons.ProfileIcon
   },
 ];
 
-const theme = {
-  colors: {
-    BLACK: '#151515',
-    VERY_DARK_GREY: '#4a4a4a',
-    DARK_GREY: '#6F6F6F',
-    MID_GREY: '#AEAEAE',
-    LIGHT_GRAY: '#D8D8D8',
-    VERY_LIGHTER_GRAY: '#F2F2F2',
-    WHITE: '#F2F2F2',
-
-    ERROR: '#E42932',
-    PROGRESS: '#F2BD00',
-    SUCCESS: '#50AA3E',
-
-    ACCENT_COLOR: '#EE9907',
-    ACCENT_COLOR_2: '#FFE7BD',
-
-  },
-  shadows: {
-    sm: "0px 5px 5px -5px rgba(0, 0, 0, 0.1)",
-    md: "0px 5px 10px -5px rgba(26, 32, 44, 0.1)",
-    lg: "0px 10px 15px -3px rgba(26, 32, 44, 0.1), 0px 4px 6px -2px rgba(26, 32, 44, 0.05)",
-  },
-  typography: {
-
-  },
-  spacing: {
-
-  },
-  media: {
-    sm: '@media (max-width: 600px)',
-    md: '@media (max-width: 960px)',
-    lg: '@media (max-width: 1280px)',
-    xl: '@media (max-width: 1920px)',
-  },
-  containers: {
-    sm: 905,
-    md: 1150,
-    lg: 1400,
-  }
-};
 const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'Montserrat', Arial, sans-serif;
@@ -74,7 +27,7 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
   body {
-    background-color: #E5E5E5;
+    background-color: #000000;
     font-family: 'Montserrat', Arial, sans-serif;
     font-size: 15px;
     line-height: 22px;
@@ -170,32 +123,23 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-export const Layout = ({ menuItems, children }: LayoutProps) => {
-  const { onChangeMode, themeMode }: any = useContext(SiteContext);
+export const Layout = ({ children }: LayoutProps) => {
 
-  const { logIn, loggedIn, principal, logOut } = useAuthContext();
+  const { logIn } = useAuthContext();
   const { tokens, refreshAllBalances } = useTokensContext();
-  const toggleTheme = () => {
-    const t = themeMode === 'light' ? 'dark' : 'light';
-    onChangeMode(t);
-  };
-
-  const handleNavigation = (i) => {
-    window.location.href =
-      window.location.href.substr(0, window.location.href.lastIndexOf('\\') + 1) + i.page;
-  };
 
   useEffect(() => {
     if (tokens.OGY.balance === -1) {
       refreshAllBalances();
     }
   }, [tokens]);
+
   return (
     <>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <Flex fullWidth>
-          <Navbar navItems={initialMenuItems} onConnect={() => logIn('plug')} />
+          <Navbar navItems={initialMenuItems} />
             <Flex fullWidth>
                 {children}
             </Flex>
