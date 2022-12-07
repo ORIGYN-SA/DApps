@@ -81,19 +81,22 @@ export const CanisterLocation = (props: any) => {
           ...(await Promise.all(
             [...libraryAssets].map(async (file) => {
               return {
+                assetType: undefined,
                 filename: file.name,
                 index: i++,
                 path: file.path ?? `${file.size}+${file.name}`,
                 size: file.size,
                 type: file.type,
                 rawFile: await readFileAsync(file),
+                title:typedTitle,
+                immutable: immutable
               };
             }),
           )),
         ],
       };
       console.log('payload is ', payload);
-      const response = await stageLibraryAsset(payload.files[0], props.tokenId, typedTitle, immutable);
+      const response = await stageLibraryAsset([payload.files[0]], props.tokenId);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {

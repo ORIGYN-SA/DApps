@@ -401,7 +401,7 @@ const ColumnView = () => {
                             >
                               <ListItemText
                                 sx={{ paddingLeft: 1, width: 'max-content' }}
-                                primary={library?.Class[0]?.value?.Text}
+                                primary={library?.Class[1]?.value?.Text}
                               />
                             </ListItemButton>
                           </ListItem>

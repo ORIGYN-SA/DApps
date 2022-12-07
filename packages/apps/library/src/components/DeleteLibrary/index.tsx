@@ -34,6 +34,7 @@ export const DeleteLibrary = (props: any) => {
   // Token that use the selected collection level library
   const [tokensThatUseSelectedLibrary, setTokensThatUseSelectedLibrary] = useState<string[]>([]);
 
+
   const CheckLibraries = async () => {
     setMessageLoadingStatus(false);
     await OrigynClient.getInstance().init(true, await getCanisterId(), {
@@ -78,18 +79,48 @@ export const DeleteLibrary = (props: any) => {
   }, [props.libraryId]);
 
   const DeleteMutableLibrary = async () => {
-    console.log('tokensThatUseSelectedLibrary', tokensThatUseSelectedLibrary);
+
     // Init origyn client
     await OrigynClient.getInstance().init(true, await getCanisterId(), {
       key: {
         seed: TEST_IDENTITY.seed,
       },
     });
+
+    if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
+      for (let i in tokensThatUseSelectedLibrary) {
+        try {
+          const responseFromNftLib =  await deleteLibraryAsset(tokensThatUseSelectedLibrary[i], props.libraryId);
+          console.log('resp', responseFromNftLib);
+          if (responseFromNftLib.ok) {
+            // Display a success message - SNACKBAR
+            enqueueSnackbar('Library Deleted from '+tokensThatUseSelectedLibrary[i] , {
+              variant: 'success',
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+            });
+            handleClose();
+          }
+        } catch (e) {
+          enqueueSnackbar('Something went wrong', {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+          console.log('error', e);
+          handleClose();
+        }
+
+      }
+    }
+
     try {
-      //const response = await deleteLibraryAsset(props.currentTokenId, props.libraryId);
-      const response = 'ddddd';
-      console.log('resp', response);
-      if (response) {
+      const response = await deleteLibraryAsset(props.currentTokenId, props.libraryId);
+      if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library Deleted', {
           variant: 'success',
