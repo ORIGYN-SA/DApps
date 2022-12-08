@@ -81,6 +81,13 @@ const GuestContainer = () => {
 
 const StyledSectionTitle = styled.h1`
   margin: 48px 24px;
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -0.75px;
+  color: #FEFEFE;
 `
 
 const StyledCustomGrid = styled(Grid)`
@@ -484,7 +491,7 @@ const WalletPage = () => {
                     <LoadingContainer />
                   ) : <GridMain>
                     <StyledBlackCard flexFlow='column' padding='24px' gap={16}>
-                      <h3>Wallet Card</h3>
+                      <h3>Wallet Balances</h3>
                       {console.log(tokens)}
                       {
                         Object.values(tokens).map((k) => (
