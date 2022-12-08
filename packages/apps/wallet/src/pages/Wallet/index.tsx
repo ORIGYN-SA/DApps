@@ -343,7 +343,7 @@ const WalletPage = () => {
           })
 
           Promise.all(
-            [...response?.ok?.nfts, 'cerebellum-thalamus-diencephalon'].map((nft) => actor?.nft_origyn(nft).then((r) => {
+            response?.ok?.nfts.map((nft) => actor?.nft_origyn(nft).then((r) => {
               if ('err' in r)
                 throw new Error(Object.keys(r.err)[0])
 
