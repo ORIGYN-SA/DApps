@@ -1,16 +1,11 @@
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import {
   Box,
-  Button,
   Checkbox,
-  Container,
   FormControlLabel,
-  Tab,
-  Tabs,
   Tooltip,
   Typography,
 } from '@mui/material'
-import Link from '@mui/material/Link'
 import React, { useContext, useEffect, useState } from 'react'
 import {
   TabPanel,
@@ -18,6 +13,7 @@ import {
   Table,
   NatPrice,
   LoadingContainer,
+  WalletTokens,
 } from '@dapp/features-components'
 import { AuthContext } from '@dapp/features-authentication'
 import { useTokensContext } from '@dapp/features-tokens-provider'
@@ -26,8 +22,22 @@ import {
   ConfirmSalesActionModal,
   StartAuctionModal,
 } from '@dapp/features-sales-escrows'
-import { Banner, Card, Flex, Grid, HR, Icons, SecondaryNav, TabContent } from '@origyn-sa/origyn-art-ui'
+import {
+  Banner,
+  Button,
+  Card,
+  Flex,
+  Grid,
+  HR,
+  Icons,
+  SecondaryNav,
+  Select,
+  TabContent,
+  TextInput,
+  Container,
+} from '@origyn-sa/origyn-art-ui'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext)
@@ -74,7 +84,7 @@ const StyledSectionTitle = styled.h1`
 `
 
 const StyledCustomGrid = styled(Grid)`
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 2fr 5fr;
   padding: 24px;
 
   ${({ theme }) => theme.media.lg} {
@@ -84,6 +94,23 @@ const StyledCustomGrid = styled(Grid)`
 
 const StyledBlackCard = styled(Card)`
   background: ${({theme}) => theme.colors.DARK_BLACK};
+`
+
+const StyledCollectionImg = styled.img`
+  width: 96px;
+  height: 96px;
+`
+
+const StyledFilterSelect = styled.input`
+  width: 169px;
+  min-width: 169px;
+  height: 40px;
+  min-height: 40px;
+  border: 1px solid #242424;
+  padding: 9px 16px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  background: transparent;
 `
 
 const WalletPage = () => {
@@ -97,9 +124,11 @@ const WalletPage = () => {
     { id: 'end_date', label: 'End Date' },
     { id: 'actions', label: 'Actions' },
   ]
-  const { loggedIn, tokenId, canisterId, principal, actor, logIn } = useContext(AuthContext)
+  const { loggedIn, tokenId, canisterId, principal, actor, logIn, walletType } = useContext(AuthContext)
 
   const [openAuction, setOpenAuction] = React.useState(false)
+  const [collectionData, setCollectionData] = React.useState<any>()
+  const [collectionPreview, setCollectionPreview] = React.useState<any>()
   const [openConfirmation, setOpenConfirmation] = React.useState(false)
   const [selectdNFT, setSelectdNFT] = React.useState<any>()
   const [selectedEscrow, setSelectedEscrow] = useState<any>()
@@ -157,7 +186,7 @@ const WalletPage = () => {
         </Tooltip>
       ) || 'No sales'
       rows.raw_id = rows.id
-      rows.id = <Link href={`#/${rows.id}`}>{rows.id}</Link>
+      rows.id = <Link to={`#/${rows.id}`}>{rows.id}</Link>
       rows.preview = (
         <img
           src={`https://${canisterId}.raw.ic0.app/-/${rows.raw_id}/preview`}
@@ -201,7 +230,6 @@ const WalletPage = () => {
 
           if ('err' in response)
             throw new Error(Object.keys(response.err)[0])
-
           const escrows = response?.ok?.escrow
           const offers = response?.ok?.offers
           const inEscrow: any = []
@@ -300,8 +328,22 @@ const WalletPage = () => {
             out: { columns: outColumns, data: outEscrow },
           })
 
+          actor?.nft_origyn('').then((r) => {
+            if ('err' in r) {
+              console.log(r);
+            } else {
+              if ('Class' in r.ok.metadata) {
+                console.log(r.ok.metadata.Class);
+                setCollectionPreview(Object.values(r.ok.metadata.Class.find(({name}) => name === 'preview_asset').value)[0])
+                setCollectionData(r.ok.metadata.Class.find(({name}) => name === '__apps')
+                  .value.Array.thawed[0].Class.find(({name}) => name === 'data')
+                  .value.Class.reduce((arr, val) => ({...arr, [val.name]: Object.values(val.value)[0]}), {}));
+              }
+            }
+          })
+
           Promise.all(
-            response?.ok?.nfts?.map((nft) => actor?.nft_origyn(nft).then((r) => {
+            [...response?.ok?.nfts, 'cerebellum-thalamus-diencephalon'].map((nft) => actor?.nft_origyn(nft).then((r) => {
               if ('err' in r)
                 throw new Error(Object.keys(r.err)[0])
 
@@ -353,7 +395,21 @@ const WalletPage = () => {
 
               setActiveSales((prev) => ({ columns: prev.columns, rows }))
               setIsLoading(false)
-              setNFTData(createTableData(data))
+              const parsedData = data.map((it) => {
+                const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text;
+                const dataObj = it.metadata.Class.find(({name}) => name === '__apps')
+                  .value.Array.thawed[0].Class.find(({name}) => name === 'data')
+                  .value.Class.reduce((arr, val) => ({...arr, [val.name]: Object.values(val.value)[0]}), {});
+
+                return {
+                  ...dataObj,
+                  id: nftID,
+                }
+              });
+
+              console.log('!!!!', data, parsedData);
+
+              setNFTData(parsedData)
             })
             .catch((err) => {
               setIsLoading(false)
@@ -405,28 +461,120 @@ const WalletPage = () => {
                   ) : <StyledCustomGrid columns={2} gap={20}>
                     <StyledBlackCard flexFlow='column' padding='24px' gap={24}>
                       <h3>Wallet Card</h3>
+                      {console.log(tokens)}
+                      {
+                        Object.values(tokens).map((k) => (
+                          <StyledBlackCard align='center' padding='12px' justify='space-between'>
+                            <Flex gap={8}>
+                              <TokenIcon symbol={k.icon} />
+                              {k.symbol}
+                            </Flex>
+                            <Flex flexFlow='column' align='flex-end'>
+                              <p><b>{k.balance} {k.symbol}</b></p>
+                              <p style={{color: "#9A9A9A"}}>${k.balance / 4}</p>
+                            </Flex>
+                          </StyledBlackCard>
+                          )
+                        )
+                      }
+                      <p style={{fontSize: 10}}>Last Updated: HH:MM:SS, MM/DD/YYYY</p>
+                      <Button btnType="secondary">Transfer Tokens</Button>
+                      <WalletTokens>ManageTokens</WalletTokens>
+                      <h3>Manage Escrow</h3>
+                      <Button textButton disabled>No assets in escrow</Button>
                       <StyledBlackCard align='center' padding='12px' justify='space-between'>
-                        <Flex gap={8}>
-                          <Icons.DifinityLogoIcon width={24} />
-                          ICP
+                        <Flex align="center" gap={12}>
+                          <Icons.Wallet width={24} fill="#ffffff" height="auto" />
+                          <Flex flexFlow='column'>
+                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{walletType.charAt(0).toUpperCase() + walletType.slice(1)}</p>
+                            <p>{principal.toText().slice(0,2)}...{principal.toText().slice(-4)}</p>
+                          </Flex>
                         </Flex>
                         <Flex flexFlow='column' align='flex-end'>
-                          <p><b>700.000 ICP</b></p>
-                          <p>$4524.00</p>
+                          <Button iconButton size="medium">
+                            <Icons.PDFIcon width={12} height="auto" />
+                          </Button>
                         </Flex>
                       </StyledBlackCard>
                     </StyledBlackCard>
-                    {
-                      NFTData?.rows?.length > 0 && NFTData?.columns ? (
-                        <>
-                          <Table columns={NFTData.columns} rows={FilteredNFTData} />
-                        </>
-                      ) : (
-                        <Typography variant='h5' style={{ textAlign: 'center' }}>
-                          You do not have any NFT in your wallet
-                        </Typography>
-                      )
-                    }
+                    <div>
+                      <Flex gap={24}>
+                        <StyledCollectionImg src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`} alt='' />
+                        <Flex flexFlow="column" gap={8}>
+                          <h2>{collectionData?.name}</h2>
+                          <p><span style={{color: "#9A9A9A"}}>Created by</span> {collectionData && collectionData['com.bm.sample.app.creator_name']}</p>
+                          <br/>
+                          <Flex>
+                            <Flex flexFlow="column">
+                              <h2>{NFTData.length}</h2>
+                              <p style={{color: "#9A9A9A"}}>Owned Items</p>
+                            </Flex>
+                          </Flex>
+                          <br/>
+                          <p>{collectionData?.description}</p>
+                          <p style={{color: "#9A9A9A"}}><b>Read More</b></p>
+                          <br/>
+                          <br/>
+                        </Flex>
+                      </Flex>
+                      <HR color='MID_GREY' />
+                      <br/>
+                      <Flex justify="space-between" fullWidth>
+                        <Flex align="center" gap={12}>
+                          <Button iconButton size="small">
+                            <Icons.FilterIcon />
+                          </Button>
+                          <StyledFilterSelect placeholder="Status: All" />
+                          <Button size="small" btnType="outlined">More Filters</Button>
+                        </Flex>
+                        <Flex align="center" gap={12}>
+                          <Button btnType="outlined" iconButton size="small">
+                            <Icons.SearchIcon height={13} width={13} />
+                          </Button>
+                          <StyledFilterSelect placeholder="All Items" />
+                          <StyledFilterSelect placeholder="Listed: Recent" />
+                        </Flex>
+                      </Flex>
+                      <br/>
+
+                      {
+                        NFTData?.length > 0 ? (
+                          <Grid columns={3}>
+                            {
+                              NFTData.map((nft) => {
+                                return (
+                                  <Link to={`/${nft.id}`}>
+                                    <Card flexFlow="column" style={{overflow: 'hidden'}}>
+                                      <img
+                                        style={{width: '100%'}}
+                                        src={`https://${canisterId}.raw.ic0.app/-/${nft.id}/preview`}
+                                        alt=''
+                                      />
+                                      <Container size="full" padding="16px">
+                                        <Flex flexFlow="column" gap={32}>
+                                          <div>
+                                            <p style={{fontSize: '12px', color: '#9A9A9A'}}>{nft?.collectionid} Collection</p>
+                                            <p><b>{nft?.name}</b></p>
+                                          </div>
+                                          <div>
+                                            <p style={{fontSize: '12px', color: '#9A9A9A'}}>Status</p>
+                                            <p>currentOffer</p>
+                                          </div>
+                                        </Flex>
+                                      </Container>
+                                    </Card>
+                                  </Link>
+                                )
+                              })
+                            }
+                          </Grid>
+                        ) : (
+                          <Typography variant='h5' style={{ textAlign: 'center' }}>
+                            You do not have any NFT in your wallet
+                          </Typography>
+                        )
+                      }
+                    </div>
                   </StyledCustomGrid>}
                 </Flex>,
                 <div>

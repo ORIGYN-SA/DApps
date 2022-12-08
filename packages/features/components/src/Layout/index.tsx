@@ -11,12 +11,12 @@ const initialMenuItems: MenuItem[] = [
   {
     href: 'Home',
     title: 'Ledger',
-    icon: Icons.ProfileIcon
+    icon: Icons.Home
   },
   {
     href: 'Vault',
     title: 'NFT info',
-    icon: Icons.ProfileIcon
+    icon: Icons.Wallet
   },
 ];
 

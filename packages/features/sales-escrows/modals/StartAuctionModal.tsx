@@ -1,21 +1,13 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
 import { Principal } from '@dfinity/principal';
-import DialogTitle from '@mui/material/DialogTitle';
 import { AuthContext } from '@dapp/features-authentication';
 import {
-  Backdrop,
-  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   TextField,
-  Typography,
-  Grid,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useSnackbar } from 'notistack';
@@ -26,6 +18,7 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { TokenIcon } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
+import { Container, Flex, HR, Modal, TextInput } from '@origyn-sa/origyn-art-ui'
 
 export function StartAuctionModal({ currentToken, open, handleClose }: any) {
   const { actor } = React.useContext(AuthContext);
@@ -139,119 +132,78 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
   };
   return (
     <div>
-      <Dialog
-        open={open}
-        onClose={() => handleClose(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+      <Modal
+        isOpened={open}
+        closeModal={() => handleClose(false)}
+        size="md"
       >
-        <DialogTitle id="alert-dialog-title">
-          Start auction for {currentToken?.Class?.find(({ name }) => name === 'id').value.Text}?
-        </DialogTitle>
-        <DialogContent>
-          <Grid container spacing={3} mt={2}>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                required
-                label="Start Price"
-                fullWidth
-                id="startPrice"
-                variant="outlined"
-                value={startPrice}
-                onChange={(e) => setStartPrice(e.target.value)}
-                {...register('startPrice')}
-                error={!!errors.startPrice}
+        <Container size='full' padding='48px'>
+          <h2>Start an Auction</h2>
+          <br/>
+          <Flex flexFlow="column" gap={8}>
+            <TextInput
+              required
+              label="Start Price"
+              id="startPrice"
+              value={startPrice}
+              onChange={(e) => setStartPrice(e.target.value)}
+              error={errors?.startPrice?.message as string || ""}
+            />
+            <TextInput
+              required
+              label="Min Increase"
+              id="minIncrease"
+              value={priceStep}
+              onChange={(e) => setPriceStep(e.target.value)}
+              error={errors?.minIncrease?.message as string || ""}
+            />
+            <TextInput
+              required
+              label="Buy Now Price"
+              id="outlined-basic"
+              value={buyNowPrice}
+              onChange={(e) => setBuyNowPrice(e.target.value)}
+              error={errors?.buyNowPrice?.message as string || ""}
+            />
+            <LocalizationProvider fullWidth dateAdapter={AdapterMoment}>
+              <DateTimePicker
+                label="End Date"
+                value={endDate}
+                onChange={(newValue) => {
+                  setEndDate(newValue);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} {...register('endDate')} error={!!errors.endDate} />
+                )}
               />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.startPrice?.message}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                required
-                label="Min Increase"
-                fullWidth
-                id="minIncrease"
-                variant="outlined"
-                value={priceStep}
-                onChange={(e) => setPriceStep(e.target.value)}
-                {...register('minIncrease')}
-                error={!!errors.minIncrease}
-              />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.minIncrease?.message}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={12}>
-              <TextField
-                required
-                label="Buy Now Price"
-                fullWidth
-                id="outlined-basic"
-                variant="outlined"
-                value={buyNowPrice}
-                onChange={(e) => setBuyNowPrice(e.target.value)}
-                {...register('buyNowPrice')}
-                error={!!errors.buyNowPrice}
-              />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.buyNowPrice?.message}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={12}>
-              <LocalizationProvider fullWidth dateAdapter={AdapterMoment}>
-                <DateTimePicker
-                  label="End Date"
-                  value={endDate}
-                  onChange={(newValue) => {
-                    setEndDate(newValue);
-                  }}
-                  renderInput={(params) => (
-                    <TextField {...params} {...register('endDate')} error={!!errors.endDate} />
-                  )}
-                />
-              </LocalizationProvider>
-              <Typography variant="inherit" color="textSecondary">
-                {errors.endDate?.message}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={12}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Token</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={token}
-                  label="Token"
-                  onChange={handleChange}
-                >
-                  {Object.keys(tokens).map((t, index) => (
-                    <MenuItem key={`${token}+${index}`} value={t}>
-                      <TokenIcon symbol={tokens[t].icon} />
-                      {tokens[t].symbol}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleClose(false)}>Cancel</Button>
-          <Button onClick={handleSubmit(customSubmit)} autoFocus>
-            Start
-          </Button>
-        </DialogActions>
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={inProgress}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </Dialog>
+            </LocalizationProvider>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Token</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={token}
+                label="Token"
+                onChange={handleChange}
+              >
+                {Object.keys(tokens).map((t, index) => (
+                  <MenuItem key={`${token}+${index}`} value={t}>
+                    <TokenIcon symbol={tokens[t].icon} />
+                    {tokens[t].symbol}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <HR color='MID_GREY'/>
+            <Flex>
+              <Button onClick={() => handleClose(false)}>Cancel</Button>
+              <Button onClick={handleSubmit(customSubmit)} autoFocus>
+                Start
+              </Button>
+            </Flex>
+          </Flex>
+        </Container>
+      </Modal>
     </div>
   );
 }
