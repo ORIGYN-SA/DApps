@@ -28,6 +28,7 @@ import {
   Container,
   Grid, Banner, TabContent, CheckboxInput, TextInput, Select,
 } from '@origyn-sa/origyn-art-ui'
+import styled from 'styled-components'
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -59,6 +60,11 @@ const SymbolWithIcon = ({ symbol }: any) =>
       {symbol}
     </>
   )
+
+  const AuctionButton = styled(Button)`
+ background: #70237D
+  `
+
 export const NFTPage = () => {
   const { canisterId, principal, actor, logIn } = useContext(AuthContext)
   const [currentNFT, setCurrentNFT] = useState<any>({})
@@ -70,6 +76,8 @@ export const NFTPage = () => {
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false)
   const [modalInitialValues, setModalInitialValues] = React.useState({})
   const [expanded, setExpanded] = React.useState<string | false>('panel1')
+  const [roy1, setRoy1] = useState([])
+  const [roy2, setRoy2] = useState([])
 
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
@@ -154,7 +162,14 @@ export const NFTPage = () => {
           const dataObj = r?.ok.metadata.Class.find(({name}) => name === '__apps')
             .value.Array.thawed[0].Class.find(({name}) => name === 'data')
             .value.Class.reduce((arr, val) => ({...arr, [val.name]: Object.values(val.value)[0]}), {});
-          setCurrentNFT(dataObj)
+          const royal1 = r.ok.metadata.Class[7].value.Class[4].value.Array
+          const royal2 = r.ok.metadata.Class[7].value.Class[5].value.Array
+          setRoy2(royal2)
+          setRoy1(royal1)
+          setCurrentNFT(dataObj);
+          console.log(royal1)
+
+        console.log(currentNFT)
         })
         .catch(console.log)
     }
@@ -205,7 +220,7 @@ export const NFTPage = () => {
                         <Flex align="center" gap={8}><Icons.OrigynIcon width={22} /><b>-</b></Flex>
                         <div><b>{currentNFT?.collectionid}  Collection</b></div>
                       </Flex>
-                      <HR color='MID_GREY'/>
+                      <HR color='DARK_GREY'/>
                       <br/>
                       {
                         currentOpenAuction ? (
@@ -272,7 +287,7 @@ export const NFTPage = () => {
                               )}
                           </div>
                         ) : (
-                          <Button onClick={handleClickOpen}>Start an Auction</Button>
+                          <AuctionButton onClick={handleClickOpen}>Start an Auction</AuctionButton>
                         )
                       }
                     </Flex>
@@ -298,7 +313,8 @@ export const NFTPage = () => {
                                 <p>{k.charAt(0).toUpperCase() + k.slice(1)}</p>
                                 <p style={{fontSize: 12, color: "#9A9A9A"}}>{currentNFT[k].toString()}</p>
                               </Grid>
-                              <HR color='MID_GREY'/>
+                              <HR color='DARK_GREY'/>
+                              
                             </>
                           ))}
                         </Flex>
@@ -306,9 +322,33 @@ export const NFTPage = () => {
                         <br/>
                         <br/>
                       </Container>,
-                      <Flex flexFlow='column' gap={18} fullWidth>
-                          In development
-                      </Flex>,
+                      <Container size='sm'>
+                        <br/>
+                        <br/>
+                        <br/>
+                      <Flex flexFlow='column' gap={18}>
+                          {roy1?.frozen?.map((nft)=> (<>
+                          <Grid columns={2}>
+                            <p>{nft.Class[0].value.Text}</p>  
+                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{nft.Class[1].value.Float}</p>
+                            </Grid>
+                            <HR color='DARK_GREY'/>
+                            </>
+                            ))}
+                            {roy2?.frozen?.map((nft)=> (<>
+                          <Grid columns={2}>
+                            <p>{nft.Class[0].value.Text}</p>  
+                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{nft.Class[1].value.Float}</p>
+                            </Grid>
+                            <HR color='DARK_GREY'/>
+                            </>
+                            ))}
+                          
+                      </Flex>
+                      <br/>
+                        <br/>
+                        <br/>
+                      </Container>
                     ]}
                   />
                 </Banner>

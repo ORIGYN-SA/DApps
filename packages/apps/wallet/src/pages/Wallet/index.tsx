@@ -102,6 +102,7 @@ const StyledCustomGrid = styled(Grid)`
 const StyledBlackCard = styled(Card)`
   background: ${({theme}) => theme.colors.DARK_BLACK};
   margin-left: 20px;
+  width: 30%;
 `
 const StyledBlackItemCard = styled(Card)`
   background: ${({theme}) => theme.colors.DARK_BLACK};
@@ -483,7 +484,7 @@ const WalletPage = () => {
                   <HR color='DARK_GREY' />
                   {isLoading ? (
                     <LoadingContainer />
-                  ) : <GridMain>
+                  ) : <StyledCustomGrid columns={2} gap={20}>
                     <StyledBlackCard flexFlow='column' padding='24px' gap={16}>
                       <h3>Wallet Balances</h3>
                       {console.log(tokens)}
@@ -600,7 +601,7 @@ const WalletPage = () => {
                         )
                       }
                     </div>
-                  </GridMain>}
+                  </StyledCustomGrid>}
                 </Flex>,
                 <div>
                   {isLoading ? (
