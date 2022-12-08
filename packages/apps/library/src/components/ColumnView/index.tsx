@@ -97,6 +97,7 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
+    
     setOpenLib(!openLib);
     setOpen(false);
     setOpen1(false);
@@ -129,7 +130,7 @@ const ColumnView = () => {
   };
 
   const handleDetails = () => {
-    setOpenDetails(!openDetails);
+    setOpenDetails(true);
     setOpenDeta(false);
     setOpenForm(false);
   };
@@ -139,7 +140,7 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    setOpenDeta(!openDeta);
+    setOpenDeta(true);
     setLibDet(lib);
     setSelectedMeta(index);
     setOpenForm(false);
@@ -152,7 +153,7 @@ const ColumnView = () => {
   ) => {
     setLibrary3(lib3);
     setSelectedLibrary(index);
-    setOpenDub(!openDub);
+    setOpenDub(true);
     setOpenForm(false);
     setOpenFormDefault(false);
   };
@@ -211,9 +212,7 @@ const ColumnView = () => {
     console.log('responseCollectionMeta', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
-
     setCollectionNft(obj_token_ids);
-
     // In case we have URL with tokenID and we change canister,
     // We need to check if the tokenID is in the new canister
     // If not, we need to clear the URL and show the first tokenID in the new Canister
