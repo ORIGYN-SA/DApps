@@ -100,18 +100,14 @@ const StyledCustomGrid = styled(Grid)`
 `
 
 const StyledBlackCard = styled(Card)`
-  width: 307px;
   background: ${({theme}) => theme.colors.DARK_BLACK};
-  height: 700px;
   margin-left: 20px;
 `
 const StyledBlackItemCard = styled(Card)`
-  width: 259px;
   background: ${({theme}) => theme.colors.DARK_BLACK};
 `
 
-const GridMain2NFTS = styled.div`
-  display: flex;
+const GridMain2NFTS = styled(Flex)`
   flex-wrap: wrap;
 `;
 
@@ -133,9 +129,7 @@ const StyledFilterSelect = styled.input`
   background: transparent;
 `
 
-const GridMain = styled.div`
-  display: flex;
-  flex-direction: row;
+const GridMain = styled(Flex)`
   gap: 20px;
   margin-top: 20px;
 `;
