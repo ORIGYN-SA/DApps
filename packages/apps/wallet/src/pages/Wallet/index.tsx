@@ -93,12 +93,25 @@ const StyledCustomGrid = styled(Grid)`
 `
 
 const StyledBlackCard = styled(Card)`
+  width: 307px;
+  background: ${({theme}) => theme.colors.DARK_BLACK};
+  height: 700px;
+  margin-left: 20px;
+`
+const StyledBlackItemCard = styled(Card)`
+  width: 259px;
   background: ${({theme}) => theme.colors.DARK_BLACK};
 `
+
+const GridMain2NFTS = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
 const StyledCollectionImg = styled.img`
   width: 96px;
   height: 96px;
+  border-radius: 12px;
 `
 
 const StyledFilterSelect = styled.input`
@@ -112,6 +125,13 @@ const StyledFilterSelect = styled.input`
   box-sizing: border-box;
   background: transparent;
 `
+
+const GridMain = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-top: 20px;
+`;
 
 const WalletPage = () => {
   const activeSalesColumns = [
@@ -396,14 +416,16 @@ const WalletPage = () => {
               setActiveSales((prev) => ({ columns: prev.columns, rows }))
               setIsLoading(false)
               const parsedData = data.map((it) => {
+                const sale = it?.current_sale[0]?.sale_type?.auction?.current_bid_amount;
                 const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text;
                 const dataObj = it.metadata.Class.find(({name}) => name === '__apps')
                   .value.Array.thawed[0].Class.find(({name}) => name === 'data')
                   .value.Class.reduce((arr, val) => ({...arr, [val.name]: Object.values(val.value)[0]}), {});
-
+              const filterSale = Number(sale)
                 return {
+                  
                   ...dataObj,
-                  id: nftID,
+                  id: {nftID: nftID, sale: filterSale} 
                 }
               });
 
@@ -420,6 +442,8 @@ const WalletPage = () => {
   }
 
   useEffect(() => {
+    
+    console.log('123', collectionData);
     fetchData()
   }, [actor, principal])
 
@@ -447,7 +471,7 @@ const WalletPage = () => {
           <SecondaryNav
             title="Vault"
             tabs={[
-              { title: 'Balance', id: 'Balance' },
+              { title: 'Dashboard', id: 'Balance' },
               { title: 'Escrows', id: 'Escrows' },
               { title: 'Auctions', id: 'Auctions' },
             ]}
@@ -458,13 +482,13 @@ const WalletPage = () => {
                   <HR color='MID_GREY' />
                   {isLoading ? (
                     <LoadingContainer />
-                  ) : <StyledCustomGrid columns={2} gap={20}>
-                    <StyledBlackCard flexFlow='column' padding='24px' gap={24}>
+                  ) : <GridMain>
+                    <StyledBlackCard flexFlow='column' padding='24px' gap={16}>
                       <h3>Wallet Card</h3>
                       {console.log(tokens)}
                       {
                         Object.values(tokens).map((k) => (
-                          <StyledBlackCard align='center' padding='12px' justify='space-between'>
+                          <StyledBlackItemCard align='center' padding='12px' justify='space-between'>
                             <Flex gap={8}>
                               <TokenIcon symbol={k.icon} />
                               {k.symbol}
@@ -473,7 +497,7 @@ const WalletPage = () => {
                               <p><b>{k.balance} {k.symbol}</b></p>
                               <p style={{color: "#9A9A9A"}}>${k.balance / 4}</p>
                             </Flex>
-                          </StyledBlackCard>
+                          </StyledBlackItemCard>
                           )
                         )
                       }
@@ -498,15 +522,15 @@ const WalletPage = () => {
                       </StyledBlackCard>
                     </StyledBlackCard>
                     <div>
-                      <Flex gap={24}>
+                      <Flex align='flex-start' gap={24}>
                         <StyledCollectionImg src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`} alt='' />
                         <Flex flexFlow="column" gap={8}>
-                          <h2>{collectionData?.name}</h2>
-                          <p><span style={{color: "#9A9A9A"}}>Created by</span> {collectionData && collectionData['com.bm.sample.app.creator_name']}</p>
+                          <h2>{`${collectionData?.name}${' '}${'Collection'}`}</h2>
+                          <p><span style={{color: "#9A9A9A"}}>Created by</span><span style={{color: "#9A9A9A"}}>{collectionData?.creator_name}</span> </p>
                           <br/>
                           <Flex>
                             <Flex flexFlow="column">
-                              <h2>{NFTData.length}</h2>
+                              <h2>{collectionData?.total_in_collection}</h2>
                               <p style={{color: "#9A9A9A"}}>Owned Items</p>
                             </Flex>
                           </Flex>
@@ -539,15 +563,15 @@ const WalletPage = () => {
 
                       {
                         NFTData?.length > 0 ? (
-                          <Grid columns={3}>
+                          <GridMain2NFTS>
                             {
                               NFTData.map((nft) => {
                                 return (
-                                  <Link to={`/${nft.id}`}>
-                                    <Card flexFlow="column" style={{overflow: 'hidden'}}>
+                                  <Link to={`/${nft.id.nftID}`}>
+                                    <Card flexFlow="column" style={{overflow: 'hidden', margin: '12px'}}>
                                       <img
                                         style={{width: '100%'}}
-                                        src={`https://${canisterId}.raw.ic0.app/-/${nft.id}/preview`}
+                                        src={`https://${canisterId}.raw.ic0.app/-/${nft.id.nftID}/preview`}
                                         alt=''
                                       />
                                       <Container size="full" padding="16px">
@@ -558,7 +582,7 @@ const WalletPage = () => {
                                           </div>
                                           <div>
                                             <p style={{fontSize: '12px', color: '#9A9A9A'}}>Status</p>
-                                            <p>currentOffer</p>
+                                            <p>{nft.id.sale === NaN ? 'No auction started' : nft.id.sale}</p>
                                           </div>
                                         </Flex>
                                       </Container>
@@ -567,7 +591,7 @@ const WalletPage = () => {
                                 )
                               })
                             }
-                          </Grid>
+                          </GridMain2NFTS>
                         ) : (
                           <Typography variant='h5' style={{ textAlign: 'center' }}>
                             You do not have any NFT in your wallet
@@ -575,7 +599,7 @@ const WalletPage = () => {
                         )
                       }
                     </div>
-                  </StyledCustomGrid>}
+                  </GridMain>}
                 </Flex>,
                 <div>
                   {isLoading ? (

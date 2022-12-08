@@ -4,7 +4,8 @@ import React, { useContext, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { ThemeProvider, createGlobalStyle } from "styled-components";
+import styled, { ThemeProvider, createGlobalStyle} from "styled-components";
+import zIndex from '@mui/material/styles/zIndex';
 
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
@@ -123,6 +124,22 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
+const FixedNavbar = styled(Navbar)`
+position: fixed!important;
+top: 0;
+left: 0;
+z-index: 999;
+height: 100%;
+`
+
+const FixedFlex = styled(Flex)`
+position: fixed!important;
+top: 0;
+left: 0;
+z-index: 999;
+height: 100%;
+`
+
 export const Layout = ({ children }: LayoutProps) => {
 
   const { logIn } = useAuthContext();
@@ -139,7 +156,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <Flex fullWidth>
-          <Navbar navItems={initialMenuItems} />
+          <FixedNavbar navItems={initialMenuItems} />
             <Flex fullWidth>
                 {children}
             </Flex>
