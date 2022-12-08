@@ -486,7 +486,7 @@ const WalletPage = () => {
               [
                 <Flex fullWidth flexFlow='column'>
                   <StyledSectionTitle>Vault Dashboard</StyledSectionTitle>
-                  <HR color='MID_GREY' />
+                  <HR color='DARK_GREY' />
                   {isLoading ? (
                     <LoadingContainer />
                   ) : <GridMain>
@@ -548,7 +548,7 @@ const WalletPage = () => {
                           <br/>
                         </Flex>
                       </Flex>
-                      <HR color='MID_GREY' />
+                      <HR color='DARK_GREY' />
                       <br/>
                       <Flex justify="space-between" fullWidth>
                         <Flex align="center" gap={12}>
