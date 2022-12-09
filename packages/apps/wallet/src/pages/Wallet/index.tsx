@@ -38,6 +38,7 @@ import {
 } from '@origyn-sa/origyn-art-ui'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens'
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext)
@@ -140,6 +141,7 @@ const WalletPage = () => {
   })
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
+  const [openTrx, setOpenTrx] = useState(false);
 
   const { tokens } = useTokensContext()
 
@@ -153,6 +155,7 @@ const WalletPage = () => {
   }
 
   const handleClose = async (dataChanged = false) => {
+    setOpenTrx(false)
     setOpenAuction(false)
     setOpenConfirmation(false)
     if (dataChanged) {
@@ -478,7 +481,7 @@ const WalletPage = () => {
                         )
                       }
                       <p style={{fontSize: 10}}>Last Updated: HH:MM:SS, MM/DD/YYYY</p>
-                      <Button btnType="secondary">Transfer Tokens</Button>
+                      <Button btnType="secondary" onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h3>Manage Escrow</h3>
                       <Button textButton disabled>No assets in escrow</Button>
@@ -576,6 +579,12 @@ const WalletPage = () => {
                       }
                     </div>
                   </StyledCustomGrid>}
+
+                  <TransferTokensModal
+                  open={openTrx}
+                  handleClose={handleClose}
+                     />
+
                 </Flex>,
                 <div>
                   {isLoading ? (
