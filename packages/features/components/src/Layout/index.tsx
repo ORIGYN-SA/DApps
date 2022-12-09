@@ -30,8 +30,9 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: #000000;
     font-family: 'Montserrat', Arial, sans-serif;
-    font-size: 15px;
-    line-height: 22px;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0,2;
   }
   a {
     color: inherit;
@@ -43,23 +44,39 @@ const GlobalStyle = createGlobalStyle`
   }
   h1 {
     font-weight: 500;
-    font-size: 24px;
-    line-height: 32px;
+    font-size: 36px;
+    line-height: 44px;
+    letter-spacing: -1;
   }
   h2 {
     font-weight: 500;
-    font-size: 20px;
-    line-height: 28px;
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: -0,75;
   }
   h3 {
     font-weight: 500;
-    font-size: 18px;
-    line-height: 26px;
+    font-size: 28px;
+    line-height: 36px;
+    letter-spacing: -0,5;
   }
   h4 {
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 22px;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0,25;
+  }
+  h5 {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0,15;
+  }
+  h6 {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 26px;
+    letter-spacing: -0,1;
   }
   button, .buttonLabel {
     font-size: 12px;
@@ -131,15 +148,6 @@ left: 0;
 z-index: 999;
 height: 100%;
 `
-
-const FixedFlex = styled(Flex)`
-position: fixed!important;
-top: 0;
-left: 0;
-z-index: 999;
-height: 100%;
-`
-
 export const Layout = ({ children }: LayoutProps) => {
 
   const { logIn } = useAuthContext();
