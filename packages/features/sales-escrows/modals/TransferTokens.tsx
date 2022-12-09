@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
 import { AuthContext } from '@dapp/features-authentication';
 import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-sa/origyn-art-ui';
+import { LinearProgress } from '@mui/material';
 
 const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
   const { actor, ogyActor, principal } = React.useContext(AuthContext);
@@ -15,8 +16,10 @@ const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
   const walletType = localStorage.getItem('loggedIn');
   const [switchTransfer, setSwitchTransfer] = useState(false);
 
+  const totalAmount = Number(amount) + 0.002
+
   const sendTrx = () => {
-    sendTransaction(walletType, tokens[selectedToken], receiver, amount);
+    sendTransaction(walletType, tokens[selectedToken], receiver, totalAmount);
     setSwitchTransfer(true);
   };
 
@@ -37,7 +40,7 @@ const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
           <Container size="full" padding="48px">
             <h2>Transfer in Progress</h2>
             <br />
-            <span>loading bar placeholder</span>
+            <LinearProgress color='secondary'/>
           </Container>
         ) : (
           <Container size="full" padding="48px">
@@ -90,7 +93,7 @@ const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
             <br />
             <Flex flexFlow="row" justify="space-between">
               <h3>Total Amount</h3>
-              <span>{Number(amount) + 0.002}</span>
+              <span>{totalAmount}</span>
             </Flex>
             <br />
             <HR color="DARK_GREY" />
