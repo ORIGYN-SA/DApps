@@ -1,10 +1,9 @@
-import { Flex, Navbar, SecondaryNav } from '@origyn-sa/origyn-art-ui'
+import { Flex, Navbar } from '@origyn-sa/origyn-art-ui'
 import { Icons, theme } from "@origyn-sa/origyn-art-ui";
 import React, { useContext, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
-import { useAuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { ThemeProvider, createGlobalStyle } from "styled-components";
+import { ThemeProvider, createGlobalStyle} from "styled-components";
 
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
@@ -29,8 +28,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: #000000;
     font-family: 'Montserrat', Arial, sans-serif;
-    font-size: 15px;
-    line-height: 22px;
+    font-size: 16px;
+    line-height: 24px;
   }
   a {
     color: inherit;
@@ -42,23 +41,33 @@ const GlobalStyle = createGlobalStyle`
   }
   h1 {
     font-weight: 500;
+    font-size: 36px;
+    line-height: 44px;
+  }
+  h2 {
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 40px;
+  }
+  h3 {
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 36px;
+  }
+  h4 {
+    font-weight: 500;
     font-size: 24px;
     line-height: 32px;
   }
-  h2 {
+  h5 {
     font-weight: 500;
     font-size: 20px;
     line-height: 28px;
   }
-  h3 {
+  h6 {
     font-weight: 500;
     font-size: 18px;
     line-height: 26px;
-  }
-  h4 {
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 22px;
   }
   button, .buttonLabel {
     font-size: 12px;
@@ -124,8 +133,6 @@ const GlobalStyle = createGlobalStyle`
 `
 
 export const Layout = ({ children }: LayoutProps) => {
-
-  const { logIn } = useAuthContext();
   const { tokens, refreshAllBalances } = useTokensContext();
 
   useEffect(() => {
