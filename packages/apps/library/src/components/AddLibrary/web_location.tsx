@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { getCanisterId } from '@dapp/features-authentication';
+import { getCanisterId, AuthContext } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -12,12 +12,10 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 // mint.js
 import { OrigynClient, stageWebLibraryAsset } from '@origyn-sa/mintjs';
-const TEST_IDENTITY = {
-  principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
-  seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
-};
 
 export const WebLocation = (props: any) => {
+
+  const { actor } = useContext(AuthContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -40,11 +38,7 @@ export const WebLocation = (props: any) => {
   };
 
   const StageWebLibrary = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId(), {
-      key: {
-        seed: TEST_IDENTITY.seed,
-      },
-    });
+    await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
 
     try {
       const response = await stageWebLibraryAsset(props.tokenId, typedTitle, typedUrl,immutable);

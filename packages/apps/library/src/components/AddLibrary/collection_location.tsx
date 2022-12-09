@@ -1,26 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { getCanisterId } from '@dapp/features-authentication';
+import { getCanisterId,AuthContext } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-const TEST_IDENTITY = {
-  principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
-  seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
-};
 
 export const CollectionLocation = (props: any) => {
+  const {actor} = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
 
   const [libraries, setLibraries] = React.useState<any>([]);
@@ -58,11 +51,7 @@ export const CollectionLocation = (props: any) => {
   };
 
   const StageCollectionLibrary = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId(), {
-      key: {
-        seed: TEST_IDENTITY.seed,
-      },
-    });
+    await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
     try {
       const response = await stageCollectionLibraryAsset(props.tokenId, typedTitle, selectedLibrary,immutable);
       if (response.ok) {

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { getCanisterId } from '@dapp/features-authentication';
+import { getCanisterId,AuthContext } from '@dapp/features-authentication';
 import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
@@ -14,17 +14,13 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
-const TEST_IDENTITY = {
-  principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
-  seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
-};
-
 const currentCanisterId = async () => {
   const canisterId = await getCanisterId();
   return canisterId;
 };
 
 export const CanisterLocation = (props: any) => {
+  const { actor } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
   const [file, setFile] = useState<any>();
@@ -69,11 +65,7 @@ export const CanisterLocation = (props: any) => {
   };
 
   const stageLibrary = async () => {
-    await OrigynClient.getInstance().init(true, await currentCanisterId(), {
-      key: {
-        seed: TEST_IDENTITY.seed,
-      },
-    });
+    await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
     try {
       let i = 0;
       const payload = {
@@ -97,6 +89,7 @@ export const CanisterLocation = (props: any) => {
       };
       console.log('payload is ', payload);
       const response = await stageLibraryAsset([payload.files[0]], props.tokenId);
+      console.log('response',response);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {

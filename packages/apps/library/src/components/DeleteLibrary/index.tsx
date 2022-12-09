@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
+import { AuthContext } from '@dapp/features-authentication';
 // mint.js
 import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
 // Button delete
@@ -17,12 +18,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Typography } from '@mui/material';
 
-const TEST_IDENTITY = {
-  principalId: '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
-  seed: 'inherit disease hill can squirrel zone science dentist sadness exist wear aim',
-};
-
 export const DeleteLibrary = (props: any) => {
+  const { actor } = useContext(AuthContext);
   // Snackbar
   const { enqueueSnackbar } = useSnackbar();
   // Dialog
@@ -36,12 +33,9 @@ export const DeleteLibrary = (props: any) => {
 
 
   const CheckLibraries = async () => {
+    
+    await OrigynClient.getInstance().init(true, await getCanisterId(),{actor});
     setMessageLoadingStatus(false);
-    await OrigynClient.getInstance().init(true, await getCanisterId(), {
-      key: {
-        seed: TEST_IDENTITY.seed,
-      },
-    });
 
     if (props.currentTokenId == '') {
 
@@ -80,12 +74,7 @@ export const DeleteLibrary = (props: any) => {
 
   const DeleteMutableLibrary = async () => {
 
-    // Init origyn client
-    await OrigynClient.getInstance().init(true, await getCanisterId(), {
-      key: {
-        seed: TEST_IDENTITY.seed,
-      },
-    });
+    await OrigynClient.getInstance().init(true, await getCanisterId(),{actor});
 
     if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
       for (let i in tokensThatUseSelectedLibrary) {
