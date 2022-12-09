@@ -88,13 +88,11 @@ const StyledCustomGrid = styled(Grid)`
   ${({ theme }) => theme.media.lg} {
     grid-template-columns: 1fr 2fr;
   }
-`;
+`
 
 const StyledBlackCard = styled(Card)`
-  background: ${({ theme }) => theme.colors.DARK_BLACK};
-  margin-left: 20px;
-  width: 30%;
-`;
+  background: ${({theme}) => theme.colors.DARK_BLACK};
+`
 const StyledBlackItemCard = styled(Card)`
   background: ${({ theme }) => theme.colors.DARK_BLACK};
 `;
