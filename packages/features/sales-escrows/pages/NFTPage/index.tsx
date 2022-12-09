@@ -76,8 +76,8 @@ export const NFTPage = () => {
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false)
   const [modalInitialValues, setModalInitialValues] = React.useState({})
   const [expanded, setExpanded] = React.useState<string | false>('panel1')
-  const [roy1, setRoy1] = useState([])
-  const [roy2, setRoy2] = useState([])
+  const [roy1, setRoy1] = useState<any>()
+  const [roy2, setRoy2] = useState<any>()
 
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
@@ -152,7 +152,7 @@ export const NFTPage = () => {
     if (actor) {
       actor
         .nft_origyn(params.nft_id)
-        .then((r) => {
+        .then((r: any) => {
           console.log(r)
           setIsLoading(false)
 

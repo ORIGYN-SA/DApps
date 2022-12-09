@@ -1,8 +1,7 @@
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import { Box, Checkbox, FormControlLabel, Tooltip, Typography } from '@mui/material';
+import { Box, Tooltip, Typography } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import {
-  TabPanel,
   TokenIcon,
   Table,
   NatPrice,
@@ -97,10 +96,6 @@ const StyledBlackItemCard = styled(Card)`
   background: ${({ theme }) => theme.colors.DARK_BLACK};
 `;
 
-const GridMain2NFTS = styled(Flex)`
-  flex-wrap: wrap;
-`;
-
 const StyledCollectionImg = styled.img`
   width: 96px;
   height: 96px;
@@ -117,11 +112,6 @@ const StyledFilterSelect = styled.input`
   border-radius: 12px;
   box-sizing: border-box;
   background: transparent;
-`;
-
-const GridMain = styled(Flex)`
-  gap: 20px;
-  margin-top: 20px;
 `;
 
 const WalletPage = () => {
@@ -330,7 +320,7 @@ const WalletPage = () => {
           out: { columns: outColumns, data: outEscrow },
         });
 
-        actor?.nft_origyn('').then((r) => {
+        actor?.nft_origyn('').then((r: any) => {
           if ('err' in r) {
             console.log(r);
           } else {
@@ -354,7 +344,7 @@ const WalletPage = () => {
         });
 
         Promise.all(
-          response?.ok?.nfts.map((nft) =>
+          [...response?.ok?.nfts, "cerebellum-thalamus-diencephalon"].map((nft) =>
             actor?.nft_origyn(nft).then((r) => {
               if ('err' in r) throw new Error(Object.keys(r.err)[0]);
 
@@ -587,7 +577,7 @@ const WalletPage = () => {
                           gap={20}
                           rows={20}
                         >
-                          {NFTData.map((nft) => {
+                          {NFTData.map((nft: any) => {
                             return (
                               <Link to={`/${nft.id.nftID}`}>
                                 <Card flexFlow="column" style={{ overflow: 'hidden' }}>
@@ -609,7 +599,7 @@ const WalletPage = () => {
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                         <p>
-                                          {nft.id.sale === NaN ? 'No auction started' : nft.id.sale}
+                                          {nft.id.sale.toString() === "NaN" ? 'No auction started' : nft.id.sale}
                                         </p>
                                       </div>
                                     </Flex>
