@@ -162,8 +162,8 @@ export const NFTPage = () => {
           const dataObj = r?.ok.metadata.Class.find(({name}) => name === '__apps')
             .value.Array.thawed[0].Class.find(({name}) => name === 'data')
             .value.Class.reduce((arr, val) => ({...arr, [val.name]: Object.values(val.value)[0]}), {});
-          const royal1 = r.ok.metadata.Class[7].value.Class[4].value.Array
-          const royal2 = r.ok.metadata.Class[7].value.Class[5].value.Array
+          const royal1 = r.ok.metadata.Class.find(({name}) => name === '__system').value.Class.find(({name}) => name === 'com.origyn.royalties.primary').value.Array
+          const royal2 = r.ok.metadata.Class.find(({name}) => name === '__system').value.Class.find(({name}) => name === 'com.origyn.royalties.secondary').value.Array
           setRoy2(royal2)
           setRoy1(royal1)
           setCurrentNFT(dataObj);
@@ -329,16 +329,16 @@ export const NFTPage = () => {
                       <Flex flexFlow='column' gap={18}>
                           {roy1?.frozen?.map((nft)=> (<>
                           <Grid columns={2}>
-                            <p>{nft.Class[0].value.Text}</p>  
-                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{nft.Class[1].value.Float}</p>
+                            <p>{nft.Class.find(({name}) => name === 'tag').value.Text}</p>  
+                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{nft.Class.find(({name}) => name === 'rate').value.Float}</p>
                             </Grid>
                             <HR color='DARK_GREY'/>
                             </>
                             ))}
                             {roy2?.frozen?.map((nft)=> (<>
                           <Grid columns={2}>
-                            <p>{nft.Class[0].value.Text}</p>  
-                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{nft.Class[1].value.Float}</p>
+                            <p>{nft.Class.find(({name}) => name === 'tag').value.Text}</p>  
+                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{nft.Class.find(({name}) => name === 'rate').value.Float}</p>
                             </Grid>
                             <HR color='DARK_GREY'/>
                             </>
