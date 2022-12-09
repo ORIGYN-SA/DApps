@@ -14,6 +14,9 @@ const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
   const [token, setToken] = React.useState('OGY');
   const { tokens, refreshAllBalances } = useTokensContext();
   const [selectedToken, setSelectedToken] = useState();
+  const [amount, setAmount] = useState<any>(0)
+  const [ receiver, setReceiver] = useState<any>()
+  const [memo, setMemo] = useState<any>()
 
   // const amount = 1 * 1e8;
   // const walletType = localStorage.getItem('loggedIn');
@@ -47,7 +50,37 @@ const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
                 label: standard,
               }))}
             />
+            <br/>
+            <Flex flexFlow='row' justify="space-between">
+                <span>Amount</span>
+                <span>500 </span>
+                </Flex>
+                <TextInput
+                  id='standard-helperText'
+                  onChange={(e) => setAmount(e.target.value)}
+                  required
+                />
+                <br/>
+            <TextInput
+                  id='standard-helperText'
+                  label='Recipient Address'
+                  onChange={(e) => setReceiver(e.target.value)}
+                  required
+                />
+                <br/>
+            <TextInput
+                  id='standard-helperText'
+                  label='Memo'
+                  onChange={(e) => setMemo(e.target.value)}
+                  required
+                />
           </Flex>
+          <br/>
+          <h3>Transaction Fee</h3>
+          <span>0.002 OGY</span>
+          <br/>
+          <br/>
+          <h3>Total Amount</h3>
         </Container>
       </Modal>
     </div>
