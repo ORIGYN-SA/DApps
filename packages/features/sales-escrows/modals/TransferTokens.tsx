@@ -5,10 +5,7 @@ import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-s
 import { LinearProgress } from '@mui/material';
 
 const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
-  const { actor, ogyActor, principal } = React.useContext(AuthContext);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [token, setToken] = React.useState('OGY');
-  const { tokens, refreshAllBalances } = useTokensContext();
+  const { tokens} = useTokensContext();
   const [selectedToken, setSelectedToken] = useState<any>('OGY');
   const [amount, setAmount] = useState<any>(0);
   const [receiver, setReceiver] = useState<any>();
