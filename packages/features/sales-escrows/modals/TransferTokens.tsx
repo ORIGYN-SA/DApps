@@ -1,23 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
-import { AuthContext } from '@dapp/features-authentication';
 import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
-const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
-  const { tokens} = useTokensContext();
+const TransferTokensModal = ({ open, handleClose }: any) => {
+  const { tokens } = useTokensContext();
   const [selectedToken, setSelectedToken] = useState<any>('OGY');
   const [amount, setAmount] = useState<any>(0);
   const [receiver, setReceiver] = useState<any>();
   const [memo, setMemo] = useState<any>();
   const walletType = localStorage.getItem('loggedIn');
   const [switchTransfer, setSwitchTransfer] = useState(false);
-
-  const totalAmount = Number(amount) + 0.002
+  const [totalAmount, setTotalAmount] = useState(0);
 
   const sendTrx = () => {
-    sendTransaction(walletType, tokens[selectedToken], receiver, totalAmount);
-    setSwitchTransfer(true);
+    try {
+      sendTransaction(walletType, tokens[selectedToken], receiver, totalAmount);
+      setSwitchTransfer(true);
+    } catch (err) {
+      setSwitchTransfer(false);
+    }
   };
 
   //   <Container size='full' padding='48px'>
@@ -30,6 +32,10 @@ const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
 
   //        </Container>
 
+  useEffect(() => {
+    setTotalAmount(Number(amount) + tokens[selectedToken].fee);
+  }, [amount]);
+
   return (
     <div>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
@@ -37,7 +43,7 @@ const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
           <Container size="full" padding="48px">
             <h2>Transfer in Progress</h2>
             <br />
-            <LinearProgress color='secondary'/>
+            <LinearProgress color="secondary" />
           </Container>
         ) : (
           <Container size="full" padding="48px">
@@ -83,7 +89,7 @@ const TransferTokensModal = ({ currentToken, open, handleClose }: any) => {
               />
               <br />
               <span>Transaction Fee</span>
-              <span>0.002 OGY</span>
+              <span>{`${tokens[selectedToken].fee}${' '}${tokens[selectedToken].symbol}`}</span>
               <br />
             </Flex>
             <HR color="DARK_GREY" />

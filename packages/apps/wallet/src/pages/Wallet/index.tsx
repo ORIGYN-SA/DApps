@@ -39,6 +39,7 @@ import {
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens'
+import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows'
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext)
@@ -142,6 +143,8 @@ const WalletPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
   const [openTrx, setOpenTrx] = useState(false);
+  const [openEscrow, setOpenEscrow] = useState(false);
+  const [activeEsc, setActiveEsc] = useState<any>()
 
   const { tokens } = useTokensContext()
 
@@ -158,6 +161,7 @@ const WalletPage = () => {
     setOpenTrx(false)
     setOpenAuction(false)
     setOpenConfirmation(false)
+    setOpenEscrow(false)
     if (dataChanged) {
       fetchData()
     }
@@ -237,6 +241,8 @@ const WalletPage = () => {
           const offers = response?.ok?.offers
           const inEscrow: any = []
           const outEscrow: any = []
+          
+          setActiveEsc(escrows)
           console.log('balance of', response)
           if (escrows) {
             // TODO: fix escrow type
@@ -271,6 +277,7 @@ const WalletPage = () => {
               esc.amount = parseFloat(
                 (parseInt(escrow.amount) * 1e-8).toString(),
               ).toFixed(9)
+              
               outEscrow.push(esc)
             })
           }
@@ -326,10 +333,9 @@ const WalletPage = () => {
             { id: 'lockDate', label: 'Lock Date' },
             { id: 'actions', label: 'Actions' },
           ]
-          setActiveEscrows({
-            in: { columns: inColumns, data: inEscrow },
-            out: { columns: outColumns, data: outEscrow },
-          })
+          setActiveEscrows( inEscrow )
+          console.log('inecrow', inEscrow)
+          console.log('outescrow', outEscrow)
 
           actor?.nft_origyn('').then((r) => {
             if ('err' in r) {
@@ -344,6 +350,7 @@ const WalletPage = () => {
               }
             }
           })
+          console.log('escrow', escrows)
 
           Promise.all(
             response?.ok?.nfts.map((nft) => actor?.nft_origyn(nft).then((r) => {
@@ -443,6 +450,7 @@ const WalletPage = () => {
     : activeEscrows?.out?.data
 
   console.log('this is NFTData, ', NFTData)
+  console.log('active escrows', activeEscrows)
   return (
     <>
       {loggedIn ? (
@@ -484,7 +492,7 @@ const WalletPage = () => {
                       <Button btnType="secondary" onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h3>Manage Escrow</h3>
-                      <Button textButton disabled>No assets in escrow</Button>
+                      <Button textButton onClick={() => setOpenEscrow(true)}>No assets in escrow</Button>
                       <StyledBlackCard align='center' padding='12px' justify='space-between'>
                         <Flex align="center" gap={12}>
                           <Icons.Wallet width={24} fill="#ffffff" height="auto" />
@@ -584,6 +592,13 @@ const WalletPage = () => {
                   open={openTrx}
                   handleClose={handleClose}
                      />
+
+                     <ManageEscrowsModal
+                     open={openEscrow}
+                     handleClose={handleClose}
+                     activeEsc={activeEscrows}
+                     />
+                    
 
                 </Flex>,
                 <div>
