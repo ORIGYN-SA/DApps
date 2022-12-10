@@ -28,6 +28,7 @@ import {
 } from '@origyn-sa/origyn-art-ui';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext);
@@ -142,6 +143,8 @@ const WalletPage = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true);
+ const [openEscrow, setOpenEscrow] = useState(false);
+ const[activeEsc, setActiveEsc] = useState<any>();
 
   const { tokens } = useTokensContext();
 
@@ -157,6 +160,7 @@ const WalletPage = () => {
   const handleClose = async (dataChanged = false) => {
     setOpenAuction(false);
     setOpenConfirmation(false);
+    setOpenEscrow(false);
     if (dataChanged) {
       fetchData();
     }
@@ -234,6 +238,7 @@ const WalletPage = () => {
         const inEscrow: any = [];
         const outEscrow: any = [];
         console.log('balance of', response);
+        setActiveEsc(escrows);
         if (escrows) {
           // TODO: fix escrow type
           escrows.forEach((escrow: any, index) => {
@@ -315,10 +320,7 @@ const WalletPage = () => {
           { id: 'lockDate', label: 'Lock Date' },
           { id: 'actions', label: 'Actions' },
         ];
-        setActiveEscrows({
-          in: { columns: inColumns, data: inEscrow },
-          out: { columns: outColumns, data: outEscrow },
-        });
+        setActiveEscrows(inEscrow);
 
         actor?.nft_origyn('').then((r: any) => {
           if ('err' in r) {
@@ -492,7 +494,7 @@ const WalletPage = () => {
                       <Button btnType="secondary">Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h3>Manage Escrow</h3>
-                      <Button textButton disabled>
+                      <Button textButton onClick={()=>setOpenEscrow(true)}>
                         No assets in escrow
                       </Button>
                       <StyledBlackCard align="center" padding="12px" justify="space-between">
@@ -565,6 +567,12 @@ const WalletPage = () => {
                         </Flex>
                       </Flex>
                       <br />
+
+                      <ManageEscrowsModal
+                      open={openEscrow}
+                      handleClose={handleClose}
+                      activeEsc={activeEscrows}
+                      />
 
                       {NFTData?.length > 0 ? (
                         <Grid
