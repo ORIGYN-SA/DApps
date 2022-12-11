@@ -109,17 +109,18 @@ const StyledFilterSelect = styled.input`
   background: transparent;
 `
 
+const activeSalesColumns = [
+  { id: 'token_id', label: 'Token ID' },
+  { id: 'sale_id', label: 'Sale ID' },
+  { id: 'symbol', label: 'Token' },
+  { id: 'start_price', label: 'Start Price' },
+  { id: 'buy_now', label: 'Buy Now' },
+  { id: 'highest_bid', label: 'Highest Bid' },
+  { id: 'end_date', label: 'End Date' },
+  { id: 'actions', label: 'Actions' },
+];
+
 const WalletPage = () => {
-  const activeSalesColumns = [
-    { id: 'token_id', label: 'Token ID' },
-    { id: 'sale_id', label: 'Sale ID' },
-    { id: 'symbol', label: 'Token' },
-    { id: 'start_price', label: 'Start Price' },
-    { id: 'buy_now', label: 'Buy Now' },
-    { id: 'highest_bid', label: 'Highest Bid' },
-    { id: 'end_date', label: 'End Date' },
-    { id: 'actions', label: 'Actions' },
-  ]
   const { loggedIn, tokenId, canisterId, principal, actor, logIn, walletType } =
     useContext(AuthContext)
 
@@ -486,7 +487,7 @@ const WalletPage = () => {
                         </StyledBlackItemCard>
                       ))}
                       <p className="small_text secondary_color">Last Updated: HH:MM:SS, MM/DD/YYYY</p>
-                      <Button btnType='filled'>Transfer Tokens</Button>
+                      <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h6>Manage Escrow</h6>
                       <Button textButton disabled>
@@ -570,8 +571,8 @@ const WalletPage = () => {
                       <br/>
 
                       <TransferTokensModal
-                  open={openTrx}
-                  handleClose={handleClose}
+                        open={openTrx}
+                        handleClose={handleClose}
                      />
 
                       {NFTData?.length > 0 ? (

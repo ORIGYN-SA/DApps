@@ -1,39 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
-import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-sa/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
+import React, { useContext, useEffect, useState } from 'react'
+import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider'
+import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-sa/origyn-art-ui'
+import { LinearProgress } from '@mui/material'
+import * as Yup from 'yup'
+import { AuthContext } from '../../authentication'
+import { useSnackbar } from 'notistack'
+
+const validationSchema = Yup.object().shape({
+  amount: Yup.number()
+    .typeError('This must be a number')
+    .nullable()
+    .required('An amount is required!')
+    .default(0),
+  recipientAddress: Yup.string()
+    .typeError('This must be a principal')
+    .required('Recipient address is required!'),
+  memo: Yup.string().default(''),
+  token: Yup.string().default('OGY'),
+})
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
-  const { tokens } = useTokensContext();
-  const [selectedToken, setSelectedToken] = useState('OGY');
-  const [amount, setAmount] = useState<any>(0);
-  const [receiver, setReceiver] = useState<any>();
-  const [memo, setMemo] = useState<any>();
-  const walletType = localStorage.getItem('loggedIn');
-  const [switchTransfer, setSwitchTransfer] = useState(false);
-  const [totalAmount, setTotalAmount] = useState(0);
+  const { tokens } = useTokensContext()
+  const { walletType } = useContext(AuthContext)
+  const { enqueueSnackbar } = useSnackbar()
+  const [selectedToken, setSelectedToken] = useState('OGY')
+  const [switchTransfer, setSwitchTransfer] = useState(false)
+  // @ts-ignore
+  const [values, setValues] = React.useState<any>(validationSchema.default())
+  const [errors, setErrors] = React.useState<any>({})
+  const [totalAmount, setTotalAmount] = useState(0)
+
+
+  const onChange = (e?: any, name?: string, value?: any) => {
+    setErrors({ ...errors, [name || e.target.name]: undefined })
+    setValues({ ...values, [name || e.target.name]: value || e.target.value })
+  }
 
   const sendTrx = (data) => {
-    try {
-      sendTransaction(data.walletType, data.tokens, data.recipientAddress, data.totalAmount);
-      setSwitchTransfer(true);
-    } catch (err) {
-      setSwitchTransfer(false);
-    }
-  };
-
-  const data = {
-    walletType: walletType,
-    tokens: tokens[selectedToken],
-    amount: amount,
-    recipientAddress: receiver,
-    totalAmount: BigInt(totalAmount * 1e8)
-  };
-
-  console.log(data);
+    setSwitchTransfer(true)
+    console.log(data);
+    sendTransaction(walletType, tokens[data.token], data.recipientAddress, data.amount, data.memo)
+      .catch((e) => {
+        console.error(e);
+        setSwitchTransfer(false);
+        enqueueSnackbar('There was an error when starting your auction.', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      })
+      .then(() => {
+        setSwitchTransfer(false)
+      })
+      .finally(() => {
+        setSwitchTransfer(false)
+      })
+  }
 
   //   <Container size='full' padding='48px'>
   //             <h2>Success!</h2>
@@ -45,21 +69,6 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
 
   //        </Container>
 
-  useEffect(() => {
-    setTotalAmount(Number(amount) + tokens[selectedToken].fee * 0.00000001);
-  }, [amount]);
-
-  const validationSchema = Yup.object().shape({
-    amount: Yup.number()
-      .typeError('This must be a number')
-      .nullable()
-      .lessThan(Yup.ref('balance'), 'Account balance exceeded')
-      .required('An amount is required!'),
-    recipientAddress: Yup.string()
-      .typeError('This must be a principal')
-      .required('Recipient address is required!'),
-  });
-
   // const {
   //   handleSubmit,
   //   formState: { errors },
@@ -69,10 +78,6 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   // const customSubmit = (data) => {
   //   sendTrx(data);
   // };
-
-    // @ts-ignore
-    const [values, setValues] = React.useState<any>(validationSchema.default());
-    const [errors, setErrors] = React.useState<any>({})
 
   const getValidationErrors = (err) => {
     const validationErrors = {}
@@ -88,34 +93,34 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   const handleSubmit = (e: any) => {
     e.preventDefault()
     validationSchema.validate(values, { abortEarly: false }).then((v) => {
-      sendTrx(values);
+      sendTrx(values)
     })
       .catch(function(e) {
-        const errs = getValidationErrors(e);
+        const errs = getValidationErrors(e)
         setErrors(errs)
       })
   }
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
+      <Modal isOpened={open} closeModal={() => handleClose(false)} size='md'>
         {switchTransfer ? (
-          <Container size="full" padding="48px">
+          <Container size='full' padding='48px'>
             <h2>Transfer in Progress</h2>
             <br />
-            <LinearProgress color="secondary" />
+            <LinearProgress color='secondary' />
           </Container>
         ) : (
-          <Container onSubmit={handleSubmit} size="full" padding="48px">
+          <Container as='form' onSubmit={handleSubmit} size='full' padding='48px'>
             <h2>Transfer Tokens</h2>
             <br />
-            <Flex flexFlow="column" gap={8}>
+            <Flex flexFlow='column' gap={8}>
               <br />
               <span>Select token</span>
               <Select
-                placeholder="OGY"
+                placeholder='OGY'
                 handleChange={(option) => {
-                  setSelectedToken(option.value);
+                  onChange(null, 'token', option.value)
                 }}
                 options={Object.keys(tokens).map((standard) => ({
                   value: standard,
@@ -123,32 +128,31 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
                 }))}
               />
               <br />
-              <Flex flexFlow="row" justify="space-between">
+              <Flex flexFlow='row' justify='space-between'>
                 <span>Amount</span>
-                <span id="balance">{tokens[selectedToken].balance}</span>
+                <span id='balance'>{tokens[selectedToken].balance}</span>
               </Flex>
               <TextInput
-                id="amount"
-                onChange={(e) => setAmount(Number(e.target.value))}
-                required
-                value={amount}
-                error={(errors?.amount?.message as string) || ''}
+                name='amount'
+                type='number'
+                onChange={onChange}
+                value={values?.amount}
+                error={errors?.amount}
               />
               <br />
               <span>Recipient Address</span>
               <TextInput
-                id="recipientAddress"
-                onChange={(e) => setReceiver(e.target.value)}
-                required
-                value={receiver}
-                error={(errors?.recipientAddress?.message as string) || ''}
+                name='recipientAddress'
+                onChange={onChange}
+                value={values.recipientAddress}
+                error={errors.recipientAddress}
               />
               <br />
               <span>Memo</span>
               <TextInput
-                id="standard-helperText"
-                onChange={(e) => setMemo(e.target.value)}
-                required
+                name='memo'
+                value={values.memo}
+                onChange={onChange}
               />
               <br />
               <span>Transaction Fee</span>
@@ -157,17 +161,17 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
               }`}</span>
               <br />
             </Flex>
-            <HR color="DARK_GREY" />
+            <HR />
             <br />
-            <Flex flexFlow="row" justify="space-between">
+            <Flex flexFlow='row' justify='space-between'>
               <h3>Total Amount</h3>
               <span>{totalAmount}</span>
             </Flex>
             <br />
-            <HR color="DARK_GREY" />
+            <HR />
             <br />
-            <Flex justify="flex-end">
-              <Button btnType="secondary" type='submit'>
+            <Flex justify='flex-end'>
+              <Button btnType='secondary' type='submit'>
                 Transfer OGY
               </Button>
             </Flex>
@@ -175,7 +179,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         )}
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default TransferTokensModal;
+export default TransferTokensModal
