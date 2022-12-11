@@ -40,7 +40,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   const sendTrx = (data) => {
     setSwitchTransfer(true)
     console.log(data);
-    sendTransaction(isLocal(), activeWalletProvider.meta.name, tokens[data.token], data.recipientAddress, data.amount, data.memo)
+    sendTransaction(isLocal(), activeWalletProvider, tokens[data.token], data.recipientAddress, data.amount, data.memo)
       .catch((e) => {
         console.error(e);
         setSwitchTransfer(false);
