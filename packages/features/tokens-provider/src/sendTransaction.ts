@@ -6,7 +6,7 @@ import { getAccountId } from '@dapp/utils';
 import { toHex } from '@dfinity/agent/lib/esm/utils/buffer';
 
 // OGY and ICP
-const sendICP = async (actor: any, token: Token, to: any, amount: number) => {
+const sendICP = async (actor: any, token: Token, to: any, amount: number, memo?: number) => {
   const defaultArgs = {
     fee: token?.symbol === 'OGY' ? BigInt(200_000) : BigInt(10_000),
     memo: BigInt(0),
@@ -73,12 +73,13 @@ export const sendTransaction = async (
   token: Token,
   to: any,
   amount: number,
+  memo?: number,
   from?: string,
 ) => {
   const actor = await createWalletActor(walletType, token.canisterId, token.standard);
   switch (token.standard) {
     case IdlStandard.ICP:
-      return sendICP(actor, token, to, amount);
+      return sendICP(actor, token, to, amount, memo);
     case IdlStandard.WICP:
     case IdlStandard.DIP20:
       return sendWICP(actor, to, amount);
