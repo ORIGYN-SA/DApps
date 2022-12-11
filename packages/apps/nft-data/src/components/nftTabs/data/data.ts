@@ -1,4 +1,4 @@
-import { getTokenId, getCanisterId } from '@dapp/features-authentication';
+import { useRoute } from '@dapp/features-authentication';
 import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 
 export type Nft_Data = {
@@ -20,10 +20,11 @@ export type Permission = {
 }
 
 const getMetadata = async () => {
-  await OrigynClient.getInstance().init(true, await getCanisterId());
-  if (getTokenId()) {
+  const { tokenId, canisterId } = await useRoute();
+  await OrigynClient.getInstance().init(true, canisterId);
+  if (tokenId) {
     console.log('token id - getNft');
-    const response = await getNft(getTokenId());
+    const response = await getNft(tokenId);
     console.log('responseNFT', response);
     const metadata = await response.ok.metadata.Class;
     console.log('metadataNft', metadata);
@@ -39,6 +40,7 @@ const getMetadata = async () => {
 }
 
 export const getData = async () => {
+  const { tokenId } = await useRoute();
   let Data_Array: Nft_Data[] = [];
   const Metadata = await getMetadata();
   console.log('Metadata',Metadata);
@@ -87,7 +89,7 @@ export const getData = async () => {
         }
       );
       // Assets level - Only for NFTs, Not for collecrion 
-        if(getTokenId()){
+        if(tokenId){
           Data_Array.push(
           {
             name: 'Preview',

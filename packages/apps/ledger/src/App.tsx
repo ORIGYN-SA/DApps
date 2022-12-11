@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, HashRouter } from 'react-router-dom';
-import { AuthProvider } from '@dapp/features-authentication';
+import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
 import { SiteProvider } from '@dapp/features-theme';
 import Ledger from './pages/Ledger';
 import { Layout } from '@dapp/features-components';
@@ -10,19 +10,21 @@ import { SnackbarProvider } from 'notistack';
 
 const App = () => (
   <HashRouter>
-    <AuthProvider>
-      <SiteProvider>
+    <SiteProvider>
+      <SessionProvider>
         <TokensContextProvider>
-          <SnackbarProvider maxSnack={3}>
-            <Layout>
-              <Routes>
-                <Route path="*" element={<Ledger />} />
-              </Routes>
-            </Layout>
-          </SnackbarProvider>
+          <AuthProvider>
+            <SnackbarProvider maxSnack={3}>
+              <Layout>
+                <Routes>
+                  <Route path="*" element={<Ledger />} />
+                </Routes>
+              </Layout>
+            </SnackbarProvider>
+          </AuthProvider>
         </TokensContextProvider>
-      </SiteProvider>
-    </AuthProvider>
+      </SessionProvider>
+    </SiteProvider>
   </HashRouter>
 );
 

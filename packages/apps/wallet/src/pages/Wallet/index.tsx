@@ -1,19 +1,19 @@
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import { Box, Tooltip, Typography } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+import { Box, Tooltip, Typography } from '@mui/material'
+import React, { useContext, useEffect, useState } from 'react'
 import {
+  TabPanel,
   TokenIcon,
   Table,
   NatPrice,
   LoadingContainer,
   WalletTokens,
 } from '@dapp/features-components';
-import { AuthContext } from '@dapp/features-authentication';
-import { useTokensContext } from '@dapp/features-tokens-provider';
-import { timeConverter } from '@dapp/utils';
-import { ConfirmSalesActionModal, StartAuctionModal } from '@dapp/features-sales-escrows';
+import { useDialog } from "@connect2ic/react"
+import { AuthContext, useRoute } from '@dapp/features-authentication'
+import { useTokensContext } from '@dapp/features-tokens-provider'
+import { timeConverter } from '@dapp/utils'
+import { ConfirmSalesActionModal } from '@dapp/features-sales-escrows'
 import {
-  Banner,
   Button,
   Card,
   Flex,
@@ -24,18 +24,19 @@ import {
   Select,
   TabContent,
   TextInput,
-  Container,
-} from '@origyn-sa/origyn-art-ui';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
+  Container, ShowMoreBlock,
+} from '@origyn-sa/origyn-art-ui'
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
+import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens'
 
 const GuestContainer = () => {
-  const { logIn } = useContext(AuthContext);
+  const { open } = useDialog();
 
   return (
     <Box
-      component="main"
+      component='main'
       sx={{
         alignItems: 'center',
         display: 'flex',
@@ -43,7 +44,7 @@ const GuestContainer = () => {
         minHeight: '100%',
       }}
     >
-      <Container maxWidth="md">
+      <Container maxWidth='md'>
         <Box
           sx={{
             alignItems: 'center',
@@ -51,35 +52,27 @@ const GuestContainer = () => {
             flexDirection: 'column',
           }}
         >
-          <Typography align="center" color="textPrimary" variant="h2">
+          <Typography align='center' color='textPrimary' variant='h2'>
             Welcome to the NFT Wallet!
           </Typography>
-          <Typography align="center" color="textPrimary" variant="subtitle2">
+          <Typography align='center' color='textPrimary' variant='subtitle2'>
             Connect to your wallet using a Chrome extension for Plug.
           </Typography>
           <Button
-            onClick={() => logIn('plug')}
-            startIcon={<AccountBalanceWalletIcon fontSize="small" />}
-            variant="contained"
+            variant='contained'
+            onClick={open}
           >
             Connect wallet
           </Button>
         </Box>
       </Container>
     </Box>
-  );
-};
+  )
+}
 
-const StyledSectionTitle = styled.h1`
+const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 40px;
-  letter-spacing: -0.75px;
-  color: #fefefe;
-`;
+`
 
 const StyledCustomGrid = styled(Grid)`
   grid-template-columns: 2fr 5fr;
@@ -91,17 +84,17 @@ const StyledCustomGrid = styled(Grid)`
 `
 
 const StyledBlackCard = styled(Card)`
-  background: ${({theme}) => theme.colors.DARK_BLACK};
+  background: ${({ theme }) => theme.colors.DARK_BLACK};
 `
 const StyledBlackItemCard = styled(Card)`
   background: ${({ theme }) => theme.colors.DARK_BLACK};
-`;
+`
 
 const StyledCollectionImg = styled.img`
   width: 96px;
   height: 96px;
   border-radius: 12px;
-`;
+`
 
 const StyledFilterSelect = styled.input`
   width: 169px;
@@ -113,7 +106,18 @@ const StyledFilterSelect = styled.input`
   border-radius: 12px;
   box-sizing: border-box;
   background: transparent;
-`;
+`
+
+const activeSalesColumns = [
+  { id: 'token_id', label: 'Token ID' },
+  { id: 'sale_id', label: 'Sale ID' },
+  { id: 'symbol', label: 'Token' },
+  { id: 'start_price', label: 'Start Price' },
+  { id: 'buy_now', label: 'Buy Now' },
+  { id: 'highest_bid', label: 'Highest Bid' },
+  { id: 'end_date', label: 'End Date' },
+  { id: 'actions', label: 'Actions' },
+];
 
 const WalletPage = () => {
   const activeSalesColumns = [
@@ -125,184 +129,156 @@ const WalletPage = () => {
     { id: 'highest_bid', label: 'Highest Bid' },
     { id: 'end_date', label: 'End Date' },
     { id: 'actions', label: 'Actions' },
-  ];
-  const { loggedIn, tokenId, canisterId, principal, actor, logIn, walletType } =
-    useContext(AuthContext);
-
-  const [openAuction, setOpenAuction] = React.useState(false);
-  const [collectionData, setCollectionData] = React.useState<any>();
-  const [collectionPreview, setCollectionPreview] = React.useState<any>();
-  const [openConfirmation, setOpenConfirmation] = React.useState(false);
-  const [selectdNFT, setSelectdNFT] = React.useState<any>();
-  const [selectedEscrow, setSelectedEscrow] = useState<any>();
-  const [NFTData, setNFTData] = useState<any>();
-  const [activeEscrows, setActiveEscrows] = useState<any>();
-  const [dialogAction, setDialogAction] = useState<any>();
+  ]
+  const { loggedIn, principal, actor, activeWalletProvider } = useContext(AuthContext)
+  const [openAuction, setOpenAuction] = React.useState(false)
+  const [canisterId, setCanisterId] = React.useState("")
+  const [tokenId, setTokenId] = React.useState("")
+  const [collectionData, setCollectionData] = React.useState<any>()
+  const [collectionPreview, setCollectionPreview] = React.useState<any>()
+  const [openConfirmation, setOpenConfirmation] = React.useState(false)
+  const [selectdNFT, setSelectdNFT] = React.useState<any>()
+  const [selectedEscrow, setSelectedEscrow] = useState<any>()
+  const [NFTData, setNFTData] = useState<any>()
+  const [activeEscrows, setActiveEscrows] = useState<any>()
+  const [dialogAction, setDialogAction] = useState<any>()
   const [activeSales, setActiveSales] = useState<any>({
     columns: activeSalesColumns,
-  });
-  const [isLoading, setIsLoading] = useState(true);
-  const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true);
- const [openEscrow, setOpenEscrow] = useState(false);
- const[activeEsc, setActiveEsc] = useState<any>();
+  })
+  const [isLoading, setIsLoading] = useState(true)
+  const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
+  const [openTrx, setOpenTrx] = useState(false);
+
+  const { open } = useDialog()
 
   const { tokens } = useTokensContext();
 
   const handleClickOpen = (item, modal = 'auction') => {
-    setSelectdNFT(item.metadata);
-    if (modal === 'auction') setOpenAuction(true);
+    setSelectdNFT(item.metadata)
+    if (modal === 'auction') setOpenAuction(true)
     else if (modal === 'confirmEnd') {
-      setOpenConfirmation(true);
-      setDialogAction('endSale');
+      setOpenConfirmation(true)
+      setDialogAction('endSale')
     }
-  };
+  }
 
   const handleClose = async (dataChanged = false) => {
-    setOpenAuction(false);
-    setOpenConfirmation(false);
-    setOpenEscrow(false);
+    setOpenTrx(false)
+    setOpenAuction(false)
+    setOpenConfirmation(false)
     if (dataChanged) {
-      fetchData();
+      fetchData()
     }
-  };
-
-  const createTableData = (data) => {
-    const columns = [
-      { id: 'id', label: 'id' },
-      { id: 'preview', label: 'Preview' },
-      { id: 'sale', label: 'Active Sale' },
-      { id: 'saleStatus', label: 'Sale Status' },
-      { id: 'actions', label: 'Actions' },
-    ];
-
-    const rows = data?.map((item) => {
-      const rows: any = {};
-      item?.metadata?.Class?.map((meta) => {
-        if (!meta.name.startsWith('__')) {
-          if (meta?.value?.Text || meta?.value?.Principal) {
-            rows[meta.name] = meta?.value?.Text ?? meta?.value?.Principal.toText();
-          }
-        }
-      });
-
-      const sale_type = item?.current_sale.length > 0 ? item?.current_sale[0].sale_type : {};
-      rows.sale =
-        (
-          <Tooltip title={item?.current_sale[0]?.sale_id}>
-            <p>{item?.current_sale[0]?.sale_id?.substring(0, 8)}...</p>
-          </Tooltip>
-        ) || 'No sales';
-      rows.raw_id = rows.id;
-      rows.id = <Link to={`#/${rows.id}`}>{rows.id}</Link>;
-      rows.preview = (
-        <img
-          src={`https://${canisterId}.raw.ic0.app/-/${rows.raw_id}/preview`}
-          style={{ height: '50px', borderRadius: '5px' }}
-        />
-      );
-      rows.saleStatus = Object.keys(sale_type?.auction?.status || {})[0] || 'No sales';
-
-      const isAuctionStarted =
-        !sale_type?.auction?.status?.hasOwnProperty('closed') && sale_type?.auction;
-      // @ts-ignore
-      rows.actions = isAuctionStarted ? (
-        <span style={{ color: 'orange' }}>AUCTION STARTED</span>
-      ) : (
-        <Button onClick={() => handleClickOpen(item)}>Start Auction</Button>
-      );
-      return rows;
-    });
-
-    return { rows, columns: columns.filter((column) => column) };
-  };
+  }
 
   const withdrawEscrow = async (escrow) => {
-    setOpenConfirmation(true);
-    setSelectedEscrow(escrow);
-    setDialogAction('withdraw');
-  };
+    setOpenConfirmation(true)
+    setSelectedEscrow(escrow)
+    setDialogAction('withdraw')
+  }
 
   const rejectEscrow = async (escrow) => {
-    setOpenConfirmation(true);
-    setSelectedEscrow(escrow);
-    setDialogAction('reject');
-  };
+    setOpenConfirmation(true)
+    setSelectedEscrow(escrow)
+    setDialogAction('reject')
+  }
 
   const fetchData = () => {
     if (actor && principal) {
-      setIsLoading(true);
+      setIsLoading(true)
+
+      OrigynClient.getInstance().init(true, canisterId);
+      getNftCollectionMeta([]).then((r: any) => {
+        if ('err' in r) {
+          console.log(r)
+        } else {
+          console.log(r.ok, r.ok.metadata.Class)
+          setCollectionPreview(
+            Object.values(
+              r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
+            )[0],
+          )
+          setCollectionData(
+            r.ok.metadata[0].Class.find(({ name }) => name === '__apps')
+              .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
+              .value.Class.reduce(
+              (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+              {},
+            ),
+          )
+        }
+      })
       actor?.balance_of_nft_origyn({ principal }).then((response) => {
-        if ('err' in response) throw new Error(Object.keys(response.err)[0]);
-        const escrows = response?.ok?.escrow;
-        const offers = response?.ok?.offers;
-        const inEscrow: any = [];
-        const outEscrow: any = [];
-        console.log('balance of', response);
-        setActiveEsc(escrows);
+        if ('err' in response) throw new Error(Object.keys(response.err)[0])
+        const escrows = response?.ok?.escrow
+        const offers = response?.ok?.offers
+        const inEscrow: any = []
+        const outEscrow: any = []
+        console.log('balance of', response)
         if (escrows) {
           // TODO: fix escrow type
           escrows.forEach((escrow: any, index) => {
-            const esc: any = {};
-            esc.token_id = escrow.token_id;
+            const esc: any = {}
+            esc.token_id = escrow.token_id
             esc.actions = (
               <Button
                 onClick={() => withdrawEscrow(response?.ok?.escrow[index])}
-                variant="contained"
+                variant='contained'
               >
                 Withdraw
               </Button>
-            );
+            )
             esc.symbol = (
               <>
                 <TokenIcon symbol={tokens[escrow?.token?.ic?.symbol]?.icon} />
                 {escrow?.token?.ic?.symbol}
               </>
-            );
+            )
             esc.buyer = (
               <Tooltip title={escrow.buyer.principal.toText()}>
                 <p>{escrow.buyer.principal.toText().substring(0, 8)}...</p>
               </Tooltip>
-            );
+            )
             esc.seller = (
               <Tooltip title={escrow.seller.principal.toText()}>
                 <p>{escrow.seller.principal.toText().substring(0, 8)}...</p>
               </Tooltip>
-            );
+            )
 
-            esc.amount = parseFloat((parseInt(escrow.amount) * 1e-8).toString()).toFixed(9);
-            outEscrow.push(esc);
-          });
+            esc.amount = parseFloat((parseInt(escrow.amount) * 1e-8).toString()).toFixed(9)
+            outEscrow.push(esc)
+          })
         }
         if (offers) {
           // TODO: fix offer type
           offers.forEach((offer: any, index) => {
-            const esc: any = {};
-            esc.token_id = offer.token_id;
+            const esc: any = {}
+            esc.token_id = offer.token_id
             esc.actions = (
-              <Button onClick={() => rejectEscrow(response?.ok?.offers[index])} variant="contained">
+              <Button onClick={() => rejectEscrow(response?.ok?.offers[index])} variant='contained'>
                 Reject
               </Button>
-            );
+            )
             esc.symbol = (
               <>
                 <TokenIcon symbol={tokens[offer?.token?.ic?.symbol]?.icon} />
                 {offer?.token?.ic?.symbol}
               </>
-            );
+            )
             esc.buyer = (
               <Tooltip title={offer.buyer.principal.toText()}>
                 <p>{offer.buyer.principal.toText().substring(0, 8)}...</p>
               </Tooltip>
-            );
+            )
             esc.seller = (
               <Tooltip title={offer.seller.principal.toText()}>
                 <p>{offer.seller.principal.toText().substring(0, 8)}...</p>
               </Tooltip>
-            );
+            )
 
-            esc.amount = parseFloat((parseInt(offer.amount) * 1e-8).toString()).toFixed(9);
-            inEscrow.push(esc);
-          });
+            esc.amount = parseFloat((parseInt(offer.amount) * 1e-8).toString()).toFixed(9)
+            inEscrow.push(esc)
+          })
         }
         const inColumns = [
           { id: 'token_id', label: 'Id' },
@@ -311,7 +287,7 @@ const WalletPage = () => {
           { id: 'amount', label: 'Amount' },
           { id: 'lockDate', label: 'Lock Date' },
           { id: 'actions', label: 'Actions' },
-        ];
+        ]
         const outColumns = [
           { id: 'token_id', label: 'Id' },
           { id: 'seller', label: 'Seller' },
@@ -319,49 +295,30 @@ const WalletPage = () => {
           { id: 'amount', label: 'Amount' },
           { id: 'lockDate', label: 'Lock Date' },
           { id: 'actions', label: 'Actions' },
-        ];
-        setActiveEscrows(inEscrow);
+        ]
+        setActiveEscrows({
+          in: { columns: inColumns, data: inEscrow },
+          out: { columns: outColumns, data: outEscrow },
+        })
 
-        actor?.nft_origyn('').then((r: any) => {
-          if ('err' in r) {
-            console.log(r);
-          } else {
-            if ('Class' in r.ok.metadata) {
-              console.log(r.ok.metadata.Class);
-              setCollectionPreview(
-                Object.values(
-                  r.ok.metadata.Class.find(({ name }) => name === 'preview_asset').value,
-                )[0],
-              );
-              setCollectionData(
-                r.ok.metadata.Class.find(({ name }) => name === '__apps')
-                  .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-                  .value.Class.reduce(
-                    (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-                    {},
-                  ),
-              );
-            }
-          }
-        });
 
         Promise.all(
-          [...response?.ok?.nfts, "cerebellum-thalamus-diencephalon"].map((nft) =>
+          response?.ok?.nfts.map((nft) =>
             actor?.nft_origyn(nft).then((r) => {
-              if ('err' in r) throw new Error(Object.keys(r.err)[0]);
+              if ('err' in r) throw new Error(Object.keys(r.err)[0])
 
-              return r.ok;
+              return r.ok
             }),
           ),
         )
           .then((data: any) => {
-            const rows = [];
+            const rows = []
             for (const item of data) {
               for (const sale of item.current_sale) {
-                console.log(sale);
+                console.log(sale)
                 const { start_price, buy_now, token, ending } =
-                  sale?.sale_type?.auction?.config?.auction || {};
-                const { status, current_bid_amount } = sale?.sale_type?.auction || {};
+                sale?.sale_type?.auction?.config?.auction || {}
+                const { status, current_bid_amount } = sale?.sale_type?.auction || {}
 
                 if (!status?.hasOwnProperty('closed')) {
                   rows.push({
@@ -391,211 +348,220 @@ const WalletPage = () => {
                       ) : (
                         '-'
                       ),
-                  });
+                  })
                 }
               }
             }
 
-            setActiveSales((prev) => ({ columns: prev.columns, rows }));
-            setIsLoading(false);
+            setActiveSales((prev) => ({ columns: prev.columns, rows }))
+            setIsLoading(false)
             const parsedData = data.map((it) => {
-              const sale = it?.current_sale[0]?.sale_type?.auction?.current_bid_amount;
-              const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text;
+              const sale = it?.current_sale[0]?.sale_type?.auction?.current_bid_amount
+              const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text
               const dataObj = it.metadata.Class.find(({ name }) => name === '__apps')
                 .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
                 .value.Class.reduce(
                   (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
                   {},
-                );
-              const filterSale = Number(sale);
+                )
+              const filterSale = Number(sale)
               return {
                 ...dataObj,
                 id: { nftID: nftID, sale: filterSale },
-              };
-            });
+              }
+            })
 
-            console.log('!!!!', data, parsedData);
-
-            setNFTData(parsedData);
+            setNFTData(parsedData)
           })
           .catch((err) => {
-            setIsLoading(false);
-            console.log(err);
-          });
-      });
+            setIsLoading(false)
+            console.log(err)
+          })
+      })
     }
-  };
+  }
 
   useEffect(() => {
-    console.log('123', collectionData);
-    fetchData();
-  }, [actor, principal]);
+    if (loggedIn) {
+      fetchData()
+    }
+  }, [loggedIn])
+
+  useEffect(() => {
+    useRoute().then(({canisterId, tokenId}) => {
+      setCanisterId(canisterId);
+      setTokenId(tokenId);
+    })
+  }, [])
 
   const FilteredNFTData =
     tokenId && showOnlyTokenEntries
       ? NFTData?.rows?.filter((nft) => nft.raw_id === tokenId)
-      : NFTData?.rows;
+      : NFTData?.rows
 
   const FilteredActiveSales =
     tokenId && showOnlyTokenEntries
       ? activeSales?.rows?.filter((nft) => nft.token_id === tokenId)
-      : activeSales?.rows;
+      : activeSales?.rows
 
   const FilteredActiveEscrowsIn =
     tokenId && showOnlyTokenEntries
       ? activeEscrows?.in?.data?.filter((nft) => nft.token_id === tokenId)
-      : activeEscrows?.in?.data;
+      : activeEscrows?.in?.data
 
   const FilteredActiveEscrowsOut =
     tokenId && showOnlyTokenEntries
       ? activeEscrows?.out?.data?.filter((nft) => nft.token_id === tokenId)
-      : activeEscrows?.out?.data;
+      : activeEscrows?.out?.data
 
-  console.log('this is NFTData, ', NFTData);
+  console.log('this is NFTData, ', NFTData)
   return (
     <>
       {loggedIn ? (
-        <Banner fullWidth padding="0" flexFlow="column">
+        <Flex fullWidth padding='0' flexFlow='column'>
           <SecondaryNav
-            title="Vault"
+            title='Vault'
             tabs={[
-              { title: 'Dashboard', id: 'Balance' },
+              { title: 'Balance', id: 'Balance' },
               { title: 'Escrows', id: 'Escrows' },
               { title: 'Auctions', id: 'Auctions' },
             ]}
             content={[
-              <Flex fullWidth flexFlow="column">
+              <Flex fullWidth flexFlow='column'>
                 <StyledSectionTitle>Vault Dashboard</StyledSectionTitle>
-                <HR color="DARK_GREY" />
+                <HR />
                 {isLoading ? (
                   <LoadingContainer />
                 ) : (
                   <StyledCustomGrid columns={2} gap={20}>
-                    <StyledBlackCard flexFlow="column" padding="24px" gap={16}>
-                      <h3>Wallet Balances</h3>
-                      {console.log(tokens)}
+                    <Card bgColor='NAVIGATION_BACKGROUND' type='outlined' flexFlow='column' padding='24px' gap={16}>
+                      <h6>Wallet Balances</h6>
+                      <HR />
                       {Object.values(tokens).map((k) => (
-                        <StyledBlackItemCard align="center" padding="12px" justify="space-between">
+                        <StyledBlackItemCard align='center' padding='12px' justify='space-between'>
                           <Flex gap={8}>
                             <TokenIcon symbol={k.icon} />
                             {k.symbol}
                           </Flex>
-                          <Flex flexFlow="column" align="flex-end">
+                          <Flex flexFlow='column' align='flex-end'>
                             <p>
                               <b>
                                 {k.balance} {k.symbol}
                               </b>
                             </p>
-                            <p style={{ color: '#9A9A9A' }}>${k.balance / 4}</p>
+                            <p className="secondary_color">${k.balance / 4}</p>
                           </Flex>
                         </StyledBlackItemCard>
                       ))}
-                      <p style={{ fontSize: 10 }}>Last Updated: HH:MM:SS, MM/DD/YYYY</p>
-                      <Button btnType="secondary">Transfer Tokens</Button>
+                      <p className="small_text secondary_color">Last Updated: HH:MM:SS, MM/DD/YYYY</p>
+                      <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
-                      <h3>Manage Escrow</h3>
-                      <Button textButton onClick={()=>setOpenEscrow(true)}>
+                      <h6>Manage Escrow</h6>
+                      <Button textButton disabled>
                         No assets in escrow
                       </Button>
-                      <StyledBlackCard align="center" padding="12px" justify="space-between">
-                        <Flex align="center" gap={12}>
-                          <Icons.Wallet width={24} fill="#ffffff" height="auto" />
-                          <Flex flexFlow="column">
+                      <StyledBlackCard align='center' padding='12px' justify='space-between'>
+                        <Flex align='center' gap={12}>
+                          <Icons.Wallet width={24} fill='#ffffff' height='auto' />
+                          <Flex flexFlow='column'>
                             <p style={{ fontSize: 12, color: '#9A9A9A' }}>
-                              {walletType.charAt(0).toUpperCase() + walletType.slice(1)}
+                              {activeWalletProvider.meta.name.charAt(0).toUpperCase() + activeWalletProvider.meta.name.slice(1)}
                             </p>
                             <p>
                               {principal.toText().slice(0, 2)}...{principal.toText().slice(-4)}
                             </p>
                           </Flex>
                         </Flex>
-                        <Flex flexFlow="column" align="flex-end">
-                          <Button iconButton size="medium">
-                            <Icons.PDFIcon width={12} height="auto" />
+                        <Flex flexFlow='column' align='flex-end'>
+                          <Button iconButton size='medium'>
+                            <Icons.PDFIcon width={12} height='auto' />
                           </Button>
                         </Flex>
                       </StyledBlackCard>
-                    </StyledBlackCard>
+                    </Card>
                     <div>
-                      <Flex align="flex-start" gap={24}>
+                      <Flex align='flex-start' gap={24}>
                         <StyledCollectionImg
                           src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`}
-                          alt=""
+                          alt=''
                         />
-                        <Flex flexFlow="column" gap={8}>
-                          <h2>{`${collectionData?.name}${' '}${'Collection'}`}</h2>
+                        <Flex flexFlow='column' gap={8}>
+                          <h2><b>{collectionData?.name} Collection</b></h2>
                           <p>
-                            <span style={{ color: '#9A9A9A' }}>Created by</span>
-                            <span style={{ color: '#9A9A9A' }}>
-                              {collectionData?.creator_name}
-                            </span>{' '}
+                            <span className="secondary_color">Created by</span>
+                            <span className="secondary_color">
+                              {collectionData?.creator_name
+                                ? (
+                                  collectionData?.creator_name
+                                ) : (
+                                  `${collectionData?.creator_principal?.toString()} (no creator_name)`
+                                )}
+                            </span>
                           </p>
                           <br />
                           <Flex>
-                            <Flex flexFlow="column">
-                              <h2>{collectionData?.total_in_collection}</h2>
-                              <p style={{ color: '#9A9A9A' }}>Owned Items</p>
+                            <Flex flexFlow='column'>
+                              <h5>{NFTData?.length}</h5>
+                              <p className="secondary_color">Owned Items</p>
                             </Flex>
                           </Flex>
                           <br />
-                          <p>{collectionData?.description}</p>
-                          <p style={{ color: '#9A9A9A' }}>
-                            <b>Read More</b>
-                          </p>
+                          <ShowMoreBlock btnText="Read More">
+                            <p className="secondary_color">
+                              {collectionData?.description}
+                            </p>
+                          </ShowMoreBlock>
                           <br />
                           <br />
                         </Flex>
                       </Flex>
-                      <HR color="DARK_GREY" />
+                      <HR />
                       <br />
-                      <Flex justify="space-between" fullWidth>
-                        <Flex align="center" gap={12}>
-                          <Button iconButton size="small">
+                      <Flex justify='space-between' fullWidth smFlexFlow="column" mdFlexFlow="column" gap={8}>
+                        <Flex align='center' gap={12} smFlexFlow="column">
+                          <Button iconButton size='small'>
                             <Icons.FilterIcon />
                           </Button>
-                          <StyledFilterSelect placeholder="Status: All" />
-                          <Button size="small" btnType="outlined">
+                          <StyledFilterSelect placeholder='Status: All' />
+                          <Button size='small' btnType='outlined'>
                             More Filters
                           </Button>
                         </Flex>
-                        <Flex align="center" gap={12}>
-                          <Button btnType="outlined" iconButton size="small">
+                        <Flex align='center' gap={12} smFlexFlow="column">
+                          <Button btnType='outlined' iconButton size='small'>
                             <Icons.SearchIcon height={13} width={13} />
                           </Button>
-                          <StyledFilterSelect placeholder="All Items" />
-                          <StyledFilterSelect placeholder="Listed: Recent" />
+                          <StyledFilterSelect placeholder='All Items' />
+                          <StyledFilterSelect placeholder='Listed: Recent' />
                         </Flex>
                       </Flex>
-                      <br />
+                      <br/>
 
-                      <ManageEscrowsModal
-                      open={openEscrow}
-                      handleClose={handleClose}
-                      activeEsc={activeEscrows}
-                      />
+                      <TransferTokensModal
+                        open={openTrx}
+                        handleClose={handleClose}
+                     />
 
                       {NFTData?.length > 0 ? (
                         <Grid
                           smColumns={1}
-                          mdColumns={3}
-                          lgColumns={4}
-                          xlColumns={6}
-                          md={3}
-                          columns={10}
+                          mdColumns={2}
+                          lgColumns={3}
+                          xlColumns={4}
+                          columns={6}
                           gap={20}
-                          rows={20}
                         >
                           {NFTData.map((nft: any) => {
                             return (
                               <Link to={`/${nft.id.nftID}`}>
-                                <Card flexFlow="column" style={{ overflow: 'hidden' }}>
+                                <Card flexFlow='column' style={{ overflow: 'hidden' }}>
                                   <img
                                     style={{ width: '100%' }}
                                     src={`https://${canisterId}.raw.ic0.app/-/${nft.id.nftID}/preview`}
-                                    alt=""
+                                    alt=''
                                   />
-                                  <Container size="full" padding="16px">
-                                    <Flex flexFlow="column" gap={32}>
+                                  <Container size='full' padding='16px'>
+                                    <Flex flexFlow='column' gap={32}>
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
                                           {nft?.collectionid} Collection
@@ -607,18 +573,18 @@ const WalletPage = () => {
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                         <p>
-                                          {nft.id.sale.toString() === "NaN" ? 'No auction started' : nft.id.sale}
+                                          {nft.id.sale.toString() === 'NaN' ? 'No auction started' : nft.id.sale}
                                         </p>
                                       </div>
                                     </Flex>
                                   </Container>
                                 </Card>
                               </Link>
-                            );
+                            )
                           })}
                         </Grid>
                       ) : (
-                        <Typography variant="h5" style={{ textAlign: 'center' }}>
+                        <Typography variant='h5' style={{ textAlign: 'center' }}>
                           You do not have any NFT in your wallet
                         </Typography>
                       )}
@@ -632,7 +598,7 @@ const WalletPage = () => {
                 ) : activeSales?.rows?.length > 0 ? (
                   <Table columns={activeSales.columns} rows={FilteredActiveSales} />
                 ) : (
-                  <Typography variant="h5" style={{ textAlign: 'center' }}>
+                  <Typography variant='h5' style={{ textAlign: 'center' }}>
                     You do not have any active sale at this moment
                   </Typography>
                 )}
@@ -659,17 +625,15 @@ const WalletPage = () => {
                     )}
                   </>
                 ) : (
-                  <Typography variant="h5" style={{ textAlign: 'center' }}>
+                  <Typography variant='h5' style={{ textAlign: 'center' }}>
                     You do not have any active escrow at this moment
                   </Typography>
                 )}
               </div>,
             ]}
-            onConnect={() => logIn('plug')}
+            onConnect={() => {open(); return {}}}
             principal={principal?.toText()}
           />
-
-
           <ConfirmSalesActionModal
             open={openConfirmation}
             handleClose={handleClose}
@@ -677,12 +641,12 @@ const WalletPage = () => {
             action={dialogAction}
             escrow={selectedEscrow}
           />
-        </Banner>
+        </Flex>
       ) : (
         <GuestContainer />
       )}
     </>
-  );
-};
+  )
+}
 
-export default WalletPage;
+export default WalletPage

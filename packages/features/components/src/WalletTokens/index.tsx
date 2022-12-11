@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useTokensContext } from '@dapp/features-tokens-provider'
-import { IdlStandard } from '@dapp/utils'
+import { IdlStandard, isLocal } from '@dapp/utils'
 import { TokenIcon } from '../TokenIcon'
 import { LoadingContainer } from '../LoadingContainer'
 import {
@@ -15,8 +15,10 @@ import {
   TabContent,
   TextInput,
 } from '@origyn-sa/origyn-art-ui'
+import { AuthContext } from '../../../authentication'
 
 export const WalletTokens = ({ children }: any) => {
+  const { principal } = useContext(AuthContext)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [selectedTab, setSelectedTab] = useState<number>(0)
   const [selectedStandard, setSelectedStandard] = useState<string>(
@@ -30,19 +32,19 @@ export const WalletTokens = ({ children }: any) => {
     if (isLoading) return
     setIsLoading(true)
     const tokenResponse = await addToken(
+      isLocal(),
       inputCanisterId,
       IdlStandard[selectedStandard],
+      principal
     )
     if (typeof tokenResponse !== 'string') {
-      enqueueSnackbar(
-        `You have successfully added token ${tokenResponse.symbol}.`,
-        {
+      enqueueSnackbar(`You have successfully added token ${tokenResponse.symbol}.`, {
           variant: 'success',
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
           },
-        },
+        }
       )
     } else {
       enqueueSnackbar(tokenResponse, {
@@ -61,7 +63,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true)
-    refreshAllBalances()
+    // refreshAllBalances(isLocal(), principal)
   }
   const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
     setSelectedTab(tab)
