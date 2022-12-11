@@ -38,7 +38,7 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
   const Balance = async () => {
     const data = await actor?.balance_of_nft_origyn({ principal });
     const data3 = await data.ok.escrow;
-    // setEscrow(data3);
+    setEscrow(data3);
   };
 
   useEffect(() => {
@@ -111,7 +111,7 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
           </Card>
           <br />
 
-          {escrow.map((esc: any, index) => (
+          {escrow.length > 0 ? escrow.map((esc: any, index) => (
             <>
               <Flex flexFlow="row" justify="space-around">
                 <img
@@ -146,7 +146,7 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
               <br />
               <br />
             </>
-          ))}
+          )) : 'No escrow available'}
         </Container>
       </Modal>
 
