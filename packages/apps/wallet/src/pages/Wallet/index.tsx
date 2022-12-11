@@ -303,7 +303,7 @@ const WalletPage = () => {
 
 
         Promise.all(
-          [...response?.ok?.nfts, 'cerebellum-thalamus-diencephalon'].map((nft) =>
+          response?.ok?.nfts.map((nft) =>
             actor?.nft_origyn(nft).then((r) => {
               if ('err' in r) throw new Error(Object.keys(r.err)[0])
 
@@ -501,7 +501,7 @@ const WalletPage = () => {
                           <br />
                           <Flex>
                             <Flex flexFlow='column'>
-                              <h5>{NFTData.length}</h5>
+                              <h5>{NFTData?.length}</h5>
                               <p className="secondary_color">Owned Items</p>
                             </Flex>
                           </Flex>
