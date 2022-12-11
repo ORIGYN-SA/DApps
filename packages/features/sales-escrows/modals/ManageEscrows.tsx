@@ -30,12 +30,61 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [selectdNFT, setSelectdNFT] = React.useState<any>();
   const [dialogAction, setDialogAction] = useState<any>();
+  const [openSuccess, setOpenSuccess] = useState(false);
+
+  const [escrow, setEscrow] = useState([1, 2, 3]);
+
+  //-----------------
+  const Balance = async () => {
+    const data = await actor?.balance_of_nft_origyn({ principal });
+    const data3 = await data.ok.escrow;
+    // setEscrow(data3);
+  };
+
+  useEffect(() => {
+    Balance();
+  }, [tokens]);
+
+  //------------------
 
   const withdrawEscrow = async (escrow) => {
+    handleClose(false);
     setOpenConfirmation(true);
     setSelectedEscrow(escrow);
     setDialogAction('withdraw');
     setSelectdNFT(escrow.token_id);
+    _handleClose(true);
+  };
+
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  const _handleClose = async (confirm = false) => {
+    if (confirm && actor) {
+      if (isLoading) return;
+      setIsLoading(true);
+      const tokenId = selectdNFT?.Class?.find(({ name }) => name === 'id').value.Text;
+
+      if (!escrow) {
+        return handleClose(false);
+      }
+
+      try {
+        const withdrawResponse = await actor?.sale_nft_origyn({
+          withdraw: {
+            escrow: {
+              ...selectedEscrow,
+              withdraw_to: { principal },
+            },
+          },
+        });
+
+        setIsLoading(false);
+
+        setOpenConfirmation(false);
+        setOpenSuccess(true);
+      } catch (err) {}
+      return handleClose(false);
+    }
   };
 
   console.log('this is true', activeEsc);
@@ -60,41 +109,74 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
               <p style={{ color: '#9A9A9A' }}>${tokens['OGY']?.balance / 4}</p>
             </Flex>
           </Card>
+          <br />
 
-          {activeEsc.map((esc: any, index) => (
-            <Flex flexFlow="row">
-              <img src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`} alt="" />
-              <Flex flexFlow="column">
-                <span>{esc.token_id}</span>
-                <span>bm</span>
+          {escrow.map((esc: any, index) => (
+            <>
+              <Flex flexFlow="row" justify="space-around">
+                <img
+                  style={{ width: '42px', height: '42px', borderRadius: '12px' }}
+                  src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                  alt=""
+                />
+                <Flex flexFlow="column">
+                  <span>{esc.token_id}</span>
+                  <span>bm</span>
+                </Flex>
+                <Flex flexFlow="column">
+                  <span>Amount</span>
+                  <span>{parseFloat((parseInt(esc.amount) * 1e-8).toString()).toFixed(9)}</span>
+                </Flex>
+                <Flex flexFlow="column">
+                  <span>Status</span>
+                  <span>{Date.now() * 1e6 > parseInt(esc.ending) ? 'Active' : 'Expired'}</span>
+                </Flex>
+                {Date.now() * 1e6 > parseInt(esc.ending) ? (
+                  ''
+                ) : (
+                  <Button
+                    btnType="secondary"
+                    size="small"
+                    onClick={() => withdrawEscrow(esc[index])}
+                  >
+                    Withdraw
+                  </Button>
+                )}
               </Flex>
-              <Flex flexFlow="column">
-                <span>Amount</span>
-                <span>{parseFloat((parseInt(esc.amount) * 1e-8).toString()).toFixed(9)}</span>
-              </Flex>
-              <Flex flexFlow="column">
-                <span>Status</span>
-                <span>{Date.now() * 1e6 > parseInt(esc.ending) ? 'Active' : 'Expired'}</span>
-              </Flex>
-              {Date.now() * 1e6 > parseInt(esc.ending) ? (
-                ''
-              ) : (
-                <Button bTnType="secondary" onClick={() => withdrawEscrow(esc[index])}>
-                  Withdraw
-                </Button>
-              )}
-            </Flex>
+              <br />
+              <br />
+            </>
           ))}
         </Container>
       </Modal>
 
-      <ConfirmSalesActionModal
-        open={openConfirmation}
-        handleClose={handleClose}
-        currentToken={selectdNFT}
-        action={dialogAction}
-        escrow={selectedEscrow}
-      />
+      <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
+        <Container size="full" padding="48px">
+          <h3>Withdrawing Escrow...</h3>
+          <br />
+          <span
+            style={{ color: 'gray' }}
+          >{`${'Your escrow for '}${selectdNFT}${' is being withdrawn'}`}</span>
+          {isLoading && (
+            <div style={{ marginTop: 5 }}>
+              <LoadingContainer />
+            </div>
+          )}
+        </Container>
+      </Modal>
+
+      <Modal isOpened={openSuccess} closeModal={() => handleClose(false)} size="md">
+        <Container size="full" padding="48px">
+          <h3>Success!</h3>
+          <br />
+          <span style={{ color: 'gray' }}>Your escrow has been withdrawn successfully</span>
+          <Flex align="flex-end">
+            <Button btnType="secondary" size="small" onClick={() => setOpenSuccess(false)}>
+              Done
+            </Button>
+          </Flex>
+        </Container>
+      </Modal>
     </div>
   );
 };
