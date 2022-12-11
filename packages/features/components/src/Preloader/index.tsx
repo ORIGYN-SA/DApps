@@ -7,6 +7,7 @@ const StyledPreloader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: ${({theme}) => theme?.colors?.BACKGROUND};
 
   svg {
     stroke-dasharray: 450;
