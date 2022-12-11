@@ -1,31 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
 import { AuthContext, useAuthContext } from '@dapp/features-authentication';
-import {
-  Container,
-  Flex,
-  HR,
-  Modal,
-  TextInput,
-  Select,
-  Button,
-  Card,
-} from '@origyn-sa/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
-import styled from 'styled-components';
-import {
-  TabPanel,
-  TokenIcon,
-  Table,
-  NatPrice,
-  LoadingContainer,
-  WalletTokens,
-} from '@dapp/features-components';
-import { ConfirmSalesActionModal, StartAuctionModal } from '@dapp/features-sales-escrows';
+import { Container, Flex, Modal, Button, Card } from '@origyn-sa/origyn-art-ui';
+import { TokenIcon, LoadingContainer } from '@dapp/features-components';
 
 const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
-  const { loggedIn, principal, actor, canisterId } = useAuthContext();
-  const { tokens, refreshAllBalances } = useTokensContext();
+  const { principal, actor, canisterId } = useAuthContext();
+  const { tokens } = useTokensContext();
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [selectdNFT, setSelectdNFT] = React.useState<any>();
@@ -111,42 +92,44 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
           </Card>
           <br />
 
-          {escrow.length > 0 ? escrow.map((esc: any, index) => (
-            <>
-              <Flex flexFlow="row" justify="space-around">
-                <img
-                  style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                  src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
-                  alt=""
-                />
-                <Flex flexFlow="column">
-                  <span>{esc.token_id}</span>
-                  <span>bm</span>
-                </Flex>
-                <Flex flexFlow="column">
-                  <span>Amount</span>
-                  <span>{parseFloat((parseInt(esc.amount) * 1e-8).toString()).toFixed(9)}</span>
-                </Flex>
-                <Flex flexFlow="column">
-                  <span>Status</span>
-                  <span>{Date.now() * 1e6 > parseInt(esc.ending) ? 'Active' : 'Expired'}</span>
-                </Flex>
-                {Date.now() * 1e6 > parseInt(esc.ending) ? (
-                  ''
-                ) : (
-                  <Button
-                    btnType="secondary"
-                    size="small"
-                    onClick={() => withdrawEscrow(esc[index])}
-                  >
-                    Withdraw
-                  </Button>
-                )}
-              </Flex>
-              <br />
-              <br />
-            </>
-          )) : 'No escrow available'}
+          {escrow.length > 0
+            ? escrow.map((esc: any, index) => (
+                <>
+                  <Flex flexFlow="row" justify="space-around">
+                    <img
+                      style={{ width: '42px', height: '42px', borderRadius: '12px' }}
+                      src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                      alt=""
+                    />
+                    <Flex flexFlow="column">
+                      <span>{esc.token_id}</span>
+                      <span>bm</span>
+                    </Flex>
+                    <Flex flexFlow="column">
+                      <span>Amount</span>
+                      <span>{parseFloat((parseInt(esc.amount) * 1e-8).toString()).toFixed(9)}</span>
+                    </Flex>
+                    <Flex flexFlow="column">
+                      <span>Status</span>
+                      <span>{Date.now() * 1e6 > parseInt(esc.ending) ? 'Active' : 'Expired'}</span>
+                    </Flex>
+                    {Date.now() * 1e6 > parseInt(esc.ending) ? (
+                      ''
+                    ) : (
+                      <Button
+                        btnType="secondary"
+                        size="small"
+                        onClick={() => withdrawEscrow(esc[index])}
+                      >
+                        Withdraw
+                      </Button>
+                    )}
+                  </Flex>
+                  <br />
+                  <br />
+                </>
+              ))
+            : 'No escrow available'}
         </Container>
       </Modal>
 
