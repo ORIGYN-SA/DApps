@@ -1,4 +1,3 @@
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { Box, Tooltip, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
 import {
@@ -7,8 +6,9 @@ import {
   NatPrice,
   LoadingContainer,
   WalletTokens,
-} from '@dapp/features-components'
-import { AuthContext } from '@dapp/features-authentication'
+} from '@dapp/features-components';
+import { useDialog } from "@connect2ic/react"
+import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { useTokensContext } from '@dapp/features-tokens-provider'
 import { timeConverter } from '@dapp/utils'
 import { ConfirmSalesActionModal } from '@dapp/features-sales-escrows'
@@ -30,7 +30,7 @@ import { Link } from 'react-router-dom'
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
 
 const GuestContainer = () => {
-  const { logIn } = useContext(AuthContext)
+  const { open } = useDialog();
 
   return (
     <Box
@@ -57,9 +57,8 @@ const GuestContainer = () => {
             Connect to your wallet using a Chrome extension for Plug.
           </Typography>
           <Button
-            onClick={() => logIn('plug')}
-            startIcon={<AccountBalanceWalletIcon fontSize='small' />}
             variant='contained'
+            onClick={open}
           >
             Connect wallet
           </Button>
@@ -118,10 +117,10 @@ const WalletPage = () => {
     { id: 'end_date', label: 'End Date' },
     { id: 'actions', label: 'Actions' },
   ]
-  const { loggedIn, tokenId, canisterId, principal, actor, logIn, walletType } =
-    useContext(AuthContext)
-
+  const { loggedIn, principal, actor, activeWalletProvider } = useContext(AuthContext)
   const [openAuction, setOpenAuction] = React.useState(false)
+  const [canisterId, setCanisterId] = React.useState("")
+  const [tokenId, setTokenId] = React.useState("")
   const [collectionData, setCollectionData] = React.useState<any>()
   const [collectionPreview, setCollectionPreview] = React.useState<any>()
   const [openConfirmation, setOpenConfirmation] = React.useState(false)
@@ -136,7 +135,9 @@ const WalletPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
 
-  const { tokens } = useTokensContext()
+  const { open } = useDialog()
+
+  const { tokens } = useTokensContext();
 
   const handleClickOpen = (item, modal = 'auction') => {
     setSelectdNFT(item.metadata)
@@ -153,56 +154,6 @@ const WalletPage = () => {
     if (dataChanged) {
       fetchData()
     }
-  }
-
-  const createTableData = (data) => {
-    const columns = [
-      { id: 'id', label: 'id' },
-      { id: 'preview', label: 'Preview' },
-      { id: 'sale', label: 'Active Sale' },
-      { id: 'saleStatus', label: 'Sale Status' },
-      { id: 'actions', label: 'Actions' },
-    ]
-
-    const rows = data?.map((item) => {
-      const rows: any = {}
-      item?.metadata?.Class?.map((meta) => {
-        if (!meta.name.startsWith('__')) {
-          if (meta?.value?.Text || meta?.value?.Principal) {
-            rows[meta.name] = meta?.value?.Text ?? meta?.value?.Principal.toText()
-          }
-        }
-      })
-
-      const sale_type = item?.current_sale.length > 0 ? item?.current_sale[0].sale_type : {}
-      rows.sale =
-        (
-          <Tooltip title={item?.current_sale[0]?.sale_id}>
-            <p>{item?.current_sale[0]?.sale_id?.substring(0, 8)}...</p>
-          </Tooltip>
-        ) || 'No sales'
-      rows.raw_id = rows.id
-      rows.id = <Link to={`#/${rows.id}`}>{rows.id}</Link>
-      rows.preview = (
-        <img
-          src={`https://${canisterId}.raw.ic0.app/-/${rows.raw_id}/preview`}
-          style={{ height: '50px', borderRadius: '5px' }}
-        />
-      )
-      rows.saleStatus = Object.keys(sale_type?.auction?.status || {})[0] || 'No sales'
-
-      const isAuctionStarted =
-        !sale_type?.auction?.status?.hasOwnProperty('closed') && sale_type?.auction
-      // @ts-ignore
-      rows.actions = isAuctionStarted ? (
-        <span style={{ color: 'orange' }}>AUCTION STARTED</span>
-      ) : (
-        <Button onClick={() => handleClickOpen(item)}>Start Auction</Button>
-      )
-      return rows
-    })
-
-    return { rows, columns: columns.filter((column) => column) }
   }
 
   const withdrawEscrow = async (escrow) => {
@@ -405,8 +356,6 @@ const WalletPage = () => {
               }
             })
 
-            console.log('!!!!', data, parsedData)
-
             setNFTData(parsedData)
           })
           .catch((err) => {
@@ -418,9 +367,17 @@ const WalletPage = () => {
   }
 
   useEffect(() => {
-    console.log('123', collectionData)
-    fetchData()
-  }, [actor, principal])
+    if (loggedIn) {
+      fetchData()
+    }
+  }, [loggedIn])
+
+  useEffect(() => {
+    useRoute().then(({canisterId, tokenId}) => {
+      setCanisterId(canisterId);
+      setTokenId(tokenId);
+    })
+  }, [])
 
   const FilteredNFTData =
     tokenId && showOnlyTokenEntries
@@ -493,7 +450,7 @@ const WalletPage = () => {
                           <Icons.Wallet width={24} fill='#ffffff' height='auto' />
                           <Flex flexFlow='column'>
                             <p style={{ fontSize: 12, color: '#9A9A9A' }}>
-                              {walletType.charAt(0).toUpperCase() + walletType.slice(1)}
+                              {activeWalletProvider.meta.name.charAt(0).toUpperCase() + activeWalletProvider.meta.name.slice(1)}
                             </p>
                             <p>
                               {principal.toText().slice(0, 2)}...{principal.toText().slice(-4)}
@@ -522,7 +479,7 @@ const WalletPage = () => {
                                 ? (
                                   collectionData?.creator_name
                                 ) : (
-                                  `${collectionData?.creator_principal.toString()} (no creator_name)`
+                                  `${collectionData?.creator_principal?.toString()} (no creator_name)`
                                 )}
                             </span>
                           </p>
@@ -654,7 +611,7 @@ const WalletPage = () => {
                 )}
               </div>,
             ]}
-            onConnect={() => logIn('plug')}
+            onConnect={() => {open(); return {}}}
             principal={principal?.toText()}
           />
           <ConfirmSalesActionModal

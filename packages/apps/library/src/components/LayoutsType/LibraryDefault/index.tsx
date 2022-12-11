@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
@@ -27,8 +27,8 @@ const linkStyle = {
 }
 
 const LibraryDefault = (props: any) => {
-  const { canisterId } = useContext(AuthContext);
-  const [link, setLink] = React.useState('');
+  const [canisterId, setCanisterId] = useState("");
+  const [link, setLink] = useState('');
   const formattedLink = async () => {
     const link = await GetFormattedLink(canisterId, props.source);
     setLink(link);
@@ -37,6 +37,12 @@ const LibraryDefault = (props: any) => {
     if(canisterId) {
     formattedLink();
     }
+  }, [canisterId]);
+
+  useEffect(() => {
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId);
+    });
   }, []);
 
   return (

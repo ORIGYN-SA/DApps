@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, createContext } from 'react';
 import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
-import { getTokenId, getCanisterId } from '@dapp/features-authentication';
+import { useRoute } from '@dapp/features-authentication';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { Select, SelectChangeEvent, FormControl } from '@mui/material';
@@ -13,10 +13,12 @@ const Asset = (props: any) => {
   const { setMetatype } = useContext(MetadataContext);
 
   const getLibrariesFromMeta = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId());
+
+    const { tokenId, canisterId }= await useRoute();
+    await OrigynClient.getInstance().init(true, canisterId);
     let getMeta = [];
-    if (getTokenId()) {
-      const response = await getNft(getTokenId());
+    if (tokenId) {
+      const response = await getNft(tokenId);
       getMeta = response.ok.metadata.Class;
     } else {
       const response = await getNftCollectionMeta();

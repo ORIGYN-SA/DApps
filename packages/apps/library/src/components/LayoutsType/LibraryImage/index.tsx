@@ -1,5 +1,5 @@
-import React, { useEffect, useContext } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
+import React, { useEffect, useContext, useState } from 'react';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
 import Box from '@mui/material/Box';
 import { Modal } from '@mui/material';
@@ -18,12 +18,12 @@ const style = {
 
 const LibraryImage = (props: any) => {
   // MODAL
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const { canisterId } = useContext(AuthContext);
-  const [link, setLink] = React.useState('');
+  const [canisterId, setCanisterId] = useState("");
+  const [link, setLink] = useState('');
   const formattedLink = async () => {
     const link = await GetFormattedLink(canisterId, props.source);
     setLink(link);
@@ -32,6 +32,12 @@ const LibraryImage = (props: any) => {
     if (canisterId) {
       formattedLink();
     }
+  }, [canisterId]);
+
+  useEffect(() => {
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId);
+    });
   }, []);
 
   return (
