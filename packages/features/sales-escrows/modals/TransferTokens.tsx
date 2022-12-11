@@ -5,6 +5,7 @@ import { LinearProgress } from '@mui/material'
 import * as Yup from 'yup'
 import { AuthContext } from '../../authentication'
 import { useSnackbar } from 'notistack'
+import { isLocal } from '../../../utils'
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
@@ -21,7 +22,7 @@ const validationSchema = Yup.object().shape({
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
   const { tokens } = useTokensContext()
-  const { walletType } = useContext(AuthContext)
+  const { activeWalletProvider } = useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar()
   const [selectedToken, setSelectedToken] = useState('OGY')
   const [switchTransfer, setSwitchTransfer] = useState(false)
@@ -41,7 +42,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
     setSwitchTransfer(true)
     console.log(data);
     const total = data.amount * 1e8 + tokens[data.token].fee
-    sendTransaction(walletType, tokens[data.token], data.recipientAddress, total, data.memo)
+    sendTransaction(isLocal(), activeWalletProvider.meta.name, tokens[data.token], data.recipientAddress, total, data.memo)
     .then(()=>{
       setSuccess(true);
     })

@@ -1,5 +1,5 @@
 import { ICPIcon, OGYIcon } from '@dapp/common-assets'
-import { AuthContext } from '@dapp/features-authentication'
+import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { LoadingContainer, NatPrice, Table, TokenIcon, WalletTokens } from '@dapp/features-components'
 import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal'
 import { StartAuctionModal } from '../../modals/StartAuctionModal'
@@ -29,6 +29,7 @@ import {
   Grid, Banner, TabContent, ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui'
 import styled from 'styled-components'
+import { useDialog } from '@connect2ic/react'
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -66,9 +67,10 @@ const AuctionButton = styled(Button)`
 `
 
 export const NFTPage = () => {
-  const { canisterId, principal, actor, logIn } = useContext(AuthContext)
+  const { principal, actor } = useContext(AuthContext)
   const [currentNFT, setCurrentNFT] = useState<any>({})
   const [openAuction, setOpenAuction] = React.useState(false)
+  const [canisterId, setCanisterId] = React.useState("")
   const [dialogAction, setDialogAction] = useState<any>()
   const [openConfirmation, setOpenConfirmation] = React.useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -78,6 +80,7 @@ export const NFTPage = () => {
   const [expanded, setExpanded] = React.useState<string | false>('panel1')
   const [roy1, setRoy1] = useState<any>()
   const [roy2, setRoy2] = useState<any>()
+  const { open } = useDialog();
 
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
@@ -139,6 +142,7 @@ export const NFTPage = () => {
   }
 
   useEffect(() => {
+    useRoute().then(({canisterId}) => setCanisterId(canisterId))
     if (searchParams.get('nftId')) {
       const initialParameters = searchParams.entries()
       const params = {}
@@ -175,7 +179,8 @@ export const NFTPage = () => {
     }
   }, [])
 
-  if (isLoading) {
+
+  if (isLoading || !canisterId) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
@@ -190,7 +195,6 @@ export const NFTPage = () => {
         nft={currentNFT}
         initialValues={modalInitialValues}
       />
-
       <SecondaryNav
         title='Vault'
         tabs={[
@@ -356,7 +360,7 @@ export const NFTPage = () => {
             </Flex>,
           ]
         }
-        onConnect={() => logIn('plug')}
+        onConnect={() => {open(); return {}}}
         principal={principal?.toText()}
       />
       <ConfirmSalesActionModal

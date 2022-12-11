@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import TextField  from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { getCanisterId } from '@dapp/features-authentication';
+import { useRoute } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
@@ -26,7 +26,7 @@ const TEST_IDENTITY = {
 };
 
 const currentCanisterId = async () => {
-  const canisterId = await getCanisterId();
+  const { canisterId } = await useRoute();
   return canisterId;
 };
 
@@ -61,7 +61,8 @@ export const LibraryForm =  (props: any) => {
   };
 
   const getLibraries = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId());
+    const { canisterId } = await useRoute();
+    await OrigynClient.getInstance().init(true, canisterId);
     const response = await getNftCollectionMeta();
     const library = await response.ok.metadata[0].Class.filter((res) => {
       return res.name === 'library';

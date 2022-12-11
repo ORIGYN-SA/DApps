@@ -4,6 +4,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { ThemeProvider, createGlobalStyle} from "styled-components";
+import { currencyFormat, isLocal } from '@dapp/utils';
+import './connect2ic.css';
+import { AuthContext } from '../../../authentication'
 
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
@@ -21,13 +24,14 @@ const initialMenuItems: MenuItem[] = [
 
 export const Layout = ({ children }: LayoutProps) => {
   const { tokens, refreshAllBalances } = useTokensContext();
+  const { principal, loggedIn } = useContext(AuthContext)
   const [darkTheme, setDarkTheme] = useState(true);
-
   useEffect(() => {
-    if (tokens.OGY.balance === -1) {
-      refreshAllBalances();
+    if (loggedIn) {
+      console.log(principal.toText(), isLocal());
+      refreshAllBalances(false, principal);
     }
-  }, [tokens]);
+  }, [loggedIn]);
 
   return (
     <>
@@ -40,6 +44,7 @@ export const Layout = ({ children }: LayoutProps) => {
             </Flex>
         </Flex>
       </ThemeProvider>
+
     </>
   );
 };

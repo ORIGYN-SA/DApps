@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { AuthContext, getTokenId } from '@dapp/features-authentication';
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Box, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -11,7 +11,8 @@ import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
 import { CircularProgress } from '@mui/material';
 const ISPROD = true;
 export const SearchbarNft = (props: any) => {
-  const { tokenId, actor,canisterId } = useContext(AuthContext);
+  const { actor } = useContext(AuthContext);
+  const [tokenId, setTokenId] = useState('');
   const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
   const [idsNumber, setIdsNumber] = React.useState('');
   const handleSelectIds = (event, value) => {
@@ -76,8 +77,7 @@ export const SearchbarNft = (props: any) => {
       } else {
         // setSearchBarTokenId state
         props.setSearchBarTokenId(obj_token_ids[0][0]);
-        const curTokenId=await getTokenId();
-        window.location.href = window.location.href.replace(`/${curTokenId}/`, `/${obj_token_ids[0][0]}/`);
+        window.location.href = window.location.href.replace(`/${tokenId}/`, `/${obj_token_ids[0][0]}/`);
       }
 
     }
@@ -85,10 +85,18 @@ export const SearchbarNft = (props: any) => {
   // if the actor changes getNftCollection is called
   useEffect(() => {
     if (actor) {
-      OrigynClient.getInstance().init(ISPROD,canisterId);
-      NFTCollection();
+      useRoute().then(({ canisterId }) => {
+        OrigynClient.getInstance().init(ISPROD,canisterId);
+        NFTCollection();
+      });
     }
   }, [actor]);
+
+  useEffect(() => {
+    useRoute().then(({ tokenId }) => {
+      setTokenId(tokenId);
+    });
+  }, []);
 
   return (
     <Box
