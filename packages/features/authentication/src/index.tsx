@@ -9,7 +9,6 @@ import useStoic from './stoic';
 import useInternetIdentity from './internedIdentity';
 import { getCanisterId, getTokenId } from './getRoute';
 import { _SERVICE } from '../../../apps/nft-data/src/components/nftTabs/types/origyn_nft_reference.did';
-import { Preloader } from '../../components';
 
 interface authContextType {
   isLoading: boolean;
@@ -191,7 +190,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   return (
     <AuthContext.Provider value={auth}>
-      {auth.isLoading ? <Preloader /> : children}
+      {auth.isLoading ? <div>Tmp preloader</div> : children}
     </AuthContext.Provider>
   );
 };
