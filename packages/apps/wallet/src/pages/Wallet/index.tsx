@@ -2,6 +2,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import { Box, Tooltip, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
 import {
+  TabPanel,
   TokenIcon,
   Table,
   NatPrice,
@@ -28,6 +29,7 @@ import {
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
+import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens'
 
 const GuestContainer = () => {
   const { logIn } = useContext(AuthContext)
@@ -107,17 +109,18 @@ const StyledFilterSelect = styled.input`
   background: transparent;
 `
 
+const activeSalesColumns = [
+  { id: 'token_id', label: 'Token ID' },
+  { id: 'sale_id', label: 'Sale ID' },
+  { id: 'symbol', label: 'Token' },
+  { id: 'start_price', label: 'Start Price' },
+  { id: 'buy_now', label: 'Buy Now' },
+  { id: 'highest_bid', label: 'Highest Bid' },
+  { id: 'end_date', label: 'End Date' },
+  { id: 'actions', label: 'Actions' },
+];
+
 const WalletPage = () => {
-  const activeSalesColumns = [
-    { id: 'token_id', label: 'Token ID' },
-    { id: 'sale_id', label: 'Sale ID' },
-    { id: 'symbol', label: 'Token' },
-    { id: 'start_price', label: 'Start Price' },
-    { id: 'buy_now', label: 'Buy Now' },
-    { id: 'highest_bid', label: 'Highest Bid' },
-    { id: 'end_date', label: 'End Date' },
-    { id: 'actions', label: 'Actions' },
-  ]
   const { loggedIn, tokenId, canisterId, principal, actor, logIn, walletType } =
     useContext(AuthContext)
 
@@ -135,6 +138,7 @@ const WalletPage = () => {
   })
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
+  const [openTrx, setOpenTrx] = useState(false);
 
   const { tokens } = useTokensContext()
 
@@ -148,6 +152,7 @@ const WalletPage = () => {
   }
 
   const handleClose = async (dataChanged = false) => {
+    setOpenTrx(false)
     setOpenAuction(false)
     setOpenConfirmation(false)
     if (dataChanged) {
@@ -450,7 +455,7 @@ const WalletPage = () => {
           <SecondaryNav
             title='Vault'
             tabs={[
-              { title: 'Dashboard', id: 'Balance' },
+              { title: 'Balance', id: 'Balance' },
               { title: 'Escrows', id: 'Escrows' },
               { title: 'Auctions', id: 'Auctions' },
             ]}
@@ -482,7 +487,7 @@ const WalletPage = () => {
                         </StyledBlackItemCard>
                       ))}
                       <p className="small_text secondary_color">Last Updated: HH:MM:SS, MM/DD/YYYY</p>
-                      <Button btnType='filled'>Transfer Tokens</Button>
+                      <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h6>Manage Escrow</h6>
                       <Button textButton disabled>
@@ -563,7 +568,12 @@ const WalletPage = () => {
                           <StyledFilterSelect placeholder='Listed: Recent' />
                         </Flex>
                       </Flex>
-                      <br />
+                      <br/>
+
+                      <TransferTokensModal
+                        open={openTrx}
+                        handleClose={handleClose}
+                     />
 
                       {NFTData?.length > 0 ? (
                         <Grid
