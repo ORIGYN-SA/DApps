@@ -30,6 +30,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens'
+import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -296,10 +297,10 @@ const WalletPage = () => {
           { id: 'lockDate', label: 'Lock Date' },
           { id: 'actions', label: 'Actions' },
         ]
-        setActiveEscrows({
-          in: { columns: inColumns, data: inEscrow },
-          out: { columns: outColumns, data: outEscrow },
-        })
+        setActiveEscrows(inEscrow)
+
+        console.log('in', inEscrow)
+        console.log('out', outEscrow)
 
 
         Promise.all(
@@ -387,6 +388,8 @@ const WalletPage = () => {
     }
   }, [loggedIn])
 
+  const [openEsc, SetOpenEsc] = useState(false)
+
   useEffect(() => {
     useRoute().then(({canisterId, tokenId}) => {
       setCanisterId(canisterId);
@@ -457,7 +460,7 @@ const WalletPage = () => {
                       <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h6>Manage Escrow</h6>
-                      <Button textButton disabled>
+                      <Button textButton onClick={()=>SetOpenEsc(true)}>
                         No assets in escrow
                       </Button>
                       <StyledBlackCard align='center' padding='12px' justify='space-between'>
@@ -540,6 +543,11 @@ const WalletPage = () => {
                       <TransferTokensModal
                         open={openTrx}
                         handleClose={handleClose}
+                     />
+
+                     <ManageEscrowsModal
+                     open={openEsc}
+                     handleClose={handleClose}
                      />
 
                       {NFTData?.length > 0 ? (

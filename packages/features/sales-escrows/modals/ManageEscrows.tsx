@@ -1,17 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
-import { AuthContext, useAuthContext } from '@dapp/features-authentication';
+import { AuthContext, useAuthContext, useRoute } from '@dapp/features-authentication';
 import { Container, Flex, Modal, Button, Card } from '@origyn-sa/origyn-art-ui';
 import { TokenIcon, LoadingContainer } from '@dapp/features-components';
 
 const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
-  const { principal, actor, canisterId } = useAuthContext();
+  const { loggedIn, principal, actor, activeWalletProvider } = useContext(AuthContext)
   const { tokens } = useTokensContext();
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [selectdNFT, setSelectdNFT] = React.useState<any>();
   const [dialogAction, setDialogAction] = useState<any>();
   const [openSuccess, setOpenSuccess] = useState(false);
+
+  const [canisterId, setCanisterId] = React.useState("")
 
   const [escrow, setEscrow] = useState([1, 2, 3]);
 
@@ -20,7 +22,17 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
     const data = await actor?.balance_of_nft_origyn({ principal });
     const data3 = await data.ok.escrow;
     setEscrow(data3);
+    console.log('escrows', data3)
   };
+
+
+
+  useEffect(() => {
+    useRoute().then(({canisterId, tokenId}) => {
+      setCanisterId(canisterId);
+
+    })
+  }, [])
 
   useEffect(() => {
     Balance();
