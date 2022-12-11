@@ -24,7 +24,6 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   const { tokens } = useTokensContext()
   const { activeWalletProvider } = useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar()
-  const [selectedToken, setSelectedToken] = useState('OGY')
   const [switchTransfer, setSwitchTransfer] = useState(false)
   // @ts-ignore
   const [values, setValues] = React.useState<any>(validationSchema.default())
@@ -41,8 +40,9 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   const sendTrx = (data) => {
     setSwitchTransfer(true)
     console.log(data);
-    const total = data.amount * 1e8 + tokens[data.token].fee
-    sendTransaction(isLocal(), activeWalletProvider.meta.name, tokens[data.token], data.recipientAddress, total, data.memo)
+    console.log('this is wallet', activeWalletProvider)
+    const total = data.amount * 1e8;
+    sendTransaction(isLocal(), activeWalletProvider, tokens[data.token], data.recipientAddress, total, data.memo)
     .then(()=>{
       setSuccess(true);
     })
@@ -167,7 +167,7 @@ console.log('this is the fee',tokens[tokenFee], tokens[tokenFee].fee)
               <br />
               <Flex flexFlow='row' justify='space-between'>
                 <span>Amount</span>
-                <span id='balance'>{tokens[selectedToken].balance}</span>
+                <span id='balance'>{tokens[tokenFee].balance}</span>
               </Flex>
               <TextInput
                 name='amount'
