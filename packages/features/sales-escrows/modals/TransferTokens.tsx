@@ -53,25 +53,48 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
     amount: Yup.number()
       .typeError('This must be a number')
       .nullable()
-      .typeError('This cannot be a nullable number')
       .lessThan(Yup.ref('balance'), 'Account balance exceeded')
       .required('An amount is required!'),
     recipientAddress: Yup.string()
       .typeError('This must be a principal')
-      .min(63, 'Principal invalid')
-      .max(63, 'Principal invalid')
       .required('Recipient address is required!'),
   });
 
-  const {
-    handleSubmit,
-    formState: { errors },
-  } = useForm<any>({
-    resolver: yupResolver(validationSchema),
-  });
-  const customSubmit = (data) => {
-    sendTrx(data);
-  };
+  // const {
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<any>({
+  //   resolver: yupResolver(validationSchema),
+  // });
+  // const customSubmit = (data) => {
+  //   sendTrx(data);
+  // };
+
+    // @ts-ignore
+    const [values, setValues] = React.useState<any>(validationSchema.default());
+    const [errors, setErrors] = React.useState<any>({})
+
+  const getValidationErrors = (err) => {
+    const validationErrors = {}
+
+    err.inner.forEach(error => {
+      if (error.path) {
+        validationErrors[error.path] = error.message
+      }
+    })
+
+    return validationErrors
+  }
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+    validationSchema.validate(values, { abortEarly: false }).then((v) => {
+      sendTrx(values);
+    })
+      .catch(function(e) {
+        const errs = getValidationErrors(e);
+        setErrors(errs)
+      })
+  }
 
   return (
     <div>
@@ -83,13 +106,9 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
             <LinearProgress color="secondary" />
           </Container>
         ) : (
-          <Container size="full" padding="48px">
+          <Container onSubmit={handleSubmit} size="full" padding="48px">
             <h2>Transfer Tokens</h2>
             <br />
-            <span style={{ color: 'grey' }}>
-              {' '}
-              You can only send OGY from your available balance.
-            </span>
             <Flex flexFlow="column" gap={8}>
               <br />
               <span>Select token</span>
@@ -148,7 +167,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
             <HR color="DARK_GREY" />
             <br />
             <Flex justify="flex-end">
-              <Button btnType="secondary" onClick={handleSubmit(customSubmit)}>
+              <Button btnType="secondary" type='submit'>
                 Transfer OGY
               </Button>
             </Flex>
