@@ -5,7 +5,7 @@ import { Container, Flex, Modal, Button, Card } from '@origyn-sa/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
 
-const ManageEscrowsModal = ({ open, handleClose}: any) => {
+const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
   const { principal, actor} = useContext(AuthContext);
   const { tokens } = useTokensContext();
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
@@ -21,6 +21,7 @@ const ManageEscrowsModal = ({ open, handleClose}: any) => {
   //-----------------
   const Balance = async () => {
     const data = await actor?.balance_of_nft_origyn({ principal });
+
     const data2 = await data.ok.offers;
     const data3 = await data.ok.escrow;
     setOffers(data2);
@@ -106,7 +107,7 @@ const ManageEscrowsModal = ({ open, handleClose}: any) => {
     <div>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
         <Container size="full" padding="48px">
-          <h2>Manage Escrow</h2>
+          <h3>Manage Escrow</h3>
           <br />
           <Card align="center" padding="12px" justify="space-between">
             <Flex gap={8}>
@@ -126,7 +127,7 @@ const ManageEscrowsModal = ({ open, handleClose}: any) => {
 
           {escrow.length > 0 ? (
             <>
-              <h3>Escrows</h3>
+              <h5>Escrows</h5>
               <br />
               {escrow.map((esc: any, index) => (
                 <>
@@ -138,7 +139,7 @@ const ManageEscrowsModal = ({ open, handleClose}: any) => {
                     />
                     <Flex flexFlow="column">
                       <span>{esc.token_id}</span>
-                      <span>bm</span>
+                      <span>{collection}</span>
                     </Flex>
                     <Flex flexFlow="column">
                       <span>Amount</span>
@@ -172,7 +173,7 @@ const ManageEscrowsModal = ({ open, handleClose}: any) => {
           {offers.length > 0 ? (
             <>
               {' '}
-              <h3>Offers</h3>
+              <h5>Offers</h5>
               <br />
               {offers.map((esc: any, index) => (
                 <>
@@ -184,7 +185,7 @@ const ManageEscrowsModal = ({ open, handleClose}: any) => {
                     />
                     <Flex flexFlow="column">
                       <span>{esc.token_id}</span>
-                      <span>bm</span>
+                      <span>{collection}</span>
                     </Flex>
                     <Flex flexFlow="column">
                       <span>Amount</span>
