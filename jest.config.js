@@ -3,7 +3,6 @@ module.exports = {
     '\\.(scss|svg|css)$': '<rootDir>/testUtils/fileMock.js',
     '@testUtils': '<rootDir>/testUtils/index.js',
   },
-  testPathIgnorePatterns: ['/node_modules/'],
   moduleDirectories: ['node_modules', 'packages', 'src'],
   testEnvironment: '<rootDir>/testUtils/testEnv.js',
   transformIgnorePatterns: [
