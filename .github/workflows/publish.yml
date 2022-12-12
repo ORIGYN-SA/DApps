@@ -24,6 +24,8 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bootstrap Packages
         run: npm run bootstrap
