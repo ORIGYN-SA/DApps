@@ -131,7 +131,7 @@ const WalletPage = () => {
     { id: 'end_date', label: 'End Date' },
     { id: 'actions', label: 'Actions' },
   ]
-  const { loggedIn, principal, actor, activeWalletProvider } = useContext(AuthContext)
+  const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } = useContext(AuthContext)
   const [openAuction, setOpenAuction] = React.useState(false)
   const [canisterId, setCanisterId] = React.useState("")
   const [tokenId, setTokenId] = React.useState("")
@@ -429,8 +429,6 @@ const WalletPage = () => {
             title='Vault'
             tabs={[
               { title: 'Balance', id: 'Balance' },
-              { title: 'Escrows', id: 'Escrows' },
-              { title: 'Auctions', id: 'Auctions' },
             ]}
             content={[
               <Flex fullWidth flexFlow='column'>
@@ -643,6 +641,7 @@ const WalletPage = () => {
                 )}
               </div>,
             ]}
+            onLogOut={handleLogOut}
             onConnect={() => {open(); return {}}}
             principal={principal?.toText()}
           />
