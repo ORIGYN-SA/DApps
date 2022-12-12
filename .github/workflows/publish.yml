@@ -3,7 +3,7 @@ name: publish
 on:
   push:
     branches:
-      - SI-212-upload-dapps-to-s3
+      - 'SI-212-upload-dapps-to-s3'
 
 jobs:
   build:
