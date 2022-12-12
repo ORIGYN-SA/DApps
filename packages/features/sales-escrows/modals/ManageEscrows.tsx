@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
-import { AuthContext, useAuthContext, useRoute } from '@dapp/features-authentication';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { AuthContext,useRoute } from '@dapp/features-authentication';
 import { Container, Flex, Modal, Button, Card } from '@origyn-sa/origyn-art-ui';
-import { TokenIcon, LoadingContainer } from '@dapp/features-components';
+import { TokenIcon } from '@dapp/features-components';
+import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
 
-const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
-  const { loggedIn, principal, actor, activeWalletProvider } = useContext(AuthContext)
+const ManageEscrowsModal = ({ open, handleClose}: any) => {
+  const { principal, actor} = useContext(AuthContext);
   const { tokens } = useTokensContext();
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
@@ -13,74 +14,93 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
   const [dialogAction, setDialogAction] = useState<any>();
   const [openSuccess, setOpenSuccess] = useState(false);
 
-  const [canisterId, setCanisterId] = React.useState("")
-
+  const [canisterId, setCanisterId] = React.useState('');
   const [escrow, setEscrow] = useState([1, 2, 3]);
+  const [offers, setOffers] = useState([]);
 
   //-----------------
   const Balance = async () => {
     const data = await actor?.balance_of_nft_origyn({ principal });
+    const data2 = await data.ok.offers;
     const data3 = await data.ok.escrow;
-    setEscrow(data3);
-    console.log('escrows', data3)
+    setOffers(data2);
+    //setEscrow(data3);
+    console.log('escrows', data3);
+    console.log('offer', data2);
   };
 
-
-
   useEffect(() => {
-    useRoute().then(({canisterId, tokenId}) => {
+    useRoute().then(({ canisterId}) => {
       setCanisterId(canisterId);
-
-    })
-  }, [])
+    });
+  }, []);
 
   useEffect(() => {
     Balance();
-  }, [tokens]);
+  }, []);
 
   //------------------
 
-  const withdrawEscrow = async (escrow) => {
-    handleClose(false);
-    setOpenConfirmation(true);
-    setSelectedEscrow(escrow);
-    setDialogAction('withdraw');
-    setSelectdNFT(escrow.token_id);
-    _handleClose(true);
-  };
+  // const withdrawEscrow = async (escrow) => {
+  //   handleClose(false);
+  //   setSelectedEscrow(escrow);
+  //   setDialogAction('withdraw');
+  //   setSelectdNFT(escrow.token_id);
+  // };
+
+  const withdrawEscrow = async (escrow, token_id) => {
+    setSelectdNFT(token_id)
+    setOpenConfirmation(true)
+    setSelectedEscrow(escrow)
+    setDialogAction('withdraw')
+  }
+
+  const handleClickOpen = (token_id) => {
+      setOpenConfirmation(true)
+      setDialogAction('endSale')
+      setSelectdNFT(token_id)
+  }
+
+  const handleCloseConf = () => {
+    setOpenConfirmation(false)
+
+  }
 
   const [isLoading, setIsLoading] = React.useState(true);
 
-  const _handleClose = async (confirm = false) => {
-    if (confirm && actor) {
-      if (isLoading) return;
-      setIsLoading(true);
-      const tokenId = selectdNFT?.Class?.find(({ name }) => name === 'id').value.Text;
+  // const _handleClose = async (confirm = false) => {
+  //   if (confirm && actor) {
+  //     if (isLoading) return;
+  //     setIsLoading(true);
+  //     const tokenId = selectdNFT?.Class?.find(({ name }) => name === 'id').value.Text;
 
-      if (!escrow) {
-        return handleClose(false);
-      }
+  //     if (!escrow) {
+  //       return handleClose(false);
+  //     }
 
-      try {
-        const withdrawResponse = await actor?.sale_nft_origyn({
-          withdraw: {
-            escrow: {
-              ...selectedEscrow,
-              withdraw_to: { principal },
-            },
-          },
-        });
+  //     await actor
+  //       ?.sale_nft_origyn({
+  //         withdraw: {
+  //           escrow: {
+  //             ...selectedEscrow,
+  //             withdraw_to: { principal },
+  //           },
+  //         },
+  //       })
+  //       .then(() => {
+  //         setIsLoading(false);
+  //         setOpenConfirmation(false);
+  //         setOpenSuccess(true);
+  //       })
+  //       .catch((e) => {
+  //         console.log(e);
+  //         handleClose(false);
+  //       });
+  //   }
+  // };
 
-        setIsLoading(false);
-
-        setOpenConfirmation(false);
-        setOpenSuccess(true);
-      } catch (err) {}
-      return handleClose(false);
-    }
-  };
-
-  console.log('this is true', activeEsc);
+  // const { start_price, buy_now, token, ending } =
+  //               sale?.sale_type?.auction?.config?.auction || {}
 
   return (
     <div>
@@ -104,8 +124,11 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
           </Card>
           <br />
 
-          {escrow.length > 0
-            ? escrow.map((esc: any, index) => (
+          {escrow.length > 0 ? (
+            <>
+              <h3>Escrows</h3>
+              <br />
+              {escrow.map((esc: any, index) => (
                 <>
                   <Flex flexFlow="row" justify="space-around">
                     <img
@@ -129,9 +152,9 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
                       ''
                     ) : (
                       <Button
-                        btnType="secondary"
+                        btnType="filled"
                         size="small"
-                        onClick={() => withdrawEscrow(esc[index])}
+                        onClick={() => withdrawEscrow(esc[index], esc.token_id)}
                       >
                         Withdraw
                       </Button>
@@ -140,12 +163,61 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
                   <br />
                   <br />
                 </>
-              ))
-            : 'No escrow available'}
+              ))}{' '}
+            </>
+          ) : (
+            ''
+          )}
+
+          {offers.length > 0 ? (
+            <>
+              {' '}
+              <h3>Offers</h3>
+              <br />
+              {offers.map((esc: any, index) => (
+                <>
+                  <Flex flexFlow="row" justify="space-around">
+                    <img
+                      style={{ width: '42px', height: '42px', borderRadius: '12px' }}
+                      src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                      alt=""
+                    />
+                    <Flex flexFlow="column">
+                      <span>{esc.token_id}</span>
+                      <span>bm</span>
+                    </Flex>
+                    <Flex flexFlow="column">
+                      <span>Amount</span>
+                      <span>{parseFloat((parseInt(esc.amount) * 1e-8).toString()).toFixed(9)}</span>
+                    </Flex>
+                    <Button
+                        btnType="filled"
+                        size="small"
+                        onClick={()=>handleClickOpen(esc.token_id)}
+                      >
+                       Accept
+                      </Button>
+                  </Flex>
+                  <br />
+                  <br />
+                </>
+              ))}
+            </>
+          ) : (
+            ''
+          )}
         </Container>
       </Modal>
 
-      <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
+      <ConfirmSalesActionModal
+            openConfirmation={openConfirmation}
+            handleClose={handleCloseConf}
+            currentToken={selectdNFT}
+            action={dialogAction}
+            escrow={selectedEscrow}
+          />
+
+      {/* <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
         <Container size="full" padding="48px">
           <h3>Withdrawing Escrow...</h3>
           <br />
@@ -158,9 +230,9 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
             </div>
           )}
         </Container>
-      </Modal>
+      </Modal> */}
 
-      <Modal isOpened={openSuccess} closeModal={() => handleClose(false)} size="md">
+      {/* <Modal isOpened={openSuccess} closeModal={() => handleClose(false)} size="md">
         <Container size="full" padding="48px">
           <h3>Success!</h3>
           <br />
@@ -171,7 +243,7 @@ const ManageEscrowsModal = ({ open, handleClose, activeEsc }: any) => {
             </Button>
           </Flex>
         </Container>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

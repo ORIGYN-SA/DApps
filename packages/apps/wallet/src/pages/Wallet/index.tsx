@@ -142,6 +142,7 @@ const WalletPage = () => {
   const [selectedEscrow, setSelectedEscrow] = useState<any>()
   const [NFTData, setNFTData] = useState<any>()
   const [activeEscrows, setActiveEscrows] = useState<any>()
+  const [outEscrows, setOutEscrows] = useState<any>()
   const [dialogAction, setDialogAction] = useState<any>()
   const [activeSales, setActiveSales] = useState<any>({
     columns: activeSalesColumns,
@@ -149,6 +150,7 @@ const WalletPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
   const [openTrx, setOpenTrx] = useState(false);
+  const [propsEsc, setPropsEsc] = useState([])
 
   const { open } = useDialog()
 
@@ -164,6 +166,7 @@ const WalletPage = () => {
   }
 
   const handleClose = async (dataChanged = false) => {
+    setOpenEsc(false)
     setOpenTrx(false)
     setOpenAuction(false)
     setOpenConfirmation(false)
@@ -298,7 +301,7 @@ const WalletPage = () => {
           { id: 'actions', label: 'Actions' },
         ]
         setActiveEscrows(inEscrow)
-
+        setOutEscrows(outEscrow)
         console.log('in', inEscrow)
         console.log('out', outEscrow)
 
@@ -388,7 +391,7 @@ const WalletPage = () => {
     }
   }, [loggedIn])
 
-  const [openEsc, SetOpenEsc] = useState(false)
+  const [openEsc, setOpenEsc] = useState(false)
 
   useEffect(() => {
     useRoute().then(({canisterId, tokenId}) => {
@@ -460,8 +463,8 @@ const WalletPage = () => {
                       <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h6>Manage Escrow</h6>
-                      <Button textButton onClick={()=>SetOpenEsc(true)}>
-                        No assets in escrow
+                      <Button textButton onClick={()=>setOpenEsc(true)}>
+                        {activeEscrows.length > 0 || outEscrows.length > 0 ? 'Assets in Escrow' : 'No assets in Escrow'}
                       </Button>
                       <StyledBlackCard align='center' padding='12px' justify='space-between'>
                         <Flex align='center' gap={12}>
