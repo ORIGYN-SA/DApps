@@ -31,9 +31,11 @@ export const NFTLibrary = (props: any) => {
     return param.charAt(0).toUpperCase() + param.slice(1);
   }
 
-  const LocationType = props.libDet.Class.filter((item) => item.name === 'location_type')[0].value.Text;
-  const isMutable = props.libDet.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0];
-  
+  const LocationType = props.libDet.Class.filter((item) => item.name === 'location_type')[0].value
+    .Text;
+  const isMutable = props.libDet.Class.filter(
+    (item) => item.name === 'com.origyn.immutable_library',
+  )[0];
 
   let objLibraryData: FileType;
   const library = props.libDet;
@@ -69,7 +71,6 @@ export const NFTLibrary = (props: any) => {
       };
       break;
   }
-
 
   console.log('objLibraryData', objLibraryData);
 
@@ -117,15 +118,17 @@ export const NFTLibrary = (props: any) => {
           {capitalizeString(objLibraryData.location_type)}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
-        <DeleteLibrary 
-        libraryId={objLibraryData.library_id} 
-        currentTokenId={props.currentTokenId}
-        isMutable={isMutable}
-        loggedIn = {props.loggedIn}
-        owner = {props.owner}
-        />
-      </Grid>
+      {props.loggedIn == true && props.owner == true ? (
+        <Grid item xs={12}>
+          <DeleteLibrary
+            libraryId={objLibraryData.library_id}
+            currentTokenId={props.currentTokenId}
+            isMutable={isMutable}
+          />
+        </Grid>
+      ) : (
+        <></>
+      )}
     </Grid>
   );
 };

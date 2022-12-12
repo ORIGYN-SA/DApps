@@ -142,8 +142,6 @@ export const DeleteLibrary = (props: any) => {
           mt: 2,
         }}
       >
-        <>
-          {props.loggedIn && props.owner ? (
             <>
               {!props.isMutable ? (
                 <>
@@ -231,12 +229,6 @@ export const DeleteLibrary = (props: any) => {
                 </>
               )}
             </>
-          ) : (
-            <>
-              <Typography fontSize={10}>Not Logged In</Typography>
-            </>
-          )}
-        </>
       </Box>
     </Grid>
   );

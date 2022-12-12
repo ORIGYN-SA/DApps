@@ -114,15 +114,20 @@ export const LibraryBox = (props: any) => {
           {objLibraryData.location_type}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
-        <DeleteLibrary 
-        libraryId={objLibraryData.library_id} 
-        currentTokenId={''}
-        isMutable={isMutable}
-        loggedIn = {props.loggedIn}
-        owner = {props.owner}
-        />
-      </Grid>
+      {
+        props.loggedIn == true && props.owner == true ? (
+          <Grid item xs={12}>
+          <DeleteLibrary 
+          libraryId={objLibraryData.library_id} 
+          currentTokenId={''}
+          isMutable={isMutable}
+          />
+        </Grid>
+        ) :(
+          <>
+          </>
+        )
+      }
     </Grid>
   );
 };
