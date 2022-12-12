@@ -7,29 +7,28 @@ import { getCanisterId,AuthContext } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import Divider from '@mui/material/Divider';
 
 export const CollectionLocation = (props: any) => {
   const {actor} = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
-
   const [libraries, setLibraries] = React.useState<any>([]);
   const [selectedLibrary, setSelectedLibrary] = React.useState('');
   const [typedTitle, setTypedTitle] = useState('');
+  const [typedId, setTypedId] = useState<any>();
 
-  const [immutable, setImmutable] = React.useState(false);
-  const handleChange = (event) => {
-    setImmutable(event.target.value);
-    console.log(event.target.value)
-  };
 
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
   };
-
+  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedId(event.target.value);
+  };
   const getLibraries = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId());
     const response = await getNftCollectionMeta();
@@ -52,8 +51,15 @@ export const CollectionLocation = (props: any) => {
 
   const StageCollectionLibrary = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
+
+    const CollectionFile: StageFile = {
+      filename: typedTitle,
+      title: typedTitle,
+      path: '',
+      libraryId: selectedLibrary,
+    };
     try {
-      const response = await stageCollectionLibraryAsset(props.tokenId, typedTitle, selectedLibrary,immutable);
+      const response = await stageCollectionLibraryAsset(props.tokenId, CollectionFile);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {
@@ -102,6 +108,22 @@ export const CollectionLocation = (props: any) => {
           onChange={getTypedTitle}
         />
       </Box>
+      <Divider />
+        <Box
+          sx={{
+            mt: 2,
+            mb:2,
+          }}
+        >
+          <TextField
+            id="title"
+            label="Library ID"
+            variant="outlined"
+            fullWidth
+            placeholder="Library ID"
+            onChange={getTypedId}
+          />
+        </Box>
      
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Select</InputLabel>

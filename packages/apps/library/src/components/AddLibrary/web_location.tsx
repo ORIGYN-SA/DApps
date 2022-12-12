@@ -10,8 +10,11 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import Divider from '@mui/material/Divider';
+
 // mint.js
 import { OrigynClient, stageWebLibraryAsset } from '@origyn-sa/mintjs';
+import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 
 export const WebLocation = (props: any) => {
 
@@ -21,6 +24,8 @@ export const WebLocation = (props: any) => {
 
   const [typedUrl, setTypedUrl] = useState('');
   const [typedTitle, setTypedTitle] = useState('');
+  const [typedId, setTypedId] = useState<any>();
+
 
   const [immutable, setImmutable] = React.useState(false);
   const handleChange = (event) => {
@@ -33,15 +38,29 @@ export const WebLocation = (props: any) => {
     setTypedTitle(event.target.value);
   };
 
+  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedId(event.target.value);
+  };
+
   const getTypedUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedUrl(event.target.value);
   };
 
   const StageWebLibrary = async () => {
+
     await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
 
+    const WebFile : StageFile = {
+      filename: typedTitle,
+      immutable: immutable,
+      webUrl: typedUrl,
+      path: '',
+      libraryId: typedId,
+      title:typedTitle,
+    };
+
     try {
-      const response = await stageWebLibraryAsset(props.tokenId, typedTitle, typedUrl,immutable);
+      const response = await stageWebLibraryAsset(props.tokenId, WebFile);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {
@@ -71,6 +90,7 @@ export const WebLocation = (props: any) => {
         sx={{
           textAlign: 'right',
           mt: 2,
+          mb:2,
         }}
       >
         <FormControl fullWidth>
@@ -84,6 +104,22 @@ export const WebLocation = (props: any) => {
         />
         </FormControl>
       </Box>
+      <Divider />
+        <Box
+          sx={{
+            mt: 2,
+            mb:2,
+          }}
+        >
+          <TextField
+            id="title"
+            label="Library ID"
+            variant="outlined"
+            fullWidth
+            placeholder="Library ID"
+            onChange={getTypedId}
+          />
+        </Box>
       <Box
           sx={{
             mt: 2,

@@ -5,6 +5,9 @@ import Grid from '@mui/material/Grid';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
 import { DeleteLibrary } from '../DeleteLibrary';
+import { EditLibrary } from '../EditLibrary';
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
 
 interface FileType {
   library_id: string;
@@ -31,14 +34,22 @@ export const NFTLibrary = (props: any) => {
     return param.charAt(0).toUpperCase() + param.slice(1);
   }
 
-  const LocationType = props.libDet.Class.filter((item) => item.name === 'location_type')[0].value.Text;
-  const isMutable = props.libDet.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0];
-  
+  const LocationType = props.libDet.Class.filter((item) => item.name === 'location_type')[0].value
+    .Text;
+  let isMutable = false;
+  const searchForNode = props.libDet.Class.filter(
+    (item) => item.name === 'com.origyn.immutable_library',
+  )[0];
+  if (!searchForNode) {
+    isMutable = true;
+  }
 
   let objLibraryData: FileType;
+
   const library = props.libDet;
   switch (LocationType) {
     case 'canister':
+      console.log(objLibraryData);
       objLibraryData = {
         library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
         title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
@@ -70,8 +81,17 @@ export const NFTLibrary = (props: any) => {
       break;
   }
 
-
   console.log('objLibraryData', objLibraryData);
+
+  const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedTitle(event.target.value);
+  };
+  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedId(event.target.value);
+  };
+
+  const [typedTitle, setTypedTitle] = React.useState('');
+  const [typedId, setTypedId] = React.useState('');
 
   return (
     <Grid container maxHeight={300} width={'max-content'}>
@@ -117,15 +137,87 @@ export const NFTLibrary = (props: any) => {
           {capitalizeString(objLibraryData.location_type)}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
-        <DeleteLibrary 
-        libraryId={objLibraryData.library_id} 
-        currentTokenId={props.currentTokenId}
-        isMutable={isMutable}
-        loggedIn = {props.loggedIn}
-        owner = {props.owner}
-        />
-      </Grid>
+      {props.loggedIn == true && props.owner == true ? (
+        <>
+          {isMutable == true ? (
+            <>
+              <Grid item xs={12} sx={{ m: 2 }}>
+                <Box sx={{ m: 2 }}>
+                  <Typography>Edit Library Title</Typography>
+                </Box>
+                <Box sx={{ m: 2 }}>
+                  <TextField
+                    id="title"
+                    label={objLibraryData.title}
+                    variant="outlined"
+                    fullWidth
+                    placeholder={objLibraryData.title}
+                    onChange={getTypedTitle}
+                  />
+                </Box>
+                <Divider />
+              </Grid>
+              <Divider />
+              {objLibraryData.location_type == 'collection' ? (
+                <>
+                  <Box sx={{ m: 2 }}>
+                    <Typography fontSize={10}>
+                      You cannot edit the library id for collection location type libraries.
+                    </Typography>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Grid item xs={12} sx={{ m: 2 }}>
+                    <Box sx={{ m: 2 }}>
+                      <Typography>Edit Library ID</Typography>
+                    </Box>
+                    <Box sx={{ m: 2 }}>
+                      <TextField
+                        id="Id"
+                        label={objLibraryData.library_id}
+                        variant="outlined"
+                        fullWidth
+                        placeholder={objLibraryData.library_id}
+                        onChange={getTypedId}
+                      />
+                    </Box>
+                    <Divider />
+                  </Grid>
+                </>
+              )}
+              <Grid item xs={12}>
+                <EditLibrary
+                  libraryId={objLibraryData.library_id}
+                  libraryTitle={typedTitle}
+                  currentTokenId={props.currentTokenId}
+                  locationType={objLibraryData.location_type}
+                  typedId= {typedId}
+                  location={objLibraryData.location}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <DeleteLibrary
+                  libraryId={objLibraryData.library_id}
+                  currentTokenId={props.currentTokenId}
+                  isMutable={isMutable}
+                />
+              </Grid>
+            </>
+          ) : (
+            <>
+              <Box sx={{ m: 2 }}>
+                <Typography fontSize={10}>
+                  This library is immutable and can not be edited or deleted.
+                </Typography>
+              </Box>
+            </>
+          )}
+        </>
+      ) : (
+        <>
+        </>
+      )}
     </Grid>
   );
 };

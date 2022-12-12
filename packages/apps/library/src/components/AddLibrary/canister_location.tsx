@@ -1,4 +1,4 @@
-import React, { useState,useContext } from 'react';
+import React, { useState,useContext, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -13,27 +13,47 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-
-const currentCanisterId = async () => {
-  const canisterId = await getCanisterId();
-  return canisterId;
-};
+import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { lookup, mimes } from 'mrmime';
 
 export const CanisterLocation = (props: any) => {
+
   const { actor } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
+  const [type, setType] = useState<any>();
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
   const [file, setFile] = useState<any>();
-  const [type, setType] = useState<any>();
+  const [mrMimeTypes, setMrMimeTypes] = useState<any>(['']);
   const [typedTitle, setTypedTitle] = useState<any>();
-
+  const [typedId, setTypedId] = useState<any>();
   const [immutable, setImmutable] = React.useState(false);
+  const [selectedMimeType, setSelectedMimeType] = useState<any>();
+
+  const getMrMimeTypes = async () => {
+    const MimesObj = mimes;
+    const ArrayTypes: string[] = []
+    for (const [key, value] of Object.entries(MimesObj)) {
+      ArrayTypes.push(value);
+    }
+    setMrMimeTypes(ArrayTypes);
+  };
+
   const handleChange = (event) => {
     setImmutable(event.target.value);
     console.log(event.target.value)
   };
+  const handleMimeTypeChange = (event: SelectChangeEvent) => {
+    setSelectedMimeType(event.target.value as string);
+  };
+
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
+  };
+  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedId(event.target.value);
   };
   const handleInputChange = (e) => {
     console.log(e.target.files);
@@ -41,6 +61,12 @@ export const CanisterLocation = (props: any) => {
     setFile(URL.createObjectURL(e.target.files[0]));
     console.log(e.target.files[0].type);
     setType(e.target.files[0].type);
+
+    alert('Mime type is ' + lookup(e.target.files[0].name));
+    const index = mrMimeTypes.indexOf(lookup(e.target.files[0].name));
+    alert('Index is ' + index);
+
+    setSelectedMimeType(mrMimeTypes[index]);
   };
 
   // Functions needed for file to Buffer
@@ -74,14 +100,15 @@ export const CanisterLocation = (props: any) => {
             [...libraryAssets].map(async (file) => {
               return {
                 assetType: undefined,
-                filename: file.name,
+                filename: typedId,
                 index: i++,
                 path: file.path ?? `${file.size}+${file.name}`,
                 size: file.size,
                 type: file.type,
                 rawFile: await readFileAsync(file),
                 title:typedTitle,
-                immutable: immutable
+                contentType: selectedMimeType,
+                immutable: immutable,
               };
             }),
           )),
@@ -114,12 +141,16 @@ export const CanisterLocation = (props: any) => {
     }
   };
 
+  useEffect(() => {
+    getMrMimeTypes();
+  }, []);
   return (
     <Grid item xs={12}>
       <>
         <Box
           sx={{
             mt: 2,
+            mb:2,
           }}
         >
           <TextField
@@ -131,6 +162,43 @@ export const CanisterLocation = (props: any) => {
             onChange={getTypedTitle}
           />
         </Box>
+        <Divider />
+        <Box
+          sx={{
+            mt: 2,
+            mb:2,
+          }}
+        >
+          <TextField
+            id="title"
+            label="Library ID"
+            variant="outlined"
+            fullWidth
+            placeholder="Library ID"
+            onChange={getTypedId}
+          />
+        </Box>     
+        <>
+        <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Select content type</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={selectedMimeType}
+          label="Select content type"
+          onChange={handleMimeTypeChange}
+        >
+          {mrMimeTypes.map((mimeType, index) => {
+            return (
+              <MenuItem key={mimeType + index} value={mimeType}>
+                {mimeType}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </FormControl>
+        </>
+        <Divider />
         <Box
           sx={{
             mt: 2,
@@ -146,6 +214,7 @@ export const CanisterLocation = (props: any) => {
             />
           </Grid>
         </Box>
+        <Divider />
         <Box
           sx={{
             mt: 2,
@@ -167,6 +236,7 @@ export const CanisterLocation = (props: any) => {
             </FormControl>
           </Grid>
         </Box>
+        <Divider />
         {file === undefined ? (
           <></>
         ) : (
@@ -183,10 +253,11 @@ export const CanisterLocation = (props: any) => {
         sx={{
           m: 2,
         }}
-      ></Box>
+      >
       <Button variant="outlined" onClick={stageLibrary}>
         Stage Library
       </Button>
+      </Box>
       <Box />
     </Grid>
   );
