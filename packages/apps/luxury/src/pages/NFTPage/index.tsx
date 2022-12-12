@@ -1,6 +1,6 @@
 import { CssBaseline, Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import ArrowIcon from '../../components/ArrowIcon';
@@ -97,8 +97,10 @@ const History = styled.div`
 `;
 
 const NFTPage = () => {
-  const { tokenId, canisterId, actor } = useContext(AuthContext);
+  const { actor } = useContext(AuthContext);
   const [specifications, setSpecifications] = useState(true);
+  const [tokenId, setTokenId] = useState("");
+  const [canisterId, setCanisterId] = useState("");
   const [history, setHistory] = useState(true);
   const [documents, setDocuments] = useState(true);
   const [description, setDescription] = useState(true);
@@ -152,6 +154,13 @@ const NFTPage = () => {
       console.log(history);
     });
   }, [actor, tokenId]);
+
+  useEffect(() => {
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId);
+      setTokenId(tokenId);
+    });
+  }, []);
 
   return (
     <ContentContainer imageURL="123">

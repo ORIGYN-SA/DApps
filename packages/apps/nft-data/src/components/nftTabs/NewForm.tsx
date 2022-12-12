@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Grid, Box, Divider, Button } from '@mui/material';
 import { Principal } from '@dfinity/principal';
 import { NFTUpdateRequest, UpdateRequest, CandyValue } from './types/origyn_nft_reference.did';
@@ -181,19 +181,20 @@ const NewForm = ({ metadata }: any) => {
         { name: 'is_soulbound', value: { Bool: false }, immutable: false },
       ],
     };
+    const { tokenId } = await useRoute();
     console.log('this is myCandy', myCandy);
     let ObjUpdateRequest: UpdateRequest = {
-      id: getTokenId(),
+      id: tokenId,
       update: [],
     };
     let ObjNftUpdateRequest: NFTUpdateRequest = {
       update: {
-        token_id: getTokenId(),
+        token_id: tokenId,
         update: ObjUpdateRequest,
         app_id: app_id.value.toString(),
       },
       replace: {
-        token_id: getTokenId(),
+        token_id: tokenId,
         data: myCandy,
       },
     };
@@ -206,7 +207,8 @@ const NewForm = ({ metadata }: any) => {
     }
   };
   const checkOwnerAndPermissions = async () => {
-    const checked = await checkOwner(principal, await getCanisterId(), getTokenId());
+    const { tokenId, canisterId } = await useRoute();
+    const checked = await checkOwner(principal, canisterId, tokenId);
     setIsOwner(checked);
     console.log('isOwner', checked);
   };

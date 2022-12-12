@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import { Box, Button, Typography, Grid } from '@mui/material';
 import { checkCanister } from '@dapp/utils';
-import { getCanisterId } from '@dapp/features-authentication';
+import { useRoute } from '@dapp/features-authentication';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useSnackbar } from 'notistack';
 import { Principal } from '@dfinity/principal';
@@ -22,7 +22,7 @@ export const SwitchCanisterCollection = () => {
     };
 
     const GetCanisterName = async () => {
-        const canisterId = await getCanisterId();
+        const { canisterId } = await useRoute();
         const QueryName : any = await phonebookActor?.reverse_lookup(
             Principal.fromText(canisterId),
         );
@@ -42,7 +42,8 @@ export const SwitchCanisterCollection = () => {
         canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
     });
     const GetCurrentCanisterId = async () => {
-        SetCurrentCanisterId(await getCanisterId());
+        const { canisterId } = await useRoute();
+        SetCurrentCanisterId(canisterId);
     };
     const changeCanisterCollection = async () => {
         //Transform current url to a string
