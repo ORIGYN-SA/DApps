@@ -549,7 +549,7 @@ const WalletPage = () => {
                      <ManageEscrowsModal
                      open={openEsc}
                      handleClose={handleClose}
-                     collection={NFTData[0]?.collectionid}
+                     collection={collectionData}
                      />
 
                       {NFTData?.length > 0 ? (

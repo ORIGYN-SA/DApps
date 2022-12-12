@@ -15,8 +15,10 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
   const [openSuccess, setOpenSuccess] = useState(false);
 
   const [canisterId, setCanisterId] = React.useState('');
-  const [escrow, setEscrow] = useState([1, 2, 3]);
+  const [escrow, setEscrow] = useState([]);
   const [offers, setOffers] = useState([]);
+
+  const [totalAm, setTotalAm] = useState()
 
   //-----------------
   const Balance = async () => {
@@ -25,7 +27,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
     const data2 = await data.ok.offers;
     const data3 = await data.ok.escrow;
     setOffers(data2);
-    //setEscrow(data3);
+    setEscrow(data3);
     console.log('escrows', data3);
     console.log('offer', data2);
   };
@@ -35,19 +37,6 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
       setCanisterId(canisterId);
     });
   }, []);
-
-  useEffect(() => {
-    Balance();
-  }, []);
-
-  //------------------
-
-  // const withdrawEscrow = async (escrow) => {
-  //   handleClose(false);
-  //   setSelectedEscrow(escrow);
-  //   setDialogAction('withdraw');
-  //   setSelectdNFT(escrow.token_id);
-  // };
 
   const withdrawEscrow = async (escrow, token_id) => {
     setSelectdNFT(token_id)
@@ -64,44 +53,26 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
 
   const handleCloseConf = () => {
     setOpenConfirmation(false)
-
+  }
+  const totalAmount = async () => {
+    const total = [];
+    const initialValue = 0;
+    escrow.map((esc: any) => (
+      total.push((Number(esc.amount) * 0.00000001))
+    ))
+    const sumWithInitial = total.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      initialValue
+    );
+    setTotalAm(sumWithInitial)
   }
 
-  const [isLoading, setIsLoading] = React.useState(true);
+  useEffect(() => {
+    Balance();
+    totalAmount();
+  }, [open]);
 
-  // const _handleClose = async (confirm = false) => {
-  //   if (confirm && actor) {
-  //     if (isLoading) return;
-  //     setIsLoading(true);
-  //     const tokenId = selectdNFT?.Class?.find(({ name }) => name === 'id').value.Text;
-
-  //     if (!escrow) {
-  //       return handleClose(false);
-  //     }
-
-  //     await actor
-  //       ?.sale_nft_origyn({
-  //         withdraw: {
-  //           escrow: {
-  //             ...selectedEscrow,
-  //             withdraw_to: { principal },
-  //           },
-  //         },
-  //       })
-  //       .then(() => {
-  //         setIsLoading(false);
-  //         setOpenConfirmation(false);
-  //         setOpenSuccess(true);
-  //       })
-  //       .catch((e) => {
-  //         console.log(e);
-  //         handleClose(false);
-  //       });
-  //   }
-  // };
-
-  // const { start_price, buy_now, token, ending } =
-  //               sale?.sale_type?.auction?.config?.auction || {}
+ console.log(escrow)
 
   return (
     <div>
@@ -117,7 +88,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
             <Flex flexFlow="column" align="flex-end">
               <p>
                 <b>
-                  {tokens['OGY']?.balance} {tokens['OGY']?.symbol}
+                  {totalAm} {tokens['OGY']?.symbol}
                 </b>
               </p>
               <p style={{ color: '#9A9A9A' }}>${tokens['OGY']?.balance / 4}</p>
@@ -139,23 +110,30 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                     />
                     <Flex flexFlow="column">
                       <span>{esc.token_id}</span>
-                      <span>{collection}</span>
+                      <span style={{color: 'grey'}}>{collection.name}</span>
                     </Flex>
                     <Flex flexFlow="column">
-                      <span>Amount</span>
-                      <span>{parseFloat((parseInt(esc.amount) * 1e-8).toString()).toFixed(9)}</span>
+                      <span style={{color: 'grey'}}>Amount</span>
+                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${'OGY'}`}</span>                  
                     </Flex>
                     <Flex flexFlow="column">
-                      <span>Status</span>
-                      <span>{Date.now() * 1e6 > parseInt(esc.ending) ? 'Active' : 'Expired'}</span>
+                      <span style={{color: 'grey'}}>Status</span>
+                      <span>{esc.lock_to_date ? (Date.now() * 1e6 > parseInt(esc.lock_to_date) ? 'Locked' : 'Done' ) : 'Hey'}</span>
                     </Flex>
-                    {Date.now() * 1e6 > parseInt(esc.ending) ? (
-                      ''
+                    {Date.now() * 1e6 > parseInt(esc.lock_to_date) ? (
+                                            <Button
+                                            btnType="filled"
+                                            size="small"
+                                            onClick={() => withdrawEscrow(esc, esc.token_id)}
+                                            disabled
+                                          >
+                                            Withdraw
+                                          </Button>
                     ) : (
                       <Button
                         btnType="filled"
                         size="small"
-                        onClick={() => withdrawEscrow(esc[index], esc.token_id)}
+                        onClick={() => withdrawEscrow(esc, esc.token_id)}
                       >
                         Withdraw
                       </Button>
@@ -185,12 +163,12 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                     />
                     <Flex flexFlow="column">
                       <span>{esc.token_id}</span>
-                      <span>{collection}</span>
+                      <span style={{color: 'grey'}}>{collection.name}</span>
                     </Flex>
                     <Flex flexFlow="column">
-                      <span>Amount</span>
-                      <span>{parseFloat((parseInt(esc.amount) * 1e-8).toString()).toFixed(9)}</span>
-                    </Flex>
+                      <span style={{color: 'grey'}} >Amount</span>
+                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${'OGY'}`}</span>                  
+                      </Flex>
                     <Button
                         btnType="filled"
                         size="small"

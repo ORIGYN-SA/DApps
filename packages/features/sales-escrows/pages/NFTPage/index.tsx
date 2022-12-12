@@ -61,10 +61,9 @@ const SymbolWithIcon = ({ symbol }: any) =>
       {symbol}
     </>
   )
-
-  const AuctionButton = styled(Button)`
+const AuctionButton = styled(Button)`
  background: #70237D
-  `
+`
 
 export const NFTPage = () => {
   const { principal, actor } = useContext(AuthContext)
