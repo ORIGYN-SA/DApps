@@ -1,5 +1,6 @@
 {
   "name": "origyn-dapps",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap --force-local",
@@ -84,6 +85,8 @@
     "webpack-dev-server": "^3.11.3"
   },
   "dependencies": {
+    "@connect2ic/core": "^0.2.0-beta.5",
+    "@connect2ic/react": "^0.2.0-beta.5",
     "@date-io/moment": "^2.14.0",
     "@dfinity/auth-client": "^0.10.4",
     "@dfinity/authentication": "^0.10.4",

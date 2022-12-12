@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { getNft, OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { checkOwner } from '@dapp/utils';
 // Import from style.tsx
@@ -40,19 +40,11 @@ const ColumnView = () => {
   const [opera, setOpera] = useState(false);
   const classes = useStyles();
   const [library3, setLibrary3] = useState();
-  const { actor, canisterId, loggedIn, principal } = useContext(AuthContext);
+  const { actor, loggedIn, principal } = useContext(AuthContext);
+  const [canisterId, setCanisterId] = useState("");
   const [collectionNft, setCollectionNft] = useState([]);
 
   const [openFormDefault, setOpenFormDefault] = React.useState(false);
-
-  const currentCanisterId = async () => {
-    const canisterId = await getCanisterId();
-    return canisterId;
-  };
-  const currentUrlTokenId = async () => {
-    const tokenId = await getTokenId();
-    return tokenId;
-  };
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
     setOpen(!open);
@@ -73,6 +65,7 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
+    const { canisterId } = await useRoute();
     setOpen1(!open1);
     setOpenLib(false);
     setOpera(false);
@@ -82,7 +75,7 @@ const ColumnView = () => {
     handleDetails();
     setSelectedNft(index);
     setCurrentTokenId(nft);
-    OrigynClient.getInstance().init(true, await currentCanisterId());
+    OrigynClient.getInstance().init(true, canisterId);
     getNft(nft).then((r) => {
       console.log('nft_origyn', r);
       setLibraryData(
@@ -110,7 +103,7 @@ const ColumnView = () => {
     setSelectedIndex(index);
     // As default-general view of libraries the tokenId is empty
     if (actor) {
-      OrigynClient.getInstance().init(true, await currentCanisterId());
+      OrigynClient.getInstance().init(true, canisterId);
       getNftCollectionMeta().then((r) => {
         console.log('CollMeta', r);
         setDefaultLibraryData(
@@ -178,7 +171,8 @@ const ColumnView = () => {
   };
 
   const openSpecificNft = async () => {
-    if (getTokenId() !== '') {
+    const { tokenId, canisterId } = await useRoute();
+    if (tokenId !== '') {
       setOpen(!open);
       setOpenLib(false);
       setOpera(false);
@@ -190,12 +184,11 @@ const ColumnView = () => {
       setOpen1(!open1);
       handleDetails();
 
-      OrigynClient.getInstance().init(true, await currentCanisterId());
-      const curTokenId = await getTokenId();
-      setCurrentTokenId(curTokenId);
+      OrigynClient.getInstance().init(true, canisterId);
+      setCurrentTokenId(tokenId);
       setSelectedIndex(0);
-      setSelectedNft((await nftCollection()).indexOf(curTokenId));
-      getNft(curTokenId).then((r) => {
+      setSelectedNft((await nftCollection()).indexOf(tokenId));
+      getNft(tokenId).then((r) => {
         setLibraryData(
           r.ok.metadata.Class.filter((res) => {
             return res.name === 'library';
@@ -206,8 +199,9 @@ const ColumnView = () => {
   };
 
   const nftCollection = async () => {
+    const { tokenId, canisterId } = await useRoute();
     setCollectionNft([]);
-    OrigynClient.getInstance().init(true, await currentCanisterId());
+    OrigynClient.getInstance().init(true, canisterId);
     const response = await getNftCollectionMeta([]);
     console.log('responseCollectionMeta', response);
     const collectionNFT = response.ok;
@@ -216,9 +210,9 @@ const ColumnView = () => {
     // In case we have URL with tokenID and we change canister,
     // We need to check if the tokenID is in the new canister
     // If not, we need to clear the URL and show the first tokenID in the new Canister
-    if (!obj_token_ids.includes(getTokenId()) && getTokenId() !== '') {
+    if (!obj_token_ids.includes(tokenId) && tokenId !== '') {
       let Url = window.location.href;
-      Url = Url.replace(getTokenId(), obj_token_ids[0]);
+      Url = Url.replace(tokenId, obj_token_ids[0]);
       window.location.href = Url;
       setCurrentTokenId(obj_token_ids[0]);
     }
@@ -228,14 +222,19 @@ const ColumnView = () => {
   // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
     openSpecificNft();
+
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId);
+    });
     console.log('actor', actor);
   }, []);
 
   const checkAndSetOwner = async () => {
+    const { tokenId, canisterId } = await useRoute();
     const checked = await checkOwner(
       principal,
-      await currentCanisterId(),
-      await currentUrlTokenId(),
+      canisterId,
+      tokenId,
     );
     setOwner(checked);
   };
