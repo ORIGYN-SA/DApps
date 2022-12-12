@@ -1,12 +1,13 @@
 import React from 'react';
+import { Container } from '@origyn-sa/origyn-art-ui';
 
 const JSONTab = ({ metadata }: any) => {
   console.log(metadata);
 
   return (
-    <div>
-        <pre>{JSON.stringify(metadata, null, 3)}</pre>
-    </div>
+    <Container padding="16px">
+      <pre>{JSON.stringify(metadata, null, 3)}</pre>
+    </Container>
   );
 };
 
