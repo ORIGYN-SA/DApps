@@ -75,11 +75,11 @@ const StyledSectionTitle = styled.h2`
 `
 
 const StyledCustomGrid = styled(Grid)`
-  grid-template-columns: 2fr 5fr;
+  grid-template-columns: minmax(0,2fr) minmax(0,5fr);
   padding: 24px;
 
   ${({ theme }) => theme.media.lg} {
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: minmax(0,1fr) minmax(0,2fr);
   }
 `
 
@@ -562,10 +562,10 @@ const WalletPage = () => {
                                     <Flex flexFlow='column' gap={32}>
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                          {nft?.collectionid} Collection
+                                          {collectionData?.name} Collection
                                         </p>
                                         <p>
-                                          <b>{nft?.name}</b>
+                                          <b>{nft['com.bm.sample.app.creator_name']}</b>
                                         </p>
                                       </div>
                                       <div>
