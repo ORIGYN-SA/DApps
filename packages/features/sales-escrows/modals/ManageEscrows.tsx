@@ -55,16 +55,28 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
     setOpenConfirmation(false)
   }
   const totalAmount = async () => {
-    const total = [];
+    const totalEsc = [];
+    const totalOffer = [];
     const initialValue = 0;
+
     escrow.map((esc: any) => (
-      total.push((Number(esc.amount) * 0.00000001))
+      totalEsc.push((Number(esc.amount) * 0.00000001))
     ))
-    const sumWithInitial = total.reduce(
+    const escrowSum = totalEsc.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
       initialValue
     );
-    setTotalAm(sumWithInitial)
+  offers.map((esc: any) => (
+      totalOffer.push((Number(esc.amount) * 0.00000001))
+    ))
+  const offerSum = totalOffer.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      initialValue
+    );
+    
+    
+    
+    setTotalAm(escrowSum + offerSum)
   }
 
   useEffect(() => {
