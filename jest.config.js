@@ -2,8 +2,6 @@ module.exports = {
   moduleNameMapper: {
     '\\.(scss|svg|css)$': '<rootDir>/testUtils/fileMock.js',
     '@testUtils': '<rootDir>/testUtils/index.js',
-    '@connect2ic/react': '<rootDir>/node_modules/@connect2ic/react',
-    '@connect2ic/core': '<rootDir>/node_modules/@connect2ic/core',
   },
 
   moduleDirectories: ['node_modules', 'packages', 'src'],
