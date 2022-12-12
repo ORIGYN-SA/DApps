@@ -1,5 +1,6 @@
 {
   "name": "origyn-dapps",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap --force-local",
