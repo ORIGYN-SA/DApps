@@ -4,10 +4,6 @@ import NFTInfo from '../NFTInfo';
 import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { Container } from '@mui/material';
 
-const currentCanisterId = async () => {
-  const canisterId = await getCanisterId();
-  return canisterId;
-};
 
 
 const Home = () => {
