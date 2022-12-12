@@ -381,6 +381,13 @@ const WalletPage = () => {
     }
   }
 
+var today = new Date();
+var date = today.getFullYear()+'/'+(today.getMonth()+1)+'/'+today.getDate();
+var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+var dateTime = time+','+' '+date;
+ 
+console.log('time4',dateTime)
+
   useEffect(() => {
     if (loggedIn) {
       fetchData()
@@ -451,7 +458,7 @@ const WalletPage = () => {
                           </Flex>
                         </StyledBlackItemCard>
                       ))}
-                      <p className="small_text secondary_color">Last Updated: HH:MM:SS, MM/DD/YYYY</p>
+                      <p className="small_text secondary_color">Last Updated: {dateTime}</p>
                       <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h6>Manage Escrow</h6>
