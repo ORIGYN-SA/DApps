@@ -1,5 +1,5 @@
 import { ICPIcon, OGYIcon } from '@dapp/common-assets'
-import { AuthContext } from '@dapp/features-authentication'
+import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { LoadingContainer, NatPrice, Table, TokenIcon, WalletTokens } from '@dapp/features-components'
 import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal'
 import { StartAuctionModal } from '../../modals/StartAuctionModal'
@@ -26,9 +26,10 @@ import {
   Card, Flex, HR, Icons, SecondaryNav,
   Button,
   Container,
-  Grid, Banner, TabContent, CheckboxInput, TextInput, Select,
+  Grid, Banner, TabContent, ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui'
 import styled from 'styled-components'
+import { useDialog } from '@connect2ic/react'
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -61,14 +62,15 @@ const SymbolWithIcon = ({ symbol }: any) =>
     </>
   )
 
-  const AuctionButton = styled(Button)`
- background: #70237D
-  `
+const AuctionButton = styled(Button)`
+  background: #70237D
+`
 
 export const NFTPage = () => {
-  const { canisterId, principal, actor, logIn } = useContext(AuthContext)
+  const { principal, actor } = useContext(AuthContext)
   const [currentNFT, setCurrentNFT] = useState<any>({})
   const [openAuction, setOpenAuction] = React.useState(false)
+  const [canisterId, setCanisterId] = React.useState("")
   const [dialogAction, setDialogAction] = useState<any>()
   const [openConfirmation, setOpenConfirmation] = React.useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -78,6 +80,7 @@ export const NFTPage = () => {
   const [expanded, setExpanded] = React.useState<string | false>('panel1')
   const [roy1, setRoy1] = useState<any>()
   const [roy2, setRoy2] = useState<any>()
+  const { open } = useDialog();
 
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
@@ -139,6 +142,7 @@ export const NFTPage = () => {
   }
 
   useEffect(() => {
+    useRoute().then(({canisterId}) => setCanisterId(canisterId))
     if (searchParams.get('nftId')) {
       const initialParameters = searchParams.entries()
       const params = {}
@@ -159,23 +163,24 @@ export const NFTPage = () => {
           if ('err' in r)
             throw new Error(Object.keys(r.err)[0])
 
-          const dataObj = r?.ok.metadata.Class.find(({name}) => name === '__apps')
-            .value.Array.thawed[0].Class.find(({name}) => name === 'data')
-            .value.Class.reduce((arr, val) => ({...arr, [val.name]: Object.values(val.value)[0]}), {});
-          const royal1 = r.ok.metadata.Class.find(({name}) => name === '__system').value.Class.find(({name}) => name === 'com.origyn.royalties.primary').value.Array
-          const royal2 = r.ok.metadata.Class.find(({name}) => name === '__system').value.Class.find(({name}) => name === 'com.origyn.royalties.secondary').value.Array
+          const dataObj = r?.ok.metadata.Class.find(({ name }) => name === '__apps')
+            .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
+            .value.Class.reduce((arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }), {})
+          const royal1 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.primary').value.Array
+          const royal2 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.secondary').value.Array
           setRoy2(royal2)
           setRoy1(royal1)
-          setCurrentNFT(dataObj);
+          setCurrentNFT(dataObj)
           console.log(royal1)
 
-        console.log(currentNFT)
+          console.log(currentNFT)
         })
         .catch(console.log)
     }
   }, [])
 
-  if (isLoading) {
+
+  if (isLoading || !canisterId) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
@@ -183,14 +188,13 @@ export const NFTPage = () => {
     )
   }
   return (
-    <Banner fullWidth padding='0' flexFlow='column'>
+    <Flex fullWidth padding='0' flexFlow='column'>
       <StartEscrowModal
         open={openEscrowModal}
         handleClose={handleCloseEscrow}
         nft={currentNFT}
         initialValues={modalInitialValues}
       />
-
       <SecondaryNav
         title='Vault'
         tabs={[
@@ -202,98 +206,99 @@ export const NFTPage = () => {
               {isLoading ? (
                 <LoadingContainer />
               ) : <Flex flexFlow='column'>
-                <Container size="md" padding="80px">
+                <Container size='md' padding='80px'>
                   <Grid columns={2} gap={120} smGap={16} mdGap={40}>
                     <img
                       style={{ borderRadius: '18px', width: '100%' }}
                       src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
                     />
-                    <Flex flexFlow="column" gap={8}>
-                      <p style={{fontSize: '12px', color: '#9A9A9A'}}>{currentNFT?.collectionid} Collection</p>
-                      <h1>{currentNFT?.name}</h1>
-                      <br/>
-                      <p>{currentNFT?.description}</p>
-                      <p style={{color: "#9A9A9A"}}><b>Read More</b></p>
-                      <br/>
-                      <HR color='MID_GREY'/>
-                      <Flex justify="space-between" align="center">
-                        <Flex align="center" gap={8}><Icons.OrigynIcon width={22} /><b>-</b></Flex>
-                        <div><b>{currentNFT?.collectionid}  Collection</b></div>
+                    <Flex flexFlow='column' gap={8}>
+                      <p className="secondary_color">{currentNFT?.collectionid} Collection</p>
+                      <h2><b>{currentNFT?.name}</b></h2>
+                      <br />
+                      <ShowMoreBlock btnText='Read More'>
+                        <p className="secondary_color">{currentNFT?.description}</p>
+                      </ShowMoreBlock>
+                      <br />
+                      <HR />
+                      <Flex justify='space-between' align='center'>
+                        <Flex align='center' gap={8}><Icons.OrigynIcon width={22} /><b>-</b></Flex>
+                        <div><b>{currentNFT?.collectionid} Collection</b></div>
                       </Flex>
-                      <HR color='DARK_GREY'/>
-                      <br/>
+                      <HR />
+                      <br />
                       {
                         currentOpenAuction ? (
                           <div>
-                              <Typography>
-                                Sale ends on{' '}
-                                <strong>
-                                  {' '}
-                                  {timeConverter(
-                                    BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)),
-                                  )}
-                                </strong>
-                              </Typography>
-                              <Typography>
-                                Token:{' '}
-                                <SymbolWithIcon
-                                  symbol={
-                                    currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic
-                                      ?.symbol
+                            <Typography>
+                              Sale ends on{' '}
+                              <strong>
+                                {' '}
+                                {timeConverter(
+                                  BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)),
+                                )}
+                              </strong>
+                            </Typography>
+                            <Typography>
+                              Token:{' '}
+                              <SymbolWithIcon
+                                symbol={
+                                  currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic
+                                    ?.symbol
+                                }
+                              />
+                            </Typography>
+                            <Typography>
+                              Start price:{' '}
+                              <strong>
+                                <NatPrice
+                                  value={
+                                    currentOpenAuction?.sale_type?.auction?.config?.auction?.start_price
                                   }
                                 />
-                              </Typography>
+                              </strong>
+                            </Typography>
+                            <Typography>
+                              Minimum step:{' '}
+                              <strong>
+                                <NatPrice
+                                  value={
+                                    currentOpenAuction?.sale_type?.auction?.config?.auction?.min_increase
+                                      ?.amount
+                                  }
+                                />
+                              </strong>
+                            </Typography>
+                            <Typography>
+                              Highest bid:{' '}
+                              <strong>
+                                <NatPrice
+                                  value={currentOpenAuction?.sale_type?.auction?.current_bid_amount}
+                                />
+                              </strong>
+                            </Typography>
+                            {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
+                            0 && (
                               <Typography>
-                                Start price:{' '}
+                                Buy now:{' '}
                                 <strong>
                                   <NatPrice
                                     value={
-                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.start_price
+                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]
                                     }
                                   />
                                 </strong>
                               </Typography>
-                              <Typography>
-                                Minimum step:{' '}
-                                <strong>
-                                  <NatPrice
-                                    value={
-                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.min_increase
-                                        ?.amount
-                                    }
-                                  />
-                                </strong>
-                              </Typography>
-                              <Typography>
-                                Highest bid:{' '}
-                                <strong>
-                                  <NatPrice
-                                    value={currentOpenAuction?.sale_type?.auction?.current_bid_amount}
-                                  />
-                                </strong>
-                              </Typography>
-                              {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
-                              0 && (
-                                <Typography>
-                                  Buy now:{' '}
-                                  <strong>
-                                    <NatPrice
-                                      value={
-                                        currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]
-                                      }
-                                    />
-                                  </strong>
-                                </Typography>
-                              )}
+                            )}
                           </div>
                         ) : (
-                          <AuctionButton onClick={handleClickOpen}>Start an Auction</AuctionButton>
+                          <Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>
                         )
                       }
                     </Flex>
                   </Grid>
                 </Container>
-                <Banner style={{display: 'block'}} bgColor="rgba(0, 0, 0, 0.3)" padding="0">
+                <Banner bgColor="PRIMARY_1000"  style={{ display: 'block' }} padding='0'>
                   <TabContent
                     fullWidth
                     borderBottom
@@ -302,53 +307,52 @@ export const NFTPage = () => {
                       { title: 'Royalties', id: 'royalties' },
                     ]}
                     content={[
-                      <Container size="sm">
-                        <br/>
-                        <br/>
-                        <br/>
-                        <Flex flexFlow="column" gap={16}>
+                      <Container size='sm'>
+                        <br />
+                        <br />
+                        <br />
+                        <Flex flexFlow='column' gap={16}>
                           {Object.keys(currentNFT).map((k) => (
                             <>
                               <Grid columns={2}>
                                 <p>{k.charAt(0).toUpperCase() + k.slice(1)}</p>
-                                <p style={{fontSize: 12, color: "#9A9A9A"}}>{currentNFT[k].toString()}</p>
+                                <p className="secondary_color">{currentNFT[k].toString()}</p>
                               </Grid>
-                              <HR color='DARK_GREY'/>
-                              
+                              <HR />
+
                             </>
                           ))}
                         </Flex>
-                        <br/>
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
+                        <br />
                       </Container>,
                       <Container size='sm'>
-                        <br/>
-                        <br/>
-                        <br/>
-                      <Flex flexFlow='column' gap={18}>
-                          {roy1?.frozen?.map((nft)=> (<>
-                          <Grid columns={2}>
-                            <p>{nft.Class.find(({name}) => name === 'tag').value.Text}</p>  
-                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{nft.Class.find(({name}) => name === 'rate').value.Float}</p>
-                            </Grid>
-                            <HR color='DARK_GREY'/>
+                        <br />
+                        <br />
+                        <br />
+                        <Flex flexFlow='column' gap={18}>
+                          {roy1?.frozen?.map((nft) => (<>
+                              <Grid columns={2}>
+                                <p>{nft.Class.find(({ name }) => name === 'tag').value.Text}</p>
+                                <p className="secondary_color">{nft.Class.find(({ name }) => name === 'rate').value.Float}</p>
+                              </Grid>
+                              <HR />
                             </>
-                            ))}
-                            {roy2?.frozen?.map((nft)=> (<>
-                          <Grid columns={2}>
-                            <p>{nft.Class.find(({name}) => name === 'tag').value.Text}</p>  
-                            <p style={{fontSize: 12, color: "#9A9A9A"}}>{nft.Class.find(({name}) => name === 'rate').value.Float}</p>
-                            </Grid>
-                            <HR color='DARK_GREY'/>
+                          ))}
+                          {roy2?.frozen?.map((nft) => (<>
+                              <Grid columns={2}>
+                                <p>{nft.Class.find(({ name }) => name === 'tag').value.Text}</p>
+                                <p className="secondary_color">{nft.Class.find(({ name }) => name === 'rate').value.Float}</p>
+                              </Grid>
+                              <HR />
                             </>
-                            ))}
-                          
-                      </Flex>
-                      <br/>
-                        <br/>
-                        <br/>
-                      </Container>
+                          ))}
+                        </Flex>
+                        <br />
+                        <br />
+                        <br />
+                      </Container>,
                     ]}
                   />
                 </Banner>
@@ -356,7 +360,7 @@ export const NFTPage = () => {
             </Flex>,
           ]
         }
-        onConnect={() => logIn('plug')}
+        onConnect={() => {open(); return {}}}
         principal={principal?.toText()}
       />
       <ConfirmSalesActionModal
@@ -370,6 +374,6 @@ export const NFTPage = () => {
         handleClose={handleClose}
         currentToken={currentNFT?.metadata}
       />
-    </Banner>
+    </Flex>
   )
 }

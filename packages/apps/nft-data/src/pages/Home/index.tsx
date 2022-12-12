@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import NFTInfo from '../NFTInfo';
 import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { Container } from '@mui/material';
@@ -9,13 +9,17 @@ const currentCanisterId = async () => {
   return canisterId;
 };
 
+
 const Home = () => {
-  const { tokenId, actor } = useContext(AuthContext);
+  const { actor } = useContext(AuthContext);
+  const [tokenId, setTokenId] = useState();
   const [NFTData, setNFTData] = useState();
   const [canisterId, setCanisterId] = useState('');
 
   const nftCollection = async () => {
-    OrigynClient.getInstance().init(true, await currentCanisterId());
+    const route = await useRoute();
+    
+    OrigynClient.getInstance().init(true, route.canisterId);
     const response = await getNftCollectionMeta([]);
     console.log('response', response);
     const collectionNFT = response.ok;
@@ -24,11 +28,11 @@ const Home = () => {
     // In case we have URL with tokenID and we change canister,
     // We need to check if the tokenID is in the new canister
     // If not, we need to clear the URL and show the first tokenID in the new Canister
-    if (!obj_token_ids.includes(getTokenId()) && getTokenId() !== '') {
-      let Url = window.location.href;
-      Url = Url.replace(getTokenId(), obj_token_ids[0]);
-      window.location.href = Url;
-    }
+    // if (!obj_token_ids.includes(tokenId) && tokenId !== '') {
+    //   let Url = window.location.href;
+    //   Url = Url.replace(tokenId, obj_token_ids[0]);
+    //   window.location.href = Url;
+    // }
     return obj_token_ids;
   };
 
@@ -48,6 +52,7 @@ const Home = () => {
     } else {
       try {
         const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
+
         const result = await response.text();
         if (result.search('"is_soulbound":,')) {
           setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
@@ -61,10 +66,12 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getCanisterId().then((r) => {
-      setCanisterId(r);
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId);
+      setTokenId(tokenId);
     });
   }, []);
+
   useEffect(() => {
     if (canisterId) {
       nftCollection();

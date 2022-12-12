@@ -1,9 +1,12 @@
-import { Flex, Navbar } from '@origyn-sa/origyn-art-ui'
-import { Icons, theme } from "@origyn-sa/origyn-art-ui";
-import React, { useContext, useEffect } from 'react';
+import { Flex, GlobalStyle, Navbar } from '@origyn-sa/origyn-art-ui'
+import { Icons, theme, themeLight } from "@origyn-sa/origyn-art-ui";
+import React, { useContext, useEffect, useState } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { ThemeProvider, createGlobalStyle} from "styled-components";
+import { currencyFormat, isLocal } from '@dapp/utils';
+import './connect2ic.css';
+import { AuthContext } from '../../../authentication'
 
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
@@ -19,139 +22,29 @@ const initialMenuItems: MenuItem[] = [
   },
 ];
 
-const GlobalStyle = createGlobalStyle`
-  * {
-    font-family: 'Montserrat', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  body {
-    background-color: #000000;
-    font-family: 'Montserrat', Arial, sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-  }
-  a {
-    color: inherit;
-    text-decoration: inherit;
-  }
-  
-  .noShrink {
-    flex-shrink: 0;
-  }
-  h1 {
-    font-weight: 500;
-    font-size: 36px;
-    line-height: 44px;
-  }
-  h2 {
-    font-weight: 500;
-    font-size: 32px;
-    line-height: 40px;
-  }
-  h3 {
-    font-weight: 500;
-    font-size: 28px;
-    line-height: 36px;
-  }
-  h4 {
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 32px;
-  }
-  h5 {
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 28px;
-  }
-  h6 {
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 26px;
-  }
-  button, .buttonLabel {
-    font-size: 12px;
-    line-height: 16px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .largeText {
-    font-weight: 500;
-    font-size: 17px;
-    line-height: 24px;
-  }
-  .smallText {
-    font-weight: 500;
-    font-size: 13px;
-    line-height: 18px;
-  }
-  
-  @media (min-width: 600px) {
-    h1 {
-      font-size: 28px;
-      line-height: 38px;
-    }
-    h2 {
-      font-size: 24px;
-      line-height: 36px;
-    }
-    h3 {
-      font-size: 20px;
-      line-height: 30px;
-    }
-    h4 {
-      font-size: 17px;
-      line-height: 24px;
-    }
-  }
-  
-  @media (min-width: 960px) {
-    h1 {
-      font-size: 32px;
-      line-height: 44px;
-    }
-    h2 {
-      font-size: 26px;
-      line-height: 38px;
-    }
-  }
-  
-  @media (min-width: 1280px) {
-    h1 {
-      font-size: 36px;
-      line-height: 48px;
-    }
-    h2 {
-      font-size: 30px;
-      line-height: 40px;
-    }
-    h3 {
-      font-size: 24px;
-      line-height: 36px;
-    }
-  }
-`
-
 export const Layout = ({ children }: LayoutProps) => {
   const { tokens, refreshAllBalances } = useTokensContext();
-
+  const { principal, loggedIn, handleLogOut } = useContext(AuthContext)
+  const [darkTheme, setDarkTheme] = useState(true);
   useEffect(() => {
-    if (tokens.OGY.balance === -1) {
-      refreshAllBalances();
+    if (loggedIn) {
+      console.log(principal.toText(), isLocal());
+      refreshAllBalances(false, principal);
     }
-  }, [tokens]);
+  }, [loggedIn]);
 
   return (
     <>
-      <GlobalStyle />
-      <ThemeProvider theme={theme}>
-        <Flex fullWidth>
-          <Navbar navItems={initialMenuItems} />
+      <ThemeProvider theme={darkTheme ? theme : themeLight}>
+        <GlobalStyle />
+        <Flex fullWidth mdFlexFlow="column">
+          <Navbar navItems={initialMenuItems} onChangeTheme={() => setDarkTheme(!darkTheme)} />
             <Flex fullWidth>
                 {children}
             </Flex>
         </Flex>
       </ThemeProvider>
+
     </>
   );
 };
