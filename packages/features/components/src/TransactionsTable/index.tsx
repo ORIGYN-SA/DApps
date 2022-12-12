@@ -14,6 +14,7 @@ import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
+import { Container } from '@origyn-sa/origyn-art-ui';
 // Import Interfaces TS
 import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
@@ -35,6 +36,7 @@ const cell_style = {
   colSpan: '4',
   align: 'center',
   fontWeight: 'Bold',
+  color: 'white'
 };
 // Style Modal Box
 const style = {
@@ -600,22 +602,15 @@ export const TransactionsTable = (props: any) => {
   }, [props.searchBarTokenId, props.filter]);
 
   return (
-    <Box margin="0 0 0 0" display="flex" flexDirection="column" alignItems="center">
+    <>
       {props.isLoading ? (
-        <Box
-          component={Paper}
-          elevation={3}
-          sx={{ margin: 2, width: '100%', padding: 2, textAlign: 'center' }}
-        >
+        <Container>
           <CircularProgress color="inherit" />
-        </Box>
+        </Container>
       ) : (
-        <TableContainer
-          component={Paper}
-          elevation={2}
-          sx={{ margin: 2, width: '100%', padding: 2 }}
-        >
-          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="ogy_data_table">
+        <Container padding="16px">
+        <TableContainer>
+          <Table stickyHeader sx={{ minWidth: 650, backgroundColor: "#000000" }} aria-label="ogy_data_table">
             {props.searchBarTokenId == 'Not selected'? (
               <TableHead>
                 <TableRow>
@@ -623,7 +618,7 @@ export const TransactionsTable = (props: any) => {
                 </TableRow>
               </TableHead>
             ) : (
-              <TableHead>
+              <TableHead sx={{backgroundColor:"#000000"}}>
                 <TableRow>
                   <TableCell align="center">
                     <IconButton
@@ -650,6 +645,7 @@ export const TransactionsTable = (props: any) => {
                   sx={{
                     '&:last-child td, &:last-child th': { border: 0 },
                     cursor: 'pointer',
+                    color: '#fff',
                   }}
                 >
                   <TableCell sx={cell_style}>Transactions not found</TableCell>
@@ -668,6 +664,7 @@ export const TransactionsTable = (props: any) => {
                       sx={{
                         '&:last-child td, &:last-child th': { border: 0 },
                         cursor: 'pointer',
+                        color: '#fff',
                       }}
                     >
                       <TableCell align="center">{row.index}</TableCell>
@@ -691,6 +688,7 @@ export const TransactionsTable = (props: any) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
+        </Container>
       )}
       <Modal
         open={open}
@@ -702,6 +700,6 @@ export const TransactionsTable = (props: any) => {
           <Transaction modalData={modalData} />
         </Box>
       </Modal>
-    </Box>
+    </>
   );
 };

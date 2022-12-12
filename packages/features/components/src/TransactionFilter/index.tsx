@@ -12,7 +12,7 @@ import Collapse from '@mui/material/Collapse';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Filter } from '@dapp/utils'
-
+import { Container } from '@origyn-sa/origyn-art-ui';
 
 // Select menu styling
 const ITEM_HEIGHT: number = 48;
@@ -130,11 +130,7 @@ export const TransactionFilter = (props : any) => {
   }, [typedVal, searchTrough, transType]);
 
   return (
-    <Box
-      component={Paper}
-      elevation={2}
-      sx={{ margin: 2, width: '100%', padding: 2 }}
-    >
+    <Container padding="16px">
       {props.searchBarTokenId == 'Not selected' ? (
         <div>
           <FormControlLabel
@@ -271,6 +267,6 @@ export const TransactionFilter = (props : any) => {
             </Collapse>
           </div>
         )}
-    </Box>
+    </Container>
   );
 };
