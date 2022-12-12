@@ -42,4 +42,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
           source_dir: 'dist'
-          destination_dir: 'dapps/v${{ steps.package-version.outputs.current-version}}'
+          destination_dir: 'dApps/${{ GITHUB_REF##*/ }}/v${{ steps.package-version.outputs.current-version}}'
