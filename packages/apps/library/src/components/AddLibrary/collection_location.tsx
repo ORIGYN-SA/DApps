@@ -7,6 +7,7 @@ import { getCanisterId,AuthContext } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
@@ -53,7 +54,13 @@ export const CollectionLocation = (props: any) => {
   const StageCollectionLibrary = async () => {
     await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
     try {
-      const response = await stageCollectionLibraryAsset(props.tokenId, typedTitle, selectedLibrary,immutable);
+      const CollectionFile: StageFile = {
+        filename: typedTitle,
+        title: typedTitle,
+        path: '',
+        libraryId: selectedLibrary,
+      };
+      const response = await stageCollectionLibraryAsset(props.tokenId, CollectionFile);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {

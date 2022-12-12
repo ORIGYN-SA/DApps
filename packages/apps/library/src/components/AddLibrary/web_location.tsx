@@ -10,24 +10,27 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 // mint.js
 import { OrigynClient, stageWebLibraryAsset } from '@origyn-sa/mintjs';
 
 export const WebLocation = (props: any) => {
-
   const { actor } = useContext(AuthContext);
 
   const { enqueueSnackbar } = useSnackbar();
 
   const [typedUrl, setTypedUrl] = useState('');
   const [typedTitle, setTypedTitle] = useState('');
-
+  const [typedId, setTypedId] = useState('');
   const [immutable, setImmutable] = React.useState(false);
   const handleChange = (event) => {
     setImmutable(event.target.value);
-    console.log(event.target.value)
+    console.log(event.target.value);
   };
 
+  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedId(event.target.value);
+  };
 
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
@@ -38,10 +41,17 @@ export const WebLocation = (props: any) => {
   };
 
   const StageWebLibrary = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
-
+    await OrigynClient.getInstance().init(true, await getCanisterId(), { actor });
     try {
-      const response = await stageWebLibraryAsset(props.tokenId, typedTitle, typedUrl,immutable);
+      const WebFile: StageFile = {
+        filename: typedTitle,
+        immutable: immutable,
+        webUrl: typedUrl,
+        path: '',
+        libraryId: typedId,
+        title: typedTitle,
+      };
+      const response = await stageWebLibraryAsset(props.tokenId, WebFile);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {
@@ -74,37 +84,52 @@ export const WebLocation = (props: any) => {
         }}
       >
         <FormControl fullWidth>
-        <TextField
-          id="title"
-          label="Library Title"
-          variant="outlined"
-          fullWidth
-          placeholder="Enter Title"
-          onChange={getTypedTitle}
-        />
+          <TextField
+            id="title"
+            label="Library Title"
+            variant="outlined"
+            fullWidth
+            placeholder="Enter Title"
+            onChange={getTypedTitle}
+          />
         </FormControl>
       </Box>
       <Box
-          sx={{
-            mt: 2,
-          }}
-        >
-          <Grid item xs={12} m={2}>
-            <FormControl>
-              <FormLabel id="demo-radio-buttons-group-label">Make library mutable or not</FormLabel>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="Mutable"
-                name="radio-buttons-group"
-                value={immutable}
-                onChange={handleChange}
-              >
-                <FormControlLabel value={false}control={<Radio />} label="Mutable" />
-                <FormControlLabel value={true} control={<Radio />} label="Immutable" />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Box>
+        sx={{
+          mt: 2,
+        }}
+      >
+        <Grid item xs={12} m={2}>
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">Make library mutable or not</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue="Mutable"
+              name="radio-buttons-group"
+              value={immutable}
+              onChange={handleChange}
+            >
+              <FormControlLabel value={false} control={<Radio />} label="Mutable" />
+              <FormControlLabel value={true} control={<Radio />} label="Immutable" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+      </Box>
+      <Box
+        sx={{
+          mt: 2,
+          mb: 2,
+        }}
+      >
+        <TextField
+          id="title"
+          label="Library ID"
+          variant="outlined"
+          fullWidth
+          placeholder="Library ID"
+          onChange={getTypedId}
+        />
+      </Box>
       <Box
         sx={{
           textAlign: 'right',
@@ -112,14 +137,14 @@ export const WebLocation = (props: any) => {
         }}
       >
         <FormControl fullWidth>
-        <TextField
-          id="web"
-          label="Web Location"
-          variant="outlined"
-          fullWidth
-          placeholder="https://www.example.com"
-          onChange={getTypedUrl}
-        />
+          <TextField
+            id="web"
+            label="Web Location"
+            variant="outlined"
+            fullWidth
+            placeholder="https://www.example.com"
+            onChange={getTypedUrl}
+          />
         </FormControl>
       </Box>
       <Box
