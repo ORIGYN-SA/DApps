@@ -130,7 +130,7 @@ const WalletPage = () => {
     { id: 'end_date', label: 'End Date' },
     { id: 'actions', label: 'Actions' },
   ]
-  const { loggedIn, principal, actor, activeWalletProvider } = useContext(AuthContext)
+  const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } = useContext(AuthContext)
   const [openAuction, setOpenAuction] = React.useState(false)
   const [canisterId, setCanisterId] = React.useState("")
   const [tokenId, setTokenId] = React.useState("")
@@ -629,6 +629,7 @@ const WalletPage = () => {
                 )}
               </div>,
             ]}
+            onLogOut={handleLogOut}
             onConnect={() => {open(); return {}}}
             principal={principal?.toText()}
           />
