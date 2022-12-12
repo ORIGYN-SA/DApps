@@ -423,8 +423,6 @@ const WalletPage = () => {
             title='Vault'
             tabs={[
               { title: 'Balance', id: 'Balance' },
-              { title: 'Escrows', id: 'Escrows' },
-              { title: 'Auctions', id: 'Auctions' },
             ]}
             content={[
               <Flex fullWidth flexFlow='column'>
