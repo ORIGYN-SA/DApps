@@ -49,7 +49,6 @@ return (
           <Tab label="Tree"  />
           <Tab label="Raw"  />
           <Tab label="JSON"  />
-          <Tab label="Update" disabled={true}/>
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -63,9 +62,6 @@ return (
       </TabPanel>
       <TabPanel value={value} index={3}>
         <JSONTab metadata={metadata} />
-      </TabPanel>
-      <TabPanel value={value} index={4}>   
-        <NewForm metadata={metadata} />
       </TabPanel>
     </Box>
    
