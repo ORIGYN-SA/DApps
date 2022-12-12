@@ -1,12 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, getTokenId, getCanisterId } from '@dapp/features-authentication';
 import NFTInfo from '../NFTInfo';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import { SwitchCanisterCollection } from '@dapp/features-components';
-import Paper from '@mui/material/Paper';
-import { OrigynClient, getNftCollectionMeta} from '@origyn-sa/mintjs';
-
+import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import { Container } from '@mui/material';
 
 const currentCanisterId = async () => {
   const canisterId = await getCanisterId();
@@ -16,7 +12,7 @@ const currentCanisterId = async () => {
 const Home = () => {
   const { tokenId, actor } = useContext(AuthContext);
   const [NFTData, setNFTData] = useState();
-  const [canisterId, setCanisterId] = useState("");
+  const [canisterId, setCanisterId] = useState('');
 
   const nftCollection = async () => {
     OrigynClient.getInstance().init(true, await currentCanisterId());
@@ -37,38 +33,38 @@ const Home = () => {
   };
 
   const getData = async () => {
-      if (tokenId) {
-        try {
-          const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
-          const result = await response.text();
-          if (result.search('"is_soulbound":,')) {
-            setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
-          } else {
-            setNFTData(JSON.parse(result));
-          }
-        } catch (err) {
-          console.log(err);
+    if (tokenId) {
+      try {
+        const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
+        const result = await response.text();
+        if (result.search('"is_soulbound":,')) {
+          setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
+        } else {
+          setNFTData(JSON.parse(result));
         }
-      } else {
-        try {
-          const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
-          const result = await response.text();
-          if (result.search('"is_soulbound":,')) {
-            setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
-          } else {
-            setNFTData(JSON.parse(result));
-          }
-        } catch (err) {
-          console.log(err);
-        }
+      } catch (err) {
+        console.log(err);
       }
+    } else {
+      try {
+        const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
+        const result = await response.text();
+        if (result.search('"is_soulbound":,')) {
+          setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
+        } else {
+          setNFTData(JSON.parse(result));
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 
   useEffect(() => {
     getCanisterId().then((r) => {
       setCanisterId(r);
     });
-  }, [])
+  }, []);
   useEffect(() => {
     if (canisterId) {
       nftCollection();
@@ -76,16 +72,11 @@ const Home = () => {
     }
   }, [canisterId]);
 
-
-
   return (
-    <Container maxWidth="xl">
-      <Box>
-        <SwitchCanisterCollection/>
-        <Box component={Paper} elevation={3} sx={{ margin: 2, width: '100%', padding: 2 }}>
-          {NFTData ? <NFTInfo metadata={NFTData} /> : null}
-        </Box>
-      </Box>
+    <Container>
+      {NFTData ? (
+          <NFTInfo metadata={NFTData} />
+      ) : null}
     </Container>
   );
 };
