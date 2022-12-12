@@ -10,5 +10,3 @@ export type AuthContextType = {
   principal?: Principal;
   setLocalDevelopment?: (value: boolean) => void;
 };
-
-https://sp3hj-caaaa-aaaaa-aaajq-cai.localhost:8000/-/bm-0/preview

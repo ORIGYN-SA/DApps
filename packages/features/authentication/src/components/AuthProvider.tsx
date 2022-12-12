@@ -19,6 +19,7 @@ export const useAuth = () => {
     disconnect: handleLogOut,
     isInitializing,
     isConnected,
+    connect,
   } = useConnect();
 
   const [actor] = useCanister('nft');

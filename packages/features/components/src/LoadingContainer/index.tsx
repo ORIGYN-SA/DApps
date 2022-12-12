@@ -3,6 +3,6 @@ import { Box, LinearProgress } from '@mui/material';
 
 export const LoadingContainer = () => (
   <Box sx={{ width: '100%' }}>
-    <LinearProgress />
+    <LinearProgress color='secondary' />
   </Box>
 );

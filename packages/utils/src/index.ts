@@ -1,8 +1,13 @@
 import { toast } from 'react-toastify';
 
-export const isLocal = () =>
-  window.location.hostname.indexOf('localhost') !== -1 ||
-  window.location.hostname.indexOf('127.0.0.1') !== -1;
+export const isLocal = () => {
+  return (
+    process.env.isLocal && (
+      window.location.hostname.indexOf('localhost') !== -1 ||
+      window.location.hostname.indexOf('127.0.0.1') !== -1
+    )
+  );
+}
 
 export function numberWithCommas(number: number, separator = ',') {
   // Split float on "."
