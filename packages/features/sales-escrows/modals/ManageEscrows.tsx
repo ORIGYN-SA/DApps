@@ -50,6 +50,11 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
       setDialogAction('endSale')
       setSelectdNFT(token_id)
   }
+  const handleClickOpenRej = (escrow, token_id) => {
+    setOpenConfirmation(true)
+    setDialogAction('reject')
+    setSelectedEscrow(escrow)
+}
 
   const handleCloseConf = () => {
     setOpenConfirmation(false)
@@ -66,17 +71,17 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
       (accumulator, currentValue) => accumulator + currentValue,
       initialValue
     );
-  offers.map((esc: any) => (
-      totalOffer.push((Number(esc.amount) * 0.00000001))
-    ))
-  const offerSum = totalOffer.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      initialValue
-    );
+  // offers.map((esc: any) => (
+  //     totalOffer.push((Number(esc.amount) * 0.00000001))
+  //   ))
+  // const offerSum = totalOffer.reduce(
+  //     (accumulator, currentValue) => accumulator + currentValue,
+  //     initialValue
+  //   );
     
     
     
-    setTotalAm(escrowSum + offerSum)
+    setTotalAm(escrowSum)
   }
 
   useEffect(() => {
@@ -181,12 +186,19 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                       <span style={{color: 'grey'}} >Amount</span>
                       <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${'OGY'}`}</span>                  
                       </Flex>
-                    <Button
+                    {/* <Button
                         btnType="filled"
                         size="small"
                         onClick={()=>handleClickOpen(esc.token_id)}
                       >
                        Accept
+                      </Button> */}
+                      <Button
+                        btnType="outlined"
+                        size="small"
+                        onClick={()=>handleClickOpenRej(esc, esc.token_id)}
+                      >
+                       Reject
                       </Button>
                   </Flex>
                   <br />
