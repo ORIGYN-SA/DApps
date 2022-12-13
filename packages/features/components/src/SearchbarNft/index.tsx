@@ -7,6 +7,7 @@ import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
+import { Container } from '@origyn-sa/origyn-art-ui';
 // Preloader
 import { CircularProgress } from '@mui/material';
 const ISPROD = true;
@@ -91,11 +92,7 @@ export const SearchbarNft = (props: any) => {
   }, [actor]);
 
   return (
-    <Box
-      component={Paper}
-      elevation={2}
-      sx={{ margin: 2, width: '100%', padding: 2 }}
-    >
+    <Container padding="16px">
       {props.isLoading ? (
         <Box sx={{ textAlign: 'center' }}>
           <CircularProgress color="inherit" />
@@ -153,6 +150,6 @@ export const SearchbarNft = (props: any) => {
           />
         </FormControl>
       )}
-    </Box>
+    </Container>
   );
 };

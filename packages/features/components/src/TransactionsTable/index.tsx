@@ -600,8 +600,9 @@ export const TransactionsTable = (props: any) => {
   }, [props.searchBarTokenId, props.filter]);
 
   return (
-    <Box margin="0 0 0 0" display="flex" flexDirection="column" alignItems="center">
+    <>
       {props.isLoading ? (
+       
         <Box
           component={Paper}
           elevation={3}
@@ -702,6 +703,6 @@ export const TransactionsTable = (props: any) => {
           <Transaction modalData={modalData} />
         </Box>
       </Modal>
-    </Box>
+      </>
   );
 };
