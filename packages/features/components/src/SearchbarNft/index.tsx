@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { AuthContext, getTokenId } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { collectionName } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
 import { Container, Card, Select } from '@origyn-sa/origyn-art-ui';
@@ -10,9 +10,11 @@ interface SelectType {
 }
 
 const ISPROD = true;
-export const SearchbarNft = (props: any) => {
 
-  const { tokenId, actor,canisterId } = useContext(AuthContext);
+export const SearchbarNft = (props: any) => {
+  const { actor } = useContext(AuthContext);
+  const [tokenId, setTokenId] = React.useState('');
+  const [canisterId, setCanisterId] = React.useState('');
   const [selectTokenIds, setSelectTokenIds] = React.useState<any>(['']);
   const [selectUi, setSelectUi] = React.useState<SelectType[]>([]);
   const [idsNumber, setIdsNumber] = React.useState('');
@@ -35,8 +37,17 @@ export const SearchbarNft = (props: any) => {
     console.log('nft', nft);
   };
 
+  const GetTokenId = async () => {
+    setTokenId(await useRoute().then((res) => res.tokenId));
+  };
+  const GetCanisterId = async () => {
+    setCanisterId(await useRoute().then((res) => res.canisterId));
+  };
+
   useEffect(() => {
     NFTobj();
+    GetTokenId();
+    GetCanisterId();
   }, []);
   const NFTCollection = async () => {
     setSelectTokenIds(['Loading...']);
@@ -86,19 +97,10 @@ export const SearchbarNft = (props: any) => {
   // if the actor changes getNftCollection is called
   useEffect(() => {
     if (actor) {
-      useRoute().then(({ canisterId }) => {
-        OrigynClient.getInstance().init(ISPROD,canisterId);
-        NFTCollection();
-      });
+      OrigynClient.getInstance().init(ISPROD,canisterId);
+      NFTCollection();
     }
   }, [actor]);
-
-  useEffect(() => {
-    useRoute().then(({ tokenId }) => {
-      setTokenId(tokenId);
-    });
-  }, []);
-
   return (
     <Container padding="16px">
       {props.isLoading ? (
