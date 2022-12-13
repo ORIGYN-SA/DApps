@@ -30,6 +30,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens'
+import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -75,11 +76,11 @@ const StyledSectionTitle = styled.h2`
 `
 
 const StyledCustomGrid = styled(Grid)`
-  grid-template-columns: 2fr 5fr;
+  grid-template-columns: minmax(0,2fr) minmax(0,5fr);
   padding: 24px;
 
   ${({ theme }) => theme.media.lg} {
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: minmax(0,1fr) minmax(0,2fr);
   }
 `
 
@@ -141,6 +142,7 @@ const WalletPage = () => {
   const [selectedEscrow, setSelectedEscrow] = useState<any>()
   const [NFTData, setNFTData] = useState<any>()
   const [activeEscrows, setActiveEscrows] = useState<any>()
+  const [outEscrows, setOutEscrows] = useState<any>()
   const [dialogAction, setDialogAction] = useState<any>()
   const [activeSales, setActiveSales] = useState<any>({
     columns: activeSalesColumns,
@@ -148,6 +150,7 @@ const WalletPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
   const [openTrx, setOpenTrx] = useState(false);
+  const [propsEsc, setPropsEsc] = useState([])
 
   const { open } = useDialog()
 
@@ -163,6 +166,7 @@ const WalletPage = () => {
   }
 
   const handleClose = async (dataChanged = false) => {
+    setOpenEsc(false)
     setOpenTrx(false)
     setOpenAuction(false)
     setOpenConfirmation(false)
@@ -296,10 +300,10 @@ const WalletPage = () => {
           { id: 'lockDate', label: 'Lock Date' },
           { id: 'actions', label: 'Actions' },
         ]
-        setActiveEscrows({
-          in: { columns: inColumns, data: inEscrow },
-          out: { columns: outColumns, data: outEscrow },
-        })
+        setActiveEscrows(inEscrow)
+        setOutEscrows(outEscrow)
+        console.log('in', inEscrow)
+        console.log('out', outEscrow)
 
 
         Promise.all(
@@ -387,6 +391,8 @@ const WalletPage = () => {
     }
   }, [loggedIn])
 
+  const [openEsc, setOpenEsc] = useState(false)
+
   useEffect(() => {
     useRoute().then(({canisterId, tokenId}) => {
       setCanisterId(canisterId);
@@ -455,8 +461,8 @@ const WalletPage = () => {
                       <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h6>Manage Escrow</h6>
-                      <Button textButton disabled>
-                        No assets in escrow
+                      <Button textButton onClick={()=>setOpenEsc(true)}>
+                        {activeEscrows.length > 0 || outEscrows.length > 0 ? 'Assets in Escrow' : 'No assets in Escrow'}
                       </Button>
                       <StyledBlackCard align='center' padding='12px' justify='space-between'>
                         <Flex align='center' gap={12}>
@@ -540,6 +546,12 @@ const WalletPage = () => {
                         handleClose={handleClose}
                      />
 
+                     <ManageEscrowsModal
+                     open={openEsc}
+                     handleClose={handleClose}
+                     collection={collectionData}
+                     />
+
                       {NFTData?.length > 0 ? (
                         <Grid
                           smColumns={1}
@@ -562,10 +574,10 @@ const WalletPage = () => {
                                     <Flex flexFlow='column' gap={32}>
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                          {nft?.collectionid} Collection
+                                          {collectionData?.name} Collection
                                         </p>
                                         <p>
-                                          <b>{nft?.name}</b>
+                                          <b>{nft['com.bm.sample.app.creator_name']}</b>
                                         </p>
                                       </div>
                                       <div>
