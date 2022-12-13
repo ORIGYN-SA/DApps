@@ -1,6 +1,6 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import Box from '@mui/material/Box';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
 import { WebContentsType } from './HtmlContents';
 import LibraryDefault from '../LibraryDefault';
@@ -13,9 +13,9 @@ const linkStyle = {
 };
 
 const LibraryTextHtml = (props: any) => {
-  const { canisterId } = useContext(AuthContext);
-  const [link, setLink] = React.useState('');
-  const [content, setContent] = React.useState('');
+  const [canisterId, setCanisterId] = useState("");
+  const [link, setLink] = useState('');
+  const [content, setContent] = useState('');
 
   const getContent = async () => {
     const arrayFromContentsType = Object.getOwnPropertyNames(WebContentsType);
@@ -36,6 +36,12 @@ const LibraryTextHtml = (props: any) => {
     if (canisterId) {
       getContent();
     }
+  }, [canisterId]);
+
+  useEffect(() => {
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId);
+    });
   }, []);
 
   return (

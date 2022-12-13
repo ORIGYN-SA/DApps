@@ -39,3 +39,7 @@ export const eToNumber = (num) => {
     return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`);
   }
 };
+
+export const currencyFormat = (val?: number) => {
+  return (val ?? 0).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+};

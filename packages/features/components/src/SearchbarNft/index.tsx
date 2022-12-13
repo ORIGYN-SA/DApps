@@ -78,8 +78,7 @@ export const SearchbarNft = (props: any) => {
       } else {
         // setSearchBarTokenId state
         props.setSearchBarTokenId(obj_token_ids[0][0]);
-        const curTokenId=await getTokenId();
-        window.location.href = window.location.href.replace(`/${curTokenId}/`, `/${obj_token_ids[0][0]}/`);
+        window.location.href = window.location.href.replace(`/${tokenId}/`, `/${obj_token_ids[0][0]}/`);
       }
 
     }
@@ -87,10 +86,18 @@ export const SearchbarNft = (props: any) => {
   // if the actor changes getNftCollection is called
   useEffect(() => {
     if (actor) {
-      OrigynClient.getInstance().init(ISPROD,canisterId);
-      NFTCollection();
+      useRoute().then(({ canisterId }) => {
+        OrigynClient.getInstance().init(ISPROD,canisterId);
+        NFTCollection();
+      });
     }
   }, [actor]);
+
+  useEffect(() => {
+    useRoute().then(({ tokenId }) => {
+      setTokenId(tokenId);
+    });
+  }, []);
 
   return (
     <Container padding="16px">
