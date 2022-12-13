@@ -166,6 +166,7 @@ export const NFTPage = () => {
           const dataObj = r?.ok.metadata.Class.find(({ name }) => name === '__apps')
             .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
             .value.Class.reduce((arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }), {})
+          dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text
           const royal1 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.primary').value.Array
           const royal2 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.secondary').value.Array
           setRoy2(royal2)
@@ -173,11 +174,13 @@ export const NFTPage = () => {
           setCurrentNFT(dataObj)
           console.log(royal1)
 
-          console.log(currentNFT)
+          console.log('nft fik',currentNFT)
         })
         .catch(console.log)
     }
   }, [])
+
+  console.log('nft id', currentNFT)
 
 
   if (isLoading || !canisterId) {
@@ -372,7 +375,7 @@ export const NFTPage = () => {
       <StartAuctionModal
         open={openAuction}
         handleClose={handleClose}
-        currentToken={currentNFT?.metadata}
+        currentToken={currentNFT?.tokenID}
       />
     </Flex>
   )

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Principal } from '@dfinity/principal'
 import { AuthContext } from '@dapp/features-authentication'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -7,6 +7,7 @@ import * as Yup from 'yup'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { useTokensContext } from '@dapp/features-tokens-provider'
 import { Container, Flex, HR, Modal, TextInput, DatePicker, Select, Button } from '@origyn-sa/origyn-art-ui'
+import { useRoute } from '@dapp/features-authentication'
 
 const validationSchema = Yup.object({
   token: Yup.string()
@@ -35,6 +36,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
   const { actor } = React.useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar()
   const [errors, setErrors] = React.useState<any>({})
+const [tokenID, setTokenID] = useState<any>()
   // @ts-ignore
   const [values, setValues] = React.useState<any>(validationSchema.default());
   const [inProgress, setInProgress] = React.useState(false)
@@ -48,9 +50,13 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
                                       token: saleToken
                                     }) => {
     setInProgress(true)
+    console.log('tokenId', currentToken)
+    console.log('startPrice',BigInt(startPrice))
+    console.log('token', tokens[saleToken])
+    console.log('endDate', BigInt(endDate.getTime() * 1e6))
     try {
       const resp = await actor.market_transfer_nft_origyn({
-        token_id: currentToken?.Class?.find(({ name }) => name === 'id').value.Text,
+        token_id: currentToken,  //TO DO: move to NFTPage and use as props
         sales_config: {
           pricing: {
             auction: {
@@ -82,6 +88,9 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
         },
       })
 
+
+      console.log('resp', resp)
+
       if ('err' in resp) {
         enqueueSnackbar('There was an error when starting your auction.', {
           variant: 'error',
@@ -101,7 +110,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
         handleClose(true)
       }
     } catch (e) {
-      console.log(e)
+      console.log('this ie error', e)
       enqueueSnackbar('There was an error when starting your auction.', {
         variant: 'error',
         anchorOrigin: {
@@ -139,7 +148,8 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
     setErrors({...errors, [name || e.target.name]: undefined});
     setValues({...values, [name || e.target.name]: value || e.target.value});
   }
-  console.log()
+  console.log('form',values)
+
   return (
     <div>
       <Modal
