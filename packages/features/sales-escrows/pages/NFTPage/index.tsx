@@ -92,6 +92,7 @@ export const NFTPage = () => {
   }
 
   const handleClickOpenEsc = (item) => {
+    console.log('clicked', openConfirmation, dialogAction)
       setOpenConfirmation(true)
       setDialogAction('endSale')
   }
@@ -309,7 +310,17 @@ export const NFTPage = () => {
                                 </strong>
                               </Typography>
                             )}
-                            <Button btnType='accent' onClick={handleClickOpenEsc}>End Sale</Button>
+                            <br/>
+                            <Flex flexFlow='row'>
+                            {(principal == verifyOwner) ?
+                            <Button btnType='accent' onClick={handleClickOpenEsc}> End Sale </Button> :
+                            <Button btnType='accent' onClick={()=> handleOpen('bid')}> Make an Offer</Button>}
+                            
+                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
+                            0 && (
+                            <Button btnType='accent' onClick={()=> handleOpen('buyNow')}>Buy Now</Button>
+                            )}
+                            </Flex>
                           </div>
                         ) : (  (principal == verifyOwner) ?
                           (<Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>) : 
@@ -390,6 +401,7 @@ export const NFTPage = () => {
         handleClose={handleClose}
         currentToken={currentNFT?.tokenID}
         action={dialogAction}
+        escrow={undefined}
       />
       <StartAuctionModal
         open={openAuction}

@@ -37,6 +37,7 @@ export const ConfirmSalesActionModal = ({
       setIsLoading(true); 
       if (action === 'endSale') {
         const endSaleResponse = await actor.end_sale_nft_origyn(currentToken);
+        console.log('error here')
         if (endSaleResponse.ok) {
           enqueueSnackbar(`You have successfully ended the sale for ${currentToken}.`, {
             variant: 'success',
