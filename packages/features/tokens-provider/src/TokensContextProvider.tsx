@@ -167,9 +167,8 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       pTokens[symbol].balance = balance;
       return { ...pTokens };
     });
-    let today: any = new Date();
-    let today2 = timeConverter(BigInt(today * 1000000))
-    setTime(today2)
+    const today = timeConverter(BigInt(new Date().getTime() * 1000000))
+    setTime(today)
   };
 
   const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
