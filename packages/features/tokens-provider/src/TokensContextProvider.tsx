@@ -4,6 +4,7 @@ import JSONBig from 'json-bigint';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
+import { timeConverter } from '@dapp/utils';
 
 const defaultTokens = {
   ICP: {
@@ -65,6 +66,7 @@ export type TokensContext = {
   tokens: {
     [key: string]: Token;
   };
+  time?: string | number;
   addToken?: (
     isLocal: boolean,
     canisterId: string,
@@ -110,6 +112,7 @@ export const useTokensContext = () => {
 
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
+  const [time, setTime] = useState<any>()
 
   const addToken = async (
     isLocal: boolean,
@@ -164,6 +167,9 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       pTokens[symbol].balance = balance;
       return { ...pTokens };
     });
+    let today: any = new Date();
+    let today2 = timeConverter(BigInt(today * 1000000))
+    setTime(today2)
   };
 
   const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
@@ -206,6 +212,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         setLocalCanisterId,
         toggleToken,
         tokens,
+        time
       }}
     >
       {children}
