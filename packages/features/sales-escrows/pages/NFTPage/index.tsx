@@ -83,12 +83,17 @@ export const NFTPage = () => {
   const { open } = useDialog();
   const [saleNft, setSaleNft] = useState<any>();
 
-  const handleClickOpen = (item, modal = 'auction') => {
+  const handleClickOpen = (modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
     else if (modal === 'confirmEnd') {
       setOpenConfirmation(true)
       setDialogAction('endSale')
     }
+  }
+
+  const handleClickOpenEsc = (item) => {
+      setOpenConfirmation(true)
+      setDialogAction('endSale')
   }
 
   const handleClose = async () => {
@@ -304,6 +309,7 @@ export const NFTPage = () => {
                                 </strong>
                               </Typography>
                             )}
+                            <Button btnType='accent' onClick={handleClickOpenEsc}>End Sale</Button>
                           </div>
                         ) : (  (principal == verifyOwner) ?
                           (<Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>) : 
