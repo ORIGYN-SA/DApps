@@ -100,7 +100,7 @@ export const NFTPage = () => {
     setExpanded(newExpanded ? panel : false)
   }
   const params = useParams()
-  const currentOpenAuction = currentNFT?.current_sale?.find((sale) =>
+  const currentOpenAuction = saleNft?.current_sale?.find((sale) =>
     sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
   )
 
