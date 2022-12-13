@@ -381,12 +381,10 @@ const WalletPage = () => {
     }
   }
 
-let today = new Date();
-let date = today.getFullYear()+'/'+(today.getMonth()+1)+'/'+today.getDate();
-let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-let dateTime = time+','+' '+date;
+let today: any = new Date();
+let today2 = timeConverter(BigInt(today * 1000000))
  
-console.log('time4',dateTime)
+console.log('time4',today2)
 
   useEffect(() => {
     if (loggedIn) {
@@ -458,7 +456,7 @@ console.log('time4',dateTime)
                           </Flex>
                         </StyledBlackItemCard>
                       ))}
-                      <p className="small_text secondary_color">Last Updated: {dateTime}</p>
+                      <p className="small_text secondary_color">Last Updated: {today2}</p>
                       <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h6>Manage Escrow</h6>
