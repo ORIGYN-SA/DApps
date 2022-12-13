@@ -30,6 +30,7 @@ import {
 } from '@origyn-sa/origyn-art-ui'
 import styled from 'styled-components'
 import { useDialog } from '@connect2ic/react'
+import { useTokensContext } from '@dapp/features-tokens-provider';
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -82,8 +83,9 @@ export const NFTPage = () => {
   const [roy2, setRoy2] = useState<any>()
   const { open } = useDialog();
   const [saleNft, setSaleNft] = useState<any>();
+  const { tokens } = useTokensContext();
 
-  const handleClickOpen = (modal = 'auction') => {
+  const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
     else if (modal === 'confirmEnd') {
       setOpenConfirmation(true)
@@ -91,7 +93,7 @@ export const NFTPage = () => {
     }
   }
 
-  const handleClickOpenEsc = (item) => {
+  const handleClickOpenEsc = (item, modal='confirmEnd') => {
     console.log('clicked', openConfirmation, dialogAction)
       setOpenConfirmation(true)
       setDialogAction('endSale')
@@ -199,6 +201,9 @@ export const NFTPage = () => {
 
   console.log('nft id', currentNFT)
 
+ console.log('end', currentOpenAuction?.sale_type?.auction)  
+ console.log('now',BigInt(new Date().getTime() ) )
+
 
   if (isLoading || !canisterId) {
     return (
@@ -242,7 +247,45 @@ export const NFTPage = () => {
                       <br />
                       <HR />
                       <Flex justify='space-between' align='center'>
-                        <Flex align='center' gap={8}><Icons.OrigynIcon width={22} /><b>-</b></Flex>
+
+                        <Flex align='center' gap={8}>
+                         
+                        { saleNft?.current_sale.length > 0 ? (
+                        <Flex flexFlow='column'>
+                        
+                          <Flex flexFlow='column'>
+                            <span>Current bid</span>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} /><NatPrice value={currentOpenAuction?.sale_type?.auction?.current_bid_amount}/></strong>
+                          </Flex> 
+                          <br/>
+                           <Flex flexFlow='row'>
+                            
+
+                           {currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve?.length >
+                            0 && (
+                           <Flex flexFlow='column'>
+                            <span>Reserve Price</span>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} /><NatPrice value={currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve[0]}/></strong>
+                          </Flex>)}
+                          <br/>
+
+                           
+                          {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
+                            0 && (
+                          <Flex flexFlow='column'>
+                            <span>Buy Now</span>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} /><NatPrice value={currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]}/></strong>
+                          </Flex>)}
+                            
+                           </Flex>
+                        </Flex>
+                        ) : '-'}
+
+
+
+
+                        </Flex>
+                          
                         <div><b>{currentNFT?.collectionid} Collection</b></div>
                       </Flex>
                       <HR />
@@ -250,70 +293,10 @@ export const NFTPage = () => {
                       {
                         currentOpenAuction ? (
                           <div>
-                            <Typography>
-                              Sale ends on{' '}
-                              <strong>
-                                {' '}
-                                {timeConverter(
-                                  BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)),
-                                )}
-                              </strong>
-                            </Typography>
-                            <Typography>
-                              Token:{' '}
-                              <SymbolWithIcon
-                                symbol={
-                                  currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic
-                                    ?.symbol
-                                }
-                              />
-                            </Typography>
-                            <Typography>
-                              Start price:{' '}
-                              <strong>
-                                <NatPrice
-                                  value={
-                                    currentOpenAuction?.sale_type?.auction?.config?.auction?.start_price
-                                  }
-                                />
-                              </strong>
-                            </Typography>
-                            <Typography>
-                              Minimum step:{' '}
-                              <strong>
-                                <NatPrice
-                                  value={
-                                    currentOpenAuction?.sale_type?.auction?.config?.auction?.min_increase
-                                      ?.amount
-                                  }
-                                />
-                              </strong>
-                            </Typography>
-                            <Typography>
-                              Highest bid:{' '}
-                              <strong>
-                                <NatPrice
-                                  value={currentOpenAuction?.sale_type?.auction?.current_bid_amount}
-                                />
-                              </strong>
-                            </Typography>
-                            {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
-                            0 && (
-                              <Typography>
-                                Buy now:{' '}
-                                <strong>
-                                  <NatPrice
-                                    value={
-                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]
-                                    }
-                                  />
-                                </strong>
-                              </Typography>
-                            )}
-                            <br/>
+
                             <Flex flexFlow='row'>
-                            {(principal == verifyOwner) ?
-                            <Button btnType='accent' onClick={handleClickOpenEsc}> End Sale </Button> :
+                            {(principal == verifyOwner) ? ( (BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ?
+                            <Button btnType='accent' onClick={handleClickOpenEsc}> End Sale </Button> : <Button btnType='outlined' disabled onClick={handleClickOpenEsc}> End Sale </Button>) :
                             <Button btnType='accent' onClick={()=> handleOpen('bid')}> Make an Offer</Button>}
                             
                              {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
@@ -324,7 +307,9 @@ export const NFTPage = () => {
                           </div>
                         ) : (  (principal == verifyOwner) ?
                           (<Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>) : 
-                          (<Button btnType='accent' onClick={handleEscrow}>Make an Offer</Button>)
+                          ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ? 
+                          (<Button btnType='accent' disabled onClick={handleEscrow}>Make an Offer</Button>) 
+                          : (<Button btnType='accent'  onClick={handleEscrow}>Make an Offer</Button>))
                         
                         )
                       }
