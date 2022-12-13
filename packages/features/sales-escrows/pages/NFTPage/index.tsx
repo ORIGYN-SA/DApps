@@ -81,6 +81,7 @@ export const NFTPage = () => {
   const [roy1, setRoy1] = useState<any>()
   const [roy2, setRoy2] = useState<any>()
   const { open } = useDialog();
+  const [saleNft, setSaleNft] = useState();
 
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
@@ -176,9 +177,11 @@ export const NFTPage = () => {
           dataObj.owner = r?.ok?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText()
           const royal1 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.primary').value.Array
           const royal2 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.secondary').value.Array
+          const _nft = r?.ok
           setRoy2(royal2)
           setRoy1(royal1)
           setCurrentNFT(dataObj)
+          setSaleNft(_nft)
           console.log(royal1)
 
         })
@@ -201,7 +204,7 @@ export const NFTPage = () => {
       <StartEscrowModal
         open={openEscrowModal}
         handleClose={handleCloseEscrow}
-        nft={currentNFT?.tokenID}
+        nft={saleNft}
         initialValues={modalInitialValues}
       />
       <SecondaryNav
@@ -377,7 +380,7 @@ export const NFTPage = () => {
       <ConfirmSalesActionModal
         open={openConfirmation}
         handleClose={handleClose}
-        currentToken={currentNFT}
+        currentToken={currentNFT?.tokenID}
         action={dialogAction}
       />
       <StartAuctionModal

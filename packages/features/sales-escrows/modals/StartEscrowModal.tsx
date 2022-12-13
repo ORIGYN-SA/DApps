@@ -142,7 +142,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
           throw Error(transactionHeight.err);
         }
         const escrowData = {
-          token_id: nft,
+          token_id: _nft.id,
           deposit: {
             token: {
               ic: {
@@ -241,7 +241,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          Send escrow for <strong>{nft}</strong>?
+          Send escrow for <strong>{_nft.id}</strong>?
         </DialogTitle>
         <DialogContent style={{ opacity: isLoading ? '0.4' : '1' }}>
           <Grid container spacing={3} mt={2}>
@@ -253,7 +253,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 id="nftId"
                 variant="outlined"
                 inputProps={{ 'aria-label': 'nftId' }}
-                value={nft.tokenID}
+                value={_nft.id}
                 {...register('nftId')}
                 error={!!errors.nftId}
               />
@@ -270,7 +270,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 id="sellerId"
                 inputProps={{ 'aria-label': 'sellerId' }}
                 variant="outlined"
-                value={nft.owner}
+                value={_nft.seller}
                 {...register('sellerId')}
                 error={!!errors.sellerId}
               />
