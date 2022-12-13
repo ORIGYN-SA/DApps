@@ -18,17 +18,17 @@ export const SearchbarNft = (props: any) => {
   const [selectTokenIds, setSelectTokenIds] = React.useState<any>(['']);
   const [selectUi, setSelectUi] = React.useState<SelectType[]>([]);
   const [idsNumber, setIdsNumber] = React.useState('');
-  const handleSelectIds = (event, value) => {
+  const handleSelectIds = (option) => {
     // setSearchBarTokenId state
-    if (value == null) {
-      value = '';
+    if (option.value == null) {
+      option.value = '';
     }
-    props.setSearchBarTokenId(value);
+    props.setSearchBarTokenId(option.value);
     // replace the tokenId in the searchBar
     window.history.pushState(
       '',
       '',
-      window.location.href.replace(`/${props.searchBarTokenId}/`, `/${value}/`),
+      window.location.href.replace(`/${props.searchBarTokenId}/`, `/${option.value}/`),
     );
   };
 
@@ -38,6 +38,7 @@ export const SearchbarNft = (props: any) => {
   };
 
   const GetTokenId = async () => {
+    console.log(await useRoute().then((res) => res.tokenId))
     setTokenId(await useRoute().then((res) => res.tokenId));
   };
   const GetCanisterId = async () => {
@@ -133,9 +134,9 @@ export const SearchbarNft = (props: any) => {
             <Select 
              placeholder="Token Ids"
              selectedOption={props.searchBarTokenId}
-             handleChange={(event) => {
-               handleSelectIds(event, event.target.value);
-             }}
+            handleChange={(opt) => {
+              handleSelectIds(opt);
+            }}
              options={
               selectTokenIds.map((token) => {
                 return {
