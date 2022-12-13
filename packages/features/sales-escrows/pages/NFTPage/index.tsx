@@ -81,7 +81,7 @@ export const NFTPage = () => {
   const [roy1, setRoy1] = useState<any>()
   const [roy2, setRoy2] = useState<any>()
   const { open } = useDialog();
-  const [saleNft, setSaleNft] = useState();
+  const [saleNft, setSaleNft] = useState<any>();
 
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
@@ -174,6 +174,8 @@ export const NFTPage = () => {
             .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
             .value.Class.reduce((arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }), {})
           dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text
+
+        //TO DO: remove owner from dataObj, create new const so not included in properties for now?
           dataObj.owner = r?.ok?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText()
           const royal1 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.primary').value.Array
           const royal2 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.secondary').value.Array
@@ -226,7 +228,7 @@ export const NFTPage = () => {
                     />
                     <Flex flexFlow='column' gap={8}>
                       <p className="secondary_color">{currentNFT?.collectionid} Collection</p>
-                      <h2><b>{currentNFT?.name}</b></h2>
+                      <h2><b>{currentNFT?.tokenID}</b></h2>
                       <br />
                       <ShowMoreBlock btnText='Read More'>
                         <p className="secondary_color">{currentNFT?.description}</p>

@@ -149,7 +149,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 fee: BigInt(tokens[token].fee ?? 200_000),
                 decimals: BigInt(tokens[token].decimals ?? 8),
                 canister: Principal.fromText(
-                  isLocal ? tokens[token].localCanisterId : tokens[token].canisterId,
+                  isLocal() ? tokens[token].localCanisterId : tokens[token].canisterId,
                 ),
                 standard: { Ledger: null },
                 symbol: tokens[token].symbol,
