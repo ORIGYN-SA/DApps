@@ -317,7 +317,7 @@ export const NFTPage = () => {
                             <Button btnType='accent' onClick={()=> handleOpen('bid')}> Make an Offer</Button>}
                             
                              {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
-                            0 && (
+                            0 && (principal != verifyOwner) && (
                             <Button btnType='accent' onClick={()=> handleOpen('buyNow')}>Buy Now</Button>
                             )}
                             </Flex>
