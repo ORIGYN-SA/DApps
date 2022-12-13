@@ -65,6 +65,9 @@ export type TokensContext = {
   tokens: {
     [key: string]: Token;
   };
+  activeTokens: {
+    [key: string]: Token;
+  };
   addToken?: (
     isLocal: boolean,
     canisterId: string,
@@ -101,6 +104,10 @@ const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
+  activeTokens:
+    Object.keys(initialTokens)
+      .filter((t) => initialTokens[t].enabled)
+      .reduce((ats,key) => ({...ats, [key]: initialTokens[key]}), {}),
 });
 
 export const useTokensContext = () => {
@@ -110,7 +117,7 @@ export const useTokensContext = () => {
 
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
-
+  console.log(tokens);
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -206,6 +213,10 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         setLocalCanisterId,
         toggleToken,
         tokens,
+        activeTokens:
+          Object.keys(tokens)
+            .filter((t) => tokens[t].enabled)
+            .reduce((ats,key) => ({...ats, [key]: tokens[key]}), {}),
       }}
     >
       {children}
