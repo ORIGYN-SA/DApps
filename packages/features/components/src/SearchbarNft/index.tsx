@@ -1,19 +1,20 @@
 import React, { useContext, useEffect } from 'react';
 import { AuthContext, getTokenId } from '@dapp/features-authentication';
-import { Box, Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import Paper from '@mui/material/Paper';
-import FormControl from '@mui/material/FormControl';
 import { collectionName } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
-import { Container } from '@origyn-sa/origyn-art-ui';
-// Preloader
-import { CircularProgress } from '@mui/material';
+import { Container, Card, Select } from '@origyn-sa/origyn-art-ui';
+
+interface SelectType {
+  value: string;
+  label: string;
+}
+
 const ISPROD = true;
 export const SearchbarNft = (props: any) => {
+
   const { tokenId, actor,canisterId } = useContext(AuthContext);
-  const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
+  const [selectTokenIds, setSelectTokenIds] = React.useState<any>(['']);
+  const [selectUi, setSelectUi] = React.useState<SelectType[]>([]);
   const [idsNumber, setIdsNumber] = React.useState('');
   const handleSelectIds = (event, value) => {
     // setSearchBarTokenId state
@@ -94,61 +95,49 @@ export const SearchbarNft = (props: any) => {
   return (
     <Container padding="16px">
       {props.isLoading ? (
-        <Box sx={{ textAlign: 'center' }}>
-          <CircularProgress color="inherit" />
-        </Box>
+        <Card 
+        type="filled"
+        align="center"
+      >
+          Loading...
+        </Card>
       ) : (
-        <FormControl sx={{ m: 1, width: '100%' }}>
+        <Container>
           {tokenId == "" ? (
-            <div>
-              <Typography
-                sx={{
-                  m: 1,
-                  width: '95%',
-                }}
-              >
+            <>
+              <Container padding="16px">
                 Collection name: <b>{collectionName(tokenId)}</b>
-              </Typography>
-              <Typography
-                sx={{
-                  m: 1,
-                  borderBottom: '1px solid',
-                  paddingBottom: 2,
-                  width: '95%',
-                }}
-              >
+              </Container>
+              <Container padding="16px">
                 Current Token ID: <b>{props.searchBarTokenId}</b>
-              </Typography>
-            </div>
+              </Container>
+            </>
           ) : (
-            <Typography
-              sx={{
-                m: 1,
-                borderBottom: '1px solid',
-                paddingBottom: 2,
-                width: '95%',
-              }}
-            >
+            <Container padding="16px">
               Current Token ID: <b>{props.searchBarTokenId}</b>
-            </Typography>
+            </Container>
           )}
-          <Typography sx={{ m: 1, fontSize: 13 }}>
+          <Container padding="16px" >
             Search for other NFT&#39;S <em>(+{idsNumber}...)</em>
-          </Typography>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={selectTokenIds}
-            sx={{ width: '95%', m: 1 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Other tokens IDS" />
-            )}
-            value={props.searchBarTokenId}
-            onChange={(event, newValue) => {
-              handleSelectIds(event, newValue);
-            }}
-          />
-        </FormControl>
+          </Container>
+          <Container padding="16px">
+            <Select 
+             placeholder="Token Ids"
+             selectedOption={props.searchBarTokenId}
+             handleChange={(event) => {
+               handleSelectIds(event, event.target.value);
+             }}
+             options={
+              selectTokenIds.map((token) => {
+                return {
+                  value: token,
+                  label: token,
+                };
+              })
+             }
+            />
+          </Container>
+        </Container>
       )}
     </Container>
   );

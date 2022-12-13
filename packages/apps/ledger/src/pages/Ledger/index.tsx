@@ -36,8 +36,8 @@ const Ledger = () => {
   }, [actor]);
 
   return (
-    
-    <SecondaryNav
+  <Banner Banner fullWidth padding="0" flexFlow="column">
+  <SecondaryNav
       title="Ledger"
       tabs={[{ title: 'Transactions', id: 'Transactions' }]}
       content={[
@@ -73,6 +73,7 @@ const Ledger = () => {
         </Container> 
       ]} 
     />
+  </Banner>
   );
 };
 
