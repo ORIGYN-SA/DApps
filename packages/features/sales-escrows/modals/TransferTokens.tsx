@@ -197,7 +197,7 @@ setTokenFee(values.token)
             </Flex>
             <HR />
             <br />
-            <Flex flexFlow='row' justify='space-between'>
+            <Flex flexFlow='row' align="center" justify='space-between'>
               <h3>Total Amount</h3>
               <span>{totalAmount}</span>
             </Flex>

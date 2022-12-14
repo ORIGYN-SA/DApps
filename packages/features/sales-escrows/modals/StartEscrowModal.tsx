@@ -1,18 +1,12 @@
-import { AuthContext, useRoute } from '@dapp/features-authentication'
-import { LoadingContainer, TokenIcon } from '@dapp/features-components'
+import { AuthContext } from '@dapp/features-authentication'
+import { LoadingContainer } from '@dapp/features-components'
 import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider'
-import { isLocal } from '@dapp/utils'
 import { Principal } from '@dfinity/principal'
-import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  Typography,
-} from '@mui/material'
 import { useSnackbar } from 'notistack'
 import * as React from 'react'
-import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import * as Yup from 'yup'
-import { Modal, Container, TextInput, Flex, Select, Button } from '@origyn-sa/origyn-art-ui'
+import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui'
 import { useEffect } from 'react'
 
 const validationSchema = Yup.object({
@@ -23,10 +17,11 @@ const validationSchema = Yup.object({
     .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
 })
 
-export function StartEscrowModal({ nft, open, handleClose, initialValues }: any) {
+export function StartEscrowModal({ nft, open, handleClose, initialValues, onSuccess }: any) {
   const { actor, principal, activeWalletProvider } =
     React.useContext(AuthContext)
   const [isLoading, setIsLoading] = React.useState(false)
+  const [success, setSuccess] = React.useState(false)
   const [errors, setErrors] = React.useState<any>({})
   const [values, setValues] = React.useState<any>({
     nftId: nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text,
@@ -35,26 +30,18 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
       nft?.current_sale?.length > 0
         ? nft?.current_sale[0].sale_type?.auction?.config?.auction?.token?.ic?.symbol
         : 'OGY',
-
     openAuction: nft?.current_sale?.find((sale) =>
       sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
     ),
   })
-  const [searchParams, setSearchParams] = useSearchParams({})
   const { enqueueSnackbar } = useSnackbar() || {}
   const { tokens, refreshAllBalances } = useTokensContext()
 
   const handleCustomClose = (value: any) => {
-    setSearchParams(searchParams)
     handleClose(value)
-  }
-  console.log(initialValues, values);
-  const customSubmit = (data) => {
-    handleStartEscrow(data)
   }
 
   const handleStartEscrow = async (data) => {
-    console.log("start");
     if (
       isNaN(parseFloat(data.priceOffer)) ||
       data.sellerId === 'undefined' ||
@@ -74,14 +61,22 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
     if (activeWalletProvider) {
       setIsLoading(true)
       const amount = data.priceOffer * 1e8
-      const {canisterId} = await useRoute();
+      const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] })
+
+      if ('err' in saleInfo)
+        throw new Error(Object.keys(saleInfo.err)[0])
+
+      if (!('deposit_info' in saleInfo.ok))
+        throw new Error()
+
+      const { account_id } = saleInfo?.ok?.deposit_info ?? {}
 
       try {
         const transactionHeight = await sendTransaction(
           false,
           activeWalletProvider,
           tokens[values.token],
-          canisterId,
+          account_id,
           amount + tokens[values.token].fee,
         )
         if (transactionHeight.err) {
@@ -111,10 +106,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
           lock_to_date: [],
         }
         try {
-          console.log(escrowData);
           const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData })
-
-          console.log(escrowResponse);
           if ('err' in escrowResponse)
             throw new Error(Object.keys(escrowResponse.err)[0])
 
@@ -129,9 +121,9 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
             setIsLoading(false)
             handleCustomClose(true)
             refreshAllBalances(false, principal)
+            setSuccess(true)
+            onSuccess()
           } else {
-            if (!('receipt' in escrowResponse.ok))
-              throw new Error()
 
             const bidData = {
               broker_id: [],
@@ -139,8 +131,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
               sale_id: values.openAuction?.sale_id,
             }
 
-            console.log("salevalues_origyn");
-            const bidResponse = await actor.salevalues_origyn({ bid: bidData } as any) // TODO: fix this
+            const bidResponse = await actor.sale_nft_origyn({ bid: bidData }) // TODO: fix this
 
             if ('err' in bidResponse)
               throw new Error(Object.keys(bidResponse.err)[0])
@@ -154,9 +145,11 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
             setIsLoading(false)
             handleCustomClose(true)
             refreshAllBalances(false, principal)
+            setSuccess(true)
+            onSuccess()
           }
         } catch (e) {
-          console.log(e);
+          console.log(e)
           enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
             variant: 'error',
             anchorOrigin: {
@@ -172,7 +165,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
     }
   }
 
-
   const getValidationErrors = (err) => {
     const validationErrors = {}
 
@@ -187,11 +179,10 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
   const handleSubmit = (e: any) => {
     e.preventDefault()
     validationSchema.validate(values, { abortEarly: false }).then((v) => {
-      console.log(v);
       handleStartEscrow(values)
     })
       .catch(function(e) {
-        console.log(e);
+        console.log(e)
         const errs = getValidationErrors(e)
         setErrors(errs)
       })
@@ -200,7 +191,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
     setErrors({ ...errors, [name || e.target.name]: undefined })
     setValues({ ...values, [name || e.target.name]: value || e.target.value })
   }
-
   useEffect(() => {
     setValues({
       ...initialValues,
@@ -213,7 +203,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
       openAuction: nft?.current_sale?.find((sale) =>
         sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
       ),
-    });
+    })
   }, [nft, initialValues])
   return (
     <div>
@@ -222,55 +212,74 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues }: any)
         closeModal={() => handleClose(false)}
         size='md'
       >
-        <Container as="form" onSubmit={handleSubmit} size='full' padding='48px' smPadding="8px">
-          <h2>
-            Send escrow for <strong>{values.nftId}</strong>?
-          </h2>
-          <br />
-          <Flex flexFlow='column' gap={8}>
-            <TextInput
-              label='NFT ID'
-              name='nftId'
-              value={values.nftId}
-              disabled
-              onChange={onChange}
-            />
-            <TextInput
-              label='Seller'
-              name='sellerId'
-              value={values.seller}
-              disabled
-              onChange={onChange}
-            />
-            <TextInput
-              required
-              label='Your Offer (in tokens)'
-              id='priceOffer'
-              name='priceOffer'
-              error={errors.priceOffer}
-              value={values.priceOffer}
-              onChange={onChange}
-            />
-            <Select
-              name='token'
-              selectedOption={{ label: values.token, value: values.token }}
-              handleChange={(opt) => onChange(null, 'token', opt.value )}
-              label='Token'
-              options={Object.keys(tokens).map((t) => ({ label: tokens[t].symbol, value: t }))}
-            />
-            {isLoading && (
-              <div style={{ marginTop: 5 }}>
-                <LoadingContainer data-testid='loading-container' />
-              </div>
-            )}
-            <br />
-            <Flex align='center' justify='flex-end' gap={16}>
-              <Button btnType='outlined' onClick={() => handleCustomClose(false)}>Cancel</Button>
-              <Button btnType='accent' type="submit">
-                Send Escrow
-              </Button>
-            </Flex>
-          </Flex>
+        <Container as='form' onSubmit={handleSubmit} size='full' padding='48px' smPadding='8px'>
+          {
+            success ? (
+              <>
+                <h2>Success!</h2>
+                <p className='secondary_color'>All the transactions were made successfully.</p>
+                <Flex justify='flex-end'>
+                  <Button onClick={handleClose}>Done</Button>
+                </Flex>
+              </>
+            ) : (
+              <>
+                {isLoading ? (
+                  <>
+                    <h2>Transactions in Progress</h2>
+                    <br />
+                    <LoadingContainer data-testid='loading-container' />
+                  </>
+                ) : (
+                  <>
+                    <h2>
+                      Send escrow for <strong>{values.nftId}</strong>?
+                    </h2>
+                    <br />
+                    <Flex flexFlow='column' gap={8}>
+                      <Select
+                        name='token'
+                        selectedOption={{ label: values.token, value: values.token }}
+                        handleChange={(opt) => onChange(null, 'token', opt.value)}
+                        label='Token'
+                        options={Object.keys(tokens).map((t) => ({ label: tokens[t].symbol, value: t }))}
+                      />
+                      <TextInput
+                        required
+                        label='Your Offer (in tokens)'
+                        id='priceOffer'
+                        name='priceOffer'
+                        error={errors.priceOffer}
+                        value={values.priceOffer}
+                        onChange={onChange}
+                      />
+                      <br />
+                      <span>Transaction Fee</span>
+                      <span style={{ color: 'grey' }}>{`${tokens[values.token].fee * 0.00000001}${' '}${
+                        tokens[values.token].symbol
+                      }`}</span>
+                      <br />
+                      <HR />
+                      <br />
+                      <Flex flexFlow='row' align='center' justify='space-between'>
+                        <h3>Total Amount</h3>
+                        <span>{parseFloat(values.priceOffer) + tokens[values.token].fee * 0.00000001}</span>
+                      </Flex>
+                      <br />
+                      <HR />
+                      <br />
+                      <Flex align='center' justify='flex-end' gap={16}>
+                        <Button btnType='outlined' onClick={() => handleCustomClose(false)}>Cancel</Button>
+                        <Button btnType='accent' type='submit'>
+                          Send Escrow
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  </>
+                )}
+              </>
+            )
+          }
         </Container>
       </Modal>
     </div>

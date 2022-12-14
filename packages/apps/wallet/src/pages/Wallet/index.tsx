@@ -11,7 +11,7 @@ import {
 import { useDialog } from '@connect2ic/react'
 import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { useTokensContext } from '@dapp/features-tokens-provider'
-import { timeConverter } from '@dapp/utils'
+import { copyToClipboard, timeConverter } from '@dapp/utils'
 import { ConfirmSalesActionModal } from '@dapp/features-sales-escrows'
 import {
   Button,
@@ -32,6 +32,7 @@ import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens'
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows'
 import Filter from './Filter'
+import { useSnackbar } from 'notistack'
 
 const GuestContainer = () => {
   const { open } = useDialog()
@@ -128,7 +129,7 @@ const WalletPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
   const [openTrx, setOpenTrx] = useState(false)
-  const [propsEsc, setPropsEsc] = useState([])
+  const { enqueueSnackbar } = useSnackbar() || {}
 
   const { open } = useDialog()
 
@@ -346,7 +347,6 @@ const WalletPage = () => {
     }
   }
 
-
   useEffect(() => {
     if (loggedIn) {
       fetchData()
@@ -474,7 +474,15 @@ const WalletPage = () => {
                             </Flex>
                           </Flex>
                           <Flex flexFlow='column' align='flex-end'>
-                            <Button iconButton size='medium'>
+                            <Button iconButton size='medium' onClick={() => copyToClipboard(principal.toText(), () => {
+                              enqueueSnackbar('Copied to clipboard', {
+                                variant: 'success',
+                                anchorOrigin: {
+                                  vertical: 'top',
+                                  horizontal: 'right',
+                                },
+                              })
+                            })}>
                               <Icons.CopyIcon width={12} height='auto' />
                             </Button>
                           </Flex>
@@ -543,6 +551,10 @@ const WalletPage = () => {
                           gap={20}
                         >
                           {filteredNFTData.map((nft: any) => {
+
+                            const currentOpenAuction = nft?.current_sale?.find((sale) =>
+                              sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
+                            )
                             return (
                               <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
                                 <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
@@ -564,7 +576,7 @@ const WalletPage = () => {
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                         <p>
-                                          {isNaN(nft.id.sale) ? 'No auction started' : nft.id.sale}
+                                          {currentOpenAuction ? 'No auction started' : nft.id.sale}
                                         </p>
                                       </div>
                                     </Flex>

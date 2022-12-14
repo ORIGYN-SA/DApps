@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+import { useSnackbar } from 'notistack'
 
 export const isLocal = () => {
   return (
@@ -26,15 +27,12 @@ export const formatE8S = (e8s: BigInt) => {
   return [n.slice(0, -8), '.', n.slice(-8)].join('');
 };
 
-export const copyToClipboard = (text: string, msg?: string) => {
+export const copyToClipboard = (text: string, onSuccess?: () => void) => {
   navigator.clipboard.writeText(text).then(
     function () {
-      toast.success(msg || 'Copied to clipboard');
+      onSuccess();
       console.log('Async: Copying to clipboard was successful!');
-    },
-    function (err) {
-      toast.error('Cant copy :(');
-    },
+    }
   );
 };
 

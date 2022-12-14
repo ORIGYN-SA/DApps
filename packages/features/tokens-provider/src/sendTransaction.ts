@@ -18,7 +18,7 @@ const sendICP = async (actor: any, token: Token, to: any, amount: number, memo?:
         typeof to === 'string' ? getAccountId(Principal.fromText(to)) : toHex(to),
       fee: { e8s: token?.fee || defaultArgs.fee },
       amount: { e8s: BigInt(amount) },
-      memo: defaultArgs.memo,
+      memo: memo || defaultArgs.memo,
       from_subaccount: [],
       created_at_time: [],
     });
