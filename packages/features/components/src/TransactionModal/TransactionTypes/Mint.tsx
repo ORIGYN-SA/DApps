@@ -15,10 +15,10 @@ export const Mint = (props: any) => {
       <Container padding="16px">
         <Grid columns={2}>
           <Grid column={1}>
-            Token: <b>{token}</b>
+            Token: <span style={{color: 'grey'}}>{token}</span>
           </Grid>
           <Grid column={2}>
-            Amount: <b>{amount}</b>
+            Amount: <span style={{color: 'grey'}}>{amount}</span>
           </Grid>
         </Grid>
       </Container>
@@ -28,9 +28,9 @@ export const Mint = (props: any) => {
       <Container padding="16px">
         <Grid columns={2}>
           <Grid column={1}>
-            Canister: {token.canister_string}
-            Fee: {token.fee}
-            Decimals:{token.decimal}
+            Canister: <span style={{color: 'grey'}}>{token.canister_string}</span>
+            Fee: <span style={{color: 'grey'}}>{token.fee}</span>
+            Decimals:<span style={{color: 'grey'}}>{token.decimal}</span>
           </Grid>
           <Grid column={2}>
             Symbol: {token.symbol === 'OGY' ? (
@@ -38,7 +38,7 @@ export const Mint = (props: any) => {
             ) : (
               <ICPIcon className="token-symbol" />
             )}
-            Standard:{token.standard}
+            Standard:<span style={{color: 'grey'}}>{token.standard}</span>
           </Grid>
         </Grid>
       </Container>
@@ -48,7 +48,7 @@ export const Mint = (props: any) => {
   return (
     <Container>
       <Container padding="16px">
-        Transaction type: <b>{type_txn}</b>
+        Transaction type: <span style={{color: 'grey'}}>{type_txn}</span>
       </Container>
         <HR marginTop="8px" marginBottom="8px" />
       <Container padding="16px">
@@ -56,12 +56,12 @@ export const Mint = (props: any) => {
           <Grid column={1}>
             Mint from:
             <br />
-            {mint_from}
+            <span style={{color: 'grey'}}>{mint_from}</span>
           </Grid>
           <Grid column={2}>
             Mint to:
             <br />
-            {mint_to}
+            <span style={{color: 'grey'}}>{mint_to}</span>
           </Grid>
         </Grid>
       </Container>

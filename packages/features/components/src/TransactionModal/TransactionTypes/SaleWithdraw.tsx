@@ -26,35 +26,35 @@ export const SaleWithdraw = (props: any) => {
       <Container padding="16px">
         Transaction type:
         <br />
-        {type_txn}
+        <span style={{color: 'grey'}}>{type_txn}</span>
         <br />
         Transaction ID:
         <br />
-        {id_trans}
+        <span style={{color: 'grey'}}>{id_trans}</span>
       </Container>
       <Container padding="16px">
         <Grid columns={2}>
           <Grid column={1}>
             Buyer:
             <br />
-            {buyer.acc_principal_string}
+            <span style={{color: 'grey'}}>{buyer.acc_principal_string}</span>
             <br />
             Seller:
             <br />
-            {seller.acc_principal_string}
+            <span style={{color: 'grey'}}>{seller.acc_principal_string}</span>
             <br />
             Token ID:
             <br />
-            {token_id}
+            <span style={{color: 'grey'}}>{token_id}</span>
           </Grid>
           <Grid column={2}>
             Amount:
             <br />
-            {amount}
+            <span style={{color: 'grey'}}>{amount}</span>
             <br />
             Fee:
             <br />
-            {token_fee}
+            <span style={{color: 'grey'}}> {token_fee}</span>
           </Grid>
         </Grid>
       </Container>
@@ -63,15 +63,15 @@ export const SaleWithdraw = (props: any) => {
           <Grid column={1}>
             Canister:
             <br />
-            {token.canister_string}
+            <span style={{color: 'grey'}}>{token.canister_string}</span>
             <br />
             Fee:
             <br />
-            {token.fee}
+            <span style={{color: 'grey'}}>{token.fee}</span>
             <br />
             Decimals:
             <br />
-            {token.decimal}
+            <span style={{color: 'grey'}}>{token.decimal}</span>
           </Grid>
           <Grid column={2}>
             Symbol:
@@ -84,7 +84,7 @@ export const SaleWithdraw = (props: any) => {
             <br />
             Standard:
             <br />
-            {token.standard}
+            <span style={{color: 'grey'}}>{token.standard}</span>
           </Grid>
         </Grid>
       </Container>

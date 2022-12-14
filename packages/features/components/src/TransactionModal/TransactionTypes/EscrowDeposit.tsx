@@ -24,9 +24,9 @@ export const EscrowDeposit = (props: any) => {
     <>
       <Container>
         <Container padding="16px">
-          Transaction type: {type_txn}
+          Transaction type: <span style={{color: 'grey'}}>{type_txn}</span>
           <br />
-          Transaction ID: {id_trans}
+          Transaction ID: <span style={{color: 'grey'}}>{id_trans}</span>
         </Container>
         <HR marginTop="8px" marginBottom="8px" />
         <Container padding="16px">
@@ -34,22 +34,22 @@ export const EscrowDeposit = (props: any) => {
             <Grid column={1}>
               Buyer:
               <br />
-              {buyer.acc_principal_string}
+              <span style={{color: 'grey'}}>{buyer.acc_principal_string}</span>
               <br />
               Seller:
               <br />
-              {seller.acc_principal_string}
+              <span style={{color: 'grey'}}>{seller.acc_principal_string}</span>
               <br />
               Token ID: {token_id}
             </Grid>
             <Grid column={2}>
               Amount:
               <br />
-              {amount}
+              <span style={{color: 'grey'}}>{amount}</span>
               <br />
               Fee:
               <br />
-              {token_fee}
+              <span style={{color: 'grey'}}> {token_fee}</span>
             </Grid>
           </Grid>
         </Container>
@@ -57,11 +57,11 @@ export const EscrowDeposit = (props: any) => {
         <Container padding="16px">
           <Grid columns={2}>
             <Grid column={1}>
-              Canister: {token.canister_string}
+              Canister: <span style={{color: 'grey'}}>{token.canister_string}</span>
               <br />
-              Fee: {token.fee}
+              Fee: <span style={{color: 'grey'}}>{token.fee}</span>
               <br />
-              Decimals: {token.decimal}
+              Decimals: <span style={{color: 'grey'}}>{token.decimal}</span>
             </Grid>
             <Grid column={2}>
               Symbol:{' '}
@@ -71,7 +71,7 @@ export const EscrowDeposit = (props: any) => {
                 <ICPIcon className="token-symbol" />
               )}
               <br />
-              Standard: {token.standard}
+              Standard: <span style={{color: 'grey'}}>{token.standard}</span>
             </Grid>
           </Grid>
         </Container>

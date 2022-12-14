@@ -12,31 +12,32 @@ export const AuctionBid = (props: any) => {
     <>
     <Container>
       <Container padding="16px">
-          Transaction type:
+          Transaction type: 
           <br/>
-          {type_txn}
+          <span style={{color: 'grey'}}> {type_txn}</span>
+          <br/>
           Sale ID:
           <br/>
-          {sale_id}
+          <span style={{color: 'grey'}}> {sale_id}</span>
         </Container>
         <HR marginTop="8px" marginBottom="8px" />
         <Grid columns={2}>
           <Grid column={1}>
-              Buyer: {buyer.acc_principal_string}
+              Buyer: <span style={{color: 'grey'}}>{buyer.acc_principal_string}</span>
           </Grid>
           <Grid column={2}>
-              Amount: {amount}
+              Amount: <span style={{color: 'grey'}}>{amount}</span>
           </Grid>
         </Grid>
       </Container>
       <Container padding="16px">
         <Grid columns={2}>
           <Grid column={1}>
-              Canister: {token.canister_string}
+              Canister: <span style={{color: 'grey'}}>{token.canister_string}</span>
               <br/>
-              Fee: {token.fee}
+              Fee: <span style={{color: 'grey'}}>{token.fee}</span>
          <br/>
-              Decimals: {token.decimal}
+              Decimals: <span style={{color: 'grey'}}>{token.decimal}</span>
           </Grid>
           <Grid column={2}>
               Symbol: {token.symbol === 'OGY' ? (
@@ -45,7 +46,7 @@ export const AuctionBid = (props: any) => {
                 <ICPIcon className="token-symbol" />
               )}
             
-              Standard: {token.standard}
+              Standard: <span style={{color: 'grey'}}>{token.standard}</span>
           </Grid>
         </Grid>
       </Container>

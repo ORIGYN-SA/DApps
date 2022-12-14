@@ -39,20 +39,20 @@ export const SaleOpened = (props: any) => {
             <Grid colum={1}>
               Pricing type:
               <br />
-              {pricingType}
+              <span style={{color: 'grey'}}>{pricingType}</span>
               <br />
               Start price:
               <br />
-              {start_price}
+              <span style={{color: 'grey'}}>{start_price}</span>
             </Grid>
             <Grid colum={2}>
               Decay per hour:
               <br />
-              {decay_per_hour}
+              <span style={{color: 'grey'}}>{decay_per_hour}</span>
               <br />
               Reserve:
               <br />
-              {reserve}
+              <span style={{color: 'grey'}}>  {reserve}</span>
             </Grid>
           </Grid>
         </Container>
@@ -65,19 +65,19 @@ export const SaleOpened = (props: any) => {
             <Grid colum={1}>
               Pricing type:
               <br />
-              {pricingType}
+              <span style={{color: 'grey'}}>{pricingType}</span>
               <br />
               Amount:
               <br />
-              {amount}
+              <span style={{color: 'grey'}}>{amount}</span>
               <br />
               Canister:
               <br />
-              {token.canister_string}
+              <span style={{color: 'grey'}}> {token.canister_string}</span>
               <br />
               Fee:
               <br />
-              {token.fee}
+              <span style={{color: 'grey'}}>{token.fee}</span>
             </Grid>
 
             <Grid colum={2}>
@@ -91,11 +91,11 @@ export const SaleOpened = (props: any) => {
               <br />
               Decimals:
               <br />
-              {token.decimal}
+              <span style={{color: 'grey'}}>{token.decimal}</span>
               <br />
               Standard:
               <br />
-              {token.standard}
+              <span style={{color: 'grey'}}>  {token.standard}</span>
             </Grid>
           </Grid>
         </Container>
@@ -109,33 +109,33 @@ export const SaleOpened = (props: any) => {
             <Grid colum={1}>
               Start date:
               <br />
-              {start_date}
+              <span style={{color: 'grey'}}> {start_date}</span>
             </Grid>
             <Grid colum={1}>
               Ending date:
               <br />
-              {ending_date}
+              <span style={{color: 'grey'}}>  {ending_date}</span>
             </Grid>
             <Grid colum={1}>
               Pricing type:
               <br />
-              {pricingType}
+              <span style={{color: 'grey'}}>{pricingType}</span>
               <br />
               Reserve:
               <br />
-              {reserve}
+              <span style={{color: 'grey'}}> {reserve}</span>
               <br />
               Buy now:
               <br />
-              {buy_now}
+              <span style={{color: 'grey'}}>  {buy_now}</span>
               <br />
               Start price:
               <br />
-              {start_price}
+              <span style={{color: 'grey'}}> {start_price}</span>
               <br />
               Min increase:
               <br />
-              {min_increase}
+              <span style={{color: 'grey'}}> {min_increase}</span>
             </Grid>
             <Grid colum={2}>
               Symbol:
@@ -148,19 +148,19 @@ export const SaleOpened = (props: any) => {
               <br />
               Canister:
               <br />
-              {token.canister_string}
+              <span style={{color: 'grey'}}> {token.canister_string}</span>
               <br />
               Fee:
               <br />
-              {token.fee}
+              <span style={{color: 'grey'}}> {token.fee}</span>
               <br />
               Decimals:
               <br />
-              {token.decimal}
+              <span style={{color: 'grey'}}>{token.decimal}</span>
               <br />
               Standard:
               <br />
-              {token.standard}
+              <span style={{color: 'grey'}}>{token.standard}</span>
             </Grid>
           </Grid>
         </Container>
@@ -174,11 +174,11 @@ export const SaleOpened = (props: any) => {
             <Grid colum={1}>
               Pricing type:
               <br />
-              {pricingType}
+              <span style={{color: 'grey'}}> {pricingType}</span>
               <br />
               Transaction ID:
               <br />
-              {txn_id}
+              <span style={{color: 'grey'}}> {txn_id}</span>
             </Grid>
           </Grid>
         </Container>
@@ -189,9 +189,9 @@ export const SaleOpened = (props: any) => {
   return (
     <Container>
       <Container padding="16px">
-        Transaction type: {singleT_type}
+        Transaction type: <span style={{color: 'grey'}}>{singleT_type}</span>
         <br />
-        Sale ID: {singleT_sale_id}
+        Sale ID: <span style={{color: 'grey'}}>{singleT_sale_id}</span>
       </Container>
       <HR marginTop="8px" marginBottom="8px" />
       {display_pricing_config}

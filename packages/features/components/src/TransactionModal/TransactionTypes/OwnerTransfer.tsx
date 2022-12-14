@@ -12,12 +12,12 @@ export const OwnerTransfer = (props: any) => {
         <Grid column={1}>
           Transfer from:
           <br />
-          {from.acc_principal_string}
+          <span style={{color: 'grey'}}>{from.acc_principal_string}</span>
         </Grid>
         <Grid column={2}>
           Transfer to:
           <br />
-          {to.acc_principal_string}
+          <span style={{color: 'grey'}}>{to.acc_principal_string}</span>
         </Grid>
       </Grid>
     </Container>

@@ -17,35 +17,35 @@ export const SaleEnded = (props : any) => {
       <Container padding="16px">
         
           Transaction type:<br/>
-          {props.data.type_txn}
+          <span style={{color: 'grey'}}>{props.data.type_txn}</span>
           <br/>
           Sale ID:<br/>
-          {props.data.sale}
+          <span style={{color: 'grey'}}>{props.data.sale}</span>
         
       </Container>
       <HR marginTop="8px" marginBottom="8px" />
       <Container padding="16px">
         <Container>
         Amount:<br/>
-        {amount}
+        <span style={{color: 'grey'}}>{amount}</span>
         </Container>
         <Grid columns>
           <Grid column={1}>
             
-              Buyer:<br/>{buyer.acc_principal_string}
+              Buyer:<br/> <span style={{color: 'grey'}}>{buyer.acc_principal_string}</span>
           </Grid>
           <Grid column={2}>
             
-              Seller:<br/>{seller.acc_principal_string}
+              Seller:<br/> <span style={{color: 'grey'}}>{seller.acc_principal_string}</span>
           </Grid>
         </Grid>
       </Container>
       <Container>
         <Grid columns={2}>
           <Grid column={1}>
-            Canister:<br/>{token.canister_string}<br/>
-             Fee:<br/>{token.fee}<br/>
-            Decimals: <br/>{token.decimal}<br/>
+            Canister:<br/> <span style={{color: 'grey'}}>{token.canister_string}</span><br/>
+             Fee:<br/> <span style={{color: 'grey'}}>{token.fee}</span><br/>
+            Decimals: <br/> <span style={{color: 'grey'}}>{token.decimal}</span><br/>
           </Grid>
           <Grid column={2}>
              Symbol:<br/>{token.symbol === 'OGY' ? (
@@ -55,7 +55,7 @@ export const SaleEnded = (props : any) => {
               )}
             <br/>
             
-              Standard:<br/>{token.standard}
+              Standard:<br/> <span style={{color: 'grey'}}>{token.standard}</span>
           </Grid>
         </Grid>
       </Container>
