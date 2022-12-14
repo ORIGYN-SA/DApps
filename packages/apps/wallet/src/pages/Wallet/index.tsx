@@ -474,7 +474,7 @@ const WalletPage = () => {
                           </Flex>
                           <Flex flexFlow='column' align='flex-end'>
                             <Button iconButton size='medium'>
-                              <Icons.PDFIcon width={12} height='auto' />
+                              <Icons.CopyIcon width={12} height='auto' />
                             </Button>
                           </Flex>
                         </StyledBlackCard>
