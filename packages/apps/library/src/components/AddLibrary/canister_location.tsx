@@ -2,7 +2,7 @@ import React, { useState,useContext } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { getCanisterId,AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
@@ -60,7 +60,9 @@ export const CanisterLocation = (props: any) => {
   };
 
   const stageLibrary = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
+    const {canisterId} = await useRoute();
+
+    await OrigynClient.getInstance().init(true, canisterId, {actor});
     try {
       let i = 0;
       const payload = {
@@ -83,27 +85,31 @@ export const CanisterLocation = (props: any) => {
         ],
       };
       console.log('payload is ', payload);
-      const response = await stageLibraryAsset([payload.files[0]], props.tokenId);
-      console.log('response',response);
-      if (response.ok) {
-        // Display a success message - SNACKBAR
-        enqueueSnackbar('Library staged!', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
-      } else {
-        enqueueSnackbar('Library not staged!', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+      try {
+        const response = await stageLibraryAsset([payload.files[0]], props.tokenId);
+        console.log('response',response);
+        if (response.ok) {
+          // Display a success message - SNACKBAR
+          enqueueSnackbar('Library staged!', {
+            variant: 'success',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
+          enqueueSnackbar('Library not staged!', {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        }
+        console.log(response);
+      } catch (e) {
+        console.log(e);
       }
-      console.log(response);
     } catch (e) {
       console.log(e);
     }

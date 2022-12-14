@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { getCanisterId, AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { useSnackbar } from 'notistack';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -41,7 +41,9 @@ export const WebLocation = (props: any) => {
   };
 
   const StageWebLibrary = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId(), { actor });
+    const {canisterId} = await useRoute();
+
+    await OrigynClient.getInstance().init(true, canisterId, { actor });
     try {
       const WebFile: StageFile = {
         filename: typedTitle,

@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { getCanisterId,AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
@@ -32,7 +32,8 @@ export const CollectionLocation = (props: any) => {
   };
 
   const getLibraries = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId());
+    const {canisterId} = await useRoute();
+    await OrigynClient.getInstance().init(true, canisterId);
     const response = await getNftCollectionMeta();
     const library = await response.ok.metadata[0].Class.filter((res) => {
       return res.name === 'library';
@@ -52,7 +53,8 @@ export const CollectionLocation = (props: any) => {
   };
 
   const StageCollectionLibrary = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId(), {actor});
+    const {canisterId} = await useRoute();
+    await OrigynClient.getInstance().init(true, canisterId, {actor});
     try {
       const CollectionFile: StageFile = {
         filename: typedTitle,

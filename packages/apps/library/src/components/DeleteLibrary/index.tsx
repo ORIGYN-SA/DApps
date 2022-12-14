@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication'
 // mint.js
 import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
 // Button delete
@@ -33,8 +32,9 @@ export const DeleteLibrary = (props: any) => {
 
 
   const CheckLibraries = async () => {
+    const {canisterId} = await useRoute();
     
-    await OrigynClient.getInstance().init(true, await getCanisterId(),{actor});
+    await OrigynClient.getInstance().init(true, canisterId,{actor});
     setMessageLoadingStatus(false);
 
     if (props.currentTokenId == '') {
@@ -73,8 +73,9 @@ export const DeleteLibrary = (props: any) => {
   }, [props.libraryId]);
 
   const DeleteMutableLibrary = async () => {
+    const {canisterId} = await useRoute();
 
-    await OrigynClient.getInstance().init(true, await getCanisterId(),{actor});
+    await OrigynClient.getInstance().init(true, canisterId,{actor});
 
     if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
       for (let i in tokensThatUseSelectedLibrary) {

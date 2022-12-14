@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import { getCanisterId } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
@@ -16,6 +15,7 @@ import FormLabel from '@mui/material/FormLabel';
 import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
+import { useRoute } from '../../../../../features/authentication'
 
 export const LibraryForm = (props: any) => {
 
@@ -30,7 +30,9 @@ export const LibraryForm = (props: any) => {
   };
 
   const getLibraries = async () => {
-    await OrigynClient.getInstance().init(true, await getCanisterId());
+    const {canisterId} = await useRoute();
+
+    await OrigynClient.getInstance().init(true, canisterId);
     const response = await getNftCollectionMeta();
     const library = await response.ok.metadata[0].Class.filter((res) => {
       return res.name === 'library';
