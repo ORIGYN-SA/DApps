@@ -6,7 +6,6 @@ import { NFTUpdateRequest, UpdateRequest, CandyValue } from './types/origyn_nft_
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-
 // data
 import { getData, getPermissions, Nft_Data, Permission } from './data/data';
 // inputs

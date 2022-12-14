@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, Grid, Divider } from '@mui/material';
 import pick from 'lodash/pick';
-import { Container } from '@origyn-sa/origyn-art-ui';
-
 const FormTab = ({ metadata }: any) => {
 
   const [owner, setOwner] = useState('');
@@ -28,7 +26,7 @@ const FormTab = ({ metadata }: any) => {
   }, [metadata]);
 
   return (
-    <Container padding="16px">
+    <div>
       <Grid container spacing={2}>
         <Grid item xs={2}>
           Info
@@ -174,7 +172,7 @@ const FormTab = ({ metadata }: any) => {
           </Grid>
         );
       })}
-    </Container>
+    </div>
   );
 };
 

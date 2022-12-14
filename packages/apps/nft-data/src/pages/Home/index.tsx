@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import NFTInfo from '../NFTInfo';
-import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import { Container } from '@mui/material';
-
-
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import { SwitchCanisterCollection } from '@dapp/features-components';
+import Paper from '@mui/material/Paper';
+import { OrigynClient, getNftCollectionMeta} from '@origyn-sa/mintjs';
 
 const Home = () => {
   const { actor } = useContext(AuthContext);
   const [tokenId, setTokenId] = useState();
   const [NFTData, setNFTData] = useState();
-  const [canisterId, setCanisterId] = useState('');
+  const [canisterId, setCanisterId] = useState("");
 
   const nftCollection = async () => {
     const route = await useRoute();
@@ -33,9 +34,10 @@ const Home = () => {
   };
 
   const getData = async () => {
+    const url = `https://${canisterId}.raw.ic0.app`;
     if (tokenId) {
       try {
-        const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
+        const response = await fetch(url + '/-/${tokenId}/info');
         const result = await response.text();
         if (result.search('"is_soulbound":,')) {
           setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
@@ -47,8 +49,7 @@ const Home = () => {
       }
     } else {
       try {
-        const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
-
+        const response = await fetch(url + '/collection/info');
         const result = await response.text();
         if (result.search('"is_soulbound":,')) {
           setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
@@ -75,11 +76,16 @@ const Home = () => {
     }
   }, [canisterId]);
 
+
+
   return (
-    <Container>
-      {NFTData ? (
-          <NFTInfo metadata={NFTData} />
-      ) : null}
+    <Container maxWidth="xl">
+      <Box>
+        <SwitchCanisterCollection/>
+        <Box component={Paper} elevation={3} sx={{ margin: 2, width: '100%', padding: 2 }}>
+          {NFTData ? <NFTInfo metadata={NFTData} /> : null}
+        </Box>
+      </Box>
     </Container>
   );
 };

@@ -6,7 +6,7 @@ import pick from 'lodash/pick';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useState } from 'react';
-import { Container } from '@origyn-sa/origyn-art-ui';
+
 interface RenderTree {
   id: string;
   name: string;
@@ -179,7 +179,6 @@ function Tree({ metadata }: any) {
     </TreeItem>
   );
   return (
-    <Container padding="16px">
     <Box margin="6rem 0 0 0">
       <FormControlLabel
         control={<Switch onChange={handleExpandAll} checked={all} />}
@@ -206,7 +205,6 @@ function Tree({ metadata }: any) {
         </TreeView>
       )}
     </Box>
-    </Container>
   );
 }
 
