@@ -21,7 +21,7 @@ const validationSchema = Yup.object().shape({
 })
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
-  const { tokens } = useTokensContext()
+  const { activeTokens: tokens } = useTokensContext()
   const { activeWalletProvider } = useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar()
   const [switchTransfer, setSwitchTransfer] = useState(false)

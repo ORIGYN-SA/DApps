@@ -65,7 +65,10 @@ export const AddTokenError = {
 export type TokensContext = {
   tokens: {
     [key: string]: Token;
-  };
+  },
+  activeTokens: {
+    [key: string]: Token;
+  },
   time?: string | number;
   addToken?: (
     isLocal: boolean,
@@ -101,8 +104,15 @@ const localStorageTokens = () => {
 };
 const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
+const today = timeConverter(BigInt(new Date().getTime() * 1000000))
+
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
+  activeTokens:
+    Object.keys(initialTokens)
+      .filter((t) => initialTokens[t].enabled)
+      .reduce((ats,key) => ({...ats, [key]: initialTokens[key]}), {}),
+   time: today
 });
 
 export const useTokensContext = () => {
@@ -112,8 +122,7 @@ export const useTokensContext = () => {
 
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
-  const [time, setTime] = useState<any>()
-
+  console.log(tokens);
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -167,8 +176,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       pTokens[symbol].balance = balance;
       return { ...pTokens };
     });
-    const today = timeConverter(BigInt(new Date().getTime() * 1000000))
-    setTime(today)
+
   };
 
   const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
@@ -211,7 +219,11 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         setLocalCanisterId,
         toggleToken,
         tokens,
-        time
+        time,
+        activeTokens:
+          Object.keys(tokens)
+            .filter((t) => tokens[t].enabled)
+            .reduce((ats,key) => ({...ats, [key]: tokens[key]}), {}),
       }}
     >
       {children}
