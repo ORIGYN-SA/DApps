@@ -7,7 +7,7 @@ import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
 
 const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
   const { principal, actor} = useContext(AuthContext);
-  const { tokens } = useTokensContext();
+  const { activeTokens } = useTokensContext();
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [selectdNFT, setSelectdNFT] = React.useState<any>();
@@ -99,16 +99,16 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
           <br />
           <Card align="center" padding="12px" justify="space-between">
             <Flex gap={8}>
-              <TokenIcon symbol={tokens['OGY']?.icon} />
-              {tokens['OGY']?.icon}
+              <TokenIcon symbol={activeTokens['OGY']?.icon} />
+              {activeTokens['OGY']?.icon}
             </Flex>
             <Flex flexFlow="column" align="flex-end">
               <p>
                 <b>
-                  {totalAm} {tokens['OGY']?.symbol}
+                  {totalAm} {activeTokens['OGY']?.symbol}
                 </b>
               </p>
-              <p style={{ color: '#9A9A9A' }}>${tokens['OGY']?.balance / 4}</p>
+              <p style={{ color: '#9A9A9A' }}>${activeTokens['OGY']?.balance / 4}</p>
             </Flex>
           </Card>
           <br />
