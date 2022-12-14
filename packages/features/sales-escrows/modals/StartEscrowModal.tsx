@@ -9,7 +9,6 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  Select,
   TextField,
   Typography,
 } from '@mui/material';
@@ -23,7 +22,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
-import { Modal, Container, TextInput, Flex } from '@origyn-sa/origyn-art-ui';
+import { Modal, Container, TextInput, Flex, Select } from '@origyn-sa/origyn-art-ui';
 
 export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
   const { actor, principal, activeWalletProvider } =
@@ -273,38 +272,24 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
 
 
 
-              <TextField
+              <TextInput
                 required
                 label="Your Offer (in tokens)"
-                fullWidth
                 id="priceOffer"
-                inputProps={{ 'aria-label': 'priceOffer' }}
-                variant="outlined"
                 {...register('priceOffer')}
-                error={!!errors.priceOffer}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.priceOffer?.message}
               </Typography>
 
 
-              <FormControl fullWidth>
-                <InputLabel id="token-select-label">Token</InputLabel>
                 <Select
-                  labelId="token-select-label"
-                  id="token-select"
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
+                  name="token-select"
+                  selectedOption={{ label: token, value: token }}
+                  handleChange={(e) => setToken(e.target.value)}
                   label="Token"
-                >
-                  {Object.keys(tokens).map((t, index) => (
-                    <MenuItem key={`${t}+${index}`} value={t}>
-                      <TokenIcon symbol={tokens[t].icon} />
-                      {tokens[t].symbol}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  options={Object.keys(tokens).map((t) => ({ label: tokens[t].symbol, value: t }))}/>
+
 
           {isLoading && (
             <div style={{ marginTop: 5 }}>
