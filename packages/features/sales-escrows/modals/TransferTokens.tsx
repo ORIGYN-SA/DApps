@@ -21,7 +21,7 @@ const validationSchema = Yup.object().shape({
 })
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
-  const { activeTokens: tokens } = useTokensContext()
+  const { tokens, activeTokens } = useTokensContext()
   const { activeWalletProvider } = useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar()
   const [switchTransfer, setSwitchTransfer] = useState(false)
@@ -156,7 +156,7 @@ setTokenFee(values.token)
                 handleChange={(option) => {
                   onChange(null, 'token', option.value)
                 }}
-                options={Object.keys(tokens).map((standard) => ({
+                options={Object.keys(activeTokens).map((standard) => ({
                   value: standard,
                   label: standard,
                 }))}
@@ -164,7 +164,7 @@ setTokenFee(values.token)
               <br />
               <Flex flexFlow='row' justify='space-between'>
                 <span>Amount</span>
-                <span id='balance'>{tokens[tokenFee].balance}</span>
+                <span id='balance'>{tokens[tokenFee]?.balance}</span>
               </Flex>
               <TextInput
                 name='amount'
