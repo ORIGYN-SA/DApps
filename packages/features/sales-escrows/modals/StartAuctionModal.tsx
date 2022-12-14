@@ -23,6 +23,10 @@ const validationSchema = Yup.object({
     .nullable()
     .required('Minimum increase step is required')
     .default(0),
+  reservePrice:Yup.number()
+  .typeError('This must be a number')
+  .nullable()
+  .default(0),
   buyNowPrice: Yup.number()
     .typeError('This must be a number')
     .nullable()
@@ -45,6 +49,7 @@ const [tokenID, setTokenID] = useState<any>()
   const handleStartAuction = async ({
                                       startPrice,
                                       buyNowPrice,
+                                      reservePrice,
                                       minIncrease: priceStep,
                                       endDate,
                                       token: saleToken
@@ -56,7 +61,7 @@ const [tokenID, setTokenID] = useState<any>()
     console.log('endDate', BigInt(endDate.getTime() * 1e6))
     try {
       const resp = await actor.market_transfer_nft_origyn({
-        token_id: currentToken,  //TO DO: move to NFTPage and use as props
+        token_id: currentToken,  
         sales_config: {
           pricing: {
             auction: {
@@ -70,7 +75,7 @@ const [tokenID, setTokenID] = useState<any>()
                   symbol: tokens[saleToken]?.symbol,
                 },
               },
-              reserve: [],
+              reserve: [BigInt(reservePrice * 1e8)],
               start_date: BigInt(Math.floor(new Date().getTime() * 1e6)),
               min_increase: {
                 amount: BigInt(priceStep * 1e8),
@@ -195,6 +200,14 @@ const [tokenID, setTokenID] = useState<any>()
               value={values.minIncrease}
               onChange={onChange}
               error={errors?.minIncrease}
+            />
+              <TextInput
+              type='number'
+              label='Reserve Price'
+              name='reservePrice'
+              value={values.reservePrice}
+              onChange={onChange}
+              error={errors?.reservePrice}
             />
             <LocalizationProvider fullWidth dateAdapter={AdapterMoment}>
               <DatePicker
