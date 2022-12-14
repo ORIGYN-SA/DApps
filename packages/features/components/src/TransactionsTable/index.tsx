@@ -600,7 +600,6 @@ export const TransactionsTable = (props: any) => {
         <TableContainer
           component={Paper}
           elevation={2}
-          sx={{ margin: 2, width: '100%', padding: 2 }}
         >
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="ogy_data_table">
             {props.searchBarTokenId == 'Not selected'? (

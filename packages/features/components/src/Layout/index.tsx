@@ -20,7 +20,7 @@ const initialMenuItems: MenuItem[] = [
     icon: Icons.Wallet
   },
   {
-    href: 'nft-data',
+    href: 'data',
     title: 'NFT Data',
     icon: Icons.MenuIcon
   },
