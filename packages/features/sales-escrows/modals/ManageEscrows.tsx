@@ -28,8 +28,6 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
     const data3 = await data.ok.escrow;
     setOffers(data2);
     setEscrow(data3);
-    console.log('escrows', data3);
-    console.log('offer', data2);
   };
 
   useEffect(() => {
@@ -88,8 +86,6 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
     Balance();
     totalAmount();
   }, [open]);
-
- console.log(escrow)
 
   return (
     <div>
