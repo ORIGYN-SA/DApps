@@ -3,8 +3,8 @@ import { Icons, theme, themeLight } from "@origyn-sa/origyn-art-ui";
 import React, { useContext, useEffect, useState } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { ThemeProvider, createGlobalStyle} from "styled-components";
-import { currencyFormat, isLocal } from '@dapp/utils';
+import { ThemeProvider } from "styled-components";
+import { isLocal } from '@dapp/utils';
 import './connect2ic.css';
 import { AuthContext } from '../../../authentication'
 
@@ -26,13 +26,14 @@ export const Layout = ({ children }: LayoutProps) => {
   const { tokens, refreshAllBalances } = useTokensContext();
   const { principal, loggedIn, handleLogOut } = useContext(AuthContext)
   const [darkTheme, setDarkTheme] = useState(true);
+
+  console.log(loggedIn);
   useEffect(() => {
     if (loggedIn) {
       console.log(principal.toText(), isLocal());
       refreshAllBalances(false, principal);
     }
   }, [loggedIn]);
-
   return (
     <>
       <ThemeProvider theme={darkTheme ? theme : themeLight}>
