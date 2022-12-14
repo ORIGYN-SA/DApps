@@ -262,7 +262,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues, onSucc
                       <HR />
                       <br />
                       <Flex flexFlow='row' align='center' justify='space-between'>
-                        <h3>Total Amount</h3>
+                        <h6>Total Amount</h6>
                         <span>{parseFloat(values.priceOffer) + tokens[values.token].fee * 0.00000001}</span>
                       </Flex>
                       <br />

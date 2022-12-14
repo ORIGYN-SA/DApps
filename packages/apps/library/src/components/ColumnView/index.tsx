@@ -16,6 +16,7 @@ import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
 import { DeleteLibrary } from '../DeleteLibrary';
+import { Card, Container } from '@origyn-sa/origyn-art-ui'
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -247,7 +248,7 @@ const ColumnView = () => {
 
   return (
     <div>
-      <Box component={Paper} elevation={2} sx={{ margin: 2, width: '100%', padding: 2 }}>
+      <Container>
         <Grid
           container
           minHeight={Sizes.minHeight}
@@ -514,7 +515,7 @@ const ColumnView = () => {
             </Collapse>
           </List>
         </Grid>
-      </Box>
+      </Container>
     </div>
   );
 };

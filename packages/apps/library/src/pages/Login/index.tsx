@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import ColumnView from '../../components/ColumnView';
-import { SecondaryNav,Container } from '@origyn-sa/origyn-art-ui'
+import { SecondaryNav, Container } from '@origyn-sa/origyn-art-ui'
 import { AuthContext } from '../../../../../features/authentication'
 import { useDialog } from '@connect2ic/react'
 
@@ -11,7 +11,6 @@ const Library = () => {
   return (
 
     <Container>
-      {console.log(principal?.toText())}
       <SecondaryNav
         title='Vault'
         tabs={[

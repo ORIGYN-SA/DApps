@@ -196,14 +196,11 @@ setTokenFee(values.token)
               <br />
             </Flex>
             <HR />
-            <br />
             <Flex flexFlow='row' align="center" justify='space-between'>
-              <h3>Total Amount</h3>
+              <h6>Total Amount</h6>
               <span>{totalAmount}</span>
             </Flex>
-            <br />
             <HR />
-            <br />
             <Flex justify='flex-end'>
               <Button btnType='filled' type='submit'>
                 Transfer {tokenFee}

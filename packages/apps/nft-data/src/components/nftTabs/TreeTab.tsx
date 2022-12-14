@@ -179,8 +179,8 @@ function Tree({ metadata }: any) {
     </TreeItem>
   );
   return (
-    <Container padding="16px">
-    <Box margin="6rem 0 0 0">
+    <Container padding="8px 16px">
+    <Box margin="0 0 0 0">
       <FormControlLabel
         control={<Switch onChange={handleExpandAll} checked={all} />}
         label="Expand All"
