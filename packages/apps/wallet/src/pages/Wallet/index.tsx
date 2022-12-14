@@ -132,6 +132,7 @@ const WalletPage = () => {
 
   const { open } = useDialog()
 
+  const { tokens, time } = useTokensContext();
   const { activeTokens } = useTokensContext();
 
   const handleClickOpen = (item, modal = 'auction') => {
@@ -341,6 +342,24 @@ const WalletPage = () => {
     }
   }
 
+
+  useEffect(() => {
+    if (loggedIn) {
+      fetchData()
+    }
+  }, [loggedIn])
+
+  useEffect(() => {
+    useRoute().then(({canisterId, tokenId}) => {
+      setCanisterId(canisterId);
+      setTokenId(tokenId);
+    })
+  }, [])
+
+  const FilteredNFTData =
+    tokenId && showOnlyTokenEntries
+      ? NFTData?.rows?.filter((nft) => nft.raw_id === tokenId)
+      : NFTData?.rows
   const [openEsc, setOpenEsc] = useState(false)
 
   const FilteredActiveSales =
@@ -436,7 +455,7 @@ const WalletPage = () => {
                           </Flex>
                         </StyledBlackItemCard>
                       ))}
-                      <p className="small_text secondary_color">Last Updated: HH:MM:SS, MM/DD/YYYY</p>
+                      <p className="small_text secondary_color">Last Updated: {time}</p>
                       <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
                       <WalletTokens>ManageTokens</WalletTokens>
                       <h6>Manage Escrow</h6>
