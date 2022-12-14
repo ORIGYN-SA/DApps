@@ -174,16 +174,10 @@ export const NFTPage = () => {
           setRoy1(royal1)
           setCurrentNFT(dataObj)
           setSaleNft(_nft)
-          console.log(royal1)
-
         })
         .catch(console.log)
     }
   }, [])
-
- console.log('nft id', currentNFT)
- console.log('end', currentOpenAuction?.sale_type?.auction)  
- console.log('now',BigInt(new Date().getTime() ) )
 
   if (isLoading || !canisterId) {
     return (
