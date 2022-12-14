@@ -65,7 +65,7 @@ export const NFTPage = () => {
   const [roy2, setRoy2] = useState<any>()
   const { open } = useDialog();
   const [saleNft, setSaleNft] = useState<any>();
-  const { tokens } = useTokensContext();
+  const { activeTokens :tokens } = useTokensContext();
 
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
@@ -230,7 +230,7 @@ export const NFTPage = () => {
                         
                           <Flex flexFlow='column'>
                             <span>Current bid</span>
-                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.current_bid_amount) * 1e-8).toString()).toFixed(2)}</strong>
+                              <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.current_bid_amount) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex> 
                           <br/>
                           
@@ -238,7 +238,7 @@ export const NFTPage = () => {
                             0 && (
                            <Flex flexFlow='column'>
                             <span>Reserve Price</span>
-                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve[0]) * 1e-8).toString()).toFixed(2)}</strong>
+                              <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve[0]) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex>)}
                           <br/>
                           
@@ -246,7 +246,7 @@ export const NFTPage = () => {
                             0 && (
                           <Flex flexFlow='column'>
                             <span>Buy Now</span>
-                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]) * 1e-8).toString()).toFixed(2)}</strong>
+                              <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex>)}                          
                         </Flex>
                         ) : '-'}
