@@ -51,7 +51,7 @@ const SymbolWithIcon = ({ symbol }: any) =>
     </>
   )
 export const NFTPage = () => {
-  const { principal, actor } = useContext(AuthContext)
+  const { principal, actor, handleLogOut } = useContext(AuthContext)
   const [currentNFT, setCurrentNFT] = useState<any>({})
   const [collectionData, setCollectionData] = useState<any>({})
   const [collectionPreview, setCollectionPreview] = useState<any>({})
@@ -339,7 +339,8 @@ export const NFTPage = () => {
             </Flex>,
           ]
         }
-        onConnect={() => {open(); return {}}}
+        onLogOut={handleLogOut}
+        onConnect={open}
         principal={principal?.toText() === "2vxsx-fae" ? "" : principal?.toText()}
       />
       <ConfirmSalesActionModal

@@ -11,7 +11,7 @@ import { SecondaryNav, Container, Banner, HR } from '@origyn-sa/origyn-art-ui';
 
 const Ledger = () => {
   const ledgerVersion: string = '0.1.0';
-  const { actor } = useContext(AuthContext);
+  const { principal, actor, handleLogOut } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(true);
   const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
   const [indexID, setIndexID] = React.useState('');
@@ -36,7 +36,7 @@ const Ledger = () => {
   }, [actor]);
 
   return (
-    <Banner Banner fullWidth padding="0" flexFlow="column">
+    <Container fullWidth padding="0" flexFlow="column">
       <SecondaryNav
         title="Ledger"
         tabs={[{ title: 'Transactions', id: 'Transactions' }]}
@@ -79,8 +79,11 @@ const Ledger = () => {
             <VersionLabel ledgerVersion={ledgerVersion} />
           </Container>,
         ]}
+        onLogOut={handleLogOut}
+        onConnect={open}
+        principal={principal?.toText() === "2vxsx-fae" ? "" : principal?.toText()}
       />
-    </Banner>
+    </Container>
   );
 };
 

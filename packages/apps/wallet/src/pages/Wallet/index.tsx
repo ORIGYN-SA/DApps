@@ -635,10 +635,7 @@ const WalletPage = () => {
               </div>,
             ]}
             onLogOut={handleLogOut}
-            onConnect={() => {
-              open()
-              return {}
-            }}
+            onConnect={open}
             principal={principal?.toText() === "2vxsx-fae" ? "" : principal?.toText()}
           />
           <ConfirmSalesActionModal

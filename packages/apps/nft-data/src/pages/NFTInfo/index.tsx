@@ -3,9 +3,12 @@ import TreeTab from '../../components/nftTabs/TreeTab';
 import RawTab from '../../components/nftTabs/RawTab';
 import FormTab from '../../components/nftTabs/FormTab';
 import JSONTab from '../../components/nftTabs/JSONTab';
-import { SecondaryNav } from '@origyn-sa/origyn-art-ui';
+import { SecondaryNav } from '@origyn-sa/origyn-art-ui'
+import { useContext } from 'react'
+import { AuthContext } from '../../../../../features/authentication'
 
 const NFTInfo = ({ metadata }: any) => {
+  const { principal, actor, handleLogOut } = useContext(AuthContext)
 
   return (
     <>
@@ -23,6 +26,9 @@ const NFTInfo = ({ metadata }: any) => {
           <RawTab metadata={metadata} />,
           <JSONTab metadata={metadata} />,
         ]}
+        onLogOut={handleLogOut}
+        onConnect={open}
+        principal={principal?.toText() === "2vxsx-fae" ? "" : principal?.toText()}
       />
     </>
   );
