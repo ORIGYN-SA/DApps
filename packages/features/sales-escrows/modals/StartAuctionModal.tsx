@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Principal } from '@dfinity/principal'
 import { AuthContext } from '@dapp/features-authentication'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -7,6 +7,7 @@ import * as Yup from 'yup'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { useTokensContext } from '@dapp/features-tokens-provider'
 import { Container, Flex, HR, Modal, TextInput, DatePicker, Select, Button } from '@origyn-sa/origyn-art-ui'
+import { useRoute } from '@dapp/features-authentication'
 
 const validationSchema = Yup.object({
   token: Yup.string()
@@ -22,6 +23,10 @@ const validationSchema = Yup.object({
     .nullable()
     .required('Minimum increase step is required')
     .default(0),
+  reservePrice:Yup.number()
+  .typeError('This must be a number')
+  .nullable()
+  .default(0),
   buyNowPrice: Yup.number()
     .typeError('This must be a number')
     .nullable()
@@ -35,14 +40,16 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
   const { actor } = React.useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar()
   const [errors, setErrors] = React.useState<any>({})
+const [tokenID, setTokenID] = useState<any>()
   // @ts-ignore
   const [values, setValues] = React.useState<any>(validationSchema.default());
   const [inProgress, setInProgress] = React.useState(false)
-  const { tokens } = useTokensContext()
+  const { activeTokens } = useTokensContext()
 
   const handleStartAuction = async ({
                                       startPrice,
                                       buyNowPrice,
+                                      reservePrice,
                                       minIncrease: priceStep,
                                       endDate,
                                       token: saleToken
@@ -50,21 +57,21 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
     setInProgress(true)
     try {
       const resp = await actor.market_transfer_nft_origyn({
-        token_id: currentToken?.Class?.find(({ name }) => name === 'id').value.Text,
+        token_id: currentToken,  
         sales_config: {
           pricing: {
             auction: {
               start_price: BigInt(startPrice * 1e8),
               token: {
                 ic: {
-                  fee: BigInt(tokens[saleToken]?.fee ?? 200000),
-                  decimals: BigInt(tokens[saleToken]?.decimals ?? 8),
-                  canister: Principal.fromText(tokens[saleToken]?.canisterId),
+                  fee: BigInt(activeTokens[saleToken]?.fee ?? 200000),
+                  decimals: BigInt(activeTokens[saleToken]?.decimals ?? 8),
+                  canister: Principal.fromText(activeTokens[saleToken]?.canisterId),
                   standard: { Ledger: null },
-                  symbol: tokens[saleToken]?.symbol,
+                  symbol: activeTokens[saleToken]?.symbol,
                 },
               },
-              reserve: [],
+              reserve: [BigInt(reservePrice * 1e8)],
               start_date: BigInt(Math.floor(new Date().getTime() * 1e6)),
               min_increase: {
                 amount: BigInt(priceStep * 1e8),
@@ -81,6 +88,9 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
           escrow_receipt: [],
         },
       })
+
+
+      console.log('resp', resp)
 
       if ('err' in resp) {
         enqueueSnackbar('There was an error when starting your auction.', {
@@ -101,7 +111,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
         handleClose(true)
       }
     } catch (e) {
-      console.log(e)
+      console.log('this ie error', e)
       enqueueSnackbar('There was an error when starting your auction.', {
         variant: 'error',
         anchorOrigin: {
@@ -139,7 +149,8 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
     setErrors({...errors, [name || e.target.name]: undefined});
     setValues({...values, [name || e.target.name]: value || e.target.value});
   }
-  console.log()
+  console.log('form',values)
+
   return (
     <div>
       <Modal
@@ -157,7 +168,7 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
               /*@ts-ignore*/
               selectedOption={{ label: values.token, value: values.token }}
               handleChange={(v) => onChange(null, 'token', v.value)}
-              options={Object.keys(tokens).map((t) => ({ label: tokens[t].symbol, value: t }))}
+              options={Object.keys(activeTokens).map((t) => ({ label: activeTokens[t].symbol, value: t }))}
             />
             <TextInput
               required
@@ -185,6 +196,14 @@ export function StartAuctionModal({ currentToken, open, handleClose }: any) {
               value={values.minIncrease}
               onChange={onChange}
               error={errors?.minIncrease}
+            />
+              <TextInput
+              type='number'
+              label='Reserve Price'
+              name='reservePrice'
+              value={values.reservePrice}
+              onChange={onChange}
+              error={errors?.reservePrice}
             />
             <LocalizationProvider fullWidth dateAdapter={AdapterMoment}>
               <DatePicker
