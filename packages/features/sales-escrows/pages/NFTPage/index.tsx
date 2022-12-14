@@ -17,7 +17,7 @@ import {
 } from '@origyn-sa/origyn-art-ui'
 import styled from 'styled-components'
 import { useDialog } from '@connect2ic/react'
-import { useTokensContext } from '@dapp/features-tokens-provider';
+import { TokensContext, useTokensContext } from '@dapp/features-tokens-provider';
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -65,7 +65,7 @@ export const NFTPage = () => {
   const [roy2, setRoy2] = useState<any>()
   const { open } = useDialog();
   const [saleNft, setSaleNft] = useState<any>();
-  const { activeTokens :tokens } = useTokensContext();
+  const { activeTokens }= useTokensContext();
 
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)

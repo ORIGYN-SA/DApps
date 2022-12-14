@@ -44,7 +44,7 @@ const [tokenID, setTokenID] = useState<any>()
   // @ts-ignore
   const [values, setValues] = React.useState<any>(validationSchema.default());
   const [inProgress, setInProgress] = React.useState(false)
-  const { tokens } = useTokensContext()
+  const { activeTokens } = useTokensContext()
 
   const handleStartAuction = async ({
                                       startPrice,
@@ -55,10 +55,6 @@ const [tokenID, setTokenID] = useState<any>()
                                       token: saleToken
                                     }) => {
     setInProgress(true)
-    console.log('tokenId', currentToken)
-    console.log('startPrice',BigInt(startPrice))
-    console.log('token', tokens[saleToken])
-    console.log('endDate', BigInt(endDate.getTime() * 1e6))
     try {
       const resp = await actor.market_transfer_nft_origyn({
         token_id: currentToken,  
@@ -68,11 +64,11 @@ const [tokenID, setTokenID] = useState<any>()
               start_price: BigInt(startPrice * 1e8),
               token: {
                 ic: {
-                  fee: BigInt(tokens[saleToken]?.fee ?? 200000),
-                  decimals: BigInt(tokens[saleToken]?.decimals ?? 8),
-                  canister: Principal.fromText(tokens[saleToken]?.canisterId),
+                  fee: BigInt(activeTokens[saleToken]?.fee ?? 200000),
+                  decimals: BigInt(activeTokens[saleToken]?.decimals ?? 8),
+                  canister: Principal.fromText(activeTokens[saleToken]?.canisterId),
                   standard: { Ledger: null },
-                  symbol: tokens[saleToken]?.symbol,
+                  symbol: activeTokens[saleToken]?.symbol,
                 },
               },
               reserve: [BigInt(reservePrice * 1e8)],
@@ -172,7 +168,7 @@ const [tokenID, setTokenID] = useState<any>()
               /*@ts-ignore*/
               selectedOption={{ label: values.token, value: values.token }}
               handleChange={(v) => onChange(null, 'token', v.value)}
-              options={Object.keys(tokens).map((t) => ({ label: tokens[t].symbol, value: t }))}
+              options={Object.keys(activeTokens).map((t) => ({ label: activeTokens[t].symbol, value: t }))}
             />
             <TextInput
               required

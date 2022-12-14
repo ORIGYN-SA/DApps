@@ -32,7 +32,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
   const [token, setToken] = React.useState('OGY');
   const [searchParams, setSearchParams] = useSearchParams({});
   const { enqueueSnackbar } = useSnackbar() || {};
-  const { tokens, refreshAllBalances } = useTokensContext();
+  const { activeTokens :tokens, refreshAllBalances } = useTokensContext();
   const validationSchema = Yup.object().shape({
     nftId: Yup.string().required(),
     escrowPrice: Yup.number()
