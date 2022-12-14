@@ -18,6 +18,7 @@ import {
 import styled from 'styled-components'
 import { useDialog } from '@connect2ic/react'
 import { TokensContext, useTokensContext } from '@dapp/features-tokens-provider';
+import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -52,6 +53,8 @@ const SymbolWithIcon = ({ symbol }: any) =>
 export const NFTPage = () => {
   const { principal, actor } = useContext(AuthContext)
   const [currentNFT, setCurrentNFT] = useState<any>({})
+  const [collectionData, setCollectionData] = useState<any>({})
+  const [collectionPreview, setCollectionPreview] = useState<any>({})
   const [openAuction, setOpenAuction] = React.useState(false)
   const [canisterId, setCanisterId] = React.useState("")
   const [dialogAction, setDialogAction] = useState<any>()
@@ -76,7 +79,6 @@ export const NFTPage = () => {
   }
 
   const handleClickOpenEsc = (item, modal='confirmEnd') => {
-    console.log('clicked', openConfirmation, dialogAction)
       setOpenConfirmation(true)
       setDialogAction('endSale')
   }
@@ -139,7 +141,28 @@ export const NFTPage = () => {
   const verifyOwner = currentNFT?.owner
 
   useEffect(() => {
-    useRoute().then(({canisterId}) => setCanisterId(canisterId))
+    useRoute().then(({canisterId}) => {
+      setCanisterId(canisterId)
+      OrigynClient.getInstance().init(true, canisterId)
+      getNftCollectionMeta([]).then((r: any) => {
+        if ('err' in r) {
+        } else {
+          setCollectionPreview(
+            Object.values(
+              r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
+            )[0],
+          )
+          setCollectionData(
+            r.ok.metadata[0].Class.find(({ name }) => name === '__apps')
+              .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
+              .value.Class.reduce(
+              (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+              {},
+            ),
+          )
+        }
+      })
+    })
     if (searchParams.get('nftId')) {
       const initialParameters = searchParams.entries()
       const params = {}
@@ -154,7 +177,6 @@ export const NFTPage = () => {
       actor
         .nft_origyn(params.nft_id)
         .then((r: any) => {
-          console.log(r)
           setIsLoading(false)
 
           if ('err' in r)
@@ -179,13 +201,6 @@ export const NFTPage = () => {
     }
   }, [])
 
-  if (isLoading || !canisterId) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Box>
-    )
-  }
   return (
     <Flex fullWidth padding='0' flexFlow='column'>
       <StartEscrowModal
@@ -212,53 +227,51 @@ export const NFTPage = () => {
                       src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
                     />
                     <Flex flexFlow='column' gap={8}>
-                      <p className="secondary_color">{currentNFT?.collectionid} Collection</p>
-                      <h2><b>{currentNFT?.tokenID}</b></h2>
+                      <p className="secondary_color">{currentNFT?.owner}</p>
+                      <h2><b>{currentNFT?.display_name}</b></h2>
                       <br />
                       <ShowMoreBlock btnText='Read More'>
                         <p className="secondary_color">{currentNFT?.description}</p>
                       </ShowMoreBlock>
                       <br />
-                      <div><b>{currentNFT?.collectionid} Collection</b></div>
+                      <Flex gap={8} align="center">
+                        <img
+                          src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`}
+                          alt=''
+                          style={{width: "32px", height: "32px", borderRadius: "7.5px"}}
+                        />
+                        <b>{collectionData?.display_name} Collection</b>
+                      </Flex>
                       <br/>
                       <HR />
-                      <Flex justify='space-between' align='center'>
-                        <Flex align='center' gap={8} >
-                         
+                      <Flex fullWidth justify='space-between' align='center'>
                         { saleNft?.current_sale.length > 0 ? (
-                        <Flex flexFlow='row' padding={24}>
-                        
+                        <>
                           <Flex flexFlow='column'>
                             <span>Current bid</span>
                               <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.current_bid_amount) * 1e-8).toString()).toFixed(2)}</strong>
-                          </Flex> 
-                          <br/>
-                          
+                          </Flex>
                            {currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve?.length >
                             0 && (
                            <Flex flexFlow='column'>
                             <span>Reserve Price</span>
                               <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve[0]) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex>)}
-                          <br/>
-                          
                           {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
                             0 && (
                           <Flex flexFlow='column'>
                             <span>Buy Now</span>
                               <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex>)}                          
-                        </Flex>
-                        ) : '-'}
-                        </Flex>                                                 
+                        </>
+                        ) : 'Not on sale'}
                       </Flex>
                       <HR />
                       <br />
+                      <Flex gap={8} flexFlow='column'>
                       {
                         currentOpenAuction ? (
-                          <div>
-                            <Flex flexFlow='row'>
-
+                          <>
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
                             0 && (principal != verifyOwner) && (
                             <Button btnType='accent' style={{marginRight: '16px'}}onClick={()=> handleOpen('buyNow')}>Buy Now</Button>
@@ -266,16 +279,14 @@ export const NFTPage = () => {
                             {(principal == verifyOwner) ? ( (BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ?
                             <Button btnType='accent' onClick={handleClickOpenEsc}> End Sale </Button> : <Button btnType='outlined' disabled onClick={handleClickOpenEsc}> End Sale </Button>) :
                             <Button btnType='outlined' onClick={()=> handleOpen('bid')}>Place Bid</Button>}
-                            
-
-                            </Flex>
-                          </div>
+                          </>
                         ) : (  (principal == verifyOwner) ?
                           (<Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>) : 
                           ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ? 
                           (<Button btnType='primary' disabled onClick={handleEscrow}>Place Bid</Button>) 
                           : (<Button btnType='primary'  onClick={handleEscrow}>Place Bid</Button>))                     
                         )}
+                      </Flex>
                     </Flex>
                   </Grid>
                 </Container>
@@ -294,14 +305,13 @@ export const NFTPage = () => {
                         <br />
                         <Flex flexFlow='column' gap={16}>
                           {Object.keys(currentNFT).map((k) => (
-                            <>
+                            <div key={k}>
                               <Grid columns={2}>
                                 <p>{k.charAt(0).toUpperCase() + k.slice(1)}</p>
                                 <p className="secondary_color">{currentNFT[k].toString()}</p>
                               </Grid>
-                              <HR />
-
-                            </>
+                              <HR marginTop={16} />
+                            </div>
                           ))}
                         </Flex>
                         <br />
@@ -313,21 +323,23 @@ export const NFTPage = () => {
                         <br />
                         <br />
                         <Flex flexFlow='column' gap={18}>
-                          {roy1?.frozen?.map((nft) => (<>
+                          {roy1?.frozen?.map((nft) => (
+                            <div key={nft.Class.find(({ name }) => name === 'tag').value.Text}>
                               <Grid columns={2}>
                                 <p>{nft.Class.find(({ name }) => name === 'tag').value.Text}</p>
                                 <p className="secondary_color">{nft.Class.find(({ name }) => name === 'rate').value.Float}</p>
                               </Grid>
-                              <HR />
-                            </>
+                              <HR marginTop={18} />
+                            </div>
                           ))}
-                          {roy2?.frozen?.map((nft) => (<>
+                          {roy2?.frozen?.map((nft) => (
+                            <div key={nft.Class.find(({ name }) => name === 'tag').value.Text}>
                               <Grid columns={2}>
                                 <p>{nft.Class.find(({ name }) => name === 'tag').value.Text}</p>
                                 <p className="secondary_color">{nft.Class.find(({ name }) => name === 'rate').value.Float}</p>
                               </Grid>
-                              <HR />
-                            </>
+                              <HR marginTop={18} />
+                            </div>
                           ))}
                         </Flex>
                         <br />

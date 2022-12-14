@@ -89,9 +89,6 @@ const [tokenID, setTokenID] = useState<any>()
         },
       })
 
-
-      console.log('resp', resp)
-
       if ('err' in resp) {
         enqueueSnackbar('There was an error when starting your auction.', {
           variant: 'error',
@@ -137,7 +134,6 @@ const [tokenID, setTokenID] = useState<any>()
   const handleSubmit = (e: any) => {
     e.preventDefault()
     validationSchema.validate(values, { abortEarly: false }).then((v) => {
-      console.log(values, values.endDate.getTime())
       handleStartAuction(values);
     })
       .catch(function(e) {
@@ -149,7 +145,6 @@ const [tokenID, setTokenID] = useState<any>()
     setErrors({...errors, [name || e.target.name]: undefined});
     setValues({...values, [name || e.target.name]: value || e.target.value});
   }
-  console.log('form',values)
 
   return (
     <div>

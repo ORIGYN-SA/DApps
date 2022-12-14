@@ -34,7 +34,7 @@ export const SiteProvider = ({ children }: any) => {
       drawerMode: d,
     });
   };
-  console.log(site);
+
   return (
     <SiteContext.Provider
       value={{
@@ -50,7 +50,6 @@ export const SiteProvider = ({ children }: any) => {
 
 export default function ThemeConfig({ children }: any) {
   const { themeMode } = useContext(SiteContext);
-  console.log('themeMode', themeMode);
   const isLight = themeMode === 'light';
 
   const themeOptions: any = useMemo(

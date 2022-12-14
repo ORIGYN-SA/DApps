@@ -95,7 +95,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
   };
 
   const handleStartEscrow = async (data) => {
-    console.log(data);
     if (
       isNaN(parseFloat(data.priceOffer)) ||
       data.sellerId === 'undefined' ||
@@ -124,12 +123,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
         throw new Error();
 
       const { account_id } = saleInfo?.ok?.deposit_info ?? {};
-      console.log(tokens[token]);
       const amountWithFee = amount + tokens[token].fee;
-      console.log(
-        '🚀 ~ file: StartEscrowModal.tsx ~ line 121 ~ handleStartEscrow ~ amountWithFee',
-        amountWithFee,
-      );
+
       try {
         const transactionHeight = await sendTransaction(
           false,
@@ -191,8 +186,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               handleCustomClose(true);
               refreshAllBalances(false, principal);
           } else {
-            console.log('escrowResponse', escrowResponse);
-
             if (!('receipt' in escrowResponse.ok))
               throw new Error();
 
@@ -217,8 +210,6 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               refreshAllBalances(false, principal);
           }
         } catch (e) {
-          console.log(e?.message ?? e);
-
           enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
             variant: 'error',
             anchorOrigin: {

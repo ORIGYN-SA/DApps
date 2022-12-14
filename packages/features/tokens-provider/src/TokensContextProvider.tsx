@@ -105,7 +105,6 @@ const localStorageTokens = () => {
 const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
 const today = timeConverter(BigInt(new Date().getTime() * 1000000))
-console.log('time', today)
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
   activeTokens:
@@ -126,7 +125,6 @@ export const useTokensContext = () => {
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
   const [time, setTime] = useState<any>()
-  console.log(tokens);
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -185,7 +183,6 @@ export const TokensContextProvider: React.FC = ({ children }) => {
   };
 
   const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
-    console.log('refreshAllBalances > calling');
     // Refresh icon
     const _tokens = tokens;
     Object.keys(_tokens).map((symbol) => {
