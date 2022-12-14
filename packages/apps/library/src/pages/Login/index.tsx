@@ -1,9 +1,6 @@
 import React, { useContext } from 'react'
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container'
 import ColumnView from '../../components/ColumnView';
-import { SwitchCanisterCollection } from '@dapp/features-components';
-import { SecondaryNav } from '@origyn-sa/origyn-art-ui'
+import { SecondaryNav,Container } from '@origyn-sa/origyn-art-ui'
 import { AuthContext } from '../../../../../features/authentication'
 import { useDialog } from '@connect2ic/react'
 
@@ -12,7 +9,8 @@ const Library = () => {
   const { open } = useDialog()
 
   return (
-    <div>
+
+    <Container>
       {console.log(principal?.toText())}
       <SecondaryNav
         title='Vault'
@@ -20,15 +18,14 @@ const Library = () => {
           { title: 'Balance', id: 'Balance' },
         ]}
         content={[
-          <Box>
-            <SwitchCanisterCollection />
+          <Container padding="16px">
             <ColumnView />
-          </Box>
+          </Container>
         ]}
         onLogOut={handleLogOut}
         onConnect={() => {open()}}
         principal={principal.toText() === "2vxsx-fae" ? "" : principal?.toText()} />
-    </div>
+    </Container>
   );
 };
 
