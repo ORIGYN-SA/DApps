@@ -3,7 +3,7 @@ import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { getNft, OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { checkOwner } from '@dapp/utils';
 // Import from style.tsx
-import { Sizes, ListItemButton , useStyles } from './style';
+import { Sizes, ListItemButton, useStyles } from './style';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
@@ -14,8 +14,8 @@ import { Box } from '@mui/system';
 // Library components
 import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
-import { LibraryForm } from '../LibraryForm';
-
+import { LibraryForm } from '../AddLibrary';
+import { DeleteLibrary } from '../DeleteLibrary';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -33,6 +33,7 @@ const ColumnView = () => {
   // Specific library -- tokenId from URL or from clicked item
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
   const [openForm, setOpenForm] = React.useState(false);
+  const [openFormDelete, setOpenFormDelete] = React.useState(false);
   const [openDeta, setOpenDeta] = useState(false);
   const [openDub, setOpenDub] = useState(false);
   const [libDet, setLibDet] = useState();
@@ -89,7 +90,7 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    const { canisterId } = await useRoute();
+    
     setOpenLib(!openLib);
     setOpen(false);
     setOpen1(false);
@@ -122,7 +123,7 @@ const ColumnView = () => {
   };
 
   const handleDetails = () => {
-    setOpenDetails(!openDetails);
+    setOpenDetails(true);
     setOpenDeta(false);
     setOpenForm(false);
   };
@@ -132,7 +133,7 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    setOpenDeta(!openDeta);
+    setOpenDeta(true);
     setLibDet(lib);
     setSelectedMeta(index);
     setOpenForm(false);
@@ -145,18 +146,28 @@ const ColumnView = () => {
   ) => {
     setLibrary3(lib3);
     setSelectedLibrary(index);
-    setOpenDub(!openDub);
+    setOpenDub(true);
     setOpenForm(false);
     setOpenFormDefault(false);
   };
 
   const handleForm = () => {
     setOpenForm(!openForm);
+    setOpenFormDelete(false);
+    setOpenLib(false);
+    setOpera(false);
+    setOpenDetails(false);
+    setOpenDub(false);
+    setOpenDeta(false);
   };
 
   const handleForm1 = () => {
     setOpenFormDefault(!openFormDefault);
+    setOpenLib(false);
+    setOpera(false);
+    setOpenDetails(false);
     setOpenDub(false);
+    setOpenDeta(false);
   };
 
   const openSpecificNft = async () => {
@@ -195,9 +206,7 @@ const ColumnView = () => {
     console.log('responseCollectionMeta', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
-
     setCollectionNft(obj_token_ids);
-
     // In case we have URL with tokenID and we change canister,
     // We need to check if the tokenID is in the new canister
     // If not, we need to clear the URL and show the first tokenID in the new Canister
@@ -238,216 +247,275 @@ const ColumnView = () => {
 
   return (
     <div>
-    <Box component={Paper} elevation={2} sx={{ margin: 2, width: '100%', padding: 2 }}>
-      <Grid
-        container
-        minHeight={Sizes.minHeight}
-        overflow={'scroll'}
-        className={classes.classes["styledScroll"]}
-      >
-        <List className={classes.classes["horizontal"]}>
-          <Box minHeight={Sizes.minHeight} borderRight={1}>
-            <Grid container minWidth={Sizes.minWidth}>
-              <Grid item xs={12}>
-                <ListItem className={classes.classes["noPadding"]}>
-                  <ListItemButton
-                    selected={selectedIndex === 0}
-                    onClick={(event) => handleClick(event, 0)}
-                    className={classes.classes["noPadding"]}
-                  >
-                    <ListItemText sx={{ paddingLeft: 1 }} primary="NFTs" />
-                  </ListItemButton>
-                </ListItem>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItem className={classes.classes["noPadding"]}>
-                  <ListItemButton
-                    selected={selectedIndex === 1}
-                    onClick={(event) => handleClickLib(event, 1)}
-                    className={classes.classes["noPadding"]}
-                  >
-                    <ListItemText sx={{ paddingLeft: 1 }} primary="Collection" />
-                  </ListItemButton>
-                </ListItem>
-              </Grid>
-            </Grid>
-          </Box>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.classes["styledScroll"]}>
+      <Box component={Paper} elevation={2} sx={{ margin: 2, width: '100%', padding: 2 }}>
+        <Grid
+          container
+          minHeight={Sizes.minHeight}
+          overflow={'scroll'}
+          className={classes.classes['styledScroll']}
+        >
+          <List className={classes.classes['horizontal']}>
+            <Box minHeight={Sizes.minHeight} borderRight={1}>
               <Grid container minWidth={Sizes.minWidth}>
-                <Grid container minWidth={Sizes.minWidth} maxHeight={Sizes.maxHeight}>
+                <Grid item xs={12}>
+                  <ListItem className={classes.classes['noPadding']}>
+                    <ListItemButton
+                      selected={selectedIndex === 0}
+                      onClick={(event) => handleClick(event, 0)}
+                      className={classes.classes['noPadding']}
+                    >
+                      <ListItemText sx={{ paddingLeft: 1 }} primary="NFTs" />
+                    </ListItemButton>
+                  </ListItem>
+                </Grid>
+                <Grid item xs={12}>
+                  <ListItem className={classes.classes['noPadding']}>
+                    <ListItemButton
+                      selected={selectedIndex === 1}
+                      onClick={(event) => handleClickLib(event, 1)}
+                      className={classes.classes['noPadding']}
+                    >
+                      <ListItemText sx={{ paddingLeft: 1 }} primary="Collection" />
+                    </ListItemButton>
+                  </ListItem>
+                </Grid>
+              </Grid>
+            </Box>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box
+                minHeight={Sizes.minHeight}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
+                <Grid container minWidth={Sizes.minWidth}>
+                  <Grid container minWidth={Sizes.minWidth} maxHeight={Sizes.maxHeight}>
+                    <Grid item xs={12}>
+                      {collectionNft?.map((nft, index) => (
+                        <ListItem className={classes.classes['noPadding']} key={index}>
+                          <ListItemButton
+                            selected={selectedNft === index}
+                            onClick={(event) => handleClick1(nft, event, index)}
+                            className={classes.classes['noPadding']}
+                          >
+                            <ListItemText
+                              primary={nft}
+                              sx={{ width: 'max-content', paddingLeft: 1 }}
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Collapse>
+
+            <Collapse in={openDetails} timeout="auto" unmountOnExit>
+              <Box
+                minHeight={Sizes.minHeight}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
+                <Grid container minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
-                    {collectionNft?.map((nft, index) => (
-                      <ListItem className={classes.classes["noPadding"]} key={index}>
+                    {owner && loggedIn ? (
+                      <> 
+                      <ListItem className={classes.classes['noPadding']}>
                         <ListItemButton
-                          selected={selectedNft === index}
-                          onClick={(event) => handleClick1(nft, event, index)}
-                          className={classes.classes["noPadding"]}
+                          className={classes.classes['noPadding']}
+                          onClick={() => handleForm()}
                         >
                           <ListItemText
-                            primary={nft}
+                            sx={{ width: 'max-content', paddingLeft: 1 , fontWeight: 'bold'}}
+                            primary="+ Add a Library"
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                      </>
+                      
+                    ) : (
+                      <></>
+                    )}
+                    {libraryData?.map((library, index) => (
+                      <ListItem key={index} className={classes.classes['noPadding']}>
+                        <ListItemButton
+                          className={classes.classes['noPadding']}
+                          selected={selectedMeta === index}
+                          onClick={(event) => handleDeta(library, event, index)}
+                        >
+                          <ListItemText
                             sx={{ width: 'max-content', paddingLeft: 1 }}
+                            primary={library?.Class[1]?.value?.Text}
                           />
                         </ListItemButton>
                       </ListItem>
                     ))}
                   </Grid>
                 </Grid>
-              </Grid>
-            </Box>
-          </Collapse>
+              </Box>
+            </Collapse>
 
-          <Collapse in={openDetails} timeout="auto" unmountOnExit>
-            <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.classes["styledScroll"]}>
-              <Grid container minWidth={Sizes.minWidth}>
-                <Grid item xs={12}>
-                  {owner && loggedIn ? (
-                    <ListItem className={classes.classes["noPadding"]}>
-                      <ListItemButton className={classes.classes["noPadding"]} onClick={() => handleForm()}>
-                        <ListItemText
-                          sx={{ width: 'max-content', paddingLeft: 1 }}
-                          primary="+ Add Library"
-                        />
-                      </ListItemButton>
-                    </ListItem>
-                  ) : (
-                    <></>
-                  )}
-                  {libraryData?.map((library, index) => (
-                    <ListItem key={index} className={classes.classes["noPadding"]}>
-                      <ListItemButton
-                        className={classes.classes["noPadding"]}
-                        selected={selectedMeta === index}
-                        onClick={(event) => handleDeta(library, event, index)}
-                      >
-                        <ListItemText
-                          sx={{ width: 'max-content', paddingLeft: 1 }}
-                          primary={library?.Class[1]?.value?.Text}
-                        />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
+            <Collapse in={openLib} timeout="auto" unmountOnExit>
+              <Box
+                minHeight={Sizes.minHeight}
+                minWidth={Sizes.minWidth}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
+                <Grid container maxHeight={Sizes.maxHeight}>
+                  <Grid onClick={handleClickLib1} item xs={12}>
+                    {defaultLibraryData?.length <= 0 || defaultLibraryData === undefined ? (
+                      <ListItem className={classes.classes['noPadding']}>
+                        <ListItemButton className={classes.classes['noPadding']}>
+                          <ListItemText sx={{ paddingLeft: 1 }} primary="Loading data..." />
+                        </ListItemButton>
+                      </ListItem>
+                    ) : (
+                      <>
+                        {owner && loggedIn ? (
+                          <>
+                          <ListItem className={classes.classes['noPadding']}>
+                            <ListItemButton
+                              className={classes.classes['noPadding']}
+                              onClick={() => handleForm1()}
+                            >
+                              <ListItemText
+                                sx={{ width: 'max-content', paddingLeft: 1 }}
+                                primary="+ Add Library"
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        </>
+                        ) : (
+                          <></>
+                        )}
+
+                        {defaultLibraryData?.map((library, index) => (
+                          <ListItem className={classes.classes['noPadding']} key={index}>
+                            <ListItemButton
+                              selected={selectedLibrary === index}
+                              onClick={(event) => handleClick3(library, event, index)}
+                              className={classes.classes['noPadding']}
+                            >
+                              <ListItemText
+                                sx={{ paddingLeft: 1, width: 'max-content' }}
+                                primary={library?.Class[1]?.value?.Text}
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        ))}
+                      </>
+                    )}
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Box>
-          </Collapse>
+              </Box>
+            </Collapse>
 
-          <Collapse in={openLib} timeout="auto" unmountOnExit>
-            <Box
-              minHeight={Sizes.minHeight}
-              minWidth={Sizes.minWidth}
-              borderRight={1}
-              className={classes.classes["styledScroll"]}
+            <Collapse
+              in={openForm}
+              timeout="auto"
+              style={{ display: openForm ? 'block' : 'none' }}
+              unmountOnExit
             >
-              <Grid container maxHeight={Sizes.maxHeight}>
-                <Grid onClick={handleClickLib1} item xs={12}>
-                  {defaultLibraryData?.length <= 0 || defaultLibraryData === undefined ? (
-                    <ListItem className={classes.classes["noPadding"]}>
-                      <ListItemButton className={classes.classes["noPadding"]}>
-                        <ListItemText sx={{ paddingLeft: 1 }} primary="Loading data..." />
-                      </ListItemButton>
-                    </ListItem>
-                  ) : (
-                    <>
-                      {owner && loggedIn ? (
-                        <ListItem className={classes.classes["noPadding"]}>
-                          <ListItemButton
-                            className={classes.classes["noPadding"]}
-                            onClick={() => handleForm1()}
-                          >
-                            <ListItemText
-                              sx={{ width: 'max-content', paddingLeft: 1 }}
-                              primary="+ Add Library"
-                            />
-                          </ListItemButton>
-                        </ListItem>
-                      ) : (
-                        <></>
-                      )}
-
-                      {defaultLibraryData?.map((library, index) => (
-                        <ListItem className={classes.classes["noPadding"]} key={index}>
-                          <ListItemButton
-                            selected={selectedLibrary === index}
-                            onClick={(event) => handleClick3(library, event, index)}
-                            className={classes.classes["noPadding"]}
-                          >
-                            <ListItemText
-                              sx={{ paddingLeft: 1, width: 'max-content' }}
-                              primary={library?.Class[0]?.value?.Text}
-                            />
-                          </ListItemButton>
-                        </ListItem>
-                      ))}
-                    </>
-                  )}
-                </Grid>
-              </Grid>
-            </Box>
-          </Collapse>
-
-          <Collapse
-            in={openForm}
-            timeout="auto"
-            style={{ display:  openForm ? 'block' : 'none' }}
-            unmountOnExit
-          >
-            <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.classes["styledScroll"]}>
-              <Grid item xs={12}>
-                <LibraryForm currentTokenId={currentTokenId} />
-              </Grid>
-            </Box>
-          </Collapse>
-
-          <Collapse
-            in={openDeta}
-            timeout="auto"
-            unmountOnExit
-            style={{ display: openDeta ? 'block' : 'none' }}
-          >
-            <Box
-              maxHeight={Sizes.maxHeight}
-              minHeight={Sizes.minHeight}
-              borderRight={1}
-              className={classes.classes["styledScroll"]}
-            >
-              <Grid container minWidth={Sizes.minWidth}>
+              <Box
+                minHeight={Sizes.minHeight}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
                 <Grid item xs={12}>
-                  <NFTLibrary libDet={libDet} />
+                  <LibraryForm 
+                  currentTokenId={currentTokenId} 
+                  />
                 </Grid>
-              </Grid>
-            </Box>
-          </Collapse>
+              </Box>
+            </Collapse>
 
-          <Collapse
-            in={openDub}
-            timeout="auto"
-            style={{ display: openDub ? 'block' : 'none' }}
-            unmountOnExit
-          >
-            <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.classes["styledScroll"]}>
-              <Grid item xs={12}>
-                <LibraryBox library3={library3} />
-              </Grid>
-            </Box>
-          </Collapse>
+            <Collapse
+              in={openFormDelete}
+              timeout="auto"
+              style={{ display: openFormDelete? 'block' : 'none' }}
+              unmountOnExit
+            >
+              <Box
+                minHeight={Sizes.minHeight}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
+                <Grid item xs={12}>
+                  <DeleteLibrary currentTokenId={currentTokenId} />
+                </Grid>
+              </Box>
+            </Collapse>
 
-          <Collapse
-            in={openFormDefault}
-            timeout="auto"
-            style={{ display: openFormDefault ? 'block' : 'none' }}
-            unmountOnExit
-          >
-            <Box minHeight={Sizes.minHeight} borderRight={1} className={classes.classes["styledScroll"]}>
-              <Grid item xs={12}>
-                <LibraryForm currentTokenId={''} />
-              </Grid>
-            </Box>
-          </Collapse>
-        </List>
-      </Grid>
-    </Box>
-  </div>
+            <Collapse
+              in={openDeta}
+              timeout="auto"
+              unmountOnExit
+              style={{ display: openDeta ? 'block' : 'none' }}
+            >
+              <Box
+                maxHeight={Sizes.maxHeight}
+                minHeight={Sizes.minHeight}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
+                <Grid container minWidth={Sizes.minWidth}>
+                  <Grid item xs={12}>
+                    <NFTLibrary 
+                    libDet={libDet}
+                    currentTokenId={currentTokenId}
+                    loggedIn = {loggedIn}
+                    owner = {owner}
+                  />
+                  </Grid>
+                </Grid>
+              </Box>
+            </Collapse>
+
+            <Collapse
+              in={openDub}
+              timeout="auto"
+              style={{ display: openDub ? 'block' : 'none' }}
+              unmountOnExit
+            >
+              <Box
+                minHeight={Sizes.minHeight}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
+                <Grid item xs={12}>
+                  <LibraryBox 
+                  loggedIn = {loggedIn}
+                  library3={library3} 
+                  owner = {owner}
+                  currentTokenId={''}
+                  />
+                </Grid>
+              </Box>
+            </Collapse>
+
+            <Collapse
+              in={openFormDefault}
+              timeout="auto"
+              style={{ display: openFormDefault ? 'block' : 'none' }}
+              unmountOnExit
+            >
+              <Box
+                minHeight={Sizes.minHeight}
+                borderRight={1}
+                className={classes.classes['styledScroll']}
+              >
+                <Grid item xs={12}>
+                  <LibraryForm 
+                  loggedIn = {loggedIn}
+                  currentTokenId={''} />
+                </Grid>
+              </Box>
+            </Collapse>
+          </List>
+        </Grid>
+      </Box>
+    </div>
   );
 };
 
