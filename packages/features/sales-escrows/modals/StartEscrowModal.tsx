@@ -247,8 +247,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
           Send escrow for <strong>{_nft.id}</strong>?
         </h2>
         <br/>
-        <Flex as='form' onSubmit={handleSubmit} action='' flexFlow='column' gap={8}>
-            <Grid item xs={12} sm={12}>
+        <Flex flexFlow='column' gap={8}>
+
               <TextField
                 required
                 label="NFT ID"
@@ -263,9 +263,9 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               <Typography variant="inherit" color="textSecondary">
                 {errors.nftId?.message}
               </Typography>
-            </Grid>
 
-            <Grid item xs={12} sm={12}>
+
+
               <TextField
                 required
                 label="Seller"
@@ -280,9 +280,9 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               <Typography variant="inherit" color="textSecondary">
                 {errors.sellerId?.message}
               </Typography>
-            </Grid>
 
-            <Grid item xs={12} sm={12}>
+
+
               <TextField
                 required
                 label="Your Offer (in tokens)"
@@ -296,9 +296,8 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               <Typography variant="inherit" color="textSecondary">
                 {errors.priceOffer?.message}
               </Typography>
-            </Grid>
 
-            <Grid item xs={12} sm={12}>
+
               <FormControl fullWidth>
                 <InputLabel id="token-select-label">Token</InputLabel>
                 <Select
@@ -316,7 +315,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+
           {isLoading && (
             <div style={{ marginTop: 5 }}>
               <LoadingContainer data-testid="loading-container" />
