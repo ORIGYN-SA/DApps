@@ -67,6 +67,9 @@ export type TokensContext = {
     [key: string]: Token;
   };
   time?: string | number;
+  activeTokens: {
+    [key: string]: Token;
+  };
   addToken?: (
     isLocal: boolean,
     canisterId: string,
@@ -101,19 +104,29 @@ const localStorageTokens = () => {
 };
 const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
+const today = timeConverter(BigInt(new Date().getTime() * 1000000))
+console.log('time', today)
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
+  activeTokens:
+    Object.keys(initialTokens)
+      .filter((t) => initialTokens[t].enabled)
+      .reduce((ats,key) => ({...ats, [key]: initialTokens[key]}), {}),
+  time: today
 });
+
 
 export const useTokensContext = () => {
   const context = useContext(TokensContext);
   return context;
 };
 
+
+
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
   const [time, setTime] = useState<any>()
-
+  console.log(tokens);
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -211,7 +224,11 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         setLocalCanisterId,
         toggleToken,
         tokens,
-        time
+        time,
+        activeTokens:
+          Object.keys(tokens)
+            .filter((t) => tokens[t].enabled)
+            .reduce((ats,key) => ({...ats, [key]: tokens[key]}), {}),
       }}
     >
       {children}
