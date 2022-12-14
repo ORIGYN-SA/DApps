@@ -1,163 +1,82 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import {ICPIcon, OGYIcon} from '@dapp/common-assets';
+import { ICPIcon, OGYIcon } from '@dapp/common-assets';
+import { Grid, Container, HR } from '@origyn-sa/origyn-art-ui';
 
-export const EscrowDeposit = (props : any) => {
-const { type_txn, buyer, seller, token, token_id, amount, trx_id } = props.data;
+export const EscrowDeposit = (props: any) => {
+  const { type_txn, buyer, seller, token, token_id, amount, trx_id } = props.data;
 
-let token_fee = props.data.fee;
-if (!token_fee) {
-  token_fee = 'Undefined';
-}
-// trx_id
+  let token_fee = props.data.fee;
+  if (!token_fee) {
+    token_fee = 'Undefined';
+  }
+  // trx_id
 
-const { _nat, _text } = trx_id;
+  const { _nat, _text } = trx_id;
 
-let id_trans;
+  let id_trans;
 
-if (_text) {
-  id_trans = _text;
-} else {
-  id_trans = _nat.toString();
-}
+  if (_text) {
+    id_trans = _text;
+  } else {
+    id_trans = _nat.toString();
+  }
   return (
-    <Box>
-      <Box
-        sx={{
-          padding: 1,
-          borderBottom: '1px solid',
-        }}
-      >
-        <Typography
-          sx={{ fontSize: 14 }}
-          color="text.secondary"
-          gutterBottom
-        >
-          Transaction type:
-        </Typography>
-        <Typography variant="h5" gutterBottom>
-          {type_txn}
-        </Typography>
-        <Typography
-          sx={{ fontSize: 14 }}
-          color="text.secondary"
-          gutterBottom
-        >
-          Transaction ID:
-        </Typography>
-        <Typography variant="h5" gutterBottom>
-          {id_trans}
-        </Typography>
-      </Box>
-      <Box
-        sx={{
-          padding: 1,
-          borderBottom: '1px solid',
-        }}
-      >
-        <Grid container>
-          <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+    <>
+      <Container>
+        <Container padding="16px">
+          Transaction type: {type_txn}
+          <br />
+          Transaction ID: {id_trans}
+        </Container>
+        <HR marginTop="8px" marginBottom="8px" />
+        <Container padding="16px">
+          <Grid columns={2}>
+            <Grid column={1}>
               Buyer:
-            </Typography>
-            <Typography gutterBottom>{buyer.acc_principal_string}</Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+              <br />
+              {buyer.acc_principal_string}
+              <br />
               Seller:
-            </Typography>
-            <Typography gutterBottom>{seller.acc_principal_string}</Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
-              Token ID:
-            </Typography>
-            <Typography gutterBottom>{token_id}</Typography>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+              <br />
+              {seller.acc_principal_string}
+              <br />
+              Token ID: {token_id}
+            </Grid>
+            <Grid column={2}>
               Amount:
-            </Typography>
-            <Typography gutterBottom>{amount}</Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+              <br />
+              {amount}
+              <br />
               Fee:
-            </Typography>
-            <Typography gutterBottom>{token_fee}</Typography>
+              <br />
+              {token_fee}
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
-      <Box sx={{ padding: 1 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
-              Canister:
-            </Typography>
-            <Typography gutterBottom>{token.canister_string}</Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
-              Fee:
-            </Typography>
-            <Typography gutterBottom>{token.fee}</Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
-              Decimals:
-            </Typography>
-            <Typography gutterBottom>{token.decimal}</Typography>
-          </Grid>
-          <Grid item xs={6} md={6}>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
-              Symbol:
-            </Typography>
-            <Typography>
+        </Container>
+        <HR marginTop="8px" marginBottom="8px" />
+        <Container padding="16px">
+          <Grid columns={2}>
+            <Grid column={1}>
+              Canister: {token.canister_string}
+              <br />
+              Fee: {token.fee}
+              <br />
+              Decimals: {token.decimal}
+            </Grid>
+            <Grid column={2}>
+              Symbol:{' '}
               {token.symbol === 'OGY' ? (
                 <OGYIcon className="token-symbol" />
               ) : (
                 <ICPIcon className="token-symbol" />
               )}
-            </Typography>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
-              Standard:
-            </Typography>
-            <Typography gutterBottom>{token.standard}</Typography>
+              <br />
+              Standard: {token.standard}
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
-    </Box>
+        </Container>
+        <HR marginTop="8px" marginBottom="8px" />
+      </Container>
+    </>
   );
 };
-

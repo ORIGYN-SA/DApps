@@ -1,8 +1,7 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
+import { Grid, Container, HR } from '@origyn-sa/origyn-art-ui';
 
 export const Mint = (props: any) => {
   const { type_txn, mint_from, mint_to, sale } = props.data;
@@ -13,112 +12,61 @@ export const Mint = (props: any) => {
 
   if (token == 'Token not defined') {
     display_token_config = (
-      <Box
-        sx={{
-          padding: 1,
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={6} md={6}>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Token:
-            </Typography>
-            <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {token}
-            </Typography>
+      <Container padding="16px">
+        <Grid columns={2}>
+          <Grid column={1}>
+            Token: <b>{token}</b>
           </Grid>
-          <Grid item xs={6} md={6}>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Amount:
-            </Typography>
-            <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {amount}
-            </Typography>
+          <Grid column={2}>
+            Amount: <b>{amount}</b>
           </Grid>
         </Grid>
-      </Box>
+      </Container>
     );
   } else {
     display_token_config = (
-      <Box
-        sx={{
-          padding: 1,
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={6} md={6}>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Canister:
-            </Typography>
-            <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {token.canister_string}
-            </Typography>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Fee:
-            </Typography>
-            <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {token.fee}
-            </Typography>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Decimals:
-            </Typography>
-            <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {token.decimal}
-            </Typography>
+      <Container padding="16px">
+        <Grid columns={2}>
+          <Grid column={1}>
+            Canister: {token.canister_string}
+            Fee: {token.fee}
+            Decimals:{token.decimal}
           </Grid>
-          <Grid item xs={6} md={6}>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Symbol:
-            </Typography>
-            <Typography>
-              {token.symbol === 'OGY' ? (
-                <OGYIcon className="token-symbol" />
-              ) : (
-                <ICPIcon className="token-symbol" />
-              )}
-            </Typography>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Standard:
-            </Typography>
-            <Typography sx={{ fontSize: 12 }} gutterBottom>
-              {token.standard}
-            </Typography>
+          <Grid column={2}>
+            Symbol: {token.symbol === 'OGY' ? (
+              <OGYIcon className="token-symbol" />
+            ) : (
+              <ICPIcon className="token-symbol" />
+            )}
+            Standard:{token.standard}
           </Grid>
         </Grid>
-      </Box>
+      </Container>
     );
   }
 
   return (
-    <Box>
-      <Box
-        sx={{
-          padding: 1,
-          borderBottom: '1px solid',
-        }}
-      >
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Transaction type:
-        </Typography>
-        <Typography variant="h5" gutterBottom>
-          {type_txn}
-        </Typography>
-        <Grid container>
-          <Grid item xs={6} md={6}>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Mint from:
-            </Typography>
-            <Typography gutterBottom>{mint_from}</Typography>
+    <Container>
+      <Container padding="16px">
+        Transaction type: <b>{type_txn}</b>
+      </Container>
+        <HR marginTop="8px" marginBottom="8px" />
+      <Container padding="16px">
+        <Grid columns={2}>
+          <Grid column={1}>
+            Mint from:
+            <br />
+            {mint_from}
           </Grid>
-          <Grid item xs={6} md={6}>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Mint to:
-            </Typography>
-            <Typography gutterBottom>{mint_to}</Typography>
+          <Grid column={2}>
+            Mint to:
+            <br />
+            {mint_to}
           </Grid>
         </Grid>
-      </Box>
+      </Container>
+      <HR marginTop="8px" marginBottom="8px" />
       {display_token_config}
-    </Box>
+    </Container>
   );
 };

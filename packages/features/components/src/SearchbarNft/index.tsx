@@ -108,6 +108,7 @@ export const SearchbarNft = (props: any) => {
         <Card 
         type="filled"
         align="center"
+        padding="16px"
       >
           Loading...
         </Card>

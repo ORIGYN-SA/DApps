@@ -7,7 +7,7 @@ import {
   SearchbarNft,
   SwitchCanisterCollection,
 } from '@dapp/features-components';
-import { SecondaryNav, Container, Banner } from '@origyn-sa/origyn-art-ui';
+import { SecondaryNav, Container, Banner, HR } from '@origyn-sa/origyn-art-ui';
 
 const Ledger = () => {
   const ledgerVersion: string = '0.1.0';
@@ -36,17 +36,21 @@ const Ledger = () => {
   }, [actor]);
 
   return (
-  <Banner Banner fullWidth padding="0" flexFlow="column">
-  <SecondaryNav
-      title="Ledger"
-      tabs={[{ title: 'Transactions', id: 'Transactions' }]}
-      content={[
-        <Container>
+    <Banner Banner fullWidth padding="0" flexFlow="column">
+      <SecondaryNav
+        title="Ledger"
+        tabs={[{ title: 'Transactions', id: 'Transactions' }]}
+        content={[
+          <Container>
             <SearchbarNft
               setSearchBarTokenId={setSearchBarTokenId}
               setIndexID={setIndexID}
               searchBarTokenId={searchBarTokenId}
               isLoading={isLoading}
+            />
+            <HR 
+              marginTop = "16px"
+              marginBottom = "16px"
             />
             <TransactionFilter
               isLoading={isLoading}
@@ -56,24 +60,27 @@ const Ledger = () => {
               transactionData={transactionData}
               searchBarTokenId={searchBarTokenId}
             />
-
-          <TransactionsTable
-            setIsLoading={setIsLoading}
-            isLoading={isLoading}
-            searchBarTokenId={searchBarTokenId}
-            indexID={indexID}
-            setIndexID={setIndexID}
-            filter={filter}
-            setFilter={setFilter}
-            setTrans_types={setTrans_types}
-            setTransactionData={setTransactionData}
-            transactionData={transactionData}
-          />
-          <VersionLabel ledgerVersion={ledgerVersion} />
-        </Container> 
-      ]} 
-    />
-  </Banner>
+            <HR 
+             marginTop = "16px"
+             marginBottom = "16px"
+            />
+            <TransactionsTable
+              setIsLoading={setIsLoading}
+              isLoading={isLoading}
+              searchBarTokenId={searchBarTokenId}
+              indexID={indexID}
+              setIndexID={setIndexID}
+              filter={filter}
+              setFilter={setFilter}
+              setTrans_types={setTrans_types}
+              setTransactionData={setTransactionData}
+              transactionData={transactionData}
+            />
+            <VersionLabel ledgerVersion={ledgerVersion} />
+          </Container>,
+        ]}
+      />
+    </Banner>
   );
 };
 

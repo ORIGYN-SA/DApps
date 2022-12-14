@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { timeConverter } from '@dapp/utils';
 import { AuthContext } from '@dapp/features-authentication';
-import { Box, IconButton } from '@mui/material';
-import Modal from '@mui/material/Modal';
+import { IconButton } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,7 +16,6 @@ import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined
 // Import Interfaces TS
 import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
-import { CircularProgress } from '@mui/material';
 import { Mint } from './functions/Mint';
 import {AuctionBid}  from './functions/AuctionBid';
 import { SaleEnded } from './functions/SaleEnded';
@@ -30,6 +28,9 @@ import { SaleWithdraw } from './functions/SaleWithdraw';
 import { getNftHistory} from '@origyn-sa/mintjs';
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
+
+import { Container, Modal} from '@origyn-sa/origyn-art-ui';
+
 // Table style
 const cell_style = {
   colSpan: '4',
@@ -602,14 +603,9 @@ export const TransactionsTable = (props: any) => {
   return (
     <>
       {props.isLoading ? (
-       
-        <Box
-          component={Paper}
-          elevation={3}
-          sx={{ margin: 2, width: '100%', padding: 2, textAlign: 'center' }}
-        >
-          <CircularProgress color="inherit" />
-        </Box>
+      <Container padding="16px">
+        Loading...
+      </Container>
       ) : (
         <TableContainer
           component={Paper}
@@ -693,15 +689,16 @@ export const TransactionsTable = (props: any) => {
           />
         </TableContainer>
       )}
+      
       <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        closeModal={handleClose}
+        isOpened = {open}
+        mode="light"
+        size="md"   
       >
-        <Box sx={style}>
+        <Container padding="16px">
           <Transaction modalData={modalData} />
-        </Box>
+          </Container>
       </Modal>
       </>
   );
