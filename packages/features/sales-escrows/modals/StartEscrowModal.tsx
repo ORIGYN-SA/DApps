@@ -249,16 +249,11 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
         <br/>
         <Flex flexFlow='column' gap={8}>
 
-              <TextField
-                required
+              <TextInput
                 label="NFT ID"
-                fullWidth
-                id="nftId"
-                variant="outlined"
-                inputProps={{ 'aria-label': 'nftId' }}
+                name="nftId"
                 value={_nft.id}
                 {...register('nftId')}
-                error={!!errors.nftId}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.nftId?.message}
@@ -266,16 +261,11 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
 
 
 
-              <TextField
-                required
+              <TextInput
                 label="Seller"
-                fullWidth
-                id="sellerId"
-                inputProps={{ 'aria-label': 'sellerId' }}
-                variant="outlined"
+                name="sellerId"
                 value={_nft.seller}
                 {...register('sellerId')}
-                error={!!errors.sellerId}
               />
               <Typography variant="inherit" color="textSecondary">
                 {errors.sellerId?.message}
