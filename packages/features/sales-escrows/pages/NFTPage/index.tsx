@@ -5,19 +5,6 @@ import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal'
 import { StartAuctionModal } from '../../modals/StartAuctionModal'
 import { StartEscrowModal } from '../../modals/StartEscrowModal'
 import { eToNumber, IdlStandard, timeConverter } from '@dapp/utils'
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
-import PendingIcon from '@mui/icons-material/Pending'
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Link,
-  Typography,
-} from '@mui/material'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import React, { useContext, useEffect, useState } from 'react'
@@ -62,11 +49,6 @@ const SymbolWithIcon = ({ symbol }: any) =>
       {symbol}
     </>
   )
-
-const AuctionButton = styled(Button)`
-  background: #70237D
-`
-
 export const NFTPage = () => {
   const { principal, actor } = useContext(AuthContext)
   const [currentNFT, setCurrentNFT] = useState<any>({})
@@ -107,11 +89,11 @@ export const NFTPage = () => {
   const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false)
   }
+
   const params = useParams()
   const currentOpenAuction = saleNft?.current_sale?.find((sale) =>
     sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
   )
-
   const handleOpen = (type) => {
     const modalInitial = {
       nftId: params.nft_id,
@@ -199,11 +181,9 @@ export const NFTPage = () => {
     }
   }, [])
 
-  console.log('nft id', currentNFT)
-
+ console.log('nft id', currentNFT)
  console.log('end', currentOpenAuction?.sale_type?.auction)  
  console.log('now',BigInt(new Date().getTime() ) )
-
 
   if (isLoading || !canisterId) {
     return (
@@ -245,55 +225,44 @@ export const NFTPage = () => {
                         <p className="secondary_color">{currentNFT?.description}</p>
                       </ShowMoreBlock>
                       <br />
+                      <div><b>{currentNFT?.collectionid} Collection</b></div>
+                      <br/>
                       <HR />
                       <Flex justify='space-between' align='center'>
-
-                        <Flex align='center' gap={8}>
+                        <Flex align='center' gap={8} >
                          
                         { saleNft?.current_sale.length > 0 ? (
-                        <Flex flexFlow='column'>
+                        <Flex flexFlow='row' padding={24}>
                         
                           <Flex flexFlow='column'>
                             <span>Current bid</span>
-                              <strong><TokenIcon symbol={tokens['OGY']?.icon} /><NatPrice value={currentOpenAuction?.sale_type?.auction?.current_bid_amount}/></strong>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.current_bid_amount) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex> 
                           <br/>
-                           <Flex flexFlow='row'>
-                            
-
+                          
                            {currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve?.length >
                             0 && (
                            <Flex flexFlow='column'>
                             <span>Reserve Price</span>
-                              <strong><TokenIcon symbol={tokens['OGY']?.icon} /><NatPrice value={currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve[0]}/></strong>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve[0]) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex>)}
                           <br/>
-
-                           
+                          
                           {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
                             0 && (
                           <Flex flexFlow='column'>
                             <span>Buy Now</span>
-                              <strong><TokenIcon symbol={tokens['OGY']?.icon} /><NatPrice value={currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]}/></strong>
-                          </Flex>)}
-                            
-                           </Flex>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]) * 1e-8).toString()).toFixed(2)}</strong>
+                          </Flex>)}                          
                         </Flex>
                         ) : '-'}
-
-
-
-
-                        </Flex>
-                          
-                        <div><b>{currentNFT?.collectionid} Collection</b></div>
+                        </Flex>                                                 
                       </Flex>
                       <HR />
                       <br />
                       {
                         currentOpenAuction ? (
                           <div>
-
                             <Flex flexFlow='row'>
                             {(principal == verifyOwner) ? ( (BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ?
                             <Button btnType='accent' onClick={handleClickOpenEsc}> End Sale </Button> : <Button btnType='outlined' disabled onClick={handleClickOpenEsc}> End Sale </Button>) :
@@ -309,10 +278,8 @@ export const NFTPage = () => {
                           (<Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>) : 
                           ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ? 
                           (<Button btnType='accent' disabled onClick={handleEscrow}>Make an Offer</Button>) 
-                          : (<Button btnType='accent'  onClick={handleEscrow}>Make an Offer</Button>))
-                        
-                        )
-                      }
+                          : (<Button btnType='accent'  onClick={handleEscrow}>Make an Offer</Button>))                     
+                        )}
                     </Flex>
                   </Grid>
                 </Container>
