@@ -4,11 +4,11 @@ import { LoadingContainer, NatPrice, Table, TokenIcon, WalletTokens } from '@dap
 import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal'
 import { StartAuctionModal } from '../../modals/StartAuctionModal'
 import { StartEscrowModal } from '../../modals/StartEscrowModal'
-import { eToNumber, IdlStandard, timeConverter } from '@dapp/utils'
+import { eToNumber, getDiffInDays, IdlStandard, timeConverter } from '@dapp/utils'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import {
   Card, Flex, HR, Icons, SecondaryNav,
   Button,
@@ -60,7 +60,6 @@ export const NFTPage = () => {
   const [dialogAction, setDialogAction] = useState<any>()
   const [openConfirmation, setOpenConfirmation] = React.useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [searchParams] = useSearchParams()
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false)
   const [modalInitialValues, setModalInitialValues] = React.useState({})
   const [expanded, setExpanded] = React.useState<string | false>('panel1')
@@ -185,15 +184,6 @@ export const NFTPage = () => {
         }
       })
     })
-    if (searchParams.get('nftId')) {
-      const initialParameters = searchParams.entries()
-      const params = {}
-      for (const [key, value] of initialParameters) {
-        params[key] = value
-      }
-      setModalInitialValues(params)
-      setOpenEscrowModal(true)
-    }
 
     if (actor) {
       fetchNft()
@@ -213,7 +203,7 @@ export const NFTPage = () => {
               {isLoading ? (
                 <LoadingContainer />
               ) : <Flex flexFlow='column'>
-                <Container size='md' padding='80px' smPadding="16px">
+                <Container size='md' padding='80px' mdPadding="16px">
                   <Grid columns={2} gap={120} smGap={16} mdGap={40}>
                     <img
                       style={{ borderRadius: '18px', width: '100%' }}
@@ -238,7 +228,7 @@ export const NFTPage = () => {
                       <br/>
                       <HR />
                       <Flex fullWidth justify='space-between' align='center'>
-                        { saleNft?.current_sale.length > 0 ? (
+                        { currentOpenAuction ? (
                         <>
                           <Flex flexFlow='column'>
                             <span>Current bid</span>
@@ -260,6 +250,7 @@ export const NFTPage = () => {
                         ) : 'Not on sale'}
                       </Flex>
                       <HR />
+                      <p className="secondary_color">{getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</p>
                       <br />
                       <Flex gap={8} flexFlow='column'>
                       {
@@ -270,9 +261,9 @@ export const NFTPage = () => {
                             <Button btnType='accent' onClick={()=> handleOpen('buyNow')}>Buy Now</Button>
                             )}
                             {(principal == verifyOwner)
-                              ? ( (BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime()))
-                                ? <Button btnType='accent' onClick={handleClickOpenEsc}>End Sale</Button>
-                                : <Button disabled btnType='outlined'>End Sale</Button>)
+                              ? ( (BigInt(currentOpenAuction?.sale_type?.auction?.end_date) > BigInt(new Date().getTime() *1e8))
+                                ? <Button btnType='accent' onClick={handleClickOpenEsc}>Finish Sale</Button>
+                                : <Button disabled btnType='outlined'>Finish Sale</Button>)
                               : <Button btnType='outlined' onClick={()=> handleOpen('bid')}>Place Bid</Button>}
                           </>
                         ) : (  (principal == verifyOwner) ?
@@ -294,7 +285,7 @@ export const NFTPage = () => {
                       { title: 'Royalties', id: 'royalties' },
                     ]}
                     content={[
-                      <Container size='sm' smPadding="16px">
+                      <Container size='sm' padding="32px" smPadding="16px">
                         <br />
                         <br />
                         <br />
@@ -313,7 +304,7 @@ export const NFTPage = () => {
                         <br />
                         <br />
                       </Container>,
-                      <Container size='sm' smPadding="16px">
+                      <Container size='sm' padding="32px" smPadding="16px">
                         <br />
                         <br />
                         <br />
@@ -368,6 +359,7 @@ export const NFTPage = () => {
         handleClose={handleCloseEscrow}
         nft={saleNft}
         initialValues={modalInitialValues}
+        onSuccess={fetchNft}
       />
     </Flex>
   )
