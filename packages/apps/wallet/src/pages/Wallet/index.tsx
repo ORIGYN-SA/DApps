@@ -173,6 +173,7 @@ const WalletPage = () => {
       useRoute().then(({canisterId}) => {
         setCanisterId(canisterId)
         OrigynClient.getInstance().init(true, canisterId)
+
         getNftCollectionMeta([]).then((r: any) => {
           if ('err' in r) {
           } else {
@@ -350,7 +351,7 @@ const WalletPage = () => {
     if (loggedIn) {
       fetchData()
     }
-  }, [loggedIn])
+  }, [loggedIn, actor, principal])
 
   useEffect(() => {
     useRoute().then(({ canisterId, tokenId }) => {
@@ -626,7 +627,7 @@ const WalletPage = () => {
               open()
               return {}
             }}
-            principal={principal?.toText()}
+            principal={principal?.toText() === "2vxsx-fae" ? "" : principal?.toText()}
           />
           <ConfirmSalesActionModal
             open={openConfirmation}

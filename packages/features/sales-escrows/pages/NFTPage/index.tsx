@@ -68,8 +68,7 @@ export const NFTPage = () => {
   const [roy2, setRoy2] = useState<any>()
   const { open } = useDialog();
   const [saleNft, setSaleNft] = useState<any>();
-  const { activeTokens }= useTokensContext();
-
+  const { tokens }= useTokensContext();
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true)
     else if (modal === 'confirmEnd') {
@@ -78,9 +77,9 @@ export const NFTPage = () => {
     }
   }
 
-  const handleClickOpenEsc = (item, modal='confirmEnd') => {
-      setOpenConfirmation(true)
-      setDialogAction('endSale')
+  const handleClickOpenEsc = () => {
+    setOpenConfirmation(true)
+    setDialogAction('endSale')
   }
 
   const handleClose = async () => {
@@ -105,10 +104,7 @@ export const NFTPage = () => {
       priceOffer: '0',
     }
     if (type === 'buyNow') {
-      modalInitial.priceOffer = eToNumber(
-        parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0].toString()) /
-        100_000_000,
-      )
+      modalInitial.priceOffer = (parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]) * 1e-8).toString()
     } else if (type === 'bid') {
       const startPrice = parseInt(
         currentOpenAuction?.sale_type?.auction?.config?.auction?.start_price,
@@ -202,16 +198,10 @@ export const NFTPage = () => {
     if (actor) {
       fetchNft()
     }
-  }, [])
+  }, [actor])
 
   return (
     <Flex fullWidth padding='0' flexFlow='column'>
-      <StartEscrowModal
-        open={openEscrowModal}
-        handleClose={handleCloseEscrow}
-        nft={saleNft}
-        initialValues={modalInitialValues}
-      />
       <SecondaryNav
         title='Vault'
         tabs={[
@@ -223,7 +213,7 @@ export const NFTPage = () => {
               {isLoading ? (
                 <LoadingContainer />
               ) : <Flex flexFlow='column'>
-                <Container size='md' padding='80px'>
+                <Container size='md' padding='80px' smPadding="16px">
                   <Grid columns={2} gap={120} smGap={16} mdGap={40}>
                     <img
                       style={{ borderRadius: '18px', width: '100%' }}
@@ -252,19 +242,19 @@ export const NFTPage = () => {
                         <>
                           <Flex flexFlow='column'>
                             <span>Current bid</span>
-                              <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.current_bid_amount) * 1e-8).toString()).toFixed(2)}</strong>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.current_bid_amount) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex>
                            {currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve?.length >
                             0 && (
                            <Flex flexFlow='column'>
                             <span>Reserve Price</span>
-                              <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve[0]) * 1e-8).toString()).toFixed(2)}</strong>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve[0]) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex>)}
                           {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
                             0 && (
                           <Flex flexFlow='column'>
                             <span>Buy Now</span>
-                              <strong><TokenIcon symbol={activeTokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]) * 1e-8).toString()).toFixed(2)}</strong>
+                              <strong><TokenIcon symbol={tokens['OGY']?.icon} />{parseFloat((parseInt(currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now[0]) * 1e-8).toString()).toFixed(2)}</strong>
                           </Flex>)}                          
                         </>
                         ) : 'Not on sale'}
@@ -277,17 +267,19 @@ export const NFTPage = () => {
                           <>
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
                             0 && (principal != verifyOwner) && (
-                            <Button btnType='accent' style={{marginRight: '16px'}}onClick={()=> handleOpen('buyNow')}>Buy Now</Button>
+                            <Button btnType='accent' onClick={()=> handleOpen('buyNow')}>Buy Now</Button>
                             )}
-                            {(principal == verifyOwner) ? ( (BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ?
-                            <Button btnType='accent' onClick={handleClickOpenEsc}> End Sale </Button> : <Button btnType='outlined' disabled onClick={handleClickOpenEsc}> End Sale </Button>) :
-                            <Button btnType='outlined' onClick={()=> handleOpen('bid')}>Place Bid</Button>}
+                            {(principal == verifyOwner)
+                              ? ( (BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime()))
+                                ? <Button btnType='accent' onClick={handleClickOpenEsc}>End Sale</Button>
+                                : <Button disabled btnType='outlined'>End Sale</Button>)
+                              : <Button btnType='outlined' onClick={()=> handleOpen('bid')}>Place Bid</Button>}
                           </>
                         ) : (  (principal == verifyOwner) ?
                           (<Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>) : 
-                          ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ? 
-                          (<Button btnType='primary' disabled onClick={handleEscrow}>Place Bid</Button>) 
-                          : (<Button btnType='primary'  onClick={handleEscrow}>Place Bid</Button>))                     
+                          // ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ? 
+                          // (<Button btnType='primary' disabled onClick={handleEscrow}>Make an Offer</Button>) : 
+                           (<Button btnType='accent'  onClick={handleEscrow}>Make an Offer</Button>)                   
                         )}
                       </Flex>
                     </Flex>
@@ -302,7 +294,7 @@ export const NFTPage = () => {
                       { title: 'Royalties', id: 'royalties' },
                     ]}
                     content={[
-                      <Container size='sm'>
+                      <Container size='sm' smPadding="16px">
                         <br />
                         <br />
                         <br />
@@ -321,7 +313,7 @@ export const NFTPage = () => {
                         <br />
                         <br />
                       </Container>,
-                      <Container size='sm'>
+                      <Container size='sm' smPadding="16px">
                         <br />
                         <br />
                         <br />
@@ -357,20 +349,25 @@ export const NFTPage = () => {
           ]
         }
         onConnect={() => {open(); return {}}}
-        principal={principal?.toText()}
+        principal={principal?.toText() === "2vxsx-fae" ? "" : principal?.toText()}
       />
       <ConfirmSalesActionModal
-        open={openConfirmation}
+        openConfirmation={openConfirmation}
         handleClose={handleClose}
         currentToken={currentNFT?.tokenID}
         action={dialogAction}
-        escrow={undefined}
       />
       <StartAuctionModal
         open={openAuction}
         handleClose={handleClose}
         onSuccess={fetchNft}
         currentToken={currentNFT?.tokenID}
+      />
+      <StartEscrowModal
+        open={openEscrowModal}
+        handleClose={handleCloseEscrow}
+        nft={saleNft}
+        initialValues={modalInitialValues}
       />
     </Flex>
   )
