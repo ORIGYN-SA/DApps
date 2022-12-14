@@ -36,7 +36,7 @@ const validationSchema = Yup.object({
   endDate: Yup.date().min(new Date(), 'The end date needs to be in the future!').default(new Date()),
 })
 
-export function StartAuctionModal({ currentToken, open, handleClose }: any) {
+export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }: any) {
   const { actor } = React.useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar()
   const [errors, setErrors] = React.useState<any>({})
@@ -106,6 +106,7 @@ const [tokenID, setTokenID] = useState<any>()
             horizontal: 'right',
           },
         })
+        onSuccess(resp.ok);
         setSuccess(true)
       }
     } catch (e) {
