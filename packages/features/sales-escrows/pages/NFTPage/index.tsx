@@ -139,6 +139,32 @@ export const NFTPage = () => {
 
   const verifyOwner = currentNFT?.owner
 
+  const fetchNft = () => {
+    actor
+      .nft_origyn(params.nft_id)
+      .then((r: any) => {
+        setIsLoading(false)
+
+        if ('err' in r)
+          throw new Error(Object.keys(r.err)[0])
+
+        const dataObj = r?.ok.metadata.Class.find(({ name }) => name === '__apps')
+          .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
+          .value.Class.reduce((arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }), {})
+        dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text
+
+        //TO DO: remove owner from dataObj, create new const so not included in properties for now?
+        dataObj.owner = r?.ok?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText()
+        const royal1 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.primary').value.Array
+        const royal2 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.secondary').value.Array
+        const _nft = r?.ok
+        setRoy2(royal2)
+        setRoy1(royal1)
+        setCurrentNFT(dataObj)
+        setSaleNft(_nft)
+      })
+      .catch(console.log)
+  }
   useEffect(() => {
     useRoute().then(({canisterId}) => {
       setCanisterId(canisterId)
@@ -173,30 +199,7 @@ export const NFTPage = () => {
     }
 
     if (actor) {
-      actor
-        .nft_origyn(params.nft_id)
-        .then((r: any) => {
-          setIsLoading(false)
-
-          if ('err' in r)
-            throw new Error(Object.keys(r.err)[0])
-
-          const dataObj = r?.ok.metadata.Class.find(({ name }) => name === '__apps')
-            .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-            .value.Class.reduce((arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }), {})
-          dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text
-
-        //TO DO: remove owner from dataObj, create new const so not included in properties for now?
-          dataObj.owner = r?.ok?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText()
-          const royal1 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.primary').value.Array
-          const royal2 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.secondary').value.Array
-          const _nft = r?.ok
-          setRoy2(royal2)
-          setRoy1(royal1)
-          setCurrentNFT(dataObj)
-          setSaleNft(_nft)
-        })
-        .catch(console.log)
+      fetchNft()
     }
   }, [])
 
@@ -366,6 +369,7 @@ export const NFTPage = () => {
       <StartAuctionModal
         open={openAuction}
         handleClose={handleClose}
+        onSuccess={fetchNft}
         currentToken={currentNFT?.tokenID}
       />
     </Flex>
