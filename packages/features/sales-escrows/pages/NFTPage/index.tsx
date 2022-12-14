@@ -226,7 +226,7 @@ export const NFTPage = () => {
                         <Flex align='center' gap={8} >
                          
                         { saleNft?.current_sale.length > 0 ? (
-                        <Flex flexFlow='row' padding={24}>
+                        <Flex flexFlow='row' gap={24}>
                         
                           <Flex flexFlow='column'>
                             <span>Current bid</span>
@@ -272,9 +272,9 @@ export const NFTPage = () => {
                           </div>
                         ) : (  (principal == verifyOwner) ?
                           (<Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>) : 
-                          ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ? 
-                          (<Button btnType='primary' disabled onClick={handleEscrow}>Place Bid</Button>) 
-                          : (<Button btnType='primary'  onClick={handleEscrow}>Place Bid</Button>))                     
+                          // ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ? 
+                          // (<Button btnType='primary' disabled onClick={handleEscrow}>Make an Offer</Button>) : 
+                           (<Button btnType='accent'  onClick={handleEscrow}>Make an Offer</Button>)                   
                         )}
                     </Flex>
                   </Grid>
