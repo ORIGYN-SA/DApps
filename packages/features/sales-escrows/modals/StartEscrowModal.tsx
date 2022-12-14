@@ -23,7 +23,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
-import { Modal } from '@origyn-sa/origyn-art-ui';
+import { Modal, Container, TextInput, Flex } from '@origyn-sa/origyn-art-ui';
 
 export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
   const { actor, principal, activeWalletProvider } =
@@ -33,8 +33,10 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
   const [searchParams, setSearchParams] = useSearchParams({});
   const { enqueueSnackbar } = useSnackbar() || {};
   const { activeTokens :tokens, refreshAllBalances } = useTokensContext();
-  const validationSchema = Yup.object().shape({
-    nftId: Yup.string().required(),
+
+  const validationSchema = Yup.object({
+    nftId: Yup.string()
+    .required(),
     escrowPrice: Yup.number()
       .typeError('This must be a number')
       .nullable()
@@ -240,11 +242,12 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
         closeModal={() => handleClose(false)}
         size='md'
       >
-        <DialogTitle id="alert-dialog-title">
+        <Container size='full' padding='48px'>
+        <h2>
           Send escrow for <strong>{_nft.id}</strong>?
-        </DialogTitle>
-        <DialogContent style={{ opacity: isLoading ? '0.4' : '1' }}>
-          <Grid container spacing={3} mt={2}>
+        </h2>
+        <br/>
+        <Flex as='form' onSubmit={handleSubmit} action='' flexFlow='column' gap={8}>
             <Grid item xs={12} sm={12}>
               <TextField
                 required
@@ -314,19 +317,19 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
                 </Select>
               </FormControl>
             </Grid>
-          </Grid>
           {isLoading && (
             <div style={{ marginTop: 5 }}>
               <LoadingContainer data-testid="loading-container" />
             </div>
           )}
-        </DialogContent>
         <DialogActions>
           <Button onClick={() => handleCustomClose(false)}>Cancel</Button>
           <Button onClick={handleSubmit(customSubmit)} autoFocus>
             Send Escrow
           </Button>
         </DialogActions>
+        </Flex>
+        </Container>
       </Modal>
     </div>
   );
