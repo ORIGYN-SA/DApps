@@ -264,21 +264,23 @@ export const NFTPage = () => {
                         currentOpenAuction ? (
                           <div>
                             <Flex flexFlow='row'>
+
+                            {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
+                            0 && (principal != verifyOwner) && (
+                            <Button btnType='accent' style={{marginRight: '16px'}}onClick={()=> handleOpen('buyNow')}>Buy Now</Button>
+                            )}
                             {(principal == verifyOwner) ? ( (BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ?
                             <Button btnType='accent' onClick={handleClickOpenEsc}> End Sale </Button> : <Button btnType='outlined' disabled onClick={handleClickOpenEsc}> End Sale </Button>) :
-                            <Button btnType='accent' onClick={()=> handleOpen('bid')}> Make an Offer</Button>}
+                            <Button btnType='outlined' onClick={()=> handleOpen('bid')}>Place Bid</Button>}
                             
-                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now?.length >
-                            0 && (principal != verifyOwner) && (
-                            <Button btnType='accent' onClick={()=> handleOpen('buyNow')}>Buy Now</Button>
-                            )}
+
                             </Flex>
                           </div>
                         ) : (  (principal == verifyOwner) ?
                           (<Button btnType='accent' onClick={handleClickOpen}>Start an Auction</Button>) : 
                           ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ? 
-                          (<Button btnType='accent' disabled onClick={handleEscrow}>Make an Offer</Button>) 
-                          : (<Button btnType='accent'  onClick={handleEscrow}>Make an Offer</Button>))                     
+                          (<Button btnType='primary' disabled onClick={handleEscrow}>Place Bid</Button>) 
+                          : (<Button btnType='primary'  onClick={handleEscrow}>Place Bid</Button>))                     
                         )}
                     </Flex>
                   </Grid>

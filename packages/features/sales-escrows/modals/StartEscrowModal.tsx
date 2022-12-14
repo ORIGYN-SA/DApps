@@ -23,6 +23,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
+import { Modal } from '@origyn-sa/origyn-art-ui';
 
 export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
   const { actor, principal, activeWalletProvider } =
@@ -234,11 +235,10 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
   };
   return (
     <div>
-      <Dialog
-        open={open}
-        onClose={() => handleCustomClose(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+      <Modal
+        isOpened={open}
+        closeModal={() => handleClose(false)}
+        size='md'
       >
         <DialogTitle id="alert-dialog-title">
           Send escrow for <strong>{_nft.id}</strong>?
@@ -327,7 +327,7 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
             Send Escrow
           </Button>
         </DialogActions>
-      </Dialog>
+      </Modal>
     </div>
   );
 }
