@@ -5,24 +5,14 @@ import { isLocal } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  TextField,
   Typography,
 } from '@mui/material';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
-import { Modal, Container, TextInput, Flex, Select } from '@origyn-sa/origyn-art-ui';
+import { Modal, Container, TextInput, Flex, Select, Button } from '@origyn-sa/origyn-art-ui';
 
 export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
   const { actor, principal, activeWalletProvider } =
@@ -296,12 +286,13 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues = undef
               <LoadingContainer data-testid="loading-container" />
             </div>
           )}
-        <DialogActions>
-          <Button onClick={() => handleCustomClose(false)}>Cancel</Button>
-          <Button onClick={handleSubmit(customSubmit)} autoFocus>
+          <br/>
+          <Flex align="center" justify="flex-end" gap={16}>
+          <Button btnType='outlined' onClick={() => handleCustomClose(false)}>Cancel</Button>
+          <Button btnType='accent' onClick={handleSubmit(customSubmit)} >
             Send Escrow
           </Button>
-        </DialogActions>
+          </Flex>
         </Flex>
         </Container>
       </Modal>

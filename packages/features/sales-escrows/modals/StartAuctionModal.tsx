@@ -217,8 +217,8 @@ const [tokenID, setTokenID] = useState<any>()
             <br/>
             <HR />
             <Flex align="center" justify="flex-end" gap={16}>
-              <Button onClick={() => handleClose(false)}>Cancel</Button>
-              <Button type='submit'>
+              <Button btnType='outlined' onClick={() => handleClose(false)}>Cancel</Button>
+              <Button btnType='accent' type='submit'>
                 Start
               </Button>
             </Flex>
