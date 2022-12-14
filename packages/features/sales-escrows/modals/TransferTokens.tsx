@@ -39,8 +39,6 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
 
   const sendTrx = (data) => {
     setSwitchTransfer(true)
-    console.log(data);
-    console.log('this is wallet', activeWalletProvider)
     const total = data.amount * 1e8;
     sendTransaction(isLocal(), activeWalletProvider, tokens[data.token], data.recipientAddress, total, data.memo)
     .then(()=>{
@@ -124,7 +122,6 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
 const total = Number(values.amount) + tokens[values.token].fee * 0.00000001
 setTotalAmount(total)
 setTokenFee(values.token)
-console.log('this is the fee',tokens[tokenFee], tokens[tokenFee].fee)
   }, [onChange])
 
 

@@ -159,7 +159,6 @@ export const TransactionsTable = (props: any) => {
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
     const response = await getNftHistory(props.searchBarTokenId.toString());
-    //console.log(response);
     // response 2 string
     const string_history = JSON.stringify(
       response,
@@ -171,7 +170,6 @@ export const TransactionsTable = (props: any) => {
 
     // enter in the obj
     const historyNFT = json_history.ok;
-    //console.log("!!!", actor);
     let x: string;
     let _props: string;
 
@@ -361,7 +359,6 @@ export const TransactionsTable = (props: any) => {
             };
             setRowsArray((x) => [...x, { ...newRow }]);
             select_vals.push(transactionObj.type_txn);
-            // console.log('match');
             setIsEmpty(false);
             break;
           case 'Transaction Id':
@@ -378,7 +375,6 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
 
-              // console.log('match');
               setIsEmpty(false);
             }
             break;
@@ -396,7 +392,6 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              // console.log('match');
               setIsEmpty(false);
             }
             break;
@@ -417,7 +412,6 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              // console.log('match');
               setIsEmpty(false);
             }
             break;
@@ -439,7 +433,6 @@ export const TransactionsTable = (props: any) => {
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
 
-              // console.log('match');
               setIsEmpty(false);
             }
 
@@ -465,7 +458,6 @@ export const TransactionsTable = (props: any) => {
               } else {
                 select_vals.push(transactionObj.type_txn);
               }
-              // console.log('match');
               setIsEmpty(false);
             }
             break;
@@ -494,7 +486,6 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              // console.log('match');
               setIsEmpty(false);
             } else {
               select_vals.push('');
@@ -530,7 +521,6 @@ export const TransactionsTable = (props: any) => {
                 };
                 setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
-                // console.log('match');
                 setIsEmpty(false);
               }
             }

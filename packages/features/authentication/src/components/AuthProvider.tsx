@@ -24,7 +24,6 @@ export const useAuth = () => {
     status
   } = useConnect();
 
-  console.log(status, isIdle);
   const [actor] = useCanister('nft');
 
   return {
@@ -39,7 +38,6 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const auth = useAuth();
-  console.log(auth);
   return (
     <>
       <ConnectDialog />

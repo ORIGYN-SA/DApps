@@ -38,7 +38,6 @@ export const SearchbarNft = (props: any) => {
   };
 
   const GetTokenId = async () => {
-    console.log(await useRoute().then((res) => res.tokenId))
     setTokenId(await useRoute().then((res) => res.tokenId));
   };
   const GetCanisterId = async () => {
@@ -53,7 +52,6 @@ export const SearchbarNft = (props: any) => {
   const NFTCollection = async () => {
     setSelectTokenIds(['Loading...']);
     const response = await getNftCollectionMeta();
-    console.log(response);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
     const number_ids = collectionNFT.token_ids_count[0].toString();

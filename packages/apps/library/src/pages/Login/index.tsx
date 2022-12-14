@@ -1,16 +1,30 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container'
+import React, { useContext } from 'react'
 import ColumnView from '../../components/ColumnView';
-import { SwitchCanisterCollection } from '@dapp/features-components';
+import { SecondaryNav,Container } from '@origyn-sa/origyn-art-ui'
+import { AuthContext } from '../../../../../features/authentication'
+import { useDialog } from '@connect2ic/react'
 
 const Library = () => {
+  const { principal, handleLogOut } = useContext(AuthContext)
+  const { open } = useDialog()
+
   return (
-    <Container maxWidth="xl">
-      <Box>
-        <SwitchCanisterCollection />
-        <ColumnView />
-      </Box>
+
+    <Container>
+      {console.log(principal?.toText())}
+      <SecondaryNav
+        title='Vault'
+        tabs={[
+          { title: 'Balance', id: 'Balance' },
+        ]}
+        content={[
+          <Container padding="16px">
+            <ColumnView />
+          </Container>
+        ]}
+        onLogOut={handleLogOut}
+        onConnect={() => {open()}}
+        principal={principal.toText() === "2vxsx-fae" ? "" : principal?.toText()} />
     </Container>
   );
 };

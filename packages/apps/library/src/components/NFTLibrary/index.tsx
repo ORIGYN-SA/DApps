@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
+import { DeleteLibrary } from '../DeleteLibrary';
 
 interface FileType {
   library_id: string;
@@ -30,22 +31,23 @@ export const NFTLibrary = (props: any) => {
     return param.charAt(0).toUpperCase() + param.slice(1);
   }
 
-  console.log('props', props);
-
   const LocationType = props.libDet.Class.filter((item) => item.name === 'location_type')[0].value
     .Text;
-  console.log('LocationType', LocationType);
+  const isMutable = props.libDet.Class.filter(
+    (item) => item.name === 'com.origyn.immutable_library',
+  )[0];
+
   let objLibraryData: FileType;
   const library = props.libDet;
   switch (LocationType) {
     case 'canister':
       objLibraryData = {
-        library_id: library?.Class[0]?.value?.Text,
-        title: library?.Class[1]?.value?.Text,
-        content_type: library?.Class[4]?.value?.Text,
-        location: library?.Class[3]?.value?.Text,
+        library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
+        title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
+        content_type: library?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
+        location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
         location_type: LocationType,
-        size: library?.Class[6]?.value?.Nat,
+        size: library?.Class.filter((item) => item.name === 'size')[0].value.Nat,
       };
       break;
     case 'collection':
@@ -116,6 +118,17 @@ export const NFTLibrary = (props: any) => {
           {capitalizeString(objLibraryData.location_type)}
         </Typography>
       </Grid>
+      {props.loggedIn == true && props.owner == true ? (
+        <Grid item xs={12}>
+          <DeleteLibrary
+            libraryId={objLibraryData.library_id}
+            currentTokenId={props.currentTokenId}
+            isMutable={isMutable}
+          />
+        </Grid>
+      ) : (
+        <></>
+      )}
     </Grid>
   );
 };

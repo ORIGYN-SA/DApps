@@ -7,8 +7,8 @@ import {
   NatPrice,
   LoadingContainer,
   WalletTokens,
-} from '@dapp/features-components';
-import { useDialog } from "@connect2ic/react"
+} from '@dapp/features-components'
+import { useDialog } from '@connect2ic/react'
 import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { useTokensContext } from '@dapp/features-tokens-provider'
 import { timeConverter } from '@dapp/utils'
@@ -30,11 +30,11 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens'
-import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
+import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows'
 import Filter from './Filter'
 
 const GuestContainer = () => {
-  const { open } = useDialog();
+  const { open } = useDialog()
 
   return (
     <Box
@@ -74,11 +74,11 @@ const StyledSectionTitle = styled.h2`
 `
 
 const StyledCustomGrid = styled(Grid)`
-  grid-template-columns: minmax(0,2fr) minmax(0,5fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 5fr);
   padding: 24px;
 
   ${({ theme }) => theme.media.lg} {
-    grid-template-columns: minmax(0,1fr) minmax(0,2fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   }
 `
 
@@ -108,8 +108,8 @@ const WalletPage = () => {
   ]
   const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } = useContext(AuthContext)
   const [openAuction, setOpenAuction] = React.useState(false)
-  const [canisterId, setCanisterId] = React.useState("")
-  const [tokenId, setTokenId] = React.useState("")
+  const [canisterId, setCanisterId] = React.useState('')
+  const [tokenId, setTokenId] = React.useState('')
   const [collectionData, setCollectionData] = React.useState<any>()
   const [collectionPreview, setCollectionPreview] = React.useState<any>()
   const [openConfirmation, setOpenConfirmation] = React.useState(false)
@@ -127,13 +127,13 @@ const WalletPage = () => {
   })
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
-  const [openTrx, setOpenTrx] = useState(false);
+  const [openTrx, setOpenTrx] = useState(false)
   const [propsEsc, setPropsEsc] = useState([])
 
   const { open } = useDialog()
 
-  const { tokens, time } = useTokensContext();
-  const { activeTokens } = useTokensContext();
+  const { tokens, time } = useTokensContext()
+  const { activeTokens } = useTokensContext()
 
   const handleClickOpen = (item, modal = 'auction') => {
     setSelectdNFT(item.metadata)
@@ -170,25 +170,29 @@ const WalletPage = () => {
     if (actor && principal) {
       setIsLoading(true)
 
-      OrigynClient.getInstance().init(true, canisterId);
-      getNftCollectionMeta([]).then((r: any) => {
-        if ('err' in r) {
-        } else {
-          setCollectionPreview(
-            Object.values(
-              r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
-            )[0],
-          )
-          setCollectionData(
-            r.ok.metadata[0].Class.find(({ name }) => name === '__apps')
-              .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-              .value.Class.reduce(
-              (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-              {},
-            ),
-          )
-        }
+      useRoute().then(({canisterId}) => {
+        setCanisterId(canisterId)
+        OrigynClient.getInstance().init(true, canisterId)
+        getNftCollectionMeta([]).then((r: any) => {
+          if ('err' in r) {
+          } else {
+            setCollectionPreview(
+              Object.values(
+                r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
+              )[0],
+            )
+            setCollectionData(
+              r.ok.metadata[0].Class.find(({ name }) => name === '__apps')
+                .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
+                .value.Class.reduce(
+                (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+                {},
+              ),
+            )
+          }
+        })
       })
+
       actor?.balance_of_nft_origyn({ principal }).then((response) => {
         if ('err' in response) throw new Error(Object.keys(response.err)[0])
         const escrows = response?.ok?.escrow
@@ -275,7 +279,6 @@ const WalletPage = () => {
             const rows = []
             for (const item of data) {
               for (const sale of item.current_sale) {
-                console.log(sale)
                 const { start_price, buy_now, token, ending } =
                 sale?.sale_type?.auction?.config?.auction || {}
                 const { status, current_bid_amount } = sale?.sale_type?.auction || {}
@@ -350,16 +353,12 @@ const WalletPage = () => {
   }, [loggedIn])
 
   useEffect(() => {
-    useRoute().then(({canisterId, tokenId}) => {
-      setCanisterId(canisterId);
-      setTokenId(tokenId);
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId)
+      setTokenId(tokenId)
     })
   }, [])
 
-  const FilteredNFTData =
-    tokenId && showOnlyTokenEntries
-      ? NFTData?.rows?.filter((nft) => nft.raw_id === tokenId)
-      : NFTData?.rows
   const [openEsc, setOpenEsc] = useState(false)
 
   const FilteredActiveSales =
@@ -378,33 +377,31 @@ const WalletPage = () => {
       : activeEscrows?.out?.data
 
   useEffect(() => {
-    let filtered = NFTData;
+    let filtered = NFTData
 
     switch (filter) {
-      case "onSale":
-        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale));
-        console.log(filtered, NFTData);
-        break;
-      case "notOnSale":
-        filtered = filtered.filter((nft) => isNaN(nft?.id?.sale));
-        break;
+      case 'onSale':
+        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale))
+        break
+      case 'notOnSale':
+        filtered = filtered.filter((nft) => isNaN(nft?.id?.sale))
+        break
     }
 
     switch (sort) {
-      case "saleASC":
+      case 'saleASC':
         filtered = [...filtered]
           .sort((nft, nft2) =>
-            isNaN(nft?.id?.sale) ? 1 : isNaN(nft2?.id?.sale) ? -1 : nft?.id?.sale - nft2?.id?.sale);
-        break;
-      case "saleDESC":
+            isNaN(nft?.id?.sale) ? 1 : isNaN(nft2?.id?.sale) ? -1 : nft?.id?.sale - nft2?.id?.sale)
+        break
+      case 'saleDESC':
         filtered = [...filtered].sort((nft, nft2) =>
-          isNaN(nft2?.id?.sale) ? -1 : isNaN(nft?.id?.sale) ? 1 : nft2?.id?.sale - nft?.id?.sale);
-        break;
+          isNaN(nft2?.id?.sale) ? -1 : isNaN(nft?.id?.sale) ? 1 : nft2?.id?.sale - nft?.id?.sale)
+        break
     }
 
-    console.log("filtered", filtered);
-    setFilteredNFTData(filtered);
-  }, [filter, sort]);
+    setFilteredNFTData(filtered)
+  }, [filter, sort])
 
   useEffect(() => {
     if (loggedIn) {
@@ -413,9 +410,9 @@ const WalletPage = () => {
   }, [loggedIn])
 
   useEffect(() => {
-    useRoute().then(({canisterId, tokenId}) => {
-      setCanisterId(canisterId);
-      setTokenId(tokenId);
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId)
+      setTokenId(tokenId)
     })
   }, [])
 
@@ -436,62 +433,64 @@ const WalletPage = () => {
                   <LoadingContainer />
                 ) : (
                   <StyledCustomGrid columns={2} gap={20}>
-                    <Card bgColor='NAVIGATION_BACKGROUND' type='outlined' flexFlow='column' padding='24px' gap={16}>
-                      <h6>Wallet Balances</h6>
-                      <HR />
-                      {Object.values(activeTokens).map((k) => (
-                        <StyledBlackItemCard align='center' padding='12px' justify='space-between'>
-                          <Flex gap={8}>
-                            <TokenIcon symbol={k.icon} />
-                            {k.symbol}
+                    <div>
+                      <Card bgColor='NAVIGATION_BACKGROUND' type='outlined' flexFlow='column' padding='24px' gap={16}>
+                        <h6>Wallet Balances</h6>
+                        <HR />
+                        {Object.values(activeTokens).map((k) => (
+                          <StyledBlackItemCard align='center' padding='12px' justify='space-between'>
+                            <Flex gap={8}>
+                              <TokenIcon symbol={k.icon} />
+                              {k.symbol}
+                            </Flex>
+                            <Flex flexFlow='column' align='flex-end'>
+                              <p>
+                                <b>
+                                  {k.balance} {k.symbol}
+                                </b>
+                              </p>
+                              <p className='secondary_color'>${k.balance / 4}</p>
+                            </Flex>
+                          </StyledBlackItemCard>
+                        ))}
+                        <p className='small_text secondary_color'>Last Updated: {time}</p>
+                        <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
+                        <WalletTokens>ManageTokens</WalletTokens>
+                        <h6>Manage Escrow</h6>
+                        <Button textButton onClick={() => setOpenEsc(true)}>
+                          {activeEscrows.length > 0 || outEscrows.length > 0 ? 'Assets in Escrow' : 'No assets in Escrow'}
+                        </Button>
+                        <StyledBlackCard align='center' padding='12px' justify='space-between'>
+                          <Flex align='center' gap={12}>
+                            <Icons.Wallet width={24} fill='#ffffff' height='auto' />
+                            <Flex flexFlow='column'>
+                              <p style={{ fontSize: 12, color: '#9A9A9A' }}>
+                                {activeWalletProvider.meta.name.charAt(0).toUpperCase() + activeWalletProvider.meta.name.slice(1)}
+                              </p>
+                              <p>
+                                {principal.toText().slice(0, 2)}...{principal.toText().slice(-4)}
+                              </p>
+                            </Flex>
                           </Flex>
                           <Flex flexFlow='column' align='flex-end'>
-                            <p>
-                              <b>
-                                {k.balance} {k.symbol}
-                              </b>
-                            </p>
-                            <p className="secondary_color">${k.balance / 4}</p>
+                            <Button iconButton size='medium'>
+                              <Icons.CopyIcon width={12} height='auto' />
+                            </Button>
                           </Flex>
-                        </StyledBlackItemCard>
-                      ))}
-                      <p className="small_text secondary_color">Last Updated: {time}</p>
-                      <Button btnType='filled' onClick={() => setOpenTrx(true)}>Transfer Tokens</Button>
-                      <WalletTokens>ManageTokens</WalletTokens>
-                      <h6>Manage Escrow</h6>
-                      <Button textButton onClick={()=>setOpenEsc(true)}>
-                        {activeEscrows.length > 0 || outEscrows.length > 0 ? 'Assets in Escrow' : 'No assets in Escrow'}
-                      </Button>
-                      <StyledBlackCard align='center' padding='12px' justify='space-between'>
-                        <Flex align='center' gap={12}>
-                          <Icons.Wallet width={24} fill='#ffffff' height='auto' />
-                          <Flex flexFlow='column'>
-                            <p style={{ fontSize: 12, color: '#9A9A9A' }}>
-                              {activeWalletProvider.meta.name.charAt(0).toUpperCase() + activeWalletProvider.meta.name.slice(1)}
-                            </p>
-                            <p>
-                              {principal.toText().slice(0, 2)}...{principal.toText().slice(-4)}
-                            </p>
-                          </Flex>
-                        </Flex>
-                        <Flex flexFlow='column' align='flex-end'>
-                          <Button iconButton size='medium'>
-                            <Icons.PDFIcon width={12} height='auto' />
-                          </Button>
-                        </Flex>
-                      </StyledBlackCard>
-                    </Card>
+                        </StyledBlackCard>
+                      </Card>
+                    </div>
                     <div>
                       <Flex align='flex-start' gap={24}>
                         <StyledCollectionImg
                           src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`}
                           alt=''
                         />
-                        <Flex flexFlow='column' gap={8}>
+                        <Flex flexFlow='column' justify="space-between" gap={8}>
                           <h2><b>{collectionData?.name} Collection</b></h2>
                           <p>
-                            <span className="secondary_color">Created by</span>
-                            <span className="secondary_color">
+                            <span className='secondary_color'>Created by</span>
+                            <span className='secondary_color'>
                               {collectionData?.creator_name
                                 ? (
                                   collectionData?.creator_name
@@ -504,12 +503,12 @@ const WalletPage = () => {
                           <Flex>
                             <Flex flexFlow='column'>
                               <h5>{NFTData?.length}</h5>
-                              <p className="secondary_color">Owned Items</p>
+                              <p className='secondary_color'>Owned Items</p>
                             </Flex>
                           </Flex>
                           <br />
-                          <ShowMoreBlock btnText="Read More">
-                            <p className="secondary_color">
+                          <ShowMoreBlock btnText='Read More'>
+                            <p className='secondary_color'>
                               {collectionData?.description}
                             </p>
                           </ShowMoreBlock>
@@ -523,16 +522,16 @@ const WalletPage = () => {
                         onChangeFilter={setFilter}
                         onChangeSort={setSort}
                       />
-                      <br/>
+                      <br />
                       <TransferTokensModal
                         open={openTrx}
                         handleClose={handleClose}
-                     />
-                     <ManageEscrowsModal
-                     open={openEsc}
-                     handleClose={handleClose}
-                     collection={collectionData}
-                     />
+                      />
+                      <ManageEscrowsModal
+                        open={openEsc}
+                        handleClose={handleClose}
+                        collection={collectionData}
+                      />
                       {NFTData?.length > 0 ? (
                         <Grid
                           smColumns={1}
@@ -545,20 +544,20 @@ const WalletPage = () => {
                           {filteredNFTData.map((nft: any) => {
                             return (
                               <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
-                                <Card flexFlow='column' style={{ overflow: 'hidden' }}>
+                                <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
                                   <img
                                     style={{ width: '100%' }}
                                     src={`https://${canisterId}.raw.ic0.app/-/${nft.id.nftID}/preview`}
                                     alt=''
                                   />
-                                  <Container size='full' padding='16px'>
-                                    <Flex flexFlow='column' gap={32}>
+                                  <Container  style={{height: '100%'}} size='full' padding='16px'>
+                                    <Flex style={{height: '100%'}} justify="space-between" flexFlow='column' gap={32}>
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
                                           {collectionData?.name} Collection
                                         </p>
                                         <p>
-                                          <b>{nft['com.bm.sample.app.creator_name']}</b>
+                                          <b>{nft['display_name']}</b>
                                         </p>
                                       </div>
                                       <div>
@@ -623,7 +622,10 @@ const WalletPage = () => {
               </div>,
             ]}
             onLogOut={handleLogOut}
-            onConnect={() => {open(); return {}}}
+            onConnect={() => {
+              open()
+              return {}
+            }}
             principal={principal?.toText()}
           />
           <ConfirmSalesActionModal

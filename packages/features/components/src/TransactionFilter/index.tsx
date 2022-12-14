@@ -24,7 +24,6 @@ export const TransactionFilter = (props: any) => {
       value = '';
     }
     setTypedVal(value);
-    console.log(value);
     setUpdate(1);
   };
 
