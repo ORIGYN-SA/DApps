@@ -325,6 +325,8 @@ const WalletPage = () => {
             setActiveSales((prev) => ({ columns: prev.columns, rows }))
             setIsLoading(false)
             const parsedData = data.map((it) => {
+              const openSale = it.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open')
+              console.log('bau', openSale)
               const sale = it?.current_sale[0]?.sale_type?.auction?.current_bid_amount
               const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text
               const dataObj = it.metadata.Class.find(({ name }) => name === '__apps')
@@ -336,7 +338,7 @@ const WalletPage = () => {
               const filterSale = Number(sale)
               return {
                 ...dataObj,
-                id: { nftID: nftID, sale: filterSale },
+                id: { nftID: nftID, sale: filterSale, open: openSale },
               }
             })
 
@@ -563,7 +565,7 @@ const WalletPage = () => {
                           gap={20}
                         >
                           {filteredNFTData.map((nft: any) => {
-                            
+
                             return (
                               <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
                                 <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
@@ -585,7 +587,7 @@ const WalletPage = () => {
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                         <p>
-                                          {isNaN(nft.id.sale) ? 'No auction started' : nft.id.sale}
+                                          {nft.id.open ? nft.id.sale : 'No auction started'}
                                         </p>
                                       </div>
                                     </Flex>
