@@ -127,6 +127,7 @@ const WalletPage = () => {
   const [activeSales, setActiveSales] = useState<any>({
     columns: activeSalesColumns,
   })
+  const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
   const [openTrx, setOpenTrx] = useState(false)
@@ -402,9 +403,15 @@ const WalletPage = () => {
           isNaN(nft2?.id?.sale) ? -1 : isNaN(nft?.id?.sale) ? 1 : nft2?.id?.sale - nft?.id?.sale)
         break
     }
+    
+    if (inputText==='') {
+      filtered = filtered
+    } else {
+    filtered = filtered.filter((nft) => (nft?.display_name.toLowerCase().includes(inputText)))
+    }
 
     setFilteredNFTData(filtered)
-  }, [filter, sort])
+  }, [filter, sort, inputText])
 
   useEffect(() => {
     if (loggedIn) {
@@ -418,6 +425,8 @@ const WalletPage = () => {
       setTokenId(tokenId)
     })
   }, [])
+
+  console.log(filteredNFTData)
 
   return (
     <>
@@ -532,6 +541,7 @@ const WalletPage = () => {
                       <Filter
                         onChangeFilter={setFilter}
                         onChangeSort={setSort}
+                        onInput={setInputText}
                       />
                       <br />
                       <TransferTokensModal
