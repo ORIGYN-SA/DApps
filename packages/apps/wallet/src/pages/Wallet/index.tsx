@@ -128,6 +128,7 @@ const WalletPage = () => {
   const [activeSales, setActiveSales] = useState<any>({
     columns: activeSalesColumns,
   })
+  const [creator, setCreator] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
   const [openTrx, setOpenTrx] = useState(false)
@@ -193,6 +194,7 @@ const WalletPage = () => {
                 {},
               ),
             )
+            setCreator(r.ok.metadata[0].Class.find(({ name }) => name === 'com.origyn.originator').value.Principal.toText())
           }
         })
       })
@@ -323,6 +325,8 @@ const WalletPage = () => {
             setActiveSales((prev) => ({ columns: prev.columns, rows }))
             setIsLoading(false)
             const parsedData = data.map((it) => {
+              const openSale = it.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open')
+              console.log('bau', openSale)
               const sale = it?.current_sale[0]?.sale_type?.auction?.current_bid_amount
               const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text
               const dataObj = it.metadata.Class.find(({ name }) => name === '__apps')
@@ -334,7 +338,7 @@ const WalletPage = () => {
               const filterSale = Number(sale)
               return {
                 ...dataObj,
-                id: { nftID: nftID, sale: filterSale },
+                id: { nftID: nftID, sale: filterSale, open: openSale },
               }
             })
 
@@ -426,8 +430,6 @@ const WalletPage = () => {
     })
   }, [])
 
-  console.log(filteredNFTData)
-
   return (
     <>
       {loggedIn ? (
@@ -507,15 +509,15 @@ const WalletPage = () => {
                           alt=''
                         />
                         <Flex flexFlow='column' justify="space-between" gap={8}>
-                          <h2><b>{collectionData?.name} Collection</b></h2>
+                          <h2><b>{collectionData?.display_name} Collection</b></h2>
                           <p>
-                            <span className='secondary_color'>Created by</span>
+                            <span className='secondary_color'>Created by </span>
                             <span className='secondary_color'>
-                              {collectionData?.creator_name
+                              {creator
                                 ? (
-                                  collectionData?.creator_name
+                                  creator
                                 ) : (
-                                  `${collectionData?.creator_principal?.toString()} (no creator_name)`
+                                   ('no creator_name')
                                 )}
                             </span>
                           </p>
@@ -564,10 +566,6 @@ const WalletPage = () => {
                         >
                           {filteredNFTData.map((nft: any) => {
 
-                            const currentOpenAuction = nft?.current_sale?.find((sale) =>
-                              sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-                            )
-                            console.log(currentOpenAuction);
                             return (
                               <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
                                 <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
@@ -580,7 +578,7 @@ const WalletPage = () => {
                                     <Flex style={{height: '100%'}} justify="space-between" flexFlow='column' gap={32}>
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                          {collectionData?.name} Collection
+                                          {collectionData?.display_name} Collection
                                         </p>
                                         <p>
                                           <b>{nft['display_name']}</b>
@@ -589,7 +587,7 @@ const WalletPage = () => {
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                         <p>
-                                          {currentOpenAuction ? nft.id.sale : 'No auction started'}
+                                          {nft.id.open ? nft.id.sale : 'No auction started'}
                                         </p>
                                       </div>
                                     </Flex>
