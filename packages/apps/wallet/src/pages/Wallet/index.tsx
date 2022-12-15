@@ -584,7 +584,7 @@ const WalletPage = () => {
                                           {collectionData?.display_name}
                                         </p>
                                         <p>
-                                          <b>{nft.id.nftID}</b>
+                                          <b>{ nft['display_name'] ? nft['display_name'] : nft.id.nftID}</b>
                                         </p>
                                       </div>
                                       <div>
