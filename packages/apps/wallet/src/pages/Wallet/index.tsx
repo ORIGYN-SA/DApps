@@ -121,13 +121,13 @@ const WalletPage = () => {
   const [filteredNFTData, setFilteredNFTData] = useState<any>([])
   const [filter, setFilter] = useState<any>()
   const [sort, setSort] = useState<any>()
+  const [inputText, setInputText] = useState("");
   const [activeEscrows, setActiveEscrows] = useState<any>()
   const [outEscrows, setOutEscrows] = useState<any>()
   const [dialogAction, setDialogAction] = useState<any>()
   const [activeSales, setActiveSales] = useState<any>({
     columns: activeSalesColumns,
   })
-  const [inputText, setInputText] = useState("");
   const [creator, setCreator] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
