@@ -22,7 +22,12 @@ const initialMenuItems: MenuItem[] = [
   {
     href: 'data',
     title: 'NFT Data',
-    icon: Icons.MenuIcon
+    icon: Icons.DataBrowse
+  },
+  {
+    href: 'library',
+    title: 'NFT library',
+    icon: Icons.Libraries
   },
   {
     href: 'ledger',
@@ -32,7 +37,7 @@ const initialMenuItems: MenuItem[] = [
   {
     href: 'marketplace',
     title: 'Marketplace',
-    icon: Icons.SafeIcon
+    icon: Icons.Marketplace
   },
 ];
 
