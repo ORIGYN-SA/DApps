@@ -110,6 +110,7 @@ const Marketplace = () => {
   };
 
   useEffect(() => {
+    document.title = 'Origyn Marketplace';
     useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
     });

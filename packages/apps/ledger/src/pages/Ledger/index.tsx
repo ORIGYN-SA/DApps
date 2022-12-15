@@ -35,6 +35,10 @@ const Ledger = () => {
     setIsLoading(true);
   }, [actor]);
 
+  useEffect(() => {
+    document.title = 'Origyn NFT Ledger';
+  }, []);
+
   return (
     <Container fullWidth padding="0" flexFlow="column">
       <SecondaryNav

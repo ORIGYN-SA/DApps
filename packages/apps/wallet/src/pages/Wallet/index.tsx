@@ -352,9 +352,10 @@ const WalletPage = () => {
     if (loggedIn) {
       fetchData()
     }
-  }, [loggedIn, actor, principal])
+  }, [loggedIn, actor, principal]);
 
   useEffect(() => {
+    document.title = 'Origyn Vault';
     useRoute().then(({ canisterId, tokenId }) => {
       setCanisterId(canisterId)
       setTokenId(tokenId)

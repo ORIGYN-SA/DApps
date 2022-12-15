@@ -60,6 +60,7 @@ const Home = () => {
   };
 
   useEffect(() => {
+    document.title = 'Origyn NFT data browser';
     useRoute().then(({ canisterId, tokenId }) => {
       setCanisterId(canisterId);
       setTokenId(tokenId);

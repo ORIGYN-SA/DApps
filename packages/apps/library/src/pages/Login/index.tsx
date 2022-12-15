@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import ColumnView from '../../components/ColumnView';
 import { SecondaryNav, Container } from '@origyn-sa/origyn-art-ui'
 import { AuthContext } from '../../../../../features/authentication'
@@ -7,6 +7,10 @@ import { useDialog } from '@connect2ic/react'
 const Library = () => {
   const { principal, handleLogOut } = useContext(AuthContext)
   const { open } = useDialog()
+
+  useEffect(() => {
+    document.title = 'Origyn Library Browser';
+  }, []);
 
   return (
 
