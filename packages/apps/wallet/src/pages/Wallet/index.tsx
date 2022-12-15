@@ -414,7 +414,7 @@ const WalletPage = () => {
     }
 
     setFilteredNFTData(filtered)
-  }, [filter, sort, inputHandler])
+  }, [filter, sort, inputText])
 
   useEffect(() => {
     if (loggedIn) {
