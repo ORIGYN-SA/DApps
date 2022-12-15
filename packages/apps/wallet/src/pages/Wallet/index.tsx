@@ -56,8 +56,9 @@ const GuestContainer = () => {
           }}
         >
           <h3>
-            Welcome to the NFT Wallet!
+            Welcome to the Origyn Vault
           </h3>
+          <br/>
           <Button
             variant='contained'
             onClick={open}
@@ -555,6 +556,7 @@ const WalletPage = () => {
                             const currentOpenAuction = nft?.current_sale?.find((sale) =>
                               sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
                             )
+                            console.log(currentOpenAuction);
                             return (
                               <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
                                 <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
@@ -576,7 +578,7 @@ const WalletPage = () => {
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                         <p>
-                                          {currentOpenAuction ? 'No auction started' : nft.id.sale}
+                                          {currentOpenAuction ? nft.id.sale : 'No auction started'}
                                         </p>
                                       </div>
                                     </Flex>
