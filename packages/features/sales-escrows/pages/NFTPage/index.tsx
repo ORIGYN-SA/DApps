@@ -250,7 +250,8 @@ export const NFTPage = () => {
                         ) : 'Not on sale'}
                       </Flex>
                       <HR />
-                      <p className="secondary_color">{getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</p>
+                      {currentOpenAuction?.sale_type?.auction?.end_date && 
+                      <p className="secondary_color">{getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</p>}
                       <br />
                       <Flex gap={8} flexFlow='column'>
                       {
