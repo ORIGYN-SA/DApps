@@ -20,15 +20,19 @@ export const CanisterLocation = (props: any) => {
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
   const [file, setFile] = useState<any>();
   const [type, setType] = useState<any>();
-  const [typedTitle, setTypedTitle] = useState<any>();
-
+  const [typedTitle, setTypedTitle] = useState<string>();
+  const [typedId, setTypedId] = useState<string>();
   const [immutable, setImmutable] = React.useState(false);
+
   const handleChange = (event) => {
     setImmutable(event.target.value);
     console.log(event.target.value)
   };
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
+  };
+  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedId(event.target.value);
   };
   const handleInputChange = (e) => {
     console.log(e.target.files);
@@ -78,7 +82,8 @@ export const CanisterLocation = (props: any) => {
                 type: file.type,
                 rawFile: await readFileAsync(file),
                 title:typedTitle,
-                immutable: immutable
+                immutable: immutable,
+                libraryId:typedId
               };
             }),
           )),
@@ -137,6 +142,20 @@ export const CanisterLocation = (props: any) => {
             mt: 2,
           }}
         >
+          <TextField
+            id="title"
+            label="Library Id"
+            variant="outlined"
+            fullWidth
+            placeholder="Enter Id"
+            onChange={getTypedId}
+          />
+        </Box>
+        <Box
+          sx={{
+            mt: 2,
+          }}
+        >
           <Grid item xs={12} m={2}>
             <input
               type="file"
@@ -147,6 +166,7 @@ export const CanisterLocation = (props: any) => {
             />
           </Grid>
         </Box>
+        
         <Box
           sx={{
             mt: 2,

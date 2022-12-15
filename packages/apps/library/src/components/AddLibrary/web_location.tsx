@@ -99,27 +99,6 @@ export const WebLocation = (props: any) => {
       <Box
         sx={{
           mt: 2,
-        }}
-      >
-        <Grid item xs={12} m={2}>
-          <FormControl>
-            <FormLabel id="demo-radio-buttons-group-label">Make library mutable or not</FormLabel>
-            <RadioGroup
-              aria-labelledby="demo-radio-buttons-group-label"
-              defaultValue="Mutable"
-              name="radio-buttons-group"
-              value={immutable}
-              onChange={handleChange}
-            >
-              <FormControlLabel value={false} control={<Radio />} label="Mutable" />
-              <FormControlLabel value={true} control={<Radio />} label="Immutable" />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
-      </Box>
-      <Box
-        sx={{
-          mt: 2,
           mb: 2,
         }}
       >
@@ -133,6 +112,11 @@ export const WebLocation = (props: any) => {
         />
       </Box>
       <Box
+        sx={{
+          mt: 2,
+        }}
+      >
+         <Box
         sx={{
           textAlign: 'right',
           mt: 2,
@@ -148,6 +132,22 @@ export const WebLocation = (props: any) => {
             onChange={getTypedUrl}
           />
         </FormControl>
+      </Box>
+        <Grid item xs={12} m={2}>
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">Make library mutable or not</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue="Mutable"
+              name="radio-buttons-group"
+              value={immutable}
+              onChange={handleChange}
+            >
+              <FormControlLabel value={false} control={<Radio />} label="Mutable" />
+              <FormControlLabel value={true} control={<Radio />} label="Immutable" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
       </Box>
       <Box
         sx={{

@@ -16,7 +16,7 @@ import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
 import { DeleteLibrary } from '../DeleteLibrary';
-import { Card, Container } from '@origyn-sa/origyn-art-ui'
+import { Container } from '@origyn-sa/origyn-art-ui'
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
