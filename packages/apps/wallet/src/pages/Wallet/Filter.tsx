@@ -28,7 +28,7 @@ const Filter = ({onChangeFilter, onChangeSort, onInput}) => {
   return (
     <StyledFilter>
       <div className="desktopFilters">
-        <Flex justify='space-between' fullWidth smFlexFlow="column" mdFlexFlow="column" gap={8}>
+        <Flex justify='space-between' fullWidth smFlexFlow="row" mdFlexFlow="row" gap={8}>
           <Flex align='center' gap={12} smFlexFlow="column">
             <Button iconButton size='small'>
               <Icons.FilterIcon />
@@ -49,7 +49,7 @@ const Filter = ({onChangeFilter, onChangeSort, onInput}) => {
               />
             </div>
           </Flex>
-          <Flex align='center' gap={12} smFlexFlow="column">
+          <Flex align='center' gap={12} smFlexFlow="row">
               <TextInput
               name="search"
               placeholder="Search"
