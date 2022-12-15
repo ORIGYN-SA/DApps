@@ -128,6 +128,7 @@ const WalletPage = () => {
     columns: activeSalesColumns,
   })
   const [inputText, setInputText] = useState("");
+  const [creator, setCreator] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [showOnlyTokenEntries, setShowOnlyTokenEntries] = useState(true)
   const [openTrx, setOpenTrx] = useState(false)
@@ -180,6 +181,7 @@ const WalletPage = () => {
         getNftCollectionMeta([]).then((r: any) => {
           if ('err' in r) {
           } else {
+            console.log('r',r)
             setCollectionPreview(
               Object.values(
                 r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
@@ -193,6 +195,7 @@ const WalletPage = () => {
                 {},
               ),
             )
+            setCreator(r.ok.metadata[0].Class.find(({ name }) => name === 'com.origyn.originator').value.Principal.toText())
           }
         })
       })
@@ -426,7 +429,9 @@ const WalletPage = () => {
     })
   }, [])
 
-  console.log(filteredNFTData)
+  console.log('filterdata',filteredNFTData)
+  console.log('nftdata', NFTData)
+  console.log('collectiondata', collectionData)
 
   return (
     <>
@@ -507,15 +512,15 @@ const WalletPage = () => {
                           alt=''
                         />
                         <Flex flexFlow='column' justify="space-between" gap={8}>
-                          <h2><b>{collectionData?.name} Collection</b></h2>
+                          <h2><b>{collectionData?.display_name} Collection</b></h2>
                           <p>
-                            <span className='secondary_color'>Created by</span>
+                            <span className='secondary_color'>Created by </span>
                             <span className='secondary_color'>
-                              {collectionData?.creator_name
+                              {creator
                                 ? (
-                                  collectionData?.creator_name
+                                  creator
                                 ) : (
-                                  `${collectionData?.creator_principal?.toString()} (no creator_name)`
+                                   ('no creator_name')
                                 )}
                             </span>
                           </p>
@@ -580,7 +585,7 @@ const WalletPage = () => {
                                     <Flex style={{height: '100%'}} justify="space-between" flexFlow='column' gap={32}>
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                          {collectionData?.name} Collection
+                                          {collectionData?.display_name} Collection
                                         </p>
                                         <p>
                                           <b>{nft['display_name']}</b>
