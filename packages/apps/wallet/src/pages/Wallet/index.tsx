@@ -406,6 +406,9 @@ const WalletPage = () => {
         filtered = [...filtered].sort((nft, nft2) =>
           isNaN(nft2?.id?.sale) ? -1 : isNaN(nft?.id?.sale) ? 1 : nft2?.id?.sale - nft?.id?.sale)
         break
+      case 'all':
+        filtered = filtered
+        break
     }
     
     if (inputText==='') {
@@ -509,7 +512,7 @@ const WalletPage = () => {
                           alt=''
                         />
                         <Flex flexFlow='column' justify="space-between" gap={8}>
-                          <h2><b>{collectionData?.display_name} Collection</b></h2>
+                          <h2><b>{collectionData?.display_name}</b></h2>
                           <p>
                             <span className='secondary_color'>Created by </span>
                             <span className='secondary_color'>
@@ -578,10 +581,10 @@ const WalletPage = () => {
                                     <Flex style={{height: '100%'}} justify="space-between" flexFlow='column' gap={32}>
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                          {collectionData?.display_name} Collection
+                                          {collectionData?.display_name}
                                         </p>
                                         <p>
-                                          <b>{nft['display_name']}</b>
+                                          <b>{nft.id.nftID}</b>
                                         </p>
                                       </div>
                                       <div>

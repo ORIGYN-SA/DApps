@@ -43,6 +43,7 @@ const Filter = ({onChangeFilter, onChangeSort, onInput}) => {
                   setFilter(opt)
                 }}
                 options={[
+                  {label: 'All', value: 'all'},
                   {label: 'On Sale', value: 'onSale'},
                   {label: 'Not On Sale', value: 'notOnSale'},
                 ]}
