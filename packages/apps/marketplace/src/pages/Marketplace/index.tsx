@@ -1,37 +1,16 @@
-import React from 'react';
-import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authentication';
-import { NatPrice } from '@dapp/features-components';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import GridViewIcon from '@mui/icons-material/GridView';
-import PaidIcon from '@mui/icons-material/Paid';
-import ViewComfyIcon from '@mui/icons-material/ViewComfy';
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Collapse,
-  FormControl,
-  Grid,
-  InputLabel,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  Select,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-// import { useSnackbar } from 'notistack';
-import { useContext, useEffect, useState } from 'react';
-import { isLocal } from '@dapp/utils';
+import React from 'react'
+import { ICPIcon, OGYIcon } from '@dapp/common-assets'
+import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authentication'
+import { LoadingContainer, Table } from '@dapp/features-components'
+import { Typography } from '@mui/material'
+import { useContext, useEffect, useState } from 'react'
+import { Card, Container, Flex, HR, Grid, Image, SecondaryNav, ShowMoreBlock } from '@origyn-sa/origyn-art-ui'
+import Filter from '../../../../wallet/src/pages/Wallet/Filter'
+import { ConfirmSalesActionModal } from '../../../../../features/sales-escrows'
+import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
+import { Link } from 'react-router-dom'
+import { useDialog } from '@connect2ic/react'
+import styled from 'styled-components'
 
 const SymbolWithIcon = ({ symbol }: any) =>
   symbol === 'OGY' ? (
@@ -62,282 +41,281 @@ const SymbolWithIcon = ({ symbol }: any) =>
       />{' '}
       {symbol}
     </>
-  );
+  )
+
+const StyledSectionTitle = styled.h2`
+  margin: 48px 24px;
+`
 
 const Marketplace = () => {
-  const { localDevelopment } = useSessionContext();
-  const { actor } = useContext(AuthContext);
-  const [canisterId, setCanisterId] = useState('');
-  const [NFTData, setNFTData] = useState<any>();
-  const [filteredNFTs, setFilteredNFTs] = useState([]);
-  //const [isLoading, setIsLoading] = useState(true);
-  const [display, setDisplay] = useState(3);
-  const [open, setOpen] = useState(false);
-  const [openPrice, setOpenPrice] = useState(false);
-  const [onSale, setOnSale] = useState(true);
-  const [minPrice, setMinPrice] = useState<any>(0);
-  const [maxPrice, setMaxPrice] = useState<any>(0);
+  const { localDevelopment } = useSessionContext()
+  const { principal, actor, handleLogOut } = useContext(AuthContext)
+  const [canisterId, setCanisterId] = useState('')
+  const [NFTData, setNFTData] = useState<any>()
+  const [filteredNFTs, setFilteredNFTs] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [onSale, setOnSale] = useState(true)
+  const [minPrice, setMinPrice] = useState<any>(0)
+  const [maxPrice, setMaxPrice] = useState<any>(0)
+  const [collectionData, setCollectionData] = React.useState<any>()
+  const [collectionPreview, setCollectionPreview] = React.useState<any>()
+  const [filter, setFilter] = useState<any>()
+  const [sort, setSort] = useState<any>()
+  const [inputText, setInputText] = useState('')
+  const [filteredNFTData, setFilteredNFTData] = useState<any>([])
+  const { open } = useDialog()
 
   const fetchData = () => {
-    console.log(actor);
     if (actor) {
-      //setIsLoading(true);
-      actor?.collection_nft_origyn([]).then((response) => {
-        console.log(response);
+      setIsLoading(true)
 
+      useRoute().then(({ canisterId }) => {
+        setCanisterId(canisterId)
+        OrigynClient.getInstance().init(true, canisterId)
+
+        getNftCollectionMeta([]).then((r: any) => {
+          if ('err' in r) {
+          } else {
+            setCollectionPreview(
+              Object.values(
+                r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
+              )[0],
+            )
+            setCollectionData(
+              r.ok.metadata[0].Class.find(({ name }) => name === '__apps')
+                .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
+                .value.Class.reduce(
+                (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+                {},
+              ),
+            )
+          }
+        })
+      })
+      actor?.collection_nft_origyn([]).then((response) => {
+        console.log('collection_nft_origyn', response)
         if ('err' in response)
-          throw new Error(Object.keys(response.err)[0]);
+          throw new Error(Object.keys(response.err)[0])
 
         Promise.all(
           response?.ok?.token_ids[0]?.map((nft) => actor?.nft_origyn(nft).then((r) => {
             if ('err' in r)
-              throw new Error(Object.keys(r.err)[0]);
-
+              throw new Error(Object.keys(r.err)[0])
             return r.ok
           })),
         )
           .then((data: any) => {
-            //setIsLoading(false);
-            console.log(data);
-            setNFTData(data);
+            const parsedData = data.map((it) => {
+              const sale = it?.current_sale[0]?.sale_type?.auction?.current_bid_amount
+              const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text
+              const dataObj = it.metadata.Class.find(({ name }) => name === '__apps')
+                .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
+                .value.Class.reduce(
+                  (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+                  {},
+                )
+              const filterSale = Number(sale)
+              return {
+                ...dataObj,
+                id: { nftID: nftID, sale: filterSale },
+              }
+            })
+
+            setNFTData(parsedData)
+            setFilteredNFTData(parsedData)
+            setIsLoading(false)
           })
           .catch((err) => {
-            //setIsLoading(false);
-            console.log(err);
-          });
-      });
+            setIsLoading(false)
+            console.log(err)
+          })
+      })
     }
-  };
+  }
 
   useEffect(() => {
-    document.title = 'Origyn Marketplace';
+    document.title = 'Origyn Marketplace'
     useRoute().then(({ canisterId }) => {
-      setCanisterId(canisterId);
-    });
-  }, []);
+      setCanisterId(canisterId)
+    })
+  }, [])
 
   useEffect(() => {
-    fetchData();
-  }, [actor]);
+    fetchData()
+  }, [actor])
 
   useEffect(() => {
-    const tmpFiltered = [...(NFTData || [])];
-    console.log(tmpFiltered);
+    let filtered = NFTData
+
+    switch (filter) {
+      case 'onSale':
+        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale))
+        break
+      case 'notOnSale':
+        filtered = filtered.filter((nft) => isNaN(nft?.id?.sale))
+        break
+    }
+
+    switch (sort) {
+      case 'saleASC':
+        filtered = [...filtered]
+          .sort((nft, nft2) =>
+            isNaN(nft?.id?.sale) ? 1 : isNaN(nft2?.id?.sale) ? -1 : nft?.id?.sale - nft2?.id?.sale)
+        break
+      case 'saleDESC':
+        filtered = [...filtered].sort((nft, nft2) =>
+          isNaN(nft2?.id?.sale) ? -1 : isNaN(nft?.id?.sale) ? 1 : nft2?.id?.sale - nft?.id?.sale)
+        break
+    }
+
+    if (inputText === '') {
+      filtered = filtered
+    } else {
+      filtered = filtered.filter((nft) => (nft?.display_name.toLowerCase().includes(inputText)))
+    }
+
+    setFilteredNFTData(filtered)
+  }, [filter, sort, inputText])
+
+  useEffect(() => {
+    const tmpFiltered = [...(NFTData || [])]
     const filtered = tmpFiltered.filter((item) => {
       if (onSale) {
         const currentOpenAuction = item?.current_sale?.find((sale) =>
           sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-        );
-        console.log(currentOpenAuction);
-        return currentOpenAuction;
+        )
+        console.log(currentOpenAuction)
+        return currentOpenAuction
       }
-      return true;
-    });
+      return true
+    })
     // console.log(filtered);
-    setFilteredNFTs(filtered);
-  }, [onSale, minPrice, maxPrice, NFTData]);
+    setFilteredNFTs(filtered)
+  }, [onSale, minPrice, maxPrice, NFTData])
 
   return (
-    <div>
-      <Grid
-        container
-        sx={{
-          borderTop: '1px solid #aaaaaa',
-          minHeight: 'calc(100vh - 64px)',
-        }}
-      >
-        <Grid container item xs={12} md={3} sx={{ borderRight: '1px solid #aaaaaa' }}>
-          <List sx={{ width: '100%' }}>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <FilterListIcon />
-                </ListItemIcon>
-                <ListItemText primary="Filters" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding onClick={() => setOpenPrice(!openPrice)}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <PaidIcon />
-                </ListItemIcon>
-                <ListItemText primary="Price" />
-                {openPrice ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-            </ListItem>
-
-            <Collapse in={openPrice} timeout="auto" unmountOnExit>
-              <ListItem>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="outlined-basic"
-                      label="Min Price"
-                      variant="outlined"
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
+    <Flex fullWidth padding='0' flexFlow='column'>
+      <SecondaryNav
+        title='Marketplace'
+        tabs={[
+          { title: 'Marketplace', id: 'Marketplace' },
+        ]}
+        content={[
+          <Flex fullWidth flexFlow='column'>
+            <StyledSectionTitle>Marketplace Dashboard</StyledSectionTitle>
+            <HR />
+            {isLoading ? (
+              <LoadingContainer />
+            ) : (
+              <div>
+                <Container padding='32px'>
+                  <Flex align='flex-start' gap={24}>
+                    <Image
+                      src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`}
+                      alt=''
+                      style={{ width: 200 }}
                     />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="outlined-basic"
-                      label="Max Price"
-                      variant="outlined"
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                    />
-                  </Grid>
-                </Grid>
-              </ListItem>
-            </Collapse>
-            <ListItem disablePadding onClick={() => setOpen(!open)}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <FilterListIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sale Token" />
-                {open ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-            </ListItem>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 2 }}>
-                  <ListItemIcon>
-                    <OGYIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="OGY" />
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 2 }}>
-                  <ListItemIcon>
-                    <ICPIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="ICP" />
-                </ListItemButton>
-              </List>
-            </Collapse>
-          </List>
-        </Grid>
-        <Grid item xs={12} md={9} sx={{ padding: '10px' }}>
-          <Grid container spacing={2}>
-            <Grid item>
-              <ToggleButtonGroup size="large">
-                <ToggleButton value="left" key="left" onClick={() => setDisplay(3)}>
-                  <ViewComfyIcon />
-                </ToggleButton>
-                <ToggleButton value="left" key="left" onClick={() => setDisplay(2)}>
-                  <GridViewIcon />
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </Grid>
-            <Grid item>
-              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-label">Showing</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Age"
-                  value={onSale ? '0' : '1'}
-                  onChange={(e) => setOnSale(e.target.value === '0')}
-                >
-                  <MenuItem value="0">On sale</MenuItem>
-                  <MenuItem value="1">All NFTs</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item>
-              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-label">Sort By</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" label="Age">
-                  <MenuItem value="0">Price: Low to High</MenuItem>
-                  <MenuItem value="1">Price: High to Low</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            {filteredNFTs?.map((nft, index) => {
-              const nftID = nft.metadata.Class.find(({ name }) => name === 'id').value.Text;
-              return (
-                <Grid item xs={12} md={display} key={`${nft}+${index}`}>
-                  <Link href={`#/${nftID}`}>
-                    <Card variant="outlined">
-                      <CardMedia
-                        component="img"
-                        image={
-                          isLocal() && localDevelopment
-                            ? `http://${canisterId}.localhost:8000/-/${nftID}/preview`
-                            : `https://${canisterId}.raw.ic0.app/-/${nftID}/preview`
-                        }
-                        alt={nftID}
-                      />
-                      <CardContent>
-                        <Typography variant="body2" color="text.secondary">
-                          NFT id: {nftID} <br />
-                        </Typography>
-                        <Typography>
-                          Token:{' '}
-                          <SymbolWithIcon
-                            symbol={
-                              nft?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic
-                                ?.symbol
-                            }
-                          />
-                        </Typography>
-                        <Typography>
-                          Start price:{' '}
-                          <strong>
-                            <NatPrice
-                              value={
-                                nft?.current_sale[0]?.sale_type?.auction?.config?.auction
-                                  ?.start_price
-                              }
-                            />
-                          </strong>
-                        </Typography>
-                        <Typography>
-                          Minimum step:{' '}
-                          <strong>
-                            <NatPrice
-                              value={
-                                nft?.current_sale[0]?.sale_type?.auction?.config?.auction
-                                  ?.min_increase?.amount
-                              }
-                            />
-                          </strong>
-                        </Typography>
-                        <Typography>
-                          Highest bid:{' '}
-                          <strong>
-                            <NatPrice
-                              value={nft?.current_sale[0]?.sale_type?.auction?.current_bid_amount}
-                            />
-                          </strong>
-                        </Typography>
-                        {nft?.current_sale[0]?.sale_type?.auction?.config?.auction?.buy_now
-                          ?.length > 0 && (
-                          <Typography>
-                            Buy now:{' '}
-                            <strong>
-                              <NatPrice
-                                value={
-                                  nft?.current_sale[0]?.sale_type?.auction?.config?.auction
-                                    ?.buy_now[0]
-                                }
+                    <Flex flexFlow='column' justify='space-between' gap={8}>
+                      <h2><b>{collectionData?.disaplay_name} Collection</b></h2>
+                      <p>
+                        <span className='secondary_color'>Created by</span>
+                        <span className='secondary_color'>
+                              {collectionData?.creator_name
+                                ? (
+                                  collectionData?.creator_name
+                                ) : (
+                                  `${collectionData?.creator_principal?.toString()} (no creator_name)`
+                                )}
+                            </span>
+                      </p>
+                      <br />
+                      <Flex>
+                        <Flex flexFlow='column'>
+                          <h5>{NFTData?.length}</h5>
+                          <p className='secondary_color'>Owned Items</p>
+                        </Flex>
+                      </Flex>
+                      <br />
+                      <ShowMoreBlock btnText='Read More'>
+                        <p className='secondary_color'>
+                          {collectionData?.description}
+                        </p>
+                      </ShowMoreBlock>
+                      <br />
+                      <br />
+                    </Flex>
+                  </Flex>
+                </Container>
+                <HR />
+                <Container padding='32px'>
+                  <Filter
+                    onChangeFilter={setFilter}
+                    onChangeSort={setSort}
+                    onInput={setInputText}
+                  />
+                  <br />
+                  <br />
+                  {NFTData?.length > 0 ? (
+                    <Grid
+                      smColumns={1}
+                      mdColumns={2}
+                      lgColumns={3}
+                      xlColumns={4}
+                      columns={6}
+                      gap={20}
+                    >
+                      {filteredNFTData.map((nft: any) => {
+                        const currentOpenAuction = nft?.current_sale?.find((sale) =>
+                          sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
+                        )
+                        console.log(currentOpenAuction)
+                        return (
+                          <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
+                            <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
+                              <img
+                                style={{ width: '100%' }}
+                                src={`https://${canisterId}.raw.ic0.app/-/${nft.id.nftID}/preview`}
+                                alt=''
                               />
-                            </strong>
-                          </Typography>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </Grid>
-              );
-            })}
-          </Grid>
-        </Grid>
-      </Grid>
-    </div>
-  );
-};
+                              <Container style={{ height: '100%' }} size='full' padding='16px'>
+                                <Flex style={{ height: '100%' }} justify='space-between' flexFlow='column' gap={32}>
+                                  <div>
+                                    <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
+                                      {collectionData?.name} Collection
+                                    </p>
+                                    <p>
+                                      <b>{nft['display_name']}</b>
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
+                                    <p>
+                                      {currentOpenAuction ? nft.id.sale : 'No auction started'}
+                                    </p>
+                                  </div>
+                                </Flex>
+                              </Container>
+                            </Card>
+                          </Link>
+                        )
+                      })}
+                    </Grid>
+                  ) : (
+                    <h5>
+                      There is no NFTs in this collection
+                    </h5>
+                  )}
+                </Container>
+              </div>
+            )}
+          </Flex>,
+        ]}
+        onLogOut={handleLogOut}
+        onConnect={open}
+        principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
+      />
+    </Flex>
+  )
+}
 
-export default Marketplace;
+export default Marketplace
