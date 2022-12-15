@@ -563,10 +563,7 @@ const WalletPage = () => {
                           gap={20}
                         >
                           {filteredNFTData.map((nft: any) => {
-
-                            const currentOpenAuction = nft?.current_sale?.find((sale) =>
-                              sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-                            )
+                            
                             return (
                               <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
                                 <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
@@ -588,7 +585,7 @@ const WalletPage = () => {
                                       <div>
                                         <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                         <p>
-                                          {currentOpenAuction ? nft.id.sale : 'No auction started'}
+                                          {isNaN(nft.id.sale) ? 'No auction started' : nft.id.sale}
                                         </p>
                                       </div>
                                     </Flex>
