@@ -216,7 +216,7 @@ const Marketplace = () => {
                       style={{ width: 200 }}
                     />
                     <Flex flexFlow='column' justify='space-between' gap={8}>
-                      <h2><b>{collectionData?.disaplay_name} Collection</b></h2>
+                      <h2><b>{collectionData?.display_name} Collection</b></h2>
                       <p>
                         <span className='secondary_color'>Created by</span>
                         <span className='secondary_color'>
@@ -281,7 +281,7 @@ const Marketplace = () => {
                                 <Flex style={{ height: '100%' }} justify='space-between' flexFlow='column' gap={32}>
                                   <div>
                                     <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                      {collectionData?.name} Collection
+                                      {collectionData?.display_name} Collection
                                     </p>
                                     <p>
                                       <b>{nft['display_name']}</b>
