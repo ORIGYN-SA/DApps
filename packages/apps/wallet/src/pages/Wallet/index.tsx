@@ -181,7 +181,6 @@ const WalletPage = () => {
         getNftCollectionMeta([]).then((r: any) => {
           if ('err' in r) {
           } else {
-            console.log('r',r)
             setCollectionPreview(
               Object.values(
                 r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
@@ -429,10 +428,6 @@ const WalletPage = () => {
     })
   }, [])
 
-  console.log('filterdata',filteredNFTData)
-  console.log('nftdata', NFTData)
-  console.log('collectiondata', collectionData)
-
   return (
     <>
       {loggedIn ? (
@@ -572,7 +567,6 @@ const WalletPage = () => {
                             const currentOpenAuction = nft?.current_sale?.find((sale) =>
                               sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
                             )
-                            console.log(currentOpenAuction);
                             return (
                               <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
                                 <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
