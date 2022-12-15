@@ -211,7 +211,7 @@ export const NFTPage = () => {
                     />
                     <Flex flexFlow='column' gap={8}>
                       <p className="secondary_color">{currentNFT?.owner}</p>
-                      <h2><b>{currentNFT?.display_name}</b></h2>
+                      <h2><b>{currentNFT?.tokenID}</b></h2>
                       <br />
                       <ShowMoreBlock btnText='Read More'>
                         <p className="secondary_color">{currentNFT?.description}</p>
@@ -223,7 +223,7 @@ export const NFTPage = () => {
                           alt=''
                           style={{width: "32px", height: "32px", borderRadius: "7.5px"}}
                         />
-                        <b>{collectionData?.display_name} Collection</b>
+                        <b>{collectionData?.display_name}</b>
                       </Flex>
                       <br/>
                       <HR />
