@@ -168,7 +168,6 @@ setTokenFee(values.token)
               </Flex>
               <TextInput
                 name='amount'
-                type='number'
                 onChange={onChange}
                 value={values?.amount}
                 error={errors?.amount}
@@ -195,12 +194,16 @@ setTokenFee(values.token)
               }`}</span>
               <br />
             </Flex>
+            <br/>
             <HR />
+            <br/>
             <Flex flexFlow='row' align="center" justify='space-between'>
               <h6>Total Amount</h6>
               <span>{totalAmount}</span>
             </Flex>
+            <br/>
             <HR />
+            <br/>
             <Flex justify='flex-end'>
               <Button btnType='filled' type='submit'>
                 Transfer {tokenFee}

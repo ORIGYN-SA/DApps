@@ -192,7 +192,6 @@ const [tokenID, setTokenID] = useState<any>()
                         required
                         label='Starting Price'
                         name='startPrice'
-                        type='number'
                         value={values.startPrice}
                         onChange={onChange}
                         error={errors?.startPrice}
@@ -200,14 +199,12 @@ const [tokenID, setTokenID] = useState<any>()
                       <TextInput
                         label='Buy Now Price'
                         name='buyNowPrice'
-                        type='number'
                         value={values.buyNowPrice}
                         onChange={onChange}
                         error={errors?.buyNowPrice}
                       />
                       <TextInput
                         required
-                        type='number'
                         label='Minimum Increase'
                         name='minIncrease'
                         value={values.minIncrease}
@@ -215,7 +212,6 @@ const [tokenID, setTokenID] = useState<any>()
                         error={errors?.minIncrease}
                       />
                       <TextInput
-                        type='number'
                         label='Reserve Price'
                         name='reservePrice'
                         value={values.reservePrice}
