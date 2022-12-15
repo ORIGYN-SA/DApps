@@ -87,7 +87,7 @@ export const LibraryBox = (props: any) => {
           color="text.primary"
           gutterBottom
         >
-          <b>{objLibraryData.library_id}</b>
+          <b>{objLibraryData.title}</b>
           <br></br>
           <b>{objLibraryData.content_type}</b> - {formatBytes(Number(objLibraryData.size))}
         </Typography>

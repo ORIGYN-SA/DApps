@@ -20,7 +20,7 @@ const StyledFilter = styled.div`
   }
 `
 
-const Filter = ({onChangeFilter, onChangeSort}) => {
+const Filter = ({onChangeFilter, onChangeSort, onInput}) => {
   const [mobileFilters, setMobileFilters] = useState(false);
   const [filter, setFilter] = useState();
   const [sort, setSort] = useState();
@@ -28,7 +28,7 @@ const Filter = ({onChangeFilter, onChangeSort}) => {
   return (
     <StyledFilter>
       <div className="desktopFilters">
-        <Flex justify='space-between' fullWidth smFlexFlow="column" mdFlexFlow="column" gap={8}>
+        <Flex justify='space-between' fullWidth smFlexFlow="row" mdFlexFlow="row" gap={8}>
           <Flex align='center' gap={12} smFlexFlow="column">
             <Button iconButton size='small'>
               <Icons.FilterIcon />
@@ -49,10 +49,14 @@ const Filter = ({onChangeFilter, onChangeSort}) => {
               />
             </div>
           </Flex>
-          <Flex align='center' gap={12} smFlexFlow="column">
-            <Button btnType='outlined' iconButton size='small'>
-              <Icons.SearchIcon height={10} width={32} />
-            </Button>
+          <Flex align='center' gap={12} smFlexFlow="row">
+              <TextInput
+              name="search"
+              placeholder="Search"
+              inputSize="small"
+              onChange={(e)=>onInput(e.target.value.toLowerCase())}
+            />
+           
             <div style={{minWidth: 170}}>
               <Select
                 inputSize="small"

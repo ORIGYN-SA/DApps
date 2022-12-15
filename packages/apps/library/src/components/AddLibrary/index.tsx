@@ -86,7 +86,35 @@ export const LibraryForm = (props: any) => {
             <>
               <b>Stage a library for the collection</b>
               <>
-              <CanisterLocation tokenId={props.currentTokenId} />
+              <Grid>
+                <Box
+                  sx={{
+                    m: 2,
+                  }}
+                >
+                  <Grid item xs={12}>
+                    <FormControl>
+                      <FormLabel id="radio-location-type"><b>Choose Location Type</b></FormLabel>
+                      <RadioGroup
+                        aria-labelledby="radio-location-type"
+                        defaultValue="Canister"
+                        name="radio-location-type"
+                        onChange={handleRadioChange}
+                        value={radioValue}
+                      >
+                        <FormControlLabel value="Canister" control={<Radio />} label="Canister" />
+                        <FormControlLabel value="Web" control={<Radio />} label="Web" />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                  <Collapse in={openFileInput} timeout="auto" unmountOnExit>
+                    <CanisterLocation tokenId={props.currentTokenId} />
+                  </Collapse>
+                  <Collapse in={openWebInput} timeout="auto" unmountOnExit>
+                    <WebLocation tokenId={props.currentTokenId} />
+                  </Collapse>
+                </Box>
+              </Grid>
               </>
             </>
           ) : (
