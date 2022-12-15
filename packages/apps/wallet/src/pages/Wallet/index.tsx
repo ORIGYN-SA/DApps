@@ -378,11 +378,6 @@ const WalletPage = () => {
       ? activeEscrows?.out?.data?.filter((nft) => nft.token_id === tokenId)
       : activeEscrows?.out?.data
 
-      const inputHandler = (e) => {
-        let lowerCase = e.target.value.toLowerCase();
-     setInputText(lowerCase);
-   };
-
   useEffect(() => {
     let filtered = NFTData
 
