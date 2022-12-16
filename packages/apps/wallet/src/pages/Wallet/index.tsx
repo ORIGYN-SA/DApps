@@ -34,6 +34,7 @@ import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrow
 import Filter from './Filter'
 import { useSnackbar } from 'notistack'
 
+
 const GuestContainer = () => {
   const { open } = useDialog()
 
@@ -136,8 +137,7 @@ const WalletPage = () => {
 
   const { open } = useDialog()
 
-  const { tokens, time } = useTokensContext()
-  const { activeTokens } = useTokensContext()
+  const { activeTokens, time, refreshAllBalances } = useTokensContext()
 
   const handleClickOpen = (item, modal = 'auction') => {
     setSelectdNFT(item.metadata)
@@ -326,7 +326,6 @@ const WalletPage = () => {
             setIsLoading(false)
             const parsedData = data.map((it) => {
               const openSale = it.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open')
-              console.log('bau', openSale)
               const sale = it?.current_sale[0]?.sale_type?.auction?.current_bid_amount
               const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text
               const dataObj = it.metadata.Class.find(({ name }) => name === '__apps')
@@ -418,6 +417,7 @@ const WalletPage = () => {
     }
 
     setFilteredNFTData(filtered)
+    refreshAllBalances(false, principal)
   }, [filter, sort, inputText])
 
   useEffect(() => {
