@@ -9,16 +9,27 @@ import 'react-toastify/dist/ReactToastify.css'
 import { SnackbarProvider } from 'notistack'
 import { TokensContextProvider } from '@dapp/features-tokens-provider'
 import { Layout } from '@dapp/features-components'
-import { Snackbar } from '@origyn-sa/origyn-art-ui'
+import { GlobalStyle, Snackbar } from '@origyn-sa/origyn-art-ui'
 
 const App = () => {
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path='*' element={<Login />} />
-        </Routes>
-      </Layout>
+      <GlobalStyle />
+      <SiteProvider>
+        <SessionProvider>
+          <AuthProvider>
+            <TokensContextProvider>
+              <SnackbarProvider maxSnack={3}>
+                <Layout>
+                  <Routes>
+                    <Route path='*' element={<Login />} />
+                  </Routes>
+                </Layout>
+              </SnackbarProvider>
+            </TokensContextProvider>
+          </AuthProvider>
+        </SessionProvider>
+      </SiteProvider>
     </BrowserRouter>
   )
 }

@@ -1,10 +1,6 @@
 import { Flex, GlobalStyle, Navbar } from '@origyn-sa/origyn-art-ui'
 import { Icons, theme, themeLight } from '@origyn-sa/origyn-art-ui'
 import React, { useContext, useEffect, useState } from 'react'
-import { SiteProvider } from '@dapp/features-theme'
-import { SnackbarProvider } from 'notistack'
-import { TokensContextProvider } from '@dapp/features-tokens-provider'
-import { AuthProvider, SessionProvider } from '@dapp/features-authentication'
 import 'react-toastify/dist/ReactToastify.css'
 import { useTokensContext } from '@dapp/features-tokens-provider'
 import { ThemeProvider } from 'styled-components'
@@ -47,7 +43,7 @@ const initialMenuItems: MenuItem[] = [
 
 export const Layout = ({ children }: LayoutProps) => {
   const { refreshAllBalances } = useTokensContext()
-  const { principal, loggedIn, handleLogOut } = useContext(AuthContext)
+  const { principal, loggedIn } = useContext(AuthContext)
   const [darkTheme, setDarkTheme] = useState(true)
 
   useEffect(() => {
@@ -63,21 +59,10 @@ export const Layout = ({ children }: LayoutProps) => {
         <Flex fullWidth mdFlexFlow='column'>
           <Navbar navItems={initialMenuItems} onChangeTheme={() => setDarkTheme(!darkTheme)} />
           <Flex fullWidth>
-            <SiteProvider>
-              <SessionProvider>
-                <AuthProvider>
-                  <SnackbarProvider maxSnack={3}>
-                    <TokensContextProvider>
-                      {children}
-                    </TokensContextProvider>
-                  </SnackbarProvider>
-                </AuthProvider>
-              </SessionProvider>
-            </SiteProvider>
+            {children}
           </Flex>
         </Flex>
       </ThemeProvider>
-
     </>
   )
 }

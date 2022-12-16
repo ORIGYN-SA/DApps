@@ -52,7 +52,7 @@ const PlugNotification = ({logOut}) => {
     <p>Connecting to your wallet</p>
     <br/>
     <p>If you are using Plug</p>
-    <h6>Make sure your are logged in in your Plug Extension! ^</h6>
+    <h6>Make sure your are logged in your Plug Extension! ^</h6>
   </StyledPlugNotification>
 }
 
