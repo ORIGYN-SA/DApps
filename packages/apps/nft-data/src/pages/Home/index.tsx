@@ -35,24 +35,16 @@ const Home = () => {
       try {
         const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
         const result = await response.text();
-        if (result.search('"is_soulbound":,')) {
-          setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
-        } else {
-          setNFTData(JSON.parse(result));
-        }
+        console.log(result);
+        setNFTData(JSON.parse(result.replace(':,', ':"",')));
       } catch (err) {
         console.log(err);
       }
     } else {
       try {
         const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
-
         const result = await response.text();
-        if (result.search('"is_soulbound":,')) {
-          setNFTData(JSON.parse(result.replace('"is_soulbound":,', '')));
-        } else {
-          setNFTData(JSON.parse(result));
-        }
+        setNFTData(JSON.parse(result.replace(':,', ':"",')));
       } catch (err) {
         console.log(err);
       }
