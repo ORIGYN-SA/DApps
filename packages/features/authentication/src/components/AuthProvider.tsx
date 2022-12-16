@@ -43,16 +43,21 @@ const StyledPlugNotification = styled.div`
   border-width: 4px;
   border-style: solid;
   padding: 16px;
+  box-sizing: border-box;
+  max-width: calc(100% - 100px);
   border-image: linear-gradient(96.38deg, rgb(255, 231, 1) -0.67%, rgb(250, 81, 211) 31.53%, rgb(16, 217, 237) 61.61%, rgb(95, 255, 96) 100.67%) 1;
+  @media (max-width: 767px) {
+    top: 80px;
+    right: 8px;
+    max-width: calc(100% - 16px);
+  }
+  
 `
 
 const PlugNotification = ({logOut}) => {
 
   return <StyledPlugNotification>
-    <p>Connecting to your wallet</p>
-    <br/>
-    <p>If you are using Plug</p>
-    <h6>Make sure your are logged in your Plug Extension! ^</h6>
+    <p>If you are using Plug wallet,<br/> <b>make sure you have logged-in to your Plug wallet extension.</b></p>
   </StyledPlugNotification>
 }
 
@@ -64,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       {auth.isLoading ? (
         <>
           <Preloader width="100%" />
-          {window.ic.plug.sessionManager.initialized ? <PlugNotification logOut={auth.other.cancelConnect} /> : ""}
+          {window?.ic?.plug?.sessionManager?.initialized ? <PlugNotification logOut={auth.other.cancelConnect} /> : ""}
         </>
       ) : (
         <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
