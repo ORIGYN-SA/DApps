@@ -1,18 +1,15 @@
 import React, { useState,useContext } from 'react';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
-import TextField from '@mui/material/TextField';
 import { useSnackbar } from 'notistack';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { Grid,Container,TextInput,Button} from '@origyn-sa/origyn-art-ui';
 
 export const CanisterLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -121,42 +118,28 @@ export const CanisterLocation = (props: any) => {
   };
 
   return (
-    <Grid item xs={12}>
+    <Container padding="16px">
       <>
-        <Box
-          sx={{
-            mt: 2,
-          }}
-        >
-          <TextField
+      <Grid columns={1}>
+        <Grid column={1}>
+        <TextInput
             id="title"
-            label="Library Title"
-            variant="outlined"
-            fullWidth
-            placeholder="Enter Title"
+            placeholder="Enter Library Title"
             onChange={getTypedTitle}
           />
-        </Box>
-        <Box
-          sx={{
-            mt: 2,
-          }}
-        >
-          <TextField
-            id="title"
-            label="Library Id"
-            variant="outlined"
-            fullWidth
-            placeholder="Enter Id"
+        </Grid>
+      </Grid>
+      <Grid columns={1}>
+        <Grid column={1}>
+        <TextInput
+            id="id"
+            placeholder="Enter Library Id"
             onChange={getTypedId}
           />
-        </Box>
-        <Box
-          sx={{
-            mt: 2,
-          }}
-        >
-          <Grid item xs={12} m={2}>
+        </Grid>
+      </Grid>
+        <Container padding="16px">
+          <Grid>
             <input
               type="file"
               id="library"
@@ -165,14 +148,10 @@ export const CanisterLocation = (props: any) => {
               multiple={false}
             />
           </Grid>
-        </Box>
+          </Container>
         
-        <Box
-          sx={{
-            mt: 2,
-          }}
-        >
-          <Grid item xs={12} m={2}>
+        <Container padding="16px">
+          <Grid>
             <FormControl>
               <FormLabel id="demo-radio-buttons-group-label">Make library mutable or not</FormLabel>
               <RadioGroup
@@ -187,28 +166,20 @@ export const CanisterLocation = (props: any) => {
               </RadioGroup>
             </FormControl>
           </Grid>
-        </Box>
+        </Container>
         {file === undefined ? (
           <></>
         ) : (
-          <Box
-            sx={{
-              m: 2,
-            }}
-          >
+          <Container padding="16px">
             {type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}
-          </Box>
+          </Container>
         )}
       </>
-      <Box
-        sx={{
-          m: 2,
-        }}
-      ></Box>
-      <Button variant="outlined" onClick={stageLibrary}>
+      <Button 
+       btnType="filled"
+      onClick={stageLibrary}>
         Stage Library
       </Button>
-      <Box />
-    </Grid>
+      </Container>
   );
 };

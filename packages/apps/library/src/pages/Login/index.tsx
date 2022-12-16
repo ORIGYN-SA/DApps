@@ -16,7 +16,7 @@ const Library = () => {
 
     <Container>
       <SecondaryNav
-        title='Vault'
+        title='Library'
         tabs={[
           { title: 'Balance', id: 'Balance' },
         ]}

@@ -1,11 +1,8 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
+import { Container, Grid } from '@origyn-sa/origyn-art-ui';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
 import { DeleteLibrary } from '../DeleteLibrary';
-
 interface FileType {
   library_id: string;
   title: string;
@@ -75,60 +72,51 @@ export const NFTLibrary = (props: any) => {
   console.log('objLibraryData', objLibraryData);
 
   return (
-    <Grid container maxHeight={300} width={'max-content'}>
-      <Grid item xs={12}>
-        <Box>
-          {objLibraryData?.content_type in Layouts ? (
+    <Container padding="16px">
+      <Grid columns={1}>
+        <Grid column={1} padding="16px">
+          {objLibraryData.content_type in Layouts ? (
             Layouts[objLibraryData.content_type](objLibraryData.location)
           ) : (
             <LibraryDefault source={objLibraryData.location} />
           )}
-        </Box>
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <Typography
-          sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-          color="text.primary"
-          gutterBottom
-        >
+      <Grid columns={1}>
+        <Grid column={1}>
           <b>{objLibraryData.title}</b>
+          <span style={{ color: 'grey' }}>
+            {objLibraryData.content_type} - {formatBytes(Number(objLibraryData.size))}
+          </span>
+          <br />
+          Library Id:
+          <span style={{ color: 'grey' }}>{objLibraryData.library_id}</span>
           <br></br>
-          <b>{objLibraryData.content_type}</b> - {formatBytes(Number(objLibraryData.size))}
-        </Typography>
-        <Typography
-          sx={{
-            m: 2,
-            fontSize: 14,
-            borderBottom: '1px solid',
-          }}
-          color="text.secondary"
-          gutterBottom
-        >
-          <b>Information</b>
-        </Typography>
-        <Typography
-          sx={{ m: 2, fontSize: 14, marginBottom: '10px' }}
-          color="text.primary"
-          gutterBottom
-        >
-          <b>Library Id: </b>
-          {objLibraryData.library_id + ''}
-          <br></br>
-          <b>Location type: </b>
-          {capitalizeString(objLibraryData.location_type)}
-        </Typography>
+          Location type:
+          <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
+        </Grid>
       </Grid>
       {props.loggedIn == true && props.owner == true ? (
-        <Grid item xs={12}>
-          <DeleteLibrary
-            libraryId={objLibraryData.library_id}
-            currentTokenId={props.currentTokenId}
-            isMutable={isMutable}
-          />
-        </Grid>
+        <>
+         {!isMutable ? (
+          <>
+            <Grid columns={1}>
+              <Grid column={1}>
+                <DeleteLibrary
+                  libraryId={objLibraryData.library_id}
+                  currentTokenId={''}
+                  isMutable={isMutable}
+                />
+              </Grid>
+            </Grid>
+          </>
+        ) : (
+          <></>
+        )}
+        </>
       ) : (
         <></>
       )}
-    </Grid>
+    </Container>
   );
 };

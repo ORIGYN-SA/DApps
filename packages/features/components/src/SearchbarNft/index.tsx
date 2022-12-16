@@ -16,7 +16,6 @@ export const SearchbarNft = (props: any) => {
   const [tokenId, setTokenId] = React.useState('');
   const [canisterId, setCanisterId] = React.useState('');
   const [selectTokenIds, setSelectTokenIds] = React.useState<any>(['']);
-  const [selectUi, setSelectUi] = React.useState<SelectType[]>([]);
   const [idsNumber, setIdsNumber] = React.useState('');
   const handleSelectIds = (option) => {
     // setSearchBarTokenId state
