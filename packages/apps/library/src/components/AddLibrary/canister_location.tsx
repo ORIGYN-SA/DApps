@@ -175,7 +175,9 @@ export const CanisterLocation = (props: any) => {
           </Container>
         )}
       </>
-      <Button onClick={stageLibrary}>
+      <Button 
+       btnType="filled"
+      onClick={stageLibrary}>
         Stage Library
       </Button>
       </Container>

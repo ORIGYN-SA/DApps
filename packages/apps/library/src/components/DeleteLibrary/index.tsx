@@ -142,7 +142,7 @@ export const DeleteLibrary = (props: any) => {
 
   return (
     <>
-      <Button onClick={handleClickOpen} color="error" variant="outlined" startIcon={<DeleteIcon />}>
+      <Button onClick={handleClickOpen}  btnType="filled">
         Delete this Library
       </Button>
 
@@ -196,13 +196,15 @@ export const DeleteLibrary = (props: any) => {
           <>
             {messageLoadingStatus ? (
               <>
-                <Button onClick={DeleteMutableLibrary} color="warning" autoFocus>
+                <Button 
+                 btnType="filled"
+                onClick={DeleteMutableLibrary}>
                   Delete
                 </Button>
               </>
             ) : (
               <>
-                <Button onClick={DeleteMutableLibrary} color="warning" autoFocus disabled={true}>
+                <Button onClick={DeleteMutableLibrary}  btnType="filled">
                   Delete
                 </Button>
               </>

@@ -104,7 +104,9 @@ export const CollectionLocation = (props: any) => {
         />
       </Container>
         <Grid>
-          <Button onClick={() => StageCollectionLibrary()}>STAGE LIBRARY</Button>
+          <Button 
+           btnType="filled"
+          onClick={() => StageCollectionLibrary()}>Stage Library</Button>
         </Grid>
     </Container>
   );

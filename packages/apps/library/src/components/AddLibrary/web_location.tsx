@@ -101,7 +101,9 @@ export const WebLocation = (props: any) => {
         </FormControl>
       </Grid>
       <Grid>
-        <Button onClick={() => StageWebLibrary()}>STAGE LIBRARY</Button>
+        <Button 
+         btnType="filled"
+        onClick={() => StageWebLibrary()}>Stage Library</Button>
       </Grid>
     </Container>
   );
