@@ -177,8 +177,6 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       pTokens[symbol].balance = balance;
       return { ...pTokens };
     });
-
-    console.log(time)
   };
 
   const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {

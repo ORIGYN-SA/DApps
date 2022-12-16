@@ -139,8 +139,6 @@ const WalletPage = () => {
 
   const { activeTokens, time, refreshAllBalances } = useTokensContext()
 
-  console.log('time', time)
-
   const handleClickOpen = (item, modal = 'auction') => {
     setSelectdNFT(item.metadata)
     if (modal === 'auction') setOpenAuction(true)
