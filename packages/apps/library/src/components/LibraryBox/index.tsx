@@ -1,10 +1,8 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
+import { Container, Grid, HR, TextInput } from '@origyn-sa/origyn-art-ui';
 
 interface FileType {
   library_id: string;
@@ -29,7 +27,9 @@ export const LibraryBox = (props: any) => {
   console.log('props', props);
   const LocationType = props.library3.Class.filter((item) => item.name === 'location_type')[0].value
     .Text;
-    const isMutable = props.library3.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0];
+  const isMutable = props.library3.Class.filter(
+    (item) => item.name === 'com.origyn.immutable_library',
+  )[0];
   let objLibraryData: FileType;
   switch (LocationType) {
     case 'canister':
@@ -37,7 +37,8 @@ export const LibraryBox = (props: any) => {
         library_id: props.library3?.Class.filter((item) => item.name === 'library_id')[0].value
           .Text,
         title: props.library3?.Class.filter((item) => item.name === 'title')[0].value.Text,
-        content_type: props.library3?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
+        content_type: props.library3?.Class.filter((item) => item.name === 'content_type')[0].value
+          .Text,
         location: props.library3?.Class.filter((item) => item.name === 'location')[0].value.Text,
         location_type: LocationType,
         size: props.library3?.Class.filter((item) => item.name === 'size')[0].value.Nat,
@@ -48,7 +49,8 @@ export const LibraryBox = (props: any) => {
         library_id: props.library3?.Class.filter((item) => item.name === 'library_id')[0].value
           .Text,
         title: props.library3?.Class.filter((item) => item.name === 'title')[0].value.Text,
-        content_type: props.library3?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
+        content_type: props.library3?.Class.filter((item) => item.name === 'content_type')[0].value
+          .Text,
         location: props.library3?.Class.filter((item) => item.name === 'location')[0].value.Text,
         location_type: LocationType,
         size: props.library3?.Class.filter((item) => item.name === 'size')[0].value.Nat,
@@ -69,65 +71,62 @@ export const LibraryBox = (props: any) => {
 
   console.log('objLibraryData', objLibraryData.size);
 
+  const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedTitle(event.target.value);
+  };
+  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedId(event.target.value);
+  };
+
+  const [typedTitle, setTypedTitle] = React.useState('');
+  const [typedId, setTypedId] = React.useState('');
 
   return (
-    <Grid container maxHeight={300} width={'max-content'}>
-      <Grid item xs={12}>
-        <Box>
+    <Container padding="16px">
+      <Grid columns={1}>
+        <Grid column={1}>
           {objLibraryData.content_type in Layouts ? (
             Layouts[objLibraryData.content_type](objLibraryData.location)
           ) : (
             <LibraryDefault source={objLibraryData.location} />
           )}
-        </Box>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography
-          sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-          color="text.primary"
-          gutterBottom
-        >
-          <b>{objLibraryData.title}</b>
-          <br></br>
-          <b>{objLibraryData.content_type}</b> - {formatBytes(Number(objLibraryData.size))}
-        </Typography>
-        <Typography
-          sx={{
-            m: 2,
-            fontSize: 14,
-            borderBottom: '1px solid',
-          }}
-          color="text.secondary"
-          gutterBottom
-        >
-          <b>Information</b>
-        </Typography>
-        <Typography
-          sx={{ m: 2, fontSize: 14, marginBottom: '10px' }}
-          color="text.primary"
-          gutterBottom
-        >
-          <b>Library Id: </b>
-          {objLibraryData.library_id}
-          <br></br>
-          <b>Location type: </b>
-          {objLibraryData.location_type}
-        </Typography>
-      </Grid>
-      {
-        props.loggedIn == true && props.owner == true ? (
-          <Grid item xs={12}>
-          <DeleteLibrary 
-          libraryId={objLibraryData.library_id} 
-          currentTokenId={''}
-          isMutable={isMutable}
-          />
         </Grid>
-        ) :(
-          <>
-          </>
-        )
-      }
-    </Grid>
+      </Grid>
+      <Grid columns={1}>
+        <Grid column={1}>
+          <b>{objLibraryData.title}</b>
+          <span style={{ color: 'grey' }}>
+            {objLibraryData.content_type} - {formatBytes(Number(objLibraryData.size))}
+          </span>
+          <br />
+          Library Id:
+          <span style={{ color: 'grey' }}>{objLibraryData.library_id}</span>
+          <br></br>
+          Location type:
+          <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
+        </Grid>
+      </Grid>
+      {props.loggedIn == true && props.owner == true ? (
+        <>
+          {!isMutable ? (
+            <>
+              <Grid columns={1}>
+                <Grid column={1}>
+                  <DeleteLibrary
+                    libraryId={objLibraryData.library_id}
+                    currentTokenId={''}
+                    isMutable={isMutable}
+                  />
+                </Grid>
+              </Grid>
+            </>
+          ) : (
+            <></>
+          )}
+        </>
+      ) : (
+        <></>
+      )}
+    </Container>
   );
 };
