@@ -149,10 +149,9 @@ export const NFTPage = () => {
           .value.Class.reduce((arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }), {})
         dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text
 
-        //TO DO: remove owner from dataObj, create new const so not included in properties for now?
-        dataObj.owner = r?.ok?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText()
-        const royal1 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.primary').value.Array
-        const royal2 = r.ok.metadata.Class.find(({ name }) => name === '__system').value.Class.find(({ name }) => name === 'com.origyn.royalties.secondary').value.Array
+        dataObj.owner = r?.ok?.metadata?.Class?.find(({ name }) => name === 'owner')?.value?.Principal?.toText()
+        const royal1 = r?.ok?.metadata?.Class?.find(({ name }) => name === '__system')?.value?.Class?.find(({ name }) => name === 'com.origyn.royalties.primary')?.value?.Array
+        const royal2 = r?.ok?.metadata?.Class?.find(({ name }) => name === '__system')?.value?.Class?.find(({ name }) => name === 'com.origyn.royalties.secondary')?.value?.Array
         const _nft = r?.ok
         setRoy2(royal2)
         setRoy1(royal1)
@@ -211,7 +210,7 @@ export const NFTPage = () => {
                     />
                     <Flex flexFlow='column' gap={8}>
                       <p className="secondary_color">{currentNFT?.owner}</p>
-                      <h2><b>{ currentNFT?.display_name ? currentNFT?.display_name : currentNFT?.tokenID}</b></h2>
+                      <h2><b>{ currentNFT?.display_name || currentNFT?.tokenID}</b></h2>
                       <br />
                       <ShowMoreBlock btnText='Read More'>
                         <p className="secondary_color">{currentNFT?.description}</p>
