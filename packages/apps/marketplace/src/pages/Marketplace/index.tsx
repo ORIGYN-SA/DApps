@@ -216,7 +216,7 @@ const Marketplace = () => {
                       style={{ width: 200 }}
                     />
                     <Flex flexFlow='column' justify='space-between' gap={8}>
-                      <h2><b>{collectionData?.display_name} Collection</b></h2>
+                      <h2><b>{collectionData?.display_name}</b></h2>
                       <p>
                         <span className='secondary_color'>Created by</span>
                         <span className='secondary_color'>
@@ -281,7 +281,7 @@ const Marketplace = () => {
                                 <Flex style={{ height: '100%' }} justify='space-between' flexFlow='column' gap={32}>
                                   <div>
                                     <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                      {collectionData?.display_name} Collection
+                                      {collectionData?.display_name}
                                     </p>
                                     <p>
                                       <b>{nft['display_name']}</b>
@@ -302,7 +302,7 @@ const Marketplace = () => {
                     </Grid>
                   ) : (
                     <h5>
-                      There is no NFTs in this collection
+                      There are no NFTs in this collection
                     </h5>
                   )}
                 </Container>
