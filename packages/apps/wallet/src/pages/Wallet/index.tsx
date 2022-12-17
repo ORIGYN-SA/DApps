@@ -580,8 +580,8 @@ const WalletPage = () => {
                           <Flex flexFlow="row" align='center' fullWidth justify="space-between">
                           <h2>{collectionData?.display_name}</h2>
                           
-                          <Flex>{collectionData?.social_links?.thawed?.map((links) => (
-                                <a style={{marginRight: '8px'}} href={links?.Class?.find(({ name }) => name === 'url')?.value?.Text}>                           
+                          <Flex gap={8}>{collectionData?.social_links?.thawed?.map((links) => (
+                                <a href={links?.Class?.find(({ name }) => name === 'url')?.value?.Text}>                           
                                 {{
                                   'twitter' : <SocialMediaButton iconButton> <TwitterSVG/> </SocialMediaButton>,
                                   'discord': <SocialMediaButton iconButton> <DiscordSVG/> </SocialMediaButton>,
