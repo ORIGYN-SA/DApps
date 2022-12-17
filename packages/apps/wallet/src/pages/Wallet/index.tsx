@@ -577,20 +577,20 @@ const WalletPage = () => {
                         />
                         <Flex flexFlow='column' fullWidth justify="space-between" gap={8}>
 
-                          <Flex flexFlow="row" align='center' fullWidth justify="space-between">
+                          <Flex flexFlow="row" align='center' fullWidth justify="space-between" smFlexFlow="column">
                           <h2>{collectionData?.display_name}</h2>
                           
-                          <Flex gap={8}>{collectionData?.social_links?.thawed?.map((links) => (
-                                <Button as='a' iconButton href={links?.Class?.find(({ name }) => name === 'url')?.value?.Text}>                           
+                          <Flex style={{flexWrap: 'wrap', marginTop: '8px', alignContent: 'flex-end'}} gap={8}>{collectionData?.social_links?.thawed?.map((links, index) => (
+                                <SocialMediaButton as='a' iconButton href={links?.Class?.find(({ name }) => name === 'url')?.value?.Text} key={index}>                           
                                 {{
-                                  'twitter' : <SocialMediaButton iconButton> <TwitterSVG/> </SocialMediaButton>,
-                                  'discord': <SocialMediaButton iconButton> <DiscordSVG/> </SocialMediaButton>,
-                                  'medium' : <SocialMediaButton iconButton> <MediumSVG/> </SocialMediaButton>,
-                                  'dscvr' : <SocialMediaButton iconButton> <DscvrSVG/> </SocialMediaButton>,
-                                  'distrikt' : <SocialMediaButton iconButton> <DistriktSVG/> </SocialMediaButton>,
-                                  'website' : <SocialMediaButton iconButton> <WebsiteSVG/> </SocialMediaButton>,
+                                  'twitter' :  <TwitterSVG/>,
+                                  'discord':  <DiscordSVG/>,
+                                  'medium' :<MediumSVG/>,
+                                  'dscvr' :  <DscvrSVG/>,
+                                  'distrikt' :  <DistriktSVG/>,
+                                  'website' :  <WebsiteSVG/>,
                                 }[links?.Class?.find(({ name }) => name === 'type')?.value?.Text]}
-                                </Button>
+                                </SocialMediaButton>
                                ))}
                                </Flex>   
                           </Flex>       
