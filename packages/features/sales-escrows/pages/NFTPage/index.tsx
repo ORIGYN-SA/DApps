@@ -203,7 +203,7 @@ export const NFTPage = () => {
                 <LoadingContainer />
               ) : <Flex flexFlow='column'>
                 <Container size='md' padding='80px' mdPadding="16px">
-                  <Grid columns={2} gap={120} smGap={16} mdGap={40}>
+                  <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
                     <img
                       style={{ borderRadius: '18px', width: '100%' }}
                       src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
