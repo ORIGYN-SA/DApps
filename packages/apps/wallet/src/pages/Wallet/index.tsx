@@ -72,17 +72,8 @@ const GuestContainer = () => {
   )
 }
 
-const SocialMediaCircle = styled.div`
-display: flex;
-justify-content: center;
-align-items: center;
-flex-direction: row;
-padding: 11px;
-gap: 10px;
-width: 40px;
-height: 40px;
+const SocialMediaButton = styled(Button)`
 background: #242424;
-border-radius: 999px;
 `
 
 const StyledSectionTitle = styled.h2`
@@ -408,7 +399,6 @@ const WalletPage = () => {
                   {},
                 )
               const filterSale = Number(sale)
-              console.log('nft', it)
               return {
                 ...dataObj,
                 id: { nftID: nftID, sale: filterSale, open: openSale },
@@ -593,12 +583,12 @@ const WalletPage = () => {
                           <Flex>{collectionData?.social_links?.thawed?.map((links) => (
                                 <a style={{marginRight: '8px'}} href={links?.Class?.find(({ name }) => name === 'url')?.value?.Text}>                           
                                 {{
-                                  'twitter' : <Button> <TwitterSVG/> </Button>,
-                                  'discord': <Button> <DiscordSVG/> </Button>,
-                                  'medium' : <Button> <MediumSVG/> </Button>,
-                                  'dscvr' : <SocialMediaCircle> <DscvrSVG/> </SocialMediaCircle>,
-                                  'distrikt' : <SocialMediaCircle> <DistriktSVG/> </SocialMediaCircle>,
-                                  'website' : <SocialMediaCircle> <WebsiteSVG/> </SocialMediaCircle>,
+                                  'twitter' : <SocialMediaButton iconButton> <TwitterSVG/> </SocialMediaButton>,
+                                  'discord': <SocialMediaButton iconButton> <DiscordSVG/> </SocialMediaButton>,
+                                  'medium' : <SocialMediaButton iconButton> <MediumSVG/> </SocialMediaButton>,
+                                  'dscvr' : <SocialMediaButton iconButton> <DscvrSVG/> </SocialMediaButton>,
+                                  'distrikt' : <SocialMediaButton iconButton> <DistriktSVG/> </SocialMediaButton>,
+                                  'website' : <SocialMediaButton iconButton> <WebsiteSVG/> </SocialMediaButton>,
                                 }[links?.Class?.find(({ name }) => name === 'type')?.value?.Text]}
                                 </a>
                                ))}
