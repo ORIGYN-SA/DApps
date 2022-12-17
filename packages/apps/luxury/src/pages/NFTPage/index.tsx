@@ -445,7 +445,7 @@ const NFTPage = () => {
                 <hr />
                 <h3>22/10/2020</h3>
                 <p>
-                  <b>NFT Creation</b>
+                  <b>Digital Certificates Creation</b>
                 </p>
                 <p>Organisation name</p>
               </History>

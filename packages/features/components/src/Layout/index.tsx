@@ -22,12 +22,12 @@ const initialMenuItems: MenuItem[] = [
   },
   {
     href: 'data',
-    title: 'NFT Data',
+    title: 'Certificates Data',
     icon: Icons.DataBrowse,
   },
   {
     href: 'library',
-    title: 'NFT library',
+    title: 'Certificates library',
     icon: Icons.Libraries,
   },
   {

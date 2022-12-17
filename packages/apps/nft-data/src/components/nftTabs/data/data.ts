@@ -23,7 +23,6 @@ const getMetadata = async () => {
   const { tokenId, canisterId } = await useRoute();
   await OrigynClient.getInstance().init(true, canisterId);
   if (tokenId) {
-    console.log('token id - getNft');
     const response = await getNft(tokenId);
     console.log('responseNFT', response);
     const metadata = await response.ok.metadata.Class;

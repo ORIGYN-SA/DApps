@@ -15,7 +15,7 @@ const NFTInfo = ({ metadata }: any) => {
   return (
     <>
       <SecondaryNav
-        title="NFT Data"
+        title="Certificates Data"
         tabs={[
           { title: 'Form', id: 'Form' },
           { title: 'Tree', id: 'Tree' },

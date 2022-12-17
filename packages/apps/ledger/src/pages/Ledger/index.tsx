@@ -36,7 +36,7 @@ const Ledger = () => {
   }, [actor]);
 
   useEffect(() => {
-    document.title = 'Origyn NFT Ledger';
+    document.title = 'Origyn Digital Certificates Ledger';
   }, []);
 
   return (
