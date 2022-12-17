@@ -581,7 +581,7 @@ const WalletPage = () => {
                           <h2>{collectionData?.display_name}</h2>
                           
                           <Flex gap={8}>{collectionData?.social_links?.thawed?.map((links) => (
-                                <a href={links?.Class?.find(({ name }) => name === 'url')?.value?.Text}>                           
+                                <Button as='a' iconButton href={links?.Class?.find(({ name }) => name === 'url')?.value?.Text}>                           
                                 {{
                                   'twitter' : <SocialMediaButton iconButton> <TwitterSVG/> </SocialMediaButton>,
                                   'discord': <SocialMediaButton iconButton> <DiscordSVG/> </SocialMediaButton>,
@@ -590,7 +590,7 @@ const WalletPage = () => {
                                   'distrikt' : <SocialMediaButton iconButton> <DistriktSVG/> </SocialMediaButton>,
                                   'website' : <SocialMediaButton iconButton> <WebsiteSVG/> </SocialMediaButton>,
                                 }[links?.Class?.find(({ name }) => name === 'type')?.value?.Text]}
-                                </a>
+                                </Button>
                                ))}
                                </Flex>   
                           </Flex>       
