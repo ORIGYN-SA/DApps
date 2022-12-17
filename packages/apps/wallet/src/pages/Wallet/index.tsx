@@ -276,7 +276,6 @@ const WalletPage = () => {
       useRoute().then(({canisterId}) => {
         setCanisterId(canisterId)
         OrigynClient.getInstance().init(true, canisterId)
-
         getNftCollectionMeta([]).then((r: any) => {
           if ('err' in r) {
           } else {
