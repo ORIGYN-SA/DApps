@@ -10,22 +10,22 @@ import { AuthProvider, SessionProvider } from '@dapp/features-authentication'
 
 const App = () => (
   <HashRouter>
-    <Layout>
       <SiteProvider>
         <SessionProvider>
           <AuthProvider>
             <TokensContextProvider>
               <SnackbarProvider maxSnack={3}>
+                <Layout>
                 <Routes>
                   <Route path='/' element={<Wallet />} />
                   <Route path='/:nft_id' element={<NFTPage />} />
                 </Routes>
+                </Layout>
               </SnackbarProvider>
             </TokensContextProvider>
           </AuthProvider>
         </SessionProvider>
       </SiteProvider>
-    </Layout>
   </HashRouter>
 )
 
