@@ -3,6 +3,7 @@ import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
 import { Container, Grid, HR, TextInput } from '@origyn-sa/origyn-art-ui';
+import { UpdateLibraryFile } from '../UpdateLibraryFile';
 
 interface FileType {
   library_id: string;
@@ -117,6 +118,7 @@ export const LibraryBox = (props: any) => {
                     currentTokenId={''}
                     isMutable={isMutable}
                   />
+                  <UpdateLibraryFile libraryId={objLibraryData.library_id} tokenId={''} />
                 </Grid>
               </Grid>
             </>

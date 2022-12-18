@@ -15,22 +15,20 @@ import FormLabel from '@mui/material/FormLabel';
 import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
-import { useRoute } from '../../../../../features/authentication'
+import { useRoute } from '../../../../../features/authentication';
 
 export const LibraryForm = (props: any) => {
-
   const [radioValue, setRadioValue] = React.useState('Canister');
   const [openFileInput, setOpenFileInput] = React.useState(false);
   const [openSelectInput, setOpenSelectInput] = React.useState(false);
   const [openWebInput, setOpenWebInput] = React.useState(false);
-
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRadioValue((event.target as HTMLInputElement).value);
   };
 
   const getLibraries = async () => {
-    const {canisterId} = await useRoute();
+    const { canisterId } = await useRoute();
 
     await OrigynClient.getInstance().init(true, canisterId);
     const response = await getNftCollectionMeta();
@@ -86,35 +84,37 @@ export const LibraryForm = (props: any) => {
             <>
               <b>Stage a library for the collection</b>
               <>
-              <Grid>
-                <Box
-                  sx={{
-                    m: 2,
-                  }}
-                >
-                  <Grid item xs={12}>
-                    <FormControl>
-                      <FormLabel id="radio-location-type"><b>Choose Location Type</b></FormLabel>
-                      <RadioGroup
-                        aria-labelledby="radio-location-type"
-                        defaultValue="Canister"
-                        name="radio-location-type"
-                        onChange={handleRadioChange}
-                        value={radioValue}
-                      >
-                        <FormControlLabel value="Canister" control={<Radio />} label="Canister" />
-                        <FormControlLabel value="Web" control={<Radio />} label="Web" />
-                      </RadioGroup>
-                    </FormControl>
-                  </Grid>
-                  <Collapse in={openFileInput} timeout="auto" unmountOnExit>
-                    <CanisterLocation tokenId={props.currentTokenId} />
-                  </Collapse>
-                  <Collapse in={openWebInput} timeout="auto" unmountOnExit>
-                    <WebLocation tokenId={props.currentTokenId} />
-                  </Collapse>
-                </Box>
-              </Grid>
+                <Grid>
+                  <Box
+                    sx={{
+                      m: 2,
+                    }}
+                  >
+                    <Grid item xs={12}>
+                      <FormControl>
+                        <FormLabel id="radio-location-type">
+                          <b>Choose Location Type</b>
+                        </FormLabel>
+                        <RadioGroup
+                          aria-labelledby="radio-location-type"
+                          defaultValue="Canister"
+                          name="radio-location-type"
+                          onChange={handleRadioChange}
+                          value={radioValue}
+                        >
+                          <FormControlLabel value="Canister" control={<Radio />} label="Canister" />
+                          <FormControlLabel value="Web" control={<Radio />} label="Web" />
+                        </RadioGroup>
+                      </FormControl>
+                    </Grid>
+                    <Collapse in={openFileInput} timeout="auto" unmountOnExit>
+                      <CanisterLocation tokenId={props.currentTokenId} />
+                    </Collapse>
+                    <Collapse in={openWebInput} timeout="auto" unmountOnExit>
+                      <WebLocation tokenId={props.currentTokenId} />
+                    </Collapse>
+                  </Box>
+                </Grid>
               </>
             </>
           ) : (
@@ -128,7 +128,9 @@ export const LibraryForm = (props: any) => {
                 >
                   <Grid item xs={12}>
                     <FormControl>
-                      <FormLabel id="radio-location-type"><b>Choose Location Type</b></FormLabel>
+                      <FormLabel id="radio-location-type">
+                        <b>Choose Location Type</b>
+                      </FormLabel>
                       <RadioGroup
                         aria-labelledby="radio-location-type"
                         defaultValue="Canister"

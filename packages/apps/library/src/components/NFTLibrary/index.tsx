@@ -98,21 +98,22 @@ export const NFTLibrary = (props: any) => {
       </Grid>
       {props.loggedIn == true && props.owner == true ? (
         <>
-         {!isMutable ? (
-          <>
-            <Grid columns={1}>
-              <Grid column={1}>
-                <DeleteLibrary
-                  libraryId={objLibraryData.library_id}
-                  currentTokenId={''}
-                  isMutable={isMutable}
-                />
+          {!isMutable ? (
+            <>
+              <Grid columns={1}>
+                <Grid column={1}>
+                  <DeleteLibrary
+                    libraryId={objLibraryData.library_id}
+                    currentTokenId={''}
+                    isMutable={isMutable}
+                  />
+                  test
+                </Grid>
               </Grid>
-            </Grid>
-          </>
-        ) : (
-          <></>
-        )}
+            </>
+          ) : (
+            <></>
+          )}
         </>
       ) : (
         <></>

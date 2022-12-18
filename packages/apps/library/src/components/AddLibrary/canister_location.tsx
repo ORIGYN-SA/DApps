@@ -1,5 +1,5 @@
-import React, { useState,useContext } from 'react';
-import { AuthContext, useRoute } from '@dapp/features-authentication'
+import React, { useState, useContext } from 'react';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
@@ -9,7 +9,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { Grid,Container,TextInput,Button} from '@origyn-sa/origyn-art-ui';
+import { Grid, Container, TextInput, Button } from '@origyn-sa/origyn-art-ui';
 
 export const CanisterLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -23,7 +23,7 @@ export const CanisterLocation = (props: any) => {
 
   const handleChange = (event) => {
     setImmutable(event.target.value);
-    console.log(event.target.value)
+    console.log(event.target.value);
   };
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
@@ -61,9 +61,9 @@ export const CanisterLocation = (props: any) => {
   };
 
   const stageLibrary = async () => {
-    const {canisterId} = await useRoute();
+    const { canisterId } = await useRoute();
 
-    await OrigynClient.getInstance().init(true, canisterId, {actor});
+    await OrigynClient.getInstance().init(true, canisterId, { actor });
     try {
       let i = 0;
       const payload = {
@@ -78,9 +78,9 @@ export const CanisterLocation = (props: any) => {
                 size: file.size,
                 type: file.type,
                 rawFile: await readFileAsync(file),
-                title:typedTitle,
+                title: typedTitle,
                 immutable: immutable,
-                libraryId:typedId
+                libraryId: typedId,
               };
             }),
           )),
@@ -89,7 +89,7 @@ export const CanisterLocation = (props: any) => {
       console.log('payload is ', payload);
       try {
         const response = await stageLibraryAsset([payload.files[0]], props.tokenId);
-        console.log('response',response);
+        console.log('response', response);
         if (response.ok) {
           // Display a success message - SNACKBAR
           enqueueSnackbar('Library staged!', {
@@ -120,24 +120,16 @@ export const CanisterLocation = (props: any) => {
   return (
     <Container padding="16px">
       <>
-      <Grid columns={1}>
-        <Grid column={1}>
-        <TextInput
-            id="title"
-            placeholder="Enter Library Title"
-            onChange={getTypedTitle}
-          />
+        <Grid columns={1}>
+          <Grid column={1}>
+            <TextInput id="title" placeholder="Enter Library Title" onChange={getTypedTitle} />
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid columns={1}>
-        <Grid column={1}>
-        <TextInput
-            id="id"
-            placeholder="Enter Library Id"
-            onChange={getTypedId}
-          />
+        <Grid columns={1}>
+          <Grid column={1}>
+            <TextInput id="id" placeholder="Enter Library Id" onChange={getTypedId} />
+          </Grid>
         </Grid>
-      </Grid>
         <Container padding="16px">
           <Grid>
             <input
@@ -148,8 +140,8 @@ export const CanisterLocation = (props: any) => {
               multiple={false}
             />
           </Grid>
-          </Container>
-        
+        </Container>
+
         <Container padding="16px">
           <Grid>
             <FormControl>
@@ -161,7 +153,7 @@ export const CanisterLocation = (props: any) => {
                 value={immutable}
                 onChange={handleChange}
               >
-                <FormControlLabel value={false}control={<Radio />} label="Mutable" />
+                <FormControlLabel value={false} control={<Radio />} label="Mutable" />
                 <FormControlLabel value={true} control={<Radio />} label="Immutable" />
               </RadioGroup>
             </FormControl>
@@ -175,11 +167,9 @@ export const CanisterLocation = (props: any) => {
           </Container>
         )}
       </>
-      <Button 
-       btnType="filled"
-      onClick={stageLibrary}>
+      <Button btnType="filled" onClick={stageLibrary}>
         Stage Library
       </Button>
-      </Container>
+    </Container>
   );
 };

@@ -16,7 +16,7 @@ import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
 import { DeleteLibrary } from '../DeleteLibrary';
-import { Container } from '@origyn-sa/origyn-art-ui'
+import { Container } from '@origyn-sa/origyn-art-ui';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -42,7 +42,7 @@ const ColumnView = () => {
   const classes = useStyles();
   const [library3, setLibrary3] = useState();
   const { actor, loggedIn, principal } = useContext(AuthContext);
-  const [canisterId, setCanisterId] = useState("");
+  const [canisterId, setCanisterId] = useState('');
   const [collectionNft, setCollectionNft] = useState([]);
 
   const [openFormDefault, setOpenFormDefault] = React.useState(false);
@@ -91,7 +91,6 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    
     setOpenLib(!openLib);
     setOpen(false);
     setOpen1(false);
@@ -232,11 +231,7 @@ const ColumnView = () => {
 
   const checkAndSetOwner = async () => {
     const { tokenId, canisterId } = await useRoute();
-    const checked = await checkOwner(
-      principal,
-      canisterId,
-      tokenId,
-    );
+    const checked = await checkOwner(principal, canisterId, tokenId);
     setOwner(checked);
   };
 
@@ -320,20 +315,19 @@ const ColumnView = () => {
                 <Grid container minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
                     {owner && loggedIn ? (
-                      <> 
-                      <ListItem className={classes.classes['noPadding']}>
-                        <ListItemButton
-                          className={classes.classes['noPadding']}
-                          onClick={() => handleForm()}
-                        >
-                          <ListItemText
-                            sx={{ width: 'max-content', paddingLeft: 1 , fontWeight: 'bold'}}
-                            primary="+ Add a Library"
-                          />
-                        </ListItemButton>
-                      </ListItem>
+                      <>
+                        <ListItem className={classes.classes['noPadding']}>
+                          <ListItemButton
+                            className={classes.classes['noPadding']}
+                            onClick={() => handleForm()}
+                          >
+                            <ListItemText
+                              sx={{ width: 'max-content', paddingLeft: 1, fontWeight: 'bold' }}
+                              primary="+ Add a Library"
+                            />
+                          </ListItemButton>
+                        </ListItem>
                       </>
-                      
                     ) : (
                       <></>
                     )}
@@ -375,18 +369,18 @@ const ColumnView = () => {
                       <>
                         {owner && loggedIn ? (
                           <>
-                          <ListItem className={classes.classes['noPadding']}>
-                            <ListItemButton
-                              className={classes.classes['noPadding']}
-                              onClick={() => handleForm1()}
-                            >
-                              <ListItemText
-                                sx={{ width: 'max-content', paddingLeft: 1 }}
-                                primary="+ Add Library"
-                              />
-                            </ListItemButton>
-                          </ListItem>
-                        </>
+                            <ListItem className={classes.classes['noPadding']}>
+                              <ListItemButton
+                                className={classes.classes['noPadding']}
+                                onClick={() => handleForm1()}
+                              >
+                                <ListItemText
+                                  sx={{ width: 'max-content', paddingLeft: 1 }}
+                                  primary="+ Add Library"
+                                />
+                              </ListItemButton>
+                            </ListItem>
+                          </>
                         ) : (
                           <></>
                         )}
@@ -424,9 +418,7 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm 
-                  currentTokenId={currentTokenId} 
-                  />
+                  <LibraryForm currentTokenId={currentTokenId} />
                 </Grid>
               </Box>
             </Collapse>
@@ -434,7 +426,7 @@ const ColumnView = () => {
             <Collapse
               in={openFormDelete}
               timeout="auto"
-              style={{ display: openFormDelete? 'block' : 'none' }}
+              style={{ display: openFormDelete ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box
@@ -462,12 +454,12 @@ const ColumnView = () => {
               >
                 <Grid container minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
-                    <NFTLibrary 
-                    libDet={libDet}
-                    currentTokenId={currentTokenId}
-                    loggedIn = {loggedIn}
-                    owner = {owner}
-                  />
+                    <NFTLibrary
+                      libDet={libDet}
+                      currentTokenId={currentTokenId}
+                      loggedIn={loggedIn}
+                      owner={owner}
+                    />
                   </Grid>
                 </Grid>
               </Box>
@@ -485,11 +477,11 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryBox 
-                  loggedIn = {loggedIn}
-                  library3={library3} 
-                  owner = {owner}
-                  currentTokenId={''}
+                  <LibraryBox
+                    loggedIn={loggedIn}
+                    library3={library3}
+                    owner={owner}
+                    currentTokenId={''}
                   />
                 </Grid>
               </Box>
@@ -507,9 +499,7 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm 
-                  loggedIn = {loggedIn}
-                  currentTokenId={''} />
+                  <LibraryForm loggedIn={loggedIn} currentTokenId={''} />
                 </Grid>
               </Box>
             </Collapse>
