@@ -19,24 +19,28 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
         return res.name === 'owner';
     })[0].value);
 
+    console.log('🚀 - COLLECTION DATA', await getNftCollectionMeta());
     let CollectionOwner: string;
+
     if ((Object.keys(CollectionData)[0]) == 'Principal') {
         CollectionOwner = CollectionData.Principal.toText();
     } else {
         CollectionOwner = CollectionData.Text;
     }
 
-    // SELECTED NFT OWNER
-    const NftOwner = await getNft(currTokenId).then((r) =>
-        r.ok.metadata.Class.filter((res) => {
-            return res.name === 'owner';
-        })[0].value.Principal.toText(),);
-
     // WRITE PERMISSIONS SELECTED NFT
     const ArrayAllowed = await getNft(currTokenId).then((r) =>
         r.ok.metadata.Class.filter((res) => {
             return res.name === '__apps';
         })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed);
+
+    // ARRAY OF MANAGERS 
+    // if array contains the user principal return true 
+
+    const ArrayManagers = await getNftCollectionMeta().then((r) =>
+    r.ok.managers);
+
+    console.log('🚀 - ARRAY MANAGERS', ArrayManagers);
 
     // CHECK IF THE OWNER IS IN THE PERMISSION LIST
     const AllowedUsers = () => {
@@ -52,8 +56,6 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
 
     console.log('🚀 - COLLECTION OWNER', CollectionOwner);
     console.log('🚀 - USERPRINCIPAL', UserPrincipal);
-    console.log('🚀 - CURRENT SELECTED NFT : ', await currTokenId);
-    console.log('🚀 - NFT OWNER', NftOwner);
 
     if ((UserPrincipal === CollectionOwner) || (AllowedUsers() === true)) {
         return true;
