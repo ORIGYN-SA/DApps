@@ -680,7 +680,7 @@ const WalletPage = () => {
                                         <div>
                                           <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                           <p>
-                                            {nft.id.open ? nft.id.sale : 'No auction started'}
+                                            {nft.id.open ?  <><TokenIcon symbol={activeTokens['OGY']?.icon} /> {parseFloat((parseInt(nft.id.sale) * 1e-8).toString()).toFixed(2)}</> : 'No auction started'}
                                           </p>
                                         </div>
                                       </Flex>
