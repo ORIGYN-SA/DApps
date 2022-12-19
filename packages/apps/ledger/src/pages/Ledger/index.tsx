@@ -5,13 +5,12 @@ import {
   TransactionFilter,
   TransactionsTable,
   SearchbarNft,
-  SwitchCanisterCollection,
 } from '@dapp/features-components';
 import { SecondaryNav, Container, Banner, HR } from '@origyn-sa/origyn-art-ui';
 
 const Ledger = () => {
   const ledgerVersion: string = '0.1.0';
-  const { principal, actor, handleLogOut } = useContext(AuthContext)
+  const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
   const [indexID, setIndexID] = React.useState('');
@@ -52,10 +51,7 @@ const Ledger = () => {
               searchBarTokenId={searchBarTokenId}
               isLoading={isLoading}
             />
-            <HR 
-              marginTop = "16px"
-              marginBottom = "16px"
-            />
+            <HR marginTop="16px" marginBottom="16px" />
             <TransactionFilter
               isLoading={isLoading}
               setFilter={setFilter}
@@ -64,10 +60,7 @@ const Ledger = () => {
               transactionData={transactionData}
               searchBarTokenId={searchBarTokenId}
             />
-            <HR 
-             marginTop = "16px"
-             marginBottom = "16px"
-            />
+            <HR marginTop="16px" marginBottom="16px" />
             <TransactionsTable
               setIsLoading={setIsLoading}
               isLoading={isLoading}
@@ -85,7 +78,7 @@ const Ledger = () => {
         ]}
         onLogOut={handleLogOut}
         onConnect={open}
-        principal={principal?.toText() === "2vxsx-fae" ? "" : principal?.toText()}
+        principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
       />
     </Container>
   );
