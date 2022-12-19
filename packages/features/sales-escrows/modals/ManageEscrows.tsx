@@ -104,7 +104,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                   {totalAm} {activeTokens['OGY']?.symbol}
                 </b>
               </p>
-              <p style={{ color: '#9A9A9A' }}>${activeTokens['OGY']?.balance / 4}</p>
+              {/* <p style={{ color: '#9A9A9A' }}>${activeTokens['OGY']?.balance / 4}</p> */}
             </Flex>
           </Card>
           <br />

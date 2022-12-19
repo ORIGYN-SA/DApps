@@ -228,6 +228,9 @@ export const NFTPage = () => {
     }
   }, [actor]);
 
+  console.log('cr',currentOpenAuction?.sale_type?.auction?.end_date < new Date().getTime() * 1e8)
+console.log('now',new Date().getTime() * 1e8 )
+
   return (
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
@@ -338,7 +341,7 @@ export const NFTPage = () => {
                                 </Button>
                               )}
                             {principal == verifyOwner ? (
-                              BigInt(currentOpenAuction?.sale_type?.auction?.end_date) >
+                              BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
                               BigInt(new Date().getTime() * 1e8) ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale
