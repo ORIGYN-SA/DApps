@@ -35,12 +35,22 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
         })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed);
 
     // ARRAY OF MANAGERS 
-    // if array contains the user principal return true 
 
-    const ArrayManagers = await getNftCollectionMeta().then((r) =>
+    const Managers = await getNftCollectionMeta().then((r) =>
     r.ok.managers);
 
-    console.log('🚀 - ARRAY MANAGERS', ArrayManagers);
+    console.log('🚀 - ARRAY MANAGERS', Managers);
+
+    const  ManagersArray = () => {
+        let i: any;
+        for (i in Managers) {
+            let ManagersPrincipals = Managers[i].toText();
+            console.log(' 🔏 - PERMISSION LIST - WRITE', ManagersPrincipals);
+            if (ManagersPrincipals === UserPrincipal) {
+                return true;
+            }
+        }
+    }
 
     // CHECK IF THE OWNER IS IN THE PERMISSION LIST
     const AllowedUsers = () => {
@@ -57,7 +67,7 @@ export const checkOwner = async (principal: Principal, currCanisterId, currToken
     console.log('🚀 - COLLECTION OWNER', CollectionOwner);
     console.log('🚀 - USERPRINCIPAL', UserPrincipal);
 
-    if ((UserPrincipal === CollectionOwner) || (AllowedUsers() === true)) {
+    if ((UserPrincipal === CollectionOwner) || (AllowedUsers() === true) || (ManagersArray() === true)) {
         return true;
     } else {
         return false;
