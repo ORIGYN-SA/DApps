@@ -237,6 +237,7 @@ const ColumnView = () => {
       canisterId,
       tokenId,
     );
+    console.log(canisterId, tokenId, checked);
     setOwner(checked);
   };
 
