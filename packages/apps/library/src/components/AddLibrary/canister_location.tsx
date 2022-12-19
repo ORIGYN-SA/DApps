@@ -9,8 +9,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { Grid, Container, TextInput, Button } from '@origyn-sa/origyn-art-ui';
-
+import { Grid, Container, TextInput, Button, HR, Flex } from '@origyn-sa/origyn-art-ui';
 export const CanisterLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
@@ -87,6 +86,7 @@ export const CanisterLocation = (props: any) => {
         ],
       };
       console.log('payload is ', payload);
+      props.setInProgress(true);
       try {
         const response = await stageLibraryAsset([payload.files[0]], props.tokenId);
         console.log('response', response);
@@ -115,6 +115,7 @@ export const CanisterLocation = (props: any) => {
     } catch (e) {
       console.log(e);
     }
+    props.setInProgress(false);
   };
 
   return (
@@ -167,9 +168,14 @@ export const CanisterLocation = (props: any) => {
           </Container>
         )}
       </>
-      <Button btnType="filled" onClick={stageLibrary}>
-        Stage Library
-      </Button>
+      <HR marginTop={16} marginBottom={16} />
+      <Flex align="center" justify="center">
+        <Flex>
+          <Button btnType="filled" onClick={stageLibrary}>
+            Stage Library
+          </Button>
+        </Flex>
+      </Flex>
     </Container>
   );
 };

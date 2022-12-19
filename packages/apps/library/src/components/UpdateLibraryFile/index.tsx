@@ -1,22 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { DropzoneArea } from 'mui-file-dropzone';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
 import { OrigynClient, updateLibraryFileContent } from '@origyn-sa/mintjs';
-// Button delete
-import DeleteIcon from '@mui/icons-material/Delete';
-import Stack from '@mui/material/Stack';
 // Dialog
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Typography } from '@mui/material';
 import { Button } from '@origyn-sa/origyn-art-ui';
+import { LinearProgress } from '@mui/material';
 
 type Props = {
   tokenId: string;
@@ -29,7 +23,7 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
   // Dialog
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
-
+  const [inProgress, setInProgress] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -55,9 +49,36 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
       rawFile: rawFile,
     };
     const { canisterId } = await useRoute();
-    await OrigynClient.getInstance().init(true, canisterId, { actor });
-    const updateResponse = await updateLibraryFileContent(tokenId, libraryId, file);
-    console.log('🚀 ~ file: index.tsx:56 ~ handleSubmit ~ updateResponse', updateResponse);
+    setInProgress(true);
+    try {
+      await OrigynClient.getInstance().init(true, canisterId, { actor });
+      const updateResponse = await updateLibraryFileContent(tokenId, libraryId, file);
+      console.log('updateResponse', updateResponse);
+      if (updateResponse.ok) {
+        // Display a success message - SNACKBAR
+        enqueueSnackbar('Library Updated', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        handleClose();
+      }else{
+        enqueueSnackbar('Something went wrong', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        handleClose();
+      }
+    } catch (e) {
+      console.log('error', e);
+      handleClose();
+    }
+    setInProgress(false);
   };
   const arrayToBuffer = (arrayBuffer) => {
     const buffer = Buffer.alloc(arrayBuffer.byteLength);
@@ -91,7 +112,16 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
+         {inProgress ? (
+          <>
+            <DialogTitle>Updating in Progress</DialogTitle>
+            <DialogContent>
+                <LinearProgress color="secondary" />
+            </DialogContent>
+          </>
+        ) : (
+          <>
+             <DialogTitle id="alert-dialog-title">
           Update file content of library
           {libraryId}
         </DialogTitle>
@@ -104,6 +134,8 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
             Submit
           </Button>
         </DialogActions>
+          </>
+        )}
       </Dialog>
     </>
   );

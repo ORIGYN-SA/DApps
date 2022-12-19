@@ -2,7 +2,7 @@ import React from 'react';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
-import { Container, Grid, HR, TextInput } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, HR, TextInput, Flex } from '@origyn-sa/origyn-art-ui';
 import { UpdateLibraryFile } from '../UpdateLibraryFile';
 
 interface FileType {
@@ -107,20 +107,23 @@ export const LibraryBox = (props: any) => {
           <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
         </Grid>
       </Grid>
+      <HR marginTop={16} marginBottom={16}/>
       {props.loggedIn == true && props.owner == true ? (
         <>
           {!isMutable ? (
             <>
-              <Grid columns={1}>
-                <Grid column={1}>
+              <Flex flexFlow="column" gap={16}>
+                <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}
                     currentTokenId={''}
                     isMutable={isMutable}
                   />
+                </Flex>
+                <Flex>
                   <UpdateLibraryFile libraryId={objLibraryData.library_id} tokenId={''} />
-                </Grid>
-              </Grid>
+                </Flex>
+              </Flex>
             </>
           ) : (
             <></>

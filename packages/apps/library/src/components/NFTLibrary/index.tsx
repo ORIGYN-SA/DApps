@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, Flex, HR } from '@origyn-sa/origyn-art-ui';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
 import { DeleteLibrary } from '../DeleteLibrary';
@@ -96,20 +96,20 @@ export const NFTLibrary = (props: any) => {
           <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
         </Grid>
       </Grid>
+      <HR marginTop={16} marginBottom={16}/>
       {props.loggedIn == true && props.owner == true ? (
         <>
           {!isMutable ? (
             <>
-              <Grid columns={1}>
-                <Grid column={1}>
+              <Flex flexFlow="column">
+                <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}
-                    currentTokenId={''}
+                    currentTokenId={props.currentTokenId}
                     isMutable={isMutable}
                   />
-                  test
-                </Grid>
-              </Grid>
+                </Flex>
+              </Flex>
             </>
           ) : (
             <></>

@@ -16,6 +16,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Typography } from '@mui/material';
 import { Button } from '@origyn-sa/origyn-art-ui';
+import { LinearProgress } from '@mui/material';
 
 export const DeleteLibrary = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -25,6 +26,7 @@ export const DeleteLibrary = (props: any) => {
   const [open, setOpen] = React.useState(false);
   const [numberLibraries, setNumberLibraries] = useState(null);
   const [messageLoadingStatus, setMessageLoadingStatus] = useState(null);
+  const [inProgress, setInProgress] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -75,10 +77,11 @@ export const DeleteLibrary = (props: any) => {
   }, [props.libraryId]);
 
   const DeleteMutableLibrary = async () => {
+    
     const { canisterId } = await useRoute();
 
     await OrigynClient.getInstance().init(true, canisterId, { actor });
-
+setInProgress(true);
     if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
       for (let i in tokensThatUseSelectedLibrary) {
         try {
@@ -138,11 +141,13 @@ export const DeleteLibrary = (props: any) => {
       console.log('error', e);
       handleClose();
     }
+
+    setInProgress(false);
   };
 
   return (
     <>
-      <Button onClick={handleClickOpen}  btnType="filled">
+      <Button onClick={handleClickOpen} btnType="filled">
         Delete this Library
       </Button>
 
@@ -152,65 +157,76 @@ export const DeleteLibrary = (props: any) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {'Delete library: '}
-          {props.libraryId}
-        </DialogTitle>
-        {props.currentTokenId == '' ? (
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {messageLoadingStatus ? (
-                <>
-                  {numberLibraries > 0 ? (
-                    <>
-                      There are {numberLibraries} NFTs that use this library. <br />
-                      Are you sure you want to delete it? <br />
-                    </>
-                  ) : (
-                    <>
-                      There are no NFTs that use this library. <br />
-                      Are you sure you want to delete it? <br />
-                    </>
-                  )}
-                  <b>This action is irreversible.</b>
-                </>
-              ) : (
-                <>
-                  <Typography variant="body1" color="textSecondary">
-                    Loading...
-                  </Typography>
-                </>
-              )}
-            </DialogContentText>
-          </DialogContent>
-        ) : (
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Are you sure you want to delete this library? <br />
-              <b>This action is irreversible.</b>
-            </DialogContentText>
-          </DialogContent>
-        )}
-        <DialogActions>
-          <Button onClick={handleClose}>Back</Button>
+        {inProgress ? (
           <>
-            {messageLoadingStatus ? (
-              <>
-                <Button 
-                 btnType="filled"
-                onClick={DeleteMutableLibrary}>
-                  Delete
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button onClick={DeleteMutableLibrary}  btnType="filled">
-                  Delete
-                </Button>
-              </>
-            )}
+            <DialogTitle>Deleting in Progress</DialogTitle>
+            <DialogContent>
+                <LinearProgress color="secondary" />
+            </DialogContent>
           </>
-        </DialogActions>
+        ) : (
+          <>
+            <DialogTitle id="alert-dialog-title">
+              {'Delete library: '}
+              {props.libraryId}
+            </DialogTitle>
+            {props.currentTokenId == '' ? (
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <>
+                    {messageLoadingStatus ? (
+                      <>
+                        {numberLibraries > 0 ? (
+                          <>
+                            There are {numberLibraries} NFTs that use this library. <br />
+                            Are you sure you want to delete it? <br />
+                          </>
+                        ) : (
+                          <>
+                            There are no NFTs that use this library. <br />
+                            Are you sure you want to delete it? <br />
+                          </>
+                        )}
+                        <b>This action is irreversible.</b>
+                      </>
+                    ) : (
+                      <>
+                        <Typography variant="body1" color="textSecondary">
+                          Loading...
+                        </Typography>
+                      </>
+                    )}
+                  </>
+                </DialogContentText>
+              </DialogContent>
+            ) : (
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to delete this library? <br />
+                  <b>This action is irreversible.</b>
+                </DialogContentText>
+              </DialogContent>
+            )}
+            <DialogActions>
+              <Button onClick={handleClose}>Back</Button>
+              <>
+                {messageLoadingStatus ? (
+                  <>
+                    <Button btnType="filled" onClick={DeleteMutableLibrary}>
+                      Delete
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button onClick={DeleteMutableLibrary} btnType="filled">
+                      Delete
+                    </Button>
+                  </>
+                )}
+              </>
+            </DialogActions>
+          </>
+        )}
       </Dialog>
     </>
   );
