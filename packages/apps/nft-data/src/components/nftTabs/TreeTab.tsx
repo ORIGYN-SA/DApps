@@ -6,7 +6,7 @@ import pick from 'lodash/pick';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useState } from 'react';
-
+import { Container } from '@origyn-sa/origyn-art-ui';
 interface RenderTree {
   id: string;
   name: string;
@@ -102,7 +102,7 @@ function Tree({ metadata }: any) {
         let obj1 = { ...item.data };
         let arr1: RenderTree[] = [];
         for (let j in obj1) {
-          arr1.push({ id: increment(), name: j, children: [{ id: increment(), name: obj1[j] }] });
+          arr1.push({ id: increment(), name: j, children: [{ id: increment(), name: JSON.stringify(obj1[j]) }] });
         }
 
         return {
@@ -179,7 +179,8 @@ function Tree({ metadata }: any) {
     </TreeItem>
   );
   return (
-    <Box margin="6rem 0 0 0">
+    <Container padding="8px 16px">
+    <Box margin="0 0 0 0">
       <FormControlLabel
         control={<Switch onChange={handleExpandAll} checked={all} />}
         label="Expand All"
@@ -199,12 +200,12 @@ function Tree({ metadata }: any) {
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
           onNodeToggle={handleToggle}
-          sx={{ height: 800, flexGrow: 1, maxWidth: 800, overflowY: 'auto' }}
         >
           {renderTree(data)}
         </TreeView>
       )}
     </Box>
+    </Container>
   );
 }
 

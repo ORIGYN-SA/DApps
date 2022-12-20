@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -10,6 +8,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useSnackbar } from 'notistack';
+import { Container, Flex, Modal, Button, Card } from '@origyn-sa/origyn-art-ui';
 
 const Transition = React.forwardRef(
   (
@@ -23,7 +22,7 @@ const Transition = React.forwardRef(
 Transition.displayName = 'Transition';
 
 export const ConfirmSalesActionModal = ({
-  open,
+  openConfirmation,
   handleClose,
   currentToken,
   action,
@@ -35,12 +34,13 @@ export const ConfirmSalesActionModal = ({
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
       if (isLoading) return;
-      setIsLoading(true);
-      const tokenId = currentToken?.Class?.find(({ name }) => name === 'id').value.Text;
+      setIsLoading(true); 
       if (action === 'endSale') {
-        const endSaleResponse = await actor.sale_nft_origyn({end_sale: tokenId});
+        const endSaleResponse = await actor.sale_nft_origyn({
+          end_sale: currentToken,
+        });
         if (endSaleResponse.ok) {
-          enqueueSnackbar(`You have successfully ended the sale for ${tokenId}.`, {
+          enqueueSnackbar(`You have successfully ended the sale for ${currentToken}.`, {
             variant: 'success',
             anchorOrigin: {
               vertical: 'top',
@@ -72,7 +72,16 @@ export const ConfirmSalesActionModal = ({
             },
           },
         });
-        if (withdrawResponse.ok) {
+
+        if ('err' in withdrawResponse) {
+          enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
           enqueueSnackbar('Your escrow has been successfully withdrawn.', {
             variant: 'success',
             anchorOrigin: {
@@ -83,13 +92,7 @@ export const ConfirmSalesActionModal = ({
           setIsLoading(false);
           return handleClose(true);
         }
-        enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+
         setIsLoading(false);
         return handleClose(false);
       }
@@ -104,7 +107,16 @@ export const ConfirmSalesActionModal = ({
             },
           },
         });
-        if (rejectResponse.ok) {
+
+        if ('err' in rejectResponse) {
+          enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
           enqueueSnackbar('The escrow has been rejected.', {
             variant: 'success',
             anchorOrigin: {
@@ -115,13 +127,6 @@ export const ConfirmSalesActionModal = ({
           setIsLoading(false);
           return handleClose(true);
         }
-        enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
         setIsLoading(false);
         return handleClose(false);
       }
@@ -130,28 +135,26 @@ export const ConfirmSalesActionModal = ({
   };
   return (
     <div>
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={() => handleClose(false)}
-        aria-describedby="alert-dialog-slide-description"
+      <Modal 
+      isOpened={openConfirmation} 
+      closeModal={() => handleClose(false)} 
+      size="md"
       >
-        <DialogTitle>
+      <Container size="full" padding="48px">
+        <h2>
           {action === 'endSale'
-            ? 'Confirm End Sale?'
+            ? 'Confirm End Sale'
             : action === 'withdraw'
             ? 'Confirm Escrow Withdraw'
             : 'Confirm Escrow Rejection'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            <div style={{ opacity: isLoading ? '0.4' : '1' }}>
+        </h2>
+        <br/>
+       <Flex flexFlow="column">
               {action === 'endSale' ? (
                 <>
                   Are you sure you want to end the sale for token{' '}
                   <strong>
-                    {currentToken?.Class?.find(({ name }) => name === 'id').value.Text}
+                    {currentToken}
                   </strong>
                   ?
                 </>
@@ -160,21 +163,22 @@ export const ConfirmSalesActionModal = ({
               ) : (
                 <>Are you sure you want to reject the escrow?</>
               )}
-            </div>
-            {isLoading && (
-              <div style={{ marginTop: 5 }}>
-                <LoadingContainer />
-              </div>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
+
+        </Flex>
+        <Flex flow='row' justify='flex-end'>
           <Button onClick={() => _handleClose(false)}>Cancel</Button>
           <Button onClick={() => _handleClose(true)} variant="contained">
             Confirm
           </Button>
-        </DialogActions>
-      </Dialog>
+          </Flex>
+          {isLoading && (
+              <div style={{ marginTop: 5 }}>
+                <LoadingContainer />
+              </div>
+            )}
+
+        </Container>
+      </Modal>
     </div>
   );
 };

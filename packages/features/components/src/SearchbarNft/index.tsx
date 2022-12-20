@@ -1,51 +1,67 @@
 import React, { useContext, useEffect } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
-import { Box, Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import Paper from '@mui/material/Paper';
-import FormControl from '@mui/material/FormControl';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { collectionName } from '@dapp/utils';
-// Preloader
-import { CircularProgress } from '@mui/material';
+import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
+import { Container, Card, Select } from '@origyn-sa/origyn-art-ui';
 
-export const SearchbarNft = (props : any) => {
+interface SelectType {
+  value: string;
+  label: string;
+}
 
-  const { tokenId, actor } = useContext(AuthContext);
-  const [selectTokenIds, setSelectTokenIds] = React.useState(['']);
+const ISPROD = true;
+
+export const SearchbarNft = (props: any) => {
+  const { actor } = useContext(AuthContext);
+  const [tokenId, setTokenId] = React.useState('');
+  const [canisterId, setCanisterId] = React.useState('');
+  const [selectTokenIds, setSelectTokenIds] = React.useState<any>(['']);
   const [idsNumber, setIdsNumber] = React.useState('');
-
-  const handleSelectIds = (event, value) => {
+  const handleSelectIds = (option) => {
     // setSearchBarTokenId state
-    if (value == null) {
-      value = '';
+    if (option.value == null) {
+      option.value = '';
     }
-    props.setSearchBarTokenId(value);
+    props.setSearchBarTokenId(option.value);
     // replace the tokenId in the searchBar
     window.history.pushState(
       '',
       '',
-      window.location.href.replace(`/${props.searchBarTokenId}/`, `/${value}/`),
+      window.location.href.replace(`/${props.searchBarTokenId}/`, `/${option.value}/`),
     );
   };
 
-  const getNFTCollection = async () => {
-    console.log('tokenIDfromContext',tokenId);
+  const NFTobj = async () => {
+    const nft = await getNft(tokenId);
+    console.log('nft', nft);
+  };
+
+  const GetTokenId = async () => {
+    setTokenId(await useRoute().then((res) => res.tokenId));
+  };
+  const GetCanisterId = async () => {
+    setCanisterId(await useRoute().then((res) => res.canisterId));
+  };
+
+  useEffect(() => {
+    NFTobj();
+    GetTokenId();
+    GetCanisterId();
+  }, []);
+  const NFTCollection = async () => {
     setSelectTokenIds(['Loading...']);
-    const response = await actor?.collection_nft_origyn([]);
+    const response = await getNftCollectionMeta();
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
     const number_ids = collectionNFT.token_ids_count[0].toString();
     setIdsNumber(number_ids);
-    let x: string;
     const arrayTokenIds = [];
-    for (x in obj_token_ids) {
+    for (var x in obj_token_ids) {
       var newID = obj_token_ids[x];
       // This is the array created to be filtered with Intersection
       arrayTokenIds.push(newID);
       setSelectTokenIds([...newID]);
     }
-
     // Check if the token Id is in the url
     const splitted_url: string[] = window.location.href.split('/');
     // Empty indexID
@@ -66,80 +82,71 @@ export const SearchbarNft = (props : any) => {
       // setSearchBarTokenId state
       props.setSearchBarTokenId(tokenId);
     } else {
-      // setSearchBarTokenId state
-      props.setSearchBarTokenId('Not selected');
+      if (window.location.href.search('collection')!=-1) {
+        props.setSearchBarTokenId(obj_token_ids[0][0]);
+      } else {
+        // setSearchBarTokenId state
+        props.setSearchBarTokenId(obj_token_ids[0][0]);
+        window.location.href = window.location.href.replace(`/${tokenId}/`, `/${obj_token_ids[0][0]}/`);
+      }
+
     }
   };
   // if the actor changes getNftCollection is called
   useEffect(() => {
     if (actor) {
-      getNFTCollection();
+      OrigynClient.getInstance().init(ISPROD,canisterId);
+      NFTCollection();
     }
   }, [actor]);
-
   return (
-    <Box
-      component={Paper}
-      elevation={2}
-      sx={{ margin: 2, width: '100%', padding: 2 }}
-    >
+    <Container padding="16px">
       {props.isLoading ? (
-        <Box sx={{ textAlign: 'center' }}>
-          <CircularProgress color="inherit" />
-        </Box>
+        <Card 
+        type="filled"
+        align="center"
+        padding="16px"
+      >
+          Loading...
+        </Card>
       ) : (
-        <FormControl sx={{ m: 1, width: '100%' }}>
+        <Container>
           {tokenId == "" ? (
-            <div>
-              <Typography
-                sx={{
-                  m: 1,
-                  width: '95%',
-                }}
-              >
+            <>
+              <Container padding="16px">
                 Collection name: <b>{collectionName(tokenId)}</b>
-              </Typography>
-              <Typography
-                sx={{
-                  m: 1,
-                  borderBottom: '1px solid',
-                  paddingBottom: 2,
-                  width: '95%',
-                }}
-              >
+              </Container>
+              <Container padding="16px">
                 Current Token ID: <b>{props.searchBarTokenId}</b>
-              </Typography>
-            </div>
+              </Container>
+            </>
           ) : (
-            <Typography
-              sx={{
-                m: 1,
-                borderBottom: '1px solid',
-                paddingBottom: 2,
-                width: '95%',
-              }}
-            >
+            <Container padding="16px">
               Current Token ID: <b>{props.searchBarTokenId}</b>
-            </Typography>
+            </Container>
           )}
-          <Typography sx={{ m: 1, fontSize: 13 }}>
+          <Container padding="16px" >
             Search for other NFT&#39;S <em>(+{idsNumber}...)</em>
-          </Typography>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={selectTokenIds}
-            sx={{ width: '95%', m: 1 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Other tokens IDS" />
-            )}
-            value={props.searchBarTokenId}
-            onChange={(event, newValue) => {
-              handleSelectIds(event, newValue);
+          </Container>
+          <Container padding="16px">
+            <Select 
+             placeholder="Token Ids"
+             selectedOption={props.searchBarTokenId}
+            handleChange={(opt) => {
+              handleSelectIds(opt);
             }}
-          />
-        </FormControl>
+             options={
+              selectTokenIds.map((token) => {
+                return {
+                  value: token,
+                  label: token,
+                };
+              })
+             }
+            />
+          </Container>
+        </Container>
       )}
-    </Box>
+    </Container>
   );
 };

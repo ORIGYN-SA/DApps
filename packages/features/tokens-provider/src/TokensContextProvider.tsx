@@ -4,6 +4,7 @@ import JSONBig from 'json-bigint';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
+import { timeConverter } from '@dapp/utils';
 
 const defaultTokens = {
   ICP: {
@@ -65,6 +66,10 @@ export type TokensContext = {
   tokens: {
     [key: string]: Token;
   };
+  time?: string | number | void;
+  activeTokens: {
+    [key: string]: Token;
+  };
   addToken?: (
     isLocal: boolean,
     canisterId: string,
@@ -101,16 +106,24 @@ const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
+  activeTokens:
+    Object.keys(initialTokens)
+      .filter((t) => initialTokens[t].enabled)
+      .reduce((ats,key) => ({...ats, [key]: initialTokens[key]}), {}),
+  time: timeConverter(BigInt(new Date().getTime() * 1000000))
 });
+
 
 export const useTokensContext = () => {
   const context = useContext(TokensContext);
   return context;
 };
 
+
+
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
-
+  const [time, setTime] = useState<any>()
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -167,7 +180,6 @@ export const TokensContextProvider: React.FC = ({ children }) => {
   };
 
   const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
-    console.log('refreshAllBalances > calling');
     // Refresh icon
     const _tokens = tokens;
     Object.keys(_tokens).map((symbol) => {
@@ -175,6 +187,8 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
     setTokens(() => ({ ..._tokens }));
 
+    const today = timeConverter(BigInt(new Date().getTime() * 1000000))
+    setTime(today)
     // Actual balance
     return Promise.all(
       Object.keys(_tokens).map(async (symbol) => {
@@ -183,6 +197,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     ).then(() => {
       setTokens(() => ({ ..._tokens }));
     });
+    
   };
 
   const setLocalCanisterId = (symbol: string, canisterId: string) => {
@@ -206,6 +221,11 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         setLocalCanisterId,
         toggleToken,
         tokens,
+        time,
+        activeTokens:
+          Object.keys(tokens)
+            .filter((t) => tokens[t].enabled)
+            .reduce((ats,key) => ({...ats, [key]: tokens[key]}), {}),
       }}
     >
       {children}

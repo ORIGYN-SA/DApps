@@ -69,4 +69,61 @@ const palette = {
   },
 };
 
+const figmaPalette = {
+  light: {
+    primary: {
+      background: '#FEFEFE',
+      border: '#E3E3E3',
+      secondary: '#5F5F5F',
+      inactive: '#9A9A9A',
+      text: '#151515'
+    },
+    origyn_gold: {
+      primary: '#EE9907'
+    },
+    origyn_purple: {
+      primary: '#70237D',
+      hover: '#2B0B31',
+      pressed: '#43154A'
+    },
+    origyn_turquoise: {
+      primary: '#43B8CA'
+    },
+    origyn_green: {
+      primary: '#5EAC31'
+    },
+    origyn_red: {
+      primary: 'DD1422',
+      error: 'B5010A'
+    },
+  },  
+  dark: {
+    primary: {
+      background: '#151515',
+      border: '#242424',
+      secondary: '#5F5F5F',
+      inactive: '#9A9A9A',
+      text: '#FEFEFE'
+    },
+    origyn_gold: {
+      primary: '#EE9907'
+    },
+    origyn_purple: {
+      primary: '#70237D',
+      hover: '#2B0B31',
+      pressed: '#43154A'
+    },
+    origyn_turquoise: {
+      primary: '#43B8CA'
+    },
+    origyn_green: {
+      primary: '#5EAC31'
+    },
+    origyn_red: {
+      primary: 'DD1422',
+      error: 'B5010A'
+    },
+  }
+}
+
 export default palette;

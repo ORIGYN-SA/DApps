@@ -149,7 +149,9 @@ exports[`Component/TransactionModal/Sale withdraw should match the snapshot 1`] 
             <p
               class="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom css-d3wcwz-MuiTypography-root"
             >
-              ICP
+              <test-file-stub
+                classname="token-symbol"
+              />
             </p>
             <p
               class="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom css-16m3jxf-MuiTypography-root"

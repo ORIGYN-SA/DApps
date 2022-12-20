@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { timeConverter } from '@dapp/utils';
 import { AuthContext } from '@dapp/features-authentication';
-import { Box, IconButton } from '@mui/material';
-import Modal from '@mui/material/Modal';
+import { IconButton } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,7 +16,6 @@ import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined
 // Import Interfaces TS
 import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
-import { CircularProgress } from '@mui/material';
 import { Mint } from './functions/Mint';
 import {AuctionBid}  from './functions/AuctionBid';
 import { SaleEnded } from './functions/SaleEnded';
@@ -26,9 +24,13 @@ import { OwnerTransfer } from './functions/OwnerTransfer';
 import { EscrowDeposit } from './functions/EscrowDeposit';
 import { EscrowWithdraw } from './functions/EscrowWithdraw';
 import { SaleWithdraw } from './functions/SaleWithdraw';
-// Preloader
+// mintjs
+import { getNftHistory} from '@origyn-sa/mintjs';
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
+
+import { Container, Modal} from '@origyn-sa/origyn-art-ui';
+
 // Table style
 const cell_style = {
   colSpan: '4',
@@ -156,7 +158,7 @@ export const TransactionsTable = (props: any) => {
     // array for dynamyc Select values
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
-    const response = await actor?.history_nft_origyn(props.searchBarTokenId.toString(), [], []);
+    const response = await getNftHistory(props.searchBarTokenId.toString());
     // response 2 string
     const string_history = JSON.stringify(
       response,
@@ -168,7 +170,6 @@ export const TransactionsTable = (props: any) => {
 
     // enter in the obj
     const historyNFT = json_history.ok;
-    // console.log("!!!", actor);
     let x: string;
     let _props: string;
 
@@ -358,7 +359,6 @@ export const TransactionsTable = (props: any) => {
             };
             setRowsArray((x) => [...x, { ...newRow }]);
             select_vals.push(transactionObj.type_txn);
-            // console.log('match');
             setIsEmpty(false);
             break;
           case 'Transaction Id':
@@ -375,7 +375,6 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
 
-              // console.log('match');
               setIsEmpty(false);
             }
             break;
@@ -393,7 +392,6 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              // console.log('match');
               setIsEmpty(false);
             }
             break;
@@ -414,7 +412,6 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              // console.log('match');
               setIsEmpty(false);
             }
             break;
@@ -436,7 +433,6 @@ export const TransactionsTable = (props: any) => {
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
 
-              // console.log('match');
               setIsEmpty(false);
             }
 
@@ -462,7 +458,6 @@ export const TransactionsTable = (props: any) => {
               } else {
                 select_vals.push(transactionObj.type_txn);
               }
-              // console.log('match');
               setIsEmpty(false);
             }
             break;
@@ -491,7 +486,6 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              // console.log('match');
               setIsEmpty(false);
             } else {
               select_vals.push('');
@@ -527,7 +521,6 @@ export const TransactionsTable = (props: any) => {
                 };
                 setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
-                // console.log('match');
                 setIsEmpty(false);
               }
             }
@@ -598,20 +591,15 @@ export const TransactionsTable = (props: any) => {
   }, [props.searchBarTokenId, props.filter]);
 
   return (
-    <Box margin="0 0 0 0" display="flex" flexDirection="column" alignItems="center">
+    <>
       {props.isLoading ? (
-        <Box
-          component={Paper}
-          elevation={3}
-          sx={{ margin: 2, width: '100%', padding: 2, textAlign: 'center' }}
-        >
-          <CircularProgress color="inherit" />
-        </Box>
+      <Container padding="16px">
+        Loading...
+      </Container>
       ) : (
         <TableContainer
           component={Paper}
           elevation={2}
-          sx={{ margin: 2, width: '100%', padding: 2 }}
         >
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="ogy_data_table">
             {props.searchBarTokenId == 'Not selected'? (
@@ -690,16 +678,17 @@ export const TransactionsTable = (props: any) => {
           />
         </TableContainer>
       )}
+      
       <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        closeModal={handleClose}
+        isOpened = {open}
+        mode="light"
+        size="md"   
       >
-        <Box sx={style}>
+        <Container padding="16px">
           <Transaction modalData={modalData} />
-        </Box>
+          </Container>
       </Modal>
-    </Box>
+      </>
   );
 };

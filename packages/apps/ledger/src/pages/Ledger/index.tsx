@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import Container from '@mui/material/Container';
-import { Box } from '@mui/material';
-import {VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft } from '@dapp/features-components';
-
-const container_style = {
-  size: 'l',
-  padding: '12px',
-};
+import React, { useEffect, useState, useContext } from 'react';
+import { AuthContext } from '@dapp/features-authentication';
+import {
+  VersionLabel,
+  TransactionFilter,
+  TransactionsTable,
+  SearchbarNft,
+} from '@dapp/features-components';
+import { SecondaryNav, Container, Banner, HR } from '@origyn-sa/origyn-art-ui';
 
 const Ledger = () => {
   const ledgerVersion: string = '0.1.0';
-  const [isLoading, setIsLoading] = useState(false);
+  const { principal, actor, handleLogOut } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
   const [indexID, setIndexID] = React.useState('');
   const [filter, setFilter] = useState<{
@@ -28,44 +29,56 @@ const Ledger = () => {
   const [transactionData, setTransactionData] = useState([]);
   const [trans_types, setTrans_types] = React.useState([]);
 
-  return (
-    <Container sx={container_style}>
-      <Box
-        margin="0 0 0 0"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-      > 
-        <SearchbarNft
-          setSearchBarTokenId={setSearchBarTokenId}
-          setIndexID={setIndexID}
-          searchBarTokenId={searchBarTokenId}
-          isLoading={isLoading}
-        />
+  useEffect(() => {
+    setSearchBarTokenId('');
+    setIsLoading(true);
+  }, [actor]);
 
-        <TransactionFilter
-          isLoading={isLoading}
-          setFilter={setFilter}
-          trans_types={trans_types}
-          setTrans_types={setTrans_types}
-          transactionData={transactionData}
-          searchBarTokenId={searchBarTokenId}
-        />
-      </Box>
-      <TransactionsTable
-        setIsLoading={setIsLoading}
-        isLoading={isLoading}
-        searchBarTokenId={searchBarTokenId}
-        indexID={indexID}
-        setIndexID={setIndexID}
-        filter={filter}
-        setFilter={setFilter}
-        setTrans_types={setTrans_types}
-        setTransactionData={setTransactionData}
-        transactionData={transactionData}
-      />
-      <VersionLabel
-        ledgerVersion={ledgerVersion}
+  useEffect(() => {
+    document.title = 'Origyn Digital Certificates Ledger';
+  }, []);
+
+  return (
+    <Container fullWidth padding="0" flexFlow="column">
+      <SecondaryNav
+        title="Ledger"
+        tabs={[{ title: 'Transactions', id: 'Transactions' }]}
+        content={[
+          <Container>
+            <SearchbarNft
+              setSearchBarTokenId={setSearchBarTokenId}
+              setIndexID={setIndexID}
+              searchBarTokenId={searchBarTokenId}
+              isLoading={isLoading}
+            />
+            <HR marginTop="16px" marginBottom="16px" />
+            <TransactionFilter
+              isLoading={isLoading}
+              setFilter={setFilter}
+              trans_types={trans_types}
+              setTrans_types={setTrans_types}
+              transactionData={transactionData}
+              searchBarTokenId={searchBarTokenId}
+            />
+            <HR marginTop="16px" marginBottom="16px" />
+            <TransactionsTable
+              setIsLoading={setIsLoading}
+              isLoading={isLoading}
+              searchBarTokenId={searchBarTokenId}
+              indexID={indexID}
+              setIndexID={setIndexID}
+              filter={filter}
+              setFilter={setFilter}
+              setTrans_types={setTrans_types}
+              setTransactionData={setTransactionData}
+              transactionData={transactionData}
+            />
+            <VersionLabel ledgerVersion={ledgerVersion} />
+          </Container>,
+        ]}
+        onLogOut={handleLogOut}
+        onConnect={open}
+        principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
       />
     </Container>
   );

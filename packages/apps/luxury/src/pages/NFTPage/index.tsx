@@ -1,6 +1,6 @@
 import { CssBaseline, Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import ArrowIcon from '../../components/ArrowIcon';
@@ -97,8 +97,10 @@ const History = styled.div`
 `;
 
 const NFTPage = () => {
-  const { tokenId, canisterId, actor } = useContext(AuthContext);
+  const { actor } = useContext(AuthContext);
   const [specifications, setSpecifications] = useState(true);
+  const [tokenId, setTokenId] = useState("");
+  const [canisterId, setCanisterId] = useState("");
   const [history, setHistory] = useState(true);
   const [documents, setDocuments] = useState(true);
   const [description, setDescription] = useState(true);
@@ -110,7 +112,12 @@ const NFTPage = () => {
 
   useEffect(() => {
     console.log(actor);
-    actor?.nft_origyn(tokenId).then((data) => {
+    // TODO: fix any data
+    actor?.nft_origyn(tokenId).then((data: any) => {
+
+      if ('err' in data)
+        throw new Error(Object.keys(data.err)[0]);
+
       const meta = data?.ok?.metadata.Class;
       const apps = meta?.find((data) => data.name === '__apps');
       const publicApp = apps.value.Array.thawed.find(
@@ -147,6 +154,13 @@ const NFTPage = () => {
       console.log(history);
     });
   }, [actor, tokenId]);
+
+  useEffect(() => {
+    useRoute().then(({ canisterId, tokenId }) => {
+      setCanisterId(canisterId);
+      setTokenId(tokenId);
+    });
+  }, []);
 
   return (
     <ContentContainer imageURL="123">
@@ -431,7 +445,7 @@ const NFTPage = () => {
                 <hr />
                 <h3>22/10/2020</h3>
                 <p>
-                  <b>NFT Creation</b>
+                  <b>Digital Certificates Creation</b>
                 </p>
                 <p>Organisation name</p>
               </History>

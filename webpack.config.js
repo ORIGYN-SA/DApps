@@ -37,6 +37,12 @@ module.exports = (env, argv, dAppConfig) => ({
     alias: {
       react: path.join(__dirname, 'node_modules/react'),
     },
+    fallback: {
+      fs: false,
+      path: false,
+      crypto: require.resolve('crypto-browserify'),
+      stream: require.resolve('stream-browserify'),
+    },
   },
   output: {
     filename: dAppConfig?.name ? `${dAppConfig?.name}.js` : 'index.js',
@@ -119,6 +125,6 @@ module.exports = (env, argv, dAppConfig) => ({
     disableHostCheck: true,
     openPage: dAppConfig?.openPage
       ? dAppConfig.openPage
-      : '-/baycdev/-/bayc-1/-/',
+      : '-/bmdev/-/bm-1/-/',
   },
 })

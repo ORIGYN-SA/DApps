@@ -1,15 +1,11 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import LibraryImage from '../LibraryImage';
-import LibraryVideo from '../LibraryVideo';
-import LibraryText from '../LibraryText';
-import LibraryDefault from '../LibraryDefault';
+import { Layouts } from '../LayoutsType';
+import LibraryDefault from '../LayoutsType/LibraryDefault';
+import { DeleteLibrary } from '../DeleteLibrary';
+import { Container, Grid, HR, Flex } from '@origyn-sa/origyn-art-ui';
+import { UpdateLibraryFile } from '../UpdateLibraryFile';
 
-interface curLibraryData {
+interface FileType {
   library_id: string;
   title: string;
   content_type: string;
@@ -17,6 +13,7 @@ interface curLibraryData {
   location_type: string;
   size: number;
 }
+
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -27,95 +24,102 @@ function formatBytes(bytes, decimals = 2) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-const LibraryBox = (props: any) => {
-  let objLibraryData: curLibraryData = {
-    library_id: props.currentLibrary?.Class[0]?.value?.Text,
-    title: props.currentLibrary?.Class[1]?.value?.Text,
-    content_type: props.currentLibrary?.Class[4]?.value?.Text,
-    location: props.currentLibrary?.Class[3]?.value?.Text,
-    location_type: props.currentLibrary?.Class[2]?.value?.Text,
-    size: props.currentLibrary?.Class[6]?.value?.Nat,
-  };
+export const LibraryBox = (props: any) => {
+  console.log('props', props);
+  const LocationType = props.library3.Class.filter((item) => item.name === 'location_type')[0].value
+    .Text;
+  const isMutable = props.library3.Class.filter(
+    (item) => item.name === 'com.origyn.immutable_library',
+  )[0];
+  let objLibraryData: FileType;
+  switch (LocationType) {
+    case 'canister':
+      objLibraryData = {
+        library_id: props.library3?.Class.filter((item) => item.name === 'library_id')[0].value
+          .Text,
+        title: props.library3?.Class.filter((item) => item.name === 'title')[0].value.Text,
+        content_type: props.library3?.Class.filter((item) => item.name === 'content_type')[0].value
+          .Text,
+        location: props.library3?.Class.filter((item) => item.name === 'location')[0].value.Text,
+        location_type: LocationType,
+        size: props.library3?.Class.filter((item) => item.name === 'size')[0].value.Nat,
+      };
+      break;
+    case 'collection':
+      objLibraryData = {
+        library_id: props.library3?.Class.filter((item) => item.name === 'library_id')[0].value
+          .Text,
+        title: props.library3?.Class.filter((item) => item.name === 'title')[0].value.Text,
+        content_type: props.library3?.Class.filter((item) => item.name === 'content_type')[0].value
+          .Text,
+        location: props.library3?.Class.filter((item) => item.name === 'location')[0].value.Text,
+        location_type: LocationType,
+        size: props.library3?.Class.filter((item) => item.name === 'size')[0].value.Nat,
+      };
+      break;
+    case 'web':
+      objLibraryData = {
+        library_id: props.library3?.Class.filter((item) => item.name === 'library_id')[0].value
+          .Text,
+        title: props.library3?.Class.filter((item) => item.name === 'title')[0].value.Text,
+        content_type: 'URL',
+        location: props.library3?.Class.filter((item) => item.name === 'location')[0].value.Text,
+        location_type: LocationType,
+        size: 0,
+      };
+      break;
+  }
 
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        minWidth: 275,
-        borderRadius: '0px',
-      }}
-    >
-      <CardContent>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography
-              sx={{
-                m: 2,
-                fontSize: 17,
-                borderBottom: '1px solid',
-                marginBottom: '30px',
-              }}
-              color="text.secondary"
-              gutterBottom
-            >
-              <b>LIBRARY ID:</b> {objLibraryData.library_id}
-            </Typography>
-            <Typography
-              sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-              color="text.primary"
-              gutterBottom
-            >
-              <b>TITLE:</b> {objLibraryData.title}
-              <br></br>
-            </Typography>
-            <Typography
-              sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-              color="text.primary"
-              gutterBottom
-            >
-              <b>LOCATION TYPE:</b> {objLibraryData.location_type}
-              <br></br>
-            </Typography>
-            <Typography
-              sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-              color="text.primary"
-              gutterBottom
-            >
-              <b>CONTENT TYPE:</b> {objLibraryData.content_type}
-              <br></br>
-            </Typography>
-            <Typography
-              sx={{ m: 2, fontSize: 17, marginBottom: '10px' }}
-              color="text.primary"
-              gutterBottom
-            >
-              <b>SIZE:</b> {formatBytes(Number(objLibraryData.size))}
-              <br></br>
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Box sx={{ m: 2 }}>
-              {(() => {
-                switch (objLibraryData.content_type) {
-                  case 'image/png' || 'image/jpg':
-                    return <LibraryImage source={objLibraryData.location} />;
-
-                  case 'video/mp4' || 'video/html5':
-                    return <LibraryVideo source={objLibraryData.location} />;
-
-                  case 'text/html':
-                    return <LibraryText source={objLibraryData.location} />;
-
-                  default:
-                    return <LibraryDefault source={objLibraryData.location} />;
-                }
-              })()}
-            </Box>
-          </Grid>
+    <Container padding="16px">
+      <Grid columns={1}>
+        <Grid column={1}>
+          {objLibraryData.content_type in Layouts ? (
+            Layouts[objLibraryData.content_type](objLibraryData.location)
+          ) : (
+            <LibraryDefault source={objLibraryData.location} />
+          )}
         </Grid>
-      </CardContent>
-    </Card>
+      </Grid>
+      <Grid columns={1}>
+        <Grid column={1}>
+          <b>{objLibraryData.title}</b>
+          <span style={{ color: 'grey' }}>
+            {objLibraryData.content_type} - {formatBytes(Number(objLibraryData.size))}
+          </span>
+          <br />
+          Library Id:
+          <span style={{ color: 'grey' }}>{objLibraryData.library_id}</span>
+          <br></br>
+          Location type:
+          <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
+        </Grid>
+      </Grid>
+      <HR marginTop={16} marginBottom={16}/>
+      {props.loggedIn == true && props.owner == true ? (
+        <>
+          {!isMutable ? (
+            <>
+              <Flex flexFlow="column" justify="center" gap={16}>
+                <Flex>
+                  <DeleteLibrary
+                    libraryId={objLibraryData.library_id}
+                    currentTokenId={''}
+                    isMutable={isMutable}
+                  />
+                </Flex>
+                <Flex>
+                  <UpdateLibraryFile libraryId={objLibraryData.library_id} tokenId={''} />
+                </Flex>
+              </Flex>
+            </>
+          ) : (
+            <></>
+          )}
+        </>
+      ) : (
+        <></>
+      )}
+    </Container>
   );
 };
-
-export default LibraryBox;
