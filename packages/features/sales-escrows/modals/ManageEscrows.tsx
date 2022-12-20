@@ -97,7 +97,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
         <Container size="full" padding="48px">
           <h3>Manage Escrow</h3>
           <br />
-          <Card align="center" padding="12px" justify="space-between">
+          {/* <Card align="center" padding="12px" justify="space-between">
             <Flex gap={8}>
               <TokenIcon symbol={activeTokens['OGY']?.icon} />
               {activeTokens['OGY']?.icon}
@@ -108,9 +108,9 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                   {totalAm} {activeTokens['OGY']?.symbol}
                 </b>
               </p>
-              {/* <p style={{ color: '#9A9A9A' }}>${activeTokens['OGY']?.balance / 4}</p> */}
+              <p style={{ color: '#9A9A9A' }}>${activeTokens['OGY']?.balance / 4}</p>
             </Flex>
-          </Card>
+          </Card> */}
           <br />
 
           {escrow.length > 0 ? (
