@@ -11,75 +11,71 @@ import ListItem from '@mui/material/ListItem';
 import Collapse from '@mui/material/Collapse';
 import { Box } from '@mui/system';
 // Library components
-import { LibraryBox } from '../LibraryBox';
+import { CollectionLibrary } from '../CollectionLibrary';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
 import { Container } from '@origyn-sa/origyn-art-ui';
 
 const ColumnView = () => {
+
+  const classes = useStyles();
+  const { actor, loggedIn, principal } = useContext(AuthContext);
+
+  const [canisterId, setCanisterId] = useState('');
+
+  const [collectionNft, setCollectionNft] = useState([]);
   const [owner, setOwner] = React.useState<boolean>(false);
   const [currentTokenId, setCurrentTokenId] = useState('');
   const [selectedIndex, setSelectedIndex] = React.useState(null);
   const [selectedNft, setSelectedNft] = React.useState(0);
   const [selectedMeta, setSelectedMeta] = React.useState(0);
   const [selectedLibrary, setSelectedLibrary] = React.useState(0);
-  const [open, setOpen] = React.useState(false);
-  const [open1, setOpen1] = React.useState(false);
+  const [openCollectionLevel, setOpenCollectionLevel] = React.useState(false);
   const [openLib, setOpenLib] = React.useState(false);
   const [openDetails, setOpenDetails] = React.useState(false);
-  // General Library -- tokenId empty
+  // Collection level Libraries -- tokenId empty
   const [collectionLevelLibraryData, setCollectionLevelLibraryData] = useState<Array<any>>([]);
   // Specific library -- tokenId from URL or from clicked item
-  const [libraryData, setLibraryData] = useState<Array<any>>([]);
-  const [openForm, setOpenForm] = React.useState(false);
-  const [openDeta, setOpenDeta] = useState(false);
-  const [openDub, setOpenDub] = useState(false);
+  const [tokenLibraryData, setTokenLibraryData] = useState<Array<any>>([]);
+  const [openAddLibrary, setOpenAddLibrary] = React.useState(false);
+  const [openLibrarySelectedToken, setOpenLibrarySelectedToken] = useState(false);
+  const [openLibraryCollectionLevel, setOpenLibraryCollectionLevel] = useState(false);
   const [libDet, setLibDet] = useState();
-  const [opera, setOpera] = useState(false);
-  const classes = useStyles();
   const [library3, setLibrary3] = useState();
-  const { actor, loggedIn, principal } = useContext(AuthContext);
-  const [canisterId, setCanisterId] = useState('');
-  const [collectionNft, setCollectionNft] = useState([]);
-
-  const [openFormCollectionLevel, setOpenFormCollectionLevel] = React.useState(false);
+  const [openAddLibraryCollectionLevel, setOpenAddLibraryCollectionLevel] = React.useState(false);
 
   const handleClickOnNfts = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    setOpen(!open);
-    setOpen1(false);
+    setOpenCollectionLevel(!openCollectionLevel);
     setOpenLib(false);
-    setOpera(false);
     setOpenDetails(false);
-    setOpenDub(false);
-    setOpenDeta(false);
-    setOpenForm(false);
-    setOpenFormCollectionLevel(false);
+    setOpenLibraryCollectionLevel(false);
+    setOpenLibrarySelectedToken(false);
+    setOpenAddLibrary(false);
+    setOpenAddLibraryCollectionLevel(false);
     nftCollection();
     setSelectedIndex(index);
   };
 
-  const handleClick1 = async (
+  const handleClickOnSelectedNft = async (
     nft,
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
     const { canisterId } = await useRoute();
-    setOpen1(!open1);
     setOpenLib(false);
-    setOpera(false);
     setOpenDetails(false);
-    setOpenDeta(false);
-    setOpenForm(false);
+    setOpenLibrarySelectedToken(false);
+    setOpenAddLibrary(false);
     handleDetails();
     setSelectedNft(index);
     setCurrentTokenId(nft);
     OrigynClient.getInstance().init(true, canisterId);
     getNft(nft).then((r) => {
       console.log('nft_origyn', r);
-      setLibraryData(
+      setTokenLibraryData(
         r.ok.metadata.Class.filter((res) => {
           return res.name === 'library';
         })[0].value.Array.thawed,
@@ -87,19 +83,17 @@ const ColumnView = () => {
     });
   };
 
-  const handleClickLib = async (
+  const handleClickOnCollectionLevel= async (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
     setOpenLib(!openLib);
-    setOpen(false);
-    setOpen1(false);
-    setOpera(false);
+    setOpenCollectionLevel(false);
     setOpenDetails(false);
-    setOpenDeta(false);
-    setOpenDub(false);
-    setOpenForm(false);
-    setOpenFormCollectionLevel(false);
+    setOpenLibrarySelectedToken(false);
+    setOpenLibraryCollectionLevel(false);
+    setOpenAddLibrary(false);
+    setOpenAddLibraryCollectionLevel(false);
     setSelectedIndex(index);
     // Collection level libraries the tokenId is empty
     if (actor) {
@@ -115,16 +109,15 @@ const ColumnView = () => {
   };
 
   const handleClickLib1 = () => {
-    setOpera(!opera);
     setOpenDetails(false);
-    setOpenDeta(false);
-    setOpenForm(false);
+    setOpenLibrarySelectedToken(false);
+    setOpenAddLibrary(false);
   };
 
   const handleDetails = () => {
     setOpenDetails(true);
-    setOpenDeta(false);
-    setOpenForm(false);
+    setOpenLibrarySelectedToken(false);
+    setOpenAddLibrary(false);
   };
 
   const handleDeta = async (
@@ -132,62 +125,57 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    setOpenDeta(true);
+    setOpenLibrarySelectedToken(true);
     setLibDet(lib);
     setSelectedMeta(index);
-    setOpenForm(false);
+    setOpenAddLibrary(false);
   };
 
-  const handleClick3 = (
+  const showCollectionLevelLibraryData = (
     lib3,
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
     setLibrary3(lib3);
     setSelectedLibrary(index);
-    setOpenDub(true);
-    setOpenForm(false);
-    setOpenFormCollectionLevel(false);
+    setOpenLibraryCollectionLevel(true);
+    setOpenAddLibrary(false);
+    setOpenAddLibraryCollectionLevel(false);
   };
 
-  const handleForm = () => {
-    setOpenForm(!openForm);
+  const handleAddLibrary = () => {
+    setOpenAddLibrary(!openAddLibrary);
     setOpenLib(false);
-    setOpera(false);
     setOpenDetails(false);
-    setOpenDub(false);
-    setOpenDeta(false);
+    setOpenLibraryCollectionLevel(false);
+    setOpenLibrarySelectedToken(false);
   };
 
-  const handleForm1 = () => {
-    setOpenFormCollectionLevel(!openFormCollectionLevel);
+  const handleAddLibraryAtCollection = () => {
+    setOpenAddLibraryCollectionLevel(!openAddLibraryCollectionLevel);
     setOpenLib(false);
-    setOpera(false);
     setOpenDetails(false);
-    setOpenDub(false);
-    setOpenDeta(false);
+    setOpenLibraryCollectionLevel(false);
+    setOpenLibrarySelectedToken(false);
   };
 
   const openSpecificNft = async () => {
     const { tokenId, canisterId } = await useRoute();
     if (tokenId !== '') {
-      setOpen(!open);
+      setOpenCollectionLevel(!openCollectionLevel);
       setOpenLib(false);
-      setOpera(false);
       setOpenDetails(false);
-      setOpenDub(false);
-      setOpenDeta(false);
-      setOpenForm(false);
+      setOpenLibraryCollectionLevel(false);
+      setOpenLibrarySelectedToken(false);
+      setOpenAddLibrary(false);
       await nftCollection();
-      setOpen1(!open1);
       handleDetails();
-
       OrigynClient.getInstance().init(true, canisterId);
       setCurrentTokenId(tokenId);
       setSelectedIndex(0);
       setSelectedNft((await nftCollection()).indexOf(tokenId));
       getNft(tokenId).then((r) => {
-        setLibraryData(
+        setTokenLibraryData(
           r.ok.metadata.Class.filter((res) => {
             return res.name === 'library';
           })[0].value.Array.thawed,
@@ -266,7 +254,7 @@ const ColumnView = () => {
                   <ListItem className={classes.classes['noPadding']}>
                     <ListItemButton
                       selected={selectedIndex === 1}
-                      onClick={(event) => handleClickLib(event, 1)}
+                      onClick={(event) => handleClickOnCollectionLevel(event, 1)}
                       className={classes.classes['noPadding']}
                     >
                       <ListItemText sx={{ paddingLeft: 1 }} primary="Collection" />
@@ -275,7 +263,7 @@ const ColumnView = () => {
                 </Grid>
               </Grid>
             </Box>
-            <Collapse in={open} timeout="auto" unmountOnExit>
+            <Collapse in={openCollectionLevel} timeout="auto" unmountOnExit>
               <Box
                 minHeight={Sizes.minHeight}
                 borderRight={1}
@@ -288,7 +276,7 @@ const ColumnView = () => {
                         <ListItem className={classes.classes['noPadding']} key={index}>
                           <ListItemButton
                             selected={selectedNft === index}
-                            onClick={(event) => handleClick1(nft, event, index)}
+                            onClick={(event) => handleClickOnSelectedNft(nft, event, index)}
                             className={classes.classes['noPadding']}
                           >
                             <ListItemText
@@ -317,7 +305,7 @@ const ColumnView = () => {
                         <ListItem className={classes.classes['noPadding']}>
                           <ListItemButton
                             className={classes.classes['noPadding']}
-                            onClick={() => handleForm()}
+                            onClick={() => handleAddLibrary()}
                           >
                             <ListItemText
                               sx={{ width: 'max-content', paddingLeft: 1, fontWeight: 'bold' }}
@@ -329,7 +317,7 @@ const ColumnView = () => {
                     ) : (
                       <></>
                     )}
-                    {libraryData?.map((library, index) => (
+                    {tokenLibraryData?.map((library, index) => (
                       <ListItem key={index} className={classes.classes['noPadding']}>
                         <ListItemButton
                           className={classes.classes['noPadding']}
@@ -371,7 +359,7 @@ const ColumnView = () => {
                             <ListItem className={classes.classes['noPadding']}>
                               <ListItemButton
                                 className={classes.classes['noPadding']}
-                                onClick={() => handleForm1()}
+                                onClick={() => handleAddLibraryAtCollection()}
                               >
                                 <ListItemText
                                   sx={{ width: 'max-content', paddingLeft: 1 }}
@@ -388,7 +376,7 @@ const ColumnView = () => {
                           <ListItem className={classes.classes['noPadding']} key={index}>
                             <ListItemButton
                               selected={selectedLibrary === index}
-                              onClick={(event) => handleClick3(library, event, index)}
+                              onClick={(event) => showCollectionLevelLibraryData(library, event, index)}
                               className={classes.classes['noPadding']}
                             >
                               <ListItemText
@@ -406,9 +394,9 @@ const ColumnView = () => {
             </Collapse>
 
             <Collapse
-              in={openForm}
+              in={openAddLibrary}
               timeout="auto"
-              style={{ display: openForm ? 'block' : 'none' }}
+              style={{ display: openAddLibrary ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box
@@ -417,15 +405,17 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm currentTokenId={currentTokenId} />
+                  <LibraryForm 
+                  updateTokenLibraryData={setTokenLibraryData}
+                  currentTokenId={currentTokenId} />
                 </Grid>
               </Box>
             </Collapse>
             <Collapse
-              in={openDeta}
+              in={openLibrarySelectedToken}
               timeout="auto"
               unmountOnExit
-              style={{ display: openDeta ? 'block' : 'none' }}
+              style={{ display: openLibrarySelectedToken ? 'block' : 'none' }}
             >
               <Box
                 maxHeight={Sizes.maxHeight}
@@ -440,6 +430,7 @@ const ColumnView = () => {
                       currentTokenId={currentTokenId}
                       loggedIn={loggedIn}
                       owner={owner}
+                      updateTokenLibraryData={setTokenLibraryData}
                     />
                   </Grid>
                 </Grid>
@@ -447,9 +438,9 @@ const ColumnView = () => {
             </Collapse>
 
             <Collapse
-              in={openDub}
+              in={openLibraryCollectionLevel}
               timeout="auto"
-              style={{ display: openDub ? 'block' : 'none' }}
+              style={{ display: openLibraryCollectionLevel ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box
@@ -458,20 +449,21 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryBox
+                  <CollectionLibrary
                     loggedIn={loggedIn}
                     library3={library3}
                     owner={owner}
                     currentTokenId={''}
+                    updateCollectionLevelLibraryData={setCollectionLevelLibraryData}
                   />
                 </Grid>
               </Box>
             </Collapse>
 
             <Collapse
-              in={openFormCollectionLevel}
+              in={openAddLibraryCollectionLevel}
               timeout="auto"
-              style={{ display: openFormCollectionLevel ? 'block' : 'none' }}
+              style={{ display: openAddLibraryCollectionLevel ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box

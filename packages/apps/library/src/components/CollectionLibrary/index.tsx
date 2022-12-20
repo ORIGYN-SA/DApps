@@ -24,8 +24,8 @@ function formatBytes(bytes, decimals = 2) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-export const LibraryBox = (props: any) => {
-  console.log('props', props);
+export const CollectionLibrary = (props: any) => {
+
   const LocationType = props.library3.Class.filter((item) => item.name === 'location_type')[0].value
     .Text;
   const isMutable = props.library3.Class.filter(
@@ -106,10 +106,15 @@ export const LibraryBox = (props: any) => {
                     libraryId={objLibraryData.library_id}
                     currentTokenId={''}
                     isMutable={isMutable}
+                    updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
                   />
                 </Flex>
                 <Flex>
-                  <UpdateLibraryFile libraryId={objLibraryData.library_id} tokenId={''} />
+                  <UpdateLibraryFile 
+                  libraryId={objLibraryData.library_id} 
+                  tokenId={''} 
+                  updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
+                  />
                 </Flex>
               </Flex>
             </>

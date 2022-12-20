@@ -3,7 +3,7 @@ import { DropzoneArea } from 'mui-file-dropzone';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
-import { OrigynClient, updateLibraryFileContent } from '@origyn-sa/mintjs';
+import { OrigynClient, updateLibraryFileContent, getNftCollectionMeta } from '@origyn-sa/mintjs';
 // Dialog
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -15,8 +15,13 @@ import { LinearProgress } from '@mui/material';
 type Props = {
   tokenId: string;
   libraryId: string;
+  updateCollectionLevelLibraryData: any;
 };
-export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
+export const UpdateLibraryFile = ({
+  tokenId,
+  libraryId,
+  updateCollectionLevelLibraryData,
+}: Props) => {
   const { actor } = useContext(AuthContext);
   // Snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -64,7 +69,7 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
           },
         });
         handleClose();
-      }else{
+      } else {
         enqueueSnackbar('Something went wrong', {
           variant: 'error',
           anchorOrigin: {
@@ -79,7 +84,17 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
       handleClose();
     }
     setInProgress(false);
+
+    //Update the library data for the collection
+    getNftCollectionMeta().then((r) => {
+      updateCollectionLevelLibraryData(
+        r.ok.metadata[0].Class.filter((res) => {
+          return res.name === 'library';
+        })[0].value.Array.thawed,
+      );
+    });
   };
+
   const arrayToBuffer = (arrayBuffer) => {
     const buffer = Buffer.alloc(arrayBuffer.byteLength);
     const view = new Uint8Array(arrayBuffer);
@@ -112,28 +127,28 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-         {inProgress ? (
+        {inProgress ? (
           <>
             <DialogTitle>Updating in Progress</DialogTitle>
             <DialogContent>
-                <LinearProgress color="secondary" />
+              <LinearProgress color="secondary" />
             </DialogContent>
           </>
         ) : (
           <>
-             <DialogTitle id="alert-dialog-title">
-          Update file content of library
-          {libraryId}
-        </DialogTitle>
-        <DialogContent>
-          <DropzoneArea filesLimit={1} onChange={handleFileSelected} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Back</Button>
-          <Button onClick={handleSubmit} btnType="filled">
-            Submit
-          </Button>
-        </DialogActions>
+            <DialogTitle id="alert-dialog-title">
+              Update file content of library
+              {libraryId}
+            </DialogTitle>
+            <DialogContent>
+              <DropzoneArea filesLimit={1} onChange={handleFileSelected} />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Back</Button>
+              <Button onClick={handleSubmit} btnType="filled">
+                Submit
+              </Button>
+            </DialogActions>
           </>
         )}
       </Dialog>

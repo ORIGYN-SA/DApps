@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
-import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
 import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 import { Container, Grid, Select, TextInput, Button, HR, Flex } from '@origyn-sa/origyn-art-ui';
 
@@ -73,6 +73,15 @@ export const CollectionLocation = (props: any) => {
       console.log('error', e);
     }
     props.setInProgress(false);
+
+    //Update the library data for the token
+    getNft(props.tokenId).then((r) => {
+      props.updateTokenLibraryData(
+        r.ok.metadata.Class.filter((res) => {
+          return res.name === 'library';
+        })[0].value.Array.thawed,
+      );
+    });
   };
   const handleSelectChange = (val) => {
     setSelectedLibrary(val);

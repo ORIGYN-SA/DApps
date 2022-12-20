@@ -136,17 +136,24 @@ export const LibraryForm = (props: any) => {
                 <Collapse in={openSelectInput} timeout="auto" unmountOnExit>
                   <CollectionLocation 
                   setInProgress={setInProgress}
-                  tokenId={props.currentTokenId} />
+                  tokenId={props.currentTokenId} 
+                  updateTokenLibraryData={props.updateTokenLibraryData}
+                  />
                 </Collapse>
                 <Collapse in={openFileInput} timeout="auto" unmountOnExit>
                   <CanisterLocation 
                   setInProgress={setInProgress}
-                  tokenId={props.currentTokenId} />
+                  tokenId={props.currentTokenId} 
+                  updateTokenLibraryData={props.updateTokenLibraryData}
+
+                  />
                 </Collapse>
                 <Collapse in={openWebInput} timeout="auto" unmountOnExit>
                   <WebLocation 
                   setInProgress={setInProgress}
-                  tokenId={props.currentTokenId} />
+                  tokenId={props.currentTokenId} 
+                  updateTokenLibraryData={props.updateTokenLibraryData}
+                  />
                 </Collapse>
               </Grid>
             </>

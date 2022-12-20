@@ -72,11 +72,10 @@ export const DeleteLibrary = (props: any) => {
   }, [props.libraryId]);
 
   const DeleteMutableLibrary = async () => {
-    
     const { canisterId } = await useRoute();
 
     await OrigynClient.getInstance().init(true, canisterId, { actor });
-setInProgress(true);
+    setInProgress(true);
     if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
       for (let i in tokensThatUseSelectedLibrary) {
         try {
@@ -138,6 +137,26 @@ setInProgress(true);
     }
 
     setInProgress(false);
+
+    if (props.currentTokenId == '') {
+      //Update the library data for the collection
+      getNftCollectionMeta().then((r) => {
+        props.updateCollectionLevelLibraryData(
+          r.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    } else {
+      //Update the library data for the token
+      getNft(props.currentTokenId).then((r) => {
+        props.updateTokenLibraryData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }
   };
 
   return (
@@ -156,7 +175,7 @@ setInProgress(true);
           <>
             <DialogTitle>Deleting in Progress</DialogTitle>
             <DialogContent>
-                <LinearProgress color="secondary" />
+              <LinearProgress color="secondary" />
             </DialogContent>
           </>
         ) : (

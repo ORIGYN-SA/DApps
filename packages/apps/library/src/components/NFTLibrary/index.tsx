@@ -107,6 +107,7 @@ export const NFTLibrary = (props: any) => {
                     libraryId={objLibraryData.library_id}
                     currentTokenId={props.currentTokenId}
                     isMutable={isMutable}
+                    updateTokenLibraryData={props.updateTokenLibraryData}
                   />
                 </Flex>
               </Flex>

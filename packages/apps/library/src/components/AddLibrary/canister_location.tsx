@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
+import { OrigynClient, stageLibraryAsset, getNft } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { useSnackbar } from 'notistack';
@@ -117,6 +117,15 @@ export const CanisterLocation = (props: any) => {
       console.log(e);
     }
     props.setInProgress(false);
+
+     //Update the library data for the token
+     getNft(props.tokenId).then((r) => {
+      props.updateTokenLibraryData(
+        r.ok.metadata.Class.filter((res) => {
+          return res.name === 'library';
+        })[0].value.Array.thawed,
+      );
+    });
   };
 
   return (

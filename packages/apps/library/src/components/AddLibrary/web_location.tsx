@@ -8,7 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 // mint.js
-import { OrigynClient, stageWebLibraryAsset } from '@origyn-sa/mintjs';
+import { OrigynClient, stageWebLibraryAsset, getNft } from '@origyn-sa/mintjs';
 import { Grid, Container, TextInput, Button, HR, Flex } from '@origyn-sa/origyn-art-ui';
 
 export const WebLocation = (props: any) => {
@@ -74,6 +74,15 @@ export const WebLocation = (props: any) => {
       console.log(e);
     }
     props.setInProgress(false);
+
+     //Update the library data for the token
+     getNft(props.tokenId).then((r) => {
+      props.updateTokenLibraryData(
+        r.ok.metadata.Class.filter((res) => {
+          return res.name === 'library';
+        })[0].value.Array.thawed,
+      );
+    });
   };
 
   return (
