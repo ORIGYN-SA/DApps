@@ -76,6 +76,8 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
   //     (accumulator, currentValue) => accumulator + currentValue,
   //     initialValue
   //   );
+
+
     
     
     
@@ -86,6 +88,8 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
     Balance();
     totalAmount();
   }, [open]);
+
+  console.log(escrow)
 
   return (
     <div>
@@ -127,7 +131,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}}>Amount</span>
-                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${'OGY'}`}</span>                  
+                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${esc.token.ic.symbol}`}</span>                  
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}}>Status</span>
@@ -180,7 +184,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}} >Amount</span>
-                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${'OGY'}`}</span>                  
+                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${esc.token.ic.symbol}`}</span>                  
                       </Flex>
                     {/* <Button
                         btnType="filled"

@@ -390,8 +390,10 @@ const WalletPage = () => {
             if ('err' in r)
               throw new Error()
             const parsedData = r.map((it) => {
+              console.log(it)
               const openSale = it?.ok?.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open')
               const sale = it?.ok?.current_sale[0]?.sale_type?.auction?.current_bid_amount
+              const saleToken = it?.ok?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic?.symbol
               const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text
               const dataObj = it?.ok?.metadata.Class.find(({ name }) => name === '__apps')
                 .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
@@ -402,7 +404,7 @@ const WalletPage = () => {
               const filterSale = Number(sale)
               return {
                 ...dataObj,
-                id: { nftID: nftID, sale: filterSale, open: openSale },
+                id: { nftID: nftID, sale: filterSale, open: openSale, token: saleToken},
               }
             })
 
@@ -679,8 +681,8 @@ const WalletPage = () => {
                                         </div>
                                         <div>
                                           <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
-                                          <p>
-                                            {nft.id.open ?  <><TokenIcon symbol={activeTokens['OGY']?.icon} /> {parseFloat((parseInt(nft.id.sale) * 1e-8).toString()).toFixed(2)}</> : 'No auction started'}
+                                          <p>{console.log(nft)}
+                                            {nft.id.open ?  <><TokenIcon symbol={nft.id.token} /> {parseFloat((parseInt(nft.id.sale) * 1e-8).toString()).toFixed(2)}</> : 'No auction started'}
                                           </p>
                                         </div>
                                       </Flex>

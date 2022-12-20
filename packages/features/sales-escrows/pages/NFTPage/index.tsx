@@ -228,7 +228,7 @@ export const NFTPage = () => {
     }
   }, [actor]);
 
-  console.log('cr',currentOpenAuction?.sale_type?.auction?.end_date < new Date().getTime() * 1e8)
+  console.log('cr',currentOpenAuction?.sale_type?.auction)
 console.log('now',new Date().getTime() * 1e8 )
 
   return (
@@ -274,7 +274,7 @@ console.log('now',new Date().getTime() * 1e8 )
                             <Flex flexFlow="column">
                               <span>Current bid</span>
                               <strong>
-                                <TokenIcon symbol={tokens['OGY']?.icon} />
+                                <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
                                 {parseFloat(
                                   (
                                     parseInt(
@@ -289,7 +289,7 @@ console.log('now',new Date().getTime() * 1e8 )
                               <Flex flexFlow="column">
                                 <span>Reserve Price</span>
                                 <strong>
-                                  <TokenIcon symbol={tokens['OGY']?.icon} />
+                                  <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
                                   {parseFloat(
                                     (
                                       parseInt(
@@ -306,7 +306,7 @@ console.log('now',new Date().getTime() * 1e8 )
                               <Flex flexFlow="column">
                                 <span>Buy Now</span>
                                 <strong>
-                                  <TokenIcon symbol={tokens['OGY']?.icon} />
+                                  <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
                                   {parseFloat(
                                     (
                                       parseInt(
