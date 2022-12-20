@@ -96,6 +96,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
         <Container size="full" padding="48px">
           <h3>Manage Escrow</h3>
           <br />
+
           {/* <Card align="center" padding="12px" justify="space-between">
             <Flex gap={8}>
               <TokenIcon symbol={activeTokens['OGY']?.icon} />
@@ -112,6 +113,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
           </Card> */}
           <br />
 
+          {console.log(escrow, offers)}
           {escrow.length > 0 ? (
             <>
               <h5>Escrows</h5>
@@ -130,7 +132,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}}>Amount</span>
-                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${esc.token.ic.symbol}`}</span>                  
+                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${esc.token.ic.symbol}`}</span>
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}}>Status</span>
@@ -183,7 +185,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}} >Amount</span>
-                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${esc.token.ic.symbol}`}</span>                  
+                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${esc.token.ic.symbol}`}</span>
                       </Flex>
                     {/* <Button
                         btnType="filled"
