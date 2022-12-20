@@ -76,6 +76,8 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
   //     (accumulator, currentValue) => accumulator + currentValue,
   //     initialValue
   //   );
+
+
     
     
     
@@ -87,25 +89,28 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
     totalAmount();
   }, [open]);
 
+
   return (
     <div>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
         <Container size="full" padding="48px">
           <h3>Manage Escrow</h3>
           <br />
-          {/*<Card align="center" padding="12px" justify="space-between">*/}
-          {/*  <Flex gap={8}>*/}
-          {/*    <TokenIcon symbol={activeTokens['OGY']?.icon} />*/}
-          {/*    {activeTokens['OGY']?.icon}*/}
-          {/*  </Flex>*/}
-          {/*  <Flex flexFlow="column" align="flex-end">*/}
-          {/*    <p>*/}
-          {/*      <b>*/}
-          {/*        {totalAm} {activeTokens['OGY']?.symbol}*/}
-          {/*      </b>*/}
-          {/*    </p>*/}
-          {/*  </Flex>*/}
-          {/*</Card>*/}
+
+          {/* <Card align="center" padding="12px" justify="space-between">
+            <Flex gap={8}>
+              <TokenIcon symbol={activeTokens['OGY']?.icon} />
+              {activeTokens['OGY']?.icon}
+            </Flex>
+            <Flex flexFlow="column" align="flex-end">
+              <p>
+                <b>
+                  {totalAm} {activeTokens['OGY']?.symbol}
+                </b>
+              </p>
+              <p style={{ color: '#9A9A9A' }}>${activeTokens['OGY']?.balance / 4}</p>
+            </Flex>
+          </Card> */}
           <br />
 
           {console.log(escrow, offers)}

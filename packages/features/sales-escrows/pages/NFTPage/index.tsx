@@ -228,6 +228,7 @@ export const NFTPage = () => {
     }
   }, [actor]);
 
+
   return (
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
@@ -271,7 +272,7 @@ export const NFTPage = () => {
                             <Flex flexFlow="column">
                               <span>Current bid</span>
                               <strong>
-                                <TokenIcon symbol={tokens['OGY']?.icon} />
+                                <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
                                 {parseFloat(
                                   (
                                     parseInt(
@@ -286,7 +287,7 @@ export const NFTPage = () => {
                               <Flex flexFlow="column">
                                 <span>Reserve Price</span>
                                 <strong>
-                                  <TokenIcon symbol={tokens['OGY']?.icon} />
+                                  <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
                                   {parseFloat(
                                     (
                                       parseInt(
@@ -303,7 +304,7 @@ export const NFTPage = () => {
                               <Flex flexFlow="column">
                                 <span>Buy Now</span>
                                 <strong>
-                                  <TokenIcon symbol={tokens['OGY']?.icon} />
+                                  <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
                                   {parseFloat(
                                     (
                                       parseInt(
@@ -338,7 +339,7 @@ export const NFTPage = () => {
                                 </Button>
                               )}
                             {principal == verifyOwner ? (
-                              BigInt(currentOpenAuction?.sale_type?.auction?.end_date) >
+                              BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
                               BigInt(new Date().getTime() * 1e8) ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale

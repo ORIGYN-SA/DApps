@@ -180,7 +180,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
             <>
               {inProgress ? (
                 <>
-                  <h2>Transfer in Progress</h2>
+                  <h2>Start an Auction in Progress</h2>
                   <br />
                   <LinearProgress color="secondary" />
                 </>
