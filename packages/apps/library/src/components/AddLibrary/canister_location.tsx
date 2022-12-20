@@ -80,6 +80,7 @@ export const CanisterLocation = (props: any) => {
                 title: typedTitle,
                 immutable: immutable,
                 libraryId: typedId,
+                isNewLibrary:true,
               };
             }),
           )),
