@@ -2,7 +2,7 @@ import React from 'react';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
-import { Container, Grid, HR, TextInput, Flex } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, HR, Flex } from '@origyn-sa/origyn-art-ui';
 import { UpdateLibraryFile } from '../UpdateLibraryFile';
 
 interface FileType {
@@ -70,18 +70,6 @@ export const LibraryBox = (props: any) => {
       break;
   }
 
-  console.log('objLibraryData', objLibraryData.size);
-
-  const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTypedTitle(event.target.value);
-  };
-  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTypedId(event.target.value);
-  };
-
-  const [typedTitle, setTypedTitle] = React.useState('');
-  const [typedId, setTypedId] = React.useState('');
-
   return (
     <Container padding="16px">
       <Grid columns={1}>
@@ -112,7 +100,7 @@ export const LibraryBox = (props: any) => {
         <>
           {!isMutable ? (
             <>
-              <Flex flexFlow="column" gap={16}>
+              <Flex flexFlow="column" justify="center" gap={16}>
                 <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}

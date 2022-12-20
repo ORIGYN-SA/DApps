@@ -13,7 +13,7 @@ interface FileType {
 }
 
 export const NFTLibrary = (props: any) => {
-  console.log(props);
+  
   function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -101,7 +101,7 @@ export const NFTLibrary = (props: any) => {
         <>
           {!isMutable ? (
             <>
-              <Flex flexFlow="column">
+              <Flex flexFlow="column" justify="center">
                 <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}

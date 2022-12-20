@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
 import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
-// Button delete
-import DeleteIcon from '@mui/icons-material/Delete';
-import Stack from '@mui/material/Stack';
 // Dialog
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';

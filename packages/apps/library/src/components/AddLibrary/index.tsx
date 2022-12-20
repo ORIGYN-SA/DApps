@@ -13,7 +13,7 @@ import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
 import { useRoute } from '../../../../../features/authentication';
 import { LinearProgress } from '@mui/material';
-import { Container, Grid, Flex, HR } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid } from '@origyn-sa/origyn-art-ui';
 
 export const LibraryForm = (props: any) => {
   const [radioValue, setRadioValue] = React.useState('Canister');
