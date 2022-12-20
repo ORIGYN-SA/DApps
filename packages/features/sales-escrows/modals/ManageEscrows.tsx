@@ -76,6 +76,8 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
   //     (accumulator, currentValue) => accumulator + currentValue,
   //     initialValue
   //   );
+
+
     
     
     
@@ -87,13 +89,14 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
     totalAmount();
   }, [open]);
 
+
   return (
     <div>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
         <Container size="full" padding="48px">
           <h3>Manage Escrow</h3>
           <br />
-          <Card align="center" padding="12px" justify="space-between">
+          {/* <Card align="center" padding="12px" justify="space-between">
             <Flex gap={8}>
               <TokenIcon symbol={activeTokens['OGY']?.icon} />
               {activeTokens['OGY']?.icon}
@@ -106,7 +109,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
               </p>
               <p style={{ color: '#9A9A9A' }}>${activeTokens['OGY']?.balance / 4}</p>
             </Flex>
-          </Card>
+          </Card> */}
           <br />
 
           {escrow.length > 0 ? (
@@ -127,7 +130,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}}>Amount</span>
-                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${'OGY'}`}</span>                  
+                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${esc.token.ic.symbol}`}</span>                  
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}}>Status</span>
@@ -180,7 +183,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
                     </Flex>
                     <Flex flexFlow="column">
                       <span style={{color: 'grey'}} >Amount</span>
-                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${'OGY'}`}</span>                  
+                      <span>{`${(Number(esc.amount) * 0.00000001)}${' '}${esc.token.ic.symbol}`}</span>                  
                       </Flex>
                     {/* <Button
                         btnType="filled"
