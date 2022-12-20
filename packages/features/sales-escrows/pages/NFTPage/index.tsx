@@ -228,8 +228,6 @@ export const NFTPage = () => {
     }
   }, [actor]);
 
-  console.log('cr',currentOpenAuction?.sale_type?.auction)
-console.log('now',new Date().getTime() * 1e8 )
 
   return (
     <Flex fullWidth padding="0" flexFlow="column">

@@ -89,7 +89,6 @@ const ManageEscrowsModal = ({ open, handleClose, collection}: any) => {
     totalAmount();
   }, [open]);
 
-  console.log(escrow)
 
   return (
     <div>

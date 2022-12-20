@@ -390,7 +390,6 @@ const WalletPage = () => {
             if ('err' in r)
               throw new Error()
             const parsedData = r.map((it) => {
-              console.log(it)
               const openSale = it?.ok?.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open')
               const sale = it?.ok?.current_sale[0]?.sale_type?.auction?.current_bid_amount
               const saleToken = it?.ok?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic?.symbol
@@ -681,7 +680,7 @@ const WalletPage = () => {
                                         </div>
                                         <div>
                                           <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
-                                          <p>{console.log(nft)}
+                                          <p>
                                             {nft.id.open ?  <><TokenIcon symbol={nft.id.token} /> {parseFloat((parseInt(nft.id.sale) * 1e-8).toString()).toFixed(2)}</> : 'No auction started'}
                                           </p>
                                         </div>
