@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, Grid, Divider } from '@mui/material';
 import pick from 'lodash/pick';
-import { Container } from '@origyn-sa/origyn-art-ui';
+import { Container, HR } from '@origyn-sa/origyn-art-ui'
 
 const FormTab = ({ metadata }: any) => {
 
@@ -38,30 +38,30 @@ const FormTab = ({ metadata }: any) => {
             <ListItem secondaryAction={<ListItemText primary={owner} />}>
               <ListItemText primary={'owner'} />
             </ListItem>
-            <Divider />
+            <HR />
             <ListItem secondaryAction={<ListItemText primary={hiddenAsset} />}>
               <ListItemText primary={'hidden_asset'} />
             </ListItem>
-            <Divider />
+            <HR />
             <ListItem secondaryAction={<ListItemText primary={previewAsset} />}>
               <ListItemText primary={'preview_asset'} />
             </ListItem>
-            <Divider />
+            <HR />
             <ListItem secondaryAction={<ListItemText primary={primaryAsset} />}>
               <ListItemText primary={'primary_asset'} />
             </ListItem>
-            <Divider />
+            <HR />
             <ListItem secondaryAction={<ListItemText primary={experienceAsset} />}>
               <ListItemText primary={'experience_asset'} />
             </ListItem>
-            <Divider />
+            <HR />
             <ListItem secondaryAction={<ListItemText primary={id} />}>
               <ListItemText primary={'id'} />
             </ListItem>
           </List>
         </Grid>
       </Grid>
-      <Divider />
+      <HR />
       {apps?.map((app, i, index) => {
         return (
           <Grid sx={{ marginTop: '20px' }} container spacing={2} key={`${app}+${index}`}>
@@ -72,19 +72,18 @@ const FormTab = ({ metadata }: any) => {
                 <ListItem secondaryAction={<ListItemText primary={app.app_id} />}>
                   <ListItemText primary={'app_id'} />
                 </ListItem>
-                <Divider />
+                <HR />
                 <ListItem secondaryAction={<ListItemText primary={app.read} />}>
                   <ListItemText primary={'read'} />
                 </ListItem>
-                <Divider />
-
+                <HR />
                 <ListItem
                   secondaryAction={
                     <List sx={{}}>
                       <ListItem secondaryAction={<ListItemText primary={app.write.type} />}>
                         <ListItemText primary={'type'} />
                       </ListItem>{' '}
-                      <Divider />
+                      <HR />
                       {app.write.list.map((item) => (
                         <ListItem key={`${item}+${index}`}>
                           <ListItemText primary={item} />
@@ -98,7 +97,7 @@ const FormTab = ({ metadata }: any) => {
                     primary={'write'}
                   />
                 </ListItem>
-                <Divider />
+                <HR />
 
                 <ListItem
                   secondaryAction={
@@ -106,7 +105,7 @@ const FormTab = ({ metadata }: any) => {
                       <ListItem secondaryAction={<ListItemText primary={app.permissions.type} />}>
                         <ListItemText primary={'type'} />
                       </ListItem>{' '}
-                      <Divider />
+                      <HR />
                       {app.permissions.list.map((item) => (
                         <ListItem key={`${item}}+${index}`}>
                           <ListItemText primary={item} />
@@ -120,8 +119,7 @@ const FormTab = ({ metadata }: any) => {
                     primary={'permissions'}
                   />
                 </ListItem>
-                <Divider />
-
+                <HR />
                 <ListItem
                   secondaryAction={
                     <List sx={{ width: '700px' }}>
@@ -130,12 +128,12 @@ const FormTab = ({ metadata }: any) => {
                           {' '}
                           <ListItem
                             secondaryAction={
-                              <ListItemText sx={{ width: '300px' }} primary={app.data[item]} />
+                              <ListItemText sx={{ width: '300px' }} primary={JSON.stringify(app.data[item])} />
                             }
                           >
                             <ListItemText sx={{}} primary={item} />
                           </ListItem>
-                          {i < Object.keys(app.data).length - 1 ? <Divider /> : null}
+                          {i < Object.keys(app.data).length - 1 ? <HR /> : null}
                         </>
                       ))}
                       {}
@@ -152,7 +150,7 @@ const FormTab = ({ metadata }: any) => {
           </Grid>
         );
       })}
-      <Divider />
+      <HR />
       {library?.map((lib, i, index) => {
         let length = Object.keys(lib).length;
         return (
@@ -166,7 +164,7 @@ const FormTab = ({ metadata }: any) => {
                     <ListItem secondaryAction={<ListItemText primary={lib[item]} />}>
                       <ListItemText primary={item} />
                     </ListItem>
-                    {j < length - 1 ? <Divider /> : null}
+                    {j < length - 1 ? <HR /> : null}
                   </>
                 ))}
               </List>

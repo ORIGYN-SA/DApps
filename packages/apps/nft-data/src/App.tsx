@@ -8,22 +8,24 @@ import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import { SnackbarProvider } from 'notistack';
 import { MetaProvider } from './components/nftTabs/context';
 import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
+import { GlobalStyle } from '@origyn-sa/origyn-art-ui'
 
 const App = () => {
   return (
     <HashRouter>
+      <GlobalStyle />
       <SiteProvider>
         <SessionProvider>
           <TokensContextProvider>
             <AuthProvider>
               <SnackbarProvider maxSnack={3}>
-                <MetaProvider>
                   <Layout>
+                    <MetaProvider>
                     <Routes>
                       <Route path="*" element={<Home />} />
                     </Routes>
+                    </MetaProvider>
                   </Layout>
-                </MetaProvider>
               </SnackbarProvider>
             </AuthProvider>
           </TokensContextProvider>
