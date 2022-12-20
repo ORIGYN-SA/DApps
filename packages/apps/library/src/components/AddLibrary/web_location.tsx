@@ -9,7 +9,7 @@ import FormLabel from '@mui/material/FormLabel';
 import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 // mint.js
 import { OrigynClient, stageWebLibraryAsset } from '@origyn-sa/mintjs';
-import { Grid, Container, TextInput, Button } from '@origyn-sa/origyn-art-ui';
+import { Grid, Container, TextInput, Button, HR, Flex } from '@origyn-sa/origyn-art-ui';
 
 export const WebLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -41,6 +41,7 @@ export const WebLocation = (props: any) => {
     const { canisterId } = await useRoute();
 
     await OrigynClient.getInstance().init(true, canisterId, { actor });
+    props.setInProgress(true);
     try {
       const WebFile: StageFile = {
         filename: typedTitle,
@@ -72,6 +73,7 @@ export const WebLocation = (props: any) => {
     } catch (e) {
       console.log(e);
     }
+    props.setInProgress(false);
   };
 
   return (
@@ -100,11 +102,14 @@ export const WebLocation = (props: any) => {
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid>
-        <Button 
-         btnType="filled"
-        onClick={() => StageWebLibrary()}>Stage Library</Button>
-      </Grid>
+      <HR marginTop={16} marginBottom={16}/>
+      <Flex align="center" justify="center">
+        <Flex>
+          <Button btnType="filled" onClick={StageWebLibrary}>
+            Stage Library
+          </Button>
+        </Flex>
+      </Flex>
     </Container>
   );
 };

@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 // mint.js
 import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
-import { Container, Grid, Select, TextInput, Button, HR } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, Select, TextInput, Button, HR, Flex } from '@origyn-sa/origyn-art-ui';
 
 export const CollectionLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -42,6 +42,7 @@ export const CollectionLocation = (props: any) => {
   const StageCollectionLibrary = async () => {
     const { canisterId } = await useRoute();
     await OrigynClient.getInstance().init(true, canisterId, { actor });
+    props.setInProgress(true);
     try {
       const CollectionFile: StageFile = {
         filename: typedTitle,
@@ -71,6 +72,7 @@ export const CollectionLocation = (props: any) => {
     } catch (e) {
       console.log('error', e);
     }
+    props.setInProgress(false);
   };
   const handleSelectChange = (val) => {
     setSelectedLibrary(val);
@@ -103,11 +105,15 @@ export const CollectionLocation = (props: any) => {
           })}
         />
       </Container>
-        <Grid>
-          <Button 
-           btnType="filled"
-          onClick={() => StageCollectionLibrary()}>Stage Library</Button>
-        </Grid>
+      <HR marginTop={16} marginBottom={16} />
+
+      <Flex align="center" justify="center">
+        <Flex>
+          <Button btnType="filled" onClick={StageCollectionLibrary}>
+            Stage Library
+          </Button>
+        </Flex>
+      </Flex>
     </Container>
   );
 };

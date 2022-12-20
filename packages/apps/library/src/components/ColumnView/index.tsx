@@ -9,14 +9,12 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import Collapse from '@mui/material/Collapse';
-import Paper from '@mui/material/Paper';
 import { Box } from '@mui/system';
 // Library components
 import { LibraryBox } from '../LibraryBox';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
-import { DeleteLibrary } from '../DeleteLibrary';
-import { Container } from '@origyn-sa/origyn-art-ui'
+import { Container } from '@origyn-sa/origyn-art-ui';
 
 const ColumnView = () => {
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -30,11 +28,10 @@ const ColumnView = () => {
   const [openLib, setOpenLib] = React.useState(false);
   const [openDetails, setOpenDetails] = React.useState(false);
   // General Library -- tokenId empty
-  const [defaultLibraryData, setDefaultLibraryData] = useState<Array<any>>([]);
+  const [collectionLevelLibraryData, setCollectionLevelLibraryData] = useState<Array<any>>([]);
   // Specific library -- tokenId from URL or from clicked item
   const [libraryData, setLibraryData] = useState<Array<any>>([]);
   const [openForm, setOpenForm] = React.useState(false);
-  const [openFormDelete, setOpenFormDelete] = React.useState(false);
   const [openDeta, setOpenDeta] = useState(false);
   const [openDub, setOpenDub] = useState(false);
   const [libDet, setLibDet] = useState();
@@ -42,12 +39,15 @@ const ColumnView = () => {
   const classes = useStyles();
   const [library3, setLibrary3] = useState();
   const { actor, loggedIn, principal } = useContext(AuthContext);
-  const [canisterId, setCanisterId] = useState("");
+  const [canisterId, setCanisterId] = useState('');
   const [collectionNft, setCollectionNft] = useState([]);
 
-  const [openFormDefault, setOpenFormDefault] = React.useState(false);
+  const [openFormCollectionLevel, setOpenFormCollectionLevel] = React.useState(false);
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
+  const handleClickOnNfts = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    index: number,
+  ) => {
     setOpen(!open);
     setOpen1(false);
     setOpenLib(false);
@@ -56,7 +56,7 @@ const ColumnView = () => {
     setOpenDub(false);
     setOpenDeta(false);
     setOpenForm(false);
-    setOpenFormDefault(false);
+    setOpenFormCollectionLevel(false);
     nftCollection();
     setSelectedIndex(index);
   };
@@ -91,7 +91,6 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    
     setOpenLib(!openLib);
     setOpen(false);
     setOpen1(false);
@@ -100,14 +99,13 @@ const ColumnView = () => {
     setOpenDeta(false);
     setOpenDub(false);
     setOpenForm(false);
-    setOpenFormDefault(false);
+    setOpenFormCollectionLevel(false);
     setSelectedIndex(index);
-    // As default-general view of libraries the tokenId is empty
+    // Collection level libraries the tokenId is empty
     if (actor) {
       OrigynClient.getInstance().init(true, canisterId);
       getNftCollectionMeta().then((r) => {
-        console.log('CollMeta', r);
-        setDefaultLibraryData(
+        setCollectionLevelLibraryData(
           r.ok.metadata[0].Class.filter((res) => {
             return res.name === 'library';
           })[0].value.Array.thawed,
@@ -149,12 +147,11 @@ const ColumnView = () => {
     setSelectedLibrary(index);
     setOpenDub(true);
     setOpenForm(false);
-    setOpenFormDefault(false);
+    setOpenFormCollectionLevel(false);
   };
 
   const handleForm = () => {
     setOpenForm(!openForm);
-    setOpenFormDelete(false);
     setOpenLib(false);
     setOpera(false);
     setOpenDetails(false);
@@ -163,7 +160,7 @@ const ColumnView = () => {
   };
 
   const handleForm1 = () => {
-    setOpenFormDefault(!openFormDefault);
+    setOpenFormCollectionLevel(!openFormCollectionLevel);
     setOpenLib(false);
     setOpera(false);
     setOpenDetails(false);
@@ -232,12 +229,7 @@ const ColumnView = () => {
 
   const checkAndSetOwner = async () => {
     const { tokenId, canisterId } = await useRoute();
-    const checked = await checkOwner(
-      principal,
-      canisterId,
-      tokenId,
-    );
-    console.log(canisterId, tokenId, checked);
+    const checked = await checkOwner(principal, canisterId, tokenId);
     setOwner(checked);
   };
 
@@ -263,7 +255,7 @@ const ColumnView = () => {
                   <ListItem className={classes.classes['noPadding']}>
                     <ListItemButton
                       selected={selectedIndex === 0}
-                      onClick={(event) => handleClick(event, 0)}
+                      onClick={(event) => handleClickOnNfts(event, 0)}
                       className={classes.classes['noPadding']}
                     >
                       <ListItemText sx={{ paddingLeft: 1 }} primary="NFTs" />
@@ -321,20 +313,19 @@ const ColumnView = () => {
                 <Grid container minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
                     {owner && loggedIn ? (
-                      <> 
-                      <ListItem className={classes.classes['noPadding']}>
-                        <ListItemButton
-                          className={classes.classes['noPadding']}
-                          onClick={() => handleForm()}
-                        >
-                          <ListItemText
-                            sx={{ width: 'max-content', paddingLeft: 1 , fontWeight: 'bold'}}
-                            primary="+ Add a Library"
-                          />
-                        </ListItemButton>
-                      </ListItem>
+                      <>
+                        <ListItem className={classes.classes['noPadding']}>
+                          <ListItemButton
+                            className={classes.classes['noPadding']}
+                            onClick={() => handleForm()}
+                          >
+                            <ListItemText
+                              sx={{ width: 'max-content', paddingLeft: 1, fontWeight: 'bold' }}
+                              primary="+ Add a Library"
+                            />
+                          </ListItemButton>
+                        </ListItem>
                       </>
-                      
                     ) : (
                       <></>
                     )}
@@ -366,7 +357,8 @@ const ColumnView = () => {
               >
                 <Grid container maxHeight={Sizes.maxHeight}>
                   <Grid onClick={handleClickLib1} item xs={12}>
-                    {defaultLibraryData?.length <= 0 || defaultLibraryData === undefined ? (
+                    {collectionLevelLibraryData?.length <= 0 ||
+                    collectionLevelLibraryData === undefined ? (
                       <ListItem className={classes.classes['noPadding']}>
                         <ListItemButton className={classes.classes['noPadding']}>
                           <ListItemText sx={{ paddingLeft: 1 }} primary="Loading data..." />
@@ -376,23 +368,23 @@ const ColumnView = () => {
                       <>
                         {owner && loggedIn ? (
                           <>
-                          <ListItem className={classes.classes['noPadding']}>
-                            <ListItemButton
-                              className={classes.classes['noPadding']}
-                              onClick={() => handleForm1()}
-                            >
-                              <ListItemText
-                                sx={{ width: 'max-content', paddingLeft: 1 }}
-                                primary="+ Add Library"
-                              />
-                            </ListItemButton>
-                          </ListItem>
-                        </>
+                            <ListItem className={classes.classes['noPadding']}>
+                              <ListItemButton
+                                className={classes.classes['noPadding']}
+                                onClick={() => handleForm1()}
+                              >
+                                <ListItemText
+                                  sx={{ width: 'max-content', paddingLeft: 1 }}
+                                  primary="+ Add Library"
+                                />
+                              </ListItemButton>
+                            </ListItem>
+                          </>
                         ) : (
                           <></>
                         )}
 
-                        {defaultLibraryData?.map((library, index) => (
+                        {collectionLevelLibraryData?.map((library, index) => (
                           <ListItem className={classes.classes['noPadding']} key={index}>
                             <ListItemButton
                               selected={selectedLibrary === index}
@@ -425,30 +417,10 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm 
-                  currentTokenId={currentTokenId} 
-                  />
+                  <LibraryForm currentTokenId={currentTokenId} />
                 </Grid>
               </Box>
             </Collapse>
-
-            <Collapse
-              in={openFormDelete}
-              timeout="auto"
-              style={{ display: openFormDelete? 'block' : 'none' }}
-              unmountOnExit
-            >
-              <Box
-                minHeight={Sizes.minHeight}
-                borderRight={1}
-                className={classes.classes['styledScroll']}
-              >
-                <Grid item xs={12}>
-                  <DeleteLibrary currentTokenId={currentTokenId} />
-                </Grid>
-              </Box>
-            </Collapse>
-
             <Collapse
               in={openDeta}
               timeout="auto"
@@ -463,12 +435,12 @@ const ColumnView = () => {
               >
                 <Grid container minWidth={Sizes.minWidth}>
                   <Grid item xs={12}>
-                    <NFTLibrary 
-                    libDet={libDet}
-                    currentTokenId={currentTokenId}
-                    loggedIn = {loggedIn}
-                    owner = {owner}
-                  />
+                    <NFTLibrary
+                      libDet={libDet}
+                      currentTokenId={currentTokenId}
+                      loggedIn={loggedIn}
+                      owner={owner}
+                    />
                   </Grid>
                 </Grid>
               </Box>
@@ -486,20 +458,20 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryBox 
-                  loggedIn = {loggedIn}
-                  library3={library3} 
-                  owner = {owner}
-                  currentTokenId={''}
+                  <LibraryBox
+                    loggedIn={loggedIn}
+                    library3={library3}
+                    owner={owner}
+                    currentTokenId={''}
                   />
                 </Grid>
               </Box>
             </Collapse>
 
             <Collapse
-              in={openFormDefault}
+              in={openFormCollectionLevel}
               timeout="auto"
-              style={{ display: openFormDefault ? 'block' : 'none' }}
+              style={{ display: openFormCollectionLevel ? 'block' : 'none' }}
               unmountOnExit
             >
               <Box
@@ -508,9 +480,7 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm 
-                  loggedIn = {loggedIn}
-                  currentTokenId={''} />
+                  <LibraryForm loggedIn={loggedIn} currentTokenId={''} />
                 </Grid>
               </Box>
             </Collapse>

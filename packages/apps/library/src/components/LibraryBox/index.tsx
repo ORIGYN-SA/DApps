@@ -2,7 +2,8 @@ import React from 'react';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
-import { Container, Grid, HR, TextInput } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, HR, Flex } from '@origyn-sa/origyn-art-ui';
+import { UpdateLibraryFile } from '../UpdateLibraryFile';
 
 interface FileType {
   library_id: string;
@@ -69,18 +70,6 @@ export const LibraryBox = (props: any) => {
       break;
   }
 
-  console.log('objLibraryData', objLibraryData.size);
-
-  const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTypedTitle(event.target.value);
-  };
-  const getTypedId = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTypedId(event.target.value);
-  };
-
-  const [typedTitle, setTypedTitle] = React.useState('');
-  const [typedId, setTypedId] = React.useState('');
-
   return (
     <Container padding="16px">
       <Grid columns={1}>
@@ -106,19 +95,23 @@ export const LibraryBox = (props: any) => {
           <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
         </Grid>
       </Grid>
+      <HR marginTop={16} marginBottom={16}/>
       {props.loggedIn == true && props.owner == true ? (
         <>
           {!isMutable ? (
             <>
-              <Grid columns={1}>
-                <Grid column={1}>
+              <Flex flexFlow="column" justify="center" gap={16}>
+                <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}
                     currentTokenId={''}
                     isMutable={isMutable}
                   />
-                </Grid>
-              </Grid>
+                </Flex>
+                <Flex>
+                  <UpdateLibraryFile libraryId={objLibraryData.library_id} tokenId={''} />
+                </Flex>
+              </Flex>
             </>
           ) : (
             <></>

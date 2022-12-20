@@ -1,8 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import { useSnackbar } from 'notistack';
+import React, { useEffect } from 'react';
 // mint.js
 import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import Collapse from '@mui/material/Collapse';
@@ -15,22 +11,23 @@ import FormLabel from '@mui/material/FormLabel';
 import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
-import { useRoute } from '../../../../../features/authentication'
+import { useRoute } from '../../../../../features/authentication';
+import { LinearProgress } from '@mui/material';
+import { Container, Grid } from '@origyn-sa/origyn-art-ui';
 
 export const LibraryForm = (props: any) => {
-
   const [radioValue, setRadioValue] = React.useState('Canister');
   const [openFileInput, setOpenFileInput] = React.useState(false);
   const [openSelectInput, setOpenSelectInput] = React.useState(false);
   const [openWebInput, setOpenWebInput] = React.useState(false);
-
+  const [inProgress, setInProgress] = React.useState(false);
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRadioValue((event.target as HTMLInputElement).value);
   };
 
   const getLibraries = async () => {
-    const {canisterId} = await useRoute();
+    const { canisterId } = await useRoute();
 
     await OrigynClient.getInstance().init(true, canisterId);
     const response = await getNftCollectionMeta();
@@ -71,30 +68,24 @@ export const LibraryForm = (props: any) => {
   }, [radioValue]);
 
   return (
-    <Grid container maxHeight={300} width={'max-content'}>
-      <Grid item xs={12}>
-        <Typography
-          sx={{
-            m: 2,
-            fontSize: 14,
-            borderBottom: '1px solid',
-          }}
-          color="text.secondary"
-          gutterBottom
-        >
+    <Container padding="16px">
+      {inProgress ? (
+        <>
+          <h4>Staging in Progress</h4>
+          <br />
+          <LinearProgress color="secondary" />
+        </>
+      ) : (
+        <>
           {props.currentTokenId === '' ? (
             <>
               <b>Stage a library for the collection</b>
               <>
-              <Grid>
-                <Box
-                  sx={{
-                    m: 2,
-                  }}
-                >
-                  <Grid item xs={12}>
+                <Grid columns={1}>
+                  <Grid column={1}>
+                    Choose Location Type:
+                    <br />
                     <FormControl>
-                      <FormLabel id="radio-location-type"><b>Choose Location Type</b></FormLabel>
                       <RadioGroup
                         aria-labelledby="radio-location-type"
                         defaultValue="Canister"
@@ -108,59 +99,60 @@ export const LibraryForm = (props: any) => {
                     </FormControl>
                   </Grid>
                   <Collapse in={openFileInput} timeout="auto" unmountOnExit>
-                    <CanisterLocation tokenId={props.currentTokenId} />
+                    <CanisterLocation 
+                     setInProgress={setInProgress}
+                    tokenId={props.currentTokenId} />
                   </Collapse>
                   <Collapse in={openWebInput} timeout="auto" unmountOnExit>
-                    <WebLocation tokenId={props.currentTokenId} />
+                    <WebLocation 
+                     setInProgress={setInProgress}
+                    tokenId={props.currentTokenId} />
                   </Collapse>
-                </Box>
-              </Grid>
+                </Grid>
               </>
             </>
           ) : (
             <>
               <b>Stage a library for: {props.currentTokenId} </b>
-              <Grid>
-                <Box
-                  sx={{
-                    m: 2,
-                  }}
-                >
-                  <Grid item xs={12}>
-                    <FormControl>
-                      <FormLabel id="radio-location-type"><b>Choose Location Type</b></FormLabel>
-                      <RadioGroup
-                        aria-labelledby="radio-location-type"
-                        defaultValue="Canister"
-                        name="radio-location-type"
-                        onChange={handleRadioChange}
-                        value={radioValue}
-                      >
-                        <FormControlLabel value="Canister" control={<Radio />} label="Canister" />
-                        <FormControlLabel
-                          value="Collection"
-                          control={<Radio />}
-                          label="Collection"
-                        />
-                        <FormControlLabel value="Web" control={<Radio />} label="Web" />
-                      </RadioGroup>
-                    </FormControl>
-                  </Grid>
-                  <Collapse in={openSelectInput} timeout="auto" unmountOnExit>
-                    <CollectionLocation tokenId={props.currentTokenId} />
-                  </Collapse>
-                  <Collapse in={openFileInput} timeout="auto" unmountOnExit>
-                    <CanisterLocation tokenId={props.currentTokenId} />
-                  </Collapse>
-                  <Collapse in={openWebInput} timeout="auto" unmountOnExit>
-                    <WebLocation tokenId={props.currentTokenId} />
-                  </Collapse>
-                </Box>
+              <Grid columns={1}>
+                <Grid column={1}>
+                  <FormControl>
+                    <FormLabel id="radio-location-type">
+                      <b>Choose Location Type</b>
+                    </FormLabel>
+                    <RadioGroup
+                      aria-labelledby="radio-location-type"
+                      defaultValue="Canister"
+                      name="radio-location-type"
+                      onChange={handleRadioChange}
+                      value={radioValue}
+                    >
+                      <FormControlLabel value="Canister" control={<Radio />} label="Canister" />
+                      <FormControlLabel value="Collection" control={<Radio />} label="Collection" />
+                      <FormControlLabel value="Web" control={<Radio />} label="Web" />
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+                <Collapse in={openSelectInput} timeout="auto" unmountOnExit>
+                  <CollectionLocation 
+                  setInProgress={setInProgress}
+                  tokenId={props.currentTokenId} />
+                </Collapse>
+                <Collapse in={openFileInput} timeout="auto" unmountOnExit>
+                  <CanisterLocation 
+                  setInProgress={setInProgress}
+                  tokenId={props.currentTokenId} />
+                </Collapse>
+                <Collapse in={openWebInput} timeout="auto" unmountOnExit>
+                  <WebLocation 
+                  setInProgress={setInProgress}
+                  tokenId={props.currentTokenId} />
+                </Collapse>
               </Grid>
             </>
           )}
-        </Typography>
-      </Grid>
-    </Grid>
+        </>
+      )}
+    </Container>
   );
 };

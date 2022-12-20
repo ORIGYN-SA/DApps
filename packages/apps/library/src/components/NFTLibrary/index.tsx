@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, Flex, HR } from '@origyn-sa/origyn-art-ui';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
 import { DeleteLibrary } from '../DeleteLibrary';
@@ -13,7 +13,7 @@ interface FileType {
 }
 
 export const NFTLibrary = (props: any) => {
-  console.log(props);
+  
   function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -96,23 +96,24 @@ export const NFTLibrary = (props: any) => {
           <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
         </Grid>
       </Grid>
+      <HR marginTop={16} marginBottom={16}/>
       {props.loggedIn == true && props.owner == true ? (
         <>
-         {!isMutable ? (
-          <>
-            <Grid columns={1}>
-              <Grid column={1}>
-                <DeleteLibrary
-                  libraryId={objLibraryData.library_id}
-                  currentTokenId={''}
-                  isMutable={isMutable}
-                />
-              </Grid>
-            </Grid>
-          </>
-        ) : (
-          <></>
-        )}
+          {!isMutable ? (
+            <>
+              <Flex flexFlow="column" justify="center">
+                <Flex>
+                  <DeleteLibrary
+                    libraryId={objLibraryData.library_id}
+                    currentTokenId={props.currentTokenId}
+                    isMutable={isMutable}
+                  />
+                </Flex>
+              </Flex>
+            </>
+          ) : (
+            <></>
+          )}
         </>
       ) : (
         <></>
