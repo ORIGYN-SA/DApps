@@ -431,6 +431,7 @@ const ColumnView = () => {
                       loggedIn={loggedIn}
                       owner={owner}
                       updateTokenLibraryData={setTokenLibraryData}
+                      setOpenLibrarySelectedToken={setOpenLibrarySelectedToken}
                     />
                   </Grid>
                 </Grid>
@@ -454,6 +455,7 @@ const ColumnView = () => {
                     library3={library3}
                     owner={owner}
                     currentTokenId={''}
+                    setOpenLibraryCollectionLevel={setOpenLibraryCollectionLevel}
                     updateCollectionLevelLibraryData={setCollectionLevelLibraryData}
                   />
                 </Grid>
@@ -472,7 +474,10 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm loggedIn={loggedIn} currentTokenId={''} />
+                  <LibraryForm 
+                  currentTokenId={''} 
+                  setCollectionLevelLibraryData={setCollectionLevelLibraryData}
+                  />
                 </Grid>
               </Box>
             </Collapse>

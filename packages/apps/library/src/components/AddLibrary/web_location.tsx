@@ -75,14 +75,6 @@ export const WebLocation = (props: any) => {
     }
     props.setInProgress(false);
 
-     //Update the library data for the token
-     getNft(props.tokenId).then((r) => {
-      props.updateTokenLibraryData(
-        r.ok.metadata.Class.filter((res) => {
-          return res.name === 'library';
-        })[0].value.Array.thawed,
-      );
-    });
   };
 
   return (

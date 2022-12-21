@@ -107,6 +107,7 @@ export const CollectionLibrary = (props: any) => {
                     currentTokenId={''}
                     isMutable={isMutable}
                     updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
+                    setOpenLibraryCollectionLevel={props.setOpenLibraryCollectionLevel}
                   />
                 </Flex>
                 <Flex>
@@ -114,6 +115,7 @@ export const CollectionLibrary = (props: any) => {
                   libraryId={objLibraryData.library_id} 
                   tokenId={''} 
                   updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
+                  setOpenLibraryCollectionLevel={props.setOpenLibraryCollectionLevel}
                   />
                 </Flex>
               </Flex>

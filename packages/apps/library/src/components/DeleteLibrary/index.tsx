@@ -147,6 +147,8 @@ export const DeleteLibrary = (props: any) => {
           })[0].value.Array.thawed,
         );
       });
+      console.log('here');
+      props.setOpenLibraryCollectionLevel(false);
     } else {
       //Update the library data for the token
       getNft(props.currentTokenId).then((r) => {
@@ -156,6 +158,7 @@ export const DeleteLibrary = (props: any) => {
           })[0].value.Array.thawed,
         );
       });
+      props.setOpenLibrarySelectedToken(false);
     }
   };
 

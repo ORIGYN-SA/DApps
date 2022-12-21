@@ -16,11 +16,15 @@ type Props = {
   tokenId: string;
   libraryId: string;
   updateCollectionLevelLibraryData: any;
+  setOpenLibraryCollectionLevel: any;
+
 };
 export const UpdateLibraryFile = ({
   tokenId,
   libraryId,
   updateCollectionLevelLibraryData,
+  setOpenLibraryCollectionLevel
+
 }: Props) => {
   const { actor } = useContext(AuthContext);
   // Snackbar
@@ -93,6 +97,7 @@ export const UpdateLibraryFile = ({
         })[0].value.Array.thawed,
       );
     });
+    setOpenLibraryCollectionLevel(false);
   };
 
   const arrayToBuffer = (arrayBuffer) => {
