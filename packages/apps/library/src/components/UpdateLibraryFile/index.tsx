@@ -64,7 +64,7 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
           },
         });
         handleClose();
-      }else{
+      } else {
         enqueueSnackbar('Something went wrong', {
           variant: 'error',
           anchorOrigin: {
@@ -112,28 +112,28 @@ export const UpdateLibraryFile = ({ tokenId, libraryId }: Props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-         {inProgress ? (
+        {inProgress ? (
           <>
             <DialogTitle>Updating in Progress</DialogTitle>
             <DialogContent>
-                <LinearProgress color="secondary" />
+              <LinearProgress color="secondary" />
             </DialogContent>
           </>
         ) : (
           <>
-             <DialogTitle id="alert-dialog-title">
-          Update file content of library
-          {libraryId}
-        </DialogTitle>
-        <DialogContent>
-          <DropzoneArea filesLimit={1} onChange={handleFileSelected} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Back</Button>
-          <Button onClick={handleSubmit} btnType="filled">
-            Submit
-          </Button>
-        </DialogActions>
+            <DialogTitle id="alert-dialog-title">
+              Update file content of library
+              {libraryId}
+            </DialogTitle>
+            <DialogContent>
+              <DropzoneArea maxFileSize={10485760} filesLimit={1} onChange={handleFileSelected} />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Back</Button>
+              <Button onClick={handleSubmit} btnType="filled">
+                Submit
+              </Button>
+            </DialogActions>
           </>
         )}
       </Dialog>
