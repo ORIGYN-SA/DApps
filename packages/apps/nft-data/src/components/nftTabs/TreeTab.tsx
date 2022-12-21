@@ -102,7 +102,7 @@ function Tree({ metadata }: any) {
         let obj1 = { ...item.data };
         let arr1: RenderTree[] = [];
         for (let j in obj1) {
-          arr1.push({ id: increment(), name: j, children: [{ id: increment(), name: obj1[j] }] });
+          arr1.push({ id: increment(), name: j, children: [{ id: increment(), name: JSON.stringify(obj1[j]) }] });
         }
 
         return {
@@ -200,7 +200,6 @@ function Tree({ metadata }: any) {
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
           onNodeToggle={handleToggle}
-          sx={{ height: 800, flexGrow: 1, maxWidth: 800, overflowY: 'auto' }}
         >
           {renderTree(data)}
         </TreeView>

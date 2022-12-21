@@ -6,14 +6,16 @@ import JSONTab from '../../components/nftTabs/JSONTab';
 import { SecondaryNav } from '@origyn-sa/origyn-art-ui'
 import { useContext } from 'react'
 import { AuthContext } from '../../../../../features/authentication'
+import { useDialog } from '@connect2ic/react'
 
 const NFTInfo = ({ metadata }: any) => {
-  const { principal, actor, handleLogOut } = useContext(AuthContext)
+  const { principal, handleLogOut } = useContext(AuthContext)
+  const { open } = useDialog()
 
   return (
     <>
       <SecondaryNav
-        title="NFT Data"
+        title="Certificates Data"
         tabs={[
           { title: 'Form', id: 'Form' },
           { title: 'Tree', id: 'Tree' },

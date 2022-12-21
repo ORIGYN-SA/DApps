@@ -472,10 +472,7 @@ const ColumnView = () => {
                 className={classes.classes['styledScroll']}
               >
                 <Grid item xs={12}>
-                  <LibraryForm
-                    loggedIn={loggedIn}
-                    currentTokenId={''}
-                  />
+                  <LibraryForm loggedIn={loggedIn} currentTokenId={''} />
                 </Grid>
               </Box>
             </Collapse>

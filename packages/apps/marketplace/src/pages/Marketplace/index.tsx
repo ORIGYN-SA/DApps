@@ -4,7 +4,7 @@ import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authent
 import { LoadingContainer, Table } from '@dapp/features-components'
 import { Typography } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
-import { Card, Container, Flex, HR, Grid, Image, SecondaryNav, ShowMoreBlock } from '@origyn-sa/origyn-art-ui'
+import { Card, Container, Flex, HR, Grid, Image, SecondaryNav, ShowMoreBlock, Button } from '@origyn-sa/origyn-art-ui'
 import Filter from '../../../../wallet/src/pages/Wallet/Filter'
 import { ConfirmSalesActionModal } from '../../../../../features/sales-escrows'
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
@@ -51,7 +51,7 @@ const Marketplace = () => {
   const { localDevelopment } = useSessionContext()
   const { principal, actor, handleLogOut } = useContext(AuthContext)
   const [canisterId, setCanisterId] = useState('')
-  const [NFTData, setNFTData] = useState<any>()
+  const [NFTData, setNFTData] = useState<any>([])
   const [filteredNFTs, setFilteredNFTs] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [onSale, setOnSale] = useState(true)
@@ -62,10 +62,11 @@ const Marketplace = () => {
   const [filter, setFilter] = useState<any>()
   const [sort, setSort] = useState<any>()
   const [inputText, setInputText] = useState('')
+  const [total, setTotal] = useState(0)
   const [filteredNFTData, setFilteredNFTData] = useState<any>([])
   const { open } = useDialog()
 
-  const fetchData = () => {
+  const fetchData = async () => {
     if (actor) {
       setIsLoading(true)
 
@@ -92,23 +93,24 @@ const Marketplace = () => {
           }
         })
       })
-      actor?.collection_nft_origyn([]).then((response) => {
+      actor?.collection_nft_origyn([]).then(async (response) => {
         console.log('collection_nft_origyn', response)
         if ('err' in response)
           throw new Error(Object.keys(response.err)[0])
 
-        Promise.all(
-          response?.ok?.token_ids[0]?.map((nft) => actor?.nft_origyn(nft).then((r) => {
+        setTotal(response?.ok?.token_ids[0]?.length)
+
+        actor?.nft_batch_origyn(response?.ok?.token_ids[0])
+          .then((r) => {
             if ('err' in r)
-              throw new Error(Object.keys(r.err)[0])
-            return r.ok
-          })),
-        )
-          .then((data: any) => {
-            const parsedData = data.map((it) => {
-              const sale = it?.current_sale[0]?.sale_type?.auction?.current_bid_amount
-              const nftID = it.metadata.Class.find(({ name }) => name === 'id').value.Text
-              const dataObj = it.metadata.Class.find(({ name }) => name === '__apps')
+              throw new Error()
+            console.log(r)
+            const parsedData = r.map((it) => {
+              console.log(it)
+              const openSale = it?.ok?.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open')
+              const sale = it?.ok?.current_sale[0]?.sale_type?.auction?.current_bid_amount
+              const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text
+              const dataObj = it?.ok?.metadata.Class.find(({ name }) => name === '__apps')
                 .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
                 .value.Class.reduce(
                   (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
@@ -117,7 +119,7 @@ const Marketplace = () => {
               const filterSale = Number(sale)
               return {
                 ...dataObj,
-                id: { nftID: nftID, sale: filterSale },
+                id: { nftID: nftID, sale: filterSale, open: openSale },
               }
             })
 
@@ -125,10 +127,10 @@ const Marketplace = () => {
             setFilteredNFTData(parsedData)
             setIsLoading(false)
           })
-          .catch((err) => {
+          .catch(() => {
             setIsLoading(false)
-            console.log(err)
           })
+
       })
     }
   }
@@ -216,7 +218,7 @@ const Marketplace = () => {
                       style={{ width: 200 }}
                     />
                     <Flex flexFlow='column' justify='space-between' gap={8}>
-                      <h2><b>{collectionData?.display_name} Collection</b></h2>
+                      <h2><b>{collectionData?.display_name}</b></h2>
                       <p>
                         <span className='secondary_color'>Created by</span>
                         <span className='secondary_color'>
@@ -231,8 +233,8 @@ const Marketplace = () => {
                       <br />
                       <Flex>
                         <Flex flexFlow='column'>
-                          <h5>{NFTData?.length}</h5>
-                          <p className='secondary_color'>Owned Items</p>
+                          <h5>{total}</h5>
+                          <p className='secondary_color'>Total Items</p>
                         </Flex>
                       </Flex>
                       <br />
@@ -256,53 +258,55 @@ const Marketplace = () => {
                   <br />
                   <br />
                   {NFTData?.length > 0 ? (
-                    <Grid
-                      smColumns={1}
-                      mdColumns={2}
-                      lgColumns={3}
-                      xlColumns={4}
-                      columns={6}
-                      gap={20}
-                    >
-                      {filteredNFTData.map((nft: any) => {
-                        const currentOpenAuction = nft?.current_sale?.find((sale) =>
-                          sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-                        )
-                        console.log(currentOpenAuction)
-                        return (
-                          <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
-                            <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
-                              <img
-                                style={{ width: '100%' }}
-                                src={`https://${canisterId}.raw.ic0.app/-/${nft.id.nftID}/preview`}
-                                alt=''
-                              />
-                              <Container style={{ height: '100%' }} size='full' padding='16px'>
-                                <Flex style={{ height: '100%' }} justify='space-between' flexFlow='column' gap={32}>
-                                  <div>
-                                    <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                      {collectionData?.display_name} Collection
-                                    </p>
-                                    <p>
-                                      <b>{nft['display_name']}</b>
-                                    </p>
-                                  </div>
-                                  <div>
-                                    <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
-                                    <p>
-                                      {currentOpenAuction ? nft.id.sale : 'No auction started'}
-                                    </p>
-                                  </div>
-                                </Flex>
-                              </Container>
-                            </Card>
-                          </Link>
-                        )
-                      })}
-                    </Grid>
+                    <>
+                      <Grid
+                        smColumns={1}
+                        mdColumns={2}
+                        lgColumns={3}
+                        xlColumns={4}
+                        columns={6}
+                        gap={20}
+                      >
+                        {filteredNFTData.map((nft: any) => {
+                          const currentOpenAuction = nft?.current_sale?.find((sale) =>
+                            sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
+                          )
+                          return (
+                            <Link to={`/${nft?.id?.nftID}`} key={nft?.id?.nftID}>
+                              <Card flexFlow='column' style={{ overflow: 'hidden', height: '100%' }}>
+                                <img
+                                  style={{ width: '100%' }}
+                                  src={`https://${canisterId}.raw.ic0.app/-/${nft?.id?.nftID}/preview`}
+                                  alt=''
+                                />
+                                <Container style={{ height: '100%' }} size='full' padding='16px'>
+                                  <Flex style={{ height: '100%' }} justify='space-between' flexFlow='column' gap={32}>
+                                    <div>
+                                      <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
+                                        {collectionData?.display_name}
+                                      </p>
+                                      <p>
+                                        <b>{nft['display_name']}</b>
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
+                                      <p>
+                                        {nft.id.open ? nft.id.sale : 'No auction started'}
+                                      </p>
+                                    </div>
+                                  </Flex>
+                                </Container>
+                              </Card>
+                            </Link>
+                          )
+                        })}
+                      </Grid>
+                      <br />
+                    </>
                   ) : (
                     <h5>
-                      There is no NFTs in this collection
+                      There are no NFTs in this collection
                     </h5>
                   )}
                 </Container>
