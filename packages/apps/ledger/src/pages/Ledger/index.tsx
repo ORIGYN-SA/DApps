@@ -6,7 +6,12 @@ import {
   TransactionsTable,
   SearchbarNft,
 } from '@dapp/features-components';
-import { SecondaryNav, Container, Banner, HR } from '@origyn-sa/origyn-art-ui';
+import { SecondaryNav, Container, Banner, HR, Flex} from '@origyn-sa/origyn-art-ui';
+import styled from 'styled-components'
+
+const StyledSectionTitle = styled.h2`
+  margin: 48px 24px;
+`
 
 const Ledger = () => {
   const ledgerVersion: string = '0.1.0';
@@ -44,6 +49,11 @@ const Ledger = () => {
         title="Ledger"
         tabs={[{ title: 'Transactions', id: 'Transactions' }]}
         content={[
+          <>
+          <Flex fullWidth flexFlow='column'>
+                <StyledSectionTitle>Ledger Dashboard</StyledSectionTitle>
+                <HR />
+          </Flex>      
           <Container>
             <SearchbarNft
               setSearchBarTokenId={setSearchBarTokenId}
@@ -74,7 +84,8 @@ const Ledger = () => {
               transactionData={transactionData}
             />
             <VersionLabel ledgerVersion={ledgerVersion} />
-          </Container>,
+          </Container>
+          </>
         ]}
         onLogOut={handleLogOut}
         onConnect={open}

@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { collectionName } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
-import { Container, Card, Select } from '@origyn-sa/origyn-art-ui';
+import { Container, Card, Select, HR } from '@origyn-sa/origyn-art-ui';
 
 interface SelectType {
   value: string;
@@ -119,14 +119,20 @@ export const SearchbarNft = (props: any) => {
               <Container padding="16px">
                 Current Token ID: <b>{props.searchBarTokenId}</b>
               </Container>
+              <br/>
+              <HR/>
             </>
           ) : (
             <Container padding="16px">
               Current Token ID: <b>{props.searchBarTokenId}</b>
+              <br/>
+              <br/>
+              <HR/>
             </Container>
+            
           )}
           <Container padding="16px" >
-            Search for other NFT&#39;S <em>(+{idsNumber}...)</em>
+            Search for NFTs
           </Container>
           <Container padding="16px">
             <Select 
