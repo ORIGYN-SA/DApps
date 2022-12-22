@@ -10,10 +10,6 @@ interface SelectType {
   label: string;
 }
 
-const IconButton = styled(Button)`
-background: #2424242
-`
-
 const ISPROD = true;
 
 export const SearchbarNft = (props: any) => {
@@ -151,9 +147,9 @@ export const SearchbarNft = (props: any) => {
           <Grid columns={4}>           
             <Grid column={1}>
             <Flex flexFlow='row' align='center' gap={8}>
-              <IconButton iconButton style={{width: '40px', height:'40px'}} onClick={()=>setOpenSearch(!openSearch)}> 
-            <Icons.SearchIcon style={{width: '18px', height:'18px'}}/>
-            </IconButton>
+              <Button iconButton onClick={()=>setOpenSearch(!openSearch)}> 
+            <Icons.SearchIcon/>
+            </Button>
             {openSearch && <TextInput onChange={(text) => {
               handleSelectIds(text.target.value);
             }}/>}
