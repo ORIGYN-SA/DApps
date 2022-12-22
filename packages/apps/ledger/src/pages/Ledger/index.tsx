@@ -47,7 +47,7 @@ const Ledger = () => {
     <Container fullWidth padding="0" flexFlow="column">
       <SecondaryNav
         title="Ledger"
-        tabs={[{ title: 'Transactions', id: 'Transactions' }]}
+        tabs={[{ title: 'Dashboard', id: 'Transactions' }]}
         content={[
           <>
           <Flex fullWidth flexFlow='column'>

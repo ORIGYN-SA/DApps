@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { collectionName } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
-import { Container, Card, Select, HR, Grid, Icons, Flex, Button } from '@origyn-sa/origyn-art-ui';
+import { Container, Card, Select, HR, Grid, Icons, Flex, Button, TextInput } from '@origyn-sa/origyn-art-ui';
 import styled from 'styled-components'
 
 interface SelectType {
@@ -22,6 +22,7 @@ export const SearchbarNft = (props: any) => {
   const [canisterId, setCanisterId] = React.useState('');
   const [selectTokenIds, setSelectTokenIds] = React.useState<any>(['']);
   const [idsNumber, setIdsNumber] = React.useState('');
+  const [openSearch, setOpenSearch] = React.useState(false);
   const handleSelectIds = (option) => {
     // setSearchBarTokenId state
     if (option.value == null) {
@@ -150,9 +151,12 @@ export const SearchbarNft = (props: any) => {
           <Grid columns={2}>           
             <Grid column={1}>
             <Flex flexFlow='row' align='center' gap={8}>
-              <IconButton iconButton>
+              <IconButton iconButton style={{width: '40px', height:'40px'}} onClick={()=>setOpenSearch(!openSearch)}> 
             <Icons.SearchIcon style={{width: '18px', height:'18px'}}/>
             </IconButton>
+            {openSearch && <TextInput onChange={(text) => {
+              handleSelectIds(text.target.value);
+            }}/>}
             <Select 
              placeholder="Token Ids"
              selectedOption={props.searchBarTokenId}

@@ -102,12 +102,13 @@ export const TransactionFilter = (props: any) => {
         <Container>Filters unavailable, select a Token.</Container>
       ) : (
         <>
-        <Flex flexFlow='row' align='center'>
-          <Button iconButton>
+
+          <Grid columns={2}>
+            <Grid column={1}>
+            <Flex flexFlow='row' align='center' fullWidth>
+          <Button iconButton style={{width: '40px', height: '40px'}}>
         <Icons.FilterIcon style={{width: '18px', height: '18px'}} fill='white'/>
         </Button>
-          <Grid columns={3}>
-            <Grid column={1}>
               {props.isLoading ? (
                 <Container padding="16px">
                   <Select
@@ -138,8 +139,8 @@ export const TransactionFilter = (props: any) => {
                   />
                 </Container>
               )}
-            </Grid>
-            <Grid column={2}>
+            
+            
               {props.isLoading ? (
                 <Container padding="16px">
 
@@ -176,8 +177,8 @@ export const TransactionFilter = (props: any) => {
                   />
                 </Container>
               )}
-            </Grid>
-            <Grid column={3}>
+            
+            
             {props.isLoading ? (
             <>
             <Container padding="16px">
@@ -211,9 +212,10 @@ export const TransactionFilter = (props: any) => {
             </Container>
             </>
           )}
+                    </Flex>
             </Grid>
           </Grid>
-          </Flex>
+
 
         </>
       )}
