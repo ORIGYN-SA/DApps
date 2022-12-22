@@ -106,8 +106,8 @@ export const TransactionFilter = (props: any) => {
           <Grid columns={2}>
             <Grid column={1}>
             <Flex flexFlow='row' align='center' fullWidth>
-          <Button iconButton style={{width: '40px', height: '40px'}}>
-        <Icons.FilterIcon style={{width: '18px', height: '18px'}} fill='white'/>
+          <Button iconButton>
+        <Icons.FilterIcon width={18} height={18}/>
         </Button>
               {props.isLoading ? (
                 <Container padding="16px">

@@ -148,7 +148,7 @@ export const SearchbarNft = (props: any) => {
             <Grid column={1}>
             <Flex flexFlow='row' align='center' gap={8}>
               <Button iconButton onClick={()=>setOpenSearch(!openSearch)}> 
-            <Icons.SearchIcon/>
+            <Icons.SearchIcon width={18} height={18}/>
             </Button>
             {openSearch && <TextInput onChange={(text) => {
               handleSelectIds(text.target.value);
