@@ -151,7 +151,7 @@ export const SearchbarNft = (props: any) => {
             <Grid column={1}>
             <Flex flexFlow='row' align='center' gap={8}>
               <IconButton iconButton>
-            <Icons.SearchIcon />
+            <Icons.SearchIcon style={{width: '18px', height:'18px'}}/>
             </IconButton>
             <Select 
              placeholder="Token Ids"
