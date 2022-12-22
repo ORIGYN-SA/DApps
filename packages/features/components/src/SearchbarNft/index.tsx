@@ -148,7 +148,7 @@ export const SearchbarNft = (props: any) => {
             Search for NFTs
           </Container>
           <Container padding="16px">
-          <Grid columns={2}>           
+          <Grid columns={4}>           
             <Grid column={1}>
             <Flex flexFlow='row' align='center' gap={8}>
               <IconButton iconButton style={{width: '40px', height:'40px'}} onClick={()=>setOpenSearch(!openSearch)}> 
