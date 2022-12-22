@@ -2,12 +2,17 @@ import React, { useContext, useEffect } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { collectionName } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
-import { Container, Card, Select, HR, Grid } from '@origyn-sa/origyn-art-ui';
+import { Container, Card, Select, HR, Grid, Icons, Flex, Button } from '@origyn-sa/origyn-art-ui';
+import styled from 'styled-components'
 
 interface SelectType {
   value: string;
   label: string;
 }
+
+const IconButton = styled(Button)`
+background: #2424242
+`
 
 const ISPROD = true;
 
@@ -142,8 +147,12 @@ export const SearchbarNft = (props: any) => {
             Search for NFTs
           </Container>
           <Container padding="16px">
-          <Grid columns={3}>
+          <Grid columns={2}>           
             <Grid column={1}>
+            <Flex flexFlow='row' align='center' gap={8}>
+              <IconButton iconButton>
+            <Icons.SearchIcon />
+            </IconButton>
             <Select 
              placeholder="Token Ids"
              selectedOption={props.searchBarTokenId}
@@ -159,6 +168,7 @@ export const SearchbarNft = (props: any) => {
               })
              }
             />
+            </Flex>
             </Grid>
             </Grid>
           </Container>
