@@ -1,15 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { DropzoneArea } from 'mui-file-dropzone';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
 import { OrigynClient, updateLibraryFileContent, getNftCollectionMeta } from '@origyn-sa/mintjs';
-// Dialog
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Button } from '@origyn-sa/origyn-art-ui';
+import { Button, Modal, Container, Flex } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 type Props = {
@@ -17,14 +12,12 @@ type Props = {
   libraryId: string;
   updateCollectionLevelLibraryData: any;
   setOpenLibraryCollectionLevel: any;
-
 };
 export const UpdateLibraryFile = ({
   tokenId,
   libraryId,
   updateCollectionLevelLibraryData,
-  setOpenLibraryCollectionLevel
-
+  setOpenLibraryCollectionLevel,
 }: Props) => {
   const { actor } = useContext(AuthContext);
   // Snackbar
@@ -126,37 +119,33 @@ export const UpdateLibraryFile = ({
         Update library file
       </Button>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        {inProgress ? (
-          <>
-            <DialogTitle>Updating in Progress</DialogTitle>
-            <DialogContent>
+      <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
+        <Container padding="16px">
+          {inProgress ? (
+            <>
               <LinearProgress color="secondary" />
-            </DialogContent>
-          </>
-        ) : (
-          <>
-            <DialogTitle id="alert-dialog-title">
-              Update file content of library
-              {libraryId}
-            </DialogTitle>
-            <DialogContent>
-              <DropzoneArea filesLimit={1} onChange={handleFileSelected} />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Back</Button>
-              <Button onClick={handleSubmit} btnType="filled">
-                Submit
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
+            </>
+          ) : (
+            <>
+              <Flex flexFlow="column" gap={16}>
+                <Flex>
+                  Update file content of library
+                  {libraryId}
+                </Flex>
+                <Flex>
+                  <DropzoneArea filesLimit={1} onChange={handleFileSelected} />
+                </Flex>
+                <Flex>
+                  <Button onClick={handleClose}>Back</Button>
+                  <Button onClick={handleSubmit} btnType="filled">
+                    Submit
+                  </Button>
+                </Flex>
+              </Flex>
+            </>
+          )}
+        </Container>
+      </Modal>
     </>
   );
 };

@@ -108,6 +108,7 @@ export const CollectionLibrary = (props: any) => {
                     isMutable={isMutable}
                     updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
                     setOpenLibraryCollectionLevel={props.setOpenLibraryCollectionLevel}
+                    setLibrary3={props.setLibrary3}
                   />
                 </Flex>
                 <Flex>

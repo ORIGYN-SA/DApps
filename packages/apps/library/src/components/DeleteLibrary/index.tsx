@@ -148,6 +148,7 @@ export const DeleteLibrary = (props: any) => {
         );
       });
       console.log('here');
+      props.setLibrary3('');
       props.setOpenLibraryCollectionLevel(false);
     } else {
       //Update the library data for the token
@@ -159,6 +160,8 @@ export const DeleteLibrary = (props: any) => {
         );
       });
       props.setOpenLibrarySelectedToken(false);
+      // clean library data
+      props.setLibDet('');
     }
   };
 

@@ -36,7 +36,7 @@ const LibraryTextHtml = (props: any) => {
     if (canisterId) {
       getContent();
     }
-  }, [canisterId]);
+  }, [canisterId,props.source]);
 
   useEffect(() => {
     useRoute().then(({ canisterId, tokenId }) => {

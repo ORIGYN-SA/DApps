@@ -18,7 +18,7 @@ const Library = () => {
       <SecondaryNav
         title='Library'
         tabs={[
-          { title: 'Balance', id: 'Balance' },
+          { title: 'Explore', id: 'Explore' },
         ]}
         content={[
           <Container padding="16px">
