@@ -298,7 +298,7 @@ const ColumnView = () => {
                 <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
                   {owner && loggedIn && collectionLevelLibraryData.length>0 ? (
                     <>
-                      <Flex onClick={() => handleAddLibrary()}>
+                      <Flex onClick={() => handleAddLibraryAtCollection()}>
                         <span style={{ color: 'grey' }}> + Add a library at collection level </span>
                       </Flex>
                     </>

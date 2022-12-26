@@ -10,12 +10,13 @@
 import { Principal } from '@dfinity/principal';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 
-export const checkOwner = async (principal: Principal, currCanisterId, currTokenId) => {
+export const checkOwner = async (principal: Principal, currCanisterId) => {
 
     OrigynClient.getInstance().init(currCanisterId);
 
     const UserPrincipal = principal.toText();
-    const MetadataCollectionLevel = await getNftCollectionMeta().then((r) => r.ok.metadata[0].Class);
+    const MetadataCollectionLevelResponse = await getNftCollectionMeta();
+    const MetadataCollectionLevel = MetadataCollectionLevelResponse.ok.metadata[0].Class;
 
     // Collection Owner
     const CollectionData = MetadataCollectionLevel.filter((res) => {
