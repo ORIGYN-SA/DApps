@@ -1,29 +1,54 @@
 import React, { useEffect } from 'react';
 // mint.js
 import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import Collapse from '@mui/material/Collapse';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 // LocationTypes
 import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
 import { useRoute } from '../../../../../features/authentication';
 import { LinearProgress } from '@mui/material';
-import { Container, Grid } from '@origyn-sa/origyn-art-ui';
+import { Container, Toggle, Flex } from '@origyn-sa/origyn-art-ui';
+
+export const LocationTypeLayouts = {
+  Canister: (setInProgress: string, tokenId: string) => (
+    <CanisterLocation setInProgress={setInProgress} tokenId={tokenId} />
+  ),
+  Web: (setInProgress: string, tokenId: string) => (
+    <WebLocation setInProgress={setInProgress} tokenId={tokenId} />
+  ),
+  Collection: (setInProgress: string, tokenId: string) => (
+    <CollectionLocation setInProgress={setInProgress} tokenId={tokenId} />
+  ),
+};
 
 export const LibraryForm = (props: any) => {
-  const [radioValue, setRadioValue] = React.useState('Canister');
-  const [openFileInput, setOpenFileInput] = React.useState(false);
-  const [openSelectInput, setOpenSelectInput] = React.useState(false);
-  const [openWebInput, setOpenWebInput] = React.useState(false);
   const [inProgress, setInProgress] = React.useState(false);
+  const [isCheckedCanister, setIsCheckedCanister] = React.useState(false);
+  const [isCheckedWeb, setIsCheckedWeb] = React.useState(false);
+  const [isCheckedCollection, setIsCheckedCollection] = React.useState(false);
+  const [choosenLocation, setChoosenLocation] = React.useState('');
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRadioValue((event.target as HTMLInputElement).value);
+  const handleCanisterToggleChange = () => {
+    setIsCheckedCanister(true);
+    setIsCheckedWeb(false);
+    setIsCheckedCollection(false);
+
+    setChoosenLocation('Canister');
+  };
+  const handleWebToggleChange = () => {
+    setIsCheckedCanister(false);
+    setIsCheckedWeb(true);
+    setIsCheckedCollection(false);
+
+    setChoosenLocation('Web');
+  };
+  const handleCollectionToggleChange = () => {
+    setIsCheckedCanister(false);
+    setIsCheckedWeb(false);
+    setIsCheckedCollection(true);
+
+    setChoosenLocation('Collection');
+    getLibraries();
   };
 
   const getLibraries = async () => {
@@ -46,27 +71,6 @@ export const LibraryForm = (props: any) => {
     }
   };
 
-  useEffect(() => {
-    switch (radioValue) {
-      case 'Canister':
-        setOpenFileInput(true);
-        setOpenSelectInput(false);
-        setOpenWebInput(false);
-        break;
-      case 'Web':
-        setOpenFileInput(false);
-        setOpenSelectInput(false);
-        setOpenWebInput(true);
-        break;
-      case 'Collection':
-        setOpenFileInput(false);
-        setOpenSelectInput(true);
-        setOpenWebInput(false);
-        getLibraries();
-        break;
-    }
-  }, [radioValue]);
-
   return (
     <Container padding="16px">
       {inProgress ? (
@@ -81,77 +85,97 @@ export const LibraryForm = (props: any) => {
             <>
               <b>Stage a library for the collection</b>
               <>
-                <Grid columns={1}>
-                  <Grid column={1}>
-                    Choose Location Type:
-                    <br />
-                    <FormControl>
-                      <RadioGroup
-                        aria-labelledby="radio-location-type"
-                        defaultValue="Canister"
-                        name="radio-location-type"
-                        onChange={handleRadioChange}
-                        value={radioValue}
-                      >
-                        <FormControlLabel value="Canister" control={<Radio />} label="Canister" />
-                        <FormControlLabel value="Web" control={<Radio />} label="Web" />
-                      </RadioGroup>
-                    </FormControl>
-                  </Grid>
-                  <Collapse in={openFileInput} timeout="auto" unmountOnExit>
-                    <CanisterLocation 
-                     setInProgress={setInProgress}
-                    tokenId={props.currentTokenId} />
-                  </Collapse>
-                  <Collapse in={openWebInput} timeout="auto" unmountOnExit>
-                    <WebLocation 
-                     setInProgress={setInProgress}
-                    tokenId={props.currentTokenId} />
-                  </Collapse>
-                </Grid>
+                <Flex flexFlow="column" gap={8}>
+                  <Flex>Choose Location Type:</Flex>
+                  <Flex>
+                    <Flex flexFlow="row" gap={8}>
+                      <Flex>
+                        <Toggle
+                          checked={isCheckedCanister}
+                          handleToggle={handleCanisterToggleChange}
+                        />
+                      </Flex>
+                      <Flex>
+                        <b>Canister</b>
+                      </Flex>
+                    </Flex>
+                  </Flex>
+                  <Flex>
+                    <Flex flexFlow="row" gap={8}>
+                      <Flex>
+                        <Toggle checked={isCheckedWeb} handleToggle={handleWebToggleChange} />
+                      </Flex>
+                      <Flex>
+                        <b>Web</b>
+                      </Flex>
+                    </Flex>
+                  </Flex>
+                  {choosenLocation !== '' ? (
+                    <Flex>{LocationTypeLayouts[choosenLocation](setInProgress, '')}</Flex>
+                  ) : (
+                    <>
+                      <Flex>Select a location type to continue!</Flex>
+                    </>
+                  )}
+                </Flex>
               </>
             </>
           ) : (
             <>
               <b>Stage a library for: {props.currentTokenId} </b>
-              <Grid columns={1}>
-                <Grid column={1}>
-                  <FormControl>
-                    <FormLabel id="radio-location-type">
-                      <b>Choose Location Type</b>
-                    </FormLabel>
-                    <RadioGroup
-                      aria-labelledby="radio-location-type"
-                      defaultValue="Canister"
-                      name="radio-location-type"
-                      onChange={handleRadioChange}
-                      value={radioValue}
-                    >
-                      <FormControlLabel value="Canister" control={<Radio />} label="Canister" />
-                      <FormControlLabel value="Collection" control={<Radio />} label="Collection" />
-                      <FormControlLabel value="Web" control={<Radio />} label="Web" />
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
-                <Collapse in={openSelectInput} timeout="auto" unmountOnExit>
-                  <CollectionLocation 
-                  setInProgress={setInProgress}
-                  tokenId={props.currentTokenId} 
-                  />
-                </Collapse>
-                <Collapse in={openFileInput} timeout="auto" unmountOnExit>
-                  <CanisterLocation 
-                  setInProgress={setInProgress}
-                  tokenId={props.currentTokenId} 
-                  />
-                </Collapse>
-                <Collapse in={openWebInput} timeout="auto" unmountOnExit>
-                  <WebLocation 
-                  setInProgress={setInProgress}
-                  tokenId={props.currentTokenId} 
-                  />
-                </Collapse>
-              </Grid>
+              <>
+                <>
+                  <Flex flexFlow="column" gap={8}>
+                    <Flex>Choose Location Type:</Flex>
+                    <Flex>
+                      <Flex flexFlow="row" gap={8}>
+                        <Flex>
+                          <Toggle
+                            checked={isCheckedCanister}
+                            handleToggle={handleCanisterToggleChange}
+                          />
+                        </Flex>
+                        <Flex>
+                          <b>Canister</b>
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                    <Flex>
+                      <Flex flexFlow="row" gap={8}>
+                        <Flex>
+                          <Toggle checked={isCheckedWeb} handleToggle={handleWebToggleChange} />
+                        </Flex>
+                        <Flex>
+                          <b>Web</b>
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                    <Flex>
+                      <Flex flexFlow="row" gap={8}>
+                        <Flex>
+                          <Toggle
+                            checked={isCheckedCollection}
+                            handleToggle={handleCollectionToggleChange}
+                          />
+                        </Flex>
+                        <Flex>
+                          <b>Collection</b>
+                        </Flex>
+                      </Flex>
+                    </Flex>
+
+                    {choosenLocation !== '' ? (
+                      <Flex>
+                        {LocationTypeLayouts[choosenLocation](setInProgress, props.currentTokenId)}
+                      </Flex>
+                    ) : (
+                      <>
+                        <Flex>Select a location type to continue!</Flex>
+                      </>
+                    )}
+                  </Flex>
+                </>
+              </>
             </>
           )}
         </>
