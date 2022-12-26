@@ -1,15 +1,19 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { OrigynClient, stageLibraryAsset, getNft } from '@origyn-sa/mintjs';
+import { OrigynClient, stageLibraryAsset, } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { useSnackbar } from 'notistack';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import { Grid, Container, TextInput, Button, HR, Flex } from '@origyn-sa/origyn-art-ui';
+import {
+  Grid,
+  Container,
+  TextInput,
+  Button,
+  HR,
+  Flex,
+  Toggle,
+
+} from '@origyn-sa/origyn-art-ui';
 export const CanisterLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
@@ -20,9 +24,8 @@ export const CanisterLocation = (props: any) => {
   const [typedId, setTypedId] = useState<string>();
   const [immutable, setImmutable] = React.useState(false);
 
-  const handleChange = (event) => {
-    setImmutable(event.target.value);
-    console.log(event.target.value);
+  const handleChangeImmutable = () => {
+    setImmutable(!immutable);
   };
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
@@ -80,7 +83,7 @@ export const CanisterLocation = (props: any) => {
                 title: typedTitle,
                 immutable: immutable,
                 libraryId: typedId,
-                isNewLibrary:true,
+                isNewLibrary: true,
               };
             }),
           )),
@@ -117,61 +120,54 @@ export const CanisterLocation = (props: any) => {
       console.log(e);
     }
     props.setInProgress(false);
-    
   };
 
   return (
-    <Container padding="16px">
-      <>
-        <Grid columns={1}>
-          <Grid column={1}>
-            <TextInput id="title" placeholder="Enter Library Title" onChange={getTypedTitle} />
-          </Grid>
-        </Grid>
-        <Grid columns={1}>
-          <Grid column={1}>
-            <TextInput id="id" placeholder="Enter Library Id" onChange={getTypedId} />
-          </Grid>
-        </Grid>
-        <Container padding="16px">
-          <Grid>
-            <input
-              type="file"
-              id="library"
-              name="library"
-              onChange={handleInputChange}
-              multiple={false}
-            />
-          </Grid>
-        </Container>
+    <>
+    <Container size="full">
+    <Flex flexFlow="column" gap={8}>
+        <Flex>
+          <TextInput
+            label="Library title"
+            id="title"
+            placeholder="Enter Library Title"
+            onChange={getTypedTitle}
+          />
+        </Flex>
+        <Flex>
+          <TextInput
+            label={'Library id'}
+            id="id"
+            placeholder="Enter Library Id"
+            onChange={getTypedId}
+          />
+        </Flex>
+        <Flex>
+          <input
+            type="file"
+            id="library"
+            name="library"
+            onChange={handleInputChange}
+            multiple={false}
+          />
+        </Flex>
+        <Flex>
+          <Flex flexFlow="row" gap={8}>
+            <Flex>
+              <Toggle checked={immutable} handleToggle={handleChangeImmutable} />
+            </Flex>
+            <Flex>{immutable ? 'Library is immutable' : 'Library is mutable'}</Flex>
+          </Flex>
+        </Flex>
 
-        <Container padding="16px">
-          <Grid>
-            <FormControl>
-              <FormLabel id="demo-radio-buttons-group-label">Make library mutable or not</FormLabel>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="Mutable"
-                name="radio-buttons-group"
-                value={immutable}
-                onChange={handleChange}
-              >
-                <FormControlLabel value={false} control={<Radio />} label="Mutable" />
-                <FormControlLabel value={true} control={<Radio />} label="Immutable" />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Container>
         {file === undefined ? (
           <></>
         ) : (
-          <Container padding="16px">
-            {type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}
-          </Container>
+          <Flex>{type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}</Flex>
         )}
-      </>
-      <HR marginTop={16} marginBottom={16} />
-      <Flex align="center" justify="center">
+
+        <HR marginTop={16} marginBottom={16} />
+
         <Flex>
           <Button btnType="filled" onClick={stageLibrary}>
             Stage Library
@@ -179,5 +175,7 @@ export const CanisterLocation = (props: any) => {
         </Flex>
       </Flex>
     </Container>
+      
+    </>
   );
 };

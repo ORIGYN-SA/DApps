@@ -7,7 +7,7 @@ import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
 import { useRoute } from '../../../../../features/authentication';
 import { LinearProgress } from '@mui/material';
-import { Container, Toggle, Flex } from '@origyn-sa/origyn-art-ui';
+import { Container, Toggle, Flex,HR } from '@origyn-sa/origyn-art-ui';
 
 export const LocationTypeLayouts = {
   Canister: (setInProgress: string, tokenId: string) => (
@@ -110,6 +110,7 @@ export const LibraryForm = (props: any) => {
                       </Flex>
                     </Flex>
                   </Flex>
+                  <HR marginTop={16} marginBottom={16} />
                   {choosenLocation !== '' ? (
                     <Flex>{LocationTypeLayouts[choosenLocation](setInProgress, '')}</Flex>
                   ) : (
@@ -163,7 +164,7 @@ export const LibraryForm = (props: any) => {
                         </Flex>
                       </Flex>
                     </Flex>
-
+                    <HR marginTop={16} marginBottom={16} />
                     {choosenLocation !== '' ? (
                       <Flex>
                         {LocationTypeLayouts[choosenLocation](setInProgress, props.currentTokenId)}
