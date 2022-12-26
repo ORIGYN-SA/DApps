@@ -2,21 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { getNft, OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { checkOwner } from '@dapp/utils';
-// Import from style.tsx
-import { Sizes, ListItemButton, useStyles } from './style';
-import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
-import ListItem from '@mui/material/ListItem';
-import Collapse from '@mui/material/Collapse';
-import { Box } from '@mui/system';
 // Library components
 import { CollectionLibrary } from '../CollectionLibrary';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
 import { Container, Grid, Flex, Modal } from '@origyn-sa/origyn-art-ui';
-
 const ColumnView = () => {
-  const classes = useStyles();
+
   const { actor, loggedIn, principal } = useContext(AuthContext);
 
   const [canisterId, setCanisterId] = useState('');
@@ -77,6 +69,7 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
+    setLibDet('');
     const { canisterId } = await useRoute();
     setOpenLib(false);
     setOpenDetails(false);
