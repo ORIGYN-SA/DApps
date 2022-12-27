@@ -4,7 +4,7 @@ import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
 import { LinearProgress } from '@mui/material';
-import { Container, Toggle, Flex, HR, Select } from '@origyn-sa/origyn-art-ui';
+import { Container,Flex, HR, Select } from '@origyn-sa/origyn-art-ui';
 
 const locationTypeLayouts = {
   Canister: (setInProgress: string, tokenId: string) => (

@@ -47,23 +47,19 @@ export const checkOwner = async (principal: Principal, currCanisterId: string) =
         }
     }
 
-    const managers = metadataCollectionLevelResponse.ok?.managers;
+    const managers = metadataCollectionLevelResponse.ok?.managers || [];
     console.log('Managers list: ', managers)
     const isManager = () => {
         let i: any;
         for (i in managers) {
             let managersPrincipals = managers[i];
             console.log(' 🔏 - MANAGER' + ' #' + i + ' ' + managersPrincipals.toString());
-            if (managersPrincipals.toString() === userPrincipal) {
+            if(managersPrincipals.toString() === userPrincipal) {
                 return true;
             }
         }
     }
 
-    if ((isManager() === true) || (isAllowed() === true) || (userPrincipal === collectionOwner)) {
-        return true;
-    } else {
-        return false;
-    }
+    return (isManager() || isAllowed() || (userPrincipal === collectionOwner));
 
 }

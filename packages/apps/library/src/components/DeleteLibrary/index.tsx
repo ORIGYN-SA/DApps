@@ -10,7 +10,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Typography } from '@mui/material';
-import { Button } from '@origyn-sa/origyn-art-ui';
+import { Button,Modal,Flex,Container, HR } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 export const DeleteLibrary = (props: any) => {
@@ -147,7 +147,6 @@ export const DeleteLibrary = (props: any) => {
           })[0].value.Array.thawed,
         );
       });
-      console.log('here');
       props.setLibrary3('');
       props.setOpenLibraryCollectionLevel(false);
     } else {
@@ -170,19 +169,16 @@ export const DeleteLibrary = (props: any) => {
       <Button onClick={handleClickOpen} btnType="filled">
         Delete this Library
       </Button>
-
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        {inProgress ? (
+      <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
+        <Container padding="16px">
+          <Flex flexFlow="column" gap={16}>
+          {inProgress ? (
           <>
-            <DialogTitle>Deleting in Progress</DialogTitle>
-            <DialogContent>
+            <Flex>Deleting in Progress</Flex>
+            <HR marginTop={16} marginBottom={16} />
+            <Flex>
               <LinearProgress color="secondary" />
-            </DialogContent>
+            </Flex>
           </>
         ) : (
           <>
@@ -247,7 +243,9 @@ export const DeleteLibrary = (props: any) => {
             </DialogActions>
           </>
         )}
-      </Dialog>
+          </Flex>
+        </Container>
+      </Modal>
     </>
   );
 };

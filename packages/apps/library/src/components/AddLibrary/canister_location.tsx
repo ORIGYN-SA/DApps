@@ -12,6 +12,7 @@ import {
   Flex,
   CheckboxInput,
 } from '@origyn-sa/origyn-art-ui';
+
 export const CanisterLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();

@@ -6,7 +6,7 @@ import { checkOwner } from '@dapp/utils';
 import { CollectionLibrary } from '../CollectionLibrary';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
-import { Container, Grid, Flex, Modal, Select } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, Flex, Modal} from '@origyn-sa/origyn-art-ui';
 
 interface ListType {
   itemName: string;
@@ -17,24 +17,25 @@ interface ListType {
 const listStyle = {
   backgroundColor: 'transparent',
   border: 'none',
-  color: '#fff',
   cursor: 'pointer',
-  textAlign: 'left'
+  TextAlign: 'left',
+  padding:'0px',
+  fontWeight: 'normal',
 };
 
 const ListItem = (props: ListType) => {
   return (
     <Flex>
-      <button
+      <span
         style={
           props.selectedIndex == props.index
-            ? { ...listStyle, color: 'grey', fontWeight: 'bold' }
+            ? { ...listStyle, color: 'orange', fontWeight: 'bold'}
             : listStyle
         }
         onClick={props.onClick}
       >
-        {props.itemName}
-      </button>
+       {props.itemName}
+       </span>
     </Flex>
   );
 };
