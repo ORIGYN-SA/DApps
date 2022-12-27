@@ -6,24 +6,53 @@ import { checkOwner } from '@dapp/utils';
 import { CollectionLibrary } from '../CollectionLibrary';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
-import { Container, Grid, Flex, Modal } from '@origyn-sa/origyn-art-ui';
-const ColumnView = () => {
+import { Container, Grid, Flex, Modal, Select } from '@origyn-sa/origyn-art-ui';
 
+interface ListType {
+  itemName: string;
+  index: number;
+  selectedIndex: number;
+  onClick: (event: any) => Promise<void>;
+}
+const listStyle = {
+  backgroundColor: 'transparent',
+  border: 'none',
+  color: '#fff',
+  cursor: 'pointer',
+  textAlign: 'left'
+};
+
+const ListItem = (props: ListType) => {
+  return (
+    <Flex>
+      <button
+        style={
+          props.selectedIndex == props.index
+            ? { ...listStyle, color: 'grey', fontWeight: 'bold' }
+            : listStyle
+        }
+        onClick={props.onClick}
+      >
+        {props.itemName}
+      </button>
+    </Flex>
+  );
+};
+
+const ColumnView = () => {
   const { actor, loggedIn, principal } = useContext(AuthContext);
 
   const [canisterId, setCanisterId] = useState('');
 
   // Modal add library
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
   };
   const [openCollection, setOpenCollection] = React.useState(false);
   const handleCloseCollection = () => {
-    setOpen(false);
+    setOpenCollection(false);
   };
-  const handleOpenCollection = ()=> setOpenCollection(true);
 
   const [collectionNft, setCollectionNft] = useState([]);
   const [owner, setOwner] = React.useState<boolean>(false);
@@ -34,7 +63,6 @@ const ColumnView = () => {
   const [selectedLibrary, setSelectedLibrary] = React.useState(0);
   const [openCollectionLevel, setOpenCollectionLevel] = React.useState(false);
   const [openLib, setOpenLib] = React.useState(false);
-  const [openDetails, setOpenDetails] = React.useState(false);
   // Collection level Libraries -- tokenId empty
   const [collectionLevelLibraryData, setCollectionLevelLibraryData] = useState<Array<any>>([]);
   // Specific library -- tokenId from URL or from clicked item
@@ -46,16 +74,14 @@ const ColumnView = () => {
   const [library3, setLibrary3] = useState();
   const [openAddLibraryCollectionLevel, setOpenAddLibraryCollectionLevel] = React.useState(false);
 
-  const handleClickOnNfts = (
+  const handleClickOnNfts = async (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
     // Set collection level libraries data to empty
     setCollectionLevelLibraryData([]);
-
     setOpenCollectionLevel(!openCollectionLevel);
     setOpenLib(false);
-    setOpenDetails(false);
     setOpenLibraryCollectionLevel(false);
     setOpenLibrarySelectedToken(false);
     setOpenAddLibrary(false);
@@ -72,11 +98,11 @@ const ColumnView = () => {
     setLibDet('');
     const { canisterId } = await useRoute();
     setOpenLib(false);
-    setOpenDetails(false);
     setOpenLibrarySelectedToken(false);
     setOpenAddLibrary(false);
     handleDetails();
     setSelectedNft(index);
+    setSelectedMeta(null);
     setCurrentTokenId(nft);
     OrigynClient.getInstance().init(true, canisterId);
     getNft(nft).then((r) => {
@@ -98,7 +124,6 @@ const ColumnView = () => {
     setCurrentTokenId('');
     setOpenLib(!openLib);
     setOpenCollectionLevel(false);
-    setOpenDetails(false);
     setOpenLibrarySelectedToken(false);
     setOpenLibraryCollectionLevel(false);
     setOpenAddLibrary(false);
@@ -118,7 +143,6 @@ const ColumnView = () => {
   };
 
   const handleDetails = () => {
-    setOpenDetails(true);
     setOpenLibrarySelectedToken(false);
     setOpenAddLibrary(false);
   };
@@ -134,7 +158,7 @@ const ColumnView = () => {
     setOpenAddLibrary(false);
   };
 
-  const showCollectionLevelLibraryData = (
+  const showCollectionLevelLibraryData = async (
     lib3,
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
@@ -149,16 +173,15 @@ const ColumnView = () => {
   const handleAddLibrary = () => {
     setOpenAddLibrary(!openAddLibrary);
     setOpenLib(false);
-    setOpenDetails(false);
     setOpenLibraryCollectionLevel(false);
     setOpenLibrarySelectedToken(false);
     setOpen(true);
   };
 
-  const handleAddLibraryAtCollection = () => {
+  const handleAddLibraryAtCollection = async () => {
+    setCurrentTokenId;
     setOpenAddLibraryCollectionLevel(!openAddLibraryCollectionLevel);
     setOpenLib(false);
-    setOpenDetails(false);
     setOpenLibraryCollectionLevel(false);
     setOpenLibrarySelectedToken(false);
     setOpenCollection(true);
@@ -169,7 +192,6 @@ const ColumnView = () => {
     if (tokenId !== '') {
       setOpenCollectionLevel(!openCollectionLevel);
       setOpenLib(false);
-      setOpenDetails(false);
       setOpenLibraryCollectionLevel(false);
       setOpenLibrarySelectedToken(false);
       setOpenAddLibrary(false);
@@ -178,6 +200,7 @@ const ColumnView = () => {
       OrigynClient.getInstance().init(true, canisterId);
       setCurrentTokenId(tokenId);
       setSelectedIndex(0);
+      setSelectedMeta(null);
       setSelectedNft((await nftCollection()).indexOf(tokenId));
       getNft(tokenId).then((r) => {
         setTokenLibraryData(
@@ -221,8 +244,8 @@ const ColumnView = () => {
   }, []);
 
   const checkAndSetOwner = async () => {
-    const { tokenId, canisterId } = await useRoute();
-    const checked = await checkOwner(principal, canisterId, tokenId);
+    const { canisterId } = await useRoute();
+    const checked = await checkOwner(principal, canisterId);
     setOwner(checked);
   };
 
@@ -230,7 +253,7 @@ const ColumnView = () => {
     if (loggedIn) {
       checkAndSetOwner();
     }
-  }, [canisterId, currentTokenId]);
+  }, [canisterId]);
 
   return (
     <>
@@ -238,8 +261,18 @@ const ColumnView = () => {
         <Grid columns={6} gap={16}>
           <Grid column={1} style={{ borderRight: '1px solid grey' }}>
             <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
-              <Flex onClick={(event) => handleClickOnNfts(event, 0)}>NFTs</Flex>
-              <Flex onClick={(event) => handleClickOnCollectionLevel(event, 1)}>Collection</Flex>
+              <ListItem
+                itemName={'NFTs'}
+                onClick={(event) => handleClickOnNfts(event, 0)}
+                index={0}
+                selectedIndex={selectedIndex}
+              />
+              <ListItem
+                itemName={'Collection'}
+                onClick={(event) => handleClickOnCollectionLevel(event, 1)}
+                index={1}
+                selectedIndex={selectedIndex}
+              />
             </Flex>
           </Grid>
           {collectionNft.length > 0 ? (
@@ -247,32 +280,43 @@ const ColumnView = () => {
               <Grid column={2} style={{ borderRight: '1px solid grey' }}>
                 <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
                   {collectionNft?.map((nft, index) => (
-                    <Flex
-                      key={index}
+                    <ListItem
+                      itemName={nft}
                       onClick={(event) => handleClickOnSelectedNft(nft, event, index)}
-                    >
-                      {nft}
-                    </Flex>
+                      index={index}
+                      selectedIndex={selectedNft}
+                    />
                   ))}
                 </Flex>
               </Grid>
               <Grid column={3} style={{ borderRight: '1px solid grey' }}>
-                <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
-                  {owner && loggedIn ? (
-                    <>
-                      <Flex onClick={() => handleAddLibrary()}>
-                        <span style={{ color: 'grey' }}> + Add a library </span>
-                      </Flex>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {tokenLibraryData?.map((library, index) => (
-                    <Flex key={index} onClick={(event) => handleDeta(library, event, index)}>
-                      {library?.Class[1]?.value?.Text}
-                    </Flex>
-                  ))}
-                </Flex>
+                {currentTokenId ? (
+                  <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
+                    {owner && loggedIn ? (
+                      <>
+                        <Flex onClick={() => handleAddLibrary()}>
+                          <span>
+                            <b> + Add a library</b>
+                          </span>
+                        </Flex>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                    {tokenLibraryData?.map((library, index) => (
+                      <ListItem
+                        itemName={library?.Class[1]?.value?.Text}
+                        onClick={(event) => handleDeta(library, event, index)}
+                        index={index}
+                        selectedIndex={selectedMeta}
+                      />
+                    ))}
+                  </Flex>
+                ) : (
+                  <>
+                    <Flex>Select Token</Flex>
+                  </>
+                )}
               </Grid>
               <Grid column={4} style={{ borderRight: '1px solid grey', gridColumnEnd: 'span 3' }}>
                 {libDet ? (
@@ -296,10 +340,12 @@ const ColumnView = () => {
             <>
               <Grid column={2} style={{ borderRight: '1px solid grey' }}>
                 <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
-                  {owner && loggedIn && collectionLevelLibraryData.length>0 ? (
+                  {owner && loggedIn && collectionLevelLibraryData.length > 0 ? (
                     <>
                       <Flex onClick={() => handleAddLibraryAtCollection()}>
-                        <span style={{ color: 'grey' }}> + Add a library at collection level </span>
+                        <span>
+                          <b>+ Add a library at collection level</b>
+                        </span>
                       </Flex>
                     </>
                   ) : (
@@ -307,27 +353,27 @@ const ColumnView = () => {
                   )}
                   <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
                     {collectionLevelLibraryData?.map((library, index) => (
-                      <Flex
-                        key={index}
+                      <ListItem
+                        itemName={library?.Class[1]?.value?.Text}
                         onClick={(event) => showCollectionLevelLibraryData(library, event, index)}
-                      >
-                        {library?.Class[1]?.value?.Text}
-                      </Flex>
+                        index={index}
+                        selectedIndex={selectedLibrary}
+                      />
                     ))}
                   </Flex>
                 </Flex>
               </Grid>
               <Grid column={3} style={{ borderRight: '1px solid grey', gridColumnEnd: 'span 4' }}>
                 {library3 ? (
-                   <CollectionLibrary
-                   loggedIn={loggedIn}
-                   library3={library3}
-                   owner={owner}
-                   currentTokenId={''}
-                   setOpenLibraryCollectionLevel={setOpenLibraryCollectionLevel}
-                   updateCollectionLevelLibraryData={setCollectionLevelLibraryData}
-                   setLibrary3={setLibrary3}
-                 />
+                  <CollectionLibrary
+                    loggedIn={loggedIn}
+                    library3={library3}
+                    owner={owner}
+                    currentTokenId={''}
+                    setOpenLibraryCollectionLevel={setOpenLibraryCollectionLevel}
+                    updateCollectionLevelLibraryData={setCollectionLevelLibraryData}
+                    setLibrary3={setLibrary3}
+                  />
                 ) : (
                   <></>
                 )}
@@ -358,7 +404,7 @@ const ColumnView = () => {
             />
           </Container>
         </Modal>
-      </>     
+      </>
     </>
   );
 };

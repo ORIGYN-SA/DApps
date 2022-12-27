@@ -1,15 +1,12 @@
 import React, { useEffect } from 'react';
-// mint.js
-import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
 // LocationTypes
 import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
-import { useRoute } from '../../../../../features/authentication';
 import { LinearProgress } from '@mui/material';
-import { Container, Toggle, Flex,HR } from '@origyn-sa/origyn-art-ui';
+import { Container, Toggle, Flex, HR, Select } from '@origyn-sa/origyn-art-ui';
 
-export const LocationTypeLayouts = {
+const locationTypeLayouts = {
   Canister: (setInProgress: string, tokenId: string) => (
     <CanisterLocation setInProgress={setInProgress} tokenId={tokenId} />
   ),
@@ -21,55 +18,42 @@ export const LocationTypeLayouts = {
   ),
 };
 
+interface SelectType {
+  value: string;
+  label: string;
+}
+
+const canister: SelectType = {
+  value: 'Canister',
+  label: 'Canister',
+};
+
+const web: SelectType = {
+  value: 'Web',
+  label: 'Web',
+};
+
+const collection: SelectType = {
+  value: 'Collection',
+  label: 'Collection',
+};
+
 export const LibraryForm = (props: any) => {
   const [inProgress, setInProgress] = React.useState(false);
-  const [isCheckedCanister, setIsCheckedCanister] = React.useState(false);
-  const [isCheckedWeb, setIsCheckedWeb] = React.useState(false);
-  const [isCheckedCollection, setIsCheckedCollection] = React.useState(false);
   const [choosenLocation, setChoosenLocation] = React.useState('');
+  const [locationTypes, setLocationTypes] = React.useState<SelectType[]>([]);
 
-  const handleCanisterToggleChange = () => {
-    setIsCheckedCanister(true);
-    setIsCheckedWeb(false);
-    setIsCheckedCollection(false);
-
-    setChoosenLocation('Canister');
-  };
-  const handleWebToggleChange = () => {
-    setIsCheckedCanister(false);
-    setIsCheckedWeb(true);
-    setIsCheckedCollection(false);
-
-    setChoosenLocation('Web');
-  };
-  const handleCollectionToggleChange = () => {
-    setIsCheckedCanister(false);
-    setIsCheckedWeb(false);
-    setIsCheckedCollection(true);
-
-    setChoosenLocation('Collection');
-    getLibraries();
+  const handleSelectChange = (val) => {
+    setChoosenLocation(val);
   };
 
-  const getLibraries = async () => {
-    const { canisterId } = await useRoute();
-
-    await OrigynClient.getInstance().init(true, canisterId);
-    const response = await getNftCollectionMeta();
-    const library = await response.ok.metadata[0].Class.filter((res) => {
-      return res.name === 'library';
-    })[0].value.Array.thawed;
-    console.log('responseCollection', library);
-    let libraries = [];
-    let i: any;
-    for (i in library) {
-      libraries.push(
-        library[i].Class.filter((res) => {
-          return res.name === 'library_id';
-        })[0].value.Text,
-      );
+  useEffect(() => {
+    if(props.currentTokenId === '') {
+      setLocationTypes([canister, web]);
+    } else {
+      setLocationTypes([canister,web,collection]);
     }
-  };
+  }, [props.currentTokenId]);
 
   return (
     <Container padding="16px">
@@ -84,35 +68,31 @@ export const LibraryForm = (props: any) => {
           {props.currentTokenId === '' ? (
             <>
               <b>Stage a library for the collection</b>
+              <HR marginTop={16} marginBottom={16} />
               <>
                 <Flex flexFlow="column" gap={8}>
                   <Flex>Choose Location Type:</Flex>
                   <Flex>
-                    <Flex flexFlow="row" gap={8}>
-                      <Flex>
-                        <Toggle
-                          checked={isCheckedCanister}
-                          handleToggle={handleCanisterToggleChange}
-                        />
-                      </Flex>
-                      <Flex>
-                        <b>Canister</b>
-                      </Flex>
-                    </Flex>
-                  </Flex>
-                  <Flex>
-                    <Flex flexFlow="row" gap={8}>
-                      <Flex>
-                        <Toggle checked={isCheckedWeb} handleToggle={handleWebToggleChange} />
-                      </Flex>
-                      <Flex>
-                        <b>Web</b>
-                      </Flex>
-                    </Flex>
+                    <Select
+                      selectedOption={{
+                        value: choosenLocation,
+                        label: choosenLocation,
+                      }}
+                      label="Select location type"
+                      handleChange={(loc) => {
+                        handleSelectChange(loc.value);
+                      }}
+                      options={locationTypes.map((loc) => {
+                        return {
+                          value: loc.value,
+                          label: loc.label,
+                        };
+                      })}
+                    />
                   </Flex>
                   <HR marginTop={16} marginBottom={16} />
                   {choosenLocation !== '' ? (
-                    <Flex>{LocationTypeLayouts[choosenLocation](setInProgress, '')}</Flex>
+                    <Flex>{locationTypeLayouts[choosenLocation](setInProgress, '')}</Flex>
                   ) : (
                     <>
                       <Flex>Select a location type to continue!</Flex>
@@ -124,50 +104,33 @@ export const LibraryForm = (props: any) => {
           ) : (
             <>
               <b>Stage a library for: {props.currentTokenId} </b>
+              <HR marginTop={16} marginBottom={16} />
               <>
                 <>
                   <Flex flexFlow="column" gap={8}>
                     <Flex>Choose Location Type:</Flex>
                     <Flex>
-                      <Flex flexFlow="row" gap={8}>
-                        <Flex>
-                          <Toggle
-                            checked={isCheckedCanister}
-                            handleToggle={handleCanisterToggleChange}
-                          />
-                        </Flex>
-                        <Flex>
-                          <b>Canister</b>
-                        </Flex>
-                      </Flex>
-                    </Flex>
-                    <Flex>
-                      <Flex flexFlow="row" gap={8}>
-                        <Flex>
-                          <Toggle checked={isCheckedWeb} handleToggle={handleWebToggleChange} />
-                        </Flex>
-                        <Flex>
-                          <b>Web</b>
-                        </Flex>
-                      </Flex>
-                    </Flex>
-                    <Flex>
-                      <Flex flexFlow="row" gap={8}>
-                        <Flex>
-                          <Toggle
-                            checked={isCheckedCollection}
-                            handleToggle={handleCollectionToggleChange}
-                          />
-                        </Flex>
-                        <Flex>
-                          <b>Collection</b>
-                        </Flex>
-                      </Flex>
+                      <Select
+                        selectedOption={{
+                          value: choosenLocation,
+                          label: choosenLocation,
+                        }}
+                        label="Select location type"
+                        handleChange={(loc) => {
+                          handleSelectChange(loc.value);
+                        }}
+                        options={locationTypes.map((loc) => {
+                          return {
+                            value: loc.value,
+                            label: loc.label,
+                          };
+                        })}
+                      />
                     </Flex>
                     <HR marginTop={16} marginBottom={16} />
                     {choosenLocation !== '' ? (
                       <Flex>
-                        {LocationTypeLayouts[choosenLocation](setInProgress, props.currentTokenId)}
+                        {locationTypeLayouts[choosenLocation](setInProgress, props.currentTokenId)}
                       </Flex>
                     ) : (
                       <>

@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 // mint.js
 import { OrigynClient, stageWebLibraryAsset } from '@origyn-sa/mintjs';
-import { TextInput, Button, HR, Flex, Toggle, Container } from '@origyn-sa/origyn-art-ui';
+import { TextInput, Button, HR, Flex, CheckboxInput, Container } from '@origyn-sa/origyn-art-ui';
 
 export const WebLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -92,13 +92,18 @@ export const WebLocation = (props: any) => {
             onChange={getTypedUrl}
           />
         </Flex>
+        <HR marginTop={16} marginBottom={16} />
         <Flex>
-          <Flex flexFlow="row" gap={8}>
-            <Flex>
-              <Toggle checked={immutable} handleToggle={handleChangeImmutable} />
+        <Flex flexFlow="row" gap={8}>
+              <Flex>
+                <CheckboxInput
+                  name="immutable"
+                  onChange={handleChangeImmutable}
+                  checked={immutable}
+                />
+              </Flex>
+              <Flex><p>Make this Library <b>immutable</b></p></Flex>
             </Flex>
-            <Flex>{immutable ? 'Library is immutable' : 'Library is mutable'}</Flex>
-          </Flex>
         </Flex>
         <HR marginTop={16} marginBottom={16} />
         <Flex>

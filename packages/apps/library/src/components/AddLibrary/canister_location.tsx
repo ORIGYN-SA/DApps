@@ -1,18 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { OrigynClient, stageLibraryAsset, } from '@origyn-sa/mintjs';
+import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { useSnackbar } from 'notistack';
 import {
-  Grid,
   Container,
   TextInput,
   Button,
   HR,
   Flex,
-  Toggle,
-
+  CheckboxInput,
 } from '@origyn-sa/origyn-art-ui';
 export const CanisterLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -124,58 +122,63 @@ export const CanisterLocation = (props: any) => {
 
   return (
     <>
-    <Container size="full">
-    <Flex flexFlow="column" gap={8}>
-        <Flex>
-          <TextInput
-            label="Library title"
-            id="title"
-            placeholder="Enter Library Title"
-            onChange={getTypedTitle}
-          />
-        </Flex>
-        <Flex>
-          <TextInput
-            label={'Library id'}
-            id="id"
-            placeholder="Enter Library Id"
-            onChange={getTypedId}
-          />
-        </Flex>
-        <Flex>
-          <input
-            type="file"
-            id="library"
-            name="library"
-            onChange={handleInputChange}
-            multiple={false}
-          />
-        </Flex>
-        <Flex>
-          <Flex flexFlow="row" gap={8}>
-            <Flex>
-              <Toggle checked={immutable} handleToggle={handleChangeImmutable} />
+      <Container size="full">
+        <Flex flexFlow="column" gap={8}>
+          <Flex>
+            <TextInput
+              label="Library title"
+              id="title"
+              placeholder="Enter Library Title"
+              onChange={getTypedTitle}
+            />
+          </Flex>
+          <Flex>
+            <TextInput
+              label={'Library id'}
+              id="id"
+              placeholder="Enter Library Id"
+              onChange={getTypedId}
+            />
+          </Flex>
+          <HR marginTop={16} marginBottom={16} />
+          <Flex>
+            <input
+              type="file"
+              id="library"
+              name="library"
+              onChange={handleInputChange}
+              multiple={false}
+            />
+          </Flex>
+          <HR marginTop={16} marginBottom={16} />
+          <Flex>
+            <Flex flexFlow="row" gap={8}>
+              <Flex>
+                <CheckboxInput
+                  name="immutable"
+                  onChange={handleChangeImmutable}
+                  checked={immutable}
+                />
+              </Flex>
+              <Flex><p>Make this Library <b>immutable</b></p></Flex>
             </Flex>
-            <Flex>{immutable ? 'Library is immutable' : 'Library is mutable'}</Flex>
+          </Flex>
+
+          {file === undefined ? (
+            <></>
+          ) : (
+            <Flex>{type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}</Flex>
+          )}
+
+          <HR marginTop={16} marginBottom={16} />
+
+          <Flex>
+            <Button btnType="filled" onClick={stageLibrary}>
+              Stage Library
+            </Button>
           </Flex>
         </Flex>
-
-        {file === undefined ? (
-          <></>
-        ) : (
-          <Flex>{type in Layouts ? Layouts[type](file) : <LibraryDefault source={file} />}</Flex>
-        )}
-
-        <HR marginTop={16} marginBottom={16} />
-
-        <Flex>
-          <Button btnType="filled" onClick={stageLibrary}>
-            Stage Library
-          </Button>
-        </Flex>
-      </Flex>
-    </Container>
-      
+      </Container>
     </>
   );
 };
