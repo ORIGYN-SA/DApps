@@ -28,154 +28,179 @@ const FormTab = ({ metadata }: any) => {
   return (
     <Container padding="16px">
       <Grid columns={3}>
-        <Grid column={1}>Info</Grid>
+        <Grid column={1}>
+          <h3>Info</h3>
+        </Grid>
         <Grid column={2}>
           <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-            <span>{'owner'}</span>
+            <b>
+              <span>{'owner'}</span>
+            </b>
             <span>{owner}</span>
           </Flex>
           <HR />
           <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-            <span>{'hidden_asset'}</span>
+            <b>
+              <span>{'hidden_asset'}</span>
+            </b>
             <span>{hiddenAsset}</span>
           </Flex>
           <HR />
           <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-            <span>{'preview_asset'}</span>
+            <b>
+              <span>{'preview_asset'}</span>
+            </b>
             <span>{previewAsset}</span>
           </Flex>
           <HR />
           <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-            <span>{'primary_asset'}</span>
+            <b>
+              <span>{'primary_asset'}</span>
+            </b>
             <span>{primaryAsset}</span>
           </Flex>
           <HR />
           <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-            <span>{'experience_asset'}</span>
+            <b>
+              <span>{'experience_asset'}</span>
+            </b>
             <span>{experienceAsset}</span>
           </Flex>
           <HR />
           <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-            <span>{'owner'}</span>
-            <span>{owner}</span>
-          </Flex>
-          <HR />
-          <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-            <span>{'id'}</span>
+            <b>
+              <span>{'id'}</span>
+            </b>
             <span>{id}</span>
           </Flex>
           <HR />
         </Grid>
       </Grid>
       <HR />
+      <br />
+      <br />
       {apps?.map((app, i, index) => {
         return (
-          <Grid sx={{ marginTop: '20px' }} container spacing={2} key={`${app}+${index}`}>
-            <Grid item xs={2}></Grid>
-            <Grid item xs={2} sx={{}}>{`app ${i + 1}`}</Grid>
-            <Grid item xs={8}>
-
-                <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+          <Grid columns={3} key={`${app}+${index}`}>
+            <Grid column={1}>
+              <h3>{'data'}</h3>
+            </Grid>
+            <Grid column={2}>
+              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                <b>
                   <span>{'app_id'}</span>
-                  <span>{app.app_id}</span>
-                </Flex>
-                <HR />
+                </b>
+                <span>{app.app_id}</span>
+              </Flex>
+              <HR />
 
-                <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                <b>
                   <span>{'read'}</span>
-                  <span>{app.read}</span>
-                </Flex>
-                <HR />
+                </b>
+                <span>{app.read}</span>
+              </Flex>
+              <HR />
 
-                <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                <b>
                   <span>{'type'}</span>
-                  <span>{app.write.type}</span>
+                </b>
+                <span>{app.write.type}</span>
+              </Flex>
+              <HR />
+              {app.write.list.map((item) => (
+                <Flex
+                  flexFlow="row"
+                  gap={32}
+                  padding={16}
+                  justify="space-between"
+                  key={`${item}+${index}`}
+                >
+                  <b>
+                    <span>{'write'}</span>
+                  </b>
+                  <span>{item}</span>
                 </Flex>
-                <HR />
-                {app.write.list.map((item) => (
-                  <Flex
-                    flexFlow="row"
-                    gap={32}
-                    padding={16}
-                    justify="space-between"
-                    key={`${item}+${index}`}
-                  >
-                    <span>{item}</span>
-                  </Flex>
-                ))}
+              ))}
 
-                <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-                  <span>{'write'}</span>
-                </Flex>
-                <HR />
-
-                <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                <b>
                   <span>{'type'}</span>
-                  <span>{app.permissions.type}</span>
-                </Flex>
+                </b>
+                <span>{app.permissions.type}</span>
+              </Flex>
 
-                <HR />
-                {app.permissions.list.map((item) => (
-                  <Flex
-                    flexFlow="row"
-                    gap={32}
-                    padding={16}
-                    justify="space-between"
-                    key={`${item}+${index}`}
-                  >
-                    <span>{item} </span>
+              <HR />
+              {app.permissions.list.map((item) => (
+                <Flex
+                  flexFlow="row"
+                  gap={32}
+                  padding={16}
+                  justify="space-between"
+                  key={`${item}+${index}`}
+                >
+                  <b>
+                    <span>{'permissions'}</span>
+                  </b>
+                  <span>{item} </span>
+                </Flex>
+              ))}
+
+              <br />
+              <br />
+              {/* //------------------------------- */}
+
+              <br />
+              {Object.keys(app.data).map((item, i) => (
+                <>
+                  {' '}
+                  <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                    <b>
+                      {' '}
+                      <span>{item} </span>
+                    </b>
+
+                    <span>{JSON.stringify(app.data[item])}</span>
                   </Flex>
-                ))}
+                  {i < Object.keys(app.data).length - 1 ? <HR /> : null}
+                </>
+              ))}
 
-                <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-                  <span>{'permissions'}</span>
-                </Flex>
+              <br />
+              <br />
 
-                <HR />
-                {/* //------------------------------- */}
-                      {Object.keys(app.data).map((item, i) => (
-                        <>
-                          {' '}
-                          <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-
-                              <span>{JSON.stringify(app.data[item])}</span>
-                              
-
-                            <span>{item} </span>
-                          </Flex>
-                          {i < Object.keys(app.data).length - 1 ? <HR /> : null}
-                        </>
-                      ))}
-                           
-                  <span>{'data'}</span>
-
-                {/* //----------------------- */}
-
-
-
-
+              {/* //----------------------- */}
             </Grid>
           </Grid>
         );
       })}
       <HR />
 
+      <Flex flexFlow="row" gap={32} padding={16} align="flex-start">
+        <h3>Libraries</h3>
+      </Flex>
+      <HR />
 
       {library?.map((lib, i, index) => {
         let length = Object.keys(lib).length;
         return (
           <Grid key={`${lib}+${index}`} columns={1}>
-            <Grid icolumn={1}>
-                {Object.keys(lib).map((item, j) => (
-                  <>
-                   <Flex flexFlow="row" gap={32} padding={16} justify="space-around">
+            <Grid column={1}>
+              {Object.keys(lib).map((item, j) => (
+                <>
+                  <Flex flexFlow="row" gap={32} padding={16} justify="space-around">
+                    <b>
+                      <span>{item}</span>
+                    </b>
                     <span>{lib[item]}</span>
-                    <span>{item}</span>
-                    </Flex>
+                  </Flex>
 
-                    {j < length - 1 ? <HR /> : null}
-                  </>
-                ))}
+                  {j < length - 1 ? <HR /> : null}
+                </>
+              ))}
+              <br />
+              <br />
             </Grid>
           </Grid>
         );
