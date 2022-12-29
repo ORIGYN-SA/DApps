@@ -4,17 +4,39 @@ import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
 import { LinearProgress } from '@mui/material';
-import { Container,Flex, HR, Select } from '@origyn-sa/origyn-art-ui';
+import { Container, Flex, HR, Select } from '@origyn-sa/origyn-art-ui';
+
+interface PropsLayout  {
+  setInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+  tokenId: string;
+  isOpen: boolean;
+  updateData: React.Dispatch<React.SetStateAction<any[]>>;
+}
 
 const locationTypeLayouts = {
-  Canister: (setInProgress: string, tokenId: string) => (
-    <CanisterLocation setInProgress={setInProgress} tokenId={tokenId} />
+  Canister: ({setInProgress, tokenId, isOpen, updateData} : PropsLayout) => (
+    <CanisterLocation
+      setInProgress={setInProgress}
+      tokenId={tokenId}
+      isOpen={isOpen}
+      updateData={updateData}
+    />
   ),
-  Web: (setInProgress: string, tokenId: string) => (
-    <WebLocation setInProgress={setInProgress} tokenId={tokenId} />
+  Web: (setInProgress: any, tokenId: string, isOpen: void, updateData: void) => (
+    <WebLocation
+      setInProgress={setInProgress}
+      tokenId={tokenId}
+      isOpen={isOpen}
+      updateData={updateData}
+    />
   ),
-  Collection: (setInProgress: string, tokenId: string) => (
-    <CollectionLocation setInProgress={setInProgress} tokenId={tokenId} />
+  Collection: (setInProgress: any, tokenId: string, isOpen: void, updateData: void) => (
+    <CollectionLocation
+      setInProgress={setInProgress}
+      tokenId={tokenId}
+      isOpen={isOpen}
+      updateData={updateData}
+    />
   ),
 };
 
@@ -48,10 +70,10 @@ export const LibraryForm = (props: any) => {
   };
 
   useEffect(() => {
-    if(props.currentTokenId === '') {
+    if (props.currentTokenId === '') {
       setLocationTypes([canister, web]);
     } else {
-      setLocationTypes([canister,web,collection]);
+      setLocationTypes([canister, web, collection]);
     }
   }, [props.currentTokenId]);
 
@@ -92,7 +114,14 @@ export const LibraryForm = (props: any) => {
                   </Flex>
                   <HR marginTop={16} marginBottom={16} />
                   {choosenLocation !== '' ? (
-                    <Flex>{locationTypeLayouts[choosenLocation](setInProgress, '')}</Flex>
+                    <Flex>
+                      {locationTypeLayouts[choosenLocation](
+                        setInProgress,
+                        '',
+                        props.setOpenCollection,
+                        props.updateDataCollection,
+                      )}
+                    </Flex>
                   ) : (
                     <>
                       <Flex>Select a location type to continue!</Flex>
@@ -130,7 +159,12 @@ export const LibraryForm = (props: any) => {
                     <HR marginTop={16} marginBottom={16} />
                     {choosenLocation !== '' ? (
                       <Flex>
-                        {locationTypeLayouts[choosenLocation](setInProgress, props.currentTokenId)}
+                        {locationTypeLayouts[choosenLocation](
+                          setInProgress,
+                          props.currentTokenId,
+                          props.setOpen,
+                          props.updateDataToken,
+                        )}
                       </Flex>
                     ) : (
                       <>

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { OrigynClient, stageLibraryAsset } from '@origyn-sa/mintjs';
+import { OrigynClient, stageLibraryAsset, getNft, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { useSnackbar } from 'notistack';
@@ -63,7 +63,6 @@ export const CanisterLocation = (props: any) => {
 
   const stageLibrary = async () => {
     const { canisterId } = await useRoute();
-
     await OrigynClient.getInstance().init(true, canisterId, { actor });
     try {
       let i = 0;
@@ -119,6 +118,27 @@ export const CanisterLocation = (props: any) => {
       console.log(e);
     }
     props.setInProgress(false);
+    props.isOpen(false);
+    
+    if(props.tokenId==""){
+      //Update the library data for the collection
+      getNftCollectionMeta().then((r) => {
+        props.updateData(
+          r.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }else{
+      //Update the library data for the Token
+      getNft(props.tokenId).then((r) => {
+        props.updateData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }
   };
 
   return (

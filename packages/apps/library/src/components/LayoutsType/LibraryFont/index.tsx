@@ -38,7 +38,7 @@ const LibraryFont = (props: any) => {
     if(canisterId) {
     formattedLink();
     }
-  }, [canisterId]);
+  }, [canisterId,props.source]);
 
   useEffect(() => {
     useRoute().then(({ canisterId, tokenId }) => {

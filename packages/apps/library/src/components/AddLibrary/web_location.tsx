@@ -3,7 +3,7 @@ import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
 // mint.js
-import { OrigynClient, stageWebLibraryAsset } from '@origyn-sa/mintjs';
+import { OrigynClient, stageWebLibraryAsset, getNft, getNftCollectionMeta } from '@origyn-sa/mintjs';
 import { TextInput, Button, HR, Flex, CheckboxInput, Container } from '@origyn-sa/origyn-art-ui';
 
 export const WebLocation = (props: any) => {
@@ -67,6 +67,27 @@ export const WebLocation = (props: any) => {
       console.log(e);
     }
     props.setInProgress(false);
+    props.isOpen(false)
+
+    if(props.tokenId==""){
+      //Update the library data for the collection
+      getNftCollectionMeta().then((r) => {
+        props.updateData(
+          r.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }else{
+      //Update the library data for the Token
+      getNft(props.tokenId).then((r) => {
+        props.updateData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }
   };
 
   return (

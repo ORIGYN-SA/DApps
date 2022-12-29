@@ -6,8 +6,7 @@ import { checkOwner } from '@dapp/utils';
 import { CollectionLibrary } from '../CollectionLibrary';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
-import { Container, Grid, Flex, Modal} from '@origyn-sa/origyn-art-ui';
-
+import { Container, Grid, Flex, Modal, theme} from '@origyn-sa/origyn-art-ui';
 interface ListType {
   itemName: string;
   index: number;
@@ -25,18 +24,23 @@ const listStyle = {
 
 const ListItem = (props: ListType) => {
   return (
-    <Flex>
-      <span
+    <Container full padding="4px"
+      style={
+        props.selectedIndex == props.index
+         ? { backgroundColor: theme.colors.ACCENT_COLOR } : { backgroundColor: 'transparent' }
+      }
+    >
+      <div
         style={
           props.selectedIndex == props.index
-            ? { ...listStyle, color: 'orange', fontWeight: 'bold'}
+            ? { ...listStyle, fontWeight: 'bold', color: theme.colors.TEXT}
             : listStyle
         }
         onClick={props.onClick}
       >
        {props.itemName}
-       </span>
-    </Flex>
+       </div>
+    </Container>
   );
 };
 
@@ -259,7 +263,7 @@ const ColumnView = () => {
   return (
     <>
       <Container padding="16px">
-        <Grid columns={6} gap={16}>
+        <Grid columns={6}>
           <Grid column={1} style={{ borderRight: '1px solid grey' }}>
             <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
               <ListItem
@@ -390,8 +394,9 @@ const ColumnView = () => {
         <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
           <Container padding="16px">
             <LibraryForm
-              updateTokenLibraryData={setTokenLibraryData}
+              updateDataToken={setTokenLibraryData}
               currentTokenId={currentTokenId}
+              setOpen={setOpen}
             />
           </Container>
         </Modal>
@@ -400,8 +405,9 @@ const ColumnView = () => {
         <Modal closeModal={handleCloseCollection} isOpened={openCollection} mode="light" size="md">
           <Container padding="16px">
             <LibraryForm
-              setCollectionLevelLibraryData={setCollectionLevelLibraryData}
+              updateDataCollection={setCollectionLevelLibraryData}
               currentTokenId={currentTokenId}
+              setOpenCollection={setOpenCollection}
             />
           </Container>
         </Modal>
