@@ -185,11 +185,12 @@ const FormTab = ({ metadata }: any) => {
       {library?.map((lib, i, index) => {
         let length = Object.keys(lib).length;
         return (
-          <Grid key={`${lib}+${index}`} columns={1}>
-            <Grid column={1}>
+          <Grid key={`${lib}+${index}`} columns={3}>
+            <Grid column={1}></Grid>
+            <Grid column={2}>
               {Object.keys(lib).map((item, j) => (
                 <>
-                  <Flex flexFlow="row" gap={32} padding={16} justify="space-around">
+                  <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
                     <b>
                       <span>{item}</span>
                     </b>
