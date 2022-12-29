@@ -176,11 +176,13 @@ const FormTab = ({ metadata }: any) => {
         );
       })}
       <HR />
+      <br/>
+      <br/>
 
       <Flex flexFlow="row" gap={32} padding={16} align="flex-start">
         <h3>Libraries</h3>
       </Flex>
-      <HR />
+
 
       {library?.map((lib, i, index) => {
         let length = Object.keys(lib).length;
