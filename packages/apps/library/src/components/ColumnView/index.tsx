@@ -6,7 +6,7 @@ import { checkOwner } from '@dapp/utils';
 import { CollectionLibrary } from '../CollectionLibrary';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
-import { Container, Grid, Flex, Modal, theme} from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, Flex, Modal, theme } from '@origyn-sa/origyn-art-ui';
 interface ListType {
   itemName: string;
   index: number;
@@ -18,28 +18,34 @@ const listStyle = {
   border: 'none',
   cursor: 'pointer',
   TextAlign: 'left',
-  padding:'0px',
+  padding: '0px',
   fontWeight: 'normal',
 };
 
 const ListItem = (props: ListType) => {
+
   return (
-    <Container full padding="4px"
+    <Container
+      full
+      padding="4px"
       style={
         props.selectedIndex == props.index
-         ? { backgroundColor: theme.colors.ACCENT_COLOR } : { backgroundColor: 'transparent' }
+          ? { backgroundColor: theme.colors.ACCENT_COLOR }
+          : { backgroundColor: 'transparent' }
       }
     >
       <div
         style={
           props.selectedIndex == props.index
-            ? { ...listStyle, fontWeight: 'bold', color: theme.colors.TEXT}
+            ? { ...listStyle, fontWeight: 'bold', color: theme.colors.TEXT }
             : listStyle
         }
         onClick={props.onClick}
       >
-       {props.itemName}
-       </div>
+        {
+          props.itemName?.length > 24 ? props.itemName.substring(0, 24) + '...' : props.itemName
+        }
+      </div>
     </Container>
   );
 };
@@ -300,9 +306,9 @@ const ColumnView = () => {
                     {owner && loggedIn ? (
                       <>
                         <Flex onClick={() => handleAddLibrary()}>
-                          <span>
+                          <Container padding="4px">
                             <b> + Add a library</b>
-                          </span>
+                          </Container>
                         </Flex>
                       </>
                     ) : (
@@ -348,9 +354,9 @@ const ColumnView = () => {
                   {owner && loggedIn && collectionLevelLibraryData.length > 0 ? (
                     <>
                       <Flex onClick={() => handleAddLibraryAtCollection()}>
-                        <span>
+                        <Container padding="4px">
                           <b>+ Add a library at collection level</b>
-                        </span>
+                        </Container>
                       </Flex>
                     </>
                   ) : (

@@ -14,7 +14,7 @@ interface PropsLayout  {
 }
 
 const locationTypeLayouts = {
-  Canister: ({setInProgress, tokenId, isOpen, updateData} : PropsLayout) => (
+  Canister: (setInProgress, tokenId, isOpen, updateData : PropsLayout) => (
     <CanisterLocation
       setInProgress={setInProgress}
       tokenId={tokenId}

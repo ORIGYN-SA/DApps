@@ -3,7 +3,7 @@ import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
 import { Container, Grid, HR, Flex } from '@origyn-sa/origyn-art-ui';
-import { UpdateLibraryFile } from '../UpdateLibraryFile';
+import { UpdateLibrary } from '../UpdateLibrary';
 
 interface FileType {
   library_id: string;
@@ -69,7 +69,7 @@ export const CollectionLibrary = (props: any) => {
       };
       break;
   }
-
+console.log(objLibraryData.location_type);
   return (
     <Container padding="16px">
       <Grid columns={1}>
@@ -112,11 +112,13 @@ export const CollectionLibrary = (props: any) => {
                   />
                 </Flex>
                 <Flex>
-                  <UpdateLibraryFile 
+                  <UpdateLibrary
                   libraryId={objLibraryData.library_id} 
                   tokenId={''} 
                   updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
                   setOpenLibraryCollectionLevel={props.setOpenLibraryCollectionLevel}
+                  locationType={objLibraryData.location_type}
+                  metadata = {props.library3}
                   />
                 </Flex>
               </Flex>

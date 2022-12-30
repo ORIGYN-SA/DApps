@@ -60,7 +60,7 @@ export const CanisterLocation = (props: any) => {
       reader.readAsArrayBuffer(file);
     });
   };
-
+console.log(props);
   const stageLibrary = async () => {
     const { canisterId } = await useRoute();
     await OrigynClient.getInstance().init(true, canisterId, { actor });

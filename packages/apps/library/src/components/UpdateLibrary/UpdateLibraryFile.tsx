@@ -3,8 +3,13 @@ import { DropzoneArea } from 'mui-file-dropzone';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
-import { OrigynClient, updateLibraryFileContent, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import { Button, Modal, Container, Flex } from '@origyn-sa/origyn-art-ui';
+import {
+  OrigynClient,
+  updateLibraryFileContent,
+  updateLibraryMetadata,
+  getNftCollectionMeta,
+} from '@origyn-sa/mintjs';
+import { Button, Modal, Container, Flex, HR, TextInput, Select } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 type Props = {
@@ -12,51 +17,76 @@ type Props = {
   libraryId: string;
   updateCollectionLevelLibraryData: any;
   setOpenLibraryCollectionLevel: any;
+  metadata: any;
 };
 export const UpdateLibraryFile = ({
   tokenId,
   libraryId,
   updateCollectionLevelLibraryData,
   setOpenLibraryCollectionLevel,
+  metadata,
 }: Props) => {
   const { actor } = useContext(AuthContext);
   // Snackbar
   const { enqueueSnackbar } = useSnackbar();
   // Dialog
   const [open, setOpen] = useState(false);
+
+  const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
+  const read = metadata.Class?.filter((res) => res.name === 'read')[0].value.Text;
+  const readPermissions = ['public', 'owner', 'collection_owner'];
+
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [inProgress, setInProgress] = useState(false);
+  const [typedTitle, setTypedTitle] = useState<string>(title);
+  const [selectedRead, setSelectedRead] = useState<string>(read);
+  const [updatedFile, setUpdatedFile] = useState<any>(undefined);
+
+  const handleSelectChange = (val) => {
+    setSelectedRead(val);
+  };
+
+  const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedTitle(event.target.value);
+  };
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-
   const handleFileSelected = (files) => {
     setSelectedFile(files[0]);
   };
+  console.log(metadata);
 
   const handleSubmit = async () => {
-    console.log('i am here');
-    console.log(tokenId, libraryId);
-    const rawFile = await readFileAsync(selectedFile);
-    const file = {
-      category: 'collection' as 'collection',
-      filename: selectedFile.name,
-      index: 0,
-      path: `${selectedFile.size}+${selectedFile.name}`,
-      size: selectedFile.size,
-      type: selectedFile.type,
-      rawFile: rawFile,
-    };
     const { canisterId } = await useRoute();
+
+    if (selectedFile) {
+      const rawFile = await readFileAsync(selectedFile);
+      const file = {
+        category: 'collection' as 'collection',
+        filename: selectedFile.name,
+        index: 0,
+        path: `${selectedFile.size}+${selectedFile.name}`,
+        size: selectedFile.size,
+        type: selectedFile.type,
+        rawFile: rawFile,
+      };
+      setUpdatedFile(file);
+    }
     setInProgress(true);
     try {
       await OrigynClient.getInstance().init(true, canisterId, { actor });
-      const updateResponse = await updateLibraryFileContent(tokenId, libraryId, file);
-      console.log('updateResponse', updateResponse);
-      if (updateResponse.ok) {
+      const updateResponse =
+        selectedFile != undefined
+          ? await updateLibraryFileContent(tokenId, libraryId, updatedFile)
+          : null;
+      const updateTitle = await updateLibraryMetadata(tokenId, libraryId, { title: typedTitle });
+     
+
+      if (updateResponse.ok || updateTitle.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library Updated', {
           variant: 'success',
@@ -81,7 +111,6 @@ export const UpdateLibraryFile = ({
       handleClose();
     }
     setInProgress(false);
-
     //Update the library data for the collection
     getNftCollectionMeta().then((r) => {
       updateCollectionLevelLibraryData(
@@ -129,12 +158,60 @@ export const UpdateLibraryFile = ({
             <>
               <Flex flexFlow="column" gap={16}>
                 <Flex>
-                  Update file content of library
-                  {libraryId}
+                  <h4>Update library </h4>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                <Container size="full">
+                  <Flex flexFlow="column" gap={8}>
+                    <Flex>Update library title</Flex>
+                    <Flex>
+                      <TextInput
+                        label="Library title"
+                        id="title"
+                        placeholder="Enter Library Title"
+                        onChange={getTypedTitle}
+                        value={typedTitle}
+                      />
+                    </Flex>
+                  </Flex>
+                </Container>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <p>Update file content of library {libraryId}</p>
                 </Flex>
                 <Flex>
                   <DropzoneArea filesLimit={1} onChange={handleFileSelected} />
                 </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Container size="full">
+                    <Flex flexFlow="column" gap={8}>
+                      <Flex>Update Read permission</Flex>
+                      <Flex>
+                        <Select
+                          selectedOption={{
+                            value: selectedRead,
+                            label: selectedRead,
+                          }}
+                          label="Select"
+                          handleChange={(opt) => {
+                            handleSelectChange(opt.value);
+                          }}
+                          options={readPermissions.map((read) => {
+                            return {
+                              value: read,
+                              label: read,
+                            };
+                          })}
+                        />
+                      </Flex>
+                    </Flex>
+                  </Container>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+
                 <Flex>
                   <Button onClick={handleClose}>Back</Button>
                   <Button onClick={handleSubmit} btnType="filled">
@@ -149,4 +226,3 @@ export const UpdateLibraryFile = ({
     </>
   );
 };
-

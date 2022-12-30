@@ -108,6 +108,7 @@ export const NFTLibrary = (props: any) => {
                     setLibDet={props.setLibDet}
                   />
                 </Flex>
+                
               </Flex>
             </>
           ) : (
