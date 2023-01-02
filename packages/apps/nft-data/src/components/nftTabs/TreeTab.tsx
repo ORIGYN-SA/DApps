@@ -200,7 +200,7 @@ function Tree({ metadata }: any) {
     return (
       <>
         <div style={{ marginBottom: '10px' }}>
-          {children ? <span onClick={handleClick}>{name}</span> : <span>{name}</span>}
+          {children ? <span onClick={handleClick}>{name} {'>'}</span> : <span>{name} {'<'}</span>}
         </div>
         <ul style={{ paddingLeft: '30px', borderLeft: '1px solid white' }}>
           {showChildren && <Tree treeData={children} />}
@@ -217,7 +217,7 @@ function Tree({ metadata }: any) {
 
   return (
     <Container padding="8px 16px">
-      <span onClick={handleClick}>NFT</span>
+      <span onClick={handleClick}>NFT {'>'}</span>
       {showChildren && <Tree treeData={data.children} />}
     </Container>
   );
