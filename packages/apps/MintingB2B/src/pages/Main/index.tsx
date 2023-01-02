@@ -13,7 +13,7 @@ import {
   Select,
   TextInput,
   Container,
-  Pagination, DatePicker, TextArea, Stepper, useStepper, Icons,
+  Pagination, DatePicker, TextArea, Stepper, useStepper, Icons, Grid,
 } from '@origyn-sa/origyn-art-ui'
 import { Link } from 'react-router-dom'
 import { genRanHex } from '../../../../../utils/src/random'
@@ -107,7 +107,7 @@ const RenderForm = ({ data }) => {
   </>
 }
 
-const dataStructures = {
+const defaultDataStructures = {
   IGI: [
     {
       name: 'name',
@@ -417,6 +417,7 @@ const WalletPage = () => {
   const [loggedIn, setLoggedIn] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isMinting, setIsMinting] = useState(false)
+  const [dataStructure, setDataStructure] = useState(JSON.parse(localStorage.getItem('dataStructure')) || defaultDataStructures)
   const navigate = useNavigate()
   const [nftList, setNftList] = useState([])
   const [pagination, setPagination] = useState<any>()
@@ -478,7 +479,7 @@ const WalletPage = () => {
     try {
       const formFullData = {
         files: files.map(({fileName, id, type }) => ({fileName, id, type})),
-        data: dataStructures.IGI.map(({ name, type }) => ({
+        data: dataStructure.IGI.map(({ name, type }) => ({
           name,
           type,
           value: type === "record" ? metadata[name] : {
@@ -557,7 +558,7 @@ const WalletPage = () => {
       content: <>
         <form onSubmit={mintNft}>
           <RenderForm
-            data={dataStructures.IGI}
+            data={dataStructure.IGI}
           />
           <br/>
           <Flex fullWodth justify="center">
@@ -749,8 +750,10 @@ const WalletPage = () => {
   }, [currentPage])
 
   useEffect(() => {
-    console.log(localStorage.getItem('apiKey'))
     setLoggedIn(localStorage.getItem('apiKey'))
+    if (localStorage.getItem('dataStructure')) {
+      setDataStructure(defaultDataStructures);
+    }
   }, [])
 
   return (
@@ -762,6 +765,7 @@ const WalletPage = () => {
             tabs={[
               { title: 'NFTs', id: 'NFTs' },
               { title: 'Minter', id: 'Minter' },
+              { title: 'Data Structure', id: 'dataStructure' },
             ]}
             content={[
               <Container padding='16px'>
@@ -811,6 +815,40 @@ const WalletPage = () => {
                 ) : (
                   content
                 )}
+              </Container>,
+              <Container padding='16px'>
+                <br />
+                <h2>Change Certificate Data structure</h2>
+                <br />
+                <Flex fullWidth flexFlow="column" gap={8}>
+                  {
+                    dataStructure.IGI?.map((dataItem) => {
+                      return (
+                        <>
+                          <Grid columns={4} smColumns={4}>
+                            <div>
+                              <p className='secondary_color'>Label</p>
+                              <p>{dataItem.label}</p>
+                            </div>
+                            <div>
+                              <p className='secondary_color'>Type</p>
+                              <p>{dataItem.type}</p>
+                            </div>
+                            <div>
+                              <p className='secondary_color'>Input Type</p>
+                              <p>{dataItem.inputType}</p>
+                            </div>
+                            <div>
+                              <p className='secondary_color'>Actions</p>
+                              <p><Button size="small">Remove Field</Button></p>
+                            </div>
+                          </Grid>
+                          <HR />
+                        </>
+                      )
+                    })
+                  }
+                </Flex>
               </Container>,
             ]}
             onLogOut={handleLogOut}
