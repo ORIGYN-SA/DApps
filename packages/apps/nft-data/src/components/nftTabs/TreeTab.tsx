@@ -1,12 +1,8 @@
 import React, { useEffect } from 'react';
-import { Box, FormControlLabel, Switch } from '@mui/material';
-import TreeView from '@mui/lab/TreeView';
-import TreeItem from '@mui/lab/TreeItem';
 import pick from 'lodash/pick';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useState } from 'react';
-import { Container } from '@origyn-sa/origyn-art-ui';
+import { Container, Button } from '@origyn-sa/origyn-art-ui';
+import { node } from 'webpack';
 interface RenderTree {
   id: string;
   name: string;
@@ -102,7 +98,11 @@ function Tree({ metadata }: any) {
         let obj1 = { ...item.data };
         let arr1: RenderTree[] = [];
         for (let j in obj1) {
-          arr1.push({ id: increment(), name: j, children: [{ id: increment(), name: JSON.stringify(obj1[j]) }] });
+          arr1.push({
+            id: increment(),
+            name: j,
+            children: [{ id: increment(), name: JSON.stringify(obj1[j]) }],
+          });
         }
 
         return {
@@ -167,44 +167,58 @@ function Tree({ metadata }: any) {
 
     return arr;
   };
-  const data: RenderTree = {
+  const data: any = {
     id: '0',
     name: 'NFT',
     children: [...parseData(metadata)],
   };
 
-  const renderTree = (nodes: RenderTree) => (
-    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
-    </TreeItem>
-  );
+  console.log('data', data);
+
+  console.log('child', data.children);
+
+  const Tree = ({ treeData }) => {
+    console.log('tree5', treeData);
+    return (
+      <ul>
+        {treeData.map((node) => (
+          <TreeNode node={node} key={node.id} />
+        ))}
+      </ul>
+    );
+  };
+
+  const TreeNode = ({ node }) => {
+    const { children, name } = node;
+
+    const [showChildren, setShowChildren] = useState(false);
+
+    const handleClick = () => {
+      setShowChildren(!showChildren);
+    };
+
+    return (
+      <>
+        <div style={{ marginBottom: '10px' }}>
+          {children ? <span onClick={handleClick}>{name}</span> : <span>{name}</span>}
+        </div>
+        <ul style={{ paddingLeft: '30px', borderLeft: '1px solid white' }}>
+          {showChildren && <Tree treeData={children} />}
+        </ul>
+      </>
+    );
+  };
+
+  const [showChildren, setShowChildren] = useState(false);
+
+  const handleClick = () => {
+    setShowChildren(!showChildren);
+  };
+
   return (
     <Container padding="8px 16px">
-    <Box margin="0 0 0 0">
-      <FormControlLabel
-        control={<Switch onChange={handleExpandAll} checked={all} />}
-        label="Expand All"
-      />
-      <FormControlLabel
-        control={<Switch onChange={handleExpandApps} checked={apps} />}
-        label="Expand Apps"
-      />
-      <FormControlLabel
-        control={<Switch onChange={handleExpandLibraries} checked={libraries} />}
-        label="Expand Libraries"
-      />
-      {Object.entries(metadata).length > 0 && (
-        <TreeView
-          aria-label="file system navigator"
-          expanded={expanded}
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
-          onNodeToggle={handleToggle}
-        >
-          {renderTree(data)}
-        </TreeView>
-      )}
-    </Box>
+      <span onClick={handleClick}>NFT</span>
+      {showChildren && <Tree treeData={data.children} />}
     </Container>
   );
 }
