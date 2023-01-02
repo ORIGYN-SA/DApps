@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import pick from 'lodash/pick';
 import { useState } from 'react';
-import { Container} from '@origyn-sa/origyn-art-ui';
+import { Container, Button, Flex } from '@origyn-sa/origyn-art-ui';
 
 interface RenderTree {
   id: string;
@@ -196,9 +196,9 @@ function Tree({ metadata }: any) {
     return (
       <>
         <div style={{ marginBottom: '10px' }}>
-          {children ? <span onClick={handleClick}>{name} {'>'}</span> : <span>{name} {'<'}</span>}
+          {children ? <h5 onClick={handleClick}>{name}</h5> : <span>{name}</span>}
         </div>
-        <ul style={{ paddingLeft: '30px', borderLeft: '1px solid white' }}>
+        <ul style={{ paddingLeft: '30px'}}>
           {showChildren && <Tree treeData={children} />}
         </ul>
       </>
@@ -211,10 +211,28 @@ function Tree({ metadata }: any) {
     setShowChildren(!showChildren);
   };
 
+  const handleClose = () => {
+    setShowChildren(false);
+  };
+
+  const handleClose1 = () => {
+    setShowChildren(true);
+  };
+
   return (
     <Container padding="8px 16px">
-      <span onClick={handleClick}>NFT {'>'}</span>
-      {showChildren && <Tree treeData={data.children} />}
+      <Flex flexFow='row' gap={16}>
+      <Button btnType="filled" onClick={handleClose}>Close All</Button>
+      <Button btnType="filled" onClick={handleClose}>Expand All</Button>
+      <Button btnType="filled" onClick={handleClose}>Expand Libraries</Button>
+      </Flex>
+     <br/>
+      <div>
+      <h4 onClick={handleClick}>NFT </h4>
+      <br/>
+      {showChildren && <Tree treeData={data.children}/>}
+      </div>
+      
     </Container>
   );
 }
