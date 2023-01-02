@@ -16,11 +16,13 @@ import {
 import { useParams } from 'react-router-dom'
 import { LoadingContainer, TokenIcon } from '../../../../../features/components'
 import { getDiffInDays, timeConverter } from '../../../../../utils'
+import { ConnectQRModal } from '../../modals/ConnectQRModal'
 
 const WalletPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
   const [nftData, setNftData] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const { nft_id } = useParams();
 
   const handleLogOut = () => {
@@ -45,7 +47,35 @@ const WalletPage = () => {
     return data;
   }
 
+  const generateQR = async () => {
+    const response = await fetch(
+      `https://development.origyn.network/canister/v0/token`,
+      {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          'x-api-key': loggedIn,
+        },
+        body: JSON.stringify({amount: 1})
+      })
+    console.log(response);
+    const data = await response.blob();
+
+    const downloadUrl = URL.createObjectURL(data);
+    const a = document.createElement("a");
+    // safari doesn't support this yet
+    if (typeof a.download === 'undefined') {
+      window.location.href = downloadUrl;
+    } else {
+      a.href = downloadUrl;
+      a.download = 'qrcode.zip';
+      document.body.appendChild(a);
+      a.click();
+    }
+    console.log(data);
+  }
+
   useEffect(() => {
+    setLoggedIn(localStorage.getItem('apiKey'))
     fetchData();
   }, [])
 
@@ -95,7 +125,10 @@ const WalletPage = () => {
                           <ShowMoreBlock btnText="Read More">
                             <p className="secondary_color">{nftData?.description}</p>
                           </ShowMoreBlock>
-                          <Button disabled>Connect with QR</Button>
+                          <br/>
+                          <Button onClick={generateQR} btnType="filled">Generate QR</Button>
+                          <br/>
+                          <Button onClick={() => setIsOpen(true)} btnType="filled" disabled={nftData.status !== "WAITING_FOR_OWNER"}>Connect with QR</Button>
                         </Flex>
                       </Grid>
                     </Container>
@@ -159,6 +192,10 @@ const WalletPage = () => {
           </Flex>
         )
       }
+      <ConnectQRModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
     </>
   )
 }
