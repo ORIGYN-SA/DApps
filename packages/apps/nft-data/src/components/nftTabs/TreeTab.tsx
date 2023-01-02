@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import pick from 'lodash/pick';
 import { useState } from 'react';
-import { Container, Button } from '@origyn-sa/origyn-art-ui';
-import { node } from 'webpack';
+import { Container} from '@origyn-sa/origyn-art-ui';
+
 interface RenderTree {
   id: string;
   name: string;
@@ -172,10 +172,6 @@ function Tree({ metadata }: any) {
     name: 'NFT',
     children: [...parseData(metadata)],
   };
-
-  console.log('data', data);
-
-  console.log('child', data.children);
 
   const Tree = ({ treeData }) => {
     console.log('tree5', treeData);
