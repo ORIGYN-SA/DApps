@@ -477,7 +477,7 @@ const WalletPage = () => {
     setIsMinting(true)
     try {
       const formFullData = {
-        files,
+        files: files.map(({fileName, id, type }) => ({fileName, id, type})),
         data: dataStructures.IGI.map(({ name, type }) => ({
           name,
           type,
