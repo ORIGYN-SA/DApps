@@ -115,8 +115,8 @@ console.log(objLibraryData.location_type);
                   <UpdateLibrary
                   libraryId={objLibraryData.library_id} 
                   tokenId={''} 
-                  updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
-                  setOpenLibraryCollectionLevel={props.setOpenLibraryCollectionLevel}
+                  updateLibraryData={props.updateCollectionLevelLibraryData}
+                  setOpenLibrary={props.setOpenLibraryCollectionLevel}
                   locationType={objLibraryData.location_type}
                   metadata = {props.library3}
                   />

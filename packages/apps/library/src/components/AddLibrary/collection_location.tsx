@@ -51,6 +51,7 @@ export const CollectionLocation = (props: any) => {
         libraryId: selectedLibrary,
       };
       const response = await stageCollectionLibraryAsset(props.tokenId, CollectionFile);
+      console.log('response', response);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {
@@ -111,6 +112,7 @@ export const CollectionLocation = (props: any) => {
         <Flex>
           <TextInput id="title" label="Library title" placeholder="Enter Title" onChange={getTypedTitle} />
         </Flex>
+      
         <Flex>
           <Select
             selectedOption={{

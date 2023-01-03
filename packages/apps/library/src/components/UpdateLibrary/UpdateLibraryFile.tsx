@@ -8,6 +8,7 @@ import {
   updateLibraryFileContent,
   updateLibraryMetadata,
   getNftCollectionMeta,
+  getNft,
 } from '@origyn-sa/mintjs';
 import { Button, Modal, Container, Flex, HR, TextInput, Select } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
@@ -15,15 +16,15 @@ import { LinearProgress } from '@mui/material';
 type Props = {
   tokenId: string;
   libraryId: string;
-  updateCollectionLevelLibraryData: any;
-  setOpenLibraryCollectionLevel: any;
+  updateLibraryData: any;
+  setOpenLibrary: any;
   metadata: any;
 };
 export const UpdateLibraryFile = ({
   tokenId,
   libraryId,
-  updateCollectionLevelLibraryData,
-  setOpenLibraryCollectionLevel,
+  updateLibraryData,
+  setOpenLibrary,
   metadata,
 }: Props) => {
   const { actor } = useContext(AuthContext);
@@ -111,15 +112,28 @@ export const UpdateLibraryFile = ({
       handleClose();
     }
     setInProgress(false);
+    if(tokenId == ''){
+
     //Update the library data for the collection
     getNftCollectionMeta().then((r) => {
-      updateCollectionLevelLibraryData(
+      updateLibraryData(
         r.ok.metadata[0].Class.filter((res) => {
           return res.name === 'library';
         })[0].value.Array.thawed,
       );
     });
-    setOpenLibraryCollectionLevel(false);
+    setOpenLibrary(false);
+  }else{
+    //Update the library data for the Token
+    getNft(tokenId).then((r) => {
+      updateLibraryData(
+        r.ok.metadata.Class.filter((res) => {
+          return res.name === 'library';
+        })[0].value.Array.thawed,
+      );
+    });
+    setOpenLibrary(false);
+  }
   };
 
   const arrayToBuffer = (arrayBuffer) => {

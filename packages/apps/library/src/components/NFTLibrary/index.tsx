@@ -3,6 +3,7 @@ import { Container, Grid, Flex, HR } from '@origyn-sa/origyn-art-ui';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
 import { DeleteLibrary } from '../DeleteLibrary';
+import { UpdateLibrary } from '../UpdateLibrary';
 interface FileType {
   library_id: string;
   title: string;
@@ -13,6 +14,7 @@ interface FileType {
 }
 
 export const NFTLibrary = (props: any) => {
+  
   function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -97,7 +99,7 @@ export const NFTLibrary = (props: any) => {
         <>
           {!isMutable ? (
             <>
-              <Flex flexFlow="column" justify="center">
+              <Flex flexFlow="column" justify="center" gap={16}>
                 <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}
@@ -108,7 +110,16 @@ export const NFTLibrary = (props: any) => {
                     setLibDet={props.setLibDet}
                   />
                 </Flex>
-                
+                <Flex>
+                  <UpdateLibrary
+                  libraryId={objLibraryData.library_id} 
+                  tokenId={props.currentTokenId} 
+                  updateLibraryData={props.updateTokenLibraryData}
+                  setOpenLibrary={props.setOpenLibrarySelectedToken}
+                  locationType={objLibraryData.location_type}
+                  metadata = {props.libDet}
+                  />
+                </Flex>
               </Flex>
             </>
           ) : (

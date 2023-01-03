@@ -12,7 +12,7 @@ type Props = {
   setOpenLibrary: any;
   metadata: any;
 };
-export const UpdateLibraryWeb = ({
+export const UpdateLibraryCollection = ({
   tokenId,
   updateLibraryData,
   setOpenLibrary,
@@ -21,7 +21,6 @@ export const UpdateLibraryWeb = ({
   const { actor } = useContext(AuthContext);
 
   const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
-  const url = metadata.Class?.filter((res) => res.name === 'location')[0].value.Text;
   const libraryId = metadata.Class?.filter((res) => res.name === 'library_id')[0].value.Text;
   const read = metadata.Class?.filter((res) => res.name === 'read')[0].value.Text;
 
@@ -32,22 +31,40 @@ export const UpdateLibraryWeb = ({
   const [open, setOpen] = useState(false);
   const [inProgress, setInProgress] = useState(false);
   const [typedTitle, setTypedTitle] = useState<string>(title);
-  const [typedUrl, setTypedUrl] = useState<string>(url);
   const [selectedRead,setSelectedRead] = useState<string>(read);
+
+  const getLibraries = async () => {
+    const { canisterId } = await useRoute();
+    await OrigynClient.getInstance().init(true, canisterId);
+    const response = await getNftCollectionMeta();
+    const library = await response.ok.metadata[0].Class.filter((res) => {
+      return res.name === 'library';
+    })[0].value.Array.thawed;
+    console.log('responseCollection', library);
+    let libraries = [];
+    let i: any;
+    for (i in library) {
+      libraries.push(
+        library[i].Class.filter((res) => {
+          return res.name === 'library_id';
+        })[0].value.Text,
+      );
+    }
+  };
 
   useEffect(() => {
     setTypedTitle(title);
-    setTypedUrl(url);
     setSelectedRead(read);
+    getLibraries();
   }, [metadata]);
 
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
   };
-  const getTypedUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTypedUrl(event.target.value);
-  };
   const handleSelectChange = (val) => {
+    setSelectedRead(val);
+  };
+  const handleSelectChangeLibrary = (val) => {
     setSelectedRead(val);
   };
   const handleClickOpen = () => {
@@ -56,14 +73,14 @@ export const UpdateLibraryWeb = ({
   const handleClose = () => {
     setOpen(false);
   };
-console.log(metadata);
+console.log('meta',metadata);
   const handleSubmit = async () => {
     const { canisterId } = await useRoute();
     setInProgress(true);
 
     try {
       await OrigynClient.getInstance().init(true, canisterId, { actor });
-      const updateResponse = await updateLibraryMetadata(tokenId, libraryId,{title: typedTitle, location: typedUrl, read: selectedRead} );
+      const updateResponse = await updateLibraryMetadata(tokenId, libraryId,{title: typedTitle, read: selectedRead} );
       console.log(updateResponse);
       if (updateResponse.ok) {
         // Display a success message - SNACKBAR
@@ -90,17 +107,6 @@ console.log(metadata);
       handleClose();
     }
     setInProgress(false);
-    if(tokenId==''){
-    //Update the library data for the collection
-    getNftCollectionMeta().then((r) => {
-      updateLibraryData(
-        r.ok.metadata[0].Class.filter((res) => {
-          return res.name === 'library';
-        })[0].value.Array.thawed,
-      );
-    });
-    setOpenLibrary(false);
-  }else{
     //Update the library data for the Token
     getNft(tokenId).then((r) => {
       updateLibraryData(
@@ -110,7 +116,6 @@ console.log(metadata);
       );
     });
     setOpenLibrary(false);
-  }
   };
 
 
@@ -144,24 +149,6 @@ console.log(metadata);
                       placeholder="Enter Library Title"
                       onChange={getTypedTitle}
                       value={typedTitle}
-                    />
-                  </Flex>
-                </Flex>
-                </Container>
-              </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-              <Container size="full">
-                <Flex flexFlow="column" gap={8}>
-                
-                  <Flex>Update library URL</Flex>
-                  <Flex>
-                    <TextInput
-                      label="Library URL"
-                      id="url"
-                      placeholder="Enter Library URL"
-                      onChange={getTypedUrl}
-                      value={typedUrl}
                     />
                   </Flex>
                 </Flex>

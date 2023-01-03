@@ -1,40 +1,49 @@
 import React from 'react';
 import { UpdateLibraryFile } from './UpdateLibraryFile';
 import { UpdateLibraryWeb } from './UpdateLibraryWeb';
+import { UpdateLibraryCollection } from './UpdateLibraryCollection';
 
 const UpdateLayouts = {
-  canister : (tokenId, libraryId, updateCollectionLevelLibraryData, setOpenLibraryCollectionLevel, metadata) => (
+  canister : (tokenId, libraryId, updateLibraryData, setOpenLibrary, metadata) => (
     <UpdateLibraryFile
       tokenId={tokenId}
       libraryId={libraryId}
-      updateCollectionLevelLibraryData={updateCollectionLevelLibraryData}
-      setOpenLibraryCollectionLevel={setOpenLibraryCollectionLevel}
+      updateLibraryData={updateLibraryData}
+      setOpenLibrary={setOpenLibrary}
       metadata = {metadata}
     />
   ),
-  web : (tokenId, libraryId, updateCollectionLevelLibraryData, setOpenLibraryCollectionLevel,metadata) => (
+  web : (tokenId, libraryId, updateLibraryData, setOpenLibrary,metadata) => (
     <UpdateLibraryWeb
       tokenId={tokenId}
-      updateCollectionLevelLibraryData={updateCollectionLevelLibraryData}
-      setOpenLibraryCollectionLevel={setOpenLibraryCollectionLevel}
+      updateLibraryData={updateLibraryData}
+      setOpenLibrary={setOpenLibrary}
       metadata={metadata}
     />
   ),
+  collection : (tokenId,libraryId, updateLibraryData, setOpenLibrary,metadata) => (
+    <UpdateLibraryCollection
+      tokenId={tokenId}
+      updateLibraryData={updateLibraryData}
+      setOpenLibrary={setOpenLibrary}
+      metadata={metadata}
+    />
+  )
 }
 
 type Props = {
   tokenId: string;
   libraryId: string;
-  updateCollectionLevelLibraryData: any;
-  setOpenLibraryCollectionLevel: any;
+  updateLibraryData: any;
+  setOpenLibrary: any;
   locationType: string;
   metadata: any
 };
 export const UpdateLibrary = ({
   tokenId,
   libraryId,
-  updateCollectionLevelLibraryData,
-  setOpenLibraryCollectionLevel,
+  updateLibraryData,
+  setOpenLibrary,
   locationType,
   metadata
 }: Props) => {
@@ -42,7 +51,7 @@ export const UpdateLibrary = ({
   return (
     <>
       {
-        UpdateLayouts[locationType](tokenId, libraryId, updateCollectionLevelLibraryData, setOpenLibraryCollectionLevel,metadata)
+        UpdateLayouts[locationType](tokenId, libraryId, updateLibraryData, setOpenLibrary,metadata)
       }
     </>
   );
