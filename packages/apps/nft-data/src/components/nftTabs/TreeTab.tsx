@@ -29,38 +29,38 @@ function Tree({ metadata }: any) {
     return array;
   };
 
-  const handleExpandAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAll(event.target.checked);
-    if (event.target.checked) {
-      setExpanded([...init(0, all_index)]);
-    } else {
-      setExpanded([]);
-    }
-    setApps(false);
-    setLibraries(false);
-  };
+  // const handleExpandAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setAll(event.target.checked);
+  //   if (event.target.checked) {
+  //     setExpanded([...init(0, all_index)]);
+  //   } else {
+  //     setExpanded([]);
+  //   }
+  //   setApps(false);
+  //   setLibraries(false);
+  // };
 
-  const handleExpandApps = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setApps(event.target.checked);
-    if (event.target.checked) {
-      setExpanded([...init(apps_index[0], apps_index[1])]);
-    } else {
-      setExpanded([]);
-    }
-    setAll(false);
-    setLibraries(false);
-  };
+  // const handleExpandApps = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setApps(event.target.checked);
+  //   if (event.target.checked) {
+  //     setExpanded([...init(apps_index[0], apps_index[1])]);
+  //   } else {
+  //     setExpanded([]);
+  //   }
+  //   setAll(false);
+  //   setLibraries(false);
+  // };
 
-  const handleExpandLibraries = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLibraries(event.target.checked);
-    if (event.target.checked) {
-      setExpanded([...init(libraries_index[0], libraries_index[1])]);
-    } else {
-      setExpanded([]);
-    }
-    setAll(false);
-    setApps(false);
-  };
+  // const handleExpandLibraries = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setLibraries(event.target.checked);
+  //   if (event.target.checked) {
+  //     setExpanded([...init(libraries_index[0], libraries_index[1])]);
+  //   } else {
+  //     setExpanded([]);
+  //   }
+  //   setAll(false);
+  //   setApps(false);
+  // };
 
   const increment = () => {
     all_index++;
@@ -174,7 +174,6 @@ function Tree({ metadata }: any) {
   };
 
   const Tree = ({ treeData }) => {
-    console.log('tree5', treeData);
     return (
       <ul>
         {treeData.map((node) => (
@@ -186,13 +185,10 @@ function Tree({ metadata }: any) {
 
   const TreeNode = ({ node }) => {
     const { children, name } = node;
-
     const [showChildren, setShowChildren] = useState(false);
-
     const handleClick = () => {
       setShowChildren(!showChildren);
     };
-
     return (
       <>
         <div style={{ marginBottom: '10px' }}>
@@ -213,10 +209,6 @@ function Tree({ metadata }: any) {
 
   const handleClose = () => {
     setShowChildren(false);
-  };
-
-  const handleClose1 = () => {
-    setShowChildren(true);
   };
 
   return (
