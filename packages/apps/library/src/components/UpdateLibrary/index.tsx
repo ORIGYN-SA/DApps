@@ -4,16 +4,15 @@ import { UpdateLibraryWeb } from './UpdateLibraryWeb';
 import { UpdateLibraryCollection } from './UpdateLibraryCollection';
 
 const UpdateLayouts = {
-  canister : (tokenId, libraryId, updateLibraryData, setOpenLibrary, metadata) => (
+  canister : (tokenId, updateLibraryData, setOpenLibrary, metadata) => (
     <UpdateLibraryFile
       tokenId={tokenId}
-      libraryId={libraryId}
       updateLibraryData={updateLibraryData}
       setOpenLibrary={setOpenLibrary}
       metadata = {metadata}
     />
   ),
-  web : (tokenId, libraryId, updateLibraryData, setOpenLibrary,metadata) => (
+  web : (tokenId, updateLibraryData, setOpenLibrary,metadata) => (
     <UpdateLibraryWeb
       tokenId={tokenId}
       updateLibraryData={updateLibraryData}
@@ -21,7 +20,7 @@ const UpdateLayouts = {
       metadata={metadata}
     />
   ),
-  collection : (tokenId,libraryId, updateLibraryData, setOpenLibrary,metadata) => (
+  collection : (tokenId, updateLibraryData, setOpenLibrary,metadata) => (
     <UpdateLibraryCollection
       tokenId={tokenId}
       updateLibraryData={updateLibraryData}

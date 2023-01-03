@@ -3,13 +3,6 @@ import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
 import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
-// Dialog
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Typography } from '@mui/material';
 import { Button, Modal, Flex, Container, HR } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 

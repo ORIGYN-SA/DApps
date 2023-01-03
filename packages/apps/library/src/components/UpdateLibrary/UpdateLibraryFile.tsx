@@ -15,14 +15,12 @@ import { LinearProgress } from '@mui/material';
 
 type Props = {
   tokenId: string;
-  libraryId: string;
   updateLibraryData: any;
   setOpenLibrary: any;
   metadata: any;
 };
 export const UpdateLibraryFile = ({
   tokenId,
-  libraryId,
   updateLibraryData,
   setOpenLibrary,
   metadata,
@@ -35,6 +33,7 @@ export const UpdateLibraryFile = ({
 
   const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
   const read = metadata.Class?.filter((res) => res.name === 'read')[0].value.Text;
+  const libraryId = metadata.Class?.filter((res) => res.name === 'library_id')[0].value.Text;
   const readPermissions = ['public', 'owner', 'collection_owner'];
 
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
