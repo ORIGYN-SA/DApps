@@ -10,7 +10,7 @@ export const MediaList = ({ items, onRemoveClick }: Props) => {
       </div>
       <div>
         <p>Name</p>
-        <p>{item.fileName}</p>
+        <p>{item.path}</p>
       </div>
       <div>
         <p>Pointer</p>
@@ -19,7 +19,7 @@ export const MediaList = ({ items, onRemoveClick }: Props) => {
       <div>
         <p>Preview</p>
         <p>
-          <img height={50} src={item.preview} alt="" />
+          <img height={50} src={item.source} alt="" />
         </p>
       </div>
       <div>

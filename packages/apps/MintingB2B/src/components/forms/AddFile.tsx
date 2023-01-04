@@ -62,7 +62,7 @@ export const AddFile = ({ handleAdd, pointer }) => {
         <p></p>
         <Flex>
           <Button type="button" onClick={addFile} iconButton>
-            <Icons.CloseIcon />
+            <Icons.CheckIcon width="16" height="16" />
           </Button>
         </Flex>
       </div>

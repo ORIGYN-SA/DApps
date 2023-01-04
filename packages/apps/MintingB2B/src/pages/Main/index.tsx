@@ -1,14 +1,23 @@
-
-import { Button, Card, Container, Flex, Grid, HR, SecondaryNav, useStepper } from '@origyn-sa/origyn-art-ui';
+import {
+  Button,
+  Card,
+  Container,
+  Flex,
+  Grid,
+  HR,
+  SecondaryNav,
+  useStepper,
+} from '@origyn-sa/origyn-art-ui';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AddFile, AddHistory, Form as MetadataForm } from '../../components/forms';
 import { GuestContainer } from '../../components/GuestContainer';
 import { MediaList, HistoryList } from '../../components/lists';
 import { AllNfts, Minter } from './Tabs';
-import { DataStructureList } from '../../components/lists/DataStructureList'
-import { DataStructure } from './Tabs/DataStrucuter'
-import { Template } from './Tabs/Template'
+import { DataStructureList } from '../../components/lists/DataStructureList';
+import { DataStructure } from './Tabs/DataStrucuter';
+import { Template } from './Tabs/Template';
+import { useSnackbar } from 'notistack';
 const dataStructures = {
   IGI: [
     {
@@ -224,7 +233,10 @@ const MintingPage = () => {
   const [metadata, setMetadata] = useState<any>();
   const [files, setFiles] = useState<any>([]);
   const [offChainHistory, setOffChainHistory] = useState<any>([]);
-  const [dataStructure, setDataStructure] = useState<any>(JSON.parse(localStorage.getItem("dataStructure")) || dataStructures );
+  const [dataStructure, setDataStructure] = useState<any>(
+    JSON.parse(localStorage.getItem('dataStructure')) || dataStructures,
+  );
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleLogOut = () => {
     setLoggedIn('');
@@ -234,7 +246,7 @@ const MintingPage = () => {
 
   const fetchData = async (page: number) => {
     const response = await fetch(
-      `https://development.origyn.network/canister/v0/nft-token?sortKey=createdAt&sortDirection=-1&skip=${
+      `http://localhost:3000/canister/v0/nft-token?sortKey=createdAt&sortDirection=-1&skip=${
         30 * (page - 1)
       }`,
       {
@@ -256,8 +268,42 @@ const MintingPage = () => {
     return data;
   };
 
-  const addMedia = (fileObject) => {
-    setFiles([...files, fileObject]);
+  const addMedia = async (fileObject) => {
+    const requestFormData = new FormData();
+    requestFormData.append(fileObject.pointer, fileObject.file);
+    const response = await fetch(`http://localhost:3000/canister/v0/pre-stage`, {
+      method: 'PUT',
+      headers: {
+        'x-api-key': loggedIn,
+      },
+      body: requestFormData,
+    });
+    if (response.status === 200) {
+      enqueueSnackbar(`File '${fileObject.fileName}' uploaded`, {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      });
+      const body = await response.json();
+      const file = {
+        id: fileObject.id,
+        path: fileObject.fileName,
+        source: body?.[0].url,
+        pointer: fileObject.pointer,
+        download: true,
+      };
+      setFiles([...files, file]);
+    } else {
+      enqueueSnackbar(`There was an error while uploading '${fileObject.fileName}'`, {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      });
+    }
   };
   const addHistory = (historyObject) => {
     setOffChainHistory([...offChainHistory, historyObject]);
@@ -265,13 +311,10 @@ const MintingPage = () => {
   const addData = (dataObject) => {
     const newData = {
       ...dataStructure,
-      IGI: [
-        ...dataStructure.IGI,
-        dataObject
-      ]
+      IGI: [...dataStructure.IGI, dataObject],
     };
     console.log(newData);
-    localStorage.setItem('dataStructure', JSON.stringify(newData))
+    localStorage.setItem('dataStructure', JSON.stringify(newData));
     setDataStructure(newData);
   };
   const removeFile = (fileId) => {
@@ -283,10 +326,10 @@ const MintingPage = () => {
   const removeData = (fileId) => {
     const newData = {
       ...dataStructure,
-      IGI: dataStructure.IGI.filter(({name}) => name !== fileId),
+      IGI: dataStructure.IGI.filter(({ name }) => name !== fileId),
     };
     console.log(newData);
-    localStorage.setItem('dataStructure', JSON.stringify(newData))
+    localStorage.setItem('dataStructure', JSON.stringify(newData));
     setDataStructure(newData);
   };
 
@@ -303,7 +346,7 @@ const MintingPage = () => {
     setIsMinting(true);
     try {
       const formFullData = {
-        files: files.map(({ fileName, id, type }) => ({ fileName, id, type })),
+        files,
         data: dataStructures.IGI.map(({ name, type }) => ({
           name,
           type,
@@ -325,10 +368,7 @@ const MintingPage = () => {
       });
 
       const requestFormData = new FormData();
-      requestFormData.set('appType', 'ORIGYN');
-      requestFormData.set('plan', 'FREEMIUM');
-      requestFormData.set('identityType', 'AZURE');
-      requestFormData.set('canisterType', 'NFT_CANISTER');
+      requestFormData.set('appType', 'IGI');
 
       const file = new File([jsonFile], 'metadata.json', {
         type: 'application/json',
@@ -336,12 +376,12 @@ const MintingPage = () => {
       });
 
       requestFormData.set('metadata', file);
-      files.forEach(({ pointer, file }) => {
-        requestFormData.append(pointer, file);
-      });
+      // files.forEach(({ pointer, file }) => {
+      //   requestFormData.append(pointer, file);
+      // });
       console.log(metadata);
 
-      const response = await fetch(`https://development.origyn.network/canister/v0/nft-token`, {
+      const response = await fetch(`http://localhost:3000/canister/v0/nft-token`, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
           'x-api-key': loggedIn,
@@ -533,7 +573,7 @@ const MintingPage = () => {
                 removeData={removeData}
                 addData={addData}
               />,
-              <Template />
+              <Template />,
             ]}
             onLogOut={handleLogOut}
             principal={loggedIn}
