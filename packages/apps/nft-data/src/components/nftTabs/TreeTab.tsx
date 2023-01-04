@@ -212,7 +212,7 @@ function Tree({ metadata }: any) {
   };
 
   return (
-    <Container padding="8px 16px">
+    <Container padding="16px">
       <Flex flexFow='row' gap={16}>
       <Button btnType="filled" onClick={handleClose}>Close All</Button>
       <Button btnType="filled" onClick={handleClose}>Expand All</Button>
