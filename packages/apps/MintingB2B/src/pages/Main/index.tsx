@@ -1,11 +1,14 @@
 
-import { Button, Card, Flex, HR, SecondaryNav, useStepper } from '@origyn-sa/origyn-art-ui';
+import { Button, Card, Container, Flex, Grid, HR, SecondaryNav, useStepper } from '@origyn-sa/origyn-art-ui';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AddFile, AddHistory, Form as MetadataForm } from '../../components/forms';
 import { GuestContainer } from '../../components/GuestContainer';
 import { MediaList, HistoryList } from '../../components/lists';
 import { AllNfts, Minter } from './Tabs';
+import { DataStructureList } from '../../components/lists/DataStructureList'
+import { DataStructure } from './Tabs/DataStrucuter'
+import { Template } from './Tabs/Template'
 const dataStructures = {
   IGI: [
     {
@@ -221,6 +224,7 @@ const MintingPage = () => {
   const [metadata, setMetadata] = useState<any>();
   const [files, setFiles] = useState<any>([]);
   const [offChainHistory, setOffChainHistory] = useState<any>([]);
+  const [dataStructure, setDataStructure] = useState<any>(JSON.parse(localStorage.getItem("dataStructure")) || dataStructures );
 
   const handleLogOut = () => {
     setLoggedIn('');
@@ -258,11 +262,32 @@ const MintingPage = () => {
   const addHistory = (historyObject) => {
     setOffChainHistory([...offChainHistory, historyObject]);
   };
+  const addData = (dataObject) => {
+    const newData = {
+      ...dataStructure,
+      IGI: [
+        ...dataStructure.IGI,
+        dataObject
+      ]
+    };
+    console.log(newData);
+    localStorage.setItem('dataStructure', JSON.stringify(newData))
+    setDataStructure(newData);
+  };
   const removeFile = (fileId) => {
     setFiles(files.filter(({ id }) => id !== fileId));
   };
   const removeHistory = (fileId) => {
     setOffChainHistory(offChainHistory.filter(({ id }) => id !== fileId));
+  };
+  const removeData = (fileId) => {
+    const newData = {
+      ...dataStructure,
+      IGI: dataStructure.IGI.filter(({name}) => name !== fileId),
+    };
+    console.log(newData);
+    localStorage.setItem('dataStructure', JSON.stringify(newData))
+    setDataStructure(newData);
   };
 
   const mintNft = async (e) => {
@@ -363,7 +388,7 @@ const MintingPage = () => {
       content: (
         <>
           <form onSubmit={mintNft}>
-            <MetadataForm data={dataStructures.IGI} />
+            <MetadataForm data={dataStructure.IGI} />
             <br />
             <Flex fullWodth justify="center">
               <Button type="submit">Continue</Button>
@@ -491,6 +516,7 @@ const MintingPage = () => {
               { title: 'NFTs', id: 'NFTs' },
               { title: 'Minter', id: 'Minter' },
               { title: 'Data Structure', id: 'dataStructure' },
+              { title: 'Template', id: 'template' },
             ]}
             content={[
               <AllNfts
@@ -501,6 +527,13 @@ const MintingPage = () => {
                 nfts={nftList ?? []}
               />,
               <Minter key="2" isMinting={isMinting} tabs={tabs} content={content} />,
+              <DataStructure
+                isLoading={false}
+                dataStructure={dataStructure.IGI}
+                removeData={removeData}
+                addData={addData}
+              />,
+              <Template />
             ]}
             onLogOut={handleLogOut}
             principal={loggedIn}
