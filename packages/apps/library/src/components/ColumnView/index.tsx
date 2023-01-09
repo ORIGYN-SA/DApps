@@ -7,6 +7,28 @@ import { CollectionLibrary } from '../CollectionLibrary';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
 import { Container, Grid, Flex, Modal, theme } from '@origyn-sa/origyn-art-ui';
+
+function replaceSelectedTokenInTheUrl(selectedToken: string) {
+  const URL = window.location.href;
+  if (URL.includes('collection')) {
+    return;
+  } else {
+    useRoute().then(({ tokenId }) => {
+      try {
+        if (URL.includes(tokenId)) {
+          console.log(tokenId);
+          const newUrl = URL.replace(tokenId, selectedToken);
+          window.history.pushState({
+            path: newUrl
+          }, '', newUrl);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    });
+  }
+}
+
 interface ListType {
   itemName: string;
   index: number;
@@ -115,6 +137,7 @@ const ColumnView = () => {
     setSelectedNft(index);
     setSelectedMeta(null);
     setCurrentTokenId(nft);
+    replaceSelectedTokenInTheUrl(nft);
     OrigynClient.getInstance().init(true, canisterId, { actor });
     getNft(nft).then((r) => {
       console.log('nft_origyn', r);
