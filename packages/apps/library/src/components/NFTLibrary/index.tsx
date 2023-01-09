@@ -112,7 +112,6 @@ export const NFTLibrary = (props: any) => {
                 </Flex>
                 <Flex>
                   <UpdateLibrary
-                  libraryId={objLibraryData.library_id} 
                   tokenId={props.currentTokenId} 
                   updateLibraryData={props.updateTokenLibraryData}
                   setOpenLibrary={props.setOpenLibrarySelectedToken}

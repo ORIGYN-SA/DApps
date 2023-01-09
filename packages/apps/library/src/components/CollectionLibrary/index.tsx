@@ -113,7 +113,6 @@ console.log(objLibraryData.location_type);
                 </Flex>
                 <Flex>
                   <UpdateLibrary
-                  libraryId={objLibraryData.library_id} 
                   tokenId={''} 
                   updateLibraryData={props.updateCollectionLevelLibraryData}
                   setOpenLibrary={props.setOpenLibraryCollectionLevel}
