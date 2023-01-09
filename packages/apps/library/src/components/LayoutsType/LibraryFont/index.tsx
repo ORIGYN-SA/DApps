@@ -1,31 +1,7 @@
-import React, { useEffect, useContext, useState } from 'react'
-import Box from '@mui/material/Box'
-import FontDownloadIcon from '@mui/icons-material/FontDownload';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import React, { useEffect, useState } from 'react'
+import { useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
-import { styled } from '@mui/material/styles';
-import { Typography } from '@mui/material';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
-
-const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: '#f5f5f9',
-    color: 'rgba(0, 0, 0, 0.87)',
-    maxWidth: 220,
-    fontSize: theme.typography.pxToRem(12),
-    border: '1px solid #dadde9',
-  },
-}));
-
-
-const linkStyle = {
-  width: 'auto',
-  height: 'auto',
-  textAlign: 'center',
-  m: 2,
-}
+import { Flex, Tooltip, HR } from '@origyn-sa/origyn-art-ui';
 
 const LibraryFont = (props: any) => {
   const [canisterId, setCanisterId] = useState("");
@@ -35,31 +11,35 @@ const LibraryFont = (props: any) => {
     setLink(link);
   }
   useEffect(() => {
-    if(canisterId) {
-    formattedLink();
+    if (canisterId) {
+      formattedLink();
     }
-  }, [canisterId,props.source]);
+  }, [canisterId, props.source]);
 
   useEffect(() => {
-    useRoute().then(({ canisterId, tokenId }) => {
+    useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
     });
   }, []);
 
   return (
-    <Box sx={linkStyle}>
-       <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Font Type</Typography>
-            <em>{link}</em> <br></br><b><a href={link} target='_self'>{'Download Font Here'}</a></b>{' '}
-          </React.Fragment>
-        }
-      >
-         <FontDownloadIcon sx={{ fontSize: 50 }} />
-      </HtmlTooltip>
-    </Box>
+    <>
+      <Flex flexFlow="row" justify="center">
+        <Tooltip
+          text="Download font here!"
+        >
+          <a
+            style={{
+              fontSize: 12
+            }}
+            href={link}
+            target="_self"
+          >{link}</a>
+        </Tooltip>
+      </Flex>
+      <HR marginTop={16} marginBottom={16} />
+    </>
   )
 }
 
-export default LibraryFont;
+export default LibraryFont
