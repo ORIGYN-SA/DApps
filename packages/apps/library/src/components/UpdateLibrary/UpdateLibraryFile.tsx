@@ -83,10 +83,10 @@ export const UpdateLibraryFile = ({
         selectedFile != undefined
           ? await updateLibraryFileContent(tokenId, libraryId, updatedFile)
           : null;
-      const updateTitle = await updateLibraryMetadata(tokenId, libraryId, { title: typedTitle });
+      const updateMeta= await updateLibraryMetadata(tokenId, libraryId, { title: typedTitle, read: selectedRead });
      
 
-      if (updateResponse.ok || updateTitle.ok) {
+      if (updateResponse.ok || updateMeta.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library Updated', {
           variant: 'success',

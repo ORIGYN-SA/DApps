@@ -115,7 +115,7 @@ const ColumnView = () => {
     setSelectedNft(index);
     setSelectedMeta(null);
     setCurrentTokenId(nft);
-    OrigynClient.getInstance().init(true, canisterId);
+    OrigynClient.getInstance().init(true, canisterId, { actor });
     getNft(nft).then((r) => {
       console.log('nft_origyn', r);
       setTokenLibraryData(
@@ -142,7 +142,7 @@ const ColumnView = () => {
     setSelectedIndex(index);
     // Collection level libraries the tokenId is empty
     if (actor) {
-      OrigynClient.getInstance().init(true, canisterId);
+      OrigynClient.getInstance().init(true, canisterId, { actor });
       getNftCollectionMeta().then((r) => {
         setCollectionLevelLibraryData(
           r.ok.metadata[0].Class.filter((res) => {
@@ -208,7 +208,7 @@ const ColumnView = () => {
       setOpenAddLibrary(false);
       await nftCollection();
       handleDetails();
-      OrigynClient.getInstance().init(true, canisterId);
+      OrigynClient.getInstance().init(true, canisterId, { actor });
       setCurrentTokenId(tokenId);
       setSelectedIndex(0);
       setSelectedMeta(null);
@@ -226,7 +226,7 @@ const ColumnView = () => {
   const nftCollection = async () => {
     const { tokenId, canisterId } = await useRoute();
     setCollectionNft([]);
-    OrigynClient.getInstance().init(true, canisterId);
+    OrigynClient.getInstance().init(true, canisterId, { actor });
     const response = await getNftCollectionMeta([]);
     console.log('responseCollectionMeta', response);
     const collectionNFT = response.ok;
