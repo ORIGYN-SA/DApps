@@ -32,7 +32,6 @@ const UpdateLayouts = {
 
 type Props = {
   tokenId: string;
-  libraryId: string;
   updateLibraryData: any;
   setOpenLibrary: any;
   locationType: string;
@@ -40,7 +39,6 @@ type Props = {
 };
 export const UpdateLibrary = ({
   tokenId,
-  libraryId,
   updateLibraryData,
   setOpenLibrary,
   locationType,
@@ -50,7 +48,7 @@ export const UpdateLibrary = ({
   return (
     <>
       {
-        UpdateLayouts[locationType](tokenId, libraryId, updateLibraryData, setOpenLibrary,metadata)
+        UpdateLayouts[locationType](tokenId, updateLibraryData, setOpenLibrary,metadata)
       }
     </>
   );
