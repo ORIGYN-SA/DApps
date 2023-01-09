@@ -9,8 +9,9 @@ import {
   updateLibraryMetadata,
   getNftCollectionMeta,
   getNft,
+  setLibraryImmutable
 } from '@origyn-sa/mintjs';
-import { Button, Modal, Container, Flex, HR, TextInput, Select } from '@origyn-sa/origyn-art-ui';
+import { Button, Modal, Container, Flex, HR, TextInput, Select, CheckboxInput } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 type Props = {
@@ -41,11 +42,14 @@ export const UpdateLibraryFile = ({
   const [typedTitle, setTypedTitle] = useState<string>(title);
   const [selectedRead, setSelectedRead] = useState<string>(read);
   const [updatedFile, setUpdatedFile] = useState<any>(undefined);
-
+  const [immutable, setImmutable] = useState<boolean>(false);
+  
+  const handleChangeImmutable = () => {
+    setImmutable(!immutable);
+  };
   const handleSelectChange = (val) => {
     setSelectedRead(val);
   };
-
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
   };
@@ -78,17 +82,24 @@ export const UpdateLibraryFile = ({
     }
     setInProgress(true);
     try {
+      let successMsg = 'Library Updated';
+
       await OrigynClient.getInstance().init(true, canisterId, { actor });
-      const updateResponse =
-        selectedFile != undefined
+
+      selectedFile != undefined
           ? await updateLibraryFileContent(tokenId, libraryId, updatedFile)
           : null;
+
       const updateMeta= await updateLibraryMetadata(tokenId, libraryId, { title: typedTitle, read: selectedRead });
      
 
-      if (updateResponse.ok || updateMeta.ok) {
+      if (updateMeta.ok) {
         // Display a success message - SNACKBAR
-        enqueueSnackbar('Library Updated', {
+        if(immutable){
+          setLibraryImmutable(tokenId, libraryId);
+          successMsg = 'Library Updated and made immutable';
+        }
+        enqueueSnackbar(successMsg, {
           variant: 'success',
           anchorOrigin: {
             vertical: 'top',
@@ -224,7 +235,19 @@ export const UpdateLibraryFile = ({
                   </Container>
                 </Flex>
                 <HR marginBottom={16} marginTop={16} />
-
+                <Flex>
+                <Flex flexFlow="row" gap={8}>
+                  <Flex>
+                    <CheckboxInput
+                      name="immutable"
+                      onChange={handleChangeImmutable}
+                      checked={immutable}
+                    />
+                  </Flex>
+                  <Flex><p>Make this Library <b>immutable</b></p></Flex>
+                </Flex>
+              </Flex>
+                <HR marginBottom={16} marginTop={16} />
                 <Flex>
                   <Button onClick={handleClose}>Back</Button>
                   <Button onClick={handleSubmit} btnType="filled">

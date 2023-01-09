@@ -2,8 +2,8 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
-import { OrigynClient, updateLibraryMetadata, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
-import { Button, Modal, Container, Flex, HR, TextInput, Select } from '@origyn-sa/origyn-art-ui';
+import { OrigynClient, updateLibraryMetadata, getNftCollectionMeta, getNft, setLibraryImmutable } from '@origyn-sa/mintjs';
+import { Button, Modal, Container, Flex, HR, TextInput, Select, CheckboxInput } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 type Props = {
@@ -33,7 +33,8 @@ export const UpdateLibraryWeb = ({
   const [inProgress, setInProgress] = useState(false);
   const [typedTitle, setTypedTitle] = useState<string>(title);
   const [typedUrl, setTypedUrl] = useState<string>(url);
-  const [selectedRead,setSelectedRead] = useState<string>(read);
+  const [selectedRead, setSelectedRead] = useState<string>(read);
+  const [immutable, setImmutable] = useState<boolean>(false);
 
   useEffect(() => {
     setTypedTitle(title);
@@ -41,6 +42,9 @@ export const UpdateLibraryWeb = ({
     setSelectedRead(read);
   }, [metadata]);
 
+  const handleChangeImmutable = () => {
+    setImmutable(!immutable);
+  };
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypedTitle(event.target.value);
   };
@@ -56,18 +60,26 @@ export const UpdateLibraryWeb = ({
   const handleClose = () => {
     setOpen(false);
   };
-console.log(metadata);
+  console.log(metadata);
   const handleSubmit = async () => {
     const { canisterId } = await useRoute();
     setInProgress(true);
 
     try {
+
+      let successMsg = 'Web Library Updated';
+
       await OrigynClient.getInstance().init(true, canisterId, { actor });
-      const updateResponse = await updateLibraryMetadata(tokenId, libraryId,{title: typedTitle, location: typedUrl, read: selectedRead} );
-      console.log(updateResponse);
+
+      const updateResponse = await updateLibraryMetadata(tokenId, libraryId, { title: typedTitle, location: typedUrl, read: selectedRead });
+
       if (updateResponse.ok) {
+        if(immutable){
+          setLibraryImmutable(tokenId, libraryId);
+          successMsg = 'Library Updated and made immutable';
+        }
         // Display a success message - SNACKBAR
-        enqueueSnackbar('Library Updated', {
+        enqueueSnackbar(successMsg, {
           variant: 'success',
           anchorOrigin: {
             vertical: 'top',
@@ -90,27 +102,27 @@ console.log(metadata);
       handleClose();
     }
     setInProgress(false);
-    if(tokenId==''){
-    //Update the library data for the collection
-    getNftCollectionMeta().then((r) => {
-      updateLibraryData(
-        r.ok.metadata[0].Class.filter((res) => {
-          return res.name === 'library';
-        })[0].value.Array.thawed,
-      );
-    });
-    setOpenLibrary(false);
-  }else{
-    //Update the library data for the Token
-    getNft(tokenId).then((r) => {
-      updateLibraryData(
-        r.ok.metadata.Class.filter((res) => {
-          return res.name === 'library';
-        })[0].value.Array.thawed,
-      );
-    });
-    setOpenLibrary(false);
-  }
+    if (tokenId == '') {
+      //Update the library data for the collection
+      getNftCollectionMeta().then((r) => {
+        updateLibraryData(
+          r.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+      setOpenLibrary(false);
+    } else {
+      //Update the library data for the Token
+      getNft(tokenId).then((r) => {
+        updateLibraryData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+      setOpenLibrary(false);
+    }
   };
 
 
@@ -135,64 +147,77 @@ console.log(metadata);
               <HR marginBottom={16} marginTop={16} />
               <Flex>
                 <Container size="full">
-                <Flex flexFlow="column" gap={8}>
-                  <Flex>Update library title</Flex>
-                  <Flex>
-                    <TextInput
-                      label="Library title"
-                      id="title"
-                      placeholder="Enter Library Title"
-                      onChange={getTypedTitle}
-                      value={typedTitle}
-                    />
+                  <Flex flexFlow="column" gap={8}>
+                    <Flex>Update library title</Flex>
+                    <Flex>
+                      <TextInput
+                        label="Library title"
+                        id="title"
+                        placeholder="Enter Library Title"
+                        onChange={getTypedTitle}
+                        value={typedTitle}
+                      />
+                    </Flex>
                   </Flex>
-                </Flex>
                 </Container>
               </Flex>
               <HR marginBottom={16} marginTop={16} />
               <Flex>
-              <Container size="full">
-                <Flex flexFlow="column" gap={8}>
-                
-                  <Flex>Update library URL</Flex>
-                  <Flex>
-                    <TextInput
-                      label="Library URL"
-                      id="url"
-                      placeholder="Enter Library URL"
-                      onChange={getTypedUrl}
-                      value={typedUrl}
-                    />
+                <Container size="full">
+                  <Flex flexFlow="column" gap={8}>
+
+                    <Flex>Update library URL</Flex>
+                    <Flex>
+                      <TextInput
+                        label="Library URL"
+                        id="url"
+                        placeholder="Enter Library URL"
+                        onChange={getTypedUrl}
+                        value={typedUrl}
+                      />
+                    </Flex>
                   </Flex>
-                </Flex>
                 </Container>
               </Flex>
               <HR marginBottom={16} marginTop={16} />
               <Flex>
-              <Container size="full">
-                <Flex flexFlow="column" gap={8}>
-                
-                  <Flex>Update Read permission</Flex>
-                  <Flex>
-                  <Select
-            selectedOption={{
-              value: selectedRead,
-              label: selectedRead,
-            }}
-            label="Select"
-            handleChange={(opt) => {
-              handleSelectChange(opt.value);
-            }}
-            options={readPermissions.map((read) => {
-              return {
-                value: read,
-                label: read,
-              };
-            })}
-          />
+                <Container size="full">
+                  <Flex flexFlow="column" gap={8}>
+
+                    <Flex>Update Read permission</Flex>
+                    <Flex>
+                      <Select
+                        selectedOption={{
+                          value: selectedRead,
+                          label: selectedRead,
+                        }}
+                        label="Select"
+                        handleChange={(opt) => {
+                          handleSelectChange(opt.value);
+                        }}
+                        options={readPermissions.map((read) => {
+                          return {
+                            value: read,
+                            label: read,
+                          };
+                        })}
+                      />
+                    </Flex>
                   </Flex>
-                </Flex>
                 </Container>
+              </Flex>
+              <HR marginBottom={16} marginTop={16} />
+              <Flex>
+                <Flex flexFlow="row" gap={8}>
+                  <Flex>
+                    <CheckboxInput
+                      name="immutable"
+                      onChange={handleChangeImmutable}
+                      checked={immutable}
+                    />
+                  </Flex>
+                  <Flex><p>Make this Library <b>immutable</b></p></Flex>
+                </Flex>
               </Flex>
               <HR marginBottom={16} marginTop={16} />
               <Flex>
