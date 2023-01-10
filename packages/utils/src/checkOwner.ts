@@ -1,5 +1,4 @@
-// Get the Owner of the Nft / Library
-// Check if the user is the Owner.
+// Check if the user is the owner of the collection or if he is in the write permission list/manager list
 // ----------------------------------------------------------------------------
 // Arguments: canister (string) | Link (URL)
 // Returns:  boolean
@@ -10,49 +9,57 @@
 import { Principal } from '@dfinity/principal';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 
-export const checkOwner = async (principal: Principal, currCanisterId, currTokenId) => {
+export const checkOwner = async (principal: Principal, currCanisterId: string) => {
 
-    OrigynClient.getInstance().init(currCanisterId);
+    OrigynClient.getInstance().init(true, currCanisterId);
 
-    const UserPrincipal = principal.toText();
-    const MetadataCollectionLevel = await getNftCollectionMeta().then((r) => r.ok.metadata[0].Class);
+    const userPrincipal = principal.toText();
+    const metadataCollectionLevelResponse = await getNftCollectionMeta();
+    const metadataCollectionLevel = metadataCollectionLevelResponse.ok?.metadata?.[0]?.Class;
 
     // Collection Owner
-    const CollectionData = MetadataCollectionLevel.filter((res) => {
+    const collectionData = metadataCollectionLevel.filter((res) => {
         return res.name === 'owner';
     })[0].value;
 
-    let CollectionOwner: string;
+    let collectionOwner: string;
 
-    if ((Object.keys(CollectionData)[0]) == 'Principal') {
-        CollectionOwner = CollectionData.Principal.toText();
+    if ((Object.keys(collectionData)[0]) == 'Principal') {
+        collectionOwner = collectionData.Principal.toText();
     } else {
-        CollectionOwner = CollectionData.Text;
+        collectionOwner = collectionData.Text;
     }
+    console.log('🚀 - COLLECTION OWNER', collectionOwner);
 
     // Write Permission List
-    const ArrayAllowed = MetadataCollectionLevel.filter((res) => {
-            return res.name === '__apps';
-        })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed;
-
-    // Check if the user is in the write permission list
-    const AllowedUsers = () => {
+    const arrayAllowed = metadataCollectionLevel.filter((res) => {
+        return res.name === '__apps';
+    })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed;
+    
+    const isAllowed = () => {
         let i: any;
-        for (i in ArrayAllowed) {
-            let AllowedPrincipals = ArrayAllowed[i].Principal.toText();
+        for (i in arrayAllowed) {
+            let AllowedPrincipals = arrayAllowed[i].Principal.toText();
             console.log(' 🔏 - PERMISSION LIST - WRITE', AllowedPrincipals);
-            if (AllowedPrincipals === UserPrincipal) {
+            if (AllowedPrincipals === userPrincipal) {
                 return true;
             }
         }
     }
 
-    console.log('🚀 - COLLECTION OWNER', CollectionOwner);
-
-    if ((UserPrincipal === CollectionOwner) || (AllowedUsers() === true)) {
-        return true;
-    } else {
-        return false;
+    const managers = metadataCollectionLevelResponse.ok?.managers || [];
+    console.log('Managers list: ', managers)
+    const isManager = () => {
+        let i: any;
+        for (i in managers) {
+            let managersPrincipals = managers[i];
+            console.log(' 🔏 - MANAGER' + ' #' + i + ' ' + managersPrincipals.toString());
+            if(managersPrincipals.toString() === userPrincipal) {
+                return true;
+            }
+        }
     }
+
+    return (isManager() || isAllowed() || (userPrincipal === collectionOwner));
 
 }

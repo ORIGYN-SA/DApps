@@ -3,6 +3,7 @@ import { Container, Grid, Flex, HR } from '@origyn-sa/origyn-art-ui';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
 import { DeleteLibrary } from '../DeleteLibrary';
+import { UpdateLibrary } from '../UpdateLibrary';
 interface FileType {
   library_id: string;
   title: string;
@@ -23,50 +24,47 @@ export const NFTLibrary = (props: any) => {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
-
-  function capitalizeString(param) {
-    return param.charAt(0).toUpperCase() + param.slice(1);
-  }
-
-  const LocationType = props.libDet.Class.filter((item) => item.name === 'location_type')[0].value
-    .Text;
-  const isMutable = props.libDet.Class.filter(
-    (item) => item.name === 'com.origyn.immutable_library',
-  )[0];
-
   let objLibraryData: FileType;
-  const library = props.libDet;
-  switch (LocationType) {
-    case 'canister':
-      objLibraryData = {
-        library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
-        title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
-        content_type: library?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
-        location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
-        location_type: LocationType,
-        size: library?.Class.filter((item) => item.name === 'size')[0].value.Nat,
-      };
-      break;
-    case 'collection':
-      objLibraryData = {
-        library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
-        title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
-        content_type: library?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
-        location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
-        location_type: LocationType,
-        size: library?.Class.filter((item) => item.name === 'size')[0].value.Nat,
-      };
-      break;
-    case 'web':
-      objLibraryData = {
-        library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
-        title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
-        content_type: 'URL',
-        location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
-        location_type: LocationType,
-        size: 0,
-      };
-      break;
+  let LocationType: string;
+  let isMutable: string;
+  if (props.libDet) {
+    LocationType = props.libDet.Class.filter((item) => item.name === 'location_type')[0].value.Text;
+    isMutable = props.libDet.Class.filter(
+      (item) => item.name === 'com.origyn.immutable_library',
+    )[0];
+    const library = props.libDet;
+    switch (LocationType) {
+      case 'canister':
+        objLibraryData = {
+          library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
+          title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
+          content_type: library?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
+          location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
+          location_type: LocationType,
+          size: library?.Class.filter((item) => item.name === 'size')[0].value.Nat,
+        };
+        break;
+      case 'collection':
+        objLibraryData = {
+          library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
+          title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
+          content_type: library?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
+          location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
+          location_type: LocationType,
+          size: library?.Class.filter((item) => item.name === 'size')[0].value.Nat,
+        };
+        break;
+      case 'web':
+        objLibraryData = {
+          library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
+          title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
+          content_type: 'URL',
+          location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
+          location_type: LocationType,
+          size: 0,
+        };
+        break;
+    }
   }
 
   console.log('objLibraryData', objLibraryData);
@@ -96,17 +94,29 @@ export const NFTLibrary = (props: any) => {
           <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
         </Grid>
       </Grid>
-      <HR marginTop={16} marginBottom={16}/>
+      <HR marginTop={16} marginBottom={16} />
       {props.loggedIn == true && props.owner == true ? (
         <>
           {!isMutable ? (
             <>
-              <Flex flexFlow="column" justify="center">
+              <Flex flexFlow="column" justify="center" gap={16}>
                 <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}
                     currentTokenId={props.currentTokenId}
                     isMutable={isMutable}
+                    updateTokenLibraryData={props.updateTokenLibraryData}
+                    setOpenLibrarySelectedToken={props.setOpenLibrarySelectedToken}
+                    setLibDet={props.setLibDet}
+                  />
+                </Flex>
+                <Flex>
+                  <UpdateLibrary
+                  tokenId={props.currentTokenId} 
+                  updateLibraryData={props.updateTokenLibraryData}
+                  setOpenLibrary={props.setOpenLibrarySelectedToken}
+                  locationType={objLibraryData.location_type}
+                  metadata = {props.libDet}
                   />
                 </Flex>
               </Flex>

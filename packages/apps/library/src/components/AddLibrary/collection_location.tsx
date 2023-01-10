@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
-import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
 import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
-import { Container, Grid, Select, TextInput, Button, HR, Flex } from '@origyn-sa/origyn-art-ui';
+import { Select, TextInput, Button, HR, Flex,Container} from '@origyn-sa/origyn-art-ui';
 
 export const CollectionLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -51,6 +51,7 @@ export const CollectionLocation = (props: any) => {
         libraryId: selectedLibrary,
       };
       const response = await stageCollectionLibraryAsset(props.tokenId, CollectionFile);
+      console.log('response', response);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {
@@ -73,6 +74,28 @@ export const CollectionLocation = (props: any) => {
       console.log('error', e);
     }
     props.setInProgress(false);
+    props.isOpen(false)
+
+    if(props.tokenId==""){
+      //Update the library data for the collection
+      getNftCollectionMeta().then((r) => {
+        props.updateData(
+          r.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }else{
+      //Update the library data for the Token
+      getNft(props.tokenId).then((r) => {
+        props.updateData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+    }
+    
   };
   const handleSelectChange = (val) => {
     setSelectedLibrary(val);
@@ -83,37 +106,39 @@ export const CollectionLocation = (props: any) => {
   }, []);
 
   return (
-    <Container padding="16px">
-      <Grid>
-        <TextInput id="title" placeholder="Enter Title" onChange={getTypedTitle} />
-      </Grid>
-      <Container>
-        <Select
-          selectedOption={{
-            value: selectedLibrary,
-            label: selectedLibrary,
-          }}
-          label="Select"
-          handleChange={(opt) => {
-            handleSelectChange(opt.value);
-          }}
-          options={libraries.map((lib) => {
-            return {
-              value: lib,
-              label: lib,
-            };
-          })}
-        />
-      </Container>
-      <HR marginTop={16} marginBottom={16} />
-
-      <Flex align="center" justify="center">
+    <>
+    <Container size="full">
+      <Flex flexFlow="column" gap={8}>
+        <Flex>
+          <TextInput id="title" label="Library title" placeholder="Enter Title" onChange={getTypedTitle} />
+        </Flex>
+      
+        <Flex>
+          <Select
+            selectedOption={{
+              value: selectedLibrary,
+              label: selectedLibrary,
+            }}
+            label="Select"
+            handleChange={(opt) => {
+              handleSelectChange(opt.value);
+            }}
+            options={libraries.map((lib) => {
+              return {
+                value: lib,
+                label: lib,
+              };
+            })}
+          />
+        </Flex>
+        <HR marginTop={16} marginBottom={16} />
         <Flex>
           <Button btnType="filled" onClick={StageCollectionLibrary}>
             Stage Library
           </Button>
         </Flex>
       </Flex>
-    </Container>
+      </Container>
+    </>
   );
 };

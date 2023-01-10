@@ -3,14 +3,7 @@ import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
 import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
-// Dialog
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Typography } from '@mui/material';
-import { Button } from '@origyn-sa/origyn-art-ui';
+import { Button, Modal, Flex, Container, HR } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 export const DeleteLibrary = (props: any) => {
@@ -72,12 +65,12 @@ export const DeleteLibrary = (props: any) => {
   }, [props.libraryId]);
 
   const DeleteMutableLibrary = async () => {
-    
     const { canisterId } = await useRoute();
 
     await OrigynClient.getInstance().init(true, canisterId, { actor });
-setInProgress(true);
+    setInProgress(true);
     if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
+      
       for (let i in tokensThatUseSelectedLibrary) {
         try {
           const responseFromNftLib = await deleteLibraryAsset(
@@ -138,6 +131,31 @@ setInProgress(true);
     }
 
     setInProgress(false);
+
+    if (props.currentTokenId == '') {
+      //Update the library data for the collection
+      getNftCollectionMeta().then((r) => {
+        props.updateCollectionLevelLibraryData(
+          r.ok.metadata[0].Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+      props.setLibrary3('');
+      props.setOpenLibraryCollectionLevel(false);
+    } else {
+      //Update the library data for the token
+      getNft(props.currentTokenId).then((r) => {
+        props.updateTokenLibraryData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value.Array.thawed,
+        );
+      });
+      props.setOpenLibrarySelectedToken(false);
+      // clean library data
+      props.setLibDet('');
+    }
   };
 
   return (
@@ -145,84 +163,82 @@ setInProgress(true);
       <Button onClick={handleClickOpen} btnType="filled">
         Delete this Library
       </Button>
-
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        {inProgress ? (
-          <>
-            <DialogTitle>Deleting in Progress</DialogTitle>
-            <DialogContent>
-                <LinearProgress color="secondary" />
-            </DialogContent>
-          </>
-        ) : (
-          <>
-            <DialogTitle id="alert-dialog-title">
-              {'Delete library: '}
-              {props.libraryId}
-            </DialogTitle>
-            {props.currentTokenId == '' ? (
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
+      <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
+        <Container padding="16px">
+          <Flex flexFlow="column" gap={16}>
+            {inProgress ? (
+              <>
+                <Flex>
+                  <h4>Deleting in Progress</h4>
+                </Flex>
+                <HR marginTop={16} marginBottom={16} />
+                <Flex>
+                  <LinearProgress color="secondary" />
+                </Flex>
+              </>
+            ) : (
+              <>
+                <Flex>
+                  <h4>Delete Library: {props.libraryId}</h4>
+                </Flex>
+                <HR marginTop={16} marginBottom={16} />
+                {props.currentTokenId == '' ? (
+                  <Flex>
+                    <>
+                      {messageLoadingStatus ? (
+                        <>
+                          {numberLibraries > 0 ? (
+                            <>
+                              There are {numberLibraries} NFTs that use this library. <br />
+                              Are you sure you want to delete it? <br />
+                            </>
+                          ) : (
+                            <>
+                              There are no NFTs that use this library. <br />
+                              Are you sure you want to delete it? <br />
+                            </>
+                          )}
+                          <b>This action is irreversible.</b>
+                        </>
+                      ) : (
+                        <>
+                          <h4>Loading...</h4>
+                        </>
+                      )}
+                    </>
+                  </Flex>
+                ) : (
+                  <Flex>
+                    <p>
+                      Are you sure you want to delete this library? <br />
+                      <b>This action is irreversible.</b>
+                    </p>
+                  </Flex>
+                )}
+                <HR marginTop={16} marginBottom={16} />
+                <Flex>
+                  <Button onClick={handleClose}>Back</Button>
                   <>
                     {messageLoadingStatus ? (
                       <>
-                        {numberLibraries > 0 ? (
-                          <>
-                            There are {numberLibraries} NFTs that use this library. <br />
-                            Are you sure you want to delete it? <br />
-                          </>
-                        ) : (
-                          <>
-                            There are no NFTs that use this library. <br />
-                            Are you sure you want to delete it? <br />
-                          </>
-                        )}
-                        <b>This action is irreversible.</b>
+                        <Button btnType="filled" onClick={DeleteMutableLibrary}>
+                          Delete
+                        </Button>
                       </>
                     ) : (
                       <>
-                        <Typography variant="body1" color="textSecondary">
-                          Loading...
-                        </Typography>
+                        <Button onClick={DeleteMutableLibrary} btnType="filled">
+                          Delete
+                        </Button>
                       </>
                     )}
                   </>
-                </DialogContentText>
-              </DialogContent>
-            ) : (
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to delete this library? <br />
-                  <b>This action is irreversible.</b>
-                </DialogContentText>
-              </DialogContent>
-            )}
-            <DialogActions>
-              <Button onClick={handleClose}>Back</Button>
-              <>
-                {messageLoadingStatus ? (
-                  <>
-                    <Button btnType="filled" onClick={DeleteMutableLibrary}>
-                      Delete
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button onClick={DeleteMutableLibrary} btnType="filled">
-                      Delete
-                    </Button>
-                  </>
-                )}
+                </Flex>
               </>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
+            )}
+          </Flex>
+        </Container>
+      </Modal>
     </>
   );
 };
