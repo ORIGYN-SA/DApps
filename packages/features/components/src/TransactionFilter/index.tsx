@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Filter } from '@dapp/utils';
-import { Container, Select, Grid } from '@origyn-sa/origyn-art-ui';
+import { Container, Select, Grid, Icons, Flex, Button } from '@origyn-sa/origyn-art-ui';
 
 // Search into categories
 const search_into = ['All', 'Principal', 'Account', 'Transaction Id'];
@@ -102,8 +102,13 @@ export const TransactionFilter = (props: any) => {
         <Container>Filters unavailable, select a Token.</Container>
       ) : (
         <>
-          <Grid columns={3}>
+
+          <Grid columns={2}>
             <Grid column={1}>
+            <Flex flexFlow='row' align='center' fullWidth>
+          <Button iconButton>
+        <Icons.FilterIcon width={18} height={18}/>
+        </Button>
               {props.isLoading ? (
                 <Container padding="16px">
                   <Select
@@ -134,8 +139,8 @@ export const TransactionFilter = (props: any) => {
                   />
                 </Container>
               )}
-            </Grid>
-            <Grid column={2}>
+            
+            
               {props.isLoading ? (
                 <Container padding="16px">
 
@@ -172,8 +177,8 @@ export const TransactionFilter = (props: any) => {
                   />
                 </Container>
               )}
-            </Grid>
-            <Grid column={3}>
+            
+            
             {props.isLoading ? (
             <>
             <Container padding="16px">
@@ -207,8 +212,10 @@ export const TransactionFilter = (props: any) => {
             </Container>
             </>
           )}
+                    </Flex>
             </Grid>
           </Grid>
+
 
         </>
       )}
