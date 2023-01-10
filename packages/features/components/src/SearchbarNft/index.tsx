@@ -2,7 +2,8 @@ import React, { useContext, useEffect } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { collectionName } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
-import { Container, Card, Select } from '@origyn-sa/origyn-art-ui';
+import { Container, Card, Select, HR, Grid, Icons, Flex, Button, TextInput } from '@origyn-sa/origyn-art-ui';
+import styled from 'styled-components'
 
 interface SelectType {
   value: string;
@@ -17,6 +18,7 @@ export const SearchbarNft = (props: any) => {
   const [canisterId, setCanisterId] = React.useState('');
   const [selectTokenIds, setSelectTokenIds] = React.useState<any>(['']);
   const [idsNumber, setIdsNumber] = React.useState('');
+  const [openSearch, setOpenSearch] = React.useState(false);
   const handleSelectIds = (option) => {
     // setSearchBarTokenId state
     if (option.value == null) {
@@ -113,22 +115,44 @@ export const SearchbarNft = (props: any) => {
         <Container>
           {tokenId == "" ? (
             <>
+              <Grid columns={3}>
+                <Grid column={1}>
               <Container padding="16px">
                 Collection name: <b>{collectionName(tokenId)}</b>
               </Container>
               <Container padding="16px">
                 Current Token ID: <b>{props.searchBarTokenId}</b>
               </Container>
+              </Grid>
+              </Grid>
+              <br/>
+              <HR/>
             </>
           ) : (
             <Container padding="16px">
+            <Grid columns={3}>
+            <Grid column={1}>
               Current Token ID: <b>{props.searchBarTokenId}</b>
-            </Container>
+              </Grid>
+              </Grid>
+              <br/>
+              <br/>
+              <HR/>
+            </Container>            
           )}
           <Container padding="16px" >
-            Search for other NFT&#39;S <em>(+{idsNumber}...)</em>
+            Search for NFTs
           </Container>
           <Container padding="16px">
+          <Grid columns={4}>           
+            <Grid column={1}>
+            <Flex flexFlow='row' align='center' gap={8}>
+              <Button iconButton onClick={()=>setOpenSearch(!openSearch)}> 
+            <Icons.SearchIcon width={18} height={18}/>
+            </Button>
+            {openSearch && <TextInput onChange={(text) => {
+              handleSelectIds(text.target.value);
+            }}/>}
             <Select 
              placeholder="Token Ids"
              selectedOption={props.searchBarTokenId}
@@ -144,6 +168,9 @@ export const SearchbarNft = (props: any) => {
               })
              }
             />
+            </Flex>
+            </Grid>
+            </Grid>
           </Container>
         </Container>
       )}
