@@ -14,11 +14,10 @@ import { AddFile, AddHistory, Form as MetadataForm } from '../../components/form
 import { GuestContainer } from '../../components/GuestContainer';
 import { MediaList, HistoryList } from '../../components/lists';
 import { AllNfts, Minter } from './Tabs';
-import { DataStructureList } from '../../components/lists/DataStructureList';
 import { DataStructure } from './Tabs/DataStrucuter';
 import { Template } from './Tabs/Template';
 import { useSnackbar } from 'notistack';
-const dataStructures = {
+export const dataStructures = {
   IGI: [
     {
       name: 'name',
