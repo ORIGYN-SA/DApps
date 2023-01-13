@@ -1,16 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { collectionName } from '@dapp/utils';
-import { getNftCollectionMeta, OrigynClient, getNft } from '@origyn-sa/mintjs';
+import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { Container, Card, Select, HR, Grid, Icons, Flex, Button, TextInput } from '@origyn-sa/origyn-art-ui';
-import styled from 'styled-components'
-
-interface SelectType {
-  value: string;
-  label: string;
-}
-
-const ISPROD = true;
 
 export const SearchbarNft = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -22,36 +14,46 @@ export const SearchbarNft = (props: any) => {
   const handleSelectIds = (option) => {
     // setSearchBarTokenId state
     if (option.value == null) {
-      option.value = '';
+      option.value = props.searchBarTokenId;
     }
     props.setSearchBarTokenId(option.value);
     // replace the tokenId in the searchBar
     window.history.pushState(
       '',
       '',
-      window.location.href.replace(`/${props.searchBarTokenId}/`, `/${option.value}/`),
+      window.location.href.replace(`${props.searchBarTokenId}`, `${option.value}`),
     );
+    useRoute();
   };
 
-  const NFTobj = async () => {
-    const nft = await getNft(tokenId);
-    console.log('nft', nft);
-  };
+  const setTokenAndCanisterId = async () => {
+    const URL = window.location.href;
+    if (URL.includes('collection')) {
+      useRoute().then(({ canisterId }) => {
+        setCanisterId(canisterId);
+        console.log('canisterId', canisterId);
+      }
+      );
 
-  const GetTokenId = async () => {
-    setTokenId(await useRoute().then((res) => res.tokenId));
-  };
-  const GetCanisterId = async () => {
-    setCanisterId(await useRoute().then((res) => res.canisterId));
-  };
+    } else {
+      useRoute().then(({ tokenId, canisterId }) => {
+        setTokenId(tokenId);
+        setCanisterId(canisterId);
+        console.log('tokenId', tokenId);
+        console.log('canisterId', canisterId);
+      }
+      );
+
+    }
+  }
 
   useEffect(() => {
-    NFTobj();
-    GetTokenId();
-    GetCanisterId();
+    setTokenAndCanisterId();
   }, []);
+
   const NFTCollection = async () => {
     setSelectTokenIds(['Loading...']);
+    OrigynClient.getInstance().init(true, canisterId, { actor });
     const response = await getNftCollectionMeta();
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
@@ -82,14 +84,18 @@ export const SearchbarNft = (props: any) => {
     const intersection = splitted_url.filter((e) => arrayTokenIds[0].indexOf(e) > -1);
     if (intersection.length > 0) {
       // setSearchBarTokenId state
-      props.setSearchBarTokenId(tokenId);
+      useRoute().then(({ tokenId }) => {
+        props.setSearchBarTokenId(tokenId);
+      }
+      );
+      console.log('here');
     } else {
-      if (window.location.href.search('collection')!=-1) {
+      if (window.location.href.includes('collection')) {
         props.setSearchBarTokenId(obj_token_ids[0][0]);
       } else {
         // setSearchBarTokenId state
-        props.setSearchBarTokenId(obj_token_ids[0][0]);
-        window.location.href = window.location.href.replace(`/${tokenId}/`, `/${obj_token_ids[0][0]}/`);
+        console.log('here2');
+        props.setInvalidToken(true);
       }
 
     }
@@ -97,83 +103,80 @@ export const SearchbarNft = (props: any) => {
   // if the actor changes getNftCollection is called
   useEffect(() => {
     if (actor) {
-      OrigynClient.getInstance().init(ISPROD,canisterId);
       NFTCollection();
     }
-  }, [actor]);
+  }, []);
   return (
-    <Container padding="16px">
-      {props.isLoading ? (
-        <Card 
-        type="filled"
-        align="center"
-        padding="16px"
-      >
-          Loading...
-        </Card>
-      ) : (
-        <Container>
-          {tokenId == "" ? (
-            <>
-              <Grid columns={3}>
-                <Grid column={1}>
-              <Container padding="16px">
-                Collection name: <b>{collectionName(tokenId)}</b>
-              </Container>
-              <Container padding="16px">
-                Current Token ID: <b>{props.searchBarTokenId}</b>
-              </Container>
-              </Grid>
-              </Grid>
-              <br/>
-              <HR/>
-            </>
-          ) : (
+    <>
+          <>
             <Container padding="16px">
-            <Grid columns={3}>
-            <Grid column={1}>
-              Current Token ID: <b>{props.searchBarTokenId}</b>
-              </Grid>
-              </Grid>
-              <br/>
-              <br/>
-              <HR/>
-            </Container>            
-          )}
-          <Container padding="16px" >
-            Search for NFTs
-          </Container>
-          <Container padding="16px">
-          <Grid columns={4}>           
-            <Grid column={1}>
-            <Flex flexFlow='row' align='center' gap={8}>
-              <Button iconButton onClick={()=>setOpenSearch(!openSearch)}> 
-            <Icons.SearchIcon width={18} height={18}/>
-            </Button>
-            {openSearch && <TextInput onChange={(text) => {
-              handleSelectIds(text.target.value);
-            }}/>}
-            <Select 
-             placeholder="Token Ids"
-             selectedOption={props.searchBarTokenId}
-            handleChange={(opt) => {
-              handleSelectIds(opt);
-            }}
-             options={
-              selectTokenIds.map((token) => {
-                return {
-                  value: token,
-                  label: token,
-                };
-              })
-             }
-            />
-            </Flex>
-            </Grid>
-            </Grid>
-          </Container>
-        </Container>
-      )}
-    </Container>
+              {props.isLoading ? (
+                <Card
+                  type="filled"
+                  align="center"
+                  padding="16px"
+                >
+                  Loading...
+                </Card>
+              ) : (
+                <Container>
+
+                  <>
+                    <Grid columns={3}>
+                      <Grid column={1}>
+                        {
+                          tokenId == '' ? (
+                            <Container padding="16px">
+                              Collection name: <b>{collectionName()}</b>
+                            </Container>
+                          ) : (
+                            <></>
+                          )
+                        }
+                        <Container padding="16px">
+                          Current Token ID: <b>{props.searchBarTokenId}</b>
+                        </Container>
+                      </Grid>
+                    </Grid>
+                    <br />
+                    <HR />
+                  </>
+                  <Container padding="16px" >
+                    Search for NFTs
+                  </Container>
+                  <Container padding="16px">
+                    <Grid columns={4}>
+                      <Grid column={1}>
+                        <Flex flexFlow='row' align='center' gap={8}>
+                          <Button iconButton onClick={() => setOpenSearch(!openSearch)}>
+                            <Icons.SearchIcon width={18} height={18} />
+                          </Button>
+                          {openSearch && <TextInput onChange={(text) => {
+                            handleSelectIds(text.target.value);
+                          }} />}
+                          <Select
+                            placeholder="Token Ids"
+                            selectedOption={props.searchBarTokenId}
+                            handleChange={(opt) => {
+                              handleSelectIds(opt);
+                            }}
+                            options={
+                              selectTokenIds.map((token) => {
+                                return {
+                                  value: token,
+                                  label: token,
+                                };
+                              })
+                            }
+                          />
+                        </Flex>
+                      </Grid>
+                    </Grid>
+                  </Container>
+                </Container>
+              )}
+            </Container>
+          </>
+    </>
   );
 };
