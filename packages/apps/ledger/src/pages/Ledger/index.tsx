@@ -6,7 +6,7 @@ import {
   TransactionsTable,
   SearchbarNft,
 } from '@dapp/features-components';
-import { SecondaryNav, Container, HR, Flex } from '@origyn-sa/origyn-art-ui';
+import { SecondaryNav, Container, Flex, HR } from '@origyn-sa/origyn-art-ui';
 import styled from 'styled-components'
 
 const StyledSectionTitle = styled.h2`
@@ -64,6 +64,7 @@ const Ledger = () => {
                     <Flex align="center" justify="center">
                     <h4>Token Id is invalid</h4>
                     </Flex>
+                    <HR marginTop={16} marginBottom={16}/>
                     </Container>
                     </>
                   ) : (
