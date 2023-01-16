@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { timeConverter } from '@dapp/utils';
 import { AuthContext } from '@dapp/features-authentication';
 import { IconButton } from '@mui/material';
+import { CustomTable } from '@origyn-sa/origyn-art-ui';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -30,6 +31,12 @@ import { getNftHistory} from '@origyn-sa/mintjs';
 import { Transaction } from '../TransactionModal';
 
 import { Container, Modal} from '@origyn-sa/origyn-art-ui';
+
+declare type CellType = {
+  id: string;
+  label: string;
+  canSort?: boolean;
+};
 
 // Table style
 const cell_style = {
@@ -150,7 +157,6 @@ export const TransactionsTable = (props: any) => {
     props.setIndexID(key);
   };
   const [modalData, setModalData] = React.useState({});
-
   const getHistory = async () => {
     props.setIsLoading(true);
     setIsEmpty(true);
@@ -590,6 +596,24 @@ export const TransactionsTable = (props: any) => {
     }
   }, [props.searchBarTokenId, props.filter]);
 
+  const tableCells : CellType[] = [
+    {
+      id: 'index',
+      label: 'Index',
+      canSort: true,
+    },
+    {
+      id: 'type',
+      label: 'Transaction Type',
+      canSort: false,
+    },
+    {
+      id: 'date',
+      label: 'Date',
+      canSort: true,
+    }
+  ];
+
   return (
     <>
       {props.isLoading ? (
@@ -597,6 +621,22 @@ export const TransactionsTable = (props: any) => {
         Loading...
       </Container>
       ) : (
+      <>
+      <Container padding="16px">
+        <CustomTable
+        cells={tableCells}
+        rows={
+          rowsArray.map((row) => {
+            return {
+              index: row.index,
+              type: row.type_txn,
+              date: row.date,
+            };
+        })
+      }
+        />
+      </Container>
+      {/*
         <TableContainer
           component={Paper}
           elevation={2}
@@ -677,6 +717,8 @@ export const TransactionsTable = (props: any) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
+                    */}
+      </>
       )}
       
       <Modal
@@ -690,5 +732,6 @@ export const TransactionsTable = (props: any) => {
           </Container>
       </Modal>
       </>
+    
   );
 };
