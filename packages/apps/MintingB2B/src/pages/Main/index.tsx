@@ -220,6 +220,267 @@ export const dataStructures = {
   ],
   Luxury: {},
 };
+export const formTemplate = {
+  IGI: [
+    {
+      type: 'category',
+      title: 'General Info',
+      subTitle: 'Manually enter the general information found on the IGI diamond report.',
+      fields: [
+        {
+          name: 'name',
+          label: 'Name',
+          type: 'text',
+        },
+        {
+          name: 'main_image',
+          type: 'file',
+          accept: "image/*",
+          label: 'Main Image',
+          inputType: 'file',
+        },
+        {
+          name: 'report_date',
+          type: 'text',
+          label: 'Report Date',
+          inputType: 'date',
+        },
+        {
+          name: 'report_number',
+          type: 'text',
+          label: 'Report Number',
+          inputType: 'number',
+        },
+        {
+          name: 'description',
+          label: 'Description',
+          type: 'text',
+          inputType: 'largeText',
+          sectionHeader: 'Description',
+        },
+        {
+          name: 'grading_carat_weight',
+          label: 'Carat Weight',
+          inputType: 'number',
+          type: 'text',
+        },
+        {
+          name: 'grade_cut',
+          label: 'Shape & Cut Description',
+          type: 'text',
+        },
+      ]
+    },
+    {
+      type: 'category',
+      title: 'Grading Results',
+      subTitle: 'Manually enter the grading results found on the IGI diamond report.',
+      fields: [
+
+      ]
+    },
+    {
+      type: 'category',
+      title: 'Additional Grading Information',
+      subTitle: 'Manually enter the grading information found on the IGI diamond report.',
+      fields: [
+        {
+          name: 'grade_polish',
+          label: 'Polish',
+          type: 'text',
+          inputType: 'select',
+          options: ['Excellent', 'Very good', 'Good', 'Fair', 'Poor'],
+          sectionHeader: 'Additional Grading Information',
+        },
+        {
+          name: 'grade_symmetry',
+          label: 'Symmetry',
+          type: 'text',
+          inputType: 'select',
+          options: ['Excellent', 'Very good', 'Good', 'Fair', 'Poor'],
+        },
+        {
+          name: 'grade_fluorescence',
+          label: 'Fluorescence',
+          type: 'text',
+          inputType: 'select',
+          options: ['None', 'Faint', 'Medium', 'Strong', 'Very Strong'],
+        },
+        {
+          name: 'grade_comments',
+          label: 'Comments',
+          type: 'text',
+          inputType: 'largeText',
+        },
+      ]
+    },
+    {
+      type: 'category',
+      title: 'Proportions',
+      subTitle: 'Manually enter the proportions found on the IGI diamond report.',
+      fields: [
+        {
+          name: 'origyn-mints-diamonds-table',
+          label: 'Table',
+          type: 'text',
+          inputType: 'number',
+          sectionHeader: 'Proportions',
+        },
+        {
+          name: 'origyn-mints-diamonds-depth',
+          label: 'Depth',
+          type: 'text',
+          inputType: 'number',
+        },
+        {
+          name: 'origyn-mints-diamonds-culet',
+          label: 'Culet',
+          type: 'text',
+          inputType: 'select',
+          options: ['Very Small', 'Small', 'Medium', 'Large', 'Very Large', 'Pointed'],
+        },
+        {
+          name: 'origyn-mints-diamonds-ugirdle',
+          label: 'Crown',
+          type: 'text',
+          inputType: 'number',
+        },
+        {
+          name: 'origyn-mints-diamonds-lgirdle',
+          label: 'Pavilion',
+          type: 'text',
+          inputType: 'number',
+        },
+        {
+          name: 'origyn-mints-diamonds-angle',
+          label: 'Angle',
+          type: 'text',
+          inputType: 'select',
+          options: [
+            'Extremely Thin',
+            'Very Thin',
+            'Thin',
+            'Slightly Thin',
+            'Medium',
+            'Slightly Thick',
+            'Thick',
+            'Very Thick',
+            'Extremely Thick',
+          ],
+        },
+      ]
+    },
+    // {
+    //   type: 'category',
+    //   title: 'Transfer Type',
+    //   subTitle: 'How will this certificate be transferred to the end user?',
+    //   fields: [
+
+    //   ]
+    // },
+    {
+      type: 'category',
+      title: 'Images & Video',
+      fields: [
+
+      ]
+    },
+    {
+      type: 'category',
+      title: 'Additional Documents',
+      fields: [
+
+      ]
+    },
+    
+    {
+      name: 'origyn-mints-diamonds-shape',
+      label: 'Shape',
+      type: 'text',
+      inputType: 'select',
+      options: [
+        'Asher',
+        'Cushion',
+        'Emerald',
+        'Heart',
+        'Marquise',
+        'Oval',
+        'Pear',
+        'Princess',
+        'Radiant',
+        'Round',
+      ],
+      sectionHeader: 'Custom',
+    },
+    {
+      name: 'origyn-mints-diamonds-color',
+      label: 'Color',
+      type: 'text',
+      inputType: 'select',
+      options: [
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G',
+        'H',
+        'I',
+        'J',
+        'K',
+        'L',
+        'M',
+        'N',
+        'O',
+        'P',
+        'Q',
+        'R',
+        'S',
+        'T',
+        'U',
+        'V',
+        'W',
+        'X',
+        'Y',
+        'Z',
+      ],
+    },
+    {
+      name: 'origyn-mints-diamonds-clarity',
+      label: 'Clarity',
+      type: 'text',
+      inputType: 'select',
+      options: ['IF', 'VVS 1', 'VVS 2', 'VS 1', 'SI 1', 'SI 2', 'I 1', 'I 2', 'I 3'],
+    },
+    {
+      name: 'origyn-mints-diamonds-length',
+      label: 'Length',
+      type: 'text',
+      inputType: 'number',
+    },
+    {
+      name: 'origyn-mints-diamonds-width',
+      label: 'Width',
+      type: 'text',
+      inputType: 'number',
+    },
+    {
+      type: 'records',
+      name: 'origyn-mints-history',
+    },
+    // {
+    //   type: 'records',
+    //   name: 'origyn-mints-files',
+    // },
+
+    // {
+    //   type: 'media',
+    //   name: 'origyn-mints-images',
+    // },
+  ],
+  Luxury: {},
+};
 
 const MintingPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
@@ -426,13 +687,6 @@ const MintingPage = () => {
       label: 'Metadata',
       content: (
         <>
-          <form onSubmit={mintNft}>
-            <MetadataForm data={dataStructure.IGI} />
-            <br />
-            <Flex fullWodth justify="center">
-              <Button type="submit">Continue</Button>
-            </Flex>
-          </form>
         </>
       ),
       id: 'metadata',
@@ -565,7 +819,11 @@ const MintingPage = () => {
                 onPageChange={setCurrentPage}
                 nfts={nftList ?? []}
               />,
-              <Minter key="2" isMinting={isMinting} tabs={tabs} content={content} />,
+              <Minter
+                isMinting={isMinting}
+                mintNft={mintNft}
+                dataStructure={formTemplate.IGI}
+              />,
               <DataStructure
                 isLoading={false}
                 dataStructure={dataStructure.IGI}

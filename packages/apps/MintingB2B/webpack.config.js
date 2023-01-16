@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config')
 
 const appConfig = {
   name: 'mintingB2B',
-  openPage: '/',
+  openPage: '',
 }
 
 module.exports = (env, argv) => {
