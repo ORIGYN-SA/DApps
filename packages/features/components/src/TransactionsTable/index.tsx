@@ -18,7 +18,7 @@ import { getNftHistory, OrigynClient} from '@origyn-sa/mintjs';
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
 
-import { Container, Modal} from '@origyn-sa/origyn-art-ui';
+import { Container, Modal, Button} from '@origyn-sa/origyn-art-ui';
 
 declare type CellType = {
   id: string;
@@ -603,6 +603,11 @@ export const TransactionsTable = (props: any) => {
       id: 'date',
       label: 'Date',
       canSort: true,
+    },
+    {
+      id: 'info',
+      label:'',
+      canSort: false
     }
   ];
 
@@ -617,12 +622,14 @@ export const TransactionsTable = (props: any) => {
       <Container padding="16px">
         <CustomTable
         cells={tableCells}
+        
         rows={
           rowsArray?.map((row) => {
             return {
               index: row.index,
               type: row.type_txn,
               date: row.date,
+              info: <Button btnType="filled" onClick={(event) => openModal(event, row.index, props.transactionData)}> Details </Button>
             };
         })
       }
