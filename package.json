@@ -99,7 +99,7 @@
     "@mui/material": "^5.10.15",
     "@mui/x-date-pickers": "^5.0.9",
     "@origyn-sa/mintjs": "^1.0.0-alpha.4",
-    "@origyn-sa/origyn-art-ui": "^1.2.12",
+    "@origyn-sa/origyn-art-ui": "^1.2.13",
     "@svgr/webpack": "^6.2.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^17.0.19",
