@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { DropzoneArea } from 'mui-file-dropzone';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
@@ -43,6 +43,12 @@ export const UpdateLibraryFile = ({
   const [selectedRead, setSelectedRead] = useState<string>(read);
   const [updatedFile, setUpdatedFile] = useState<any>(undefined);
   const [immutable, setImmutable] = useState<boolean>(false);
+
+  useEffect(() => {
+    setTypedTitle(title);
+    setSelectedRead(read);
+  }, [metadata]);
+
   
   const handleChangeImmutable = () => {
     setImmutable(!immutable);
