@@ -1,4 +1,3 @@
-import { Box, Tooltip, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
 import {
   TabPanel,
@@ -39,9 +38,8 @@ const GuestContainer = () => {
   const { open } = useDialog()
 
   return (
-    <Box
-      component='main'
-      sx={{
+    <div
+      style={{
         alignItems: 'center',
         display: 'flex',
         flexGrow: 1,
@@ -49,8 +47,8 @@ const GuestContainer = () => {
       }}
     >
       <Container maxWidth='md'>
-        <Box
-          sx={{
+        <div
+          style={{
             alignItems: 'center',
             display: 'flex',
             flexDirection: 'column',
@@ -66,9 +64,9 @@ const GuestContainer = () => {
           >
             Connect wallet
           </Button>
-        </Box>
+        </div>
       </Container>
-    </Box>
+    </div>
   )
 }
 
@@ -337,14 +335,14 @@ const WalletPage = () => {
               </>
             )
             esc.buyer = (
-              <Tooltip title={escrow.buyer.principal.toText()}>
+              
                 <p>{escrow.buyer.principal.toText().substring(0, 8)}...</p>
-              </Tooltip>
+              
             )
             esc.seller = (
-              <Tooltip title={escrow.seller.principal.toText()}>
+              
                 <p>{escrow.seller.principal.toText().substring(0, 8)}...</p>
-              </Tooltip>
+              
             )
             esc.amount = parseFloat((parseInt(escrow.amount) * 1e-8).toString()).toFixed(9)
             outEscrow.push(esc)
@@ -367,14 +365,12 @@ const WalletPage = () => {
               </>
             )
             esc.buyer = (
-              <Tooltip title={offer.buyer.principal.toText()}>
+              
                 <p>{offer.buyer.principal.toText().substring(0, 8)}...</p>
-              </Tooltip>
+              
             )
             esc.seller = (
-              <Tooltip title={offer.seller.principal.toText()}>
                 <p>{offer.seller.principal.toText().substring(0, 8)}...</p>
-              </Tooltip>
             )
 
             esc.amount = parseFloat((parseInt(offer.amount) * 1e-8).toString()).toFixed(9)
@@ -694,9 +690,7 @@ const WalletPage = () => {
                           <br />
                         </>
                       ) : (
-                        <Typography variant='h5' style={{ textAlign: 'center' }}>
-                          You do not have any NFT in your wallet
-                        </Typography>
+                          'You do not have any NFT in your wallet'
                       )}
                     </div>
                   </StyledCustomGrid>
@@ -708,9 +702,7 @@ const WalletPage = () => {
                 ) : activeSales?.rows?.length > 0 ? (
                   <Table columns={activeSales.columns} rows={FilteredActiveSales} />
                 ) : (
-                  <Typography variant='h5' style={{ textAlign: 'center' }}>
-                    You do not have any active sale at this moment
-                  </Typography>
+                    'You do not have any active sale at this moment'
                 )}
               </div>,
               <div>
@@ -735,9 +727,7 @@ const WalletPage = () => {
                     )}
                   </>
                 ) : (
-                  <Typography variant='h5' style={{ textAlign: 'center' }}>
-                    You do not have any active escrow at this moment
-                  </Typography>
+                    'You do not have any active escrow at this moment'
                 )}
               </div>,
             ]}

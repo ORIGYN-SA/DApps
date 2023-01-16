@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { TextField } from '@mui/material';
+import { TextInput } from '@origyn-sa/origyn-art-ui';
 
 // Context
 import { MetadataContext } from '../context';
@@ -18,11 +18,9 @@ const App = (props: any) => {
   }, []);
 
   return (
-    <TextField
+    <TextInput
       id="outlined-basic"
       label={'Change ' + props.item.name}
-      variant="standard"
-      sx={{ marginBottom: 1 }}
       onChange={handleChange}
     />
   );
