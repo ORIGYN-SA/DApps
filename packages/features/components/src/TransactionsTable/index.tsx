@@ -1,19 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { timeConverter } from '@dapp/utils';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { IconButton } from '@mui/material';
 import { CustomTable } from '@origyn-sa/origyn-art-ui';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
-import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 // Import Interfaces TS
 import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
