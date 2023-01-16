@@ -25,7 +25,7 @@ export const UpdateLibraryWeb = ({
   const libraryId = metadata.Class?.filter((res) => res.name === 'library_id')[0].value.Text;
   const read = metadata.Class?.filter((res) => res.name === 'read')[0].value.Text;
 
-  const readPermissions = ['public', 'owner', 'collection_owner'];
+  const readPermissions = ['public', 'owner'];
 
   const { enqueueSnackbar } = useSnackbar();
 

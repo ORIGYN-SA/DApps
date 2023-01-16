@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { List, ListItem, ListItemText, Grid, Divider } from '@mui/material';
 import pick from 'lodash/pick';
-import { Container, HR } from '@origyn-sa/origyn-art-ui'
+import { Container, HR, Grid, Flex } from '@origyn-sa/origyn-art-ui';
 
 const FormTab = ({ metadata }: any) => {
-
   const [owner, setOwner] = useState('');
   const [hiddenAsset, setHiddenAsset] = useState('');
   const [previewAsset, setPreviewAsset] = useState('');
@@ -29,145 +27,183 @@ const FormTab = ({ metadata }: any) => {
 
   return (
     <Container padding="16px">
-      <Grid container spacing={2}>
-        <Grid item xs={2}>
-          Info
+      <Grid columns={3}>
+        <Grid column={1}>
+          <h3>Info</h3>
         </Grid>
-        <Grid item xs={10} sx={{}}>
-          <List>
-            <ListItem secondaryAction={<ListItemText primary={owner} />}>
-              <ListItemText primary={'owner'} />
-            </ListItem>
-            <HR />
-            <ListItem secondaryAction={<ListItemText primary={hiddenAsset} />}>
-              <ListItemText primary={'hidden_asset'} />
-            </ListItem>
-            <HR />
-            <ListItem secondaryAction={<ListItemText primary={previewAsset} />}>
-              <ListItemText primary={'preview_asset'} />
-            </ListItem>
-            <HR />
-            <ListItem secondaryAction={<ListItemText primary={primaryAsset} />}>
-              <ListItemText primary={'primary_asset'} />
-            </ListItem>
-            <HR />
-            <ListItem secondaryAction={<ListItemText primary={experienceAsset} />}>
-              <ListItemText primary={'experience_asset'} />
-            </ListItem>
-            <HR />
-            <ListItem secondaryAction={<ListItemText primary={id} />}>
-              <ListItemText primary={'id'} />
-            </ListItem>
-          </List>
+        <Grid column={2}>
+          <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+            <b>
+              <span>{'owner'}</span>
+            </b>
+            <span>{owner}</span>
+          </Flex>
+          <HR />
+          <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+            <b>
+              <span>{'hidden_asset'}</span>
+            </b>
+            <span>{hiddenAsset}</span>
+          </Flex>
+          <HR />
+          <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+            <b>
+              <span>{'preview_asset'}</span>
+            </b>
+            <span>{previewAsset}</span>
+          </Flex>
+          <HR />
+          <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+            <b>
+              <span>{'primary_asset'}</span>
+            </b>
+            <span>{primaryAsset}</span>
+          </Flex>
+          <HR />
+          <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+            <b>
+              <span>{'experience_asset'}</span>
+            </b>
+            <span>{experienceAsset}</span>
+          </Flex>
+          <HR />
+          <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+            <b>
+              <span>{'id'}</span>
+            </b>
+            <span>{id}</span>
+          </Flex>
+          <HR />
         </Grid>
       </Grid>
       <HR />
+      <br />
+      <br />
       {apps?.map((app, i, index) => {
         return (
-          <Grid sx={{ marginTop: '20px' }} container spacing={2} key={`${app}+${index}`}>
-            <Grid item xs={2}></Grid>
-            <Grid item xs={2} sx={{}}>{`app ${i + 1}`}</Grid>
-            <Grid item xs={8}>
-              <List>
-                <ListItem secondaryAction={<ListItemText primary={app.app_id} />}>
-                  <ListItemText primary={'app_id'} />
-                </ListItem>
-                <HR />
-                <ListItem secondaryAction={<ListItemText primary={app.read} />}>
-                  <ListItemText primary={'read'} />
-                </ListItem>
-                <HR />
-                <ListItem
-                  secondaryAction={
-                    <List sx={{}}>
-                      <ListItem secondaryAction={<ListItemText primary={app.write.type} />}>
-                        <ListItemText primary={'type'} />
-                      </ListItem>{' '}
-                      <HR />
-                      {app.write.list.map((item) => (
-                        <ListItem key={`${item}+${index}`}>
-                          <ListItemText primary={item} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  }
-                >
-                  <ListItemText
-                    sx={{ height: `${app.write.list.length * 50 + 50}px` }}
-                    primary={'write'}
-                  />
-                </ListItem>
-                <HR />
+          <Grid columns={3} key={`${app}+${index}`}>
+            <Grid column={1}>
+              <h3>{'data'}</h3>
+            </Grid>
+            <Grid column={2}>
+              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                <b>
+                  <span>{'app_id'}</span>
+                </b>
+                <span>{app.app_id}</span>
+              </Flex>
+              <HR />
 
-                <ListItem
-                  secondaryAction={
-                    <List sx={{}}>
-                      <ListItem secondaryAction={<ListItemText primary={app.permissions.type} />}>
-                        <ListItemText primary={'type'} />
-                      </ListItem>{' '}
-                      <HR />
-                      {app.permissions.list.map((item) => (
-                        <ListItem key={`${item}}+${index}`}>
-                          <ListItemText primary={item} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  }
+              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                <b>
+                  <span>{'read'}</span>
+                </b>
+                <span>{app.read}</span>
+              </Flex>
+              <HR />
+
+              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                <b>
+                  <span>{'type'}</span>
+                </b>
+                <span>{app.write.type}</span>
+              </Flex>
+              <HR />
+              {app.write.list.map((item) => (
+                <Flex
+                  flexFlow="row"
+                  gap={32}
+                  padding={16}
+                  justify="space-between"
+                  key={`${item}+${index}`}
                 >
-                  <ListItemText
-                    sx={{ height: `${app.permissions.list.length * 50 + 50}px` }}
-                    primary={'permissions'}
-                  />
-                </ListItem>
-                <HR />
-                <ListItem
-                  secondaryAction={
-                    <List sx={{ width: '700px' }}>
-                      {Object.keys(app.data).map((item, i) => (
-                        <>
-                          {' '}
-                          <ListItem
-                            secondaryAction={
-                              <ListItemText sx={{ width: '300px' }} primary={JSON.stringify(app.data[item])} />
-                            }
-                          >
-                            <ListItemText sx={{}} primary={item} />
-                          </ListItem>
-                          {i < Object.keys(app.data).length - 1 ? <HR /> : null}
-                        </>
-                      ))}
-                      {}
-                    </List>
-                  }
+                  <b>
+                    <span>{'write'}</span>
+                  </b>
+                  <span>{item}</span>
+                </Flex>
+              ))}
+
+              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                <b>
+                  <span>{'type'}</span>
+                </b>
+                <span>{app.permissions.type}</span>
+              </Flex>
+
+              <HR />
+              {app.permissions.list.map((item) => (
+                <Flex
+                  flexFlow="row"
+                  gap={32}
+                  padding={16}
+                  justify="space-between"
+                  key={`${item}+${index}`}
                 >
-                  <ListItemText
-                    sx={{ height: `${Object.keys(app.data).length * 50}px` }}
-                    primary={'data'}
-                  />
-                </ListItem>
-              </List>
+                  <b>
+                    <span>{'permissions'}</span>
+                  </b>
+                  <span>{item} </span>
+                </Flex>
+              ))}
+
+              <br />
+              <br />
+              {/* //------------------------------- */}
+
+              <br />
+              {Object.keys(app.data).map((item, i) => (
+                <>
+                  {' '}
+                  <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                    <b>
+                      {' '}
+                      <span>{item} </span>
+                    </b>
+
+                    <span>{JSON.stringify(app.data[item])}</span>
+                  </Flex>
+                  {i < Object.keys(app.data).length - 1 ? <HR /> : null}
+                </>
+              ))}
+
+              <br />
+              <br />
+
+              {/* //----------------------- */}
             </Grid>
           </Grid>
         );
       })}
       <HR />
+      <br/>
+      <br/>
+
+      <Flex flexFlow="row" gap={32} padding={16} align="flex-start">
+        <h3>Libraries</h3>
+      </Flex>
+
+
       {library?.map((lib, i, index) => {
         let length = Object.keys(lib).length;
         return (
-          <Grid key={`${lib}+${index}`} sx={{ marginTop: '20px' }} container spacing={2}>
-            <Grid item xs={2}></Grid>
-            <Grid item xs={2} sx={{}}>{`library ${i + 1}`}</Grid>
-            <Grid item xs={8}>
-              <List>
-                {Object.keys(lib).map((item, j) => (
-                  <>
-                    <ListItem secondaryAction={<ListItemText primary={lib[item]} />}>
-                      <ListItemText primary={item} />
-                    </ListItem>
-                    {j < length - 1 ? <HR /> : null}
-                  </>
-                ))}
-              </List>
+          <Grid key={`${lib}+${index}`} columns={3}>
+            <Grid column={1}></Grid>
+            <Grid column={2}>
+              {Object.keys(lib).map((item, j) => (
+                <>
+                  <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                    <b>
+                      <span>{item}</span>
+                    </b>
+                    <span>{lib[item]}</span>
+                  </Flex>
+
+                  {j < length - 1 ? <HR /> : null}
+                </>
+              ))}
+              <br />
+              <br />
             </Grid>
           </Grid>
         );
