@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { timeConverter } from '@dapp/utils';
-import { AuthContext } from '@dapp/features-authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { IconButton } from '@mui/material';
 import { CustomTable } from '@origyn-sa/origyn-art-ui';
 import Table from '@mui/material/Table';
@@ -26,7 +26,7 @@ import { EscrowDeposit } from './functions/EscrowDeposit';
 import { EscrowWithdraw } from './functions/EscrowWithdraw';
 import { SaleWithdraw } from './functions/SaleWithdraw';
 // mintjs
-import { getNftHistory} from '@origyn-sa/mintjs';
+import { getNftHistory, OrigynClient} from '@origyn-sa/mintjs';
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
 
@@ -66,6 +66,9 @@ function removeDuplicates(arr: string[]) {
 export const TransactionsTable = (props: any) => {
   // Authcontext
   const { actor } = useContext(AuthContext);
+  const [canisterId, setCanisterId] = useState('');
+
+
 
   //* *STATUS OF THE OBJ WITH HISTORY **//
   // Is empty-
@@ -164,6 +167,7 @@ export const TransactionsTable = (props: any) => {
     // array for dynamyc Select values
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
+    OrigynClient.getInstance().init(true, canisterId, { actor });
     const response = await getNftHistory(props.searchBarTokenId.toString());
     // response 2 string
     const string_history = JSON.stringify(

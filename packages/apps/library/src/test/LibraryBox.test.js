@@ -1,5 +1,5 @@
 import React from 'react';
-import LibraryBox from '../components/LibraryBox';
+import LibraryBox from '../components/CollectionLibrary';
 import { render, screen, cleanup, test } from '@testing-library/react';
 import '@testing-library/jest-dom';
 

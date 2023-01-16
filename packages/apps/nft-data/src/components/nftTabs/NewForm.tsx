@@ -208,7 +208,7 @@ const NewForm = ({ metadata }: any) => {
   };
   const checkOwnerAndPermissions = async () => {
     const { tokenId, canisterId } = await useRoute();
-    const checked = await checkOwner(principal, canisterId, tokenId);
+    const checked = await checkOwner(principal, canisterId);
     setIsOwner(checked);
     console.log('isOwner', checked);
   };
