@@ -246,7 +246,7 @@ const MintingPage = () => {
 
   const fetchData = async (page: number) => {
     const response = await fetch(
-      `http://localhost:3000/canister/v0/nft-token?sortKey=createdAt&sortDirection=-1&skip=${
+      `https://development.canister.origyn.ch/canister/v0/nft-token?sortKey=createdAt&sortDirection=-1&skip=${
         30 * (page - 1)
       }`,
       {
@@ -271,7 +271,7 @@ const MintingPage = () => {
   const addMedia = async (fileObject) => {
     const requestFormData = new FormData();
     requestFormData.append(fileObject.pointer, fileObject.file);
-    const response = await fetch(`http://localhost:3000/canister/v0/pre-stage`, {
+    const response = await fetch(`https://development.canister.origyn.ch/canister/v0/pre-stage`, {
       method: 'PUT',
       headers: {
         'x-api-key': loggedIn,
@@ -381,7 +381,7 @@ const MintingPage = () => {
       // });
       console.log(metadata);
 
-      const response = await fetch(`http://localhost:3000/canister/v0/nft-token`, {
+      const response = await fetch(`https://development.canister.origyn.ch/canister/v0/nft-token`, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
           'x-api-key': loggedIn,
