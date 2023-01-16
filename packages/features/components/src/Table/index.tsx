@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {CustomTable} from '@origyn-sa/origyn-art-ui'
 import Paper from '@mui/material/Paper';
 import MTable from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
