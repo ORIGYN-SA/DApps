@@ -630,7 +630,7 @@ export const TransactionsTable = (props: any) => {
         <CustomTable
         cells={tableCells}
         rows={
-          rowsArray.map((row) => {
+          rowsArray?.map((row) => {
             return {
               index: row.index,
               type: row.type_txn,
