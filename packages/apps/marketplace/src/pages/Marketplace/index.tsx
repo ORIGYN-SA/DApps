@@ -4,7 +4,7 @@ import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authent
 import { LoadingContainer, Table } from '@dapp/features-components'
 import { useContext, useEffect, useState } from 'react'
 import { Card, Container, Flex, HR, Grid, Image, SecondaryNav, ShowMoreBlock, Button } from '@origyn-sa/origyn-art-ui'
-import Filter from '../../../../wallet/src/pages/Wallet/Filter'
+import Filter from './Filter'
 import { ConfirmSalesActionModal } from '../../../../../features/sales-escrows'
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs'
 import { Link } from 'react-router-dom'
@@ -149,12 +149,21 @@ const Marketplace = () => {
     let filtered = NFTData
 
     switch (filter) {
-      case 'onSale':
-        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale))
+      case 'all':
+        filtered = filtered
         break
       case 'notOnSale':
         filtered = filtered.filter((nft) => isNaN(nft?.id?.sale))
         break
+      case 'onSale':
+        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale))
+        break
+      default: 
+        if (filtered.filter((nft) => !isNaN(nft?.id?.sale)).length > 0) {
+        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale))
+        } else { filtered = filtered }
+        break
+
     }
 
     switch (sort) {
@@ -176,7 +185,7 @@ const Marketplace = () => {
     }
 
     setFilteredNFTData(filtered)
-  }, [filter, sort, inputText])
+  }, [filter, sort, inputText, fetchData])
 
   useEffect(() => {
     const tmpFiltered = [...(NFTData || [])]
