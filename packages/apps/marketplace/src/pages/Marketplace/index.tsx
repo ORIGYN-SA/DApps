@@ -1,7 +1,7 @@
 import React from 'react'
 import { ICPIcon, OGYIcon } from '@dapp/common-assets'
 import { AuthContext, useRoute, useSessionContext } from '@dapp/features-authentication'
-import { LoadingContainer, Table } from '@dapp/features-components'
+import { LoadingContainer, Table,   TokenIcon } from '@dapp/features-components'
 import { useContext, useEffect, useState } from 'react'
 import { Card, Container, Flex, HR, Grid, Image, SecondaryNav, ShowMoreBlock, Button } from '@origyn-sa/origyn-art-ui'
 import Filter from '../../../../wallet/src/pages/Wallet/Filter'
@@ -105,10 +105,12 @@ const Marketplace = () => {
               throw new Error()
             console.log(r)
             const parsedData = r.map((it) => {
-              console.log(it)
+              
               const openSale = it?.ok?.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open')
               const sale = it?.ok?.current_sale[0]?.sale_type?.auction?.current_bid_amount
-              const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text
+              const buyNowPrice = it?.ok?.current_sale[0]?.sale_type?.auction.config.auction.buy_now[0];
+              const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text;
+              const saleToken = it?.ok?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic?.symbol
               const dataObj = it?.ok?.metadata.Class.find(({ name }) => name === '__apps')
                 .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
                 .value.Class.reduce(
@@ -116,9 +118,10 @@ const Marketplace = () => {
                   {},
                 )
               const filterSale = Number(sale)
+              const filterBuyNow = Number(buyNowPrice) / 1e8
               return {
                 ...dataObj,
-                id: { nftID: nftID, sale: filterSale, open: openSale },
+                id: { nftID: nftID, sale: filterSale, open: openSale, buyNow: filterBuyNow, token: saleToken },
               }
             })
 
@@ -291,7 +294,8 @@ const Marketplace = () => {
                                     <div>
                                       <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                       <p>
-                                        {nft.id.open ? nft.id.sale : 'No auction started'}
+                                  
+                                        {nft.id.open ? (nft.id.sale === 0 ? (<>{nft.id.buyNow} <TokenIcon symbol={nft.id.token}/></>) : (<>{nft.id.sale} <TokenIcon symbol={nft.id.token}/></>)) : 'No auction started'}
                                       </p>
                                     </div>
                                   </Flex>
