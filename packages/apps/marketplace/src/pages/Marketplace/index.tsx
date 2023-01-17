@@ -65,6 +65,12 @@ const Marketplace = () => {
   const [filteredNFTData, setFilteredNFTData] = useState<any>([])
   const { open } = useDialog()
 
+  window.history.back()
+
+  // here is the history API
+
+  //use history api to keep that from happening so that clicking back is smooth.
+
   const fetchData = async () => {
     if (actor) {
       setIsLoading(true)
