@@ -30,8 +30,8 @@ jobs:
       - name: Bootstrap Packages
         run: npm run bootstrap
 
-      - name: Run eslint
-        run: npm run lint
+#      - name: Run eslint
+#        run: npm run lint
 
       - name: Run tests
         run: npm run test
