@@ -4,7 +4,7 @@ import { LoadingContainer } from '@dapp/features-components'
 import styled from 'styled-components';
 import { genRanHex } from '../../../../../../utils'
 import TemplateRender from '../../../../../luxury/src/pages/NFTPage/TemplateRender'
-import { dataStructures } from '../index'
+import { dataStructures } from './Minter';
 
 const addIds = (tObj) => {
   return tObj.map((item) => {
