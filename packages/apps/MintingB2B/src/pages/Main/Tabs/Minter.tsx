@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button,Container, Card, Flex,Grid, HR, Icons } from '@origyn-sa/origyn-art-ui';
+import { Button, Container, Card, Flex, Grid, HR, Icons } from '@origyn-sa/origyn-art-ui';
 import { AddFile } from '../../../components/forms/AddFile';
 import { MediaList, HistoryList } from '../../../components/lists';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { LoadingContainer } from '@dapp/features-components';
 import { Form as MetadataForm } from '../../../components/forms';
 import styled from 'styled-components';
 import { genRanHex } from '@dapp/utils';
+import PlayForWorkIcon from '@mui/icons-material/PlayForWork';
 
 export const dataStructures = {
   IGI: [
@@ -441,7 +442,7 @@ export const formTemplate = {
 
     //   ]
     // },
-    
+
     {
       type: 'records',
       name: 'origyn-mints-history',
@@ -571,10 +572,10 @@ export const Minter = () => {
     setIsMinting(true);
     console.log("MINT");
     try {
-    const formMeta = new FormData(formRef.current);
-    const formDataObj = {};
-    formMeta.forEach((value, key) => (formDataObj[key] = value));
-    setMetadata(formDataObj);
+      const formMeta = new FormData(formRef.current);
+      const formDataObj = {};
+      formMeta.forEach((value, key) => (formDataObj[key] = value));
+      setMetadata(formDataObj);
       const formFullData = {
         files,
         data: dataStructures.IGI.map(({ name, type }) => ({
@@ -584,11 +585,11 @@ export const Minter = () => {
             type === 'record'
               ? metadata[name]
               : {
-                  language: true,
-                  data: {
-                    en: metadata[name],
-                  },
+                language: true,
+                data: {
+                  en: metadata[name],
                 },
+              },
         })),
         display: {},
       };
@@ -638,7 +639,7 @@ export const Minter = () => {
     });
     console.log(metadata);
   };
-  
+
   useEffect(() => {
     setLoggedIn(localStorage.getItem('apiKey'));
   }, []);
@@ -648,114 +649,122 @@ export const Minter = () => {
       <br />
       <br />
       <h4>Mint a new Certificate</h4>
-        <Grid columns={2}>
-          <div>
-            <br />
-            <p>Manually enter all the fields and upload any necessary images and documents to complete the minting process.</p>
-            <br />
-            <br />
-          </div>
-          <Flex align="center" justify="flex-end">
-            <Button type="submit" onClick={mintFiles}>Submit</Button>
-          </Flex>
-        </Grid> 
+      <Grid columns={2}>
+        <div>
+          <br />
+          <p>Manually enter all the fields and upload any necessary images and documents to complete the minting process.</p>
+          <br />
+          <br />
+        </div>
+        <Flex align="center" justify="flex-end">
+          <Button btnType="filled" type="submit" onClick={mintFiles}>Submit</Button>
+        </Flex>
+      </Grid>
       <HR />
-      <form ref={formRef}>
-        <MetadataForm data={formTemplate.IGI} />
-        <br />
-      </form>
+      {
+        isMinting ? (
+          <LoadingContainer />
+        ) : (
+          <>
+            <form ref={formRef}>
+              <MetadataForm data={formTemplate.IGI} />
+              <br />
+            </form>
 
-      {/* <form onSubmit={saveHistory}>
-            <br />
-            <h6>Off-chain History</h6>
-            <br />
-            <HR />
-            <br />
-            <Card padding="8px">
-            </Card>
-            <br />
-            <Flex fullWodth justify="center">
-              <Button type="submit">Continue</Button>
-            </Flex>
-      </form> */}
+            {/* <form onSubmit={saveHistory}>
+              <br />
+              <h6>Off-chain History</h6>
+              <br />
+              <HR />
+              <br />
+              <Card padding="8px">
+              </Card>
+              <br />
+              <Flex fullWodth justify="center">
+                <Button type="submit">Continue</Button>
+              </Flex>
+            </form> */}
 
-      <CustomGrid>
-          <div>
-            <h6>Main image</h6>
-          </div>
-            <CustomFileUpload htmlFor="main_image">
-                  <img
-                    src={files.find(({ pointer }) => pointer === 'mainImg')?.source}
+            <CustomGrid>
+              <div>
+                <h6>Main image</h6>
+              </div>
+              <CustomFileUpload htmlFor="main_image">
+                <img
+                  src={files.find(({ pointer }) => pointer === 'mainImg')?.source}
+                />
+                <input
+                  id="main_image"
+                  type="file"
+                  accept="image/*"
+                  name="main_image"
+                  onChange={(e) => {
+                    const id = genRanHex(32);
+                    const [fileData] = e.target.files;
+                    console.log(fileData);
+                    const newFile = new File([fileData], id);
+                    const data = {
+                      fileName: name,
+                      pointer: "mainImg",
+                      type: fileData.type,
+                      preview: URL.createObjectURL(fileData),
+                      file: newFile,
+                      id,
+                    };
+                    addMedia(data);
+                  }}
+                  style={{ display: 'none' }}
+                />
+                <PlayForWorkIcon fontSize="large" />
+              </CustomFileUpload>
+            </CustomGrid>
+            <HR marginTop={48} marginBottom={48} />
+            <CustomGrid>
+              <div>
+                <h6>Images & Video</h6>
+              </div>
+              <div>
+                <div>
+                  <h6>Upload Images & Videos</h6>
+                  <p>Upload all images and videos to display within the certificate.</p>
+                </div>
+                <br />
+                <Flex gap={48}>
+                  <MediaList
+                    items={files.filter(({ pointer }) => pointer === 'media')}
+                    onRemoveClick={removeFile}
                   />
-                  <input
-                    id="main_image"
-                    type="file"
-                    accept="image/*"
-                    name="main_image"
-                    onChange={(e) => {
-
-                      const id = genRanHex(32);
-                      const [fileData] = e.target.files;
-                      const newFile = new File([fileData], id);
-                      const data = {
-                        fileName: name,
-                        pointer: "mainImg",
-                        type: fileData.type,
-                        preview: URL.createObjectURL(fileData),
-                        file: newFile,
-                        id,
-                      };
-                      addMedia(data);
-                    }}
-                    style={{display: 'none'}}
+                  <AddFile handleAdd={addMedia} pointer="media" />
+                </Flex>
+              </div>
+            </CustomGrid>
+            <HR marginTop={48} marginBottom={48} />
+            <CustomGrid>
+              <div>
+                <h6>Additional Documents</h6>
+              </div>
+              <div>
+                <div>
+                  <h6>Upload Additional Documents</h6>
+                  <p>Upload any additional documentation</p>
+                </div>
+                <br />
+                <Flex gap={48}>
+                  <MediaList
+                    items={files.filter(({ pointer }) => pointer === 'attachments')}
+                    onRemoveClick={removeFile}
                   />
-                  <Icons.CheckIcon width="16" height="16" />
-            </CustomFileUpload>
-      </CustomGrid>
-      <HR marginTop={48} marginBottom={48} />
-      <CustomGrid>
-          <div>
-            <h6>Images & Video</h6>
-          </div>
-          <div>
-            <div>
-              <h6>Upload Images & Videos</h6>
-              <p>Upload all images and videos to display within the certificate.</p>
-            </div>
-            <br />
-            <Flex gap={48}>
-              <MediaList
-                items={files.filter(({ pointer }) => pointer === 'media')}
-                onRemoveClick={removeFile}
-              />
-              <AddFile handleAdd={addMedia} pointer="media" />
+                  <AddFile handleAdd={addMedia} pointer="attachments" />
+                </Flex>
+              </div>
+            </CustomGrid>
+            <HR marginTop={48} marginBottom={48} />
+            <Flex align="center" justify="flex-end">
+              <Button btnType="filled" type="submit" onClick={mintFiles}>Submit</Button>
             </Flex>
-          </div>
-      </CustomGrid>
-      <HR marginTop={48} marginBottom={48} />
-      <CustomGrid>
-          <div>
-            <h6>Additional Documents</h6>
-          </div>
-          <div>
-            <div>
-              <h6>Upload Additional Documents</h6>
-              <p>Upload any additional documentation</p>
-            </div>
-            <br />
-            <Flex gap={48}>
-              <MediaList
-                items={files.filter(({ pointer }) => pointer === 'attachments')}
-                onRemoveClick={removeFile}
-              />
-              <AddFile handleAdd={addMedia} pointer="attachments" />
-            </Flex>
-          </div>
-      </CustomGrid>
-      <HR marginTop={48} marginBottom={48} />
-      <Flex align="center" justify="flex-end">
-        <Button type="submit" onClick={mintFiles}>Submit</Button>
-      </Flex>
+          </>
+        )
+      }
     </Container>
   );
 };

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Button, Card, Flex, Icons, Select } from '@origyn-sa/origyn-art-ui';
 import { genRanHex } from '@dapp/utils';
+import PlayForWorkIcon from '@mui/icons-material/PlayForWork';
 
 
 const CustomFileUpload = styled.label`
@@ -51,7 +52,7 @@ export const AddFile = ({ handleAdd, pointer }) => {
   return (
     <CustomFileUpload>
       <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: "none" }} />
-      <Icons.CheckIcon width="16" height="16" />
+      <PlayForWorkIcon fontSize="large" />
     </CustomFileUpload>
   );
 };

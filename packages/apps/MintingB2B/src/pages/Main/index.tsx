@@ -1,12 +1,6 @@
 import {
-  Button,
-  Card,
-  Container,
   Flex,
-  Grid,
-  HR,
   SecondaryNav,
-  useStepper,
 } from '@origyn-sa/origyn-art-ui';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,16 +12,12 @@ import { useSnackbar } from 'notistack';
 const MintingPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [isMinting, setIsMinting] = useState(false);
-  const navigate = useNavigate();
   const [nftList, setNftList] = useState([]);
   const [pagination, setPagination] = useState<any>();
   const [currentPage, setCurrentPage] = useState<any>(1);
-  const [metadata, setMetadata] = useState<any>();
   const [dataStructure, setDataStructure] = useState<any>(
     JSON.parse(localStorage.getItem('dataStructure')) || dataStructures,
   );
-  const { enqueueSnackbar } = useSnackbar();
 
   const handleLogOut = () => {
     setLoggedIn('');
@@ -37,7 +27,7 @@ const MintingPage = () => {
 
   const fetchData = async (page: number) => {
     const response = await fetch(
-      `http://localhost:3000/canister/v0/nft-token?sortKey=createdAt&sortDirection=-1&skip=${
+      `https://development.canister.origyn.ch/canister/v0/nft-token?sortKey=createdAt&sortDirection=-1&skip=${
         30 * (page - 1)
       }`,
       {
