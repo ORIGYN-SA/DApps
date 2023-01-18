@@ -211,17 +211,12 @@ const Marketplace = () => {
     })
     // console.log(filtered);
     setFilteredNFTs(filtered)
-<<<<<<< Updated upstream
     console.log('data', NFTData)
     sessionStorage.setItem('data', JSON.stringify(NFTData))
     const savedData = sessionStorage.getItem('data')
     console.log('saved', savedData)
 
 // if savedData exists, then map through saved data and reload the fetchData in async
-=======
-
-
->>>>>>> Stashed changes
 
   }, [onSale, minPrice, maxPrice, NFTData])
 
