@@ -186,8 +186,16 @@ const Marketplace = () => {
       filtered = filtered.filter((nft) => (nft?.display_name.toLowerCase().includes(inputText)))
     }
 
+    console.log('data', NFTData)
+    sessionStorage.setItem('data', JSON.stringify(NFTData))
+    const savedData = sessionStorage.getItem('data')
+    console.log('saved', savedData)
+
+    if (!savedData) {
     setFilteredNFTData(filtered)
-  }, [filter, sort, inputText])
+    } else { setFilteredNFTData(JSON.parse(savedData)) }
+
+  }, [filter, sort, inputText, NFTData])
 
   useEffect(() => {
     const tmpFiltered = [...(NFTData || [])]
@@ -203,12 +211,17 @@ const Marketplace = () => {
     })
     // console.log(filtered);
     setFilteredNFTs(filtered)
+<<<<<<< Updated upstream
     console.log('data', NFTData)
     sessionStorage.setItem('data', JSON.stringify(NFTData))
     const savedData = sessionStorage.getItem('data')
     console.log('saved', savedData)
 
 // if savedData exists, then map through saved data and reload the fetchData in async
+=======
+
+
+>>>>>>> Stashed changes
 
   }, [onSale, minPrice, maxPrice, NFTData])
 
