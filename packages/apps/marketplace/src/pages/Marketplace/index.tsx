@@ -94,13 +94,13 @@ const Marketplace = () => {
         })
       })
       actor?.collection_nft_origyn([]).then(async (response) => {
-        console.log('collection_nft_origyn', response)
         if ('err' in response)
           throw new Error(Object.keys(response.err)[0])
 
         setTotal(response?.ok?.token_ids[0]?.length)
 
-        actor?.nft_batch_origyn(response?.ok?.token_ids[0])
+        console.log('collection_nft_origyn', response, response?.ok?.token_ids[0].slice(10))
+        actor?.nft_batch_origyn(response?.ok?.token_ids[0].slice(0, 10))
           .then((r) => {
             if ('err' in r)
               throw new Error()
@@ -109,11 +109,11 @@ const Marketplace = () => {
               console.log(it)
               const openSale = it?.ok?.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open')
               const sale = it?.ok?.current_sale[0]?.sale_type?.auction?.current_bid_amount
-              const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text
+              const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id')?.value?.Text
               const dataObj = it?.ok?.metadata.Class.find(({ name }) => name === '__apps')
-                .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-                .value.Class.reduce(
-                  (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+                ?.value.Array.thawed[0].Class.find(({ name }) => name === 'data')
+                ?.value.Class.reduce(
+                  (arr, val) => ({ ...arr, [val.name]: Object.values(val?.value)[0] }),
                   {},
                 )
               const filterSale = Number(sale)
@@ -127,7 +127,8 @@ const Marketplace = () => {
             setFilteredNFTData(parsedData)
             setIsLoading(false)
           })
-          .catch(() => {
+          .catch((e) => {
+            console.log(e);
             setIsLoading(false)
           })
 

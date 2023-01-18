@@ -16,98 +16,52 @@ import { useParams } from 'react-router-dom';
 import { LoadingContainer } from '../../../../../features/components';
 import { timeConverter } from '../../../../../utils';
 import { ConnectQRModal } from '../../modals/ConnectQRModal';
-import diamond from './diamante.png';
 import { TextBlocks } from '../../components/TextBlocks';
 import Certificate from '../../../../luxury/src/components/Certificate';
 import SquareIcon from '@mui/icons-material/Square';
 import PlayForWorkIcon from '@mui/icons-material/PlayForWork';
+import { CandyToJson } from '../../../../../utils/src/candyParser';
+import { formTemplate } from '../Main/Tabs/Minter';
+
+const RenderDetails = ({data}) => {
+  
+  return <Flex flexFlow="column" gap={16}>{
+    formTemplate?.IGI?.map((item) => {
+      return (
+        <Flex flexFlow="column" gap={24}>
+          <Flex flexFlow="column" align="center" justify="center">
+            <br />
+            <h4>{item.title}</h4>
+            <br />
+          </Flex>
+          {item?.fields?.map((f) =>
+          <>
+            <Flex align="center" justify="space-between">
+              <p>{f.label}</p>
+
+              <p style={{ textAlign: 'end' }} className="secondary_color">
+                {data[f.name]?.toString()}
+              </p>
+            </Flex>
+            <HR />
+          </>
+          )}
+        </Flex>
+      )
+    })
+    }</Flex>
+}
 
 const WalletPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
   const [nftData, setNftData] = useState<any>();
+  const [libraries, setLibraries] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const { nft_id } = useParams();
-  const [normalData, setNormalData] = useState();
+  const [normalData, setNormalData] = useState<any>();
   console.log('NFT Data', nftData);
   console.log('NFT Normal', normalData);
-
-  const parseFunc = (data) => {
-    class CandyValue {
-      constructor(candy) {
-        this._candy = candy;
-      }
-
-      getValue() {
-        const { Text, Bool, Nat, Array, Class } = this._candy.value;
-        return Text ?? Bool ?? Nat ?? Class ?? Array?.thawed;
-      }
-
-      getName() {
-        return this._candy.name;
-      }
-
-      isClassOrArray() {
-        const { Array, Class } = this._candy.value;
-        return Array || Class || false;
-      }
-    }
-
-    class CandyToJson {
-      // index = the index in __ apps.value.Array.thawed where the data sits
-      constructor(metadata, index = 0) {
-        this._metadata = metadata.metadata.meta.metadata; // i know, right? could be improved
-        this._metadataClass = metadata.metadata.meta.metadata.Class;
-        this._id = this._findClass('id');
-        this._appsClass = this._getClassValue('__apps')[index].Class;
-        this._dataClass = this._getClassValue('data', this._appsClass);
-      }
-
-      _findClass(_name, level = this._metadataClass) {
-        return level.find(({ name }) => name === _name);
-      }
-
-      _findAppsClass() {}
-
-      _getClassValue(_name, level = this._metadataClass) {
-        return new CandyValue(this._findClass(_name, level)).getValue();
-      }
-
-      getFieldValue(_name, language = 'en', level = this._dataClass) {
-        const candy = new CandyValue(level.find(({ name }) => name === _name));
-        if (!candy.isClassOrArray()) {
-          return candy.getValue();
-        }
-
-        // TODO: We will need recursivity here for Arrays
-        const dataField = new CandyValue(this._findClass('data', candy.getValue()));
-
-        if (!dataField.isClassOrArray()) {
-          return dataField.getValue();
-        }
-
-        const languageCandy = new CandyValue(this._findClass(language, dataField.getValue()));
-
-        return languageCandy.getValue();
-      }
-
-      getAllDataFields() {
-        return this._dataClass.reduce((previous, field) => {
-          const { name } = field;
-          const value = this.getFieldValue(name);
-          return {
-            ...previous,
-            [name]: value,
-          };
-        }, {});
-      }
-    }
-
-    const parser = new CandyToJson(data);
-
-    const fields = parser.getAllDataFields();
-    setNftData(fields);
-  };
 
   const handleLogOut = () => {
     setLoggedIn('');
@@ -142,7 +96,11 @@ const WalletPage = () => {
     );
     const data = await Promise.all([response.json(), responseNormalData.json()]);
     setNormalData(data[1]);
-    parseFunc(data[0]);
+    setLibraries(data[0].metadata.library);
+
+    const toJS = new CandyToJson(data[0]);
+    console.log(toJS.getAllDataFields(), data);
+    setNftData(toJS.getAllDataFields());
     setIsLoading(false);
     return data;
   };
@@ -191,7 +149,7 @@ const WalletPage = () => {
                 <Flex flexFlow="column" gap={8}>
                   <Container size="md" padding="50px">
                     <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                      <img style={{ borderRadius: '18px', width: '100%' }} src={diamond} />
+                      <img style={{ borderRadius: '18px', width: '100%' }} src={libraries[0]?.library_file} />
                       <Flex flexFlow="column" gap={8} justify="center">
                         <p className="secondary_color">Token ID</p>
                         <h2>
@@ -217,19 +175,19 @@ const WalletPage = () => {
                         <ShowMoreBlock btnText="Read More">
                           <p className="secondary_color">{normalData?.description}</p>
                         </ShowMoreBlock>
-                        <Flex align="center" justify="space-around">
-                          <Button onClick={generateQR} btnType="filled" size="large">
+                        <Grid columns={2} gap={16}>
+                          <Button onClick={generateQR} btnType="filled" style={{width: "100%"}}>
                             Generate QR
                           </Button>
                           <Button
                             onClick={() => setIsOpen(true)}
-                            btnType="filled"
+                            btnType="outlined"
                             disabled={normalData.status !== 'WAITING_FOR_OWNER'}
-                            size="large"
+                            style={{width: "100%"}}
                           >
                             Connect with QR
                           </Button>
-                        </Flex>
+                        </Grid>
                       </Flex>
                     </Grid>
                   </Container>
@@ -247,23 +205,23 @@ const WalletPage = () => {
                           <br />
                           <br />
                           {/* In here the array of the information of the Diamon NFT */}
-                          {['Diamond'].map((e, i) => (
-                            <React.Fragment key={i}>
-                              <TextBlocks data={nftData} title={e} />
-                              <br />
-                            </React.Fragment>
-                          ))}
+                          <RenderDetails
+                            data={nftData}
+                          />
+                          
                         </Container>,
                         <Container size="sm" padding="32px" smPadding="16px">
                           <h2 style={{ textAlign: 'center' }}>Origyn Certificate</h2>
                           <br />
                           <Certificate
-                            owner={normalData?._id.toString()}
-                            brand={nftData.name}
-                            model={nftData.name}
-                            refNumber={normalData?._id}
-                            serialNumber={`${normalData?._id} ['Serial Number']`}
-                            canister={normalData?._id}
+                            data={{
+                              Name: nftData.name,
+                              "NFT Type": "Digital Twin",
+                              "Date Minted": "08/25/2022",
+                              "Owner Principal ID": "zevfd-yumga-hdmnw-uk7fw-qdetm-l7jk7-rbalg-mvgk4-wqh1u",
+                              "Canister ID": "jwcfb-hyaaa-aaaaj-aac4q-cai",
+
+                            }}
                           />
                         </Container>,
 
@@ -272,10 +230,11 @@ const WalletPage = () => {
                           <br />
                           <Container size="md" padding="50px">
                             <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                              <img style={{ borderRadius: '18px', width: '100%' }} src={diamond} />
-                              <img style={{ borderRadius: '18px', width: '100%' }} src={diamond} />
-                              <img style={{ borderRadius: '18px', width: '100%' }} src={diamond} />
-                              <img style={{ borderRadius: '18px', width: '100%' }} src={diamond} />
+                              {libraries.map((l) => {
+                                return (
+                                  <img src={l?.library_file} style={{borderRadius: "12px"}} />
+                                )
+                              })}
                             </Grid>
                           </Container>
 
