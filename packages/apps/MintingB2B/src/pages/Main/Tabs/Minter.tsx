@@ -499,6 +499,9 @@ export const Minter = () => {
   const [dataStructure, setDataStructure] = useState<any>(
     JSON.parse(localStorage.getItem('dataStructure')) || dataStructures,
   );
+  const [templateFormData, setTemplateFormData] = useState<any>(
+    JSON.parse(localStorage.getItem('formTemplate')) || formTemplate,
+  );
   const formRef = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -542,15 +545,6 @@ export const Minter = () => {
   };
   const addHistory = (historyObject) => {
     setOffChainHistory([...offChainHistory, historyObject]);
-  };
-  const addData = (dataObject) => {
-    const newData = {
-      ...dataStructure,
-      IGI: [...dataStructure.IGI, dataObject],
-    };
-    console.log(newData);
-    localStorage.setItem('dataStructure', JSON.stringify(newData));
-    setDataStructure(newData);
   };
   const removeFile = (fileId) => {
     setFiles(files.filter(({ id }) => id !== fileId));
@@ -667,7 +661,7 @@ export const Minter = () => {
         ) : (
           <>
             <form ref={formRef}>
-              <MetadataForm data={formTemplate.IGI} />
+              <MetadataForm data={templateFormData.IGI} />
               <br />
             </form>
 
@@ -690,8 +684,9 @@ export const Minter = () => {
                 <h6>Main image</h6>
               </div>
               <CustomFileUpload htmlFor="main_image">
+                {console.log(files, files.find(({ pointer }) => pointer === 'media'))}
                 <img
-                  src={files.find(({ pointer }) => pointer === 'mainImg')?.source}
+                  src={files.find(({ pointer }) => pointer === 'media')?.source}
                 />
                 <input
                   id="main_image"
@@ -704,8 +699,8 @@ export const Minter = () => {
                     console.log(fileData);
                     const newFile = new File([fileData], id);
                     const data = {
-                      fileName: name,
-                      pointer: "mainImg",
+                      fileName: fileData.name,
+                      pointer: "media",
                       type: fileData.type,
                       preview: URL.createObjectURL(fileData),
                       file: newFile,

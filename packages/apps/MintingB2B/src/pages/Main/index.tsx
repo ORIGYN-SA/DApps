@@ -5,7 +5,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GuestContainer } from '../../components/GuestContainer';
-import { AllNfts, dataStructures, Minter } from './Tabs';
+import { AllNfts, dataStructures, formTemplate,  Minter } from './Tabs';
 import { DataStructure } from './Tabs/DataStrucuter';
 import { Template } from './Tabs/Template';
 import { useSnackbar } from 'notistack';
@@ -17,6 +17,9 @@ const MintingPage = () => {
   const [currentPage, setCurrentPage] = useState<any>(1);
   const [dataStructure, setDataStructure] = useState<any>(
     JSON.parse(localStorage.getItem('dataStructure')) || dataStructures,
+  );
+  const [formTemplateData, setFormTemplateData] = useState<any>(
+    JSON.parse(localStorage.getItem('formTemplate')) || formTemplate,
   );
 
   const handleLogOut = () => {
@@ -55,17 +58,28 @@ const MintingPage = () => {
       IGI: [...dataStructure.IGI, dataObject],
     };
     console.log(newData);
+    const newFormTemplate = {
+      ...formTemplateData
+    };
+    newFormTemplate.IGI[0].fields.push(dataObject)
+    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
     localStorage.setItem('dataStructure', JSON.stringify(newData));
     setDataStructure(newData);
+    setFormTemplateData(newFormTemplate);
   };
   const removeData = (fileId) => {
     const newData = {
       ...dataStructure,
       IGI: dataStructure.IGI.filter(({ name }) => name !== fileId),
     };
-    console.log(newData);
+    const newFormTemplate = {
+      ...formTemplateData,
+      IGI: formTemplate.IGI.map((t) => ({...t, fields: t?.fields?.filter(({ name }) => name !== fileId)})),
+    };
     localStorage.setItem('dataStructure', JSON.stringify(newData));
+    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
     setDataStructure(newData);
+    setFormTemplateData(newFormTemplate);
   };
 
   useEffect(() => {
