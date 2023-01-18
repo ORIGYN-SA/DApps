@@ -279,9 +279,9 @@ const Marketplace = () => {
                               href=""
                               onClick={(e) => {
                                 e.preventDefault();
-                                navigate(`/${nft?.id?.nftID}`);
+                                navigate(`/${nft.id?.nftID}`);
                               }}
-                              key={nft?.id?.nftID}
+                              key={nft.id?.nftID}
                             >
                               <Card
                                 flexFlow="column"
@@ -289,7 +289,7 @@ const Marketplace = () => {
                               >
                                 <img
                                   style={{ width: '100%' }}
-                                  src={`https://${canisterId}.raw.ic0.app/-/${nft?.id?.nftID}/preview`}
+                                  src={`https://${canisterId}.raw.ic0.app/-/${nft.id?.nftID}/preview`}
                                   alt=""
                                 />
                                 <Container style={{ height: '100%' }} size="full" padding="16px">
