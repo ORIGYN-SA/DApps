@@ -152,11 +152,13 @@ const Marketplace = () => {
 
   useEffect(() => {
     fetchData()
+    
+
   }, [actor])
 
   useEffect(() => {
     let filtered = NFTData
-
+    
     switch (filter) {
       case 'onSale':
         filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale))
@@ -201,7 +203,15 @@ const Marketplace = () => {
     })
     // console.log(filtered);
     setFilteredNFTs(filtered)
+    console.log('data', NFTData)
+    sessionStorage.setItem('data', JSON.stringify(NFTData))
+    const savedData = sessionStorage.getItem('data')
+    console.log('saved', savedData)
+
+// if savedData exists, then map through saved data and reload the fetchData in async
+
   }, [onSale, minPrice, maxPrice, NFTData])
+
 
   return (
     <Flex fullWidth padding='0' flexFlow='column'>
@@ -214,7 +224,7 @@ const Marketplace = () => {
           <Flex fullWidth flexFlow='column'>
             <StyledSectionTitle>Marketplace Dashboard</StyledSectionTitle>
             <HR />
-            {isLoading ? (
+            { isLoading ? (
               <LoadingContainer />
             ) : (
               <div>
