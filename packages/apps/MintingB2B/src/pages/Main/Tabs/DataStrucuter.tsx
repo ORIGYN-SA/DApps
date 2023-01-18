@@ -5,6 +5,7 @@ import { DataStructureList } from '../../../components/lists/DataStructureList'
 import { AddDataStructure } from '../../../components/forms/AddDataStructure'
 
 export const DataStructure = ({ isLoading, dataStructure, removeData, addData }: Props) => {
+  console.log(dataStructure)
   return (
     <Container padding="16px">
       <br />

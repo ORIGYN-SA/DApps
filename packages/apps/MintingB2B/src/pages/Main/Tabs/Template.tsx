@@ -605,7 +605,7 @@ const FieldBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   const [fields, setFields] = useState<any>([]);
 
   useEffect(() => {
-    const ds = JSON.parse(localStorage.getItem("dataStructure"))
+    const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures;
     setDataStructure(ds);
     const f = ds.IGI.map(({name}) => name);
     setFields(f)
@@ -669,7 +669,7 @@ const ImageBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   const [fields, setFields] = useState<any>([]);
 
   useEffect(() => {
-    const ds = JSON.parse(localStorage.getItem("dataStructure"))
+    const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures;
     setDataStructure(ds);
     const f = ds.IGI.map(({name}) => name);
     setFields(f)
@@ -720,7 +720,7 @@ const GalleryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   const [fields, setFields] = useState<any>([]);
 
   useEffect(() => {
-    const ds = JSON.parse(localStorage.getItem("dataStructure"))
+    const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
     const f = ds.IGI.map(({name}) => name);
     setFields(f)
@@ -772,7 +772,7 @@ const AttachmentsBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   const [fields, setFields] = useState<any>([]);
 
   useEffect(() => {
-    const ds = JSON.parse(localStorage.getItem("dataStructure"))
+    const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
     const f = ds.IGI.map(({name}) => name);
     setFields(f)
@@ -824,7 +824,7 @@ const HistoryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   const [fields, setFields] = useState<any>([]);
 
   useEffect(() => {
-    const ds = JSON.parse(localStorage.getItem("dataStructure"))
+    const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
     const f = ds.IGI.map(({name}) => name);
     setFields(f)
