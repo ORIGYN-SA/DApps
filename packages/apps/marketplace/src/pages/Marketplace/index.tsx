@@ -142,11 +142,6 @@ const Marketplace = () => {
     }
   };
 
-  const navigateToNft = (url: string) => {
-    console.log(url);
-    navigate(url);
-  };
-
   useEffect(() => {
     document.title = 'Origyn Marketplace';
     useRoute().then(({ canisterId }) => {
@@ -282,7 +277,10 @@ const Marketplace = () => {
                           return (
                             <a
                               href=""
-                              onClick={() => navigateToNft(`/${nft?.id?.nftID}`)}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                navigate(`/${nft?.id?.nftID}`);
+                              }}
                               key={nft?.id?.nftID}
                             >
                               <Card
