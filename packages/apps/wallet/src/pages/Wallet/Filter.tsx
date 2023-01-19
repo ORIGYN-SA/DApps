@@ -1,6 +1,15 @@
-import React, { useState } from 'react'
-import { Button, Flex, Select, Icons, SearchInput, TextInput, Modal, Container } from '@origyn-sa/origyn-art-ui'
-import styled from 'styled-components'
+import React, { useState } from 'react';
+import {
+  Button,
+  Flex,
+  Select,
+  Icons,
+  SearchInput,
+  TextInput,
+  Modal,
+  Container,
+} from '@origyn-sa/origyn-art-ui';
+import styled from 'styled-components';
 
 const StyledFilter = styled.div`
   .mobileFilters {
@@ -9,8 +18,8 @@ const StyledFilter = styled.div`
   .desktopFilters {
     display: block;
   }
-  
-  ${({theme}) => theme.media.sm} {
+
+  ${({ theme }) => theme.media.sm} {
     .mobileFilters {
       display: block;
     }
@@ -18,93 +27,102 @@ const StyledFilter = styled.div`
       display: none;
     }
   }
-`
+`;
 
-const Filter = ({onChangeFilter, onChangeSort, onInput}) => {
+const Filter = ({
+  onChangeFilter,
+  onChangeSort,
+  onInput,
+  initialFilterValue = '',
+  initialSortValue = '',
+}) => {
+  const filterOptions = [
+    { label: 'All', value: 'all' },
+    { label: 'On Sale', value: 'onSale' },
+    { label: 'Not On Sale', value: 'notOnSale' },
+  ];
+
+  const sortOptions = [
+    { label: 'Sale Price ASC', value: 'saleASC' },
+    { label: 'Sale Price DESC', value: 'saleDESC' },
+  ];
+
+  const initialFilter =
+    filterOptions.find((opt) => opt.value === initialFilterValue) || filterOptions[0];
+  const initialSort = sortOptions.find((opt) => opt.value == initialSortValue) || sortOptions[0];
+
   const [mobileFilters, setMobileFilters] = useState(false);
-  const [filter, setFilter] = useState();
-  const [sort, setSort] = useState();
+  const [filter, setFilter] = useState(initialFilter);
+  const [sort, setSort] = useState(initialSort);
 
   return (
     <StyledFilter>
       <div className="desktopFilters">
-        <Flex justify='space-between' fullWidth smFlexFlow="row" mdFlexFlow="row" gap={8}>
-          <Flex align='center' gap={12} smFlexFlow="column">
-            <Button iconButton size='small'>
+        <Flex justify="space-between" fullWidth smFlexFlow="row" mdFlexFlow="row" gap={8}>
+          <Flex align="center" gap={12} smFlexFlow="column">
+            <Button iconButton size="small">
               <Icons.FilterIcon />
             </Button>
-            <div style={{minWidth: 170}}>
+            <div style={{ minWidth: 170 }}>
               <Select
                 inputSize="small"
                 placeholder="Filter"
                 selectedOption={filter}
                 handleChange={(opt) => {
                   onChangeFilter(opt.value);
-                  setFilter(opt)
+                  setFilter(opt);
                 }}
-                options={[
-                  {label: 'All', value: 'all'},
-                  {label: 'On Sale', value: 'onSale'},
-                  {label: 'Not On Sale', value: 'notOnSale'},
-                ]}
+                options={filterOptions}
               />
             </div>
           </Flex>
-          <Flex align='center' gap={12} smFlexFlow="row">
-              <TextInput
+          <Flex align="center" gap={12} smFlexFlow="row">
+            <TextInput
               name="search"
               placeholder="Search"
               inputSize="small"
-              onChange={(e)=>onInput(e.target.value.toLowerCase())}
+              onChange={(e) => onInput(e.target.value.toLowerCase())}
             />
-           
-            <div style={{minWidth: 170}}>
+
+            <div style={{ minWidth: 170 }}>
               <Select
                 inputSize="small"
                 placeholder="Sort"
                 selectedOption={sort}
                 handleChange={(opt) => {
                   onChangeSort(opt.value);
-                  setSort(opt)
+                  setSort(opt);
                 }}
-                options={[
-                  {label: 'Sale Price ASC', value: 'saleASC'},
-                  {label: 'Sale Price DESC', value: 'saleDESC'},
-                ]}
+                options={sortOptions}
               />
             </div>
           </Flex>
         </Flex>
       </div>
       <div className="mobileFilters">
-        <Flex justify='space-between' fullWidth gap={8}>
-          <Flex align='center' gap={12}>
-            <Button iconButton size='small'>
+        <Flex justify="space-between" fullWidth gap={8}>
+          <Flex align="center" gap={12}>
+            <Button iconButton size="small">
               <Icons.FilterIcon onClick={() => setMobileFilters(true)} />
             </Button>
           </Flex>
-          <Flex align='center' gap={12}>
-            <TextInput
-              name="search"
-              placeholder="Search"
-              inputSize="small"
-            />
-            <Button btnType='outlined' iconButton size='small'>
+          <Flex align="center" gap={12}>
+            <TextInput name="search" placeholder="Search" inputSize="small" />
+            <Button btnType="outlined" iconButton size="small">
               <Icons.TransactionIcon height={10} width={32} />
             </Button>
           </Flex>
         </Flex>
       </div>
-      <Modal
-        isOpened={mobileFilters}
-        closeModal={() => setMobileFilters(false)}
-      >
+      <Modal isOpened={mobileFilters} closeModal={() => setMobileFilters(false)}>
         <Container padding="50px 24px">
           <h2>Filters</h2>
-          <Button onClick={() => {
-            onChangeFilter("onSale");
-            setMobileFilters(false);
-          }}>
+          <Button
+            onClick={() => {
+              onChangeFilter('onSale');
+              setMobileFilters(false);
+            }}
+          >
             On Sale
           </Button>
           <Select
@@ -113,17 +131,17 @@ const Filter = ({onChangeFilter, onChangeSort, onInput}) => {
             selectedOption={sort}
             handleChange={(opt) => {
               onChangeSort(opt.value);
-              setSort(opt)
+              setSort(opt);
             }}
             options={[
-              {label: 'Sale Price ASC', value: 'saleASC'},
-              {label: 'Sale Price DESC', value: 'saleDESC'},
+              { label: 'Sale Price ASC', value: 'saleASC' },
+              { label: 'Sale Price DESC', value: 'saleDESC' },
             ]}
           />
         </Container>
       </Modal>
     </StyledFilter>
-  )
-}
+  );
+};
 
 export default Filter;

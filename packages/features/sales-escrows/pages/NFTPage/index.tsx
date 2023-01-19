@@ -418,6 +418,8 @@ export const NFTPage = () => {
                         <br />
                         <br />
                         <Flex flexFlow="column" gap={18}>
+                          <h3> <b>Primary Royalties </b></h3>
+                          <HR/>
                           {roy1?.frozen?.map((nft) => (
                             <div key={nft.Class.find(({ name }) => name === 'tag').value.Text}>
                               <Grid columns={2}>
@@ -429,6 +431,9 @@ export const NFTPage = () => {
                               <HR marginTop={18} />
                             </div>
                           ))}
+                          <br/>
+                          <h3> <b>Secondary Royalties</b> </h3>
+                          <HR/>
                           {roy2?.frozen?.map((nft) => (
                             <div key={nft.Class.find(({ name }) => name === 'tag').value.Text}>
                               <Grid columns={2}>
