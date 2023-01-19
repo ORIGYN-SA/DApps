@@ -19,6 +19,10 @@ const reducer = (state: MarketplaceState, action: MarketplaceAction): Marketplac
       return { ...state, collectionData: action.payload };
     case 'odcData':
       return { ...state, odcData: action.payload };
+    case 'filter':
+      return { ...state, filter: action.payload };
+    case 'sort':
+      return { ...state, sort: action.payload };
     case 'filteredOdcData':
       return { ...state, filteredOdcData: action.payload };
   }
@@ -30,6 +34,8 @@ const MarketplaceProvider = ({ children }: MarketplaceProviderProps) => {
     collectionPreview: '',
     collectionData: {},
     odcData: [],
+    filter: '',
+    sort: '',
     filteredOdcData: [],
   });
 

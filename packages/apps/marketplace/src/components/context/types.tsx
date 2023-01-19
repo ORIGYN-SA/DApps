@@ -19,6 +19,8 @@ export type MarketplaceState = {
   collectionPreview: string | undefined;
   collectionData: any | undefined;
   odcData: OdcData[] | undefined;
+  filter: string | undefined;
+  sort: string | undefined;
   filteredOdcData: OdcData[] | undefined;
 };
 
@@ -27,4 +29,6 @@ export type MarketplaceAction =
   | { type: 'collectionPreview'; payload: string }
   | { type: 'collectionData'; payload: {} }
   | { type: 'odcData'; payload: OdcData[] }
+  | { type: 'filter'; payload: string }
+  | { type: 'sort'; payload: string }
   | { type: 'filteredOdcData'; payload: OdcData[] };

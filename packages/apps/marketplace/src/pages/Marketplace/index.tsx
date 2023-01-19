@@ -27,16 +27,15 @@ const Marketplace = () => {
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [canisterId, setCanisterId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<any>();
-  const [sort, setSort] = useState<any>();
   const [inputText, setInputText] = useState('');
   const { open } = useDialog();
   const { state, dispatch } = useMarketplace();
 
-  const { totalItems, collectionPreview, collectionData, odcData, filteredOdcData } = state;
+  const { totalItems, collectionPreview, collectionData, odcData, filter, sort, filteredOdcData } =
+    state;
 
   const getProperty = (properties: any, propertyName: string) => {
-    return properties.find(({ name }) => name === propertyName);
+    return properties?.find(({ name }) => name === propertyName);
   };
 
   const getTextValue = (properties: any, propertyName: string): string => {
@@ -51,10 +50,11 @@ const Marketplace = () => {
       c.Class?.find((p) => p.name === 'app_id' && p.value?.Text === 'com.origyn.metadata.general'),
     );
 
-    const data = app?.Class?.find(({ name }) => name === 'data')?.value?.Class?.reduce(
-      (obj: Object, val: any) => ({ ...obj, [val.name]: Object.values(val.value)[0] }),
-      {},
-    );
+    const data =
+      app?.Class?.find(({ name }) => name === 'data')?.value?.Class?.reduce(
+        (obj: Object, val: any) => ({ ...obj, [val.name]: Object.values(val.value)[0] }),
+        {},
+      ) || {};
 
     data.display_name = data.display_name || '';
     data.description = data.description || '';
@@ -191,10 +191,7 @@ const Marketplace = () => {
         break;
     }
 
-    console.log(inputText);
-    if (inputText === '') {
-      filtered = odcData;
-    } else {
+    if (inputText?.length) {
       filtered = filtered.filter((odc) =>
         odc?.appData?.display_name?.toLowerCase().includes(inputText),
       );
@@ -254,8 +251,14 @@ const Marketplace = () => {
                 <HR />
                 <Container padding="32px">
                   <Filter
-                    onChangeFilter={setFilter}
-                    onChangeSort={setSort}
+                    initialFilterValue={filter}
+                    initialSortValue={sort}
+                    onChangeFilter={(filterValue: string) =>
+                      dispatch({ type: 'filter', payload: filterValue })
+                    }
+                    onChangeSort={(sortValue: string) =>
+                      dispatch({ type: 'sort', payload: sortValue })
+                    }
                     onInput={setInputText}
                   />
                   <br />
