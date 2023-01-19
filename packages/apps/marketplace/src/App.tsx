@@ -1,5 +1,5 @@
-import { SnackbarProvider } from 'notistack';
 import React from 'react';
+import { SnackbarProvider } from 'notistack';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { NFTPage } from '@dapp/features-sales-escrows';
 import { SiteProvider } from '@dapp/features-theme';

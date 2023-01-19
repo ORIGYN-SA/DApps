@@ -17,10 +17,10 @@ const reducer = (state: MarketplaceState, action: MarketplaceAction): Marketplac
       return { ...state, collectionPreview: action.payload };
     case 'collectionData':
       return { ...state, collectionData: action.payload };
-    case 'nftData':
-      return { ...state, nftData: action.payload };
-    case 'filteredNftData':
-      return { ...state, filteredNftData: action.payload };
+    case 'odcData':
+      return { ...state, odcData: action.payload };
+    case 'filteredOdcData':
+      return { ...state, filteredOdcData: action.payload };
   }
 };
 
@@ -29,8 +29,8 @@ const MarketplaceProvider = ({ children }: MarketplaceProviderProps) => {
     totalItems: 0,
     collectionPreview: '',
     collectionData: {},
-    nftData: [],
-    filteredNftData: [],
+    odcData: [],
+    filteredOdcData: [],
   });
 
   return (

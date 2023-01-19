@@ -5,8 +5,8 @@ export interface AppData {
   custom_properties: any[];
 }
 
-export interface NftData {
-  nftID: string;
+export interface OdcData {
+  odcID: string;
   onSale: boolean;
   currentBid: number;
   buyNow: number;
@@ -18,13 +18,13 @@ export type MarketplaceState = {
   totalItems: number | undefined;
   collectionPreview: string | undefined;
   collectionData: any | undefined;
-  nftData: NftData[] | undefined;
-  filteredNftData: NftData[] | undefined;
+  odcData: OdcData[] | undefined;
+  filteredOdcData: OdcData[] | undefined;
 };
 
 export type MarketplaceAction =
   | { type: 'totalItems'; payload: number }
   | { type: 'collectionPreview'; payload: string }
   | { type: 'collectionData'; payload: {} }
-  | { type: 'nftData'; payload: NftData[] }
-  | { type: 'filteredNftData'; payload: NftData[] };
+  | { type: 'odcData'; payload: OdcData[] }
+  | { type: 'filteredOdcData'; payload: OdcData[] };

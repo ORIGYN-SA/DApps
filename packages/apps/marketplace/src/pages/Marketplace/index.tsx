@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
-import { useContext, useEffect, useState } from 'react';
 import { useMarketplace } from '../../components/context';
 import {
   Card,
@@ -18,7 +17,7 @@ import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { Link } from 'react-router-dom';
 import { useDialog } from '@connect2ic/react';
 import styled from 'styled-components';
-import { AppData, NftData } from '../../components/context/types';
+import { AppData, OdcData } from '../../components/context/types';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
@@ -34,7 +33,7 @@ const Marketplace = () => {
   const { open } = useDialog();
   const { state, dispatch } = useMarketplace();
 
-  const { totalItems, collectionPreview, collectionData, nftData, filteredNftData } = state;
+  const { totalItems, collectionPreview, collectionData, odcData, filteredOdcData } = state;
 
   const getProperty = (properties: any, propertyName: string) => {
     return properties.find(({ name }) => name === propertyName);
@@ -64,15 +63,15 @@ const Marketplace = () => {
     return data as AppData;
   };
 
-  const parseNftData = (data: []): NftData[] => {
-    const parsed = data.map((item: any): NftData => {
-      const nft = item?.ok;
+  const parseOdcData = (data: []): OdcData[] => {
+    const parsed = data.map((item: any): OdcData => {
+      const odc = item?.ok;
 
-      const properties = nft?.metadata?.Class;
+      const properties = odc?.metadata?.Class;
       const appData = getAppData(properties);
-      const nftID: string = getTextValue(properties, 'id');
+      const odcID: string = getTextValue(properties, 'id');
 
-      const openAuction = nft?.current_sale?.find((s) =>
+      const openAuction = odc?.current_sale?.find((s) =>
         s?.sale_type?.auction?.status?.hasOwnProperty('open'),
       )?.sale_type?.auction;
 
@@ -80,8 +79,8 @@ const Marketplace = () => {
       const currentBid: number = Number(openAuction?.current_bid_amount || 0);
       const token: string = openAuction?.config?.auction?.token?.ic?.symbol || '';
 
-      const data: NftData = {
-        nftID,
+      const data: OdcData = {
+        odcID,
         onSale: !!openAuction,
         currentBid,
         buyNow,
@@ -98,7 +97,7 @@ const Marketplace = () => {
   const fetchData = async (actor: any) => {
     try {
       // show progress bar on intial load, otherwise fetch silenty
-      const stateLoaded = nftData?.length > 0;
+      const stateLoaded = odcData?.length > 0;
       setIsLoading(!stateLoaded);
 
       OrigynClient.getInstance().init(true, canisterId);
@@ -128,17 +127,17 @@ const Marketplace = () => {
       const tokenIds = collMeta?.token_ids?.[0] || [];
       dispatch({ type: 'totalItems', payload: tokenIds.length });
 
-      const nftDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      if (nftDataRaw.err) {
+      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+      if (odcDataRaw.err) {
         // TODO: Display error
-        console.log(nftDataRaw.err);
+        console.log(odcDataRaw.err);
         return;
       }
 
-      // parse the NFT data (metadata and sale info)
-      const parsedNftData = parseNftData(nftDataRaw);
-      dispatch({ type: 'nftData', payload: parsedNftData });
-      dispatch({ type: 'filteredNftData', payload: parsedNftData });
+      // parse the digital certificate data (metadata and sale info)
+      const parsedOdcData = parseOdcData(odcDataRaw);
+      dispatch({ type: 'odcData', payload: parsedOdcData });
+      dispatch({ type: 'filteredOdcData', payload: parsedOdcData });
     } catch (err) {
       // TODO: Display error
       console.error(err);
@@ -168,40 +167,41 @@ const Marketplace = () => {
 
   /** Apply filter and sort to list */
   useEffect(() => {
-    let filtered = nftData;
+    let filtered = odcData;
 
     switch (filter) {
       case 'onSale':
-        filtered = filtered.filter((nft) => nft.onSale);
+        filtered = filtered.filter((odc) => odc.onSale);
         break;
       case 'notOnSale':
-        filtered = filtered.filter((nft) => !nft.onSale);
+        filtered = filtered.filter((odc) => !odc.onSale);
         break;
     }
 
     switch (sort) {
       case 'saleASC':
-        filtered = [...filtered].sort((nft, nft2) => {
-          return Math.max(nft2.buyNow, nft2.currentBid) - Math.max(nft.buyNow, nft.currentBid);
+        filtered = [...filtered].sort((odc1, odc2) => {
+          return Math.max(odc2.buyNow, odc2.currentBid) - Math.max(odc1.buyNow, odc1.currentBid);
         });
         break;
       case 'saleDESC':
-        filtered = [...filtered].sort((nft, nft2) => {
-          return Math.max(nft.buyNow, nft.currentBid) - Math.max(nft2.buyNow, nft2.currentBid);
+        filtered = [...filtered].sort((odc1, odc2) => {
+          return Math.max(odc1.buyNow, odc1.currentBid) - Math.max(odc2.buyNow, odc2.currentBid);
         });
         break;
     }
 
-    if (inputText !== '') {
-      filtered = nftData;
+    console.log(inputText);
+    if (inputText === '') {
+      filtered = odcData;
     } else {
-      filtered = filtered.filter((nft) =>
-        nft?.appData?.display_name?.toLowerCase().includes(inputText),
+      filtered = filtered.filter((odc) =>
+        odc?.appData?.display_name?.toLowerCase().includes(inputText),
       );
     }
 
-    dispatch({ type: 'filteredNftData', payload: filtered });
-  }, [filter, sort, inputText, nftData]);
+    dispatch({ type: 'filteredOdcData', payload: filtered });
+  }, [filter, sort, inputText, odcData]);
 
   return (
     <Flex fullWidth padding="0" flexFlow="column">
@@ -260,7 +260,7 @@ const Marketplace = () => {
                   />
                   <br />
                   <br />
-                  {nftData?.length > 0 ? (
+                  {odcData?.length > 0 ? (
                     <>
                       <Grid
                         smColumns={1}
@@ -270,16 +270,16 @@ const Marketplace = () => {
                         columns={6}
                         gap={20}
                       >
-                        {filteredNftData.map((nft: NftData) => {
+                        {filteredOdcData.map((odc: OdcData) => {
                           return (
-                            <Link to={`/${nft?.nftID}`} key={nft?.nftID}>
+                            <Link to={`/${odc?.odcID}`} key={odc?.odcID}>
                               <Card
                                 flexFlow="column"
                                 style={{ overflow: 'hidden', height: '100%' }}
                               >
                                 <img
                                   style={{ width: '100%' }}
-                                  src={`https://${canisterId}.raw.ic0.app/-/${nft?.nftID}/preview`}
+                                  src={`https://${canisterId}.raw.ic0.app/-/${odc?.odcID}/preview`}
                                   alt=""
                                 />
                                 <Container style={{ height: '100%' }} size="full" padding="16px">
@@ -294,20 +294,20 @@ const Marketplace = () => {
                                         {collectionData?.display_name}
                                       </p>
                                       <p>
-                                        <b>{nft?.appData?.display_name}</b>
+                                        <b>{odc?.appData?.display_name}</b>
                                       </p>
                                     </div>
                                     <div>
                                       <p style={{ fontSize: '12px', color: '#9A9A9A' }}>Status</p>
                                       <p>
-                                        {nft.onSale ? (
-                                          nft.currentBid === 0 ? (
+                                        {odc.onSale ? (
+                                          odc.currentBid === 0 ? (
                                             <>
-                                              {nft.buyNow} <TokenIcon symbol={nft.token} />
+                                              {odc.buyNow} <TokenIcon symbol={odc.token} />
                                             </>
                                           ) : (
                                             <>
-                                              {nft.currentBid} <TokenIcon symbol={nft.token} />
+                                              {odc.currentBid} <TokenIcon symbol={odc.token} />
                                             </>
                                           )
                                         ) : (
@@ -325,7 +325,7 @@ const Marketplace = () => {
                       <br />
                     </>
                   ) : (
-                    <h5>There are no NFTs in this collection</h5>
+                    <h5>There are no digital certificates in this collection</h5>
                   )}
                 </Container>
               </div>
