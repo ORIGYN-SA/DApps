@@ -161,7 +161,9 @@ const Marketplace = () => {
 
   /** Fetch data from canister when the actor reference is ready */
   useEffect(() => {
-    actor && fetchData(actor);
+    if (actor) {
+      fetchData(actor);
+    }
   }, [actor]);
 
   /** Apply filter and sort to list */
@@ -190,8 +192,8 @@ const Marketplace = () => {
         break;
     }
 
-    if (inputText === '') {
-      filtered = filtered;
+    if (inputText !== '') {
+      filtered = nftData;
     } else {
       filtered = filtered.filter((nft) =>
         nft?.appData?.display_name?.toLowerCase().includes(inputText),
@@ -207,7 +209,7 @@ const Marketplace = () => {
         title="Marketplace"
         tabs={[{ title: 'Marketplace', id: 'Marketplace' }]}
         content={[
-          <Flex fullWidth flexFlow="column">
+          <Flex fullWidth flexFlow="column" key="marketplace-nav">
             <StyledSectionTitle>Marketplace Dashboard</StyledSectionTitle>
             <HR />
             {isLoading ? (
