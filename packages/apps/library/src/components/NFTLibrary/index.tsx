@@ -1,20 +1,22 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Container, Grid, Flex, HR } from '@origyn-sa/origyn-art-ui';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
 import { DeleteLibrary } from '../DeleteLibrary';
 import { UpdateLibrary } from '../UpdateLibrary';
-interface FileType {
+
+interface SimplifiedMeta {
   library_id: string;
   title: string;
   content_type: string;
   location: string;
   location_type: string;
   size: number;
+  isMutable: boolean;
 }
 
 export const NFTLibrary = (props: any) => {
-  
+
   function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -24,51 +26,48 @@ export const NFTLibrary = (props: any) => {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
-  let objLibraryData: FileType;
-  let LocationType: string;
-  let isMutable: string;
-  if (props.libDet) {
-    LocationType = props.libDet.Class.filter((item) => item.name === 'location_type')[0].value.Text;
-    isMutable = props.libDet.Class.filter(
+
+  const [objLibraryData, setObjLibraryData] = React.useState<SimplifiedMeta>({
+    library_id: '',
+    title: '',
+    content_type: '',
+    location: '',
+    location_type: '',
+    size: 0,
+    isMutable: false,
+  });
+
+  const processMetadata = async () => {
+    const metadata = await props.libDet;
+    const libraryId = metadata.Class?.filter((res) => res.name === 'library_id')[0].value.Text;
+    const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
+    const contentType = metadata.Class?.filter((res) => res.name === 'content_type')[0].value.Text;
+    const location = metadata.Class?.filter((res) => res.name === 'location')[0].value.Text;
+    const locationType = metadata.Class?.filter((res) => res.name === 'location_type')[0].value.Text;
+    const size = metadata.Class?.filter((res) => res.name === 'size')[0].value.Nat;
+    let isMutable = false;
+    if (props.libDet.Class.filter(
       (item) => item.name === 'com.origyn.immutable_library',
-    )[0];
-    const library = props.libDet;
-    switch (LocationType) {
-      case 'canister':
-        objLibraryData = {
-          library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
-          title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
-          content_type: library?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
-          location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
-          location_type: LocationType,
-          size: library?.Class.filter((item) => item.name === 'size')[0].value.Nat,
-        };
-        break;
-      case 'collection':
-        objLibraryData = {
-          library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
-          title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
-          content_type: library?.Class.filter((item) => item.name === 'content_type')[0].value.Text,
-          location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
-          location_type: LocationType,
-          size: library?.Class.filter((item) => item.name === 'size')[0].value.Nat,
-        };
-        break;
-      case 'web':
-        objLibraryData = {
-          library_id: library?.Class.filter((item) => item.name === 'library_id')[0].value.Text,
-          title: library?.Class.filter((item) => item.name === 'title')[0].value.Text,
-          content_type: 'URL',
-          location: library?.Class.filter((item) => item.name === 'location')[0].value.Text,
-          location_type: LocationType,
-          size: 0,
-        };
-        break;
+    )[0]) {
+      isMutable = false
+    } else {
+      isMutable = true;
     }
+    setObjLibraryData({
+      library_id: libraryId,
+      title: title,
+      content_type: contentType,
+      location: location,
+      location_type: locationType,
+      size: Number(size),
+      isMutable: isMutable,
+    });
+    console.log(objLibraryData);
   }
 
-  console.log('objLibraryData', objLibraryData);
-
+  useEffect(() => {
+    processMetadata();
+  }, [props.libDet]);
   return (
     <Container padding="16px">
       <Grid columns={1}>
@@ -97,14 +96,13 @@ export const NFTLibrary = (props: any) => {
       <HR marginTop={16} marginBottom={16} />
       {props.loggedIn == true && props.owner == true ? (
         <>
-          {!isMutable ? (
+          {objLibraryData.isMutable ? (
             <>
               <Flex flexFlow="column" justify="center" gap={16}>
                 <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}
                     currentTokenId={props.currentTokenId}
-                    isMutable={isMutable}
                     updateTokenLibraryData={props.updateTokenLibraryData}
                     setOpenLibrarySelectedToken={props.setOpenLibrarySelectedToken}
                     setLibDet={props.setLibDet}
@@ -112,11 +110,11 @@ export const NFTLibrary = (props: any) => {
                 </Flex>
                 <Flex>
                   <UpdateLibrary
-                  tokenId={props.currentTokenId} 
-                  updateLibraryData={props.updateTokenLibraryData}
-                  setOpenLibrary={props.setOpenLibrarySelectedToken}
-                  locationType={objLibraryData.location_type}
-                  metadata = {props.libDet}
+                    tokenId={props.currentTokenId}
+                    updateLibraryData={props.updateTokenLibraryData}
+                    setOpenLibrary={props.setOpenLibrarySelectedToken}
+                    locationType={objLibraryData.location_type}
+                    metadata={props.libDet}
                   />
                 </Flex>
               </Flex>

@@ -20,5 +20,5 @@ export const Layouts = {
     "font/otf": (props) => <LibraryFont source={props} />,
     "font/woff": (props) => <LibraryFont source={props} />,
     "application/pdf": (props) => <LibraryPdf source={props}/>,
-    "URL" : (props) => <LibraryTextHtml source={props} />
+    "web" : (props) => <LibraryTextHtml source={props} />
   };
