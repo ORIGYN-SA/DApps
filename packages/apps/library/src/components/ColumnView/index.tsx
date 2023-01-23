@@ -183,7 +183,6 @@ const ColumnView = () => {
 
   const handleDeta = async (
     lib,
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
     setOpenLibrarySelectedToken(true);
@@ -245,6 +244,13 @@ const ColumnView = () => {
       });
     }
   };
+
+  // Auto refresh after Token Library Update
+  useEffect(
+    () => {
+      handleDeta(tokenLibraryData[selectedMeta], selectedMeta);
+    }, [tokenLibraryData]
+  );
 
   const nftCollection = async () => {
     const { tokenId, canisterId } = await useRoute();
@@ -340,7 +346,7 @@ const ColumnView = () => {
                     {tokenLibraryData?.map((library, index) => (
                       <ListItem
                         itemName={library?.Class[1]?.value?.Text}
-                        onClick={(event) => handleDeta(library, event, index)}
+                        onClick={() => handleDeta(library, index)}
                         index={index}
                         selectedIndex={selectedMeta}
                       />
