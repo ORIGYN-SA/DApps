@@ -193,7 +193,6 @@ const ColumnView = () => {
 
   const showCollectionLevelLibraryData = async (
     lib3,
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
     setLibrary3(lib3);
@@ -245,12 +244,18 @@ const ColumnView = () => {
     }
   };
 
-  // Auto refresh after Token Library Update
+  // Auto refresh after Token Level Library Update
   useEffect(
     () => {
       handleDeta(tokenLibraryData[selectedMeta], selectedMeta);
     }, [tokenLibraryData]
   );
+    // Auto refresh after Collection Level Library Update
+    useEffect(
+      () => {
+        showCollectionLevelLibraryData(collectionLevelLibraryData[selectedLibrary], selectedLibrary);
+      }, [collectionLevelLibraryData]
+    );
 
   const nftCollection = async () => {
     const { tokenId, canisterId } = await useRoute();
@@ -395,7 +400,7 @@ const ColumnView = () => {
                     {collectionLevelLibraryData?.map((library, index) => (
                       <ListItem
                         itemName={library?.Class[1]?.value?.Text}
-                        onClick={(event) => showCollectionLevelLibraryData(library, event, index)}
+                        onClick={() => showCollectionLevelLibraryData(library, index)}
                         index={index}
                         selectedIndex={selectedLibrary}
                       />

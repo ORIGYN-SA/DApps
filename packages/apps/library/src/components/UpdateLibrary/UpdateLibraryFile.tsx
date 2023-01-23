@@ -215,7 +215,6 @@ export const UpdateLibraryFile = ({
             updateLibraryData(nftLibrary);
           }
         }
-        setOpenLibrary(false);
       }
     } catch (e) {
       console.log(e);

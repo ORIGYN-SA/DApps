@@ -15,17 +15,17 @@ interface SimplifiedMeta {
   isMutable: boolean;
 }
 
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 export const NFTLibrary = (props: any) => {
-
-  function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-  }
 
   const [objLibraryData, setObjLibraryData] = React.useState<SimplifiedMeta>({
     library_id: '',
@@ -68,6 +68,7 @@ export const NFTLibrary = (props: any) => {
   useEffect(() => {
     processMetadata();
   }, [props.libDet]);
+
   return (
     <Container padding="16px">
       <Grid columns={1}>
