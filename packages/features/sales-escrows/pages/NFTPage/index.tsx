@@ -328,9 +328,9 @@ export const NFTPage = () => {
                       {currentOpenAuction?.sale_type?.auction?.end_date && (
                         <p className="secondary_color">
                           {BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) <
-                              BigInt(new Date().getTime() * 1e8) ? 
+                              BigInt(new Date().getTime() * 1e6) ? 
                               <span>The sale has ended  {getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</span> 
-                              : <span>The sale will end in {getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</span>}
+                              : <span>{getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</span>}
   
  
                         </p>
@@ -355,7 +355,7 @@ export const NFTPage = () => {
                             )}
                             {principal == verifyOwner ? (
                               BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
-                              BigInt(new Date().getTime() * 1e8) ? (
+                              BigInt(new Date().getTime() * 1e6) ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
