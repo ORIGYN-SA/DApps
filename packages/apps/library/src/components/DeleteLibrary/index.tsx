@@ -169,7 +169,7 @@ export const DeleteLibrary = (props: any) => {
             {inProgress ? (
               <>
                 <Flex>
-                  <h4>Deleting in Progress</h4>
+                  <h4>Deleting...</h4>
                 </Flex>
                 <HR marginTop={16} marginBottom={16} />
                 <Flex>

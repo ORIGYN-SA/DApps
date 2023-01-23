@@ -74,7 +74,7 @@ export const UpdateLibraryWeb = ({
       const updateResponse = await updateLibraryMetadata(tokenId, libraryId, { title: typedTitle, location: typedUrl, read: selectedRead });
 
       if (updateResponse.ok) {
-        if(immutable){
+        if (immutable) {
           setLibraryImmutable(tokenId, libraryId);
           successMsg = 'Library Updated and made immutable';
         }
@@ -134,101 +134,105 @@ export const UpdateLibraryWeb = ({
       </Button>
 
       <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
-        {inProgress ? (
-          <Container padding="16px" size="full">
-            <LinearProgress color="secondary" />
-          </Container>
-        ) : (
-          <Container padding="16px" size={'full'}>
-            <Flex flexFlow="column" gap={16}>
-              <Flex>
-                <h4>Update library file</h4>
-              </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-                <Container size="full">
-                  <Flex flexFlow="column" gap={8}>
-                    <Flex>Update library title</Flex>
-                    <Flex>
-                      <TextInput
-                        label="Library title"
-                        id="title"
-                        placeholder="Enter Library Title"
-                        onChange={getTypedTitle}
-                        value={typedTitle}
-                      />
+        <Container padding="16px" size="full">
+          {inProgress ? (
+            <>
+              <h4>Update in Progress</h4>
+              <br />
+              <LinearProgress color="secondary" />
+            </>
+          ) : (
+            <>
+              <Flex flexFlow="column" gap={16}>
+                <Flex>
+                  <h4>Update library file</h4>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Container size="full">
+                    <Flex flexFlow="column" gap={8}>
+                      <Flex>Update library title</Flex>
+                      <Flex>
+                        <TextInput
+                          label="Library title"
+                          id="title"
+                          placeholder="Enter Library Title"
+                          onChange={getTypedTitle}
+                          value={typedTitle}
+                        />
+                      </Flex>
                     </Flex>
-                  </Flex>
-                </Container>
-              </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-                <Container size="full">
-                  <Flex flexFlow="column" gap={8}>
+                  </Container>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Container size="full">
+                    <Flex flexFlow="column" gap={8}>
 
-                    <Flex>Update library URL</Flex>
-                    <Flex>
-                      <TextInput
-                        label="Library URL"
-                        id="url"
-                        placeholder="Enter Library URL"
-                        onChange={getTypedUrl}
-                        value={typedUrl}
-                      />
+                      <Flex>Update library URL</Flex>
+                      <Flex>
+                        <TextInput
+                          label="Library URL"
+                          id="url"
+                          placeholder="Enter Library URL"
+                          onChange={getTypedUrl}
+                          value={typedUrl}
+                        />
+                      </Flex>
                     </Flex>
-                  </Flex>
-                </Container>
-              </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-                <Container size="full">
-                  <Flex flexFlow="column" gap={8}>
+                  </Container>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Container size="full">
+                    <Flex flexFlow="column" gap={8}>
 
-                    <Flex>Update Read permission</Flex>
+                      <Flex>Update Read permission</Flex>
+                      <Flex>
+                        <Select
+                          selectedOption={{
+                            value: selectedRead,
+                            label: selectedRead,
+                          }}
+                          label="Select"
+                          handleChange={(opt) => {
+                            handleSelectChange(opt.value);
+                          }}
+                          options={readPermissions.map((read) => {
+                            return {
+                              value: read,
+                              label: read,
+                            };
+                          })}
+                        />
+                      </Flex>
+                    </Flex>
+                  </Container>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Flex flexFlow="row" gap={8}>
                     <Flex>
-                      <Select
-                        selectedOption={{
-                          value: selectedRead,
-                          label: selectedRead,
-                        }}
-                        label="Select"
-                        handleChange={(opt) => {
-                          handleSelectChange(opt.value);
-                        }}
-                        options={readPermissions.map((read) => {
-                          return {
-                            value: read,
-                            label: read,
-                          };
-                        })}
+                      <CheckboxInput
+                        name="immutable"
+                        onChange={handleChangeImmutable}
+                        checked={immutable}
                       />
                     </Flex>
+                    <Flex><p>Make this Library <b>immutable</b></p></Flex>
                   </Flex>
-                </Container>
-              </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-                <Flex flexFlow="row" gap={8}>
-                  <Flex>
-                    <CheckboxInput
-                      name="immutable"
-                      onChange={handleChangeImmutable}
-                      checked={immutable}
-                    />
-                  </Flex>
-                  <Flex><p>Make this Library <b>immutable</b></p></Flex>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Button onClick={handleClose}>Back</Button>
+                  <Button onClick={handleSubmit} btnType="filled">
+                    Submit
+                  </Button>
                 </Flex>
               </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-                <Button onClick={handleClose}>Back</Button>
-                <Button onClick={handleSubmit} btnType="filled">
-                  Submit
-                </Button>
-              </Flex>
-            </Flex>
-          </Container>
-        )}
+            </>
+          )}
+        </Container>
       </Modal>
     </>
   );

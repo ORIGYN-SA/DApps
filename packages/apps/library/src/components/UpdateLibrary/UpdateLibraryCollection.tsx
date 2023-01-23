@@ -127,12 +127,15 @@ console.log('meta',metadata);
       </Button>
 
       <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
+      <Container padding="16px" size="full">
         {inProgress ? (
-          <Container padding="16px" size="full">
-            <LinearProgress color="secondary" />
-          </Container>
+             <>
+             <h4>Update in Progress</h4>
+             <br />
+             <LinearProgress color="secondary" />
+           </>
         ) : (
-          <Container padding="16px" size={'full'}>
+          <>
             <Flex flexFlow="column" gap={16}>
               <Flex>
                 <h4>Update library file</h4>
@@ -189,8 +192,9 @@ console.log('meta',metadata);
                 </Button>
               </Flex>
             </Flex>
-          </Container>
+          </>
         )}
+      </Container>
       </Modal>
     </>
   );
