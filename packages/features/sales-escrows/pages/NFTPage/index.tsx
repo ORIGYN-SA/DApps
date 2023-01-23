@@ -327,7 +327,12 @@ export const NFTPage = () => {
                       <HR />
                       {currentOpenAuction?.sale_type?.auction?.end_date && (
                         <p className="secondary_color">
-                          {getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}
+                          {BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) <
+                              BigInt(new Date().getTime() * 1e8) ? 
+                              <span>The sale has ended  {getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</span> 
+                              : <span>The sale will end in {getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</span>}
+  
+ 
                         </p>
                       )}
                       <br />
@@ -337,10 +342,17 @@ export const NFTPage = () => {
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 &&
                               principal != verifyOwner && (
-                                <Button btnType="accent" onClick={() => handleOpen('buyNow')}>
+                              BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
+                              BigInt(new Date().getTime() * 1e8) ? (
+                                <Button btnType="accent" onClick={handleOpen('buyNow')}>
                                   Buy Now
                                 </Button>
-                              )}
+                              ) : (
+                                <Button disabled btnType="outlined">
+                                  Buy Now
+                                </Button>
+                              )
+                            )}
                             {principal == verifyOwner ? (
                               BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
                               BigInt(new Date().getTime() * 1e8) ? (
@@ -353,9 +365,16 @@ export const NFTPage = () => {
                                 </Button>
                               )
                             ) : (
-                              <Button btnType="outlined" onClick={() => handleOpen('bid')}>
-                                Place Bid
-                              </Button>
+                              BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
+                              BigInt(new Date().getTime() * 1e8) ? (
+                                <Button btnType="accent" onClick={handleOpen('bid')}>
+                                  Place Bid
+                                </Button>
+                              ) : (
+                                <Button disabled btnType="outlined">
+                                  Place Bid
+                                </Button>
+                              )
                             )}
                           </>
                         ) : principal == verifyOwner ? (
