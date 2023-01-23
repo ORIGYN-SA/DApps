@@ -5,6 +5,7 @@ import { Principal } from '@dfinity/principal';
 import { createContext, useContext } from 'react';
 import { AuthContextType } from '../types';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 export const AuthContext = createContext<AuthContextType>({
   loggedIn: false,
@@ -70,7 +71,7 @@ const PlugNotification = () => {
   );
 };
 
-export const AuthProvider = ({ children }: any) => {
+export const AuthProvider = ({ children }) => {
   const auth = useAuth();
   return (
     <>
@@ -85,4 +86,8 @@ export const AuthProvider = ({ children }: any) => {
       )}
     </>
   );
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.object
 };
