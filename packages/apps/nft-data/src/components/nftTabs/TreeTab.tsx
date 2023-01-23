@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import pick from 'lodash/pick';
 import { useState } from 'react';
 import { Container, Button, Flex } from '@origyn-sa/origyn-art-ui';
@@ -13,21 +13,21 @@ function Tree({ metadata }: any) {
   let all_index = 0;
   let apps_index: number[] = [0, 0];
   let libraries_index: number[] = [0, 0];
-  const [expanded, setExpanded] = useState<string[]>([]);
-  const [all, setAll] = React.useState(true);
-  const [apps, setApps] = React.useState(false);
-  const [libraries, setLibraries] = React.useState(false);
+  // const [expanded, setExpanded] = useState<string[]>([]);
+  // const [all, setAll] = React.useState(true);
+  // const [apps, setApps] = React.useState(false);
+  // const [libraries, setLibraries] = React.useState(false);
 
-  const init = (start, end) => {
-    let array: [string] = ['0'];
-    array.push(start + '');
-    if (Object.entries(metadata).length) {
-      for (let i = start; i <= end; i++) {
-        array.push(`${i}`);
-      }
-    }
-    return array;
-  };
+  // const init = (start, end) => {
+  //   let array: [string] = ['0'];
+  //   array.push(start + '');
+  //   if (Object.entries(metadata).length) {
+  //     for (let i = start; i <= end; i++) {
+  //       array.push(`${i}`);
+  //     }
+  //   }
+  //   return array;
+  // };
 
   // const handleExpandAll = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setAll(event.target.checked);
@@ -66,13 +66,13 @@ function Tree({ metadata }: any) {
     all_index++;
     return `${all_index}`;
   };
-  const handleToggle = (event, nodeIds) => {
-    setExpanded(nodeIds);
-  };
+  // const handleToggle = (event, nodeIds) => {
+  //   setExpanded(nodeIds);
+  // };
 
-  useEffect(() => {
-    setExpanded([...init(0, all_index)]);
-  }, [metadata]);
+  // useEffect(() => {
+  //   setExpanded([...init(0, all_index)]);
+  // }, [metadata]);
 
   const parseData = (data) => {
     let arr: RenderTree[] = [];
@@ -194,9 +194,7 @@ function Tree({ metadata }: any) {
         <div style={{ marginBottom: '10px' }}>
           {children ? <h5 onClick={handleClick}>{name}</h5> : <span>{name}</span>}
         </div>
-        <ul style={{ paddingLeft: '30px'}}>
-          {showChildren && <Tree treeData={children} />}
-        </ul>
+        <ul style={{ paddingLeft: '30px' }}>{showChildren && <Tree treeData={children} />}</ul>
       </>
     );
   };
@@ -213,18 +211,23 @@ function Tree({ metadata }: any) {
 
   return (
     <Container padding="16px">
-      <Flex flexFow='row' gap={16}>
-      <Button btnType="filled" onClick={handleClose}>Close All</Button>
-      <Button btnType="filled" onClick={handleClose}>Expand All</Button>
-      <Button btnType="filled" onClick={handleClose}>Expand Libraries</Button>
+      <Flex flexFow="row" gap={16}>
+        <Button btnType="filled" onClick={handleClose}>
+          Close All
+        </Button>
+        <Button btnType="filled" onClick={handleClose}>
+          Expand All
+        </Button>
+        <Button btnType="filled" onClick={handleClose}>
+          Expand Libraries
+        </Button>
       </Flex>
-     <br/>
+      <br />
       <div>
-      <h4 onClick={handleClick}>NFT </h4>
-      <br/>
-      {showChildren && <Tree treeData={data.children}/>}
+        <h4 onClick={handleClick}>NFT </h4>
+        <br />
+        {showChildren && <Tree treeData={data.children} />}
       </div>
-      
     </Container>
   );
 }

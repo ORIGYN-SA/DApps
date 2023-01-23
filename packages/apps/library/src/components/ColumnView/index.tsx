@@ -18,9 +18,13 @@ function replaceSelectedTokenInTheUrl(selectedToken: string) {
         if (URL.includes(tokenId)) {
           console.log(tokenId);
           const newUrl = URL.replace(tokenId, selectedToken);
-          window.history.pushState({
-            path: newUrl
-          }, '', newUrl);
+          window.history.pushState(
+            {
+              path: newUrl,
+            },
+            '',
+            newUrl,
+          );
         }
       } catch (e) {
         console.log(e);
@@ -45,7 +49,6 @@ const listStyle = {
 };
 
 const ListItem = (props: ListType) => {
-
   return (
     <Container
       full
@@ -64,9 +67,7 @@ const ListItem = (props: ListType) => {
         }
         onClick={props.onClick}
       >
-        {
-          props.itemName?.length > 24 ? props.itemName.substring(0, 24) + '...' : props.itemName
-        }
+        {props.itemName?.length > 24 ? props.itemName.substring(0, 24) + '...' : props.itemName}
       </div>
     </Container>
   );
@@ -213,7 +214,7 @@ const ColumnView = () => {
   };
 
   const handleAddLibraryAtCollection = async () => {
-    setCurrentTokenId;
+    // setCurrentTokenId;
     setOpenAddLibraryCollectionLevel(!openAddLibraryCollectionLevel);
     setOpenLib(false);
     setOpenLibraryCollectionLevel(false);
@@ -271,7 +272,7 @@ const ColumnView = () => {
   useEffect(() => {
     openSpecificNft();
 
-    useRoute().then(({ canisterId, tokenId }) => {
+    useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
     });
     console.log('actor', actor);
@@ -288,6 +289,11 @@ const ColumnView = () => {
       checkAndSetOwner();
     }
   }, [canisterId]);
+
+  useEffect(() => {
+    console.log('openLibrarySelectedToken', openLibrarySelectedToken);
+    console.log('openLibraryCollectionLevel', openLibraryCollectionLevel);
+  }, [openLibrarySelectedToken, openLibraryCollectionLevel]);
 
   return (
     <>
@@ -315,6 +321,7 @@ const ColumnView = () => {
                 <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
                   {collectionNft?.map((nft, index) => (
                     <ListItem
+                      key={index}
                       itemName={nft}
                       onClick={(event) => handleClickOnSelectedNft(nft, event, index)}
                       index={index}
@@ -339,6 +346,7 @@ const ColumnView = () => {
                     )}
                     {tokenLibraryData?.map((library, index) => (
                       <ListItem
+                        key={index}
                         itemName={library?.Class[1]?.value?.Text}
                         onClick={(event) => handleDeta(library, event, index)}
                         index={index}
@@ -388,6 +396,7 @@ const ColumnView = () => {
                   <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
                     {collectionLevelLibraryData?.map((library, index) => (
                       <ListItem
+                        key={index}
                         itemName={library?.Class[1]?.value?.Text}
                         onClick={(event) => showCollectionLevelLibraryData(library, event, index)}
                         index={index}

@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect } from 'react';
 import { DropzoneArea } from 'mui-file-dropzone';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { Buffer } from 'buffer';
+
 // mint.js
 import {
   OrigynClient,

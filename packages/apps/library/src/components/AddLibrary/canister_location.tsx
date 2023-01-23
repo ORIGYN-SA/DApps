@@ -4,14 +4,8 @@ import { OrigynClient, stageLibraryAsset, getNft, getNftCollectionMeta } from '@
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { useSnackbar } from 'notistack';
-import {
-  Container,
-  TextInput,
-  Button,
-  HR,
-  Flex,
-  CheckboxInput,
-} from '@origyn-sa/origyn-art-ui';
+import { Container, TextInput, Button, HR, Flex, CheckboxInput } from '@origyn-sa/origyn-art-ui';
+import { Buffer } from 'buffer';
 
 export const CanisterLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -60,7 +54,7 @@ export const CanisterLocation = (props: any) => {
       reader.readAsArrayBuffer(file);
     });
   };
-console.log(props);
+  console.log(props);
   const stageLibrary = async () => {
     const { canisterId } = await useRoute();
     await OrigynClient.getInstance().init(true, canisterId, { actor });
@@ -119,8 +113,8 @@ console.log(props);
     }
     props.setInProgress(false);
     props.isOpen(false);
-    
-    if(props.tokenId==""){
+
+    if (props.tokenId == '') {
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
         props.updateData(
@@ -129,7 +123,7 @@ console.log(props);
           })[0].value.Array.thawed,
         );
       });
-    }else{
+    } else {
       //Update the library data for the Token
       getNft(props.tokenId).then((r) => {
         props.updateData(
@@ -181,7 +175,11 @@ console.log(props);
                   checked={immutable}
                 />
               </Flex>
-              <Flex><p>Make this Library <b>immutable</b></p></Flex>
+              <Flex>
+                <p>
+                  Make this Library <b>immutable</b>
+                </p>
+              </Flex>
             </Flex>
           </Flex>
 

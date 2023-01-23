@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  Flex,
-  Select,
-  Icons,
-  SearchInput,
-  TextInput,
-  Modal,
-  Container,
-} from '@origyn-sa/origyn-art-ui';
+import { Button, Flex, Select, Icons, TextInput, Modal, Container } from '@origyn-sa/origyn-art-ui';
 import styled from 'styled-components';
 
 const StyledFilter = styled.div`
@@ -29,20 +20,33 @@ const StyledFilter = styled.div`
   }
 `;
 
+type Option = {
+  label: string;
+  value: string;
+};
+
+type FilterPropTypes = {
+  onChangeFilter: (value: string) => void;
+  onChangeSort: (value: string) => void;
+  onInput: (value: string) => void;
+  initialFilterValue?: string;
+  initialSortValue?: string;
+};
+
 const Filter = ({
   onChangeFilter,
   onChangeSort,
   onInput,
   initialFilterValue = '',
   initialSortValue = '',
-}) => {
-  const filterOptions = [
+}: FilterPropTypes) => {
+  const filterOptions: Option[] = [
     { label: 'All', value: 'all' },
     { label: 'On Sale', value: 'onSale' },
     { label: 'Not On Sale', value: 'notOnSale' },
   ];
 
-  const sortOptions = [
+  const sortOptions: Option[] = [
     { label: 'Sale Price ASC', value: 'saleASC' },
     { label: 'Sale Price DESC', value: 'saleDESC' },
   ];
@@ -68,7 +72,7 @@ const Filter = ({
                 inputSize="small"
                 placeholder="Filter"
                 selectedOption={filter}
-                handleChange={(opt) => {
+                handleChange={(opt: Option) => {
                   onChangeFilter(opt.value);
                   setFilter(opt);
                 }}

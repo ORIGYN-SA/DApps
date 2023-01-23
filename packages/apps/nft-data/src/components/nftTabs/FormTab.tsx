@@ -79,135 +79,133 @@ const FormTab = ({ metadata }: any) => {
       <HR />
       <br />
       <br />
-      {apps?.map((app, i, index) => {
-        return (
-          <Grid columns={3} key={`${app}+${index}`}>
-            <Grid column={1}>
-              <h3>{'data'}</h3>
-            </Grid>
-            <Grid column={2}>
-              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-                <b>
-                  <span>{'app_id'}</span>
-                </b>
-                <span>{app.app_id}</span>
-              </Flex>
-              <HR />
-
-              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-                <b>
-                  <span>{'read'}</span>
-                </b>
-                <span>{app.read}</span>
-              </Flex>
-              <HR />
-
-              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-                <b>
-                  <span>{'type'}</span>
-                </b>
-                <span>{app.write.type}</span>
-              </Flex>
-              <HR />
-              {app.write.list.map((item) => (
-                <Flex
-                  flexFlow="row"
-                  gap={32}
-                  padding={16}
-                  justify="space-between"
-                  key={`${item}+${index}`}
-                >
-                  <b>
-                    <span>{'write'}</span>
-                  </b>
-                  <span>{item}</span>
-                </Flex>
-              ))}
-
-              <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-                <b>
-                  <span>{'type'}</span>
-                </b>
-                <span>{app.permissions.type}</span>
-              </Flex>
-
-              <HR />
-              {app.permissions.list.map((item) => (
-                <Flex
-                  flexFlow="row"
-                  gap={32}
-                  padding={16}
-                  justify="space-between"
-                  key={`${item}+${index}`}
-                >
-                  <b>
-                    <span>{'permissions'}</span>
-                  </b>
-                  <span>{item} </span>
-                </Flex>
-              ))}
-
-              <br />
-              <br />
-              {/* //------------------------------- */}
-
-              <br />
-              {Object.keys(app.data).map((item, i) => (
-                <>
-                  {' '}
-                  <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-                    <b>
-                      {' '}
-                      <span>{item} </span>
-                    </b>
-
-                    <span>{JSON.stringify(app.data[item])}</span>
-                  </Flex>
-                  {i < Object.keys(app.data).length - 1 ? <HR /> : null}
-                </>
-              ))}
-
-              <br />
-              <br />
-
-              {/* //----------------------- */}
-            </Grid>
+      {apps?.map((app, appIndex) => (
+        <Grid columns={3} key={`app-${appIndex}`}>
+          <Grid column={1}>
+            <h3>{'data'}</h3>
           </Grid>
-        );
-      })}
+          <Grid column={2}>
+            <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+              <b>
+                <span>{'app_id'}</span>
+              </b>
+              <span>{app.app_id}</span>
+            </Flex>
+            <HR />
+
+            <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+              <b>
+                <span>{'read'}</span>
+              </b>
+              <span>{app.read}</span>
+            </Flex>
+            <HR />
+
+            <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+              <b>
+                <span>{'type'}</span>
+              </b>
+              <span>{app.write.type}</span>
+            </Flex>
+            <HR />
+            {app.write.list.map((item, writeIndex) => (
+              <Flex
+                flexFlow="row"
+                gap={32}
+                padding={16}
+                justify="space-between"
+                key={`write-${appIndex}-${writeIndex}`}
+              >
+                <b>
+                  <span>{'write'}</span>
+                </b>
+                <span>{item}</span>
+              </Flex>
+            ))}
+
+            <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+              <b>
+                <span>{'type'}</span>
+              </b>
+              <span>{app.permissions.type}</span>
+            </Flex>
+
+            <HR />
+            {app.permissions.list.map((item, permIndex) => (
+              <Flex
+                flexFlow="row"
+                gap={32}
+                padding={16}
+                justify="space-between"
+                key={`perm-${appIndex}-${permIndex}`}
+              >
+                <b>
+                  <span>{'permissions'}</span>
+                </b>
+                <span>{item} </span>
+              </Flex>
+            ))}
+
+            <br />
+            <br />
+            {/* //------------------------------- */}
+
+            <br />
+            {Object.keys(app.data).map((item, propIndex) => (
+              <React.Fragment key={`prop-${appIndex}-${propIndex}`}>
+                {' '}
+                <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                  <b>
+                    {' '}
+                    <span>{item} </span>
+                  </b>
+
+                  <span>{JSON.stringify(app.data[item])}</span>
+                </Flex>
+                {propIndex < Object.keys(app.data).length - 1 ? (
+                  <HR key={`prop-hr-${appIndex}-${propIndex}`} />
+                ) : null}
+              </React.Fragment>
+            ))}
+
+            <br />
+            <br />
+
+            {/* //----------------------- */}
+          </Grid>
+        </Grid>
+      ))}
       <HR />
-      <br/>
-      <br/>
+      <br />
+      <br />
 
       <Flex flexFlow="row" gap={32} padding={16} align="flex-start">
         <h3>Libraries</h3>
       </Flex>
 
+      {library?.map((lib, libraryIndex) => (
+        <Grid key={`library-${libraryIndex}`} columns={3}>
+          <Grid column={1}></Grid>
+          <Grid column={2}>
+            {Object.keys(lib).map((item, propIndex) => (
+              <React.Fragment key={`library-${libraryIndex}-${propIndex}`}>
+                <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
+                  <b>
+                    <span>{item}</span>
+                  </b>
+                  <span>{lib[item]}</span>
+                </Flex>
 
-      {library?.map((lib, i, index) => {
-        let length = Object.keys(lib).length;
-        return (
-          <Grid key={`${lib}+${index}`} columns={3}>
-            <Grid column={1}></Grid>
-            <Grid column={2}>
-              {Object.keys(lib).map((item, j) => (
-                <>
-                  <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
-                    <b>
-                      <span>{item}</span>
-                    </b>
-                    <span>{lib[item]}</span>
-                  </Flex>
-
-                  {j < length - 1 ? <HR /> : null}
-                </>
-              ))}
-              <br />
-              <br />
-            </Grid>
+                {propIndex < Object.keys(lib).length - 1 ? (
+                  <HR key={`library-hr-${libraryIndex}-${propIndex}`} />
+                ) : null}
+              </React.Fragment>
+            ))}
+            <br />
+            <br />
           </Grid>
-        );
-      })}
+        </Grid>
+      ))}
     </Container>
   );
 };
