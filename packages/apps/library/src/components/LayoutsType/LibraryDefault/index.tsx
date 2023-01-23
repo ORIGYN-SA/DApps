@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
-import { Flex, Tooltip, HR } from '@origyn-sa/origyn-art-ui';
+import { Flex, HR } from '@origyn-sa/origyn-art-ui';
 
-const LibraryDefault = (props: any) => {
+export const LibraryDefault = (props: any) => {
   const [canisterId, setCanisterId] = useState('');
   const [link, setLink] = useState('');
   const formattedLink = async () => {
@@ -25,18 +25,15 @@ const LibraryDefault = (props: any) => {
   return (
     <>
       <Flex flexFlow="row" justify="center">
-        <Tooltip text="Open link">
           <a
             style={{
               fontSize: 12,
             }}
             href={link}
             target="_blank"
-            rel="noreferrer"
           >
             {link}
           </a>
-        </Tooltip>
       </Flex>
       <HR marginTop={16} marginBottom={16} />
     </>
