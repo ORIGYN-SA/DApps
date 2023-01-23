@@ -2,7 +2,12 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
-import { OrigynClient, updateLibraryMetadata, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
+import {
+  OrigynClient,
+  updateLibraryMetadata,
+  getNftCollectionMeta,
+  getNft,
+} from '@origyn-sa/mintjs';
 import { Button, Modal, Container, Flex, HR, TextInput, Select } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
@@ -31,7 +36,7 @@ export const UpdateLibraryCollection = ({
   const [open, setOpen] = useState(false);
   const [inProgress, setInProgress] = useState(false);
   const [typedTitle, setTypedTitle] = useState<string>(title);
-  const [selectedRead,setSelectedRead] = useState<string>(read);
+  const [selectedRead, setSelectedRead] = useState<string>(read);
 
   const getLibraries = async () => {
     const { canisterId } = await useRoute();
@@ -64,23 +69,26 @@ export const UpdateLibraryCollection = ({
   const handleSelectChange = (val) => {
     setSelectedRead(val);
   };
-  const handleSelectChangeLibrary = (val) => {
-    setSelectedRead(val);
-  };
+  // const handleSelectChangeLibrary = (val) => {
+  //   setSelectedRead(val);
+  // };
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-console.log('meta',metadata);
+  console.log('meta', metadata);
   const handleSubmit = async () => {
     const { canisterId } = await useRoute();
     setInProgress(true);
 
     try {
       await OrigynClient.getInstance().init(true, canisterId, { actor });
-      const updateResponse = await updateLibraryMetadata(tokenId, libraryId,{title: typedTitle, read: selectedRead} );
+      const updateResponse = await updateLibraryMetadata(tokenId, libraryId, {
+        title: typedTitle,
+        read: selectedRead,
+      });
       console.log(updateResponse);
       if (updateResponse.ok) {
         // Display a success message - SNACKBAR
@@ -118,8 +126,6 @@ console.log('meta',metadata);
     setOpenLibrary(false);
   };
 
-
-
   return (
     <>
       <Button onClick={handleClickOpen} btnType="filled">
@@ -140,45 +146,44 @@ console.log('meta',metadata);
               <HR marginBottom={16} marginTop={16} />
               <Flex>
                 <Container size="full">
-                <Flex flexFlow="column" gap={8}>
-                  <Flex>Update library title</Flex>
-                  <Flex>
-                    <TextInput
-                      label="Library title"
-                      id="title"
-                      placeholder="Enter Library Title"
-                      onChange={getTypedTitle}
-                      value={typedTitle}
-                    />
+                  <Flex flexFlow="column" gap={8}>
+                    <Flex>Update library title</Flex>
+                    <Flex>
+                      <TextInput
+                        label="Library title"
+                        id="title"
+                        placeholder="Enter Library Title"
+                        onChange={getTypedTitle}
+                        value={typedTitle}
+                      />
+                    </Flex>
                   </Flex>
-                </Flex>
                 </Container>
               </Flex>
               <HR marginBottom={16} marginTop={16} />
               <Flex>
-              <Container size="full">
-                <Flex flexFlow="column" gap={8}>
-                
-                  <Flex>Update Read permission</Flex>
-                  <Flex>
-                  <Select
-            selectedOption={{
-              value: selectedRead,
-              label: selectedRead,
-            }}
-            label="Select"
-            handleChange={(opt) => {
-              handleSelectChange(opt.value);
-            }}
-            options={readPermissions.map((read) => {
-              return {
-                value: read,
-                label: read,
-              };
-            })}
-          />
+                <Container size="full">
+                  <Flex flexFlow="column" gap={8}>
+                    <Flex>Update Read permission</Flex>
+                    <Flex>
+                      <Select
+                        selectedOption={{
+                          value: selectedRead,
+                          label: selectedRead,
+                        }}
+                        label="Select"
+                        handleChange={(opt) => {
+                          handleSelectChange(opt.value);
+                        }}
+                        options={readPermissions.map((read) => {
+                          return {
+                            value: read,
+                            label: read,
+                          };
+                        })}
+                      />
+                    </Flex>
                   </Flex>
-                </Flex>
                 </Container>
               </Flex>
               <HR marginBottom={16} marginTop={16} />
