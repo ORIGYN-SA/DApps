@@ -70,7 +70,7 @@ const PlugNotification = () => {
   );
 };
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }: any) => {
   const auth = useAuth();
   return (
     <>

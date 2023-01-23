@@ -15,7 +15,6 @@ const Home = () => {
 
     OrigynClient.getInstance().init(true, route.canisterId);
     const response = await getNftCollectionMeta([]);
-    console.log('response', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
@@ -35,7 +34,6 @@ const Home = () => {
       try {
         const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
         const result = await response.text();
-        console.log(result);
         setNFTData(JSON.parse(result.replace(':,', ':"",')));
       } catch (err) {
         console.log(err);
