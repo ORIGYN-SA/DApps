@@ -343,8 +343,8 @@ export const NFTPage = () => {
                               ?.length > 0 &&
                               principal != verifyOwner && (
                               BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
-                              BigInt(new Date().getTime() * 1e8) ? (
-                                <Button btnType="accent" onClick={handleOpen('buyNow')}>
+                              BigInt(new Date().getTime() * 1e6) ? (
+                                <Button btnType="accent" onClick={() => handleOpen('buyNow')}>
                                   Buy Now
                                 </Button>
                               ) : (
@@ -366,8 +366,8 @@ export const NFTPage = () => {
                               )
                             ) : (
                               BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
-                              BigInt(new Date().getTime() * 1e8) ? (
-                                <Button btnType="accent" onClick={handleOpen('bid')}>
+                              BigInt(new Date().getTime() * 1e6) ? (
+                                <Button btnType="outlined" onClick={() => handleOpen('bid')}>
                                   Place Bid
                                 </Button>
                               ) : (
