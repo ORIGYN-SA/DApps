@@ -2,6 +2,7 @@ import React from 'react';
 import pick from 'lodash/pick';
 import { useState } from 'react';
 import { Container, Button, Flex } from '@origyn-sa/origyn-art-ui';
+import PropTypes from 'prop-types';
 
 interface RenderTree {
   id: string;
@@ -183,6 +184,10 @@ function Tree({ metadata }: any) {
     );
   };
 
+  Tree.propTypes = {
+    treeData: PropTypes.array
+  };
+
   const TreeNode = ({ node }) => {
     const { children, name } = node;
     const [showChildren, setShowChildren] = useState(false);
@@ -197,6 +202,10 @@ function Tree({ metadata }: any) {
         <ul style={{ paddingLeft: '30px' }}>{showChildren && <Tree treeData={children} />}</ul>
       </>
     );
+  };
+
+  TreeNode.propTypes = {
+    node: PropTypes.object
   };
 
   const [showChildren, setShowChildren] = useState(false);
