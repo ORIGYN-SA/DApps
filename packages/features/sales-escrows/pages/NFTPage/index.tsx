@@ -153,6 +153,10 @@ export const NFTPage = () => {
     }
   };
 
+  const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
+
+  const nftEndSale = currentOpenAuction?.sale_type?.auction?.end_date;
+
   const verifyOwner = currentNFT?.owner;
 
   const fetchNft = () => {
@@ -325,9 +329,11 @@ export const NFTPage = () => {
                         )}
                       </Flex>
                       <HR />
-                      {currentOpenAuction?.sale_type?.auction?.end_date && (
+                      {nftEndSale && (
                         <p className="secondary_color">
-                          {getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}
+                          {!nftEndSale || BigInt(Number(nftEndSale)) < currentTimeInNanos ? 
+                              <span>The sale has ended  {getDiffInDays(nftEndSale)}</span> 
+                              : <span>{getDiffInDays(nftEndSale)}</span>}
                         </p>
                       )}
                       <br />
@@ -337,13 +343,18 @@ export const NFTPage = () => {
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 &&
                               principal != verifyOwner && (
+                                BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={() => handleOpen('buyNow')}>
                                   Buy Now
                                 </Button>
-                              )}
+                              ) : (
+                                <Button disabled btnType="outlined">
+                                  Buy Now
+                                </Button>
+                              )
+                            )}
                             {principal == verifyOwner ? (
-                              BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
-                              BigInt(new Date().getTime() * 1e8) ? (
+                              BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
@@ -353,9 +364,15 @@ export const NFTPage = () => {
                                 </Button>
                               )
                             ) : (
-                              <Button btnType="outlined" onClick={() => handleOpen('bid')}>
-                                Place Bid
-                              </Button>
+                              BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
+                                <Button btnType="outlined" onClick={() => handleOpen('bid')}>
+                                  Place Bid
+                                </Button>
+                              ) : (
+                                <Button disabled btnType="outlined">
+                                  Place Bid
+                                </Button>
+                              )
                             )}
                           </>
                         ) : principal == verifyOwner ? (
@@ -363,7 +380,7 @@ export const NFTPage = () => {
                             Start an Auction
                           </Button>
                         ) : (
-                          // ((BigInt(parseInt(currentOpenAuction?.sale_type?.auction?.end_date)) > BigInt(new Date().getTime())) ?
+                          // ((BigInt(parseInt(nftEndSale)) > BigInt(new Date().getTime())) ?
                           // (<Button btnType='primary' disabled onClick={handleEscrow}>Make an Offer</Button>) :
                           <Button btnType="accent" onClick={handleEscrow}>
                             Make an Offer
