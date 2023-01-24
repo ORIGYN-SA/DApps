@@ -153,6 +153,10 @@ export const NFTPage = () => {
     }
   };
 
+  const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
+
+  const nftEndSale = BigInt(Number( 9 * 1e30));
+
   const verifyOwner = currentNFT?.owner;
 
   const fetchNft = () => {
@@ -327,8 +331,7 @@ export const NFTPage = () => {
                       <HR />
                       {currentOpenAuction?.sale_type?.auction?.end_date && (
                         <p className="secondary_color">
-                          {BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) <
-                              BigInt(new Date().getTime() * 1e6) ? 
+                          {nftEndSale < currentTimeInNanos ? 
                               <span>The sale has ended  {getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</span> 
                               : <span>{getDiffInDays(currentOpenAuction?.sale_type?.auction?.end_date)}</span>}
   
@@ -342,8 +345,7 @@ export const NFTPage = () => {
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 &&
                               principal != verifyOwner && (
-                              BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
-                              BigInt(new Date().getTime() * 1e6) ? (
+                                nftEndSale > currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={() => handleOpen('buyNow')}>
                                   Buy Now
                                 </Button>
@@ -354,8 +356,7 @@ export const NFTPage = () => {
                               )
                             )}
                             {principal == verifyOwner ? (
-                              BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
-                              BigInt(new Date().getTime() * 1e6) ? (
+                              nftEndSale > currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
@@ -365,8 +366,7 @@ export const NFTPage = () => {
                                 </Button>
                               )
                             ) : (
-                              BigInt(Number(currentOpenAuction?.sale_type?.auction?.end_date)) >
-                              BigInt(new Date().getTime() * 1e6) ? (
+                              nftEndSale > currentTimeInNanos ? (
                                 <Button btnType="outlined" onClick={() => handleOpen('bid')}>
                                   Place Bid
                                 </Button>
