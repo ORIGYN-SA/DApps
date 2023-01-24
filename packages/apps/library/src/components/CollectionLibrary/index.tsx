@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
@@ -26,8 +26,7 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 export const CollectionLibrary = (props: any) => {
-
-    const [objLibraryData, setObjLibraryData] = React.useState<SimplifiedMeta>({
+  const [objLibraryData, setObjLibraryData] = React.useState<SimplifiedMeta>({
     library_id: '',
     title: '',
     content_type: '',
@@ -37,19 +36,18 @@ export const CollectionLibrary = (props: any) => {
     isMutable: false,
   });
 
-    const processMetadata = async () => {
+  const processMetadata = async () => {
     const metadata = await props.library3;
     const libraryId = metadata.Class?.filter((res) => res.name === 'library_id')[0].value.Text;
     const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
     const contentType = metadata.Class?.filter((res) => res.name === 'content_type')[0].value.Text;
     const location = metadata.Class?.filter((res) => res.name === 'location')[0].value.Text;
-    const locationType = metadata.Class?.filter((res) => res.name === 'location_type')[0].value.Text;
+    const locationType = metadata.Class?.filter((res) => res.name === 'location_type')[0].value
+      .Text;
     const size = metadata.Class?.filter((res) => res.name === 'size')[0].value.Nat;
     let isMutable = false;
-    if (metadata.Class.filter(
-      (item) => item.name === 'com.origyn.immutable_library',
-    )[0]) {
-      isMutable = false
+    if (metadata.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0]) {
+      isMutable = false;
     } else {
       isMutable = true;
     }
@@ -63,7 +61,7 @@ export const CollectionLibrary = (props: any) => {
       isMutable: isMutable,
     });
     console.log(objLibraryData);
-  }
+  };
 
   useEffect(() => {
     processMetadata();
@@ -94,7 +92,7 @@ export const CollectionLibrary = (props: any) => {
           <span style={{ color: 'grey' }}>{objLibraryData.location_type}</span>
         </Grid>
       </Grid>
-      <HR marginTop={16} marginBottom={16}/>
+      <HR marginTop={16} marginBottom={16} />
       {props.loggedIn == true && props.owner == true ? (
         <>
           {objLibraryData.isMutable ? (
@@ -112,11 +110,11 @@ export const CollectionLibrary = (props: any) => {
                 </Flex>
                 <Flex>
                   <UpdateLibrary
-                  tokenId={''} 
-                  updateLibraryData={props.updateCollectionLevelLibraryData}
-                  setOpenLibrary={props.setOpenLibraryCollectionLevel}
-                  locationType={objLibraryData.location_type}
-                  metadata = {props.library3}
+                    tokenId={''}
+                    updateLibraryData={props.updateCollectionLevelLibraryData}
+                    setOpenLibrary={props.setOpenLibraryCollectionLevel}
+                    locationType={objLibraryData.location_type}
+                    metadata={props.library3}
                   />
                 </Flex>
               </Flex>

@@ -70,7 +70,6 @@ export const DeleteLibrary = (props: any) => {
     await OrigynClient.getInstance().init(true, canisterId, { actor });
     setInProgress(true);
     if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
-      
       for (let i in tokensThatUseSelectedLibrary) {
         try {
           const responseFromNftLib = await deleteLibraryAsset(

@@ -14,7 +14,7 @@ const LibraryVideo = (props: any) => {
     if (canisterId) {
       formattedLink();
     }
-  }, [canisterId,props.source]);
+  }, [canisterId, props.source]);
 
   useEffect(() => {
     useRoute().then(({ canisterId, tokenId }) => {

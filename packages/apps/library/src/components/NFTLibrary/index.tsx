@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Container, Grid, Flex, HR } from '@origyn-sa/origyn-art-ui';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
@@ -26,7 +26,6 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 export const NFTLibrary = (props: any) => {
-
   const [objLibraryData, setObjLibraryData] = React.useState<SimplifiedMeta>({
     library_id: '',
     title: '',
@@ -43,13 +42,12 @@ export const NFTLibrary = (props: any) => {
     const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
     const contentType = metadata.Class?.filter((res) => res.name === 'content_type')[0].value.Text;
     const location = metadata.Class?.filter((res) => res.name === 'location')[0].value.Text;
-    const locationType = metadata.Class?.filter((res) => res.name === 'location_type')[0].value.Text;
+    const locationType = metadata.Class?.filter((res) => res.name === 'location_type')[0].value
+      .Text;
     const size = metadata.Class?.filter((res) => res.name === 'size')[0].value.Nat;
     let isMutable = false;
-    if (props.libDet.Class.filter(
-      (item) => item.name === 'com.origyn.immutable_library',
-    )[0]) {
-      isMutable = false
+    if (props.libDet.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0]) {
+      isMutable = false;
     } else {
       isMutable = true;
     }
@@ -63,7 +61,7 @@ export const NFTLibrary = (props: any) => {
       isMutable: isMutable,
     });
     console.log(objLibraryData);
-  }
+  };
 
   useEffect(() => {
     processMetadata();

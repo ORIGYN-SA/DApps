@@ -18,9 +18,13 @@ function replaceSelectedTokenInTheUrl(selectedToken: string) {
         if (URL.includes(tokenId)) {
           console.log(tokenId);
           const newUrl = URL.replace(tokenId, selectedToken);
-          window.history.pushState({
-            path: newUrl
-          }, '', newUrl);
+          window.history.pushState(
+            {
+              path: newUrl,
+            },
+            '',
+            newUrl,
+          );
         }
       } catch (e) {
         console.log(e);
@@ -45,7 +49,6 @@ const listStyle = {
 };
 
 const ListItem = (props: ListType) => {
-
   return (
     <Container
       full
@@ -64,9 +67,7 @@ const ListItem = (props: ListType) => {
         }
         onClick={props.onClick}
       >
-        {
-          props.itemName?.length > 24 ? props.itemName.substring(0, 24) + '...' : props.itemName
-        }
+        {props.itemName?.length > 24 ? props.itemName.substring(0, 24) + '...' : props.itemName}
       </div>
     </Container>
   );
@@ -181,20 +182,14 @@ const ColumnView = () => {
     setOpenAddLibrary(false);
   };
 
-  const handleDeta = async (
-    lib,
-    index: number,
-  ) => {
+  const handleDeta = async (lib, index: number) => {
     setOpenLibrarySelectedToken(true);
     setLibDet(lib);
     setSelectedMeta(index);
     setOpenAddLibrary(false);
   };
 
-  const showCollectionLevelLibraryData = async (
-    lib3,
-    index: number,
-  ) => {
+  const showCollectionLevelLibraryData = async (lib3, index: number) => {
     setLibrary3(lib3);
     setSelectedLibrary(index);
     setOpenLibraryCollectionLevel(true);
@@ -245,17 +240,13 @@ const ColumnView = () => {
   };
 
   // Auto refresh after Token Level Library Update
-  useEffect(
-    () => {
-      handleDeta(tokenLibraryData[selectedMeta], selectedMeta);
-    }, [tokenLibraryData]
-  );
-    // Auto refresh after Collection Level Library Update
-    useEffect(
-      () => {
-        showCollectionLevelLibraryData(collectionLevelLibraryData[selectedLibrary], selectedLibrary);
-      }, [collectionLevelLibraryData]
-    );
+  useEffect(() => {
+    handleDeta(tokenLibraryData[selectedMeta], selectedMeta);
+  }, [tokenLibraryData]);
+  // Auto refresh after Collection Level Library Update
+  useEffect(() => {
+    showCollectionLevelLibraryData(collectionLevelLibraryData[selectedLibrary], selectedLibrary);
+  }, [collectionLevelLibraryData]);
 
   const nftCollection = async () => {
     const { tokenId, canisterId } = await useRoute();

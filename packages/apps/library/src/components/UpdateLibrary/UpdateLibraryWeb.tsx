@@ -2,8 +2,23 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
-import { OrigynClient, updateLibraryMetadata, getNftCollectionMeta, getNft, setLibraryImmutable } from '@origyn-sa/mintjs';
-import { Button, Modal, Container, Flex, HR, TextInput, Select, CheckboxInput } from '@origyn-sa/origyn-art-ui';
+import {
+  OrigynClient,
+  updateLibraryMetadata,
+  getNftCollectionMeta,
+  getNft,
+  setLibraryImmutable,
+} from '@origyn-sa/mintjs';
+import {
+  Button,
+  Modal,
+  Container,
+  Flex,
+  HR,
+  TextInput,
+  Select,
+  CheckboxInput,
+} from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 type Props = {
@@ -66,12 +81,15 @@ export const UpdateLibraryWeb = ({
     setInProgress(true);
 
     try {
-
       let successMsg = 'Web Library Updated';
 
       await OrigynClient.getInstance().init(true, canisterId, { actor });
 
-      const updateResponse = await updateLibraryMetadata(tokenId, libraryId, { title: typedTitle, location: typedUrl, read: selectedRead });
+      const updateResponse = await updateLibraryMetadata(tokenId, libraryId, {
+        title: typedTitle,
+        location: typedUrl,
+        read: selectedRead,
+      });
 
       if (updateResponse.ok) {
         if (immutable) {
@@ -125,8 +143,6 @@ export const UpdateLibraryWeb = ({
     }
   };
 
-
-
   return (
     <>
       <Button onClick={handleClickOpen} btnType="filled">
@@ -168,7 +184,6 @@ export const UpdateLibraryWeb = ({
                 <Flex>
                   <Container size="full">
                     <Flex flexFlow="column" gap={8}>
-
                       <Flex>Update library URL</Flex>
                       <Flex>
                         <TextInput
@@ -186,7 +201,6 @@ export const UpdateLibraryWeb = ({
                 <Flex>
                   <Container size="full">
                     <Flex flexFlow="column" gap={8}>
-
                       <Flex>Update Read permission</Flex>
                       <Flex>
                         <Select
@@ -219,7 +233,11 @@ export const UpdateLibraryWeb = ({
                         checked={immutable}
                       />
                     </Flex>
-                    <Flex><p>Make this Library <b>immutable</b></p></Flex>
+                    <Flex>
+                      <p>
+                        Make this Library <b>immutable</b>
+                      </p>
+                    </Flex>
                   </Flex>
                 </Flex>
                 <HR marginBottom={16} marginTop={16} />
