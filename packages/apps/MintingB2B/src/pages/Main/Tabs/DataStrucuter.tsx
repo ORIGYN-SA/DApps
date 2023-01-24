@@ -107,7 +107,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
 
       <br />
       <StyledSectionTitle>
-        <Flex flexFlow="row" justify="space-between">
+        <Flex flexFlow="row" fullWidth={true} justify="space-between">
           <div>
             <h5>Manage Existing Data Fields</h5>
             <br />
@@ -124,7 +124,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
         </Flex>
       </StyledSectionTitle>
       <br />
-      <Container padding="26px">
+      <Container padding="0px 24px 24px 24px">
         {isLoading ? (
           <LoadingContainer />
         ) : (
