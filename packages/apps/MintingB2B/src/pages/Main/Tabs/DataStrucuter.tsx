@@ -139,24 +139,19 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
         <CustomTable
         cells={tableCells}
 
-        rows={array.map((row) => {
+        rows={dataStructure.map((row) => {
           return {
             name: row.name,
             label: row.label,
             type:row.type,
             inputType: row.inputType,
-            actions:row.actions,
+            actions:<Button btnType='filled' onClick={removeData}>Delete</Button>,
           }
         })}
         />
-          {/* <DataStructureList
-            key="3"
-            items={dataStructure}
-            onRemoveClick={removeData}
-          />
           <AddDataStructure
             handleAdd={addData}
-          /> */}
+          /> 
         </>
       )}
       </Container>
