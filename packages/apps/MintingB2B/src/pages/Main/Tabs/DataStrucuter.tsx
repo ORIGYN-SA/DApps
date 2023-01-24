@@ -1,36 +1,40 @@
 import React from 'react';
-import { Container, HR, Grid, Flex, Select, TextInput, Button } from '@origyn-sa/origyn-art-ui';
+import { Container, HR, Grid, Flex, Select, TextInput, Button, CustomTable } from '@origyn-sa/origyn-art-ui';
 import { LoadingContainer } from '@dapp/features-components';
 import { DataStructureList } from '../../../components/lists/DataStructureList'
 import { AddDataStructure } from '../../../components/forms/AddDataStructure'
 import styled from 'styled-components'
+import { array } from 'yup/lib/locale';
 
-export const DataStructure = ({ isLoading, dataStructure, removeData, addData }: Props) => {
-
-  const StyledSectionTitle = styled.div`
-  margin: 48px 24px;
+const StyledSectionTitle = styled.div`
+margin: 48px 24px;
+width: 70%
 `
 
 const CustomGrid = styled(Grid)`
-  grid-template-columns: 4fr 8fr;
-  gap: 120px;
+grid-template-columns: 4fr 8fr;
+gap: 120px;
 `
+
+export const DataStructure = ({ isLoading, dataStructure, removeData, addData }: Props) => {
+
+
 
   console.log(dataStructure)
   return (
     <>
     <Grid columns={2}>
       <Grid column={1}>
-    <StyledSectionTitle>Below you can add or subtract custom fields that are displayed in the Minter's Certificate form.</StyledSectionTitle>
+    <StyledSectionTitle className='secondary_color'>Below you can add or subtract custom fields that are displayed in the Minter's Certificate form.</StyledSectionTitle>
     </Grid>
     </Grid>
-      <HR marginBottom={32}/>
-    <Container padding="16px">
+      <HR marginBottom={24}/>
+    <Container padding="24px">
     <CustomGrid>
           <div>
             <h6>Select Template Type</h6>
             <br/>
-            <p>Select from our predefined templates or 
+            <p className='secondary_color'>Select from our predefined templates or 
               build your own based on the project you are 
               creating certificates for.</p>
           </div>
@@ -51,7 +55,8 @@ const CustomGrid = styled(Grid)`
       <CustomGrid>
           <div>
             <h6>Add new Data Field</h6>
-            <p>Add new Data fields to the Minter's Certificate Form</p>
+            <br/>
+            <p className='secondary_color' >Add new Data fields to the Minter's Certificate Form</p>
           </div>
           <Flex gap={48} flexFlow="column">
           <Select
@@ -85,20 +90,31 @@ const CustomGrid = styled(Grid)`
         <Flex flexFlow='row' justify='space-between'>
           <div>
         <h5>Manage Existing Data Fields</h5>
-        <span>Manually enter grading results found on the IGI diamond report.</span>
+        <br/>
+        <span className='secondary_color' >Manually enter grading results found on the IGI diamond report.</span>
         </div>
+        <div>
         <Flex flexFlow='row' gap={32}>
         <Button btnType="outlined">Save Template</Button>
         <Button btnType="filled" >Preview Template</Button>
         </Flex>
+        </div>
         </Flex>
         </StyledSectionTitle>
       <br />
-      <Container padding="16px">
+      <Container padding="26px">
       {isLoading ? (
         <LoadingContainer />
       ) : (
         <>
+        {/* <CustomTable
+        cells={}
+        rows={array.map((row) => {
+          return {
+            row1: ro1.index,
+            row2: ro2.index
+          }
+        })}/> */}
           <DataStructureList
             key="3"
             items={dataStructure}
