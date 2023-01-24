@@ -13,6 +13,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
 
 const CustomGrid = styled(Grid)`
   grid-template-columns: 4fr 8fr;
+  gap: 120px;
 `
 
   console.log(dataStructure)
@@ -23,42 +24,53 @@ const CustomGrid = styled(Grid)`
     <StyledSectionTitle>Below you can add or subtract custom fields that are displayed in the Minter's Certificate form.</StyledSectionTitle>
     </Grid>
     </Grid>
-      <HR/>
+      <HR marginBottom={32}/>
     <Container padding="16px">
     <CustomGrid>
           <div>
-            <h6>Select Template</h6>
-            <p>Select from our predefined</p>
+            <h6>Select Template Type</h6>
+            <br/>
+            <p>Select from our predefined templates or 
+              build your own based on the project you are 
+              creating certificates for.</p>
           </div>
           <Flex gap={48} flexFlow="column">
           <Select
           name="Template"
-          label="label"
+          label="Select Template"
         />
         <Select
           name="Type"
-          label="Template"
+          label="Template type"
         />
-        <TextInput name="Name Template" type="type" label="label" />
+        <TextInput name="Name Template" type="type" label="Name Template" />
           </Flex>
       </CustomGrid>
       <HR marginTop={48} marginBottom={48} />
 
       <CustomGrid>
           <div>
-            <h6>Add new form</h6>
-            <p>Select from our predefined</p>
+            <h6>Add new Data Field</h6>
+            <p>Add new Data fields to the Minter's Certificate Form</p>
           </div>
           <Flex gap={48} flexFlow="column">
           <Select
           name="Template"
-          label="label"
+          label="Section"
+        />
+        <TextInput name="Name Template" type="type" label="Name" />
+        <Select
+          name="Type"
+          label="Label"
         />
         <Select
           name="Type"
-          label="Template"
+          label="Data Type"
         />
-        <TextInput name="Name Template" type="type" label="label" />
+                <Select
+          name="Type"
+          label="Input Type"
+        />
         <Flex flexFlow="row">
         <Button btnType="filled" type="submit">Submit</Button>
         </Flex>
@@ -73,10 +85,10 @@ const CustomGrid = styled(Grid)`
         <Flex flexFlow='row' justify='space-between'>
           <div>
         <h5>Manage Existing Data Fields</h5>
-        <span>Manually enter grading specs</span>
+        <span>Manually enter grading results found on the IGI diamond report.</span>
         </div>
         <Flex flexFlow='row' gap={32}>
-        <Button btnType="outlined" >Save Template</Button>
+        <Button btnType="outlined">Save Template</Button>
         <Button btnType="filled" >Preview Template</Button>
         </Flex>
         </Flex>
