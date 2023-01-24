@@ -16,8 +16,37 @@ grid-template-columns: 4fr 8fr;
 gap: 120px;
 `
 
+declare type CellType = {
+  id: string;
+  label: string;
+}
+
 export const DataStructure = ({ isLoading, dataStructure, removeData, addData }: Props) => {
 
+  const tableCells : CellType[] = [
+    {
+      id: 'name',
+      label: 'Name'
+    },
+    {
+      id: 'label',
+      label: 'Label'
+    },
+    {
+      id: 'type',
+      label: 'Type'
+    },
+    {
+      id: 'inputType',
+      label: 'Input Type'
+    },
+    {
+      id: 'actions',
+      label: 'Actions'
+    }
+  ]
+
+  const array = [{name: 'test', label: 'test', type: 'test', inputType: 'test', id: 'test', actions: 'test'}]
 
 
   console.log(dataStructure)
@@ -107,22 +136,27 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
         <LoadingContainer />
       ) : (
         <>
-        {/* <CustomTable
-        cells={}
+        <CustomTable
+        cells={tableCells}
+
         rows={array.map((row) => {
           return {
-            row1: ro1.index,
-            row2: ro2.index
+            name: row.name,
+            label: row.label,
+            type:row.type,
+            inputType: row.inputType,
+            actions:row.actions,
           }
-        })}/> */}
-          <DataStructureList
+        })}
+        />
+          {/* <DataStructureList
             key="3"
             items={dataStructure}
             onRemoveClick={removeData}
           />
           <AddDataStructure
             handleAdd={addData}
-          />
+          /> */}
         </>
       )}
       </Container>
