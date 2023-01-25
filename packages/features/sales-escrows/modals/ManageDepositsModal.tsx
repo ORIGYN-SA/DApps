@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
-import { getBalance, useTokensContext } from '@dapp/features-tokens-provider';
+import { getBalance, getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-provider';
 import { getAccountId } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 import { useSnackbar } from 'notistack';
@@ -19,7 +19,6 @@ const ManageDepositsModal = ({ open, handleClose, collection }: any) => {
 
   const withdraw = async (token) => {
     setIsLoading(true);
-    console.log(depositPrincipal, tokenBalances[token].value);
     const withdrawResp = await actor.sale_nft_origyn({
       withdraw: {
         deposit: {
@@ -38,7 +37,6 @@ const ManageDepositsModal = ({ open, handleClose, collection }: any) => {
         }
       }
     })
-    console.log(withdrawResp);
     if ("err" in withdrawResp) {
       enqueueSnackbar('Failed to withdraw', {
         variant: 'error',
@@ -62,15 +60,13 @@ const ManageDepositsModal = ({ open, handleClose, collection }: any) => {
 
   const getBalances = async () => {
 
-    console.log(principal, actor);
     const r = await actor?.sale_info_nft_origyn({ deposit_info: [{ principal }] });
     setDepositPrincipal(r.ok.deposit_info.principal);
 
     const balances = Object.keys(activeTokens).map(async (k) => {
-      const val = await getBalance(false, r.ok.deposit_info.principal, activeTokens[k]);
+      const val = await getBalanceByAccount(false, r.ok.deposit_info.account_id_text, activeTokens[k]);
       return { [k]: val };
     })
-    console.log(balances);
 
     Promise.all(Object.values(balances)).then(values => {
       console.log(values);
@@ -78,7 +74,6 @@ const ManageDepositsModal = ({ open, handleClose, collection }: any) => {
       const b = values.reduce(
         (obj, item) => Object.assign(obj, { [Object.keys(item)[0]]: Object.values(item)[0] }), {});
 
-      console.log(b);
       setTokenBalances(b);
     })
   }
@@ -99,8 +94,9 @@ const ManageDepositsModal = ({ open, handleClose, collection }: any) => {
             </>) : (
               <>
                 {Object.keys(activeTokens).map((k) => {
+                  console.log(k, tokenBalances[k]?.value);
                   return (
-                    <>
+                    <div key={k}>
                       <Flex flexFlow="row" justify="space-around">
                         <Flex flexFlow="column">
                           <span>Token</span>
@@ -114,13 +110,14 @@ const ManageDepositsModal = ({ open, handleClose, collection }: any) => {
                           btnType="filled"
                           size="small"
                           onClick={() => withdraw(k)}
+                          disabled={tokenBalances[k]?.value.toString() === "0"}
                         >
                           Withdraw
                         </Button>
                       </Flex>
                       <br />
                       <br />
-                    </>
+                    </div>
                   )
                 })}
               </>
