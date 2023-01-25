@@ -54,16 +54,26 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
     },
   ];
 
+  const [tTemplate, setTtemplate] = useState({ value: 'none', label: 'None' });
+  const [sTemplate, setStemplate] = useState({ value: 'none', label: 'None' });
+  const [nTemplate, setNtemplate] = useState('');
+
   const [type, setType] = useState({ value: 'text', label: 'Text' });
   const [inputType, setInputType] = useState({ value: 'text', label: 'Text' });
   const [name, setName] = useState('');
-  const [label, setLabel] = useState('');
+  const [label, setLabel] = useState({ value: 'label', label: 'Label' });
+  const [section, setSection] = useState({value: 'section', label: 'Section'});
 
   const addDataField = () => {
     addData({
+      tTemplate: tTemplate.value,
+      sTemplate: sTemplate.value,
+      nTemplate,
+
+      section: section.value,
       name,
       inputType: inputType.value,
-      label,
+      label: label.value,
       type: type.value,
     });
   };
@@ -91,9 +101,30 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
             </p>
           </div>
           <Flex gap={48} flexFlow="column">
-            <Select name="Template" label="Select Template" />
-            <Select name="Type" label="Template type" />
-            <TextInput name="Name Template" type="type" label="Name Template" />
+            <Select 
+            name="sTemplate" 
+            label="Select Template" 
+            options={[
+              { value: 'none', label: 'None' },
+              ]}
+            selectedOption={sTemplate}
+           handleChange={setStemplate}
+            />
+            <Select 
+            name="tTemlate" 
+            label="Template type" 
+            options={[
+              { value: 'none', label: 'None' },
+            ]}
+            selectedOption={tTemplate}
+            handleChange={setTtemplate}
+            />
+            <TextInput 
+            name="nTemplate" 
+            type="type" 
+            label="Name Template" 
+            onChange={(e) => setNtemplate(e.target.value)}
+            />
           </Flex>
         </CustomGrid>
         <HR marginTop={48} marginBottom={48} />
@@ -107,18 +138,30 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
           <Flex gap={48} flexFlow="column">
             <Select 
             name="Template" 
-            label="Section" />
+            label="Section" 
+            options={[
+                { value: 'section', label: 'Section' },
+              ]}
+            selectedOption={section}
+            handleChange={setSection}
+            />
             <TextInput
-              name="Name Template"
+              name="name"
               type="type"
               label="Name"
               onChange={(e) => setName(e.target.value)}
             />
             <Select 
-            name="Type" 
-            label="Label" />
+            name="label" 
+            label="Label" 
+            options={[
+                { value: 'label', label: 'Label' },
+              ]}
+            selectedOption={label}
+            handleChange={setLabel}
+              />
             <Select
-              name="Type"
+              name="type"
               label="Data Type"
               options={[
                 { value: 'text', label: 'Text' },
@@ -128,7 +171,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
               handleChange={setType}
             />
             <Select
-              name="Type"
+              name="inputType"
               label="Input Type"
               options={[
                 { value: 'text', label: 'Text' },
