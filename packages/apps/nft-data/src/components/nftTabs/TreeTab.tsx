@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react';
-import { Box, FormControlLabel, Switch } from '@mui/material';
-import TreeView from '@mui/lab/TreeView';
-import TreeItem from '@mui/lab/TreeItem';
+import React from 'react';
 import pick from 'lodash/pick';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useState } from 'react';
-import { Container } from '@origyn-sa/origyn-art-ui';
+import { Container, Button, Flex } from '@origyn-sa/origyn-art-ui';
+import PropTypes from 'prop-types';
+
 interface RenderTree {
   id: string;
   name: string;
@@ -17,66 +14,66 @@ function Tree({ metadata }: any) {
   let all_index = 0;
   let apps_index: number[] = [0, 0];
   let libraries_index: number[] = [0, 0];
-  const [expanded, setExpanded] = useState<string[]>([]);
-  const [all, setAll] = React.useState(true);
-  const [apps, setApps] = React.useState(false);
-  const [libraries, setLibraries] = React.useState(false);
+  // const [expanded, setExpanded] = useState<string[]>([]);
+  // const [all, setAll] = React.useState(true);
+  // const [apps, setApps] = React.useState(false);
+  // const [libraries, setLibraries] = React.useState(false);
 
-  const init = (start, end) => {
-    let array: [string] = ['0'];
-    array.push(start + '');
-    if (Object.entries(metadata).length) {
-      for (let i = start; i <= end; i++) {
-        array.push(`${i}`);
-      }
-    }
-    return array;
-  };
+  // const init = (start, end) => {
+  //   let array: [string] = ['0'];
+  //   array.push(start + '');
+  //   if (Object.entries(metadata).length) {
+  //     for (let i = start; i <= end; i++) {
+  //       array.push(`${i}`);
+  //     }
+  //   }
+  //   return array;
+  // };
 
-  const handleExpandAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAll(event.target.checked);
-    if (event.target.checked) {
-      setExpanded([...init(0, all_index)]);
-    } else {
-      setExpanded([]);
-    }
-    setApps(false);
-    setLibraries(false);
-  };
+  // const handleExpandAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setAll(event.target.checked);
+  //   if (event.target.checked) {
+  //     setExpanded([...init(0, all_index)]);
+  //   } else {
+  //     setExpanded([]);
+  //   }
+  //   setApps(false);
+  //   setLibraries(false);
+  // };
 
-  const handleExpandApps = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setApps(event.target.checked);
-    if (event.target.checked) {
-      setExpanded([...init(apps_index[0], apps_index[1])]);
-    } else {
-      setExpanded([]);
-    }
-    setAll(false);
-    setLibraries(false);
-  };
+  // const handleExpandApps = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setApps(event.target.checked);
+  //   if (event.target.checked) {
+  //     setExpanded([...init(apps_index[0], apps_index[1])]);
+  //   } else {
+  //     setExpanded([]);
+  //   }
+  //   setAll(false);
+  //   setLibraries(false);
+  // };
 
-  const handleExpandLibraries = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLibraries(event.target.checked);
-    if (event.target.checked) {
-      setExpanded([...init(libraries_index[0], libraries_index[1])]);
-    } else {
-      setExpanded([]);
-    }
-    setAll(false);
-    setApps(false);
-  };
+  // const handleExpandLibraries = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setLibraries(event.target.checked);
+  //   if (event.target.checked) {
+  //     setExpanded([...init(libraries_index[0], libraries_index[1])]);
+  //   } else {
+  //     setExpanded([]);
+  //   }
+  //   setAll(false);
+  //   setApps(false);
+  // };
 
   const increment = () => {
     all_index++;
     return `${all_index}`;
   };
-  const handleToggle = (event, nodeIds) => {
-    setExpanded(nodeIds);
-  };
+  // const handleToggle = (event, nodeIds) => {
+  //   setExpanded(nodeIds);
+  // };
 
-  useEffect(() => {
-    setExpanded([...init(0, all_index)]);
-  }, [metadata]);
+  // useEffect(() => {
+  //   setExpanded([...init(0, all_index)]);
+  // }, [metadata]);
 
   const parseData = (data) => {
     let arr: RenderTree[] = [];
@@ -102,7 +99,11 @@ function Tree({ metadata }: any) {
         let obj1 = { ...item.data };
         let arr1: RenderTree[] = [];
         for (let j in obj1) {
-          arr1.push({ id: increment(), name: j, children: [{ id: increment(), name: JSON.stringify(obj1[j]) }] });
+          arr1.push({
+            id: increment(),
+            name: j,
+            children: [{ id: increment(), name: JSON.stringify(obj1[j]) }],
+          });
         }
 
         return {
@@ -167,44 +168,75 @@ function Tree({ metadata }: any) {
 
     return arr;
   };
-  const data: RenderTree = {
+  const data: any = {
     id: '0',
     name: 'NFT',
     children: [...parseData(metadata)],
   };
 
-  const renderTree = (nodes: RenderTree) => (
-    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
-    </TreeItem>
-  );
+  const Tree = ({ treeData }) => {
+    return (
+      <ul>
+        {treeData.map((node) => (
+          <TreeNode node={node} key={node.id} />
+        ))}
+      </ul>
+    );
+  };
+
+  Tree.propTypes = {
+    treeData: PropTypes.array
+  };
+
+  const TreeNode = ({ node }) => {
+    const { children, name } = node;
+    const [showChildren, setShowChildren] = useState(false);
+    const handleClick = () => {
+      setShowChildren(!showChildren);
+    };
+    return (
+      <>
+        <div style={{ marginBottom: '10px' }}>
+          {children ? <h5 onClick={handleClick}>{name}</h5> : <span>{name}</span>}
+        </div>
+        <ul style={{ paddingLeft: '30px' }}>{showChildren && <Tree treeData={children} />}</ul>
+      </>
+    );
+  };
+
+  TreeNode.propTypes = {
+    node: PropTypes.object
+  };
+
+  const [showChildren, setShowChildren] = useState(false);
+
+  const handleClick = () => {
+    setShowChildren(!showChildren);
+  };
+
+  const handleClose = () => {
+    setShowChildren(false);
+  };
+
   return (
-    <Container padding="8px 16px">
-    <Box margin="0 0 0 0">
-      <FormControlLabel
-        control={<Switch onChange={handleExpandAll} checked={all} />}
-        label="Expand All"
-      />
-      <FormControlLabel
-        control={<Switch onChange={handleExpandApps} checked={apps} />}
-        label="Expand Apps"
-      />
-      <FormControlLabel
-        control={<Switch onChange={handleExpandLibraries} checked={libraries} />}
-        label="Expand Libraries"
-      />
-      {Object.entries(metadata).length > 0 && (
-        <TreeView
-          aria-label="file system navigator"
-          expanded={expanded}
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
-          onNodeToggle={handleToggle}
-        >
-          {renderTree(data)}
-        </TreeView>
-      )}
-    </Box>
+    <Container padding="16px">
+      <Flex flexFow="row" gap={16}>
+        <Button btnType="filled" onClick={handleClose}>
+          Close All
+        </Button>
+        <Button btnType="filled" onClick={handleClose}>
+          Expand All
+        </Button>
+        <Button btnType="filled" onClick={handleClose}>
+          Expand Libraries
+        </Button>
+      </Flex>
+      <br />
+      <div>
+        <h4 onClick={handleClick}>NFT </h4>
+        <br />
+        {showChildren && <Tree treeData={data.children} />}
+      </div>
     </Container>
   );
 }

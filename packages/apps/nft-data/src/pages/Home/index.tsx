@@ -1,21 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import React, { useEffect, useState } from 'react';
+import { useRoute } from '@dapp/features-authentication';
 import NFTInfo from '../NFTInfo';
 import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import { Container } from '@origyn-sa/origyn-art-ui'
+import { Container } from '@origyn-sa/origyn-art-ui';
 
 const Home = () => {
-  const { actor } = useContext(AuthContext);
+  // const { actor } = useContext(AuthContext);
   const [tokenId, setTokenId] = useState();
   const [NFTData, setNFTData] = useState();
   const [canisterId, setCanisterId] = useState('');
 
   const nftCollection = async () => {
     const route = await useRoute();
-    
+
     OrigynClient.getInstance().init(true, route.canisterId);
     const response = await getNftCollectionMeta([]);
-    console.log('response', response);
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
@@ -35,7 +34,6 @@ const Home = () => {
       try {
         const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
         const result = await response.text();
-        console.log(result);
         setNFTData(JSON.parse(result.replace(':,', ':"",')));
       } catch (err) {
         console.log(err);
@@ -66,12 +64,6 @@ const Home = () => {
     }
   }, [canisterId]);
 
-  return (
-    <Container>
-      {NFTData ? (
-          <NFTInfo metadata={NFTData} />
-      ) : null}
-    </Container>
-  );
+  return <Container>{NFTData ? <NFTInfo metadata={NFTData} /> : null}</Container>;
 };
 export default Home;

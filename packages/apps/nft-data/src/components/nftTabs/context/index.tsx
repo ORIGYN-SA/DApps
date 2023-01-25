@@ -1,52 +1,51 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 
 export interface metadataContextType {
-  setMetatype : (name: string, value: any) => void;
-  preview : MetaType;
-  experience : MetaType;
-  primary : MetaType;
-  hidden : MetaType;
-  id : MetaType;
-  owner : MetaType;
-  app_id : MetaType;
-  read : MetaType;
+  setMetatype: (name: string, value: any) => void;
+  preview: MetaType;
+  experience: MetaType;
+  primary: MetaType;
+  hidden: MetaType;
+  id: MetaType;
+  owner: MetaType;
+  app_id: MetaType;
+  read: MetaType;
 }
 
 // create a context with an array of items and a function to add items
 export const MetadataContext = createContext<metadataContextType>({
-  setMetatype : (value : any) => {},
-  preview : {
-    name : '',
-    value : '',
-
+  setMetatype: () => {},
+  preview: {
+    name: '',
+    value: '',
   },
-  experience : {
-    name : '',
-    value : '',
+  experience: {
+    name: '',
+    value: '',
   },
-  primary : {
-    name : '',
-    value : '',
+  primary: {
+    name: '',
+    value: '',
   },
-  hidden : {
-    name : '',
-    value : '',
+  hidden: {
+    name: '',
+    value: '',
   },
-  id : {
-    name : '',
-    value : '',
+  id: {
+    name: '',
+    value: '',
   },
-  owner : {
-    name : '',
-    value : '',
+  owner: {
+    name: '',
+    value: '',
   },
-  app_id : {
-    name : '',
-    value : '',
+  app_id: {
+    name: '',
+    value: '',
   },
-  read : {
-    name : '',
-    value : '',
+  read: {
+    name: '',
+    value: '',
   },
 });
 
@@ -81,16 +80,16 @@ export const useMeta = () => {
       case 'Hidden':
         setHidden({ name, value });
         break;
-      case 'Id': 
+      case 'Id':
         setId({ name, value });
         break;
       case 'Owner':
         setOwner({ name, value });
         break;
-      case 'App_Id' : 
+      case 'App_Id':
         setApp_id({ name, value });
         break;
-      case 'Read' :
+      case 'Read':
         setRead({ name, value });
         break;
       default:
@@ -109,15 +108,10 @@ export const useMeta = () => {
     app_id,
     read,
   };
-}
-
+};
 
 export const MetaProvider: React.FC = ({ children }) => {
-  const auth  = useMeta();
+  const auth = useMeta();
 
-  return (
-    <MetadataContext.Provider value={auth}>
-      {children}
-    </MetadataContext.Provider>
-  );
+  return <MetadataContext.Provider value={auth}>{children}</MetadataContext.Provider>;
 };

@@ -3,7 +3,7 @@ import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
 import { Container, Grid, HR, Flex } from '@origyn-sa/origyn-art-ui';
-import { UpdateLibraryFile } from '../UpdateLibraryFile';
+import { UpdateLibrary } from '../UpdateLibrary';
 
 interface FileType {
   library_id: string;
@@ -24,8 +24,8 @@ function formatBytes(bytes, decimals = 2) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-export const LibraryBox = (props: any) => {
-  console.log('props', props);
+export const CollectionLibrary = (props: any) => {
+
   const LocationType = props.library3.Class.filter((item) => item.name === 'location_type')[0].value
     .Text;
   const isMutable = props.library3.Class.filter(
@@ -69,7 +69,7 @@ export const LibraryBox = (props: any) => {
       };
       break;
   }
-
+console.log(objLibraryData.location_type);
   return (
     <Container padding="16px">
       <Grid columns={1}>
@@ -106,10 +106,19 @@ export const LibraryBox = (props: any) => {
                     libraryId={objLibraryData.library_id}
                     currentTokenId={''}
                     isMutable={isMutable}
+                    updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
+                    setOpenLibraryCollectionLevel={props.setOpenLibraryCollectionLevel}
+                    setLibrary3={props.setLibrary3}
                   />
                 </Flex>
                 <Flex>
-                  <UpdateLibraryFile libraryId={objLibraryData.library_id} tokenId={''} />
+                  <UpdateLibrary
+                  tokenId={''} 
+                  updateLibraryData={props.updateCollectionLevelLibraryData}
+                  setOpenLibrary={props.setOpenLibraryCollectionLevel}
+                  locationType={objLibraryData.location_type}
+                  metadata = {props.library3}
+                  />
                 </Flex>
               </Flex>
             </>

@@ -1,27 +1,17 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/dot-notation */
-import { ICPIcon, OGYIcon } from '@dapp/common-assets';
+// import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import {
-  LoadingContainer,
-  NatPrice,
-  Table,
-  TokenIcon,
-  WalletTokens,
-} from '@dapp/features-components';
+import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
 import { StartAuctionModal } from '../../modals/StartAuctionModal';
 import { StartEscrowModal } from '../../modals/StartEscrowModal';
-import { eToNumber, getDiffInDays, IdlStandard, timeConverter } from '@dapp/utils';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
+import { eToNumber, getDiffInDays } from '@dapp/utils';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Card,
   Flex,
   HR,
-  Icons,
   SecondaryNav,
   Button,
   Container,
@@ -30,41 +20,41 @@ import {
   TabContent,
   ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui';
-import styled from 'styled-components';
 import { useDialog } from '@connect2ic/react';
-import { TokensContext, useTokensContext } from '@dapp/features-tokens-provider';
+// import { tokensContext, useTokensContext } from '@dapp/features-tokens-provider';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 
-const SymbolWithIcon = ({ symbol }: any) =>
-  symbol === 'OGY' ? (
-    <>
-      <OGYIcon
-        style={{
-          verticalAlign: 'middle',
-          width: '20px',
-          height: '20px',
-          marginRight: '3px',
-          borderRadius: '25px',
-          backgroundColor: 'black',
-        }}
-      />{' '}
-      {symbol}
-    </>
-  ) : (
-    <>
-      <ICPIcon
-        style={{
-          verticalAlign: 'middle',
-          width: '20px',
-          height: '20px',
-          marginRight: '3px',
-          borderRadius: '25px',
-          backgroundColor: 'black',
-        }}
-      />{' '}
-      {symbol}
-    </>
-  );
+// const SymbolWithIcon = ({ symbol }: any) =>
+//   symbol === 'OGY' ? (
+//     <>
+//       <OGYIcon
+//         style={{
+//           verticalAlign: 'middle',
+//           width: '20px',
+//           height: '20px',
+//           marginRight: '3px',
+//           borderRadius: '25px',
+//           backgroundColor: 'black',
+//         }}
+//       />{' '}
+//       {symbol}
+//     </>
+//   ) : (
+//     <>
+//       <ICPIcon
+//         style={{
+//           verticalAlign: 'middle',
+//           width: '20px',
+//           height: '20px',
+//           marginRight: '3px',
+//           borderRadius: '25px',
+//           backgroundColor: 'black',
+//         }}
+//       />{' '}
+//       {symbol}
+//     </>
+// );
+
 export const NFTPage = () => {
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [currentNFT, setCurrentNFT] = useState<any>({});
@@ -77,12 +67,12 @@ export const NFTPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
   const [modalInitialValues, setModalInitialValues] = React.useState({});
-  const [expanded, setExpanded] = React.useState<string | false>('panel1');
+  // const [expanded, setExpanded] = React.useState<string | false>('panel1');
   const [roy1, setRoy1] = useState<any>();
   const [roy2, setRoy2] = useState<any>();
   const { open } = useDialog();
   const [saleNft, setSaleNft] = useState<any>();
-  const { tokens } = useTokensContext();
+  // const { tokens } = useTokensContext();
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true);
     else if (modal === 'confirmEnd') {
@@ -101,9 +91,9 @@ export const NFTPage = () => {
     setOpenConfirmation(false);
   };
 
-  const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-    setExpanded(newExpanded ? panel : false);
-  };
+  // const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+  //   setExpanded(newExpanded ? panel : false);
+  // };
 
   const params = useParams();
   const currentOpenAuction = saleNft?.current_sale?.find((sale) =>
@@ -204,8 +194,7 @@ export const NFTPage = () => {
       setCanisterId(canisterId);
       OrigynClient.getInstance().init(true, canisterId);
       getNftCollectionMeta([]).then((r: any) => {
-        if ('err' in r) {
-        } else {
+        if (!('err' in r)) {
           setCollectionPreview(
             Object.values(
               r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
@@ -227,7 +216,6 @@ export const NFTPage = () => {
       fetchNft();
     }
   }, [actor]);
-
 
   return (
     <Flex fullWidth padding="0" flexFlow="column">
@@ -272,7 +260,12 @@ export const NFTPage = () => {
                             <Flex flexFlow="column">
                               <span>Current bid</span>
                               <strong>
-                                <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
+                                <TokenIcon
+                                  symbol={
+                                    currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                      ?.ic?.symbol
+                                  }
+                                />
                                 {parseFloat(
                                   (
                                     parseInt(
@@ -287,7 +280,12 @@ export const NFTPage = () => {
                               <Flex flexFlow="column">
                                 <span>Reserve Price</span>
                                 <strong>
-                                  <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
+                                  <TokenIcon
+                                    symbol={
+                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                        ?.ic?.symbol
+                                    }
+                                  />
                                   {parseFloat(
                                     (
                                       parseInt(
@@ -304,7 +302,12 @@ export const NFTPage = () => {
                               <Flex flexFlow="column">
                                 <span>Buy Now</span>
                                 <strong>
-                                  <TokenIcon symbol={currentOpenAuction?.sale_type?.auction?.config?.auction?.token?.ic?.symbol} />
+                                  <TokenIcon
+                                    symbol={
+                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                        ?.ic?.symbol
+                                    }
+                                  />
                                   {parseFloat(
                                     (
                                       parseInt(
@@ -418,6 +421,11 @@ export const NFTPage = () => {
                         <br />
                         <br />
                         <Flex flexFlow="column" gap={18}>
+                          <h3>
+                            {' '}
+                            <b>Primary Royalties </b>
+                          </h3>
+                          <HR />
                           {roy1?.frozen?.map((nft) => (
                             <div key={nft.Class.find(({ name }) => name === 'tag').value.Text}>
                               <Grid columns={2}>
@@ -429,6 +437,12 @@ export const NFTPage = () => {
                               <HR marginTop={18} />
                             </div>
                           ))}
+                          <br />
+                          <h3>
+                            {' '}
+                            <b>Secondary Royalties</b>{' '}
+                          </h3>
+                          <HR />
                           {roy2?.frozen?.map((nft) => (
                             <div key={nft.Class.find(({ name }) => name === 'tag').value.Text}>
                               <Grid columns={2}>

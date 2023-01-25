@@ -1,20 +1,7 @@
-import React, { useEffect, useContext, useState } from 'react';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import React, { useEffect, useState } from 'react';
+import { useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
-import Box from '@mui/material/Box';
-import { Modal } from '@mui/material';
-
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 'auto',
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import { Modal, Flex, Container, HR, Image, Grid } from '@origyn-sa/origyn-art-ui';
 
 const LibraryImage = (props: any) => {
   // MODAL
@@ -22,7 +9,7 @@ const LibraryImage = (props: any) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [canisterId, setCanisterId] = useState("");
+  const [canisterId, setCanisterId] = useState('');
   const [link, setLink] = useState('');
   const formattedLink = async () => {
     const link = await GetFormattedLink(canisterId, props.source);
@@ -32,37 +19,32 @@ const LibraryImage = (props: any) => {
     if (canisterId) {
       formattedLink();
     }
-  }, [canisterId]);
+  }, [canisterId,props.source]);
 
   useEffect(() => {
-    useRoute().then(({ canisterId, tokenId }) => {
+    useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
     });
   }, []);
 
   return (
     <>
-      <Box
-        sx={{
-          width: 'auto',
-          height: 'auto',
-          textAlign: 'center',
-        }}
-      > 
-        <img src={link} height="200px" 
-        onClick={handleOpen} 
-        style={{cursor: 'zoom-in'}}
-        />
-      </Box>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <img src={link} style={{height:'70vh'}}></img>
-        </Box>
+    <Grid columns={3}>
+      <Grid column={1}></Grid>
+      <Grid column={2}>
+      <Flex justify="center" align="center">
+        <Image src={link} onClick={handleOpen} style={{ cursor: 'zoom-in' }} />
+      </Flex>
+      </Grid>
+      <Grid column={3}></Grid>
+    </Grid>
+      <HR marginBottom={16} marginTop={16} />
+      <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
+        <Container padding="16px">
+          <Flex justify="center" align="center">
+            <Image src={link} style={{ height: '70vh' }} />
+          </Flex>
+        </Container>
       </Modal>
     </>
   );

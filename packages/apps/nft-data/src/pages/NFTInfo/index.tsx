@@ -3,14 +3,14 @@ import TreeTab from '../../components/nftTabs/TreeTab';
 import RawTab from '../../components/nftTabs/RawTab';
 import FormTab from '../../components/nftTabs/FormTab';
 import JSONTab from '../../components/nftTabs/JSONTab';
-import { SecondaryNav } from '@origyn-sa/origyn-art-ui'
-import { useContext } from 'react'
-import { AuthContext } from '../../../../../features/authentication'
-import { useDialog } from '@connect2ic/react'
+import { SecondaryNav } from '@origyn-sa/origyn-art-ui';
+import { useContext } from 'react';
+import { AuthContext } from '../../../../../features/authentication';
+import { useDialog } from '@connect2ic/react';
 
 const NFTInfo = ({ metadata }: any) => {
-  const { principal, handleLogOut } = useContext(AuthContext)
-  const { open } = useDialog()
+  const { principal, handleLogOut } = useContext(AuthContext);
+  const { open } = useDialog();
 
   return (
     <>
@@ -23,14 +23,14 @@ const NFTInfo = ({ metadata }: any) => {
           { title: 'JSON', id: 'JSON' },
         ]}
         content={[
-          <FormTab metadata={metadata} />,
-          <TreeTab metadata={metadata} />,
-          <RawTab metadata={metadata} />,
-          <JSONTab metadata={metadata} />,
+          <FormTab metadata={metadata} key="formTab" />,
+          <TreeTab metadata={metadata} key="treeTab" />,
+          <RawTab metadata={metadata} key="rawTab" />,
+          <JSONTab metadata={metadata} key="jsonTab" />,
         ]}
         onLogOut={handleLogOut}
         onConnect={open}
-        principal={principal?.toText() === "2vxsx-fae" ? "" : principal?.toText()}
+        principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
       />
     </>
   );

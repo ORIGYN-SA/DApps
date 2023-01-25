@@ -1,23 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { timeConverter } from '@dapp/utils';
 import { AuthContext } from '@dapp/features-authentication';
-import { IconButton } from '@mui/material';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
-import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
+import { CustomTable } from '@origyn-sa/origyn-art-ui';
 // Import Interfaces TS
 import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
 import { Mint } from './functions/Mint';
-import {AuctionBid}  from './functions/AuctionBid';
+import { AuctionBid } from './functions/AuctionBid';
 import { SaleEnded } from './functions/SaleEnded';
 import { SaleOpened } from './functions/SaleOpened';
 import { OwnerTransfer } from './functions/OwnerTransfer';
@@ -25,32 +14,41 @@ import { EscrowDeposit } from './functions/EscrowDeposit';
 import { EscrowWithdraw } from './functions/EscrowWithdraw';
 import { SaleWithdraw } from './functions/SaleWithdraw';
 // mintjs
-import { getNftHistory} from '@origyn-sa/mintjs';
+import { getNftHistory, OrigynClient } from '@origyn-sa/mintjs';
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
 
-import { Container, Modal} from '@origyn-sa/origyn-art-ui';
+import { Container, Modal, Button } from '@origyn-sa/origyn-art-ui';
+
+declare type CellType = {
+  id: string;
+  label: string;
+  canSort?: boolean;
+};
 
 // Table style
-const cell_style = {
-  colSpan: '4',
-  align: 'center',
-  fontWeight: 'Bold',
-};
+// TODO: uncomment when variable is used
+// const cell_style = {
+//   colSpan: '4',
+//   align: 'center',
+//   fontWeight: 'Bold',
+// };
+
+// TODO: uncomment when variable is used
 // Style Modal Box
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  minWidth: '600px',
-  bgcolor: 'background.paper',
-  border: '3px solid ',
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 0,
-  borderImage: 'linear-gradient(to right,yellow 30%,red 50%,violet 70%, blue 80%, green 100%) 2',
-};
+// const style = {
+//   position: 'absolute',
+//   top: '50%',
+//   left: '50%',
+//   transform: 'translate(-50%, -50%)',
+//   minWidth: '600px',
+//   bgcolor: 'background.paper',
+//   border: '3px solid ',
+//   boxShadow: 24,
+//   p: 4,
+//   borderRadius: 0,
+//   borderImage: 'linear-gradient(to right,yellow 30%,red 50%,violet 70%, blue 80%, green 100%) 2',
+// };
 // array without duplicates
 function removeDuplicates(arr: string[]) {
   return arr.filter((item, index) => arr.indexOf(item) === index);
@@ -60,34 +58,39 @@ export const TransactionsTable = (props: any) => {
   // Authcontext
   const { actor } = useContext(AuthContext);
 
+  // TODO: uncomment when setCanisterId is used
+  // const [canisterId, setCanisterId] = useState('');
+  const canisterId = '';
+
   //* *STATUS OF THE OBJ WITH HISTORY **//
   // Is empty-
-  const [isEmpty, setIsEmpty] = useState(false);
+  // TODO: uncomment when isEmpty is used, along with all calls to setIsEmpty
+  //const [isEmpty, setIsEmpty] = useState(false);
 
   //* *PAGINATION**//
 
   // Pagination number of rows
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(+event.target.value);
+  //   setPage(0);
+  // };
   // Order of tnx-
-  const [isReverse, setReverseOrder] = useState(true);
+  // const [isReverse, setReverseOrder] = useState(true);
   // Change order of transactions
-  const changeOrder = () => {
-    if (isReverse) {
-      setReverseOrder(false);
-    } else {
-      setReverseOrder(true);
-    }
-  };
+  // const changeOrder = () => {
+  //   if (isReverse) {
+  //     setReverseOrder(false);
+  //   } else {
+  //     setReverseOrder(true);
+  //   }
+  // };
   // N of rows per page
-  const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(25);
   // N of page
-  const [page, setPage] = React.useState(0);
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const [page, setPage] = React.useState(0);
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
   //* TABLE ROWS*/
 
@@ -150,14 +153,14 @@ export const TransactionsTable = (props: any) => {
     props.setIndexID(key);
   };
   const [modalData, setModalData] = React.useState({});
-
   const getHistory = async () => {
     props.setIsLoading(true);
-    setIsEmpty(true);
+    //setIsEmpty(true);
     props.setTrans_types(['Loading...']);
     // array for dynamyc Select values
     const select_vals = ['All types'];
     const array_with_all_types = ['All types'];
+    OrigynClient.getInstance().init(true, canisterId, { actor });
     const response = await getNftHistory(props.searchBarTokenId.toString());
     // response 2 string
     const string_history = JSON.stringify(
@@ -198,7 +201,7 @@ export const TransactionsTable = (props: any) => {
           // replace _ with " "
           const replaced = capitalized.replace('_', ' ');
           _transaction_type_formatted += replaced;
-          
+
           switch (_props) {
             case 'auction_bid':
               transactionObj = AuctionBid(
@@ -226,7 +229,7 @@ export const TransactionsTable = (props: any) => {
                 historyNFT[x],
                 _transaction_type_formatted,
               );
-              
+
               if (props.indexID) {
                 if (historyNFT[x].index.toString() == props.indexID) {
                   setModalData('Loading...');
@@ -359,7 +362,7 @@ export const TransactionsTable = (props: any) => {
             };
             setRowsArray((x) => [...x, { ...newRow }]);
             select_vals.push(transactionObj.type_txn);
-            setIsEmpty(false);
+            // setIsEmpty(false);
             break;
           case 'Transaction Id':
             // If input is '' show all the rows
@@ -375,7 +378,7 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
 
-              setIsEmpty(false);
+              // setIsEmpty(false);
             }
             break;
           case 'Token Id':
@@ -392,7 +395,7 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              setIsEmpty(false);
+              // setIsEmpty(false);
             }
             break;
           case 'Principal':
@@ -412,7 +415,7 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              setIsEmpty(false);
+              //setIsEmpty(false);
             }
             break;
           case 'Account':
@@ -433,7 +436,7 @@ export const TransactionsTable = (props: any) => {
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
 
-              setIsEmpty(false);
+              // setIsEmpty(false);
             }
 
             break;
@@ -458,7 +461,7 @@ export const TransactionsTable = (props: any) => {
               } else {
                 select_vals.push(transactionObj.type_txn);
               }
-              setIsEmpty(false);
+              // setIsEmpty(false);
             }
             break;
           case 'Transaction Id':
@@ -472,7 +475,7 @@ export const TransactionsTable = (props: any) => {
                 };
                 setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
-                setIsEmpty(false);
+                // setIsEmpty(false);
               }
             } else if (
               transactionObj.trans_index == props.filter.searchInputValue.toString().trim() &&
@@ -486,7 +489,7 @@ export const TransactionsTable = (props: any) => {
               };
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
-              setIsEmpty(false);
+              // setIsEmpty(false);
             } else {
               select_vals.push('');
             }
@@ -506,7 +509,7 @@ export const TransactionsTable = (props: any) => {
                 };
                 setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
-                setIsEmpty(false);
+                // setIsEmpty(false);
               }
             } else {
               found = transactionObj.principals.indexOf(
@@ -521,7 +524,7 @@ export const TransactionsTable = (props: any) => {
                 };
                 setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
-                setIsEmpty(false);
+                // setIsEmpty(false);
               }
             }
 
@@ -540,7 +543,7 @@ export const TransactionsTable = (props: any) => {
                 };
                 setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
-                setIsEmpty(false);
+                // setIsEmpty(false);
               }
             } else {
               found = transactionObj.accounts.indexOf(
@@ -555,7 +558,7 @@ export const TransactionsTable = (props: any) => {
                 };
                 setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
-                setIsEmpty(false);
+                // setIsEmpty(false);
               }
             }
 
@@ -571,7 +574,7 @@ export const TransactionsTable = (props: any) => {
         };
         setRowsArray((x) => [...x, { ...newRow }]);
         select_vals.push(transactionObj.type_txn);
-        setIsEmpty(false);
+        // setIsEmpty(false);
       }
     }
 
@@ -590,13 +593,57 @@ export const TransactionsTable = (props: any) => {
     }
   }, [props.searchBarTokenId, props.filter]);
 
+  const tableCells: CellType[] = [
+    {
+      id: 'index',
+      label: 'Index',
+      canSort: true,
+    },
+    {
+      id: 'type',
+      label: 'Transaction Type',
+      canSort: false,
+    },
+    {
+      id: 'date',
+      label: 'Date',
+      canSort: true,
+    },
+    {
+      id: 'info',
+      label: '',
+      canSort: false,
+    },
+  ];
+
   return (
     <>
       {props.isLoading ? (
-      <Container padding="16px">
-        Loading...
-      </Container>
+        <Container padding="16px">Loading...</Container>
       ) : (
+        <>
+          <Container padding="16px">
+            <CustomTable
+              cells={tableCells}
+              rows={rowsArray?.map((row) => {
+                return {
+                  index: row.index,
+                  type: row.type_txn,
+                  date: row.date,
+                  info: (
+                    <Button
+                      btnType="filled"
+                      onClick={(event) => openModal(event, row.index, props.transactionData)}
+                    >
+                      {' '}
+                      Details{' '}
+                    </Button>
+                  ),
+                };
+              })}
+            />
+          </Container>
+          {/*
         <TableContainer
           component={Paper}
           elevation={2}
@@ -677,18 +724,15 @@ export const TransactionsTable = (props: any) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
+                    */}
+        </>
       )}
-      
-      <Modal
-        closeModal={handleClose}
-        isOpened = {open}
-        mode="light"
-        size="md"   
-      >
+
+      <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
         <Container padding="16px">
           <Transaction modalData={modalData} />
-          </Container>
+        </Container>
       </Modal>
-      </>
+    </>
   );
 };

@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react'
-import { useSnackbar } from 'notistack'
-import { useTokensContext } from '@dapp/features-tokens-provider'
-import { IdlStandard, isLocal } from '@dapp/utils'
-import { TokenIcon } from '../TokenIcon'
-import { LoadingContainer } from '../LoadingContainer'
+import React, { useContext, useState } from 'react';
+import { useSnackbar } from 'notistack';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { IdlStandard, isLocal } from '@dapp/utils';
+import { TokenIcon } from '../TokenIcon';
+import { LoadingContainer } from '../LoadingContainer';
 import {
   Button,
   Card,
@@ -14,38 +14,35 @@ import {
   Select,
   TabContent,
   TextInput,
-} from '@origyn-sa/origyn-art-ui'
-import { AuthContext } from '../../../authentication'
+} from '@origyn-sa/origyn-art-ui';
+import { AuthContext } from '../../../authentication';
 
 export const WalletTokens = ({ children }: any) => {
-  const { principal } = useContext(AuthContext)
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const [selectedTab, setSelectedTab] = useState<number>(0)
-  const [selectedStandard, setSelectedStandard] = useState<string>(
-    IdlStandard.DIP20.toString(),
-  )
-  const [inputCanisterId, setInputCanisterId] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { tokens, addToken, toggleToken, refreshAllBalances } = useTokensContext()
-  const { enqueueSnackbar } = useSnackbar()
+  const { principal } = useContext(AuthContext);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  //const [selectedTab, setSelectedTab] = useState<number>(0)
+  const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
+  const [inputCanisterId, setInputCanisterId] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { tokens, addToken, toggleToken } = useTokensContext();
+  const { enqueueSnackbar } = useSnackbar();
   const handleAddButton = async () => {
-    if (isLoading) return
-    setIsLoading(true)
+    if (isLoading) return;
+    setIsLoading(true);
     const tokenResponse = await addToken(
       isLocal(),
       inputCanisterId,
       IdlStandard[selectedStandard],
-      principal
-    )
+      principal,
+    );
     if (typeof tokenResponse !== 'string') {
       enqueueSnackbar(`You have successfully added token ${tokenResponse.symbol}.`, {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        }
-      )
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      });
     } else {
       enqueueSnackbar(tokenResponse, {
         variant: 'error',
@@ -53,38 +50,34 @@ export const WalletTokens = ({ children }: any) => {
           vertical: 'top',
           horizontal: 'right',
         },
-      })
+      });
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
   const handleModalClose = () => {
-    setIsModalOpen(false)
-  }
+    setIsModalOpen(false);
+  };
 
   const handleModalOpen = () => {
-    setIsModalOpen(true)
+    setIsModalOpen(true);
     // refreshAllBalances(isLocal(), principal)
-  }
-  const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
-    setSelectedTab(tab)
-  }
+  };
+  // const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
+  //   setSelectedTab(tab)
+  // }
   const onTokenCheck = (symbol: string) => {
-    toggleToken(symbol)
-  }
-  const a11yProps = (index: number) => ({
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  })
+    toggleToken(symbol);
+  };
+  // const a11yProps = (index: number) => ({
+  //   id: `simple-tab-${index}`,
+  //   'aria-controls': `simple-tabpanel-${index}`,
+  // });
   return (
     <>
-      <Modal
-        isOpened={isModalOpen}
-        closeModal={() => handleModalClose()}
-        size="md"
-      >
-        <Container size='full' padding='48px'>
+      <Modal isOpened={isModalOpen} closeModal={() => handleModalClose()} size="md">
+        <Container size="full" padding="48px">
           <h2>Manage Tokens</h2>
-          <br/>
+          <br />
           <TabContent
             fullWidth
             borderBottom
@@ -93,19 +86,19 @@ export const WalletTokens = ({ children }: any) => {
               { title: 'Custom Token', id: 'Custom Token' },
             ]}
             content={[
-              <Flex flexFlow='column' gap={18} fullWidth>
-                <br/>
+              <Flex flexFlow="column" gap={18} fullWidth key="tabContentCol1">
+                <br />
                 {Object.keys(tokens).map((key: string) => {
-                  const token = tokens[key]
-                  const labelId = `checkbox-list-secondary-label-${token.symbol}`
+                  const token = tokens[key];
+                  // const labelId = `checkbox-list-secondary-label-${token.symbol}`;
                   return (
                     <Card
                       key={`${token.symbol}-${token.enabled}`}
-                      justify='space-between'
-                      align='center'
-                      padding='16px'
+                      justify="space-between"
+                      align="center"
+                      padding="16px"
                     >
-                      <Flex gap={8} align='center'>
+                      <Flex gap={8} align="center">
                         <CheckboxInput
                           name={token.symbol}
                           onChange={() => onTokenCheck(token.symbol)}
@@ -116,33 +109,29 @@ export const WalletTokens = ({ children }: any) => {
                       </Flex>
                       <div>{token.balance}</div>
                     </Card>
-                  )
+                  );
                 })}
               </Flex>,
-              <Flex flexFlow='column' gap={18} fullWidth>
-                <br/>
+              <Flex flexFlow="column" gap={18} fullWidth key="tabContentCol2">
+                <br />
                 <TextInput
-                  id='standard-helperText'
-                  label='Canister Id'
+                  id="standard-helperText"
+                  label="Canister Id"
                   value={inputCanisterId}
                   onChange={(e) => setInputCanisterId(e.target.value)}
                   required
                 />
                 <Select
-                  label='Token Standard'
+                  label="Token Standard"
                   handleChange={(option) => {
-                    setSelectedStandard(option.value)
+                    setSelectedStandard(option.value);
                   }}
-                  options={
-                    Object.keys(IdlStandard)
-                      .filter((standard) => isNaN(parseInt(standard)))
-                      .map((standard) => (
-                        {
-                          value: standard,
-                          label: standard,
-                        }
-                      ))
-                  }
+                  options={Object.keys(IdlStandard)
+                    .filter((standard) => isNaN(parseInt(standard)))
+                    .map((standard) => ({
+                      value: standard,
+                      label: standard,
+                    }))}
                 />
                 <Flex justify="flex-end">
                   <Button btnType="outlined" onClick={handleAddButton}>
@@ -159,7 +148,9 @@ export const WalletTokens = ({ children }: any) => {
           )}
         </Container>
       </Modal>
-      <Button btnType='outlined' onClick={handleModalOpen}>{children}</Button>
+      <Button btnType="outlined" onClick={handleModalOpen}>
+        {children}
+      </Button>
     </>
-  )
-}
+  );
+};

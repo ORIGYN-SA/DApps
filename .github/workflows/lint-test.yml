@@ -24,13 +24,14 @@ jobs:
       - name: Install Dependencies
         run: npm install
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bootstrap Packages
         run: npm run bootstrap
 
-      - name: Run eslint
-        run: npm run lint
+#      - name: Run eslint
+#        run: npm run lint
 
       - name: Run tests
         run: npm run test

@@ -1,30 +1,22 @@
 import React, { useEffect, useContext } from 'react';
-import { TextField } from '@mui/material';
+import { TextInput } from '@origyn-sa/origyn-art-ui';
 
 // Context
 import { MetadataContext } from '../context';
 
 const App = (props: any) => {
-
-  const { setMetatype,app_id } = useContext(MetadataContext);
+  const { setMetatype } = useContext(MetadataContext);
 
   const handleChange = (event) => {
-    setMetatype(props.item.name,event.target.value);
+    setMetatype(props.item.name, event.target.value);
   };
 
   useEffect(() => {
-    setMetatype(props.item.name,props.item.value);
-
+    setMetatype(props.item.name, props.item.value);
   }, []);
 
   return (
-    <TextField
-      id="outlined-basic"
-      label={'Change ' + props.item.name}
-      variant="standard"
-      sx={{ marginBottom: 1 }}
-      onChange={handleChange}
-    />
+    <TextInput id="outlined-basic" label={'Change ' + props.item.name} onChange={handleChange} />
   );
 };
 
