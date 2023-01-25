@@ -14,6 +14,7 @@
     "@dapp/features-sales-escrows": "0.1.0",
     "@dapp/features-theme": "0.1.0",
     "@dapp/features-tokens-provider": "0.1.0",
-    "@dapp/utils": "0.1.0"
+    "@dapp/utils": "0.1.0",
+    "@dapp/candy-editor": "0.1.0"
   }
 }
