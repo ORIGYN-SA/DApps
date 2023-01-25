@@ -25,7 +25,6 @@ export type CandyValue =
       Array: { thawed: Array<CandyValue> } | { frozen: Array<CandyValue> };
     }
   | { Class: Array<Property> };
-
 export interface Property {
   value: CandyValue;
   name: string;
