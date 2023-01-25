@@ -3,6 +3,7 @@ import TreeTab from '../../components/nftTabs/TreeTab';
 import RawTab from '../../components/nftTabs/RawTab';
 import FormTab from '../../components/nftTabs/FormTab';
 import JSONTab from '../../components/nftTabs/JSONTab';
+import Write from '../../components/nftTabs/Write';
 import { SecondaryNav } from '@origyn-sa/origyn-art-ui';
 import { useContext } from 'react';
 import { AuthContext } from '../../../../../features/authentication';
@@ -21,12 +22,14 @@ const NFTInfo = ({ metadata }: any) => {
           { title: 'Tree', id: 'Tree' },
           { title: 'Raw', id: 'Raw' },
           { title: 'JSON', id: 'JSON' },
+          { title: 'Write', id: 'Write'}
         ]}
         content={[
           <FormTab metadata={metadata} key="formTab" />,
           <TreeTab metadata={metadata} key="treeTab" />,
           <RawTab metadata={metadata} key="rawTab" />,
           <JSONTab metadata={metadata} key="jsonTab" />,
+          <Write metadata={metadata} key="writeTab" />
         ]}
         onLogOut={handleLogOut}
         onConnect={open}
