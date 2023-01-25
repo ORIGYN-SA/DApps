@@ -14,6 +14,7 @@ import { DataStructureList } from '../../../components/lists/DataStructureList';
 import { AddDataStructure } from '../../../components/forms/AddDataStructure';
 import styled from 'styled-components';
 import { array } from 'yup/lib/locale';
+import AddDataModal from './AddData';
 
 const StyledSectionTitle = styled.div`
   margin: 48px 24px;
@@ -58,23 +59,16 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
   const [sTemplate, setStemplate] = useState({ value: 'none', label: 'None' });
   const [nTemplate, setNtemplate] = useState('');
 
-  const [type, setType] = useState({ value: 'text', label: 'Text' });
-  const [inputType, setInputType] = useState({ value: 'text', label: 'Text' });
-  const [name, setName] = useState('');
-  const [label, setLabel] = useState({ value: 'label', label: 'Label' });
-  const [section, setSection] = useState({value: 'section', label: 'Section'});
+  const [openData, setOpenData] = useState(false);
+  const handleClose = () => {
+    setOpenData(!openData);
+  };
 
   const addDataField = () => {
     addData({
       tTemplate: tTemplate.value,
       sTemplate: sTemplate.value,
       nTemplate,
-
-      section: section.value,
-      name,
-      inputType: inputType.value,
-      label: label.value,
-      type: type.value,
     });
   };
 
@@ -83,9 +77,13 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
     <>
       <Grid columns={2}>
         <Grid column={1}>
-          <StyledSectionTitle className="secondary_color">
-            Below you can add or subtract custom fields that are displayed in the Minter's
-            Certificate form.
+          <StyledSectionTitle>
+            <h2>Create/Edit Data Structure</h2>
+            <br />
+            <p className="secondary_color">
+              Below you can add or subtract custom fields that are displayed in the Minter's
+              Certificate form.
+            </p>
           </StyledSectionTitle>
         </Grid>
       </Grid>
@@ -101,29 +99,12 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
             </p>
           </div>
           <Flex gap={48} flexFlow="column">
-            <Select 
-            name="sTemplate" 
-            label="Select Template" 
-            options={[
-              { value: 'none', label: 'None' },
-              ]}
-            selectedOption={sTemplate}
-           handleChange={setStemplate}
-            />
-            <Select 
-            name="tTemlate" 
-            label="Template type" 
-            options={[
-              { value: 'none', label: 'None' },
-            ]}
-            selectedOption={tTemplate}
-            handleChange={setTtemplate}
-            />
-            <TextInput 
-            name="nTemplate" 
-            type="type" 
-            label="Name Template" 
-            onChange={(e) => setNtemplate(e.target.value)}
+            <Select
+              name="sTemplate"
+              label="Select Template"
+              options={[{ value: 'none', label: 'None' }]}
+              selectedOption={sTemplate}
+              handleChange={setStemplate}
             />
           </Flex>
         </CustomGrid>
@@ -131,65 +112,43 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
 
         <CustomGrid>
           <div>
-            <h6>Add new Data Field</h6>
+            <h6>Select Template Type</h6>
             <br />
-            <p className="secondary_color">Add new Data fields to the Minter's Certificate Form</p>
+            <p className="secondary_color">
+              Select from our predefined templates or build your own based on the project you are
+              creating certificates for.
+            </p>
           </div>
           <Flex gap={48} flexFlow="column">
-            <Select 
-            name="Template" 
-            label="Section" 
-            options={[
-                { value: 'section', label: 'Section' },
-              ]}
-            selectedOption={section}
-            handleChange={setSection}
+            <Select
+              name="tTemlate"
+              label="Template type"
+              options={[{ value: 'none', label: 'None' }]}
+              selectedOption={tTemplate}
+              handleChange={setTtemplate}
             />
             <TextInput
-              name="name"
+              name="nTemplate"
               type="type"
-              label="Name"
-              onChange={(e) => setName(e.target.value)}
+              label="Name Template"
+              onChange={(e) => setNtemplate(e.target.value)}
             />
-            <Select 
-            name="label" 
-            label="Label" 
-            options={[
-                { value: 'label', label: 'Label' },
-              ]}
-            selectedOption={label}
-            handleChange={setLabel}
-              />
-            <Select
-              name="type"
-              label="Data Type"
-              options={[
-                { value: 'text', label: 'Text' },
-                { value: 'number', label: 'Number' },
-              ]}
-              selectedOption={type}
-              handleChange={setType}
-            />
-            <Select
-              name="inputType"
-              label="Input Type"
-              options={[
-                { value: 'text', label: 'Text' },
-                { value: 'number', label: 'Number' },
-                { value: 'select', label: 'Select' },
-              ]}
-              selectedOption={inputType}
-              handleChange={setInputType}
-            />
-            <Flex flexFlow="row">
-              <Button btnType="filled" type="button" onClick={addDataField}>
-                Submit
-              </Button>
-            </Flex>
           </Flex>
         </CustomGrid>
+        <HR marginTop={48} marginBottom={48} />
+
+        <Flex flexFlow="row" justify="space-between">
+          <div>
+            <h6>Add New Field</h6>
+            <br />
+            <p className="secondary_color">Add a new field to this Data Structure</p>
+          </div>
+          <Button btnType="filled" onClick={()=>setOpenData(!openData)}>Add New Field</Button>
+        </Flex>
         <HR marginTop={48} />
       </Container>
+
+      <AddDataModal openConfirmation={openData} handleClose={handleClose} handleAdd={addData} />
 
       <br />
       <StyledSectionTitle>
