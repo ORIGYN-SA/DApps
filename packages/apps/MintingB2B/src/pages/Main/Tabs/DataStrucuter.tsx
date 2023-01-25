@@ -231,7 +231,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
                 };
               })}
             />
-            <AddDataStructure handleAdd={addData} />
+            {/* <AddDataStructure handleAdd={addData} /> */}
           </>
         )}
       </Container>
