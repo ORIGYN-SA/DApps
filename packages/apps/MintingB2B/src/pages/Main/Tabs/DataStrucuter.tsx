@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   HR,
@@ -56,7 +56,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
   ];
 
   const [tTemplate, setTtemplate] = useState({ value: 'none', label: 'None' });
-  const [sTemplate, setStemplate] = useState({ value: 'none', label: 'None' });
+  const [sTemplate, setStemplate] = useState({ value: undefined, label: 'None' });
   const [nTemplate, setNtemplate] = useState('');
 
   const [openData, setOpenData] = useState(false);
@@ -64,13 +64,39 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
     setOpenData(!openData);
   };
 
-  const addDataField = () => {
-    addData({
-      tTemplate: tTemplate.value,
-      sTemplate: sTemplate.value,
-      nTemplate,
+  const filter = () => {
+    dataStructure.map((data) => {
+      selectTemplate.push({ value: data.name, label: data.name });
     });
   };
+
+  const selectTemplate = [{ value: 'newTemplate', label: 'New Template' }];
+
+  const addTemplate = () => {
+    selectTemplate.push({ value: nTemplate, label: nTemplate });
+  };
+
+  //-------------Testing-----------------
+
+  const arrayData = [];
+
+  const filterData = () => {
+    selectTemplate.map((data) => {
+      if (data.value == sTemplate.value) {
+        arrayData.push(data);
+      }
+    });
+  };
+
+  console.log(arrayData); // this will filter the data showed for each
+
+  //----------------------------------------
+
+  useEffect(() => {
+    filter();
+    filterData();
+    console.log(arrayData);
+  }, [selectTemplate, addTemplate, setStemplate]);
 
   console.log(dataStructure);
   return (
@@ -102,98 +128,163 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
             <Select
               name="sTemplate"
               label="Select Template"
-              options={[{ value: 'none', label: 'None' }]}
+              options={selectTemplate}
               selectedOption={sTemplate}
               handleChange={setStemplate}
             />
           </Flex>
         </CustomGrid>
-        <HR marginTop={48} marginBottom={48} />
-
-        <CustomGrid>
-          <div>
-            <h6>Select Template Type</h6>
-            <br />
-            <p className="secondary_color">
-              Select from our predefined templates or build your own based on the project you are
-              creating certificates for.
-            </p>
-          </div>
-          <Flex gap={48} flexFlow="column">
-            <Select
-              name="tTemlate"
-              label="Template type"
-              options={[{ value: 'none', label: 'None' }]}
-              selectedOption={tTemplate}
-              handleChange={setTtemplate}
-            />
-            <TextInput
-              name="nTemplate"
-              type="type"
-              label="Name Template"
-              onChange={(e) => setNtemplate(e.target.value)}
-            />
-          </Flex>
-        </CustomGrid>
-        <HR marginTop={48} marginBottom={48} />
-
-        <Flex flexFlow="row" justify="space-between">
-          <div>
-            <h6>Add New Field</h6>
-            <br />
-            <p className="secondary_color">Add a new field to this Data Structure</p>
-          </div>
-          <Button btnType="filled" onClick={()=>setOpenData(!openData)}>Add New Field</Button>
-        </Flex>
-        <HR marginTop={48} />
       </Container>
+      <HR marginTop={48} marginBottom={48} />
+
+      {sTemplate.value != undefined &&
+        (sTemplate.value == 'newTemplate' ? (
+          <>
+            <Container padding="24px">
+              <CustomGrid>
+                <div>
+                  <h6>Set Template Type</h6>
+                  <br />
+                  <p className="secondary_color">
+                    Select from our predefined templates or build your own based on the project you
+                    are creating certificates for.
+                  </p>
+                </div>
+                <Flex gap={48} flexFlow="column">
+                  <TextInput
+                    name="nTemplate"
+                    type="type"
+                    label="Name Template"
+                    onChange={(e) => setNtemplate(e.target.value)}
+                  />
+                  <Select
+                    name="tTemlate"
+                    label="Template type"
+                    options={[
+                      { value: 'none', label: 'None' },
+                      { value: 'test', label: 'Test' },
+                    ]}
+                    selectedOption={tTemplate}
+                    handleChange={setTtemplate}
+                  />
+                </Flex>
+              </CustomGrid>
+            </Container>
+            <HR marginTop={48} marginBottom={48} />
+            <Container padding="24px">
+              <Flex flexFlow="row" justify="space-between">
+                <div>
+                  <h6>Add New Field</h6>
+                  <br />
+                  <p className="secondary_color">Add a new field to this Data Structure</p>
+                </div>
+                <Button btnType="filled" onClick={() => setOpenData(!openData)}>
+                  Add New Field
+                </Button>
+              </Flex>
+            </Container>
+            <HR marginTop={48} marginBottom={48} />
+            <Container padding="0px 24px 24px 24px">
+              {isLoading ? (
+                <LoadingContainer />
+              ) : (
+                <>
+                  <CustomTable
+                    cells={tableCells}
+                    rows={dataStructure.map((row) => {
+                      return {
+                        name: row.name,
+                        label: row.label,
+                        type: row.type,
+                        inputType: row.inputType,
+                        actions: (
+                          <Button btnType="filled" onClick={removeData}>
+                            Edit/Delete
+                          </Button>
+                        ),
+                      };
+                    })}
+                  />
+                </>
+              )}
+            </Container>
+
+            <HR marginBottom={24} />
+            <Container padding="24px">
+              <Flex flexFlow="row" justify="space-between">
+                <div>
+                  <h6>Save Template</h6>
+                  <br />
+                  <p className="secondary_color">Save your progress</p>
+                </div>
+                <Button btnType="filled" onClick={() => addTemplate()}>
+                  Save Template
+                </Button>
+              </Flex>
+            </Container>
+            <HR marginTop={24} />
+          </>
+        ) : (
+          <div>
+            <>
+              <Container padding="24px">
+                <Flex flexFlow="row" justify="space-between">
+                  <div>
+                    <h6>Add New Field</h6>
+                    <br />
+                    <p className="secondary_color">Add a new field to this Data Structure</p>
+                  </div>
+                  <Button btnType="filled" onClick={() => setOpenData(!openData)}>
+                    Add New Field
+                  </Button>
+                </Flex>
+              </Container>
+              <HR marginTop={48} marginBottom={48} />
+
+              <Container padding="0px 24px 24px 24px">
+                {isLoading ? (
+                  <LoadingContainer />
+                ) : (
+                  <>
+                    <CustomTable
+                      cells={tableCells}
+                      rows={dataStructure.map((row) => {
+                        return {
+                          name: row.name,
+                          label: row.label,
+                          type: row.type,
+                          inputType: row.inputType,
+                          actions: (
+                            <Button btnType="filled" onClick={removeData}>
+                              Edit/Delete
+                            </Button>
+                          ),
+                        };
+                      })}
+                    />
+                  </>
+                )}
+              </Container>
+
+              <HR marginBottom={24} />
+              <Container padding="24px">
+                <Flex flexFlow="row" justify="space-between">
+                  <div>
+                    <h6>Save Template</h6>
+                    <br />
+                    <p className="secondary_color">Save your progress</p>
+                  </div>
+                  <Button btnType="filled" onClick={() => addTemplate()}>
+                    Save Template
+                  </Button>
+                </Flex>
+              </Container>
+              <HR marginTop={24} />
+            </>
+          </div>
+        ))}
 
       <AddDataModal openConfirmation={openData} handleClose={handleClose} handleAdd={addData} />
-
-      <br />
-      <StyledSectionTitle>
-        <Flex flexFlow="row" fullWidth={true} justify="space-between">
-          <div>
-            <h5>Manage Existing Data Fields</h5>
-            <br />
-            <span className="secondary_color">
-              Manually enter grading results found on the IGI diamond report.
-            </span>
-          </div>
-          <div>
-            <Flex flexFlow="row" gap={32}>
-              <Button btnType="outlined">Save Template</Button>
-              <Button btnType="filled">Preview Template</Button>
-            </Flex>
-          </div>
-        </Flex>
-      </StyledSectionTitle>
-      <br />
-      <Container padding="0px 24px 24px 24px">
-        {isLoading ? (
-          <LoadingContainer />
-        ) : (
-          <>
-            <CustomTable
-              cells={tableCells}
-              rows={dataStructure.map((row) => {
-                return {
-                  name: row.name,
-                  label: row.label,
-                  type: row.type,
-                  inputType: row.inputType,
-                  actions: (
-                    <Button btnType="filled" onClick={removeData}>
-                      Delete
-                    </Button>
-                  ),
-                };
-              })}
-            />
-            {/* <AddDataStructure handleAdd={addData} /> */}
-          </>
-        )}
-      </Container>
     </>
   );
 };

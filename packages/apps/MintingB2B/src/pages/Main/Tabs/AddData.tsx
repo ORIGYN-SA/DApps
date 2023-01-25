@@ -8,7 +8,8 @@ import {
     TextInput,
     Button,
     CustomTable,
-    Modal
+    Modal,
+    TextArea
   } from '@origyn-sa/origyn-art-ui';
 
   const AddDataModal = ({ handleAdd, openConfirmation, handleClose }) => {
@@ -77,6 +78,19 @@ import {
               selectedOption={inputType}
               handleChange={setInputType}
             />
+            {inputType.value == 'select' && (
+            <>
+             <TextInput
+              name="name"
+              type="type"
+              label="Input Option 1"
+            />
+             <TextInput
+              name="name"
+              label="Input Option 2"
+            />
+            </>
+            )}
             <Flex flexFlow="row">
               <Button btnType="filled" type="button" onClick={addDataField}>
                 Submit
