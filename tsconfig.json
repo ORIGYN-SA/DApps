@@ -54,7 +54,10 @@
       ],
       "@dapp/common-assets": [
         "./packages/common/assets/src/index.ts"
-      ]
+      ],
+      "@dapp/candy-editor" : [
+        "./packages/candy_editor/src/index.ts"
+      ],
     }
   },
   "include": [
