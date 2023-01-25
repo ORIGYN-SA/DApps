@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   HR,
@@ -53,6 +53,21 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
       label: 'Actions',
     },
   ];
+
+  const [type, setType] = useState({ value: 'text', label: 'Text' });
+  const [inputType, setInputType] = useState({ value: 'text', label: 'Text' });
+  const [name, setName] = useState('');
+  const [label, setLabel] = useState('');
+
+  const addDataField = () => {
+    addData({
+      name,
+      inputType: inputType.value,
+      label,
+      type: type.value,
+    });
+  };
+
   console.log(dataStructure);
   return (
     <>
@@ -90,13 +105,41 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
             <p className="secondary_color">Add new Data fields to the Minter's Certificate Form</p>
           </div>
           <Flex gap={48} flexFlow="column">
-            <Select name="Template" label="Section" />
-            <TextInput name="Name Template" type="type" label="Name" />
-            <Select name="Type" label="Label" />
-            <Select name="Type" label="Data Type" />
-            <Select name="Type" label="Input Type" />
+            <Select 
+            name="Template" 
+            label="Section" />
+            <TextInput
+              name="Name Template"
+              type="type"
+              label="Name"
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Select 
+            name="Type" 
+            label="Label" />
+            <Select
+              name="Type"
+              label="Data Type"
+              options={[
+                { value: 'text', label: 'Text' },
+                { value: 'number', label: 'Number' },
+              ]}
+              selectedOption={type}
+              handleChange={setType}
+            />
+            <Select
+              name="Type"
+              label="Input Type"
+              options={[
+                { value: 'text', label: 'Text' },
+                { value: 'number', label: 'Number' },
+                { value: 'select', label: 'Select' },
+              ]}
+              selectedOption={inputType}
+              handleChange={setInputType}
+            />
             <Flex flexFlow="row">
-              <Button btnType="filled" type="submit">
+              <Button btnType="filled" type="button" onClick={addDataField}>
                 Submit
               </Button>
             </Flex>
