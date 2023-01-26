@@ -13,6 +13,7 @@ import { LoadingContainer } from '@dapp/features-components';
 import { DataStructureList } from '../../../components/lists/DataStructureList';
 import { AddDataStructure } from '../../../components/forms/AddDataStructure';
 import styled from 'styled-components';
+import pick from 'lodash/pick';
 import { array } from 'yup/lib/locale';
 import AddDataModal from './AddData';
 
@@ -64,39 +65,28 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
     setOpenData(!openData);
   };
 
-  const filter = () => {
-    dataStructure.map((data) => {
-      selectTemplate.push({ value: data.name, label: data.name });
-    });
-  };
-
   const selectTemplate = [{ value: 'newTemplate', label: 'New Template' }];
 
   const addTemplate = () => {
     selectTemplate.push({ value: nTemplate, label: nTemplate });
   };
+  // --------------------------
 
-  //-------------Testing-----------------
+  let localTemplates: any = localStorage.getItem('formTemplate');
 
-  const arrayData = [];
+  localTemplates = JSON.parse(localTemplates);
 
-  const filterData = () => {
-    selectTemplate.map((data) => {
-      if (data.value == sTemplate.value) {
-        arrayData.push(data);
-      }
+  const addSelection = () => {
+    localTemplates.IGI.map((data) => {
+      selectTemplate.push({ value: data.title, label: data.title });
     });
   };
 
-  console.log(arrayData); // this will filter the data showed for each
-
-  //----------------------------------------
+  console.log(localTemplates);
 
   useEffect(() => {
-    filter();
-    filterData();
-    console.log(arrayData);
-  }, [selectTemplate, addTemplate, setStemplate]);
+    addSelection(), selectTemplate;
+  }, [selectTemplate, addTemplate, setStemplate, addSelection]);
 
   console.log(dataStructure);
   return (
@@ -248,7 +238,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
                   <>
                     <CustomTable
                       cells={tableCells}
-                      rows={dataStructure.map((row) => {
+                      rows={localTemplates.IGI[0].fields.map((row) => {
                         return {
                           name: row.name,
                           label: row.label,
