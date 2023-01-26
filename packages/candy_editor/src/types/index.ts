@@ -22,8 +22,8 @@ export type CandyValue =
   | { Option: [] | [CandyValue] }
   | { Principal: Principal }
   | {
-      Array: { thawed: Array<CandyValue> } | { frozen: Array<CandyValue> };
-    }
+    Array: { thawed: Array<CandyValue> } | { frozen: Array<CandyValue> };
+  }
   | { Class: Array<Property> };
 
 export interface Property {
@@ -31,3 +31,7 @@ export interface Property {
   name: string;
   immutable: boolean;
 }
+
+export interface CandyClassEditor {
+  addPropertyToCandyClass : (property: Property) => void;
+};

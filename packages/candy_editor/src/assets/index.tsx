@@ -1,17 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Card, Flex, Button, HR, Select, Container } from '@origyn-sa/origyn-art-ui';
-import type { CandyValue } from '../types';
+import { FormTypes } from './formTypes';
+import type { CandyValue, Property, CandyClassEditor } from '../types';
 
 export const CandyDataEditor = () => {
   const selectOptions = [{ label: 'Text', value: 'Text' }];
   const [openForm, setOpenForm] = React.useState(false);
   const [candyType, setCandyType] = useState<string>('Not selected');
+  const [candyClass, setCandyClass] = useState<CandyValue>({ Class: [] });
+
+  const candyClassEditor: CandyClassEditor = {
+    addPropertyToCandyClass: (property: Property) => {
+      setCandyClass({ Class: [...candyClass['Class'], property] });
+    },
+  };
+
   const handleOpenForm = () => {
     setOpenForm(!openForm);
   };
   const handleSelectChange = (type) => {
     setCandyType(type);
   };
+
+  useEffect(() => {
+    console.log('Candy Class', candyClass);
+    setCandyType('Not selected');
+  }, [candyClass]);
 
   return (
     <Card type="outlined" padding="16px">
@@ -25,10 +39,11 @@ export const CandyDataEditor = () => {
           {openForm ? (
             <>
               <HR marginTop={8} marginBottom={8} />
-              <Flex flexFlow="row">
+              <Flex flexFlow="column" gap={16}>
                 <Flex>
                   <Select
-                    label="Candy Type"
+                    inputSize="medium"
+                    label="Select Candy Type"
                     handleChange={(type) => {
                       handleSelectChange(type.value);
                     }}
@@ -38,6 +53,18 @@ export const CandyDataEditor = () => {
                     }))}
                   />
                 </Flex>
+                <HR marginTop={8} marginBottom={8} />
+                <Flex>
+                  {candyType !== 'Not selected' ? FormTypes[candyType](candyClassEditor) : null}
+                </Flex>
+              </Flex>
+            </>
+          ) : null}
+          {candyClass['Class'].length > 0 ? (
+            <>
+              <HR marginTop={8} marginBottom={8} />
+              <Flex>
+                <b>Your Candy Class: </b> <pre>{JSON.stringify(candyClass, null, 2)}</pre>
               </Flex>
             </>
           ) : null}
