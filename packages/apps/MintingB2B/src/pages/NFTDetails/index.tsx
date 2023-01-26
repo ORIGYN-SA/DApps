@@ -16,7 +16,6 @@ import { useParams } from 'react-router-dom';
 import { LoadingContainer } from '../../../../../features/components';
 import { timeConverter } from '../../../../../utils';
 import { ConnectQRModal } from '../../modals/ConnectQRModal';
-import { TextBlocks } from '../../components/TextBlocks';
 import Certificate from '../../../../luxury/src/components/Certificate';
 import SquareIcon from '@mui/icons-material/Square';
 import PlayForWorkIcon from '@mui/icons-material/PlayForWork';
@@ -27,32 +26,34 @@ import { SendCertificateToPrincipal } from '../../modals/SendCertificateToPrinci
 const RenderDetails = ({ data }) => {
   const FT = JSON.parse(localStorage.getItem('formTemplate')) || formTemplate;
 
-  return <Flex flexFlow="column" gap={16}>{
-    FT?.IGI?.map((item) => {
-      return (
-        <Flex flexFlow="column" gap={24}>
-          <Flex flexFlow="column" align="center" justify="center">
-            <br />
-            <h4>{item.title}</h4>
-            <br />
-          </Flex>
-          {item?.fields?.map((f) =>
-            <>
-              <Flex align="center" justify="space-between">
-                <p>{f.label}</p>
+  return (
+    <Flex flexFlow="column" gap={16}>
+      {FT?.IGI?.map((item, k) => {
+        return (
+          <Flex key={k} flexFlow="column" gap={24}>
+            <Flex flexFlow="column" align="center" justify="center">
+              <br />
+              <h4>{item.title}</h4>
+              <br />
+            </Flex>
+            {item?.fields?.map((f, k) => (
+              <React.Fragment key={k}>
+                <Flex align="center" justify="space-between">
+                  <p>{f.label}</p>
 
-                <p style={{ textAlign: 'end' }} className="secondary_color">
-                  {data[f.name]?.toString()}
-                </p>
-              </Flex>
-              <HR />
-            </>
-          )}
-        </Flex>
-      )
-    })
-  }</Flex>
-}
+                  <p style={{ textAlign: 'end' }} className="secondary_color">
+                    {data[f.name]?.toString()}
+                  </p>
+                </Flex>
+                <HR />
+              </React.Fragment>
+            ))}
+          </Flex>
+        );
+      })}
+    </Flex>
+  );
+};
 
 const WalletPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
@@ -65,6 +66,7 @@ const WalletPage = () => {
   const [normalData, setNormalData] = useState<any>();
   console.log('NFT Data', nftData);
   console.log('NFT Normal', normalData);
+  console.log('Libraries', libraries);
 
   const handleLogOut = () => {
     setLoggedIn('');
@@ -139,6 +141,28 @@ const WalletPage = () => {
     console.log(data);
   };
 
+  const downloadFile = async (url: string, fileName: string) => {
+    const response = await fetch(url, {
+      method: 'GET', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'x-api-key': loggedIn,
+      },
+    });
+    const data = await response.blob();
+
+    const downloadUrl = URL.createObjectURL(data);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   useEffect(() => {
     setLoggedIn(localStorage.getItem('apiKey'));
     fetchData();
@@ -158,7 +182,10 @@ const WalletPage = () => {
                 <Flex flexFlow="column" gap={8}>
                   <Container size="md" padding="50px">
                     <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                      <img style={{ borderRadius: '18px', width: '100%' }} src={libraries[0]?.library_file} />
+                      <img
+                        style={{ borderRadius: '18px', width: '100%' }}
+                        src={libraries[0]?.library_file}
+                      />
                       <Flex flexFlow="column" gap={8} justify="center">
                         <p className="secondary_color">Token ID</p>
                         <h2>
@@ -167,9 +194,7 @@ const WalletPage = () => {
                         <Flex align="center" justify="space-between">
                           <div>
                             <p className="secondary_color">Status</p>
-                            <p style={{ color: '#DD1422' }}>
-                              {normalData?.status}
-                            </p>
+                            <p style={{ color: '#DD1422' }}>{normalData?.status}</p>
                           </div>
                           {normalData.status === 'SUCCESS' && (
                             <div>
@@ -184,46 +209,39 @@ const WalletPage = () => {
                         <ShowMoreBlock btnText="Read More">
                           <p className="secondary_color">{normalData?.description}</p>
                         </ShowMoreBlock>
-                        {
-                          normalData.status === "PRE_STAGE" && (
-                            <Grid columns={2} gap={16}>
-                              <Button btnType="filled" style={{ width: "100%" }}>
-                                Edit
-                              </Button>
-                              <Button
-                                btnType="outlined"
-                                style={{ width: "100%" }}
-                              >
-                                Stage
-                              </Button>
-                            </Grid>  
-                          )
-                        }
-                        {
-                          normalData.status === "WAITING_FOR_OWNER" && (
-                            <Grid columns={2} gap={16}>
-                              <Button onClick={generateQR} btnType="filled" style={{ width: "100%" }}>
-                                Generate QR
-                              </Button>
-                              <Button
-                                onClick={() => setIsOpen(true)}
-                                btnType="outlined"
-                                disabled={normalData.status !== 'WAITING_FOR_OWNER'}
-                                style={{ width: "100%" }}
-                              >
-                                Connect with QR
-                              </Button>
-                              <Button
-                                onClick={() => setIsSendOpen(true)}
-                                btnType="outlined"
-                                disabled={normalData.status !== 'WAITING_FOR_OWNER'}
-                                style={{ width: "100%" }}
-                              >
-                                Send to Principal
-                              </Button>
-                            </Grid>
-                          )
-                        }
+                        {normalData.status === 'PRE_STAGE' && (
+                          <Grid columns={2} gap={16}>
+                            <Button btnType="filled" style={{ width: '100%' }}>
+                              Edit
+                            </Button>
+                            <Button btnType="outlined" style={{ width: '100%' }}>
+                              Stage
+                            </Button>
+                          </Grid>
+                        )}
+                        {normalData.status === 'WAITING_FOR_OWNER' && (
+                          <Grid columns={2} gap={16}>
+                            <Button onClick={generateQR} btnType="filled" style={{ width: '100%' }}>
+                              Generate QR
+                            </Button>
+                            <Button
+                              onClick={() => setIsOpen(true)}
+                              btnType="outlined"
+                              disabled={normalData.status !== 'WAITING_FOR_OWNER'}
+                              style={{ width: '100%' }}
+                            >
+                              Connect with QR
+                            </Button>
+                            <Button
+                              onClick={() => setIsSendOpen(true)}
+                              btnType="outlined"
+                              disabled={normalData.status !== 'WAITING_FOR_OWNER'}
+                              style={{ width: '100%' }}
+                            >
+                              Send to Principal
+                            </Button>
+                          </Grid>
+                        )}
                       </Flex>
                     </Grid>
                   </Container>
@@ -241,10 +259,7 @@ const WalletPage = () => {
                           <br />
                           <br />
                           {/* In here the array of the information of the Diamon NFT */}
-                          <RenderDetails
-                            data={nftData}
-                          />
-
+                          <RenderDetails data={nftData} />
                         </Container>,
                         <Container size="sm" padding="32px" smPadding="16px">
                           <h2 style={{ textAlign: 'center' }}>Origyn Certificate</h2>
@@ -252,11 +267,11 @@ const WalletPage = () => {
                           <Certificate
                             data={{
                               Name: nftData.name,
-                              "NFT Type": "Digital Twin",
-                              "Date Minted": "08/25/2022",
-                              "Owner Principal ID": "zevfd-yumga-hdmnw-uk7fw-qdetm-l7jk7-rbalg-mvgk4-wqh1u",
-                              "Canister ID": "jwcfb-hyaaa-aaaaj-aac4q-cai",
-
+                              'NFT Type': 'Digital Twin',
+                              'Date Minted': '08/25/2022',
+                              'Owner Principal ID':
+                                'zevfd-yumga-hdmnw-uk7fw-qdetm-l7jk7-rbalg-mvgk4-wqh1u',
+                              'Canister ID': 'jwcfb-hyaaa-aaaaj-aac4q-cai',
                             }}
                           />
                         </Container>,
@@ -266,10 +281,14 @@ const WalletPage = () => {
                           <br />
                           <Container size="md" padding="50px">
                             <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                              {libraries.map((l) => {
+                              {libraries.map((l, k) => {
                                 return (
-                                  <img src={l?.library_file} style={{ borderRadius: "12px" }} />
-                                )
+                                  <img
+                                    key={k}
+                                    src={l?.library_file}
+                                    style={{ borderRadius: '12px' }}
+                                  />
+                                );
                               })}
                             </Grid>
                           </Container>
@@ -277,68 +296,49 @@ const WalletPage = () => {
                           <h2 style={{ textAlign: 'center' }}>Documents</h2>
                           <br />
                           <Container size="md" padding="50px">
-                            <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                              <Card padding="16px" justify="space-between">
-                                <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                                  <div
-                                    style={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                    }}
-                                  >
-                                    <SquareIcon fontSize="large" />
-                                    <div>
-                                      <p style={{ whiteSpace: 'nowrap', marginLeft: 10 }}>
-                                        IGI Report
-                                      </p>
-                                      <p
-                                        className="secondary_color"
-                                        style={{ whiteSpace: 'nowrap', marginLeft: 10 }}
+                            <Grid columns={2} mdColumns={2} gap={50} smGap={16} mdGap={40}>
+                              {libraries.map((e, k) => {
+                                return (
+                                  <Card key={k} padding="10px" justify="space-between">
+                                    <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                        }}
                                       >
-                                        IGI Report #{nftData.report_number}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <Flex justify="flex-end" align="center">
-                                    <PlayForWorkIcon fontSize="large" />
-                                  </Flex>
-                                </Grid>
-                              </Card>
-                              <Card padding="16px" justify="space-between">
-                                <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                                  <div
-                                    style={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                    }}
-                                  >
-                                    <SquareIcon fontSize="large" />
-                                    <div>
-                                      <p style={{ whiteSpace: 'nowrap', marginLeft: 10 }}>
-                                        Origyn Certificate
-                                      </p>
-                                      <p
-                                        className="secondary_color"
-                                        style={{ whiteSpace: 'nowrap', marginLeft: 10 }}
-                                      >
-                                        Minting Date: {nftData.report_date}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <Flex justify="flex-end" align="center">
-                                    <PlayForWorkIcon fontSize="large" />
-                                  </Flex>
-                                </Grid>
-                              </Card>
+                                        <SquareIcon fontSize="large" />
+                                        <div>
+                                          <p style={{ whiteSpace: 'nowrap', marginLeft: 10 }}>
+                                            {e.library_id}
+                                          </p>
+                                          <p
+                                            className="secondary_color"
+                                            style={{ whiteSpace: 'nowrap', marginLeft: 10 }}
+                                          >
+                                            Report #{nftData.report_number}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <Flex justify="flex-end" align="center">
+                                        <PlayForWorkIcon
+                                          onClick={() => downloadFile(e.library_file, e.library_id)}
+                                          fontSize="large"
+                                        />
+                                      </Flex>
+                                    </Grid>
+                                  </Card>
+                                );
+                              })}
                             </Grid>
                           </Container>
 
                           <Flex flexFlow="column" gap={16}>
-                            {normalData?.statusHistory.map((hItem) => {
+                            {normalData?.statusHistory.map((hItem, k) => {
                               const createDate = new Date(hItem.createdAt);
                               const updateDate = new Date(hItem.updatedAt);
                               return (
-                                <React.Fragment>
+                                <React.Fragment key={k}>
                                   <h2 style={{ textAlign: 'center' }}>History</h2>
                                   <br />
                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
