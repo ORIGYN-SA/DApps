@@ -1,58 +1,75 @@
 import React from 'react';
-import { Pagination, Container, Flex, Card, Grid, HR } from '@origyn-sa/origyn-art-ui';
+import { Pagination, Container, Flex, Card, Grid, HR, Button, CustomTable } from '@origyn-sa/origyn-art-ui';
 import { LoadingContainer } from '@dapp/features-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { NftsPagination } from '../types';
 
+const tableCells = [
+  {
+    id: 'tokenId',
+    label: 'Token ID',
+  },
+  {
+    id: 'type',
+    label: 'App Type',
+  },
+  {
+    id: 'status',
+    label: 'Status',
+  },
+  {
+    id: 'actions',
+    label: 'Actions',
+  },
+];
 export const AllNfts = ({ isLoading, nfts, pagination, onPageChange }: Props) => {
+  const navigate = useNavigate();
+
   return (
-    <Container padding="16px">
-      <br />
-      <h2>Certificates</h2>
-      <br />
-      <p>Below is a list of all of the minted Certificates</p>
-      <br />
+    <>
+      <Container padding="16px">
+        <br />
+        <h2>Certificates</h2>
+        <br />
+        <p>Below is a list of all of the minted Certificates</p>
+        <br />
+      </Container>
       <HR />
-      <br />
-      {isLoading ? (
-        <LoadingContainer />
-      ) : (
-        <Flex flexFlow="column" gap={8}>
-          {nfts.map((item) => (
-            <Card
-              key={item.tokenId}
-              as={Link}
-              to={`/${item.tokenId}`}
-              padding="8px"
-              justify="space-between"
-            >
-              <Grid columns={3} style={{ width: "100%" }}>
-                <Flex flexFlow="column" gap={4}>
-                  <p className="secondary_color">Token ID</p>
-                  <p>{item.tokenId}</p>
-                </Flex>
-                <Flex flexFlow="column" gap={4}>
-                  <p className="secondary_color">App Type</p>
-                  <p>{item.appType}</p>
-                </Flex>
-                <Flex flexFlow="column" gap={4}>
-                  <p className="secondary_color">Status</p>
-                  <p>{item.status}</p>
-                </Flex>
-              </Grid>
-            </Card>
-          ))}
-        </Flex>
-      )}
-      <br />
-      <Flex align="center" justify="center">
-        <Pagination
-          pageCount={Math.ceil(pagination?.total / pagination?.limit)}
-          onPageChange={onPageChange}
-        />
-      </Flex>
-    </Container>
+      <Container padding="16px">
+        <br />
+        {isLoading ? (
+          <LoadingContainer />
+        ) : (
+          <Flex flexFlow="column" gap={8}>
+            <CustomTable
+              cells={tableCells}
+              rows={nfts.map((nft) => {
+                return {
+                  tokenId: nft.tokenId,
+                  type: nft.appType,
+                  status: nft.status,
+                  actions: (
+                    <Button btnType="filled" onClick={() => navigate(`/${nft.tokenId}`)}>
+                      Show Details
+                    </Button>
+                  ),
+                };
+              })}
+            />
+          </Flex>
+        )}
+        <br />
+        <Grid columns={3}>
+          <div />
+          <Pagination
+            pageCount={Math.ceil(pagination?.total / pagination?.limit)}
+            onPageChange={onPageChange}
+          />
+          <div />
+        </Grid>
+      </Container>
+    </>
   );
 };
 

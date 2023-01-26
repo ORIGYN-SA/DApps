@@ -511,7 +511,7 @@ export const Minter = () => {
     const response = await fetch(`https://development.origyn.network/canister/v0/pre-stage/files`, {
       method: 'PUT',
       headers: {
-        'x-api-key': loggedIn,
+        'x-access-token': loggedIn,
       },
       body: requestFormData,
     });
@@ -609,7 +609,7 @@ export const Minter = () => {
       const response = await fetch(`https://development.origyn.network/canister/v0/nft-token`, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
-          'x-api-key': loggedIn,
+          'x-access-token': loggedIn,
         },
         body: requestFormData,
       });
@@ -643,23 +643,23 @@ export const Minter = () => {
       <br />
       <br />
       <h4>Mint a new Certificate</h4>
-      <Grid columns={2}>
-        <div>
-          <br />
-          <p>Manually enter all the fields and upload any necessary images and documents to complete the minting process.</p>
-          <br />
-          <br />
-        </div>
-        <Flex align="center" justify="flex-end">
-          <Button btnType="filled" type="submit" onClick={mintFiles}>Submit</Button>
-        </Flex>
-      </Grid>
-      <HR />
       {
         isMinting ? (
           <LoadingContainer />
         ) : (
           <>
+            <Grid columns={2}>
+              <div>
+                <br />
+                <p>Manually enter all the fields and upload any necessary images and documents to complete the minting process.</p>
+                <br />
+                <br />
+              </div>
+              <Flex align="center" justify="flex-end">
+                <Button btnType="filled" onClick={mintFiles}>Submit</Button>
+              </Flex>
+            </Grid>
+            <HR />
             <form ref={formRef}>
               <MetadataForm data={templateFormData.IGI} />
               <br />
@@ -755,7 +755,7 @@ export const Minter = () => {
             </CustomGrid>
             <HR marginTop={48} marginBottom={48} />
             <Flex align="center" justify="flex-end">
-              <Button btnType="filled" type="submit" onClick={mintFiles}>Submit</Button>
+              <Button btnType="filled" onClick={mintFiles}>Submit</Button>
             </Flex>
           </>
         )

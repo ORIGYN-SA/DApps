@@ -46,7 +46,7 @@ const initialMenuItems: MenuItem[] = [
 export const Layout = ({ children }: LayoutProps) => {
   const { refreshAllBalances } = useTokensContext();
   const { principal, loggedIn } = useContext(AuthContext);
-  const [darkTheme, setDarkTheme] = useState(true);
+  const [darkTheme, setDarkTheme] = useState(false);
   const [menuItems, setMenuItems] = useState(initialMenuItems);
 
   useEffect(() => {

@@ -24,6 +24,7 @@ const CustomGrid = styled(Grid)`
 declare type CellType = {
   id: string;
   label: string;
+  canSort?: boolean;
 };
 
 export const DataStructure = ({ isLoading, dataStructure, removeData, addData }: Props) => {
@@ -31,6 +32,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
     {
       id: 'name',
       label: 'Name',
+      canSort: true,
     },
     {
       id: 'label',
@@ -98,8 +100,8 @@ const [openData, setOpenData] = useState(false);
                   type: row.type,
                   inputType: row.inputType,
                   actions: (
-                    <Button btnType="filled" onClick={removeData}>
-                      Edit/Delete
+                    <Button btnType="filled" onClick={() => removeData(row.name)}>
+                      Delete
                     </Button>
                   ),
                 };

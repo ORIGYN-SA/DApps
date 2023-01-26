@@ -77,10 +77,11 @@ const WalletPage = () => {
         credentials: 'same-origin', // include, *same-origin, omit
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'x-api-key': loggedIn,
+          'x-access-token': loggedIn,
         },
       },
     );
+    
     const responseNormalData = await fetch(
       `https://development.canister.origyn.ch/canister/v0/nft-token/${nft_id}/`,
       {
@@ -90,11 +91,12 @@ const WalletPage = () => {
         credentials: 'same-origin', // include, *same-origin, omit
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'x-api-key': loggedIn,
+          'x-access-token': loggedIn,
         },
       },
     );
     const data = await Promise.all([response.json(), responseNormalData.json()]);
+    console.log(data);
     setNormalData(data[1]);
     setLibraries(data[0].metadata.library);
 
@@ -109,7 +111,7 @@ const WalletPage = () => {
     const response = await fetch(`https://development.canister.origyn.ch/canister/v0/token`, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: {
-        'x-api-key': loggedIn,
+        'x-access-token': loggedIn,
       },
       body: JSON.stringify({ amount: 1 }),
     });

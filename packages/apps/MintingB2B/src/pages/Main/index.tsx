@@ -12,6 +12,8 @@ import { useSnackbar } from 'notistack';
 const MintingPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isDataStructureLoading, setIsDataStructureLoading] = useState(false);
+  
   const [nftList, setNftList] = useState([]);
   const [pagination, setPagination] = useState<any>();
   const [currentPage, setCurrentPage] = useState<any>(1);
@@ -29,6 +31,7 @@ const MintingPage = () => {
   };
 
   const fetchData = async (page: number) => {
+    setIsLoading(true);
     const response = await fetch(
       `https://development.canister.origyn.ch/canister/v0/nft-token?sortKey=createdAt&sortDirection=-1&skip=${
         30 * (page - 1)
@@ -40,7 +43,7 @@ const MintingPage = () => {
         credentials: 'same-origin', // include, *same-origin, omit
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'x-api-key': loggedIn,
+          'x-access-token': loggedIn,
         },
       },
     );
@@ -68,19 +71,45 @@ const MintingPage = () => {
     setFormTemplateData(newFormTemplate);
   };
   const removeData = (fileId) => {
+    setIsDataStructureLoading(true);
     const newData = {
       ...dataStructure,
       IGI: dataStructure.IGI.filter(({ name }) => name !== fileId),
     };
     const newFormTemplate = {
       ...formTemplateData,
-      IGI: formTemplate.IGI.map((t) => ({...t, fields: t?.fields?.filter(({ name }) => name !== fileId)})),
+      IGI: formTemplateData.IGI.map((t) => ({...t, fields: t?.fields?.filter(({ name }) => name !== fileId)})),
     };
     localStorage.setItem('dataStructure', JSON.stringify(newData));
     localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
     setDataStructure(newData);
     setFormTemplateData(newFormTemplate);
+    setIsDataStructureLoading(false);
   };
+
+  const logIn = async (email, password) => {
+
+    const response = await fetch(
+      `https://development.canister.origyn.ch/user/v0/user/authenticate`,
+      {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        body: JSON.stringify({
+          mail: email,
+          password,
+          "jwt": "true",
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          accept: 'application/json',
+        },
+      },
+    );
+    const d = await response.json()
+    setLoggedIn(d.accessToken);
+  }
 
   useEffect(() => {
     if (loggedIn) {
@@ -123,7 +152,7 @@ const MintingPage = () => {
               />,
               <Minter />,
               <DataStructure
-                isLoading={false}
+                isLoading={isDataStructureLoading}
                 dataStructure={dataStructure.IGI}
                 removeData={removeData}
                 addData={addData}
@@ -135,7 +164,7 @@ const MintingPage = () => {
           />
         </Flex>
       ) : (
-        <GuestContainer onLogin={setLoggedIn} />
+        <GuestContainer onLogin={logIn} />
       )}
     </>
   );

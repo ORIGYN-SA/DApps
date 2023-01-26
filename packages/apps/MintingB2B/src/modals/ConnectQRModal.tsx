@@ -19,7 +19,7 @@ export const ConnectQRModal = (props) => {
           method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
           headers: {
             accept: 'application/json',
-            'x-api-key': localStorage.getItem('apiKey').toString(),
+            'x-access-token': localStorage.getItem('apiKey').toString(),
           },
           body: JSON.stringify({ tokenId: nft_id }),
         },

@@ -16,7 +16,7 @@ import {
     const [type, setType] = useState({ value: 'text', label: 'Text' });
     const [inputType, setInputType] = useState({ value: 'text', label: 'Text' });
     const [name, setName] = useState('');
-    const [label, setLabel] = useState({ value: 'label', label: 'Label' });
+    const [label, setLabel] = useState('');
     const [section, setSection] = useState({value: 'section', label: 'Section'});
 
     const addDataField = () => {
@@ -24,9 +24,10 @@ import {
             section: section.value,
             name,
             inputType: inputType.value,
-            label: label.value,
+            label: label,
             type: type.value,
         })
+        handleClose();
       }
 
     return(<>
@@ -48,15 +49,11 @@ import {
               label="Name"
               onChange={(e) => setName(e.target.value)}
             />
-            <Select 
-            name="label" 
-            label="Label" 
-            options={[
-                { value: 'label', label: 'Label' },
-              ]}
-            selectedOption={label}
-            handleChange={setLabel}
-              />
+            <TextInput
+              name="label" 
+              label="Label" 
+              onChange={(e) => setLabel(e.target.value)}
+            />
             <Select
               name="type"
               label="Data Type"
@@ -80,15 +77,15 @@ import {
             />
             {inputType.value == 'select' && (
             <>
-             <TextInput
-              name="name"
-              type="type"
-              label="Input Option 1"
-            />
-             <TextInput
-              name="name"
-              label="Input Option 2"
-            />
+              <TextInput
+                name="name"
+                type="type"
+                label="Input Option 1"
+              />
+              <TextInput
+                name="name"
+                label="Input Option 2"
+              />
             </>
             )}
             <Flex flexFlow="row">
