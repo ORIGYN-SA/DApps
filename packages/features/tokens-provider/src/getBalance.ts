@@ -15,11 +15,10 @@ const createAgent = (isLocal: boolean) =>
 
 const icpMethod = async (
   isLocal: boolean,
-  principal: Principal,
+  account: string,
   token: Token,
 ): Promise<BalanceResponse> => {
   try {
-    const account = getAccountId(principal);
     const actor = Actor.createActor(getIdl(IdlStandard.ICP), {
       canisterId: isLocal ? token.localCanisterId : token.canisterId,
       agent: createAgent(isLocal),
@@ -49,7 +48,7 @@ const dip20Method = async (
 
 const extMethod = async (
   isLocal: boolean,
-  principal: Principal,
+  address: string,
   token: Token,
 ): Promise<BalanceResponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.EXT), {
@@ -58,7 +57,7 @@ const extMethod = async (
   });
   const balanceResult: any = await actor.balance({
     token: isLocal ? token.localCanisterId : token.canisterId,
-    user: { principal: principal },
+    user: { address },
   });
   if ('ok' in balanceResult) return { value: balanceResult.ok.toString(), decimals: 8 };
 
@@ -93,14 +92,13 @@ const wicpMethod = async (
 
 const ogyMethod = async (
   isLocal: boolean,
-  principal: Principal,
+  account: string,
   token: Token,
 ): Promise<BalanceResponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.ICP), {
     canisterId: isLocal ? token.localCanisterId : token.canisterId,
     agent: createAgent(isLocal),
   });
-  const account = getAccountId(principal);
 
   const value: any = await actor.account_balance_dfx({
     account,
@@ -112,15 +110,24 @@ const ogyMethod = async (
 export const getBalance = async (isLocal: boolean, principal: Principal, token: Token) => {
   switch (token.standard) {
     case IdlStandard.ICP:
-      if (token.symbol === 'OGY') return ogyMethod(isLocal, principal, token);
-      return icpMethod(isLocal, principal, token);
+      if (token.symbol === 'OGY') return ogyMethod(isLocal, getAccountId(principal), token);
+      return icpMethod(isLocal, getAccountId(principal), token);
     case IdlStandard.DIP20:
       return dip20Method(isLocal, principal, token);
     case IdlStandard.EXT:
-      return extMethod(isLocal, principal, token);
+      return extMethod(isLocal, getAccountId(principal), token);
     case IdlStandard.WICP:
       return wicpMethod(isLocal, principal, token);
     case IdlStandard.XTC:
       return xtcMethod(isLocal, principal, token);
+  }
+};
+export const getBalanceByAccount = async (isLocal: boolean, account: string, token: Token) => {
+  switch (token.standard) {
+    case IdlStandard.ICP:
+      if (token.symbol === 'OGY') return ogyMethod(isLocal, account, token);
+      return icpMethod(isLocal, account, token);
+    case IdlStandard.EXT:
+      return extMethod(isLocal, account, token);
   }
 };
