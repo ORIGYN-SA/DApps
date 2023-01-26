@@ -220,7 +220,7 @@ export const NFTPage = () => {
       fetchNft();
     }
   }, [actor]);
-
+ 
   return (
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
@@ -359,9 +359,11 @@ export const NFTPage = () => {
                                   Finish Sale
                                 </Button>
                               ) : (
-                                <Button disabled btnType="outlined">
+                                <Button btnType="outlined" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
+
+
                               )
                             ) : (
                               BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
