@@ -18,7 +18,7 @@ const Library = () => {
         title="Library"
         tabs={[{ title: 'Explore', id: 'Explore' }]}
         content={[
-          <Container padding="16px">
+          <Container padding="16px" key="secondaryNavContent">
             <ColumnView />
           </Container>,
         ]}

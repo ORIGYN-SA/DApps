@@ -59,8 +59,7 @@ export const Layout = ({ children }: LayoutProps) => {
     useRoute().then(({ canisterId }) => {
       OrigynClient.getInstance().init(true, canisterId);
       getNftCollectionMeta([]).then((r: any) => {
-        if ('err' in r) {
-        } else {
+        if (!('err' in r)) {
           const data = r.ok.metadata[0].Class.find(
             ({ name }) => name === 'library',
           ).value.Array.thawed.reduce(

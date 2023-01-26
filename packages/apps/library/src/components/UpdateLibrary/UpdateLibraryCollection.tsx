@@ -69,9 +69,9 @@ export const UpdateLibraryCollection = ({
   const handleSelectChange = (val) => {
     setSelectedRead(val);
   };
-  const handleSelectChangeLibrary = (val) => {
-    setSelectedRead(val);
-  };
+  // const handleSelectChangeLibrary = (val) => {
+  //   setSelectedRead(val);
+  // };
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -133,69 +133,65 @@ export const UpdateLibraryCollection = ({
       </Button>
 
       <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
-        <Container padding="16px" size="full">
-          {inProgress ? (
-            <>
-              <h4>Update in Progress</h4>
-              <br />
-              <LinearProgress color="secondary" />
-            </>
-          ) : (
-            <>
-              <Flex flexFlow="column" gap={16}>
-                <Flex>
-                  <h4>Update library file</h4>
-                </Flex>
-                <HR marginBottom={16} marginTop={16} />
-                <Flex>
-                  <Container size="full">
-                    <Flex flexFlow="column" gap={8}>
-                      <Flex>Update library title</Flex>
-                      <Flex>
-                        <TextInput
-                          label="Library title"
-                          id="title"
-                          placeholder="Enter Library Title"
-                          onChange={getTypedTitle}
-                          value={typedTitle}
-                        />
-                      </Flex>
+        {inProgress ? (
+          <Container padding="16px" size="full">
+            <LinearProgress color="secondary" />
+          </Container>
+        ) : (
+          <Container padding="16px" size={'full'}>
+            <Flex flexFlow="column" gap={16}>
+              <Flex>
+                <h4>Update library file</h4>
+              </Flex>
+              <HR marginBottom={16} marginTop={16} />
+              <Flex>
+                <Container size="full">
+                  <Flex flexFlow="column" gap={8}>
+                    <Flex>Update library title</Flex>
+                    <Flex>
+                      <TextInput
+                        label="Library title"
+                        id="title"
+                        placeholder="Enter Library Title"
+                        onChange={getTypedTitle}
+                        value={typedTitle}
+                      />
                     </Flex>
-                  </Container>
-                </Flex>
-                <HR marginBottom={16} marginTop={16} />
-                <Flex>
-                  <Container size="full">
-                    <Flex flexFlow="column" gap={8}>
-                      <Flex>Update Read permission</Flex>
-                      <Flex>
-                        <Select
-                          selectedOption={{
-                            value: selectedRead,
-                            label: selectedRead,
-                          }}
-                          label="Select"
-                          handleChange={(opt) => {
-                            handleSelectChange(opt.value);
-                          }}
-                          options={readPermissions.map((read) => {
-                            return {
-                              value: read,
-                              label: read,
-                            };
-                          })}
-                        />
-                      </Flex>
+                  </Flex>
+                </Container>
+              </Flex>
+              <HR marginBottom={16} marginTop={16} />
+              <Flex>
+                <Container size="full">
+                  <Flex flexFlow="column" gap={8}>
+                    <Flex>Update Read permission</Flex>
+                    <Flex>
+                      <Select
+                        selectedOption={{
+                          value: selectedRead,
+                          label: selectedRead,
+                        }}
+                        label="Select"
+                        handleChange={(opt) => {
+                          handleSelectChange(opt.value);
+                        }}
+                        options={readPermissions.map((read) => {
+                          return {
+                            value: read,
+                            label: read,
+                          };
+                        })}
+                      />
                     </Flex>
-                  </Container>
-                </Flex>
-                <HR marginBottom={16} marginTop={16} />
-                <Flex>
-                  <Button onClick={handleClose}>Back</Button>
-                  <Button onClick={handleSubmit} btnType="filled">
-                    Submit
-                  </Button>
-                </Flex>
+                  </Flex>
+                </Container>
+              </Flex>
+              <HR marginBottom={16} marginTop={16} />
+              <Flex>
+                <Button onClick={handleClose}>Back</Button>
+                <Button onClick={handleSubmit} btnType="filled">
+                  Submit
+                </Button>
               </Flex>
             </>
           )}

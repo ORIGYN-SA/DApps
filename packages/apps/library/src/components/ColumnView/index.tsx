@@ -206,7 +206,7 @@ const ColumnView = () => {
   };
 
   const handleAddLibraryAtCollection = async () => {
-    setCurrentTokenId;
+    // setCurrentTokenId;
     setOpenAddLibraryCollectionLevel(!openAddLibraryCollectionLevel);
     setOpenLib(false);
     setOpenLibraryCollectionLevel(false);
@@ -273,7 +273,7 @@ const ColumnView = () => {
   useEffect(() => {
     openSpecificNft();
 
-    useRoute().then(({ canisterId, tokenId }) => {
+    useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
     });
     console.log('actor', actor);
@@ -290,6 +290,11 @@ const ColumnView = () => {
       checkAndSetOwner();
     }
   }, [canisterId]);
+
+  useEffect(() => {
+    console.log('openLibrarySelectedToken', openLibrarySelectedToken);
+    console.log('openLibraryCollectionLevel', openLibraryCollectionLevel);
+  }, [openLibrarySelectedToken, openLibraryCollectionLevel]);
 
   return (
     <>
@@ -317,6 +322,7 @@ const ColumnView = () => {
                 <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
                   {collectionNft?.map((nft, index) => (
                     <ListItem
+                      key={index}
                       itemName={nft}
                       onClick={(event) => handleClickOnSelectedNft(nft, event, index)}
                       index={index}
@@ -341,6 +347,7 @@ const ColumnView = () => {
                     )}
                     {tokenLibraryData?.map((library, index) => (
                       <ListItem
+                        key={index}
                         itemName={library?.Class[1]?.value?.Text}
                         onClick={() => handleDeta(library, index)}
                         index={index}
@@ -390,6 +397,7 @@ const ColumnView = () => {
                   <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
                     {collectionLevelLibraryData?.map((library, index) => (
                       <ListItem
+                        key={index}
                         itemName={library?.Class[1]?.value?.Text}
                         onClick={() => showCollectionLevelLibraryData(library, index)}
                         index={index}

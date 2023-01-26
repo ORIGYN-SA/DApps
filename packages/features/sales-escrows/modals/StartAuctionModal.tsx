@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Principal } from '@dfinity/principal';
 import { AuthContext } from '@dapp/features-authentication';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -16,7 +16,6 @@ import {
   Select,
   Button,
 } from '@origyn-sa/origyn-art-ui';
-import { useRoute } from '@dapp/features-authentication';
 import { LinearProgress } from '@mui/material';
 
 const dateNow = new Date();
@@ -50,7 +49,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
   const { actor } = React.useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
   const [errors, setErrors] = React.useState<any>({});
-  const [tokenID, setTokenID] = useState<any>();
+  // const [tokenID, setTokenID] = useState<any>();
   // @ts-ignore
   const [values, setValues] = React.useState<any>(validationSchema.default());
   const [inProgress, setInProgress] = React.useState(false);
@@ -147,7 +146,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
     e.preventDefault();
     validationSchema
       .validate(values, { abortEarly: false })
-      .then((v) => {
+      .then(() => {
         handleStartAuction(values);
       })
       .catch(function (e) {

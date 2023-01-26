@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider'
-import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-sa/origyn-art-ui'
-import { LinearProgress } from '@mui/material'
-import * as Yup from 'yup'
-import { AuthContext } from '../../authentication'
-import { useSnackbar } from 'notistack'
-import { isLocal } from '../../../utils'
+import React, { useContext, useEffect, useState } from 'react';
+import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
+import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-sa/origyn-art-ui';
+import { LinearProgress } from '@mui/material';
+import * as Yup from 'yup';
+import { AuthContext } from '../../authentication';
+import { useSnackbar } from 'notistack';
+import { isLocal } from '../../../utils';
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
@@ -18,32 +18,38 @@ const validationSchema = Yup.object().shape({
     .required('Recipient address is required!'),
   memo: Yup.string().default(''),
   token: Yup.string().default('OGY'),
-})
+});
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
-  const { tokens, activeTokens } = useTokensContext()
-  const { activeWalletProvider } = useContext(AuthContext)
-  const { enqueueSnackbar } = useSnackbar()
-  const [switchTransfer, setSwitchTransfer] = useState(false)
+  const { tokens, activeTokens } = useTokensContext();
+  const { activeWalletProvider } = useContext(AuthContext);
+  const { enqueueSnackbar } = useSnackbar();
+  const [switchTransfer, setSwitchTransfer] = useState(false);
   // @ts-ignore
-  const [values, setValues] = React.useState<any>(validationSchema.default())
-  const [errors, setErrors] = React.useState<any>({})
-  const [totalAmount, setTotalAmount] = useState(0)
-  const [success, setSuccess] = useState(false)
-
+  const [values, setValues] = React.useState<any>(validationSchema.default());
+  const [errors, setErrors] = React.useState<any>({});
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [success, setSuccess] = useState(false);
 
   const onChange = (e?: any, name?: string, value?: any) => {
-    setErrors({ ...errors, [name || e.target.name]: undefined })
-    setValues({ ...values, [name || e.target.name]: value || e.target.value })
-  }
+    setErrors({ ...errors, [name || e.target.name]: undefined });
+    setValues({ ...values, [name || e.target.name]: value || e.target.value });
+  };
 
   const sendTrx = (data) => {
-    setSwitchTransfer(true)
+    setSwitchTransfer(true);
     const total = data.amount * 1e8;
-    sendTransaction(isLocal(), activeWalletProvider, tokens[data.token], data.recipientAddress, total, data.memo)
-    .then(()=>{
-      setSuccess(true);
-    })
+    sendTransaction(
+      isLocal(),
+      activeWalletProvider,
+      tokens[data.token],
+      data.recipientAddress,
+      total,
+      data.memo,
+    )
+      .then(() => {
+        setSuccess(true);
+      })
       .catch((e) => {
         console.error(e);
         setSwitchTransfer(false);
@@ -52,7 +58,6 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
           anchorOrigin: {
             vertical: 'top',
             horizontal: 'right',
-            
           },
         });
       })
@@ -61,9 +66,8 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
       })
       .finally(() => {
         setSwitchTransfer(false);
-        ;
-      })
-  }
+      });
+  };
 
   //   <Container size='full' padding='48px'>
   //             <h2>Success!</h2>
@@ -86,75 +90,79 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   // };
 
   const getValidationErrors = (err) => {
-    const validationErrors = {}
+    const validationErrors = {};
 
-    err.inner.forEach(error => {
+    err.inner.forEach((error) => {
       if (error.path) {
-        validationErrors[error.path] = error.message
+        validationErrors[error.path] = error.message;
       }
-    })
+    });
 
-    return validationErrors
-  }
+    return validationErrors;
+  };
   const handleSubmit = (e: any) => {
-    e.preventDefault()
-    validationSchema.validate(values, { abortEarly: false }).then((v) => {
-      sendTrx(values);
-      
-    })
-      .catch(function(e) {
-        const errs = getValidationErrors(e)
+    e.preventDefault();
+    validationSchema
+      .validate(values, { abortEarly: false })
+      .then(() => {
+        sendTrx(values);
+      })
+      .catch(function (e) {
+        const errs = getValidationErrors(e);
         setErrors(errs);
         setSuccess(false);
-      })
-  }
+      });
+  };
 
-//   const total = values.amount * 1e8 + tokens[values.token].fee
-// setTotalAmount(total)
+  //   const total = values.amount * 1e8 + tokens[values.token].fee
+  // setTotalAmount(total)
 
   const handleSuccess = () => {
     handleClose(false);
     setSuccess(false);
-  }
- const [tokenFee, setTokenFee] = useState('OGY')
+  };
+  const [tokenFee, setTokenFee] = useState('OGY');
 
-  useEffect(()=> {
-const total = Number(values.amount) + tokens[values.token].fee * 0.00000001
-setTotalAmount(total)
-setTokenFee(values.token)
-  }, [onChange])
-
+  useEffect(() => {
+    const total = Number(values.amount) + tokens[values.token].fee * 0.00000001;
+    setTotalAmount(total);
+    setTokenFee(values.token);
+  }, [onChange]);
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => handleClose(false)} size='md'>
-        {success ? ( <Container size='full' padding='48px'>
-             <h2>Success!</h2>
-               <br/>
-               <span>Your transfer of {totalAmount} {tokenFee} is complete.
-               Click done to return to the dashboard.</span>
-               <br/>
-               <br/>
-              <Button btnType='filled' onClick={handleSuccess}>Done</Button>
-
-         </Container> ) :
-        ( switchTransfer ? (
-          <Container size='full' padding='48px'>
+      <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
+        {success ? (
+          <Container size="full" padding="48px">
+            <h2>Success!</h2>
+            <br />
+            <span>
+              Your transfer of {totalAmount} {tokenFee} is complete. Click done to return to the
+              dashboard.
+            </span>
+            <br />
+            <br />
+            <Button btnType="filled" onClick={handleSuccess}>
+              Done
+            </Button>
+          </Container>
+        ) : switchTransfer ? (
+          <Container size="full" padding="48px">
             <h2>Transfer in Progress</h2>
             <br />
-            <LinearProgress color='secondary' />
+            <LinearProgress color="secondary" />
           </Container>
         ) : (
-          <Container as='form' onSubmit={handleSubmit} size='full' padding='48px'>
+          <Container as="form" onSubmit={handleSubmit} size="full" padding="48px">
             <h2>Transfer Tokens</h2>
             <br />
-            <Flex flexFlow='column' gap={8}>
+            <Flex flexFlow="column" gap={8}>
               <br />
               <span>Select token</span>
               <Select
-                placeholder='OGY'
+                placeholder="OGY"
                 handleChange={(option) => {
-                  onChange(null, 'token', option.value)
+                  onChange(null, 'token', option.value);
                 }}
                 options={Object.keys(activeTokens).map((standard) => ({
                   value: standard,
@@ -162,12 +170,12 @@ setTokenFee(values.token)
                 }))}
               />
               <br />
-              <Flex flexFlow='row' justify='space-between'>
+              <Flex flexFlow="row" justify="space-between">
                 <span>Amount</span>
-                <span id='balance'>{tokens[tokenFee]?.balance}</span>
+                <span id="balance">{tokens[tokenFee]?.balance}</span>
               </Flex>
               <TextInput
-                name='amount'
+                name="amount"
                 onChange={onChange}
                 value={values?.amount}
                 error={errors?.amount}
@@ -175,18 +183,14 @@ setTokenFee(values.token)
               <br />
               <span>Recipient Address</span>
               <TextInput
-                name='recipientAddress'
+                name="recipientAddress"
                 onChange={onChange}
                 value={values.recipientAddress}
                 error={errors.recipientAddress}
               />
               <br />
               <span>Memo</span>
-              <TextInput
-                name='memo'
-                value={values.memo}
-                onChange={onChange}
-              />
+              <TextInput name="memo" value={values.memo} onChange={onChange} />
               <br />
               <span>Transaction Fee</span>
               <span style={{ color: 'grey' }}>{`${tokens[tokenFee].fee * 0.00000001}${' '}${
@@ -194,26 +198,26 @@ setTokenFee(values.token)
               }`}</span>
               <br />
             </Flex>
-            <br/>
+            <br />
             <HR />
-            <br/>
-            <Flex flexFlow='row' align="center" justify='space-between'>
+            <br />
+            <Flex flexFlow="row" align="center" justify="space-between">
               <h6>Total Amount</h6>
               <span>{totalAmount}</span>
             </Flex>
-            <br/>
+            <br />
             <HR />
-            <br/>
-            <Flex justify='flex-end'>
-              <Button btnType='filled' type='submit'>
+            <br />
+            <Flex justify="flex-end">
+              <Button btnType="filled" type="submit">
                 Transfer {tokenFee}
               </Button>
             </Flex>
           </Container>
-        ))}
+        )}
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default TransferTokensModal
+export default TransferTokensModal;

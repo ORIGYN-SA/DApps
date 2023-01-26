@@ -17,7 +17,7 @@ const LibraryVideo = (props: any) => {
   }, [canisterId, props.source]);
 
   useEffect(() => {
-    useRoute().then(({ canisterId, tokenId }) => {
+    useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
     });
   }, []);
