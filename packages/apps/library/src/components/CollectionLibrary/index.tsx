@@ -12,7 +12,7 @@ interface SimplifiedMeta {
   location: string;
   location_type: string;
   size: number;
-  isMutable: boolean;
+  immutable: boolean;
 }
 
 function formatBytes(bytes, decimals = 2) {
@@ -33,23 +33,20 @@ export const CollectionLibrary = (props: any) => {
     location: '',
     location_type: '',
     size: 0,
-    isMutable: false,
+    immutable: false,
   });
 
   const processMetadata = async () => {
-    const metadata = await props.library3;
+    const metadata = props.collectionLevelLibraryMetadata;
     const libraryId = metadata.Class?.filter((res) => res.name === 'library_id')[0].value.Text;
     const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
-    const contentType = metadata.Class?.filter((res) => res.name === 'content_type')[0].value.Text;
+    const contentType = metadata.Class.filter((res) => res.name === 'content_type')[0].value.Text;
     const location = metadata.Class?.filter((res) => res.name === 'location')[0].value.Text;
-    const locationType = metadata.Class?.filter((res) => res.name === 'location_type')[0].value
-      .Text;
+    const locationType = metadata.Class?.filter((res) => res.name === 'location_type')[0].value.Text;
     const size = metadata.Class?.filter((res) => res.name === 'size')[0].value.Nat;
-    let isMutable = false;
+    let immutable = false;
     if (metadata.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0]) {
-      isMutable = false;
-    } else {
-      isMutable = true;
+      immutable = true;
     }
     setObjLibraryData({
       library_id: libraryId,
@@ -58,14 +55,14 @@ export const CollectionLibrary = (props: any) => {
       location: location,
       location_type: locationType,
       size: Number(size),
-      isMutable: isMutable,
+      immutable: immutable,
     });
     console.log(objLibraryData);
   };
 
   useEffect(() => {
     processMetadata();
-  }, [props.library3]);
+  }, [props.collectionLevelLibraryMetadata]);
 
   return (
     <Container padding="16px">
@@ -95,27 +92,29 @@ export const CollectionLibrary = (props: any) => {
       <HR marginTop={16} marginBottom={16} />
       {props.loggedIn == true && props.owner == true ? (
         <>
-          {objLibraryData.isMutable ? (
+          {!objLibraryData.immutable ? (
             <>
               <Flex flexFlow="column" justify="center" gap={16}>
                 <Flex>
                   <DeleteLibrary
                     libraryId={objLibraryData.library_id}
                     currentTokenId={''}
-                    isMutable={objLibraryData.isMutable}
+                    isMutable={objLibraryData.immutable}
                     updateCollectionLevelLibraryData={props.updateCollectionLevelLibraryData}
                     setOpenLibraryCollectionLevel={props.setOpenLibraryCollectionLevel}
-                    setLibrary3={props.setLibrary3}
+                    setCollectionLevelLibraryMetadata={props.setCollectionLevelLibraryMetadata}
                   />
                 </Flex>
                 <Flex>
-                  <UpdateLibrary
-                    tokenId={''}
-                    updateLibraryData={props.updateCollectionLevelLibraryData}
-                    setOpenLibrary={props.setOpenLibraryCollectionLevel}
-                    locationType={objLibraryData.location_type}
-                    metadata={props.library3}
-                  />
+                  
+                    <UpdateLibrary
+                      tokenId={''}
+                      updateLibraryData={props.updateCollectionLevelLibraryData}
+                      setOpenLibrary={props.setOpenLibraryCollectionLevel}
+                      locationType={props.collectionLevelLibraryMetadata.Class.filter((res) => res.name === 'location_type')[0].value.Text}
+                      metadata={props.collectionLevelLibraryMetadata}
+                    />
+                  
                 </Flex>
               </Flex>
             </>

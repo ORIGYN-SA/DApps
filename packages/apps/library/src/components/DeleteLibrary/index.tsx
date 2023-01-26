@@ -140,7 +140,7 @@ export const DeleteLibrary = (props: any) => {
           })[0].value.Array.thawed,
         );
       });
-      props.setLibrary3('');
+      props.setCollectionLevelLibraryMetadata('');
       props.setOpenLibraryCollectionLevel(false);
     } else {
       //Update the library data for the token
@@ -153,7 +153,7 @@ export const DeleteLibrary = (props: any) => {
       });
       props.setOpenLibrarySelectedToken(false);
       // clean library data
-      props.setLibDet('');
+      props.setTokenLevelLibraryMetadata('');
     }
   };
 

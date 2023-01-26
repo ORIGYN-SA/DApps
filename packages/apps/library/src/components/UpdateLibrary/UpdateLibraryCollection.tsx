@@ -138,64 +138,66 @@ export const UpdateLibraryCollection = ({
             <LinearProgress color="secondary" />
           </Container>
         ) : (
-          <Container padding="16px" size={'full'}>
-            <Flex flexFlow="column" gap={16}>
-              <Flex>
-                <h4>Update library file</h4>
-              </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-                <Container size="full">
-                  <Flex flexFlow="column" gap={8}>
-                    <Flex>Update library title</Flex>
-                    <Flex>
-                      <TextInput
-                        label="Library title"
-                        id="title"
-                        placeholder="Enter Library Title"
-                        onChange={getTypedTitle}
-                        value={typedTitle}
-                      />
+          <>
+            <Container padding="16px" size={'full'}>
+              <Flex flexFlow="column" gap={16}>
+                <Flex>
+                  <h4>Update library file</h4>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Container size="full">
+                    <Flex flexFlow="column" gap={8}>
+                      <Flex>Update library title</Flex>
+                      <Flex>
+                        <TextInput
+                          label="Library title"
+                          id="title"
+                          placeholder="Enter Library Title"
+                          onChange={getTypedTitle}
+                          value={typedTitle}
+                        />
+                      </Flex>
                     </Flex>
-                  </Flex>
-                </Container>
-              </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-                <Container size="full">
-                  <Flex flexFlow="column" gap={8}>
-                    <Flex>Update Read permission</Flex>
-                    <Flex>
-                      <Select
-                        selectedOption={{
-                          value: selectedRead,
-                          label: selectedRead,
-                        }}
-                        label="Select"
-                        handleChange={(opt) => {
-                          handleSelectChange(opt.value);
-                        }}
-                        options={readPermissions.map((read) => {
-                          return {
-                            value: read,
-                            label: read,
-                          };
-                        })}
-                      />
+                  </Container>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Container size="full">
+                    <Flex flexFlow="column" gap={8}>
+                      <Flex>Update Read permission</Flex>
+                      <Flex>
+                        <Select
+                          selectedOption={{
+                            value: selectedRead,
+                            label: selectedRead,
+                          }}
+                          label="Select"
+                          handleChange={(opt) => {
+                            handleSelectChange(opt.value);
+                          }}
+                          options={readPermissions.map((read) => {
+                            return {
+                              value: read,
+                              label: read,
+                            };
+                          })}
+                        />
+                      </Flex>
                     </Flex>
-                  </Flex>
-                </Container>
+                  </Container>
+                </Flex>
+                <HR marginBottom={16} marginTop={16} />
+                <Flex>
+                  <Button onClick={handleClose}>Back</Button>
+                  <Button onClick={handleSubmit} btnType="filled">
+                    Submit
+                  </Button>
+                </Flex>
               </Flex>
-              <HR marginBottom={16} marginTop={16} />
-              <Flex>
-                <Button onClick={handleClose}>Back</Button>
-                <Button onClick={handleSubmit} btnType="filled">
-                  Submit
-                </Button>
-              </Flex>
-            </>
-          )}
-        </Container>
+            </Container>
+          </>
+        )}
       </Modal>
     </>
   );

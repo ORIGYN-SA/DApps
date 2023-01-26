@@ -37,7 +37,7 @@ export const NFTLibrary = (props: any) => {
   });
 
   const processMetadata = async () => {
-    const metadata = await props.libDet;
+    const metadata = await props.tokenLevelLibraryMetadata;
     const libraryId = metadata.Class?.filter((res) => res.name === 'library_id')[0].value.Text;
     const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
     const contentType = metadata.Class?.filter((res) => res.name === 'content_type')[0].value.Text;
@@ -46,7 +46,7 @@ export const NFTLibrary = (props: any) => {
       .Text;
     const size = metadata.Class?.filter((res) => res.name === 'size')[0].value.Nat;
     let isMutable = false;
-    if (props.libDet.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0]) {
+    if (props.tokenLevelLibraryMetadata.Class.filter((item) => item.name === 'com.origyn.immutable_library')[0]) {
       isMutable = false;
     } else {
       isMutable = true;
@@ -65,7 +65,7 @@ export const NFTLibrary = (props: any) => {
 
   useEffect(() => {
     processMetadata();
-  }, [props.libDet]);
+  }, [props.tokenLevelLibraryMetadata]);
 
   return (
     <Container padding="16px">
@@ -104,7 +104,7 @@ export const NFTLibrary = (props: any) => {
                     currentTokenId={props.currentTokenId}
                     updateTokenLibraryData={props.updateTokenLibraryData}
                     setOpenLibrarySelectedToken={props.setOpenLibrarySelectedToken}
-                    setLibDet={props.setLibDet}
+                    setTokenLevelLibraryMetadata={props.setTokenLevelLibraryMetadata}
                   />
                 </Flex>
                 <Flex>
@@ -113,7 +113,7 @@ export const NFTLibrary = (props: any) => {
                     updateLibraryData={props.updateTokenLibraryData}
                     setOpenLibrary={props.setOpenLibrarySelectedToken}
                     locationType={objLibraryData.location_type}
-                    metadata={props.libDet}
+                    metadata={props.tokenLevelLibraryMetadata}
                   />
                 </Flex>
               </Flex>

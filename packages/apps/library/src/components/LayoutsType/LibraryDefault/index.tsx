@@ -32,6 +32,7 @@ const LibraryDefault = (props: any) => {
             }}
             href={link}
             target="_blank"
+            rel="noreferrer"
           >
             {link}
           </a>

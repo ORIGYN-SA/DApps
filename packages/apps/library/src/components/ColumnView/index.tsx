@@ -104,8 +104,8 @@ const ColumnView = () => {
   const [openAddLibrary, setOpenAddLibrary] = React.useState(false);
   const [openLibrarySelectedToken, setOpenLibrarySelectedToken] = useState(false);
   const [openLibraryCollectionLevel, setOpenLibraryCollectionLevel] = useState(false);
-  const [libDet, setLibDet] = useState('');
-  const [library3, setLibrary3] = useState();
+  const [tokenLevelLibraryMetadata, setTokenLevelLibraryMetadata] = useState('');
+  const [collectionLevelLibraryMetadata, setCollectionLevelLibraryMetadata] = useState();
   const [openAddLibraryCollectionLevel, setOpenAddLibraryCollectionLevel] = React.useState(false);
 
   const handleClickOnNfts = async (
@@ -129,7 +129,7 @@ const ColumnView = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    setLibDet('');
+    setTokenLevelLibraryMetadata('');
     const { canisterId } = await useRoute();
     setOpenLib(false);
     setOpenLibrarySelectedToken(false);
@@ -184,13 +184,13 @@ const ColumnView = () => {
 
   const handleDeta = async (lib, index: number) => {
     setOpenLibrarySelectedToken(true);
-    setLibDet(lib);
+    setTokenLevelLibraryMetadata(lib);
     setSelectedMeta(index);
     setOpenAddLibrary(false);
   };
 
   const showCollectionLevelLibraryData = async (lib3, index: number) => {
-    setLibrary3(lib3);
+    setCollectionLevelLibraryMetadata(lib3);
     setSelectedLibrary(index);
     setOpenLibraryCollectionLevel(true);
     setOpenAddLibrary(false);
@@ -362,15 +362,15 @@ const ColumnView = () => {
                 )}
               </Grid>
               <Grid column={4} style={{ borderRight: '1px solid grey', gridColumnEnd: 'span 3' }}>
-                {libDet ? (
+                {tokenLevelLibraryMetadata ? (
                   <NFTLibrary
-                    libDet={libDet}
+                    tokenLevelLibraryMetadata={tokenLevelLibraryMetadata}
                     currentTokenId={currentTokenId}
                     loggedIn={loggedIn}
                     owner={owner}
                     updateTokenLibraryData={setTokenLibraryData}
                     setOpenLibrarySelectedToken={setOpenLibrarySelectedToken}
-                    setLibDet={setLibDet}
+                    setTokenLevelLibraryMetadata={setTokenLevelLibraryMetadata}
                   />
                 ) : (
                   <></>
@@ -408,15 +408,15 @@ const ColumnView = () => {
                 </Flex>
               </Grid>
               <Grid column={3} style={{ borderRight: '1px solid grey', gridColumnEnd: 'span 4' }}>
-                {library3 ? (
+                {collectionLevelLibraryMetadata ? (
                   <CollectionLibrary
                     loggedIn={loggedIn}
-                    library3={library3}
+                    collectionLevelLibraryMetadata={collectionLevelLibraryMetadata}
                     owner={owner}
                     currentTokenId={''}
                     setOpenLibraryCollectionLevel={setOpenLibraryCollectionLevel}
                     updateCollectionLevelLibraryData={setCollectionLevelLibraryData}
-                    setLibrary3={setLibrary3}
+                    setCollectionLevelLibraryMetadata={setCollectionLevelLibraryMetadata}
                   />
                 ) : (
                   <></>
