@@ -84,9 +84,28 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
 
   console.log(localTemplates);
 
+  function getValueFromKey(arr, key1, value, key2) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].hasOwnProperty(key1) && arr[i][key1] === value) {
+        return arr[i][key2];
+      }
+    }
+  }
+
+  const refreshTemplate = () => {
+    let filteredTemplate = [];
+    if (sTemplate.value != 'newTemplate') {
+    filteredTemplate = getValueFromKey(localTemplates.IGI, 'title', sTemplate.value, 'fields');
+    return filteredTemplate;
+    }
+    return filteredTemplate
+  };
+
+  console.log(refreshTemplate())
+
   useEffect(() => {
-    addSelection(), selectTemplate;
-  }, [selectTemplate, addTemplate, setStemplate, addSelection]);
+    refreshTemplate(), addSelection(), selectTemplate;
+  }, [selectTemplate, addTemplate, setStemplate, addSelection, setStemplate, sTemplate]);
 
   console.log(dataStructure);
   return (
@@ -181,7 +200,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
                 <>
                   <CustomTable
                     cells={tableCells}
-                    rows={dataStructure.map((row) => {
+                    rows={refreshTemplate().map((row) => {
                       return {
                         name: row.name,
                         label: row.label,
@@ -238,7 +257,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
                   <>
                     <CustomTable
                       cells={tableCells}
-                      rows={localTemplates.IGI[0].fields.map((row) => {
+                      rows={refreshTemplate().map((row) => {
                         return {
                           name: row.name,
                           label: row.label,
