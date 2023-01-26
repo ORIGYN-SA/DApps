@@ -4,17 +4,11 @@ import {
   HR,
   Grid,
   Flex,
-  Select,
-  TextInput,
   Button,
   CustomTable,
 } from '@origyn-sa/origyn-art-ui';
 import { LoadingContainer } from '@dapp/features-components';
-import { DataStructureList } from '../../../components/lists/DataStructureList';
-import { AddDataStructure } from '../../../components/forms/AddDataStructure';
 import styled from 'styled-components';
-import pick from 'lodash/pick';
-import { array } from 'yup/lib/locale';
 import AddDataModal from './AddData';
 
 const StyledSectionTitle = styled.div`
@@ -56,56 +50,10 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
     },
   ];
 
-  const [tTemplate, setTtemplate] = useState({ value: 'none', label: 'None' });
-  const [sTemplate, setStemplate] = useState({ value: undefined, label: 'None' });
-  const [nTemplate, setNtemplate] = useState('');
-
-  const [openData, setOpenData] = useState(false);
+const [openData, setOpenData] = useState(false);
   const handleClose = () => {
     setOpenData(!openData);
   };
-
-  const selectTemplate = [{ value: 'newTemplate', label: 'New Template' }];
-
-  const addTemplate = () => {
-    selectTemplate.push({ value: nTemplate, label: nTemplate });
-  };
-  // --------------------------
-
-  let localTemplates: any = localStorage.getItem('formTemplate');
-
-  localTemplates = JSON.parse(localTemplates);
-
-  const addSelection = () => {
-    localTemplates.IGI.map((data) => {
-      selectTemplate.push({ value: data.title, label: data.title });
-    });
-  };
-
-  console.log(localTemplates);
-
-  function getValueFromKey(arr, key1, value, key2) {
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].hasOwnProperty(key1) && arr[i][key1] === value) {
-        return arr[i][key2];
-      }
-    }
-  }
-
-  const refreshTemplate = () => {
-    let filteredTemplate = [];
-    if (sTemplate.value != 'newTemplate') {
-    filteredTemplate = getValueFromKey(localTemplates.IGI, 'title', sTemplate.value, 'fields');
-    return filteredTemplate;
-    }
-    return filteredTemplate
-  };
-
-  console.log(refreshTemplate())
-
-  useEffect(() => {
-    refreshTemplate(), addSelection(), selectTemplate;
-  }, [selectTemplate, addTemplate, setStemplate, addSelection, setStemplate, sTemplate]);
 
   console.log(dataStructure);
   return (
@@ -114,7 +62,6 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
         <Grid column={1}>
           <StyledSectionTitle>
             <h2>Create/Edit Data Structure</h2>
-            <br />
             <p className="secondary_color">
               Below you can add or subtract custom fields that are displayed in the Minter's
               Certificate form.
@@ -122,176 +69,59 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
           </StyledSectionTitle>
         </Grid>
       </Grid>
-      <HR marginBottom={24} />
+
+      <HR marginTop={24} marginBottom={48} />
       <Container padding="24px">
-        <CustomGrid>
+        <Flex flexFlow="row" justify="space-between">
           <div>
-            <h6>Select Template Type</h6>
-            <br />
-            <p className="secondary_color">
-              Select from our predefined templates or build your own based on the project you are
-              creating certificates for.
-            </p>
+            <h6>Add New Field</h6>
+            <p className="secondary_color">Add a new field to this Data Structure</p>
           </div>
-          <Flex gap={48} flexFlow="column">
-            <Select
-              name="sTemplate"
-              label="Select Template"
-              options={selectTemplate}
-              selectedOption={sTemplate}
-              handleChange={setStemplate}
-            />
-          </Flex>
-        </CustomGrid>
+          <Button btnType="filled" onClick={() => setOpenData(!openData)}>
+            Add New Field
+          </Button>
+        </Flex>
       </Container>
       <HR marginTop={48} marginBottom={48} />
 
-      {sTemplate.value != undefined &&
-        (sTemplate.value == 'newTemplate' ? (
-          <>
-            <Container padding="24px">
-              <CustomGrid>
-                <div>
-                  <h6>Set Template Type</h6>
-                  <br />
-                  <p className="secondary_color">
-                    Select from our predefined templates or build your own based on the project you
-                    are creating certificates for.
-                  </p>
-                </div>
-                <Flex gap={48} flexFlow="column">
-                  <TextInput
-                    name="nTemplate"
-                    type="type"
-                    label="Name Template"
-                    onChange={(e) => setNtemplate(e.target.value)}
-                  />
-                  <Select
-                    name="tTemlate"
-                    label="Template type"
-                    options={[
-                      { value: 'none', label: 'None' },
-                      { value: 'test', label: 'Test' },
-                    ]}
-                    selectedOption={tTemplate}
-                    handleChange={setTtemplate}
-                  />
-                </Flex>
-              </CustomGrid>
-            </Container>
-            <HR marginTop={48} marginBottom={48} />
-            <Container padding="24px">
-              <Flex flexFlow="row" justify="space-between">
-                <div>
-                  <h6>Add New Field</h6>
-                  <br />
-                  <p className="secondary_color">Add a new field to this Data Structure</p>
-                </div>
-                <Button btnType="filled" onClick={() => setOpenData(!openData)}>
-                  Add New Field
-                </Button>
-              </Flex>
-            </Container>
-            <HR marginTop={48} marginBottom={48} />
-            <Container padding="0px 24px 24px 24px">
-              {isLoading ? (
-                <LoadingContainer />
-              ) : (
-                <>
-                  <CustomTable
-                    cells={tableCells}
-                    rows={refreshTemplate().map((row) => {
-                      return {
-                        name: row.name,
-                        label: row.label,
-                        type: row.type,
-                        inputType: row.inputType,
-                        actions: (
-                          <Button btnType="filled" onClick={removeData}>
-                            Edit/Delete
-                          </Button>
-                        ),
-                      };
-                    })}
-                  />
-                </>
-              )}
-            </Container>
-
-            <HR marginBottom={24} />
-            <Container padding="24px">
-              <Flex flexFlow="row" justify="space-between">
-                <div>
-                  <h6>Save Template</h6>
-                  <br />
-                  <p className="secondary_color">Save your progress</p>
-                </div>
-                <Button btnType="filled" onClick={() => addTemplate()}>
-                  Save Template
-                </Button>
-              </Flex>
-            </Container>
-            <HR marginTop={24} />
-          </>
+      <Container padding="0px 24px 24px 24px">
+        {isLoading ? (
+          <LoadingContainer />
         ) : (
+          <>
+            <CustomTable
+              cells={tableCells}
+              rows={dataStructure.map((row) => {
+                return {
+                  name: row.name,
+                  label: row.label,
+                  type: row.type,
+                  inputType: row.inputType,
+                  actions: (
+                    <Button btnType="filled" onClick={removeData}>
+                      Edit/Delete
+                    </Button>
+                  ),
+                };
+              })}
+            />
+          </>
+        )}
+      </Container>
+
+      <HR marginBottom={24} />
+      <Container padding="24px">
+        <Flex flexFlow="row" justify="space-between">
           <div>
-            <>
-              <Container padding="24px">
-                <Flex flexFlow="row" justify="space-between">
-                  <div>
-                    <h6>Add New Field</h6>
-                    <br />
-                    <p className="secondary_color">Add a new field to this Data Structure</p>
-                  </div>
-                  <Button btnType="filled" onClick={() => setOpenData(!openData)}>
-                    Add New Field
-                  </Button>
-                </Flex>
-              </Container>
-              <HR marginTop={48} marginBottom={48} />
-
-              <Container padding="0px 24px 24px 24px">
-                {isLoading ? (
-                  <LoadingContainer />
-                ) : (
-                  <>
-                    <CustomTable
-                      cells={tableCells}
-                      rows={refreshTemplate().map((row) => {
-                        return {
-                          name: row.name,
-                          label: row.label,
-                          type: row.type,
-                          inputType: row.inputType,
-                          actions: (
-                            <Button btnType="filled" onClick={removeData}>
-                              Edit/Delete
-                            </Button>
-                          ),
-                        };
-                      })}
-                    />
-                  </>
-                )}
-              </Container>
-
-              <HR marginBottom={24} />
-              <Container padding="24px">
-                <Flex flexFlow="row" justify="space-between">
-                  <div>
-                    <h6>Save Template</h6>
-                    <br />
-                    <p className="secondary_color">Save your progress</p>
-                  </div>
-                  <Button btnType="filled" onClick={() => addTemplate()}>
-                    Save Template
-                  </Button>
-                </Flex>
-              </Container>
-              <HR marginTop={24} />
-            </>
+            <h6>Save Template</h6>
+            <p className="secondary_color">Save your progress</p>
           </div>
-        ))}
+          <Button btnType="filled">
+            Save Template
+          </Button>
+        </Flex>
+      </Container>
+      <HR marginTop={24} />
 
       <AddDataModal openConfirmation={openData} handleClose={handleClose} handleAdd={addData} />
     </>
