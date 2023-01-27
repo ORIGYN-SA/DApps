@@ -1,0 +1,7 @@
+{
+    "name": "@dapp/candy-editor",
+    "version": "0.1.0",
+    "description": "Candy Editor for building, editing and viewing candy data.",
+    "main": "src/index.ts"
+  }
+  

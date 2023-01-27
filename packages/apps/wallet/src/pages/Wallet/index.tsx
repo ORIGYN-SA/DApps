@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { TokenIcon, Table, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useDialog } from '@connect2ic/react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { useTokensContext } from '@dapp/features-tokens-provider';
-import { copyToClipboard } from '@dapp/utils';
+import { getBalance, useTokensContext } from '@dapp/features-tokens-provider';
+import { copyToClipboard, getAccountId } from '@dapp/utils';
 import { ConfirmSalesActionModal } from '@dapp/features-sales-escrows';
 import {
   Button,
@@ -23,6 +23,7 @@ import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTok
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
 import Filter from './Filter';
 import { useSnackbar } from 'notistack';
+import ManageDepositsModal from '@dapp/features-sales-escrows/modals/ManageDepositsModal';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -220,6 +221,7 @@ const WalletPage = () => {
   const [collectionData, setCollectionData] = React.useState<any>();
   const [collectionPreview, setCollectionPreview] = React.useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
+  const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
   // const [selectdNFT, setSelectdNFT] = React.useState<any>();
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
   const [NFTData, setNFTData] = useState<any>();
@@ -308,13 +310,14 @@ const WalletPage = () => {
             setCreator(
               r.ok.metadata[0].Class.find(
                 ({ name }) => name === 'com.origyn.originator',
-              ).value.Principal.toText(),
+              )?.value.Principal.toText(),
             );
           }
         });
       });
 
       actor?.balance_of_nft_origyn({ principal }).then((response) => {
+        console.log(response);
         if ('err' in response) throw new Error(Object.keys(response.err)[0]);
         const escrows = response?.ok?.escrow;
         const offers = response?.ok?.offers;
@@ -534,6 +537,9 @@ const WalletPage = () => {
                           Transfer Tokens
                         </Button>
                         <WalletTokens>Manage Tokens</WalletTokens>
+                        <Button btnType="filled" onClick={() => setOpenManageDeposit(true)}>
+                          Manage Deposits
+                        </Button>
                         <h6>Manage Escrow</h6>
                         <Button textButton onClick={() => setOpenEsc(true)}>
                           {activeEscrows.length > 0 || outEscrows.length > 0
@@ -783,6 +789,10 @@ const WalletPage = () => {
             // currentToken={selectdNFT}
             action={dialogAction}
             escrow={selectedEscrow}
+          />
+          <ManageDepositsModal
+            open={openManageDeposit}
+            handleClose={() => setOpenManageDeposit(false)}
           />
         </Flex>
       ) : (

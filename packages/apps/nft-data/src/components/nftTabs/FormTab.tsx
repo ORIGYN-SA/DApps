@@ -21,7 +21,6 @@ const FormTab = ({ metadata }: any) => {
       setId(pick(metadata, ['id']).id);
       setApps(pick(metadata, ['__apps']).__apps);
       setLibrary(pick(metadata, ['library']).library);
-      console.log('metadata is ', metadata);
     }
   }, [metadata]);
 
