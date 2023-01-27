@@ -70,7 +70,6 @@ export const DeleteLibrary = (props: any) => {
     await OrigynClient.getInstance().init(true, canisterId, { actor });
     setInProgress(true);
     if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
-      
       for (let i in tokensThatUseSelectedLibrary) {
         try {
           const responseFromNftLib = await deleteLibraryAsset(
@@ -141,7 +140,7 @@ export const DeleteLibrary = (props: any) => {
           })[0].value.Array.thawed,
         );
       });
-      props.setLibrary3('');
+      props.setCollectionLevelLibraryMetadata('');
       props.setOpenLibraryCollectionLevel(false);
     } else {
       //Update the library data for the token
@@ -154,7 +153,7 @@ export const DeleteLibrary = (props: any) => {
       });
       props.setOpenLibrarySelectedToken(false);
       // clean library data
-      props.setLibDet('');
+      props.setTokenLevelLibraryMetadata('');
     }
   };
 
@@ -169,7 +168,7 @@ export const DeleteLibrary = (props: any) => {
             {inProgress ? (
               <>
                 <Flex>
-                  <h4>Deleting in Progress</h4>
+                  <h4>Deleting...</h4>
                 </Flex>
                 <HR marginTop={16} marginBottom={16} />
                 <Flex>
