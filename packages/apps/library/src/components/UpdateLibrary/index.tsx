@@ -32,8 +32,8 @@ const UpdateLayouts = {
 
 type Props = {
   tokenId: string;
-  updateLibraryData: any;
-  setOpenLibrary: any;
+  updateLibraryData: void;
+  setOpenLibrary: void;
   locationType: string;
   metadata: any;
 };
@@ -44,5 +44,9 @@ export const UpdateLibrary = ({
   locationType,
   metadata,
 }: Props) => {
+  if(locationType != ''){
   return <>{UpdateLayouts[locationType](tokenId, updateLibraryData, setOpenLibrary, metadata)}</>;
+  }else{
+    return <></>;
+  }
 };
