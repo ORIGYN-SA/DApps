@@ -1,30 +1,31 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Flex, Button, HR, Select, Container } from '@origyn-sa/origyn-art-ui';
 import { FormTypes } from './formTypes';
-import type { CandyValue, Property, CandyClassEditor } from '../types';
+import type { Property, CandyClassEditor, CandyClass } from '../types';
+import { NOT_SELECTED } from '../constants';
 
 export const CandyDataEditor = () => {
   const selectOptions = [{ label: 'Text', value: 'Text' }];
   const [openForm, setOpenForm] = React.useState(false);
-  const [candyType, setCandyType] = useState<string>('Not selected');
-  const [candyClass, setCandyClass] = useState<CandyValue>({ Class: [] });
+  const [candyType, setCandyType] = useState<string>(NOT_SELECTED);
+  const [candyClass, setCandyClass] = useState<CandyClass>({ Class: [] });
 
   const candyClassEditor: CandyClassEditor = {
     addPropertyToCandyClass: (property: Property) => {
-      setCandyClass({ Class: [...candyClass['Class'], property] });
+      setCandyClass({ Class: [...candyClass.Class, property] });
     },
   };
 
   const handleOpenForm = () => {
     setOpenForm(!openForm);
   };
-  const handleSelectChange = (type) => {
-    setCandyType(type);
+  const handleSelectChange = (candySelectedType: string) => {
+    setCandyType(candySelectedType);
   };
 
   useEffect(() => {
     console.log('Candy Class', candyClass);
-    setCandyType('Not selected');
+    setCandyType(NOT_SELECTED);
   }, [candyClass]);
 
   return (

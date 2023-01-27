@@ -1,21 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
-import type { CandyValue, Property, CandyClassEditor } from '../../types';
+import type { CandyClassEditor,CandyText } from '../../types';
 
 export const TextForm = (methods : CandyClassEditor) => {
   const [name, setName] = useState<string>('');
-  const [value, setValue] = useState<CandyValue>({ Text: '' });
+  const [value, setValue] = useState<CandyText>();
   const [immutable, setImmutable] = useState<boolean>(false);
 
-  const getTypedName = (e) => {
-    setName(e.target.value);
+  const getTypedName = (typedName: React.ChangeEvent<HTMLInputElement>) => {
+    setName(typedName.target.value);
   };
   const handleChangeImmutable = () => {
     setImmutable(!immutable);
   };
-  const getTypedValue = (e) => {
-    let textValue: CandyValue = { Text: e.target.value };
-    setValue(textValue);
+  const getTypedValue = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
+    setValue({ Text: typedValue.target.value });
   };
   const saveProperty = () => {
     methods.addPropertyToCandyClass({
