@@ -30,7 +30,7 @@ const LibraryFont = (props: any) => {
               fontSize: 12
             }}
             href={link}
-            download={true}
+            download
           >{link}</a>
       </Flex>
       <HR marginTop={16} marginBottom={16} />

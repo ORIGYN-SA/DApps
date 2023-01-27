@@ -31,7 +31,7 @@ const LibraryPdf = (props: any) => {
             }}
             href={link}
             target="_blank"
-            download={true}
+            download
           >{link}</a>
       </Flex>
       <HR marginTop={16} marginBottom={16} />
