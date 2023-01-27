@@ -24,9 +24,10 @@ import { CandyToJson } from '../../../../../utils/src/candyParser';
 import { formTemplate } from '../Main/Tabs/Minter';
 
 const RenderDetails = ({data}) => {
+  const FT = JSON.parse(localStorage.getItem('formTemplate')) || formTemplate;
   
   return <Flex flexFlow="column" gap={16}>{
-    formTemplate?.IGI?.map((item) => {
+    FT?.IGI?.map((item) => {
       return (
         <Flex flexFlow="column" gap={24}>
           <Flex flexFlow="column" align="center" justify="center">

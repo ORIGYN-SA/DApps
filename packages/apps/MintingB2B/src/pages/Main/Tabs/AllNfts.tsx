@@ -37,7 +37,6 @@ export const AllNfts = ({ isLoading, nfts, pagination, onPageChange }: Props) =>
       </Container>
       <HR />
       <Container padding="16px">
-        <br />
         {isLoading ? (
           <LoadingContainer />
         ) : (

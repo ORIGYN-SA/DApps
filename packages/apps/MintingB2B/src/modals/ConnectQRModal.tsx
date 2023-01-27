@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 export const ConnectQRModal = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const { nft_id } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
   const [linkCode, setLinkCode] = React.useState('');
   const { isOpen, onClose } = props;
 
@@ -19,6 +20,7 @@ export const ConnectQRModal = (props) => {
           method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
           headers: {
             accept: 'application/json',
+            'Content-Type': 'application/json',
             'x-access-token': localStorage.getItem('apiKey').toString(),
           },
           body: JSON.stringify({ tokenId: nft_id }),
@@ -28,6 +30,21 @@ export const ConnectQRModal = (props) => {
       setIsLoading(false);
       if (response.status === 200) {
         onClose();
+        enqueueSnackbar('QR code connected Successfully!', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      } else {
+        enqueueSnackbar('Failed to connect QR!', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
       }
     } catch (e) {
       setIsLoading(false);

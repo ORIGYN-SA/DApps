@@ -564,15 +564,15 @@ export const Minter = () => {
 
   const mintFiles = async () => {
     setIsMinting(true);
-    console.log("MINT");
     try {
       const formMeta = new FormData(formRef.current);
       const formDataObj = {};
       formMeta.forEach((value, key) => (formDataObj[key] = value));
       setMetadata(formDataObj);
+
       const formFullData = {
         files,
-        data: dataStructures.IGI.map(({ name, type }) => ({
+        data: dataStructure.IGI.map(({ name, type }) => ({
           name,
           type,
           value:
