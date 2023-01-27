@@ -1,3 +1,4 @@
+import React from 'react';
 import { CandyClassEditor } from '../../types';
 import { TextForm } from './textForm';
 

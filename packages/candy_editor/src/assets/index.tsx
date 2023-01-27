@@ -61,7 +61,7 @@ export const CandyDataEditor = () => {
               </Flex>
             </>
           ) : null}
-          {candyClass['Class'].length > 0 ? (
+          {candyClass.Class.length > 0 ? (
             <>
               <HR marginTop={8} marginBottom={8} />
               <Flex>

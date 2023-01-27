@@ -2,7 +2,7 @@ import React from 'react';
 import { CandyDataEditor } from '@dapp/candy-editor';
 import { Container } from '@origyn-sa/origyn-art-ui';
 
-const RawTab = ({ metadata }: any) => {
+const FormTab = () => {
   return (
     <Container padding="16px">
       <CandyDataEditor />
@@ -10,4 +10,4 @@ const RawTab = ({ metadata }: any) => {
   );
 };
 
-export default RawTab;
+export default FormTab;
