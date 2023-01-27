@@ -8,7 +8,7 @@ import { Flex, Container, HR } from '@origyn-sa/origyn-art-ui';
 const LibraryTextHtml = (props: any) => {
   const [canisterId, setCanisterId] = useState('');
   const [link, setLink] = useState('');
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState('default');
 
   const getContent = async () => {
     const arrayFromContentsType = Object.getOwnPropertyNames(WebContentsType);
@@ -18,8 +18,9 @@ const LibraryTextHtml = (props: any) => {
     for (i in arrayFromContentsType) {
       if (formattedLink.includes(arrayFromContentsType[i])) {
         setContent(arrayFromContentsType[i]);
-        console.log('content', arrayFromContentsType[i]);
         break;
+      } else {
+        setContent('default');
       }
     }
     setLink(formattedLink);
@@ -29,7 +30,7 @@ const LibraryTextHtml = (props: any) => {
     if (canisterId) {
       getContent();
     }
-  }, [canisterId, props.source]);
+  }, [canisterId, props.source, content]);
 
   useEffect(() => {
     useRoute().then(({ canisterId }) => {
@@ -42,7 +43,7 @@ const LibraryTextHtml = (props: any) => {
       <Container padding="16px">
         <Flex align="center" justify="center">
           <>
-            {WebContentsType[content] ? (
+            {content != 'default' ? (
               WebContentsType[content](link)
             ) : (
               <LibraryDefault source={props.source} />

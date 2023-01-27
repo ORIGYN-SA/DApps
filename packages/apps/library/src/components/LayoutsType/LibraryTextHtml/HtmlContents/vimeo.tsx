@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 
 export const Vimeo = (props: any) => {
   const [embedLink, setEmbedLink] = React.useState('');
-  console.log('props', props);
 
   const EmbedLink = async (url) => {
     let vimeoRegex = /(?:vimeo)\.com.*(?:videos|video|channels|)\/([\d]+)/i;
