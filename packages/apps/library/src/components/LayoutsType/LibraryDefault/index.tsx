@@ -25,15 +25,15 @@ export const LibraryDefault = (props: any) => {
   return (
     <>
       <Flex flexFlow="row" justify="center">
-          <a
-            style={{
-              fontSize: 12,
-            }}
-            href={link}
-            target="_blank"
-          >
-            {link}
-          </a>
+        <a
+          style={{
+            fontSize: 12,
+          }}
+          href={link}
+          target="_blank"
+        >
+          {link}
+        </a>
       </Flex>
       <HR marginTop={16} marginBottom={16} />
     </>

@@ -19,7 +19,7 @@ const LibraryTextHtml = (props: any) => {
       if (formattedLink.includes(arrayFromContentsType[i])) {
         setContent(arrayFromContentsType[i]);
         break;
-      }else{
+      } else {
         setContent('default');
       }
     }
@@ -30,7 +30,7 @@ const LibraryTextHtml = (props: any) => {
     if (canisterId) {
       getContent();
     }
-  }, [canisterId, props.source,content]);
+  }, [canisterId, props.source, content]);
 
   useEffect(() => {
     useRoute().then(({ canisterId }) => {
@@ -43,7 +43,7 @@ const LibraryTextHtml = (props: any) => {
       <Container padding="16px">
         <Flex align="center" justify="center">
           <>
-            {content!='default' ? (
+            {content != 'default' ? (
               WebContentsType[content](link)
             ) : (
               <LibraryDefault source={props.source} />
