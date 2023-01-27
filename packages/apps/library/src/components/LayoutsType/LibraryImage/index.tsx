@@ -11,10 +11,12 @@ const LibraryImage = (props: any) => {
 
   const [canisterId, setCanisterId] = useState('');
   const [link, setLink] = useState('');
+
   const formattedLink = async () => {
     const link = await GetFormattedLink(canisterId, props.source);
     setLink(link);
   };
+
   useEffect(() => {
     if (canisterId) {
       formattedLink();
@@ -25,7 +27,7 @@ const LibraryImage = (props: any) => {
     useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
     });
-  }, []);
+  }, [props.source]);
 
   return (
     <>
@@ -42,7 +44,7 @@ const LibraryImage = (props: any) => {
       <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
         <Container padding="16px">
           <Flex justify="center" align="center">
-            <Image src={link} style={{ height: '70vh' }} />
+            <Image src={link} />
           </Flex>
         </Container>
       </Modal>
