@@ -7,13 +7,13 @@ export const TextForm = (methods : CandyClassEditor) => {
   const [value, setValue] = useState<CandyText>();
   const [immutable, setImmutable] = useState<boolean>(false);
 
-  const getTypedName = (typedName: React.ChangeEvent<HTMLInputElement>) => {
+  const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
   };
-  const handleChangeImmutable = () => {
+  const onImmutableChanged = () => {
     setImmutable(!immutable);
   };
-  const getTypedValue = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
+  const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
     setValue({ Text: typedValue.target.value });
   };
   const saveProperty = () => {
@@ -28,14 +28,14 @@ export const TextForm = (methods : CandyClassEditor) => {
     <Container>
       <Flex flexFlow="row" gap={16}>
         <Flex>
-          <TextInput label="Name" onChange={getTypedName} />
+          <TextInput label="Name" onChange={onNameChanged} />
         </Flex>
         <Flex>
-          <TextInput label="Value" onChange={getTypedValue} />
+          <TextInput label="Value" onChange={onValueChanged} />
         </Flex>
         <Flex>
           <Flex>
-            <CheckboxInput label="Immutable" name="immutable" onChange={handleChangeImmutable} />
+            <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
           </Flex>
         </Flex>
       </Flex>
