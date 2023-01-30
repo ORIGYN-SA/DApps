@@ -29,7 +29,7 @@ const NFTInfo = ({ metadata }: any) => {
           <TreeTab metadata={metadata} key="treeTab" />,
           <RawTab metadata={metadata} key="rawTab" />,
           <JSONTab metadata={metadata} key="jsonTab" />,
-          <Write metadata={metadata} key="writeTab" />
+          <Write key="writeTab" />
         ]}
         onLogOut={handleLogOut}
         onConnect={open}

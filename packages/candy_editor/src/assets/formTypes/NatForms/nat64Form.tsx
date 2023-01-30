@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
-import type { CandyClassEditor,CandyText } from '../../types';
+import type { CandyClassEditor, CandyNat64 } from '../../../types';
+import { convertToNat64 } from './converters';
+import { VALIDATION_ERRORS } from '../../../constants';
 
-export const TextForm = (editor : CandyClassEditor) => {
+export const Nat64Form = (editor: CandyClassEditor) => {
   
   const [name, setName] = useState<string>('');
-  const [value, setValue] = useState<CandyText>();
+  const [value, setValue] = useState<CandyNat64>();
   const [immutable, setImmutable] = useState<boolean>(false);
+  const [isInvalid, setIsInvalid] = useState<boolean>(false);
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
@@ -17,14 +20,20 @@ export const TextForm = (editor : CandyClassEditor) => {
   };
 
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
-    setValue({ Text: typedValue.target.value });
+    const nat64Value = convertToNat64(typedValue.target.value);
+    if (nat64Value) {
+      setValue(nat64Value);
+      setIsInvalid(false);
+    } else {
+      setIsInvalid(true);
+    }
   };
 
   const saveProperty = () => {
     editor.addPropertyToCandyClass({
-        name: name,
-        value: value,
-        immutable: immutable,
+      name: name,
+      value: value,
+      immutable: immutable,
     });
   };
 
@@ -44,8 +53,14 @@ export const TextForm = (editor : CandyClassEditor) => {
         </Flex>
       </Flex>
       <HR marginTop={8} marginBottom={16} />
+      {isInvalid && (
+        <>
+          <Flex>{VALIDATION_ERRORS.NAT64}</Flex>
+          <HR marginTop={8} marginBottom={16} />
+        </>
+      )}
       <Flex>
-        <Button size="small" btnType="filled" onClick={saveProperty}>
+        <Button size="small" btnType="filled" onClick={saveProperty} disabled={isInvalid}>
           Save Property
         </Button>
       </Flex>
