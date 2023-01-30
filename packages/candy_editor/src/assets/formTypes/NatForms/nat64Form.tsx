@@ -4,7 +4,8 @@ import type { CandyClassEditor, CandyNat64 } from '../../../types';
 import { convertToNat64 } from './converters';
 import { VALIDATION_ERRORS } from '../../../constants';
 
-export const Nat64Form = (methods: CandyClassEditor) => {
+export const Nat64Form = (editor: CandyClassEditor) => {
+  
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyNat64>();
   const [immutable, setImmutable] = useState<boolean>(false);
@@ -13,9 +14,11 @@ export const Nat64Form = (methods: CandyClassEditor) => {
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
   };
+
   const onImmutableChanged = () => {
     setImmutable(!immutable);
   };
+
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
     const nat64Value = convertToNat64(typedValue.target.value);
     if (nat64Value) {
@@ -25,8 +28,9 @@ export const Nat64Form = (methods: CandyClassEditor) => {
       setIsInvalid(true);
     }
   };
+
   const saveProperty = () => {
-    methods.addPropertyToCandyClass({
+    editor.addPropertyToCandyClass({
       name: name,
       value: value,
       immutable: immutable,

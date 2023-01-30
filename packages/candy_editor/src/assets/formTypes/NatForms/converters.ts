@@ -1,6 +1,6 @@
 import { CandyNat, CandyNat8, CandyNat16, CandyNat32, CandyNat64 } from '../../../types';
 
-export function isInRange(num: number, min: number, max: number | bigint): boolean {
+export function isInRange(num: number | bigint, min: number, max: number | bigint): boolean {
   return num >= min && num <= max;
 }
 
@@ -38,9 +38,8 @@ export function convertToNat32(typedValue: string): CandyNat32 | undefined {
 }
 
 export function convertToNat64(typedValue: string): CandyNat64 | undefined {
-  if (/^\d+$/.test(typedValue) && isInRange(Number(typedValue), 0, BigInt('18446744073709551615'))) {
-    const num = Number(typedValue);
-    const bigInt = BigInt(num);
+  if (/^\d+$/.test(typedValue) && isInRange(BigInt(typedValue), 0, BigInt(18446744073709551615n))) {
+    const bigInt = BigInt(typedValue);
     return { Nat64: bigInt };
   }
   return undefined;

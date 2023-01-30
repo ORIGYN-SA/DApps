@@ -4,7 +4,8 @@ import type { CandyClassEditor, CandyNat8 } from '../../../types';
 import { convertToNat8 } from './converters';
 import { VALIDATION_ERRORS } from '../../../constants';
 
-export const Nat8Form = (methods: CandyClassEditor) => {
+export const Nat8Form = (editor: CandyClassEditor) => {
+  
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyNat8>();
   const [immutable, setImmutable] = useState<boolean>(false);
@@ -13,9 +14,11 @@ export const Nat8Form = (methods: CandyClassEditor) => {
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
   };
+
   const onImmutableChanged = () => {
     setImmutable(!immutable);
   };
+
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
     const nat8Value = convertToNat8(typedValue.target.value);
     if (nat8Value) {
@@ -25,8 +28,9 @@ export const Nat8Form = (methods: CandyClassEditor) => {
       setIsInvalid(true);
     }
   };
+  
   const saveProperty = () => {
-    methods.addPropertyToCandyClass({
+    editor.addPropertyToCandyClass({
       name: name,
       value: value,
       immutable: immutable,

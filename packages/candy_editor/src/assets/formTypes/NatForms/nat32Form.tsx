@@ -4,7 +4,8 @@ import type { CandyClassEditor, CandyNat32 } from '../../../types';
 import { convertToNat32 } from './converters';
 import { VALIDATION_ERRORS } from '../../../constants';
 
-export const Nat32Form = (methods: CandyClassEditor) => {
+export const Nat32Form = (editor: CandyClassEditor) => {
+  
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyNat32>();
   const [immutable, setImmutable] = useState<boolean>(false);
@@ -13,9 +14,11 @@ export const Nat32Form = (methods: CandyClassEditor) => {
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
   };
+
   const onImmutableChanged = () => {
     setImmutable(!immutable);
   };
+
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
     const nat32Value = convertToNat32(typedValue.target.value);
     if (nat32Value) {
@@ -25,8 +28,9 @@ export const Nat32Form = (methods: CandyClassEditor) => {
       setIsInvalid(true);
     }
   };
+
   const saveProperty = () => {
-    methods.addPropertyToCandyClass({
+    editor.addPropertyToCandyClass({
       name: name,
       value: value,
       immutable: immutable,

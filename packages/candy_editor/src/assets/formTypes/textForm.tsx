@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor,CandyText } from '../../types';
 
-export const TextForm = (methods : CandyClassEditor) => {
+export const TextForm = (editor : CandyClassEditor) => {
+  
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyText>();
   const [immutable, setImmutable] = useState<boolean>(false);
@@ -10,14 +11,17 @@ export const TextForm = (methods : CandyClassEditor) => {
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
   };
+
   const onImmutableChanged = () => {
     setImmutable(!immutable);
   };
+
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
     setValue({ Text: typedValue.target.value });
   };
+
   const saveProperty = () => {
-    methods.addPropertyToCandyClass({
+    editor.addPropertyToCandyClass({
         name: name,
         value: value,
         immutable: immutable,

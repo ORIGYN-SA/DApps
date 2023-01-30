@@ -5,6 +5,7 @@ import type { Property, CandyClassEditor, CandyClass } from '../types';
 import { NOT_SELECTED, SELECT_OPTIONS } from '../constants';
 
 export const CandyDataEditor = () => {
+
   const [openForm, setOpenForm] = React.useState(false);
   const [candyType, setCandyType] = useState<string>(NOT_SELECTED);
   const [candyClass, setCandyClass] = useState<CandyClass>({ Class: [] });
@@ -18,6 +19,7 @@ export const CandyDataEditor = () => {
   const handleOpenForm = () => {
     setOpenForm(!openForm);
   };
+  
   const handleSelectChange = (candySelectedType: string) => {
     setCandyType(candySelectedType);
   };
