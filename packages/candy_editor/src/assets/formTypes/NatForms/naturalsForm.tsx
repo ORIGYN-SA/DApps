@@ -3,11 +3,11 @@ import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-s
 import type { CandyClassEditor, CandyNaturals } from '../../../types';
 import { VALIDATION_ERRORS } from '../../../constants';
 import {
-  convertToNat,
-  convertToNat8,
-  convertToNat16,
-  convertToNat32,
-  convertToNat64,
+  convertToCandyNat,
+  convertToCandyNat8,
+  convertToCandyNat16,
+  convertToCandyNat32,
+  convertToCandyNat64,
 } from './converters';
 
 export const NaturalsForm = (editor: CandyClassEditor) => {
@@ -28,53 +28,53 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
     switch (editor.candyType) {
       case 'Nat':
-        const natValue = convertToNat(typedValue.target.value);
+        const natValue = convertToCandyNat(typedValue.target.value);
         if (natValue) {
           setValue(natValue);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT);
+          setValidationError(VALIDATION_ERRORS.nat);
         }
         break;
       case 'Nat8':
-        const nat8Value = convertToNat8(typedValue.target.value);
+        const nat8Value = convertToCandyNat8(typedValue.target.value);
         if (nat8Value) {
           setValue(nat8Value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT8);
+          setValidationError(VALIDATION_ERRORS.nat8);
         }
         break;
       case 'Nat16':
-        const nat16Value = convertToNat16(typedValue.target.value);
+        const nat16Value = convertToCandyNat16(typedValue.target.value);
         if (nat16Value) {
           setValue(nat16Value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT16);
+          setValidationError(VALIDATION_ERRORS.nat16);
         }
         break;
       case 'Nat32':
-        const nat32Value = convertToNat32(typedValue.target.value);
+        const nat32Value = convertToCandyNat32(typedValue.target.value);
         if (nat32Value) {
           setValue(nat32Value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT32);
+          setValidationError(VALIDATION_ERRORS.nat32);
         }
         break;
       case 'Nat64':
-        const nat64Value = convertToNat64(typedValue.target.value);
+        const nat64Value = convertToCandyNat64(typedValue.target.value);
         if (nat64Value) {
           setValue(nat64Value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT64);
+          setValidationError(VALIDATION_ERRORS.nat64);
         }
         break;
     }

@@ -3,11 +3,11 @@ import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-s
 import type { CandyClassEditor, CandyIntegers } from '../../../types';
 import { VALIDATION_ERRORS } from '../../../constants';
 import {
-    convertToInt,
-    convertToInt8,
-    convertToInt16,
-    convertToInt32,
-    convertToInt64,
+    convertToCandyInt,
+    convertToCandyInt8,
+    convertToCandyInt16,
+    convertToCandyInt32,
+    convertToCandyInt64,
 } from './converters';
 
 export const IntegersForm = (editor: CandyClassEditor) => {
@@ -28,53 +28,53 @@ export const IntegersForm = (editor: CandyClassEditor) => {
     const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
         switch (editor.candyType) {
             case 'Int':
-                const intValue = convertToInt(typedValue.target.value);
+                const intValue = convertToCandyInt(typedValue.target.value);
                 if (intValue) {
                     setValue(intValue);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT);
+                    setValidationError(VALIDATION_ERRORS.int);
                 }
                 break;
             case 'Int8':
-                const int8Value = convertToInt8(typedValue.target.value);
+                const int8Value = convertToCandyInt8(typedValue.target.value);
                 if (int8Value) {
                     setValue(int8Value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT8);
+                    setValidationError(VALIDATION_ERRORS.int8);
                 }
                 break;
             case 'Int16':
-                const int16Value = convertToInt16(typedValue.target.value);
+                const int16Value = convertToCandyInt16(typedValue.target.value);
                 if (int16Value) {
                     setValue(int16Value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT16);
+                    setValidationError(VALIDATION_ERRORS.int16);
                 }
                 break;
             case 'Int32':
-                const int32Value = convertToInt32(typedValue.target.value);
+                const int32Value = convertToCandyInt32(typedValue.target.value);
                 if (int32Value) {
                     setValue(int32Value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT32);
+                    setValidationError(VALIDATION_ERRORS.int32);
                 }
                 break;
             case 'Int64':
-                const int64Value = convertToInt64(typedValue.target.value);
+                const int64Value = convertToCandyInt64(typedValue.target.value);
                 if (int64Value) {
                     setValue(int64Value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT64);
+                    setValidationError(VALIDATION_ERRORS.int64);
                 }
                 break;
         }
