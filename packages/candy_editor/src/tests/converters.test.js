@@ -13,6 +13,7 @@ import {
   convertToInt32,
   convertToInt64,
 } from '../assets/formTypes/IntForms/converters';
+import { convertToBool } from '../assets/formTypes/BoolForm/converters';
 
 describe('NatForms > converters.ts', () => {
   it('isInRange > returns true for numbers within the range', () => {
@@ -167,5 +168,16 @@ describe('IntForms > converters.ts', () => {
     expect(convertToInt64('helloWorld')).toBe(undefined);
     expect(convertToInt64('9223372036854775808')).toBe(undefined);
     expect(convertToInt64('-9223372036854775809')).toBe(undefined);
+  });
+});
+describe('BoolForm > converters.ts', () => {
+  it('convertToBool > returns a CandyBool object for valid boolean strings', () => {
+    expect(convertToBool('true')).toEqual({ Bool: true });
+    expect(convertToBool('false')).toEqual({ Bool: false });
+  });
+
+  it('convertToBool > returns undefined for non-boolean strings', () => {
+    expect(convertToBool('true.')).toBe(undefined);
+    expect(convertToBool('invalidString')).toBe(undefined);
   });
 });

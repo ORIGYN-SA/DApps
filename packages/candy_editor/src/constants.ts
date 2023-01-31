@@ -13,6 +13,7 @@ export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Int16', value: 'Int16' },
   { label: 'Int32', value: 'Int32' },
   { label: 'Int64', value: 'Int64' },
+  { label: 'Bool', value: 'Bool' },
 ];
 
 export const VALIDATION_ERRORS: { [key: string]: string } = {
@@ -26,4 +27,5 @@ export const VALIDATION_ERRORS: { [key: string]: string } = {
   INT16: 'The value must be a Int number between -32768 and 32767',
   INT32: 'The value must be a Int number between -2147483648 and 2147483647',
   INT64: 'The value must be a Int number between -9223372036854775808 and 9223372036854775807',
+  BOOLEAN: 'The value must be a Boolean (true or false - case insensitive)',
 };
