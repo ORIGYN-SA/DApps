@@ -1,4 +1,5 @@
-export const NOT_SELECTED = null;
+export const NOT_SELECTED: string = null;
+
 export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Text', value: 'Text' },
   { label: 'Nat', value: 'Nat' },
