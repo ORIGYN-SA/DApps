@@ -3,7 +3,7 @@ import { CandyClassEditor } from '../../types';
 import { TextForm } from './TextForm/textForm';
 import { NaturalsForm } from './NatForms/naturalsForm';
 import { IntegersForm } from './IntForms/integersForm';
-import { BoolsForm } from './BoolForm/boolsForm';
+import { BoolForm } from './BoolForm/boolForm';
 
 export const FormTypes = {
   Text: (props: CandyClassEditor) => (
@@ -40,6 +40,6 @@ export const FormTypes = {
     <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Bool: (props: CandyClassEditor) => (
-    <BoolsForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <BoolForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
 };

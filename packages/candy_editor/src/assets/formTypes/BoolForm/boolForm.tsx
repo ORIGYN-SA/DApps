@@ -10,9 +10,9 @@ import {
 } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyBool } from '../../../types';
 import { VALIDATION_ERRORS } from '../../../constants';
-import { convertToBool } from './converters';
+import { convertToCandyBool } from './converters';
 
-export const BoolsForm = (editor: CandyClassEditor) => {
+export const BoolForm = (editor: CandyClassEditor) => {
     const [name, setName] = useState<string>('');
     const [value, setValue] = useState<CandyBool>();
     const [immutable, setImmutable] = useState<boolean>(false);
@@ -28,7 +28,7 @@ export const BoolsForm = (editor: CandyClassEditor) => {
     };
 
     const onValueChanged = (selectedValue: string) => {
-        const boolValue = convertToBool(selectedValue);
+        const boolValue = convertToCandyBool(selectedValue);
         if (boolValue) {
             setValue(boolValue);
             setIsInvalid(false);
