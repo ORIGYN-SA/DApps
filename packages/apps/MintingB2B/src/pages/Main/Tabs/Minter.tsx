@@ -570,6 +570,7 @@ export const Minter = () => {
       formMeta.forEach((value, key) => (formDataObj[key] = value));
       setMetadata(formDataObj);
 
+      console.log(dataStructure, metadata);
       const formFullData = {
         files,
         data: dataStructure.IGI.map(({ name, type }) => ({
@@ -600,13 +601,13 @@ export const Minter = () => {
         lastModified: Date.now(),
       });
 
-      requestFormData.set('metadata', file);
+      requestFormData.set('data', JSON.stringify(formFullData));
       // files.forEach(({ pointer, file }) => {
       //   requestFormData.append(pointer, file);
       // });
       console.log(metadata);
 
-      const response = await fetch(`https://development.origyn.network/canister/v0/nft-token`, {
+      const response = await fetch(`https://development.origyn.network/canister/v0/pre-stage`, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
           'x-access-token': loggedIn,
@@ -726,10 +727,10 @@ export const Minter = () => {
                 <br />
                 <Flex gap={48}>
                   <MediaList
-                    items={files.filter(({ pointer }) => pointer === 'media')}
+                    items={files.filter(({ pointer }) => pointer === 'files-media')}
                     onRemoveClick={removeFile}
                   />
-                  <AddFile handleAdd={addMedia} pointer="media" />
+                  <AddFile handleAdd={addMedia} pointer="files-media" />
                 </Flex>
               </div>
             </CustomGrid>
@@ -746,10 +747,10 @@ export const Minter = () => {
                 <br />
                 <Flex gap={48}>
                   <MediaList
-                    items={files.filter(({ pointer }) => pointer === 'attachments')}
+                    items={files.filter(({ pointer }) => pointer === 'files-attachments')}
                     onRemoveClick={removeFile}
                   />
-                  <AddFile handleAdd={addMedia} pointer="attachments" />
+                  <AddFile handleAdd={addMedia} pointer="files-attachments" />
                 </Flex>
               </div>
             </CustomGrid>

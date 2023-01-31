@@ -22,10 +22,11 @@ import SquareIcon from '@mui/icons-material/Square';
 import PlayForWorkIcon from '@mui/icons-material/PlayForWork';
 import { CandyToJson } from '../../../../../utils/src/candyParser';
 import { formTemplate } from '../Main/Tabs/Minter';
+import { SendCertificateToPrincipal } from '../../modals/SendCertificateToPrincipal';
 
-const RenderDetails = ({data}) => {
+const RenderDetails = ({ data }) => {
   const FT = JSON.parse(localStorage.getItem('formTemplate')) || formTemplate;
-  
+
   return <Flex flexFlow="column" gap={16}>{
     FT?.IGI?.map((item) => {
       return (
@@ -36,21 +37,21 @@ const RenderDetails = ({data}) => {
             <br />
           </Flex>
           {item?.fields?.map((f) =>
-          <>
-            <Flex align="center" justify="space-between">
-              <p>{f.label}</p>
+            <>
+              <Flex align="center" justify="space-between">
+                <p>{f.label}</p>
 
-              <p style={{ textAlign: 'end' }} className="secondary_color">
-                {data[f.name]?.toString()}
-              </p>
-            </Flex>
-            <HR />
-          </>
+                <p style={{ textAlign: 'end' }} className="secondary_color">
+                  {data[f.name]?.toString()}
+                </p>
+              </Flex>
+              <HR />
+            </>
           )}
         </Flex>
       )
     })
-    }</Flex>
+  }</Flex>
 }
 
 const WalletPage = () => {
@@ -59,6 +60,7 @@ const WalletPage = () => {
   const [libraries, setLibraries] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSendOpen, setIsSendOpen] = useState(false);
   const { nft_id } = useParams();
   const [normalData, setNormalData] = useState<any>();
   console.log('NFT Data', nftData);
@@ -69,20 +71,6 @@ const WalletPage = () => {
   };
 
   const fetchData = async () => {
-    const response = await fetch(
-      `https://development.canister.origyn.ch/canister/v0/nft-token/${nft_id}/metadata`,
-      {
-        method: 'GET', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, *cors, same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, *same-origin, omit
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'x-access-token': loggedIn,
-        },
-      },
-    );
-    
     const responseNormalData = await fetch(
       `https://development.canister.origyn.ch/canister/v0/nft-token/${nft_id}/`,
       {
@@ -96,16 +84,34 @@ const WalletPage = () => {
         },
       },
     );
-    const data = await Promise.all([response.json(), responseNormalData.json()]);
-    console.log(data);
-    setNormalData(data[1]);
-    setLibraries(data[0].metadata.library);
-
-    const toJS = new CandyToJson(data[0]);
-    console.log(toJS.getAllDataFields(), data);
-    setNftData(toJS.getAllDataFields());
-    setIsLoading(false);
-    return data;
+    console.log(responseNormalData);
+    const data = await responseNormalData.json();
+    setNormalData(data);
+    if ('prestage' in data) {
+      setNftData(data.prestage.data);
+      setIsLoading(false);
+      return data;
+    } else {
+      const response = await fetch(
+        `https://development.canister.origyn.ch/canister/v0/nft-token/${nft_id}/metadata`,
+        {
+          method: 'GET', // *GET, POST, PUT, DELETE, etc.
+          mode: 'cors', // no-cors, *cors, same-origin
+          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: 'same-origin', // include, *same-origin, omit
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'x-access-token': loggedIn,
+          },
+        },
+      );
+      const metadata = await response.json();
+      setLibraries(metadata.metadata.library);
+      const toJS = new CandyToJson(metadata);
+      setNftData(toJS.getAllDataFields());
+      setIsLoading(false);
+      return data;
+    }
   };
 
   const generateQR = async () => {
@@ -162,7 +168,7 @@ const WalletPage = () => {
                           <div>
                             <p className="secondary_color">Status</p>
                             <p style={{ color: '#DD1422' }}>
-                              {normalData?.status == 'WAITING_FOR_OWNER' ? 'Waiting for Owner' : ''}
+                              {normalData?.status}
                             </p>
                           </div>
                           {normalData.status === 'SUCCESS' && (
@@ -178,19 +184,46 @@ const WalletPage = () => {
                         <ShowMoreBlock btnText="Read More">
                           <p className="secondary_color">{normalData?.description}</p>
                         </ShowMoreBlock>
-                        <Grid columns={2} gap={16}>
-                          <Button onClick={generateQR} btnType="filled" style={{width: "100%"}}>
-                            Generate QR
-                          </Button>
-                          <Button
-                            onClick={() => setIsOpen(true)}
-                            btnType="outlined"
-                            disabled={normalData.status !== 'WAITING_FOR_OWNER'}
-                            style={{width: "100%"}}
-                          >
-                            Connect with QR
-                          </Button>
-                        </Grid>
+                        {
+                          normalData.status === "PRE_STAGE" && (
+                            <Grid columns={2} gap={16}>
+                              <Button btnType="filled" style={{ width: "100%" }}>
+                                Edit
+                              </Button>
+                              <Button
+                                btnType="outlined"
+                                style={{ width: "100%" }}
+                              >
+                                Stage
+                              </Button>
+                            </Grid>  
+                          )
+                        }
+                        {
+                          normalData.status === "WAITING_FOR_OWNER" && (
+                            <Grid columns={2} gap={16}>
+                              <Button onClick={generateQR} btnType="filled" style={{ width: "100%" }}>
+                                Generate QR
+                              </Button>
+                              <Button
+                                onClick={() => setIsOpen(true)}
+                                btnType="outlined"
+                                disabled={normalData.status !== 'WAITING_FOR_OWNER'}
+                                style={{ width: "100%" }}
+                              >
+                                Connect with QR
+                              </Button>
+                              <Button
+                                onClick={() => setIsSendOpen(true)}
+                                btnType="outlined"
+                                disabled={normalData.status !== 'WAITING_FOR_OWNER'}
+                                style={{ width: "100%" }}
+                              >
+                                Send to Principal
+                              </Button>
+                            </Grid>
+                          )
+                        }
                       </Flex>
                     </Grid>
                   </Container>
@@ -211,7 +244,7 @@ const WalletPage = () => {
                           <RenderDetails
                             data={nftData}
                           />
-                          
+
                         </Container>,
                         <Container size="sm" padding="32px" smPadding="16px">
                           <h2 style={{ textAlign: 'center' }}>Origyn Certificate</h2>
@@ -235,7 +268,7 @@ const WalletPage = () => {
                             <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
                               {libraries.map((l) => {
                                 return (
-                                  <img src={l?.library_file} style={{borderRadius: "12px"}} />
+                                  <img src={l?.library_file} style={{ borderRadius: "12px" }} />
                                 )
                               })}
                             </Grid>
@@ -341,6 +374,7 @@ const WalletPage = () => {
         </Flex>
       )}
       <ConnectQRModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <SendCertificateToPrincipal isOpen={isSendOpen} onClose={() => setIsSendOpen(false)} />
     </>
   );
 };
