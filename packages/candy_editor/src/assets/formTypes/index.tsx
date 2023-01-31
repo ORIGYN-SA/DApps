@@ -42,5 +42,4 @@ export const FormTypes = {
   Int64: (props: CandyClassEditor) => (
     <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
-
 };

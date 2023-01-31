@@ -1,5 +1,5 @@
 export const NOT_SELECTED = null;
-export const SELECT_OPTIONS = [
+export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Text', value: 'Text' },
   { label: 'Nat', value: 'Nat' },
   { label: 'Nat8', value: 'Nat8' },
@@ -14,7 +14,7 @@ export const SELECT_OPTIONS = [
   { label: 'Int64', value: 'Int64' },
 ];
 
-export const VALIDATION_ERRORS = {
+export const VALIDATION_ERRORS: { [key: string]: string } = {
   NAT: 'The value must be a Nat number.',
   NAT8: 'The value must be a Nat number between 0 and 255',
   NAT16: 'The value must be a Nat number between 0 and 65535',
