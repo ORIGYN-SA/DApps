@@ -6,44 +6,41 @@ import { Nat8Form } from './NatForms/nat8Form';
 import { Nat16Form } from './NatForms/nat16Form';
 import { Nat32Form } from './NatForms/nat32Form';
 import { Nat64Form } from './NatForms/nat64Form';
-import { IntForm } from './IntForms/intForm';
-import { Int8Form } from './IntForms/int8Form';
-import { Int16Form } from './IntForms/int16Form';
-import { Int32Form } from './IntForms/int32Form';
-import { Int64Form } from './IntForms/int64Form';
+import { IntegersForm } from './IntForms/integersForm';
 
 export const FormTypes = {
   Text: (props: CandyClassEditor) => (
-    <TextForm addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <TextForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Nat: (props: CandyClassEditor) => (
-    <NatForm addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <NatForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Nat8: (props: CandyClassEditor) => (
-    <Nat8Form addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <Nat8Form addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Nat16: (props: CandyClassEditor) => (
-    <Nat16Form addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <Nat16Form addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Nat32: (props: CandyClassEditor) => (
-    <Nat32Form addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <Nat32Form addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Nat64: (props: CandyClassEditor) => (
-    <Nat64Form addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <Nat64Form addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Int: (props: CandyClassEditor) => (
-    <IntForm addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Int8: (props: CandyClassEditor) => (
-    <Int8Form addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Int16: (props: CandyClassEditor) => (
-    <Int16Form addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Int32: (props: CandyClassEditor) => (
-    <Int32Form addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
   Int64: (props: CandyClassEditor) => (
-    <Int64Form addPropertyToCandyClass={props.addPropertyToCandyClass} />
+    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
+
 };

@@ -1,4 +1,4 @@
-export const NOT_SELECTED = 'Not selected';
+export const NOT_SELECTED = null;
 export const SELECT_OPTIONS = [
   { label: 'Text', value: 'Text' },
   { label: 'Nat', value: 'Nat' },

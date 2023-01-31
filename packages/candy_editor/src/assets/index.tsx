@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Flex, Button, HR, Select, Container } from '@origyn-sa/origyn-art-ui';
 import { FormTypes } from './formTypes';
-import type { Property, CandyClassEditor, CandyClass } from '../types';
+import type { Property, CandyClassEditor, CandyClass, CandyType } from '../types';
 import { NOT_SELECTED, SELECT_OPTIONS } from '../constants';
 
 export const CandyDataEditor = () => {
   const [openForm, setOpenForm] = React.useState(false);
-  const [candyType, setCandyType] = useState<string>(NOT_SELECTED);
+  const [candyType, setCandyType] = useState<CandyType>(NOT_SELECTED);
   const [candyClass, setCandyClass] = useState<CandyClass>({ Class: [] });
 
   const candyClassEditor: CandyClassEditor = {
     addPropertyToCandyClass: (property: Property) => {
       setCandyClass({ Class: [...candyClass.Class, property] });
     },
+    candyType: candyType,
   };
 
   const handleOpenForm = () => {
     setOpenForm(!openForm);
   };
 
-  const handleSelectChange = (candySelectedType: string) => {
+  const handleSelectChange = (candySelectedType: CandyClass) => {
     setCandyType(candySelectedType);
   };
 
@@ -56,7 +57,7 @@ export const CandyDataEditor = () => {
                 </Flex>
                 <HR marginTop={8} marginBottom={8} />
                 <Flex>
-                  {candyType !== NOT_SELECTED ? FormTypes[candyType](candyClassEditor) : null}
+                  {candyType !== null ? FormTypes[candyType.toString()](candyClassEditor, candyType) : null}
                 </Flex>
               </Flex>
             </>

@@ -1,12 +1,14 @@
 import type { Principal } from '@dfinity/principal';
 
-export interface CandyType {}
+export interface CandyType { }
 
 export interface Property {
   value: CandyType;
   name: string;
   immutable: boolean;
 }
+
+export interface CandyIntegers extends CandyType { }
 
 export interface CandyEmpty extends CandyType {
   Empty: null;
@@ -38,19 +40,19 @@ export interface CandyNat64 extends CandyType {
 export interface CandyNats extends CandyType {
   Nats: { thawed: Array<bigint> } | { frozen: Array<bigint> };
 }
-export interface CandyInt extends CandyType {
+export interface CandyInt extends CandyIntegers {
   Int: bigint;
 }
-export interface CandyInt8 extends CandyType {
+export interface CandyInt8 extends CandyIntegers {
   Int8: number;
 }
-export interface CandyInt16 extends CandyType {
+export interface CandyInt16 extends CandyIntegers {
   Int16: number;
 }
-export interface CandyInt32 extends CandyType {
+export interface CandyInt32 extends CandyIntegers {
   Int32: number;
 }
-export interface CandyInt64 extends CandyType {
+export interface CandyInt64 extends CandyIntegers {
   Int64: bigint;
 }
 export interface CandyFloats extends CandyType {
@@ -77,4 +79,5 @@ export interface CandyArray extends CandyType {
 
 export interface CandyClassEditor {
   addPropertyToCandyClass: (property: Property) => void;
+  candyType: CandyType;
 }
