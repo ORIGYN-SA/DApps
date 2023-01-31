@@ -604,7 +604,7 @@ const WalletPage = () => {
                                 alignContent: 'flex-end',
                               }}
                               gap={8}
-                            >
+                            >{console.log(collectionData)}
                               {collectionData?.social_links?.thawed?.map((links, index) => (
                                 <SocialMediaButton
                                   as="a"
@@ -627,8 +627,16 @@ const WalletPage = () => {
                                       links?.Class?.find(({ name }) => name === 'type')?.value?.Text
                                     ]
                                   }
-                                </SocialMediaButton>
+                                </SocialMediaButton> 
                               ))}
+                                 <SocialMediaButton                                  
+                                 as="a"
+                                iconButton
+                                target="_blank"
+                                href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
+                                >
+                                 Ledger
+                                </SocialMediaButton>
                             </Flex>
                           </Flex>
 
