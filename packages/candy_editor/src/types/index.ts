@@ -10,6 +10,8 @@ export interface Property {
 
 export interface CandyIntegers extends CandyType { }
 
+export interface CandyNaturals extends CandyType { }
+
 export interface CandyEmpty extends CandyType {
   Empty: null;
 }
@@ -19,22 +21,22 @@ export interface CandyClass extends CandyType {
 export interface CandyText extends CandyType {
   Text: string;
 }
-export interface CandyNat extends CandyType {
+export interface CandyNat extends CandyNaturals {
   Nat: bigint;
 }
-export interface CandyBool extends CandyType {
+export interface CandyBool extends CandyNaturals {
   Bool: boolean;
 }
-export interface CandyNat8 extends CandyType {
+export interface CandyNat8 extends CandyNaturals {
   Nat8: number;
 }
-export interface CandyNat16 extends CandyType {
+export interface CandyNat16 extends CandyNaturals {
   Nat16: number;
 }
-export interface CandyNat32 extends CandyType {
+export interface CandyNat32 extends CandyNaturals {
   Nat32: number;
 }
-export interface CandyNat64 extends CandyType {
+export interface CandyNat64 extends CandyNaturals {
   Nat64: bigint;
 }
 export interface CandyNats extends CandyType {
