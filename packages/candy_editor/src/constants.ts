@@ -17,7 +17,7 @@ export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
 ];
 
 export const VALIDATION_ERRORS: { [key: string]: string } = {
-  nat: 'The value must be a Nat number.',
+  nat: 'The value must be a Nat number',
   nat8: 'The value must be a Nat number between 0 and 255',
   nat16: 'The value must be a Nat number between 0 and 65535',
   nat32: 'The value must be a Nat number between 0 and 4294967295',
