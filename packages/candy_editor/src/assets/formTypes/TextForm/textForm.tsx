@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
-import type { CandyClassEditor,CandyText } from '../../types';
+import type { CandyClassEditor,CandyText } from '../../../types';
 
 export const TextForm = (editor : CandyClassEditor) => {
   
