@@ -34,7 +34,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT);
+          setValidationError(VALIDATION_ERRORS.nat);
         }
         break;
       case 'Nat8':
@@ -44,7 +44,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT8);
+          setValidationError(VALIDATION_ERRORS.nat8);
         }
         break;
       case 'Nat16':
@@ -54,7 +54,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT16);
+          setValidationError(VALIDATION_ERRORS.nat16);
         }
         break;
       case 'Nat32':
@@ -64,7 +64,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT32);
+          setValidationError(VALIDATION_ERRORS.nat32);
         }
         break;
       case 'Nat64':
@@ -74,7 +74,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
-          setValidationError(VALIDATION_ERRORS.NAT64);
+          setValidationError(VALIDATION_ERRORS.nat64);
         }
         break;
     }

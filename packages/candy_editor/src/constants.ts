@@ -17,15 +17,15 @@ export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
 ];
 
 export const VALIDATION_ERRORS: { [key: string]: string } = {
-  NAT: 'The value must be a Nat number.',
-  NAT8: 'The value must be a Nat number between 0 and 255',
-  NAT16: 'The value must be a Nat number between 0 and 65535',
-  NAT32: 'The value must be a Nat number between 0 and 4294967295',
-  NAT64: 'The value must be a Nat number between 0 and 18446744073709551615',
-  INT: 'The value must be a Int number',
-  INT8: 'The value must be a Int number between -128 and 127',
-  INT16: 'The value must be a Int number between -32768 and 32767',
-  INT32: 'The value must be a Int number between -2147483648 and 2147483647',
-  INT64: 'The value must be a Int number between -9223372036854775808 and 9223372036854775807',
-  BOOLEAN: 'The value must be a Boolean (true or false - case insensitive)',
+  nat: 'The value must be a Nat number.',
+  nat8: 'The value must be a Nat number between 0 and 255',
+  nat16: 'The value must be a Nat number between 0 and 65535',
+  nat32: 'The value must be a Nat number between 0 and 4294967295',
+  nat64: 'The value must be a Nat number between 0 and 18446744073709551615',
+  int: 'The value must be a Int number',
+  int8: 'The value must be a Int number between -128 and 127',
+  int16: 'The value must be a Int number between -32768 and 32767',
+  int32: 'The value must be a Int number between -2147483648 and 2147483647',
+  int64: 'The value must be a Int number between -9223372036854775808 and 9223372036854775807',
+  boolean: 'The value must be a Boolean (true or false - case insensitive)',
 };

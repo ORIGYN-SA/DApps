@@ -34,7 +34,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT);
+                    setValidationError(VALIDATION_ERRORS.int);
                 }
                 break;
             case 'Int8':
@@ -44,7 +44,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT8);
+                    setValidationError(VALIDATION_ERRORS.int8);
                 }
                 break;
             case 'Int16':
@@ -54,7 +54,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT16);
+                    setValidationError(VALIDATION_ERRORS.int16);
                 }
                 break;
             case 'Int32':
@@ -64,7 +64,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT32);
+                    setValidationError(VALIDATION_ERRORS.int32);
                 }
                 break;
             case 'Int64':
@@ -74,7 +74,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
-                    setValidationError(VALIDATION_ERRORS.INT64);
+                    setValidationError(VALIDATION_ERRORS.int64);
                 }
                 break;
         }

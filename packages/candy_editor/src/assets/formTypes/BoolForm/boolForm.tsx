@@ -34,7 +34,7 @@ export const BoolForm = (editor: CandyClassEditor) => {
             setIsInvalid(false);
         } else {
             setIsInvalid(true);
-            setValidationError(VALIDATION_ERRORS.BOOL);
+            setValidationError(VALIDATION_ERRORS.boolean);
         }
     };
 
