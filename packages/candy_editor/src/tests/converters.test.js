@@ -14,6 +14,9 @@ import {
   convertToCandyInt64,
 } from '../assets/formTypes/IntForms/converters';
 import { convertToCandyBool } from '../assets/formTypes/BoolForm/converters';
+import { convertToCandyFloat } from '../assets/formTypes/FloatForm/converters';
+import { convertToCandyPrincipal } from '../assets/formTypes/PrincipalForm/converters';
+import { Principal } from '@dfinity/principal';
 
 describe('NatForms > converters.ts', () => {
   it('isInRange > returns true for numbers within the range', () => {
@@ -170,6 +173,7 @@ describe('IntForms > converters.ts', () => {
     expect(convertToCandyInt64('-9223372036854775809')).toBe(undefined);
   });
 });
+
 describe('BoolForm > converters.ts', () => {
   it('convertToCandyBool > returns a CandyBool object for valid boolean strings', () => {
     expect(convertToCandyBool('true')).toEqual({ Bool: true });
@@ -179,5 +183,47 @@ describe('BoolForm > converters.ts', () => {
   it('convertToCandyBool > returns undefined for non-boolean strings', () => {
     expect(convertToCandyBool('true.')).toBe(undefined);
     expect(convertToCandyBool('invalidString')).toBe(undefined);
+  });
+});
+
+describe('FloatForm > converters.ts', () => {
+  it('convertToCandyFloat > returns a CandyFloat object for valid Float number strings', () => {
+    expect(convertToCandyFloat('0.545')).toEqual({ Float: Number(0.545) });
+    expect(convertToCandyFloat('1')).toEqual({ Float: Number(1) });
+    expect(convertToCandyFloat('0')).toEqual({ Float: Number(0) });
+    expect(convertToCandyFloat('-0.545')).toEqual({ Float: Number(-0.545) });
+  });
+
+  it('convertToCandyFloat > returns undefined for non-Float number strings', () => {
+    expect(convertToCandyFloat('helloWorld')).toBe(undefined);
+    expect(convertToCandyFloat('5,55')).toBe(undefined);
+  });
+});
+
+describe('PrincipalForm > converters.ts', () => {
+  it('convertToCandyPrincipal > returns a CandyPrincipal object for valid Principal strings', () => {
+    expect(
+      convertToCandyPrincipal('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe'),
+    ).toEqual({
+      Principal: Principal.fromText(
+        '6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7qe',
+      ),
+    });
+    expect(
+      convertToCandyPrincipal('no6lb-7zlb2-rky7d-pxic6-dyqdb-e73ho-4znjc-gw47r-tfm7e-xwpuu-wqe'),
+    ).toEqual({
+      Principal: Principal.fromText(
+        'no6lb-7zlb2-rky7d-pxic6-dyqdb-e73ho-4znjc-gw47r-tfm7e-xwpuu-wqe',
+      ),
+    });
+  });
+
+  it('convertToCandyPrincipal > returns undefined for non-Principal strings', () => {
+    expect(
+      convertToCandyPrincipal('6i6da-t3dfv-vteyg-v5agl-tpgrm-63p4y-t5nmm-gi7nl-o72zu-jd3sc-7q5'),
+    ).toBe(undefined);
+    expect(
+      convertToCandyPrincipal('no6lb-7zlb2-rky7d-pxic6-diqdb-e73ho-4znjc-gw47r-tfm7e-xwpuu-wqe'),
+    ).toBe(undefined);
   });
 });

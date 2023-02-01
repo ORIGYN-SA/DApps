@@ -14,6 +14,8 @@ export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Int32', value: 'Int32' },
   { label: 'Int64', value: 'Int64' },
   { label: 'Bool', value: 'Bool' },
+  { label: 'Float', value: 'Float' },
+  { label: 'Principal', value: 'Principal' },
 ];
 
 export const VALIDATION_ERRORS: { [key: string]: string } = {
@@ -28,4 +30,6 @@ export const VALIDATION_ERRORS: { [key: string]: string } = {
   int32: 'The value must be a Int number between -2147483648 and 2147483647',
   int64: 'The value must be a Int number between -9223372036854775808 and 9223372036854775807',
   boolean: 'The value must be a Boolean (true or false - case insensitive)',
+  float: 'The value must be a Float number',
+  principal: 'The value must be a valid Principal',
 };
