@@ -12,7 +12,7 @@ import {
   Banner,
   ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { LoadingContainer } from '../../../../../features/components';
 import { timeConverter } from '../../../../../utils';
 import { ConnectQRModal } from '../../modals/ConnectQRModal';
@@ -60,9 +60,11 @@ const WalletPage = () => {
   const [libraries, setLibraries] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinting, setIsMinting] = useState(false);
   const [isSendOpen, setIsSendOpen] = useState(false);
   const { nft_id } = useParams();
   const [normalData, setNormalData] = useState<any>();
+  const navigate = useNavigate();
   console.log('NFT Data', nftData);
   console.log('NFT Normal', normalData);
 
@@ -84,11 +86,15 @@ const WalletPage = () => {
         },
       },
     );
-    console.log(responseNormalData);
+    console.log(responseNormalData, "responseNormalData");
+    
     const data = await responseNormalData.json();
+
+    console.log(data, "data");
     setNormalData(data);
     if ('prestage' in data) {
       setNftData(data.prestage.data);
+      setLibraries(data.prestage.data.files);
       setIsLoading(false);
       return data;
     } else {
@@ -107,8 +113,12 @@ const WalletPage = () => {
       );
       const metadata = await response.json();
       setLibraries(metadata.metadata.library);
-      const toJS = new CandyToJson(metadata);
-      setNftData(toJS.getAllDataFields());
+      try {
+        const toJS = new CandyToJson(metadata);
+        setNftData(toJS.getAllDataFields());
+      } catch (e){
+        setNftData({});
+      }
       setIsLoading(false);
       return data;
     }
@@ -139,14 +149,52 @@ const WalletPage = () => {
     console.log(data);
   };
 
+  const stageCertificate = async () => {
+    setIsMinting(true);
+    const requestFormData = new FormData();
+    requestFormData.set('appType', 'IGI');
+
+    console.log(nftData);
+    const jsonFile = new Blob([JSON.stringify({...nftData, display: {}}, null, 2)], {
+      type: 'application/json',
+    });
+
+    const file = new File([jsonFile], 'metadata.json', {
+      type: 'application/json',
+      lastModified: Date.now(),
+    });
+    
+    requestFormData.set('metadata', file);
+
+    console.log();
+    const response = await fetch(`https://development.origyn.network/canister/v0/nft-token`, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        'x-access-token': loggedIn,
+      },
+      body: requestFormData,
+    });
+    if (response.status === 200) {
+      const data = await response.json();
+      navigate(`/${data?.token?.id}`);
+      console.log(data);
+    }
+    setIsMinting(false);
+  }
+
   useEffect(() => {
-    setLoggedIn(localStorage.getItem('apiKey'));
+    if (parseInt(localStorage.getItem('keyExpiration')) < (new Date).getTime()) {
+      localStorage.setItem('apiKey', "");
+      navigate("/");
+    } else {
+      setLoggedIn(localStorage.getItem('apiKey'));
+    }
     fetchData();
-  }, []);
+  }, [nft_id]);
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || isMinting ? (
         <LoadingContainer />
       ) : (
         <Flex fullWidth padding="0" flexFlow="column">
@@ -158,7 +206,7 @@ const WalletPage = () => {
                 <Flex flexFlow="column" gap={8}>
                   <Container size="md" padding="50px">
                     <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                      <img style={{ borderRadius: '18px', width: '100%' }} src={libraries[0]?.library_file} />
+                      <img style={{ borderRadius: '18px', width: '100%' }} src={libraries[0]?.library_file || libraries[0]?.source} />
                       <Flex flexFlow="column" gap={8} justify="center">
                         <p className="secondary_color">Token ID</p>
                         <h2>
@@ -187,12 +235,16 @@ const WalletPage = () => {
                         {
                           normalData.status === "PRE_STAGE" && (
                             <Grid columns={2} gap={16}>
-                              <Button btnType="filled" style={{ width: "100%" }}>
+                              <Button
+                                btnType="filled"
+                                style={{ width: "100%" }}
+                              >
                                 Edit
                               </Button>
                               <Button
                                 btnType="outlined"
                                 style={{ width: "100%" }}
+                                onClick={stageCertificate}
                               >
                                 Stage
                               </Button>

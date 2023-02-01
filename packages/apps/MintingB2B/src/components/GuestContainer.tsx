@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import { Button, Container, Flex, TextInput } from '@origyn-sa/origyn-art-ui';
+import { LoadingContainer } from '@dapp/features-components';
 
-export const GuestContainer = ({ onLogin }) => {
+export const GuestContainer = ({ onLogin, isLoading }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,25 +17,33 @@ export const GuestContainer = ({ onLogin }) => {
         minHeight: '100%',
       }}
     >
-      <Container size="sm" align="center">
-        <TextInput
-          label="Login"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextInput
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
-        <Flex fullWidth justify="center">
-          <Button variant="contained" onClick={() => onLogin(email, password)}>
-            Connect wallet
-          </Button>
-        </Flex>
-      </Container>
+      {
+        isLoading ? (
+          <>
+            <LoadingContainer />
+          </>
+        ) : (
+          <Container size="sm" align="center">
+            <TextInput
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextInput
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <br />
+            <Flex fullWidth justify="center">
+              <Button variant="contained" onClick={() => onLogin(email, password)}>
+                Log In
+              </Button>
+            </Flex>
+          </Container>
+        )
+      }
     </Box>
   );
 };

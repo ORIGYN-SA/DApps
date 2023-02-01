@@ -28,6 +28,7 @@ declare type CellType = {
 };
 
 export const DataStructure = ({ isLoading, dataStructure, removeData, addData }: Props) => {
+  const [editData, setEditData] = useState({});
   const tableCells: CellType[] = [
     {
       id: 'name',
@@ -52,10 +53,20 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
     },
   ];
 
-const [openData, setOpenData] = useState(false);
+  const [openData, setOpenData] = useState(false);
   const handleClose = () => {
     setOpenData(!openData);
+    setEditData({});
   };
+  const editField = (data) => {
+    setEditData(data);
+    setOpenData(true);
+  };
+
+  const handleEdit = (data) => {
+    removeData(data.name);
+    addData(data);
+  }
 
   console.log(dataStructure);
   return (
@@ -100,9 +111,14 @@ const [openData, setOpenData] = useState(false);
                   type: row.type,
                   inputType: row.inputType,
                   actions: (
-                    <Button btnType="filled" onClick={() => removeData(row.name)}>
-                      Delete
-                    </Button>
+                    <Flex gap={8}>
+                      <Button size="small" btnType="filled" onClick={() => editField(row)}>
+                        Edit
+                      </Button>
+                      <Button size="small" btnType="filled" onClick={() => removeData(row.name)}>
+                        Delete
+                      </Button>
+                    </Flex>
                   ),
                 };
               })}
@@ -125,7 +141,13 @@ const [openData, setOpenData] = useState(false);
       </Container>
       <HR marginTop={24} />
 
-      <AddDataModal openConfirmation={openData} handleClose={handleClose} handleAdd={addData} />
+      <AddDataModal
+        openConfirmation={openData}
+        editData={editData}
+        handleClose={handleClose}
+        handleAdd={addData}
+        handleEdit={handleEdit}
+      />
     </>
   );
 };

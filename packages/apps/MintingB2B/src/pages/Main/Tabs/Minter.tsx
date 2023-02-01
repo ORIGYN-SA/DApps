@@ -637,6 +637,7 @@ export const Minter = () => {
 
   useEffect(() => {
     setLoggedIn(localStorage.getItem('apiKey'));
+    setLoggedIn(localStorage.getItem('apiKey'));
   }, []);
 
   return (
@@ -685,9 +686,9 @@ export const Minter = () => {
                 <h6>Main image</h6>
               </div>
               <CustomFileUpload htmlFor="main_image">
-                {console.log(files, files.find(({ pointer }) => pointer === 'media'))}
+                {console.log(files, files.find(({ pointer }) => pointer === 'files-media'))}
                 <img
-                  src={files.find(({ pointer }) => pointer === 'media')?.source}
+                  src={files.find(({ pointer }) => pointer === 'files-media')?.source}
                 />
                 <input
                   id="main_image"

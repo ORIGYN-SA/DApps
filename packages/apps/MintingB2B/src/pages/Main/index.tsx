@@ -12,6 +12,7 @@ import { useSnackbar } from 'notistack';
 const MintingPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingLogIn, setIsLoadingLogIn] = useState(false);
   const [isDataStructureLoading, setIsDataStructureLoading] = useState(false);
   
   const [nftList, setNftList] = useState([]);
@@ -23,6 +24,7 @@ const MintingPage = () => {
   const [formTemplateData, setFormTemplateData] = useState<any>(
     JSON.parse(localStorage.getItem('formTemplate')) || formTemplate,
   );
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleLogOut = () => {
     setLoggedIn('');
@@ -56,29 +58,33 @@ const MintingPage = () => {
   };
 
   const addData = (dataObject) => {
+    const ds = JSON.parse(localStorage.getItem('dataStructure'));
+    const ft = JSON.parse(localStorage.getItem('formTemplate'));
     const newData = {
-      ...dataStructure,
-      IGI: [...dataStructure.IGI, dataObject],
+      ...ds || dataStructure,
+      IGI: [...(ds || dataStructure).IGI, dataObject],
     };
     console.log(newData);
     const newFormTemplate = {
-      ...formTemplateData
+      ...(ft || formTemplateData)
     };
-    newFormTemplate.IGI[0].fields.push(dataObject)
-    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
+    (ft || formTemplateData).IGI[0].fields.push(dataObject)
     localStorage.setItem('dataStructure', JSON.stringify(newData));
+    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
     setDataStructure(newData);
     setFormTemplateData(newFormTemplate);
   };
   const removeData = (fileId) => {
     setIsDataStructureLoading(true);
+    const ds = JSON.parse(localStorage.getItem('dataStructure'));
+    const ft = JSON.parse(localStorage.getItem('formTemplate'));
     const newData = {
-      ...dataStructure,
-      IGI: dataStructure.IGI.filter(({ name }) => name !== fileId),
+      ...ds || dataStructure,
+      IGI: (ds || dataStructure).IGI.filter(({ name }) => name !== fileId),
     };
     const newFormTemplate = {
-      ...formTemplateData,
-      IGI: formTemplateData.IGI.map((t) => ({...t, fields: t?.fields?.filter(({ name }) => name !== fileId)})),
+      ...(ft || formTemplateData),
+      IGI: (ft || formTemplateData).IGI.map((t) => ({...t, fields: t?.fields?.filter(({ name }) => name !== fileId)})),
     };
     localStorage.setItem('dataStructure', JSON.stringify(newData));
     localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
@@ -88,33 +94,57 @@ const MintingPage = () => {
   };
 
   const logIn = async (email, password) => {
-
-    const response = await fetch(
-      `https://development.canister.origyn.ch/user/v0/user/authenticate`,
-      {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, *cors, same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, *same-origin, omit
-        body: JSON.stringify({
-          mail: email,
-          password,
-          "jwt": "true",
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          accept: 'application/json',
+    setIsLoadingLogIn(true);
+    try {
+      const response = await fetch(
+        `https://development.canister.origyn.ch/user/v0/user/authenticate`,
+        {
+          method: 'POST', // *GET, POST, PUT, DELETE, etc.
+          mode: 'cors', // no-cors, *cors, same-origin
+          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: 'same-origin', // include, *same-origin, omit
+          body: JSON.stringify({
+            mail: email,
+            password,
+            "jwt": "true",
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            accept: 'application/json',
+          },
         },
-      },
-    );
-    const d = await response.json()
-    setLoggedIn(d.accessToken);
+      );
+      console.log(response);
+      const d = await response.json();
+      if (d.status === "Error") {
+        enqueueSnackbar(
+          d.message, {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
+      console.log(d);
+      setLoggedIn(d.accessToken);
+    } catch (err) {
+      enqueueSnackbar("Error during log in", {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      });
+    }
+    setIsLoadingLogIn(false);
   }
 
   useEffect(() => {
     if (loggedIn) {
       console.log(loggedIn);
       localStorage.setItem('apiKey', loggedIn);
+      localStorage.setItem('keyExpiration', ((new Date).getTime() + (1*60*60*1000)).toString());
       fetchData(1);
     }
   }, [loggedIn]);
@@ -126,8 +156,11 @@ const MintingPage = () => {
   }, [currentPage]);
 
   useEffect(() => {
-    console.log(localStorage.getItem('apiKey'));
-    setLoggedIn(localStorage.getItem('apiKey'));
+    if (parseInt(localStorage.getItem('keyExpiration')) < (new Date).getTime()) {
+      localStorage.setItem('apiKey', "");
+    } else {
+      setLoggedIn(localStorage.getItem('apiKey'));
+    }
   }, []);
 
   return (
@@ -164,7 +197,7 @@ const MintingPage = () => {
           />
         </Flex>
       ) : (
-        <GuestContainer onLogin={logIn} />
+        <GuestContainer onLogin={logIn} isLoading={isLoadingLogIn} />
       )}
     </>
   );
