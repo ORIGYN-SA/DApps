@@ -25,12 +25,13 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
     setImmutable(!immutable);
   };
 
-  const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
+  const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>): void => {
+    let naturalValue: CandyNaturals;
     switch (editor.candyType) {
       case 'Nat':
-        const natValue = convertToCandyNat(typedValue.target.value);
-        if (natValue) {
-          setValue(natValue);
+        naturalValue = convertToCandyNat(typedValue.target.value);
+        if (naturalValue) {
+          setValue(naturalValue);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
@@ -38,9 +39,9 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat8':
-        const nat8Value = convertToCandyNat8(typedValue.target.value);
-        if (nat8Value) {
-          setValue(nat8Value);
+        naturalValue = convertToCandyNat8(typedValue.target.value);
+        if (naturalValue) {
+          setValue(naturalValue);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
@@ -48,9 +49,9 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat16':
-        const nat16Value = convertToCandyNat16(typedValue.target.value);
-        if (nat16Value) {
-          setValue(nat16Value);
+        naturalValue = convertToCandyNat16(typedValue.target.value);
+        if (naturalValue) {
+          setValue(naturalValue);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
@@ -58,9 +59,9 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat32':
-        const nat32Value = convertToCandyNat32(typedValue.target.value);
-        if (nat32Value) {
-          setValue(nat32Value);
+        naturalValue = convertToCandyNat32(typedValue.target.value);
+        if (naturalValue) {
+          setValue(naturalValue);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
@@ -68,9 +69,9 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat64':
-        const nat64Value = convertToCandyNat64(typedValue.target.value);
-        if (nat64Value) {
-          setValue(nat64Value);
+        naturalValue = convertToCandyNat64(typedValue.target.value);
+        if (naturalValue) {
+          setValue(naturalValue);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);

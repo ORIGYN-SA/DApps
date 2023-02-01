@@ -4,6 +4,8 @@ import { TextForm } from './TextForm/textForm';
 import { NaturalsForm } from './NatForms/naturalsForm';
 import { IntegersForm } from './IntForms/integersForm';
 import { BoolForm } from './BoolForm/boolForm';
+import { FloatForm } from './FloatForm/floatForm';
+import { PrincipalForm } from './PrincipalForm/principalForm';
 
 export const FormTypes = {
   Text: (props: CandyClassEditor) => (
@@ -41,5 +43,11 @@ export const FormTypes = {
   ),
   Bool: (props: CandyClassEditor) => (
     <BoolForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+  ),
+  Float: (props: CandyClassEditor) => (
+    <FloatForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+  ),
+  Principal: (props: CandyClassEditor) => (
+    <PrincipalForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
   ),
 };
