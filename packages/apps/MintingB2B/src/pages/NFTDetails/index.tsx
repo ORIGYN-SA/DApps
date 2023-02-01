@@ -22,6 +22,7 @@ import PlayForWorkIcon from '@mui/icons-material/PlayForWork';
 import { CandyToJson } from '../../../../../utils/src/candyParser';
 import { formTemplate } from '../Main/Tabs/Minter';
 import { SendCertificateToPrincipal } from '../../modals/SendCertificateToPrincipal';
+import { STATUSES } from '../../constants/minting';
 
 const RenderDetails = ({ data }) => {
   const FT = JSON.parse(localStorage.getItem('formTemplate')) || formTemplate;
@@ -64,6 +65,7 @@ const WalletPage = () => {
   const [isSendOpen, setIsSendOpen] = useState(false);
   const { nft_id } = useParams();
   const [normalData, setNormalData] = useState<any>();
+  const { waitingForOwner, success, preStage } = STATUSES;
   console.log('NFT Data', nftData);
   console.log('NFT Normal', normalData);
   console.log('Libraries', libraries);
@@ -163,6 +165,25 @@ const WalletPage = () => {
     document.body.removeChild(a);
   };
 
+  function mapStatus(status) {
+    switch (status) {
+      case STATUSES.waitingForOwner:
+        return 'Waiting For Owner';
+      case STATUSES.success:
+        return 'Success';
+      case STATUSES.failed:
+        return 'Failed';
+      case STATUSES.inProgress:
+        return 'In Progress';
+      case STATUSES.preStage:
+        return 'Pre-Stage';
+      case STATUSES.pending:
+        return 'Pending';
+      default:
+        return 'Error';
+    }
+  }
+
   useEffect(() => {
     setLoggedIn(localStorage.getItem('apiKey'));
     fetchData();
@@ -194,9 +215,9 @@ const WalletPage = () => {
                         <Flex align="center" justify="space-between">
                           <div>
                             <p className="secondary_color">Status</p>
-                            <p style={{ color: '#DD1422' }}>{normalData?.status}</p>
+                            <p style={{ color: '#DD1422' }}>{mapStatus(normalData?.status)}</p>
                           </div>
-                          {normalData.status === 'SUCCESS' && (
+                          {normalData.status === success && (
                             <div>
                               <p className="secondary_color">Minted to</p>
                               <p title={normalData?.targetOwnerPrincipalId}>
@@ -209,7 +230,7 @@ const WalletPage = () => {
                         <ShowMoreBlock btnText="Read More">
                           <p className="secondary_color">{normalData?.description}</p>
                         </ShowMoreBlock>
-                        {normalData.status === 'PRE_STAGE' && (
+                        {normalData.status === preStage && (
                           <Grid columns={2} gap={16}>
                             <Button btnType="filled" style={{ width: '100%' }}>
                               Edit
@@ -219,7 +240,7 @@ const WalletPage = () => {
                             </Button>
                           </Grid>
                         )}
-                        {normalData.status === 'WAITING_FOR_OWNER' && (
+                        {normalData.status === waitingForOwner && (
                           <Grid columns={2} gap={16}>
                             <Button onClick={generateQR} btnType="filled" style={{ width: '100%' }}>
                               Generate QR
@@ -227,7 +248,7 @@ const WalletPage = () => {
                             <Button
                               onClick={() => setIsOpen(true)}
                               btnType="outlined"
-                              disabled={normalData.status !== 'WAITING_FOR_OWNER'}
+                              disabled={normalData.status !== waitingForOwner}
                               style={{ width: '100%' }}
                             >
                               Connect with QR
@@ -235,7 +256,7 @@ const WalletPage = () => {
                             <Button
                               onClick={() => setIsSendOpen(true)}
                               btnType="outlined"
-                              disabled={normalData.status !== 'WAITING_FOR_OWNER'}
+                              disabled={normalData.status !== waitingForOwner}
                               style={{ width: '100%' }}
                             >
                               Send to Principal
