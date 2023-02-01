@@ -25,12 +25,13 @@ export const IntegersForm = (editor: CandyClassEditor) => {
         setImmutable(!immutable);
     };
 
-    const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
+    const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>): void => {
+        let integerValue: CandyIntegers;
         switch (editor.candyType) {
             case 'Int':
-                const intValue = convertToCandyInt(typedValue.target.value);
-                if (intValue) {
-                    setValue(intValue);
+                integerValue = convertToCandyInt(typedValue.target.value);
+                if (integerValue) {
+                    setValue(integerValue);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
@@ -38,9 +39,9 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 }
                 break;
             case 'Int8':
-                const int8Value = convertToCandyInt8(typedValue.target.value);
-                if (int8Value) {
-                    setValue(int8Value);
+                integerValue = convertToCandyInt8(typedValue.target.value);
+                if (integerValue) {
+                    setValue(integerValue);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
@@ -48,9 +49,9 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 }
                 break;
             case 'Int16':
-                const int16Value = convertToCandyInt16(typedValue.target.value);
-                if (int16Value) {
-                    setValue(int16Value);
+                integerValue = convertToCandyInt16(typedValue.target.value);
+                if (integerValue) {
+                    setValue(integerValue);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
@@ -58,9 +59,9 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 }
                 break;
             case 'Int32':
-                const int32Value = convertToCandyInt32(typedValue.target.value);
-                if (int32Value) {
-                    setValue(int32Value);
+                integerValue = convertToCandyInt32(typedValue.target.value);
+                if (integerValue) {
+                    setValue(integerValue);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
@@ -68,9 +69,9 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 }
                 break;
             case 'Int64':
-                const int64Value = convertToCandyInt64(typedValue.target.value);
-                if (int64Value) {
-                    setValue(int64Value);
+                integerValue = convertToCandyInt64(typedValue.target.value);
+                if (integerValue) {
+                    setValue(integerValue);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);

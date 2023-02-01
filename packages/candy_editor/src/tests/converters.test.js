@@ -192,6 +192,9 @@ describe('FloatForm > converters.ts', () => {
     expect(convertToCandyFloat('1')).toEqual({ Float: Number(1) });
     expect(convertToCandyFloat('0')).toEqual({ Float: Number(0) });
     expect(convertToCandyFloat('-0.545')).toEqual({ Float: Number(-0.545) });
+    expect(convertToCandyFloat('-3.4028234663852886e+38')).toEqual({
+      Float: Number(-3.4028234663852886e38),
+    });
   });
 
   it('convertToCandyFloat > returns undefined for non-Float number strings', () => {
