@@ -33,12 +33,7 @@ type Props = {
   metadata: any;
 };
 
-export const UpdateLibraryFile = ({
-  tokenId,
-  updateLibraryData,
-  setOpenLibrary,
-  metadata,
-}: Props) => {
+export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Props) => {
   console.log(metadata);
 
   const { actor } = useContext(AuthContext);

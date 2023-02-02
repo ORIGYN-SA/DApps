@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { TokenIcon, Table, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useDialog } from '@connect2ic/react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { getBalance, useTokensContext } from '@dapp/features-tokens-provider';
-import { copyToClipboard, getAccountId } from '@dapp/utils';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { copyToClipboard } from '@dapp/utils';
 import { ConfirmSalesActionModal } from '@dapp/features-sales-escrows';
 import {
   Button,
@@ -627,16 +627,16 @@ const WalletPage = () => {
                                       links?.Class?.find(({ name }) => name === 'type')?.value?.Text
                                     ]
                                   }
-                                </SocialMediaButton> 
+                                </SocialMediaButton>
                               ))}
-                                 <SocialMediaButton                                  
-                                 as="a"
+                              <SocialMediaButton
+                                as="a"
                                 iconButton
                                 target="_blank"
                                 href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
-                                >
-                                 Ledger
-                                </SocialMediaButton>
+                              >
+                                Ledger
+                              </SocialMediaButton>
                             </Flex>
                           </Flex>
 
