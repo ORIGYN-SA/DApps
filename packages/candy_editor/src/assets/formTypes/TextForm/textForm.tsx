@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
-import type { CandyClassEditor,CandyText } from '../../../types';
+import React, { useEffect, useState } from 'react';
+import { Flex, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
+import type { CandyClassEditor, CandyText } from '../../../types';
 
-export const TextForm = (editor : CandyClassEditor) => {
-  
+export const TextForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
-  const [value, setValue] = useState<CandyText>();
+  const [value, setValue] = useState<CandyText>({ Text: '' });
   const [immutable, setImmutable] = useState<boolean>(false);
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,34 +20,52 @@ export const TextForm = (editor : CandyClassEditor) => {
   };
 
   const saveProperty = () => {
-    editor.addPropertyToCandyClass({
-        name: name,
-        value: value,
-        immutable: immutable,
-    });
+    switch (editor.editorMode) {
+      case 'create':
+        editor.addPropertyToCandyClass({
+          name: name,
+          value: value,
+          immutable: immutable,
+        });
+        break;
+      case 'edit':
+        alert('edit');
+    }
   };
 
+  useEffect(() => {
+    if (editor.editorMode === 'edit') {
+      const CandyValue = editor.property.value as CandyText;
+      setName(editor.property.name);
+      setValue(CandyValue);
+    }
+  }, [editor.editorMode]);
+
   return (
-    <Container>
-      <Flex flexFlow="row" gap={16}>
+    <>
+      <Flex>
+        <TextInput label="Name" onChange={onNameChanged} value={name} />
+      </Flex>
+      <Flex>
+        <TextInput label="Value" onChange={onValueChanged} value={value.Text} />
+      </Flex>
+      <Flex>
         <Flex>
-          <TextInput label="Name" onChange={onNameChanged} />
-        </Flex>
-        <Flex>
-          <TextInput label="Value" onChange={onValueChanged} />
-        </Flex>
-        <Flex>
-          <Flex>
-            <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
-          </Flex>
+          <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
         </Flex>
       </Flex>
       <HR marginTop={8} marginBottom={16} />
-      <Flex>
-        <Button size="small" btnType="filled" onClick={saveProperty}>
-          Save Property
-        </Button>
-      </Flex>
-    </Container>
+      {editor.editorMode === 'create' ? (
+        <Flex>
+          <span>
+            <Button size="small" btnType="filled" onClick={saveProperty}>
+              Save
+            </Button>
+          </span>
+        </Flex>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };

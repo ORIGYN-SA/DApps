@@ -1,12 +1,5 @@
 import { CandyInt, CandyInt8, CandyInt16, CandyInt32, CandyInt64 } from '../../../types';
-
-export function isInRange(
-  num: number | bigint,
-  min: number | bigint,
-  max: number | bigint,
-): boolean {
-  return num >= min && num <= max;
-}
+import { isInRange } from '../../../utils/functions';
 
 export function convertToCandyInt(typedValue: string): CandyInt | undefined {
   if (/^-?\d+$/.test(typedValue)) {

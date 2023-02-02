@@ -1,8 +1,5 @@
 import { CandyNat, CandyNat8, CandyNat16, CandyNat32, CandyNat64 } from '../../../types';
-
-export function isInRange(num: number | bigint, min: number, max: number | bigint): boolean {
-  return num >= min && num <= max;
-}
+import { isInRange } from '../../../utils/functions';
 
 export function convertToCandyNat(typedValue: string): CandyNat | undefined {
   if (/^\d+$/.test(typedValue)) {

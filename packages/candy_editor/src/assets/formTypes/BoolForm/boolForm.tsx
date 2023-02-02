@@ -39,38 +39,43 @@ export const BoolForm = (editor: CandyClassEditor) => {
     };
 
     const saveProperty = () => {
-        editor.addPropertyToCandyClass({
-            name: name,
-            value: value,
-            immutable: immutable,
-        });
+        switch (editor.editorMode) {
+            case "create":
+                editor.addPropertyToCandyClass({
+                    name: name,
+                    value: value,
+                    immutable: immutable,
+                });
+                break;
+            case "edit":
+                alert('edit');
+        }
     };
 
     return (
-        <Container>
-            <Flex flexFlow="row" gap={16}>
+        <>
+            <Flex>
+                <TextInput label="Name" onChange={onNameChanged} />
+            </Flex>
+            <Flex>
+                <Select
+                    inputSize="medium"
+                    label="Value"
+                    handleChange={(opt) => {
+                        onValueChanged(opt.value);
+                    }}
+                    options={[
+                        { value: 'true', label: 'true' },
+                        { value: 'false', label: 'false' },
+                    ]}
+                />
+            </Flex>
+            <Flex>
                 <Flex>
-                    <TextInput label="Name" onChange={onNameChanged} />
-                </Flex>
-                <Flex>
-                    <Select
-                        inputSize="medium"
-                        label="Value"
-                        handleChange={(opt) => {
-                            onValueChanged(opt.value);
-                        }}
-                        options={[
-                            { value: 'true', label: 'true' },
-                            { value: 'false', label: 'false' },
-                        ]}
-                    />
-                </Flex>
-                <Flex>
-                    <Flex>
-                        <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
-                    </Flex>
+                    <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
                 </Flex>
             </Flex>
+
             <HR marginTop={8} marginBottom={16} />
             {isInvalid && (
                 <>
@@ -83,6 +88,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
                     Save Property
                 </Button>
             </Flex>
-        </Container>
+        </>
     );
 };
