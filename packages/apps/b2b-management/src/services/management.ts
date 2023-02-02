@@ -1,6 +1,6 @@
-export const getStatistics = async (): Promise<Statistics> => {
+export const getStatistics = async (days: number): Promise<Statistics> => {
   const request = await fetch(
-    `https://development.canister.origyn.ch/canister/v0/management/statistics/31`,
+    `https://development.canister.origyn.ch/canister/v0/management/statistics/${days}`,
     {
       method: 'GET',
       mode: 'cors',
@@ -57,6 +57,7 @@ export type Statistics = {
   totalClaimedCount: number;
   totalUnClaimedCount: number;
   averageTransactions: number;
+  uniqueOwnersCount: number;
 };
 
 export type DailyCount = {
@@ -65,7 +66,6 @@ export type DailyCount = {
     status: string;
     count: number;
   }[];
-  uniqueOwners: number;
   transactionsCount: number;
 };
 

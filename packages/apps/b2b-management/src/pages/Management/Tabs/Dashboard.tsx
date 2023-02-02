@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Container } from '@origyn-sa/origyn-art-ui';
+import { Helmet } from 'react-helmet';
 import CertificateList from '../../../components/lists/CertificateList';
-import StatisticsPane from '../../../components/StatisticsPane';
+import StatisticsPane, { StatisticsPaneSkeleton } from '../../../components/StatisticsPane';
 import CertificateListContainer from '../../../components/smart-components/CertificateListContainer';
 import StatisticsPaneContainer from '../../../components/smart-components/StatisticsPaneContainer';
 import ActivityFeedContainer from '../../../components/smart-components/ActivityFeedContainer';
-import ActivityFeedList from '../../../components/lists/ActivityFeedList';
+import ActivityFeedList, {
+  ActivityFeedListSkeleton,
+} from '../../../components/lists/ActivityFeedList';
 
 const StyledTitleContainer = styled('div')`
   & > h2 {
@@ -29,19 +31,22 @@ const StyledHistoryAndLibraryContainer = styled('div')`
 const Dashboard = () => {
   return (
     <>
+      <Helmet>
+        <title>ORIGYN • Dashboard</title>
+      </Helmet>
       <StyledTitleContainer>
         <h2>Certificate Management Dashboard</h2>
       </StyledTitleContainer>
       <StyledContainer>
         <StatisticsPaneContainer
           render={(args) => <StatisticsPane {...args} />}
-          renderLoading={() => <div>Loading...</div>}
+          renderLoading={() => <StatisticsPaneSkeleton />}
         />
         <StyledHistoryAndLibraryContainer>
-          <div style={{ width: '350px' }}>
+          <div style={{ minWidth: '350px' }}>
             <ActivityFeedContainer
               render={(args) => <ActivityFeedList {...args} />}
-              renderLoading={() => <div>Loading...</div>}
+              renderLoading={() => <ActivityFeedListSkeleton />}
             />
           </div>
           <div>

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import { Container, Flex, Grid, HR, Graph } from '@origyn-sa/origyn-art-ui';
-import React from 'react';
+import { Container, Flex, HR, Graph } from '@origyn-sa/origyn-art-ui';
+import { LoadingContainer } from '@dapp/features-components';
+import React, { useCallback } from 'react';
 import { StatisticsPane as Props } from './smart-components/StatisticsPaneContainer';
 import { formatNumber } from '@dapp/utils';
 import DonutChart from './DonutChart';
@@ -39,7 +40,10 @@ const StyledStatsContainer = styled('div')`
 const Statistic = ({ title, value }: Statistic) => {
   if (!value) value = 0;
 
-  const valueAsString = typeof value === 'string' ? value : formatNumber(value);
+  const valueAsFloat =
+    typeof value === 'number' && value % 1 !== 0 ? parseFloat(value.toFixed(2)) : undefined;
+  const valueAsString = typeof value === 'string' ? value : formatNumber(valueAsFloat ?? value);
+
   return (
     <StyledStatistic>
       <span>{title}</span>
@@ -48,11 +52,7 @@ const Statistic = ({ title, value }: Statistic) => {
   );
 };
 
-const onGraphFrameChange = (days: number) => {
-  // TODO: We will do getStatistics(days) here
-};
-
-const StatisticsPane = ({ statistics }: Props) => {
+const StatisticsPane = ({ statistics, onFrameChange, frameAsDays }: Props) => {
   const { totalClaimedCount, totalUnClaimedCount } = statistics;
   const claimedPercentage = (totalClaimedCount * 100) / (totalClaimedCount + totalUnClaimedCount);
   const graphData: Record<string, number> = statistics.dailyCounts.reduce((prev, value) => {
@@ -60,6 +60,10 @@ const StatisticsPane = ({ statistics }: Props) => {
     prev[unix] = value.transactionsCount;
     return prev;
   }, {});
+
+  const onGraphFrameChange = useCallback((days: number) => {
+    onFrameChange(days);
+  }, []);
 
   return (
     <>
@@ -70,10 +74,10 @@ const StatisticsPane = ({ statistics }: Props) => {
             <Container padding="24px" style={{ height: '220px' }}>
               <h6>Total Certificate Status</h6>
               <Flex flexWrap="nowrap" gap={24} style={{ marginTop: '16px' }}>
-                <Statistic title="Unique Certificate Owners" value="5" />
+                <Statistic title="Unique Certificate Owners" value={statistics.uniqueOwnersCount} />
                 <Statistic title="Total Claimed" value={statistics.totalClaimedCount} />
                 <Statistic title="Total Unclaimed" value={statistics.totalUnClaimedCount} />
-                <Statistic title="Avg Daily Tx" value={statistics.averageTransactions ?? 0} />
+                <Statistic title="Avg Daily Tx" value={statistics.averageTransactions} />
               </Flex>
             </Container>
             <HR />
@@ -91,7 +95,7 @@ const StatisticsPane = ({ statistics }: Props) => {
             <Graph
               onFrameChange={onGraphFrameChange}
               token="Daily Certificate Transactions"
-              frame={2}
+              frameAsDays={frameAsDays}
               hidePriceChange={true}
               data={graphData}
               width="750px"
@@ -107,5 +111,20 @@ const StatisticsPane = ({ statistics }: Props) => {
 type Statistic = {
   title: string;
   value: string | number;
+};
+
+export const StatisticsPaneSkeleton = () => {
+  return (
+    <>
+      <StyledPanelTitle>Certificate Stats</StyledPanelTitle>
+      <StyledStatsContainer>
+        <StyledGridContainer>
+          <div style={{ width: '100%', height: '480px', borderRadius: '10px', overflow: 'hidden' }}>
+            <LoadingContainer />
+          </div>
+        </StyledGridContainer>
+      </StyledStatsContainer>
+    </>
+  );
 };
 export default StatisticsPane;

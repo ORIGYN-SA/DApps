@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
+import { LoadingContainer } from '@dapp/features-components';
 import { ActivityFeedList as Props } from '../smart-components/ActivityFeedContainer';
 
 const StyledActivityList = styled('div')`
@@ -79,4 +80,18 @@ const ActivityFeedList = ({ activityFeed }: Props) => {
   );
 };
 
+export const ActivityFeedListSkeleton = () => {
+  return (
+    <>
+      <h5 style={{ marginBottom: '24px' }}>Activity Feed</h5>
+      <StyledActivityList style={{ height: '800px', padding: 0 }}>
+        <div
+          style={{ minWidth: '100%', height: '480px', borderRadius: '10px', overflow: 'hidden' }}
+        >
+          <LoadingContainer />
+        </div>
+      </StyledActivityList>
+    </>
+  );
+};
 export default ActivityFeedList;
