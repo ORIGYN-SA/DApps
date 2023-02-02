@@ -14,24 +14,28 @@ const CertificateListContainer = ({ render, renderLoading }: ContainerProps) => 
     setCurrentPage(page);
     setIsLoading(true);
 
-    // TODO: I really do not like this, the be should aggregate this
+    // TODO: I really do not like this, we should have an aggregation that does it
     const _certificates = await getCertificates(page);
     _certificates.data = await Promise.all(
       _certificates.data.map(async (certificate) => {
         const metadata = await getCertificateMetadata(certificate._id);
         if (!metadata.metadata) return certificate;
         const image = metadata?.metadata?.library?.[0]?.library_file;
-        const dataFields = new CandyToJson(metadata).getAllDataFields();
+        let dataFields;
+        try {
+          dataFields = new CandyToJson(metadata).getAllDataFields();
+        } catch (e) {
+          return {
+            ...certificate,
+            image,
+          };
+        }
         return {
           ...certificate,
           image,
           dataFields,
         };
       }),
-    );
-    console.log(
-      '🚀 ~ file: CertificateListContainer.tsx:35 ~ fetchCertificates ~ _certificates.data',
-      _certificates.data,
     );
     setCertificates(_certificates.data);
     setPagination(_certificates.cursor);

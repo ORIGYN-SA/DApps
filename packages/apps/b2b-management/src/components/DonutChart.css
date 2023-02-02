@@ -1,0 +1,10 @@
+.indicator-off--customize::before {
+  width: 48px !important;
+  height: 7px !important;
+  border-radius: 12px !important;
+}
+.indicator-on--customize::before {
+  width: 48px !important;
+  height: 7px !important;
+  border-radius: 12px !important;
+}

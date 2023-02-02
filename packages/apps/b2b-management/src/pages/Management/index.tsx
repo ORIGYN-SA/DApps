@@ -43,7 +43,7 @@ const Management = () => {
   return (
     <>
       {loggedIn ? (
-        <Flex fullWidth padding="0" flexFlow="column">
+        <Flex fullWidth flexFlow="column">
           <SecondaryNav
             title="Vault"
             tabs={[

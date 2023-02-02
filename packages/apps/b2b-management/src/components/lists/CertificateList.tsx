@@ -1,7 +1,14 @@
-import React, { useEffect } from 'react';
-import { Pagination, Container, Flex, Grid, HR, ProductCard } from '@origyn-sa/origyn-art-ui';
+import React from 'react';
+import styled from 'styled-components';
+import { Pagination, Grid, HR, ProductCard } from '@origyn-sa/origyn-art-ui';
 import { CertificateList as Props } from '../smart-components/CertificateListContainer';
 
+const StyledListContainer = styled('div')`
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 24px;
+  gap: 10px;
+`;
 const CertificateCard = ({ certificate }) => {
   const isClaimed = certificate.status === 'SUCCESS';
 
@@ -22,17 +29,13 @@ const CertificateCard = ({ certificate }) => {
 const CertificateList = ({ certificates, currentPage, onPageChange, pagination }: Props) => {
   return (
     <>
-      <Container padding="16px">
-        <h2>Library</h2>
-      </Container>
+      <h5 style={{ marginBottom: '24px' }}>Library</h5>
       <HR />
-      <Container padding="16px">
-        <Flex flexWrap="wrap" flexFlow="row" gap={8}>
-          {certificates.map((certificate) => (
-            <CertificateCard key={certificate._id} certificate={certificate} />
-          ))}
-        </Flex>
-      </Container>
+      <StyledListContainer>
+        {certificates.map((certificate) => (
+          <CertificateCard key={certificate._id} certificate={certificate} />
+        ))}
+      </StyledListContainer>
       <Grid columns={3}>
         <div />
         <Pagination
