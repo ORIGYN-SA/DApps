@@ -15,6 +15,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Nat: (props: CandyClassEditor) => (

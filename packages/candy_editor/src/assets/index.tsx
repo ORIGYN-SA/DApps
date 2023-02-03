@@ -8,59 +8,65 @@ import { NOT_SELECTED, SELECT_OPTIONS } from '../constants';
 export const CandyDataEditor = () => {
   const [candyType, setCandyType] = useState<CandyType>(NOT_SELECTED);
   const [candyClass, setCandyClass] = useState<CandyClass>({ Class: [] });
+  const [editableCandyClass, setEditableCandyClass] = useState<CandyClass>({ Class: [] });
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [editorMode, setEditorMode] = useState<EditorMode>("edit");
+  const [editorMode, setEditorMode] = useState<EditorMode>('edit');
 
   const addCandyClassEditor: CandyClassEditor = {
     addPropertyToCandyClass: (property: Property) => {
       setCandyClass({ Class: [...candyClass.Class, property] });
     },
     candyType: candyType,
-    removePropertyFromCandyClass: (property: Property): void => {
-      const newClass = [...candyClass.Class];
-      const index = newClass.indexOf(property);
-      if (index !== -1) {
-        newClass.splice(index, 1);
-      }
-      setCandyClass({ Class: newClass });
-    },
     editorMode: editorMode,
   };
 
-  const createEditCandyClassEditor = (candyType: string, property: Property, propIndex: number): CandyClassEditor => {
+  const createEditCandyClassEditor = (
+    candyType: string,
+    property: Property,
+    propertyIndex: number,
+  ): CandyClassEditor => {
     return {
       candyType: candyType,
       editorMode: editorMode,
-      editExistingProperty: (updatedProperty: Property,) => {
-        const updatedProperties = candyClass.Class.map((property, index) => {
-          if (index === propIndex) {
+      editExistingProperty: (updatedProperty: Property) => {
+        const updated = candyClass.Class.map((property, index) => {
+          if (index === propertyIndex) {
             return { ...property, ...updatedProperty };
           }
           return property;
         });
-        setCandyClass({ Class: updatedProperties });
+        setEditableCandyClass({ Class: updated });
       },
-      property: property
-    }
-  }
-
-  const displayModal = () => {
-    setOpenModal(true);
-    setEditorMode("create")
+      removePropertyFromCandyClass: (property: Property): void => {
+        const updated = candyClass.Class.filter((item) => item !== property);
+        setCandyClass({ Class: updated });
+      },
+      property: property,
+    };
   };
 
-  const closeModal = () => {
+  const displayModal = (): void => {
+    setOpenModal(true);
+    setEditorMode('create');
+  };
+
+  const closeModal = (): void => {
     setOpenModal(false);
     setCandyType(NOT_SELECTED);
-    setEditorMode("edit")
+    setEditorMode('edit');
   };
 
-  const handleSelectChange = (candySelectedType: CandyClass) => {
+  const handleSelectChange = (candySelectedType: CandyClass): void => {
     setCandyType(candySelectedType);
+  };
+
+  const saveCandyClass = (): void => {
+    setCandyClass({ Class: [...editableCandyClass.Class] });
   };
 
   useEffect(() => {
     console.log('Candy Class', candyClass);
+    setEditableCandyClass(candyClass);
     setCandyType(NOT_SELECTED);
     closeModal();
   }, [candyClass]);
@@ -78,24 +84,29 @@ export const CandyDataEditor = () => {
             <>
               <HR marginTop={8} marginBottom={8} />
               <Flex flexFlow="column" gap={24}>
-                {
-                  candyClass.Class.map((property, index) => (
-                    <Flex flexFlow="row" gap={24} key={index}>
-                      {
-                        FormTypes[getValueType(property).type](
-                          createEditCandyClassEditor(getValueType(property).type, property, index)
-                        )
-                      }
-                    </Flex>
-                  ))
-                }
+                {candyClass.Class.map((property, index) => (
+                  <Flex flexFlow="row" gap={24} key={index}>
+                    {FormTypes[getValueType(property).type](
+                      createEditCandyClassEditor(getValueType(property).type, property, index),
+                    )}
+                  </Flex>
+                ))}
+                <Flex align="flex-end" justify="flex-end">
+                  {editableCandyClass === candyClass ? null : (
+                    <>
+                      <Button size="medium" btnType="filled" onClick={saveCandyClass}>
+                        Save Candy Class
+                      </Button>
+                    </>
+                  )}
+                </Flex>
               </Flex>
             </>
           ) : null}
         </Flex>
       </Container>
       <Modal closeModal={closeModal} isOpened={openModal} mode="light" size="md">
-        <Container padding="16px">
+        <Container size="full" padding="48px">
           <Flex flexFlow="column" gap={16}>
             <Flex>
               <Select
@@ -110,14 +121,12 @@ export const CandyDataEditor = () => {
                 }))}
               />
             </Flex>
-            <HR marginTop={8} marginBottom={8} />
             <Flex flexFlow="column" gap={16}>
               {candyType !== null ? (
                 FormTypes[candyType.toString()](addCandyClassEditor)
               ) : (
                 <>
                   <Flex>Select a Candy Type</Flex>
-                  <HR marginTop={8} marginBottom={16} />
                 </>
               )}
             </Flex>
