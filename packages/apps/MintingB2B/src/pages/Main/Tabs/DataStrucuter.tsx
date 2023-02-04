@@ -6,10 +6,15 @@ import {
   Flex,
   Button,
   CustomTable,
+  Card,
+  Select,
+  TextInput,
 } from '@origyn-sa/origyn-art-ui';
 import { LoadingContainer } from '@dapp/features-components';
 import styled from 'styled-components';
 import AddDataModal from '../../../components/lists/AddData';
+import { dataStructures, formTemplate } from './Minter';
+import AddDataSection from '../../../modals/AddDataSection';
 
 const StyledSectionTitle = styled.div`
   margin: 48px 24px;
@@ -18,7 +23,8 @@ const StyledSectionTitle = styled.div`
 
 const CustomGrid = styled(Grid)`
   grid-template-columns: 4fr 8fr;
-  gap: 120px;
+  gap: 12px;
+  padding: 24px;
 `;
 
 declare type CellType = {
@@ -27,8 +33,17 @@ declare type CellType = {
   canSort?: boolean;
 };
 
-export const DataStructure = ({ isLoading, dataStructure, removeData, addData }: Props) => {
+export const DataStructure = ({ isLoading }: Props) => {
   const [editData, setEditData] = useState({});
+  const [name, setName] = useState("");
+  const [currentDataStrucure, setCurrentDataStrucure] = useState({ value: '', label: '' });
+  const [selectedDataStructure, setSelectedDataStructure] = useState(Object.keys(dataStructures)[0]);
+  const [formTemplateData, setFormTemplateData] = useState<any>(
+    JSON.parse(localStorage.getItem('formTemplate')) || formTemplate,
+  );
+  const [dataStructure, setDataStructure] = useState<any>(
+    JSON.parse(localStorage.getItem('dataStructure')) || dataStructures,
+  );
   const tableCells: CellType[] = [
     {
       id: 'name',
@@ -54,6 +69,7 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
   ];
 
   const [openData, setOpenData] = useState(false);
+  const [openAddSection, setOpenAddSection] = useState(false);
   const handleClose = () => {
     setOpenData(!openData);
     setEditData({});
@@ -63,12 +79,80 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
     setOpenData(true);
   };
 
-  const handleEdit = (data) => {
+  const handleEdit = (data, section) => {
     removeData(data.name);
-    addData(data);
+    addData(data, section);
+  }
+  const addData = (dataObject, section) => {
+    const ds = JSON.parse(localStorage.getItem('dataStructure'));
+    const ft = JSON.parse(localStorage.getItem('formTemplate'));
+    const newData = {
+      ...ds || dataStructure,
+      [selectedDataStructure]: [...(ds || dataStructure)[selectedDataStructure], dataObject],
+    };
+    console.log(newData);
+    const newFormTemplate = {
+      ...(ft || formTemplateData)
+    };
+    const ind = (ft || formTemplateData)[selectedDataStructure].findIndex(({ title }) => title === section);
+    (ft || formTemplateData)[selectedDataStructure][ind]?.fields.push(dataObject)
+    localStorage.setItem('dataStructure', JSON.stringify(newData));
+    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
+    setDataStructure(newData);
+    setFormTemplateData(newFormTemplate);
+  };
+  const removeData = (fileId) => {
+    const ds = JSON.parse(localStorage.getItem('dataStructure'));
+    const ft = JSON.parse(localStorage.getItem('formTemplate'));
+    const newData = {
+      ...ds || dataStructure,
+      [selectedDataStructure]: (ds || dataStructure)[selectedDataStructure].filter(({ name }) => name !== fileId),
+    };
+    const newFormTemplate = {
+      ...(ft || formTemplateData),
+      [selectedDataStructure]: (ft || formTemplateData)[selectedDataStructure].map((t) => ({ ...t, fields: t?.fields?.filter(({ name }) => name !== fileId) })),
+    };
+    localStorage.setItem('dataStructure', JSON.stringify(newData));
+    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
+    setDataStructure(newData);
+    setFormTemplateData(newFormTemplate);
+  };
+
+  const addSection = (title, subTitle) => {
+    const ft = JSON.parse(localStorage.getItem('formTemplate'));
+    const newFormTemplate = {
+      ...(ft || formTemplateData)
+    };
+    (ft || formTemplateData)[selectedDataStructure].push({
+      fields: [],
+      subTitle,
+      title,
+      type: "category",
+    })
+    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
+    setFormTemplateData(newFormTemplate);
+  };
+
+  const handleCreateDataStructure = () => {
+    const ds = JSON.parse(localStorage.getItem('dataStructure'));
+    const ft = JSON.parse(localStorage.getItem('formTemplate'));
+    const newData = {
+      ...ds || dataStructure,
+      [name]: [],
+    };
+    const newFormTemplate = {
+      ...(ft || formTemplateData),
+      [name]: [],
+    };
+    localStorage.setItem('dataStructure', JSON.stringify(newData));
+    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
+    setDataStructure(newData);
+    setFormTemplateData(newFormTemplate);
+    setSelectedDataStructure(name);
+    setCurrentDataStrucure({value: name, label: name});
+    setName('');
   }
 
-  console.log(dataStructure);
   return (
     <>
       <Grid columns={2}>
@@ -84,51 +168,107 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
       </Grid>
 
       <HR marginTop={24} marginBottom={48} />
-      <Container padding="24px">
-        <Flex flexFlow="row" justify="space-between">
+        <CustomGrid>
           <div>
-            <h6>Add New Field</h6>
-            <p className="secondary_color">Add a new field to this Data Structure</p>
+            <h6>Select Data Structure</h6>
+            <br />
+            <p>Select from our pre defined templates or build your own based on the object you are creating certificates for.</p>
           </div>
-          <Button btnType="filled" onClick={() => setOpenData(!openData)}>
-            Add New Field
-          </Button>
-        </Flex>
-      </Container>
-      <HR marginTop={48} marginBottom={48} />
+          <div>
+            <Select
+              name="dataStructure"
+              label="Data Structure"
+              options={[
+                { value: 'new', label: 'New Data Structure' },
+                ...Object.keys(dataStructure).map((k) => ({ value: k, label: k }))
+              ]}
+              selectedOption={currentDataStrucure}
+              handleChange={setCurrentDataStrucure}
+            />
+          </div>
+        </CustomGrid>
+        <HR marginTop={48} marginBottom={48} />
+        {
+          currentDataStrucure.value && (
+            <>
+              {currentDataStrucure.value === "new" ? (
+                <CustomGrid>
+                  <h4>Create New Data Structure</h4>
+                  <div>
+                    <TextInput
+                      name="name"
+                      type="text"
+                      label="Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <Flex>
+                      <Button onClick={handleCreateDataStructure}>Create</Button>
+                    </Flex>
+                  </div>
+                </CustomGrid>
+              ) : (
+                <>
 
-      <Container padding="0px 24px 24px 24px">
-        {isLoading ? (
-          <LoadingContainer />
-        ) : (
-          <>
-            <CustomTable
-              cells={tableCells}
-              rows={dataStructure.map((row) => {
-                return {
-                  name: row.name,
-                  label: row.label,
-                  type: row.type,
-                  inputType: row.inputType,
-                  actions: (
-                    <Flex gap={8}>
-                      <Button size="small" btnType="filled" onClick={() => editField(row)}>
-                        Edit
-                      </Button>
-                      <Button size="small" btnType="filled" onClick={() => removeData(row.name)}>
-                        Delete
+                  <Container padding="24px">
+                    <Flex flexFlow="row" justify="space-between">
+                      <div>
+                        <h6>Add New Section</h6>
+                        <p className="secondary_color">Add a new section to group data fields</p>
+                      </div>
+                      <Button btnType="filled" onClick={() => setOpenAddSection(!openAddSection)}>
+                        Add New Section
                       </Button>
                     </Flex>
-                  ),
-                };
-              })}
-            />
-          </>
-        )}
-      </Container>
-
-      <HR marginBottom={24} />
-      <Container padding="24px">
+                  </Container>
+                  <HR marginTop={48} marginBottom={48} />
+                  <Container padding="24px">
+                    <Flex flexFlow="row" justify="space-between">
+                      <div>
+                        <h6>Add New Field</h6>
+                        <p className="secondary_color">Add a new field to this Data Structure</p>
+                      </div>
+                      <Button btnType="filled" onClick={() => setOpenData(!openData)}>
+                        Add New Field
+                      </Button>
+                    </Flex>
+                  </Container>
+                  <HR marginTop={48} marginBottom={48} />
+                  <Container padding="0px 24px 24px 24px">
+                    {isLoading ? (
+                      <LoadingContainer />
+                    ) : (
+                      <>
+                        <CustomTable
+                          cells={tableCells}
+                          rows={dataStructure[selectedDataStructure].map((row) => {
+                            return {
+                              name: row.name,
+                              label: row.label,
+                              type: row.type,
+                              inputType: row.inputType,
+                              actions: (
+                                <Flex gap={8}>
+                                  <Button size="small" btnType="filled" onClick={() => editField(row)}>
+                                    Edit
+                                  </Button>
+                                  <Button size="small" btnType="filled" onClick={() => removeData(row.name)}>
+                                    Delete
+                                  </Button>
+                                </Flex>
+                              ),
+                            };
+                          })}
+                        />
+                      </>
+                    )}
+                  </Container>
+                </>
+              )}
+            </>
+          )
+        }
+      {/* <Container padding="24px">
         <Flex flexFlow="row" justify="space-between">
           <div>
             <h6>Save Template</h6>
@@ -139,13 +279,21 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
           </Button>
         </Flex>
       </Container>
-      <HR marginTop={24} />
-
+      <HR marginTop={24} /> */}
       <AddDataModal
         openConfirmation={openData}
         editData={editData}
         handleClose={handleClose}
         handleAdd={addData}
+        handleEdit={handleEdit}
+        sections={formTemplateData[selectedDataStructure].map((f) => f.title)}
+      />
+      {console.log(formTemplateData[selectedDataStructure])}
+      <AddDataSection
+        isOpened={openAddSection}
+        editData={""}
+        handleClose={() => setOpenAddSection(false)}
+        handleAdd={addSection}
         handleEdit={handleEdit}
       />
     </>
@@ -154,7 +302,4 @@ export const DataStructure = ({ isLoading, dataStructure, removeData, addData }:
 
 type Props = {
   isLoading: boolean;
-  dataStructure: any;
-  removeData: any;
-  addData: any;
 };

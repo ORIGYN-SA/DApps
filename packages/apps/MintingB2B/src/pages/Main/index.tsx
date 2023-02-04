@@ -9,6 +9,7 @@ import { AllNfts, dataStructures, formTemplate,  Minter } from './Tabs';
 import { DataStructure } from './Tabs/DataStrucuter';
 import { Template } from './Tabs/Template';
 import { useSnackbar } from 'notistack';
+
 const MintingPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -20,9 +21,6 @@ const MintingPage = () => {
   const [currentPage, setCurrentPage] = useState<any>(1);
   const [dataStructure, setDataStructure] = useState<any>(
     JSON.parse(localStorage.getItem('dataStructure')) || dataStructures,
-  );
-  const [formTemplateData, setFormTemplateData] = useState<any>(
-    JSON.parse(localStorage.getItem('formTemplate')) || formTemplate,
   );
   const { enqueueSnackbar } = useSnackbar();
 
@@ -57,41 +55,6 @@ const MintingPage = () => {
     return data;
   };
 
-  const addData = (dataObject) => {
-    const ds = JSON.parse(localStorage.getItem('dataStructure'));
-    const ft = JSON.parse(localStorage.getItem('formTemplate'));
-    const newData = {
-      ...ds || dataStructure,
-      IGI: [...(ds || dataStructure).IGI, dataObject],
-    };
-    console.log(newData);
-    const newFormTemplate = {
-      ...(ft || formTemplateData)
-    };
-    (ft || formTemplateData).IGI[0].fields.push(dataObject)
-    localStorage.setItem('dataStructure', JSON.stringify(newData));
-    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
-    setDataStructure(newData);
-    setFormTemplateData(newFormTemplate);
-  };
-  const removeData = (fileId) => {
-    setIsDataStructureLoading(true);
-    const ds = JSON.parse(localStorage.getItem('dataStructure'));
-    const ft = JSON.parse(localStorage.getItem('formTemplate'));
-    const newData = {
-      ...ds || dataStructure,
-      IGI: (ds || dataStructure).IGI.filter(({ name }) => name !== fileId),
-    };
-    const newFormTemplate = {
-      ...(ft || formTemplateData),
-      IGI: (ft || formTemplateData).IGI.map((t) => ({...t, fields: t?.fields?.filter(({ name }) => name !== fileId)})),
-    };
-    localStorage.setItem('dataStructure', JSON.stringify(newData));
-    localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
-    setDataStructure(newData);
-    setFormTemplateData(newFormTemplate);
-    setIsDataStructureLoading(false);
-  };
 
   const logIn = async (email, password) => {
     setIsLoadingLogIn(true);
@@ -168,10 +131,10 @@ const MintingPage = () => {
       {loggedIn ? (
         <Flex fullWidth padding="0" flexFlow="column">
           <SecondaryNav
-            title="Vault"
+            title="Minting"
             tabs={[
-              { title: 'NFTs', id: 'NFTs' },
-              { title: 'Minter', id: 'Minter' },
+              { title: 'Certificates', id: 'certificates' },
+              { title: 'Minter', id: 'minter' },
               { title: 'Data Structure', id: 'dataStructure' },
               { title: 'Template', id: 'template' },
             ]}
@@ -186,9 +149,6 @@ const MintingPage = () => {
               <Minter />,
               <DataStructure
                 isLoading={isDataStructureLoading}
-                dataStructure={dataStructure.IGI}
-                removeData={removeData}
-                addData={addData}
               />,
               <Template />,
             ]}

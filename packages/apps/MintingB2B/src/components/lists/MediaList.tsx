@@ -30,7 +30,7 @@ export const MediaList = ({ items, onRemoveClick }: Props) => {
   return items.map((item) => (
     <CustomFileUpload  key={item.id} align="center" justify="center" gap={16}>
       <img src={item.source} alt="" />
-      <Button type="button" onClick={() => onRemoveClick(item.id)} iconButton>
+      <Button style={{backgroundColor: "#5f5f5fcc"}} type="button" onClick={() => onRemoveClick(item.id)} iconButton>
         <Icons.CloseIcon />
       </Button>
     </CustomFileUpload>

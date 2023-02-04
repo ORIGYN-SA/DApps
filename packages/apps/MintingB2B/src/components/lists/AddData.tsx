@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import {
   Container,
-  HR,
-  Grid,
   Flex,
   Select,
   TextInput,
   Button,
-  CustomTable,
   Modal,
-  TextArea
 } from '@origyn-sa/origyn-art-ui';
 
-const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handleClose }) => {
+const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handleClose, sections }) => {
   const [type, setType] = useState({ value: 'text', label: 'Text' });
   const [inputType, setInputType] = useState({ value: 'text', label: 'Text' });
   const [name, setName] = useState('');
   const [label, setLabel] = useState('');
   const [selectOptions, setSelectOptions] = useState('');
-  const [section, setSection] = useState({ value: 'section', label: 'Section' });
+  const [pointer, setPointer] = useState('');
+  const [section, setSection] = useState({value: "", label: ""});
 
   const addDataField = () => {
     if (editData?.name) {
@@ -28,7 +25,8 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
         label: label,
         type: type.value,
         options: selectOptions ? selectOptions.split(',') : undefined,
-      })
+        pointer,
+      }, section?.value)
     } else {
       handleAdd({
         name,
@@ -36,7 +34,8 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
         label: label,
         type: type.value,
         options: selectOptions ? selectOptions.split(',') : undefined,
-      })
+        pointer,
+      }, section?.value);
     }
     closeModal();
   }
@@ -46,6 +45,7 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
     setInputType({ value: editData.inputType || '', label: editData.inputType || '' });
     setName(editData.name || '');
     setLabel(editData.label || '');
+    setPointer(editData.pointer || '');
     setSelectOptions(editData?.options?.join(",") || '');
   }, [editData]);
 
@@ -56,21 +56,21 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
     setName('');
     setLabel('');
     setSelectOptions('');
+    setPointer('');
+    setSection(undefined);
   }
 
   return (<>
     <Modal isOpened={openConfirmation} closeModal={() => closeModal()} size="md">
       <Container size="full" padding="48px">
         <Flex gap={48} flexFlow="column">
-          {/* <Select 
-            name="Template" 
-            label="Section" 
-            options={[
-                { value: 'section', label: 'Section' },
-              ]}
+          <Select 
+            name="section"
+            label="Section"
+            options={sections.map((f) => ({value: f, label: f}))}
             selectedOption={section}
             handleChange={setSection}
-            /> */}
+            />
           <Select
             name="inputType"
             label="Input Type"
@@ -78,6 +78,8 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
               { value: 'text', label: 'Text' },
               { value: 'number', label: 'Number' },
               { value: 'select', label: 'Select' },
+              { value: 'images', label: 'Images' },
+              { value: 'files', label: 'Files' },
             ]}
             selectedOption={inputType}
             handleChange={setInputType}
@@ -96,17 +98,32 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
             value={label}
             onChange={(e) => setLabel(e.target.value)}
           />
-          <Select
-            name="type"
-            label="Data Type"
-            options={[
-              { value: 'text', label: 'Text' },
-              { value: 'number', label: 'Number' },
-            ]}
-            selectedOption={type}
-            handleChange={setType}
-          />
-          {inputType.value == 'select' && (
+          {
+            inputType.value !== 'files' && inputType.value !== 'images' && (
+              <Select
+                name="type"
+                label="Data Type"
+                options={[
+                  { value: 'text', label: 'Text' },
+                  { value: 'number', label: 'Number' },
+                ]}
+                selectedOption={type}
+                handleChange={setType}
+              />
+            )
+          }
+          {
+            (inputType.value === 'files' || inputType.value === 'images') && (
+              <TextInput
+                name="pointer"
+                type="text"
+                label="Pointer (use files-***)"
+                value={pointer}
+                onChange={(e) => setPointer(e.target.value)}
+              />
+            )
+          }
+          {inputType.value === 'select' && (
             <>
               <TextInput
                 name="options"
