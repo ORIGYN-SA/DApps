@@ -37,7 +37,6 @@ export const DataStructure = ({ isLoading }: Props) => {
   const [editData, setEditData] = useState({});
   const [name, setName] = useState("");
   const [currentDataStrucure, setCurrentDataStrucure] = useState({ value: '', label: '' });
-  const [selectedDataStructure, setSelectedDataStructure] = useState(Object.keys(dataStructures)[0]);
   const [formTemplateData, setFormTemplateData] = useState<any>(
     JSON.parse(localStorage.getItem('formTemplate')) || formTemplate,
   );
@@ -88,14 +87,14 @@ export const DataStructure = ({ isLoading }: Props) => {
     const ft = JSON.parse(localStorage.getItem('formTemplate'));
     const newData = {
       ...ds || dataStructure,
-      [selectedDataStructure]: [...(ds || dataStructure)[selectedDataStructure], dataObject],
+      [currentDataStrucure.value]: [...(ds || dataStructure)[currentDataStrucure.value], dataObject],
     };
     console.log(newData);
     const newFormTemplate = {
       ...(ft || formTemplateData)
     };
-    const ind = (ft || formTemplateData)[selectedDataStructure].findIndex(({ title }) => title === section);
-    (ft || formTemplateData)[selectedDataStructure][ind]?.fields.push(dataObject)
+    const ind = (ft || formTemplateData)[currentDataStrucure.value].findIndex(({ title }) => title === section);
+    (ft || formTemplateData)[currentDataStrucure.value][ind]?.fields.push(dataObject)
     localStorage.setItem('dataStructure', JSON.stringify(newData));
     localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
     setDataStructure(newData);
@@ -106,11 +105,11 @@ export const DataStructure = ({ isLoading }: Props) => {
     const ft = JSON.parse(localStorage.getItem('formTemplate'));
     const newData = {
       ...ds || dataStructure,
-      [selectedDataStructure]: (ds || dataStructure)[selectedDataStructure].filter(({ name }) => name !== fileId),
+      [currentDataStrucure.value]: (ds || dataStructure)[currentDataStrucure.value].filter(({ name }) => name !== fileId),
     };
     const newFormTemplate = {
       ...(ft || formTemplateData),
-      [selectedDataStructure]: (ft || formTemplateData)[selectedDataStructure].map((t) => ({ ...t, fields: t?.fields?.filter(({ name }) => name !== fileId) })),
+      [currentDataStrucure.value]: (ft || formTemplateData)[currentDataStrucure.value].map((t) => ({ ...t, fields: t?.fields?.filter(({ name }) => name !== fileId) })),
     };
     localStorage.setItem('dataStructure', JSON.stringify(newData));
     localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
@@ -123,7 +122,7 @@ export const DataStructure = ({ isLoading }: Props) => {
     const newFormTemplate = {
       ...(ft || formTemplateData)
     };
-    (ft || formTemplateData)[selectedDataStructure].push({
+    (ft || formTemplateData)[currentDataStrucure.value].push({
       fields: [],
       subTitle,
       title,
@@ -148,7 +147,6 @@ export const DataStructure = ({ isLoading }: Props) => {
     localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
     setDataStructure(newData);
     setFormTemplateData(newFormTemplate);
-    setSelectedDataStructure(name);
     setCurrentDataStrucure({value: name, label: name});
     setName('');
   }
@@ -241,7 +239,7 @@ export const DataStructure = ({ isLoading }: Props) => {
                       <>
                         <CustomTable
                           cells={tableCells}
-                          rows={dataStructure[selectedDataStructure].map((row) => {
+                          rows={dataStructure[currentDataStrucure.value].map((row) => {
                             return {
                               name: row.name,
                               label: row.label,
@@ -286,9 +284,8 @@ export const DataStructure = ({ isLoading }: Props) => {
         handleClose={handleClose}
         handleAdd={addData}
         handleEdit={handleEdit}
-        sections={formTemplateData[selectedDataStructure].map((f) => f.title)}
+        sections={formTemplateData[currentDataStrucure.value]?.map((f) => f.title)}
       />
-      {console.log(formTemplateData[selectedDataStructure])}
       <AddDataSection
         isOpened={openAddSection}
         editData={""}

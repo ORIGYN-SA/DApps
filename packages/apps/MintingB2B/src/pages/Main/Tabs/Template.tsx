@@ -40,7 +40,7 @@ const updateById = (tObj, id, newObj) => {
   });
 };
 
-const defaultTemplate = [
+export const defaultTemplate = [
   {
     id: 1,
     type: 'columns',
@@ -607,7 +607,7 @@ const FieldBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures;
     setDataStructure(ds);
-    const f = ds.IGI.map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -671,7 +671,7 @@ const ImageBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures;
     setDataStructure(ds);
-    const f = ds.IGI.map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -722,7 +722,7 @@ const GalleryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds.IGI.map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -774,7 +774,7 @@ const AttachmentsBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds.IGI.map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -826,7 +826,7 @@ const HistoryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds.IGI.map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
     setFields(f)
   }, [])
 

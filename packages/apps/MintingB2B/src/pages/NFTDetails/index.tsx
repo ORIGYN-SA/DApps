@@ -67,10 +67,6 @@ const WalletPage = () => {
   const { nft_id } = useParams();
   const [normalData, setNormalData] = useState<any>();
   const navigate = useNavigate();
-  console.log('NFT Data', nftData);
-  console.log('NFT Normal', normalData);
-  console.log('Libraries', libraries);
-
   const handleLogOut = () => {
     setLoggedIn('');
   };
@@ -89,7 +85,6 @@ const WalletPage = () => {
         },
       },
     );
-    console.log(responseNormalData, "responseNormalData");
     
     const data = await responseNormalData.json();
 
@@ -115,6 +110,7 @@ const WalletPage = () => {
         },
       );
       const metadata = await response.json();
+      console.log(metadata, "metadata");
       setLibraries(metadata.metadata.library);
       try {
         const toJS = new CandyToJson(metadata);

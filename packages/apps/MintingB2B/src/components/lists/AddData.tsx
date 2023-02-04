@@ -67,7 +67,7 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
           <Select 
             name="section"
             label="Section"
-            options={sections.map((f) => ({value: f, label: f}))}
+            options={sections?.map((f) => ({value: f, label: f}))}
             selectedOption={section}
             handleChange={setSection}
             />

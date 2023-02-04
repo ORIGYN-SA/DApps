@@ -9,6 +9,7 @@ import { Form as MetadataForm } from '../../../components/forms';
 import styled from 'styled-components';
 import { genRanHex } from '@dapp/utils';
 import PlayForWorkIcon from '@mui/icons-material/PlayForWork';
+import { defaultTemplate } from './Template';
 
 export const dataStructures = {
   'Natural Diamond': [
@@ -490,34 +491,9 @@ const CustomGrid = styled(Grid)`
   gap: 16px;
 `
 
-const CustomFileUpload = styled.label`
-  display: flex;
-  flex-shrink: 0;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-
-  width: 148px;
-  height: 148px;
-  background: #5F5F5F;
-  border-radius: 12px;
-  cursor: pointer;
-
-  img {
-    width: 148px;
-    height: 148px;
-    position: absolute;
-    border-radius: 12px;
-    top: 0;
-    left: 0;
-  }
-`
-
 export const Minter = () => {
   const [loggedIn, setLoggedIn] = useState('');
   const [selectedDataStructure, setSelectedDataStructure] = useState(Object.keys(dataStructures)[0]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isMinting, setIsMinting] = useState(false);
   const navigate = useNavigate();
   const [metadata, setMetadata] = useState<any>();
@@ -581,15 +557,6 @@ export const Minter = () => {
   const removeHistory = (fileId) => {
     setOffChainHistory(offChainHistory.filter(({ id }) => id !== fileId));
   };
-  const removeData = (fileId) => {
-    const newData = {
-      ...dataStructure,
-      IGI: dataStructure.IGI.filter(({ name }) => name !== fileId),
-    };
-    console.log(newData);
-    localStorage.setItem('dataStructure', JSON.stringify(newData));
-    setDataStructure(newData);
-  };
 
   const mintFiles = async () => {
     setIsMinting(true);
@@ -599,23 +566,22 @@ export const Minter = () => {
       formMeta.forEach((value, key) => (formDataObj[key] = value));
       setMetadata(formDataObj);
 
-      console.log(dataStructure, metadata);
       const formFullData = {
         files,
-        data: dataStructure.IGI.map(({ name, type }) => ({
+        data: dataStructure[selectedDataStructure]?.map(({ name, type }) => ({
           name,
           type,
           value:
             type === 'record'
-              ? metadata[name]
+              ? formDataObj[name]
               : {
                 language: true,
                 data: {
-                  en: metadata[name],
+                  en: formDataObj[name],
                 },
               },
         })),
-        display: JSON.parse(localStorage.getItem('template')) || {},
+        display: JSON.parse(localStorage.getItem('template')) || defaultTemplate,
       };
       console.log(formFullData);
       const jsonFile = new Blob([JSON.stringify(formFullData, null, 2)], {
@@ -671,7 +637,6 @@ export const Minter = () => {
 
   return (
     <>
-
       <Container padding="48px 24px 32px">
         <h2>Mint a new Certificate</h2>
         <br />
