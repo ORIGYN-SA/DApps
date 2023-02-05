@@ -18,6 +18,7 @@
     "build:ledger": "lerna exec --scope @dapp/app-ledger -- npm run build",
     "build:library": "lerna exec --scope @dapp/app-library -- npm run build",
     "build:nft-data": "lerna exec --scope @dapp/app-nft-data -- npm run build",
+    "build:luxury": "lerna exec --scope @dapp/app-luxury -- npm run build",
     "test": "jest --env=./testUtils/testEnv.js",
     "lint": "eslint packages/**/*.tsx",
     "clear_jest": "jest --clearCache"
