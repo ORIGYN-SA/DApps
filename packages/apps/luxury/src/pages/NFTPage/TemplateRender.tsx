@@ -102,7 +102,7 @@ const MainImage = () => {
   return <img src='' alt='' />
 }
 
-const data = {
+const defaultData = {
   'info': {
     'mint': {
       'code': '580bbaf06c18a0188037757ea30b6f6f',
@@ -644,7 +644,7 @@ const data = {
   }],
 }
 
-const RenderTemplateBlock = ({ templateObject }) => {
+const RenderTemplateBlock = ({ templateObject, data }) => {
   let field;
   return templateObject.map((tempObj) => {
     switch (tempObj.type) {
@@ -655,17 +655,19 @@ const RenderTemplateBlock = ({ templateObject }) => {
         >
           <RenderTemplateBlock
             templateObject={tempObj.content}
+            data={data}
           />
         </Grid>
       case 'elements':
         return <Flex flexFlow='column' gap={8}>
           <RenderTemplateBlock
             templateObject={tempObj.content}
+            data={data}
           />
         </Flex>
       case 'mainPhoto':
         return <>
-          <img src={data.files.find((f) => f.pointer === tempObj.pointer).source} alt='' />
+          <img src={data?.files?.find((f) => f.pointer === tempObj.pointer).source} alt='' />
           <MainImage />
         </>
       case 'section':
@@ -678,6 +680,7 @@ const RenderTemplateBlock = ({ templateObject }) => {
           <AccordionSection>
             <RenderTemplateBlock
               templateObject={tempObj.content}
+              data={data}
             />
           </AccordionSection>
         </>
@@ -710,7 +713,7 @@ const RenderTemplateBlock = ({ templateObject }) => {
         return <>
 
           <Grid columns={2} mdColumns={2} gap={8}>
-            {data.files.filter((f) => f.pointer === tempObj.pointer).map((img) => {
+            {data?.files?.filter((f) => f.pointer === tempObj.pointer).map((img) => {
               return (
                 <img
                   style={{ height: '200px', width: '100%', objectFit: "cover" }}
@@ -723,7 +726,7 @@ const RenderTemplateBlock = ({ templateObject }) => {
         </>
       case 'attachments':
         return <>
-          {data.files.filter((f) => f.pointer === tempObj.pointer).map((doc) => (
+          {data?.files?.filter((f) => f.pointer === tempObj.pointer).map((doc) => (
             <>
               <Flex align="center" justify="space-between">
                 <Flex style={{ gap: 14 }} align="center">
@@ -754,7 +757,7 @@ const RenderTemplateBlock = ({ templateObject }) => {
         return <>
           <History>
             {
-              field.records.map((r) => {
+              field?.records?.map((r) => {
                 console.log(r)
                 return (
                   <>
@@ -783,6 +786,7 @@ const TemplateRender = ({ templateObject, data }) => {
     <ContentContainer>
       <RenderTemplateBlock
         templateObject={templateObject}
+        data={data}
       />
     </ContentContainer>
   )
