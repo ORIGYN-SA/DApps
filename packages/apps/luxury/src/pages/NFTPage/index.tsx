@@ -3,98 +3,38 @@ import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { LoadingContainer } from '@dapp/features-components';
 import TemplateRender from './TemplateRender';
 import { useParams } from 'react-router-dom';
-import { CandyToJson } from '../../../../../utils/src/candyParser';
-import { ContactlessOutlined } from '@mui/icons-material';
 
+const getCandyValue = (obj) => {
+  const type = Object.keys(obj?.value || obj)[0];
+  const value = Object.values(obj?.value || obj)[0] as any;
+
+  if (type === "Class") {
+    const pData = {};
+    value.forEach((item) => {
+      pData[item.name] = getCandyValue(item);
+    });
+    return pData;
+  }
+  if (type === "Array") {
+    // Add Array handler
+    const arr = value.thawed.map(parseCandyObj);
+    return arr;
+  }
+  return value;
+}
 
 const parseCandyObj = (obj) => {
   let field = {};
   if(obj.Class) {
     obj.Class.forEach((item) => {
-      const type = Object.keys(item?.value || item)[0];
-      const value = Object.values(item?.value || item)[0] as any;
-      
-      // console.log(type);
-      if (type === "Class") {
-        field[item.name] = value.forEach((item) => {
-          const type = Object.keys(item?.value || item)[0];
-          const value = Object.values(item?.value || item)[0] as any;
-          
-          // console.log(type);
-          if (type === "Class") {
-            field[item.name] = value.map(parseCandyObj);
-            return;
-          }
-          if (type === "Array") {
-            // Add Array handler
-            const data = value.thawed.map(parseCandyObj)
-            field[item.name] = data;
-            return;
-          }
-          field[item.name] = value;
-        });
-        return;
-      }
-      if (type === "Array") {
-        // Add Array handler
-        const data = value.thawed.map(parseCandyObj)
-        field[item.name] = data;
-        return;
-      }
-      field[item.name] = value;
+      field[item.name] = getCandyValue(item);
     });
     return field;
   }
 
-  const type = Object.keys(obj?.value || obj)[0];
-  const value = Object.values(obj?.value || obj)[0] as any;
-  if (type === "Class") {
-    const pData = {};
-    value.forEach((item) => {
-      const type = Object.keys(item?.value || item)[0];
-      const value = Object.values(item?.value || item)[0] as any;
-      
-      // console.log(type);
-      if (type === "Class") {
-        pData[item.name] = value.forEach((item) => {
-          const type = Object.keys(item?.value || item)[0];
-          const value = Object.values(item?.value || item)[0] as any;
-          
-          // console.log(type);
-          if (type === "Class") {
-            pData[item.name] = value.map(parseCandyObj);
-            return;
-          }
-          if (type === "Array") {
-            // Add Array handler
-            const data = value.thawed.map(parseCandyObj)
-            pData[item.name] = data;
-            return;
-          }
-          pData[item.name] = value;
-        });
-        return;
-      }
-      if (type === "Array") {
-        // Add Array handler
-        const data = value.thawed.map(parseCandyObj)
-        pData[item.name] = data;
-        return;
-      }
-      pData[item.name] = value;
-    });
-    console.log("Name",obj.name);
-    field[obj.name] = pData;
-    return field;
-  }
-  if (type === "Array") {
-    // Add Array handler
-    const arr = value.thawed.map(parseCandyObj);
-    field[obj.name] = arr;
-    return field;
-  }
+  const value = getCandyValue(obj);
   if (obj.name) {
-    field[obj.name] = obj.value;
+    field[obj.name] = value;
     return field;
   }
   
@@ -104,10 +44,10 @@ const parseCandyObj = (obj) => {
 }
 
 const NFTPage = () => {
+  const { actor } = useContext(AuthContext)
   const [template, setTemplate] = useState<any>();
   const [data, setData] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
-  const params = useParams();
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -133,25 +73,35 @@ const NFTPage = () => {
       console.log("DATA", data);
       
       try {
-        
         const parsedData = parseCandyObj(
           data.metadata.meta.metadata
         );
         console.log(parsedData);
-        setData(parsedData);
+        // @ts-ignore
+        setData(parsedData.__apps.find(({app_id}) => app_id === "public.metadata").data);
+        // @ts-ignore
+        setTemplate([parsedData.__apps.find(({app_id}) => app_id === "public.metadata.template").data[0]]);
       } catch (e){
         console.log(e);
         setData([]);
       }
 
     } else {
+      
       const { canisterId, tokenId } = await useRoute();
       const resp =  await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
       const data = await resp.json();
-      console.log(data);
+
+      // const data = await actor.nft_origyn(tokenId);
+      // const parsedData = parseCandyObj(
+      //   data.metadata.meta.metadata
+      // );
+      const tmplt = [data.__apps.find(({app_id}) => app_id === "public.metadata.template").data[0]];
+      const d = data.__apps.find(({app_id}) => app_id === "public.metadata").data;
+      console.log(data, tmplt, d);
   
-      setTemplate([data.__apps.find(({app_id}) => app_id === "public.metadata.template").data[0]]);
-      setData(data.__apps.find(({app_id}) => app_id === "public.metadata").data);
+      setTemplate(tmplt);
+      setData(d);
     }
     setIsLoading(false);
   }
