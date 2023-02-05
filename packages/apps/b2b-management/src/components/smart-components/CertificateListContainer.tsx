@@ -63,7 +63,7 @@ type ContainerProps = {
 };
 
 export type CertificateList = {
-  certificates: Array<unknown>;
+  certificates: Array<any>;
   currentPage: number;
   onPageChange: (page: number) => void;
   pagination: Pagination;

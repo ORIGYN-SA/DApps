@@ -1,2 +1,2 @@
-export * from './HistoryList';
-export * from './MediaList';
+export * from './ActivityFeedList';
+export * from './CertificateList';
