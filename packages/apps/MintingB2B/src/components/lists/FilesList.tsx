@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, Card, Flex, Icons } from '@origyn-sa/origyn-art-ui';
 
-const PreviewImage = styled.div`
+export const PreviewImage = styled.div`
   width: 40px;
   height: 40px;
   flex-shrink: 0;
@@ -14,7 +14,7 @@ const PreviewImage = styled.div`
 
 export const FilesList = ({ items, onRemoveClick }: Props) => {
   return items.map((item) => (
-    <Card padding="16px" key={item.id} align="center" justify="center" gap={16}>
+    <Card padding="16px" key={item.id} align="center" justify="space-between" gap={16}>
       <Flex gap={12} align="center">
         <PreviewImage />
         <Flex flexFlow="column">
