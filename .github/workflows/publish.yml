@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - develop
 
 jobs:
   build:
@@ -33,14 +34,16 @@ jobs:
       - name: Run build
         run: npm run build:all
 
-      - name: Create .ZIP Archive of the build
-        run: zip -r dist.zip dist
+      - name: Get dApps Version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
 
-      - name: Upload dApps to Release
-        uses: svenstaro/upload-release-action@v2
+      - uses: shallwefootball/s3-upload-action@master
+        name: Upload dApps to S3
+        id: S3
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist.zip
-          tag: 'dapps-latest-build'
-          overwrite: true
-          body: 'Automatically built files of dApps Monorepo'
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ secrets.AWS_BUCKET }}
+          source_dir: 'dist'
+          destination_dir: 'dApps/${{ github.head_ref || github.ref_name }}/v${{ steps.package-version.outputs.current-version}}'
