@@ -103,14 +103,7 @@ export const TextForm = (editor: CandyClassEditor) => {
           ) : (
             <>
               <Flex>
-                <TextInput
-                  label="Name"
-                  onChange={onNameChanged}
-                  value={name}
-                  error={
-                    'This is an Error This is an Error This is an ErrorThis is an Error This is an Error This is an Error'
-                  }
-                />
+                <TextInput label="Name" onChange={onNameChanged} value={name} />
               </Flex>
               <Flex>
                 <TextInput label="Value" onChange={onValueChanged} value={value.Text} />

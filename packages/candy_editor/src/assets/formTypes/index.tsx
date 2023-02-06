@@ -70,6 +70,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Int8: (props: CandyClassEditor) => (
@@ -79,6 +80,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Int16: (props: CandyClassEditor) => (
@@ -88,6 +90,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Int32: (props: CandyClassEditor) => (
@@ -97,6 +100,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Int64: (props: CandyClassEditor) => (
@@ -106,6 +110,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Bool: (props: CandyClassEditor) => (

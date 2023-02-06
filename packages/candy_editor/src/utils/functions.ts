@@ -1,4 +1,4 @@
-import { PropertyType, Property } from '../types'
+import { PropertyWithType, Property } from '../types'
 
 export function isInRange(
   num: number | bigint,
@@ -8,10 +8,10 @@ export function isInRange(
   return num >= min && num <= max;
 }
 
-export function getValueType(property: Property): PropertyType {
-  let propertyType: PropertyType;
+export function getValueType(property: Property): PropertyWithType {
+  let propertyWithType: PropertyWithType;
   const valueType: string = Object.getOwnPropertyNames(property.value)[0];
-  return propertyType = {
+  return propertyWithType = {
     type: valueType,
     name: property.name,
     immutable: property.immutable,

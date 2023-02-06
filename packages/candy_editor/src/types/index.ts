@@ -8,7 +8,7 @@ export interface Property {
   immutable: boolean;
 }
 
-export interface PropertyType extends Property {
+export interface PropertyWithType extends Property {
   type: string;
 }
 
