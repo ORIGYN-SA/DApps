@@ -572,8 +572,10 @@ export const Minter = () => {
           name,
           type,
           value:
-            type === 'record'
-              ? formDataObj[name]
+            type === 'images' || type === 'files'
+              ? {
+                data: formDataObj[name],
+              }
               : {
                 language: true,
                 data: {

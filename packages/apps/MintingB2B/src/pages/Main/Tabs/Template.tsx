@@ -56,7 +56,7 @@ export const defaultTemplate = [
           {
             type: 'mainPhoto',
             id: 3,
-            pointer: 'mainImage',
+            pointer: 'files-mainImage',
           },
           {
             type: "section",
@@ -66,10 +66,13 @@ export const defaultTemplate = [
             },
             content: [
               {
-                'type': 'text',
-                'text': {
-                  'en': 'Diamond forms under high temperature and pressure conditions that exist only about 100 miles beneath the earth\u2019s surface. Diamond\u2019s carbon atoms are bonded in essentially the same way in all directions. Another mineral, graphite, also contains only ca',
+                'type': 'field',
+                title: {
+                  'en': '',
                 },
+                'fields': [
+                  ['description'],
+                ],
               },
             ],
           },
@@ -86,7 +89,7 @@ export const defaultTemplate = [
                   'en': 'Report Date',
                 },
                 'fields': [
-                  ['field_code'],
+                  ['report_date'],
                 ],
               },
               {
@@ -95,16 +98,7 @@ export const defaultTemplate = [
                   'en': 'IGI Report Number',
                 },
                 'fields': [
-                  ['field_code'],
-                ],
-              },
-              {
-                'type': 'field',
-                'title': {
-                  'en': 'Description',
-                },
-                'fields': [
-                  ['field_code'],
+                  ['report_number'],
                 ],
               },
               {
@@ -113,18 +107,7 @@ export const defaultTemplate = [
                   'en': 'Shape and Cutting Style',
                 },
                 'fields': [
-                  ['field_code'],
-                ],
-              },
-              {
-                'type': 'field',
-                'title': {
-                  'en': 'Measurements',
-                },
-                'fields': [
-                  ['field_code'],
-                  ['field_code'],
-                  ['field_code'],
+                  ['grade_cut'],
                 ],
               },
               {
@@ -142,7 +125,7 @@ export const defaultTemplate = [
                   'en': 'Carat Weight',
                 },
                 'fields': [
-                  ['field_code'],
+                  ['grading_carat_weight'],
                 ],
               },
               {
@@ -150,14 +133,14 @@ export const defaultTemplate = [
                 'title': {
                   'en': 'Color Grade',
                 },
-                'fields': [],
+                'fields': ['origyn-mints-diamonds-color'],
               },
               {
                 'type': 'field',
                 'title': {
                   'en': 'Clarity Grade',
                 },
-                'fields': [],
+                'fields': ['origyn-mints-diamonds-clarity'],
               },
               {
                 'type': 'field',
@@ -183,7 +166,7 @@ export const defaultTemplate = [
                   'en': 'Polish',
                 },
                 'fields': [
-                  ['field_code'],
+                  ['grade_polish'],
                 ],
               },
               {
@@ -192,7 +175,7 @@ export const defaultTemplate = [
                   'en': 'Symmetry',
                 },
                 'fields': [
-                  ['field_code'],
+                  ['grade_symmetry'],
                 ],
               },
               {
@@ -201,7 +184,7 @@ export const defaultTemplate = [
                   'en': 'Fluorescence',
                 },
                 'fields': [
-                  ['field_code'],
+                  ['grade_fluorescence'],
                 ],
               },
               {
@@ -210,7 +193,7 @@ export const defaultTemplate = [
                   'en': 'Inscription(s)',
                 },
                 'fields': [
-                  ['field_code'],
+                  [''],
                 ],
               },
               {
@@ -219,7 +202,7 @@ export const defaultTemplate = [
                   'en': 'Comments',
                 },
                 'fields': [
-                  ['field_code'],
+                  ['grade_comments'],
                 ],
               },
               {
@@ -227,76 +210,88 @@ export const defaultTemplate = [
                 'title': {
                   'en': 'Table',
                 },
-                'field': 'origyn-mints-diamonds',
+                'fields': [
+                  ['origyn-mints-diamonds-table'],
+                ],
               },
               {
                 'type': 'records',
                 'title': {
                   'en': 'Depth',
                 },
-                'field': 'origyn-mints-diamonds',
+                'fields': [
+                  ['origyn-mints-diamonds-depth'],
+                ],
               },
               {
                 'type': 'records',
                 'title': {
                   'en': 'Culet',
                 },
-                'field': 'origyn-mints-diamonds',
+                'field': [
+                  ['origyn-mints-diamonds-culet'],
+                ],
               },
               {
                 'type': 'records',
                 'title': {
                   'en': 'Girdle',
                 },
-                'field': 'origyn-mints-diamonds',
+                'field': [
+                  ['origyn-mints-diamonds-ugirdle',
+                  ' origyn-mints-diamonds-lgirdle'],
+                ],
               },
               {
                 'type': 'records',
                 'title': {
                   'en': 'Shape',
                 },
-                'field': 'origyn-mints-diamonds',
+                'field': [
+                  ['origyn-mints-diamonds-angle'],
+                ],
               },
             ],
           },
-          {
-            type: "section",
-            id: 6,
-            'title': {
-              'en': 'Characteristics',
-            },
-            'content': [
-              {
-                'type': 'title',
-                'title': {
-                  'en': 'Proportions',
-                },
-              },
-              {
-                'type': 'image',
-                'title': {
-                  'en': null,
-                },
-                'field': 'origyn-mints-diamonds',
-              },
-              {
-                'type': 'separator',
-              },
-              {
-                'type': 'title',
-                'title': {
-                  'en': 'Clarity',
-                },
-              },
-              {
-                'type': 'image',
-                'title': {
-                  'en': null,
-                },
-                'field': 'origyn-mints-images',
-              },
-            ],
-          },
+          // {
+          //   type: "section",
+          //   id: 6,
+          //   'title': {
+          //     'en': 'Characteristics',
+          //   },
+          //   'content': [
+          //     {
+          //       'type': 'title',
+          //       'title': {
+          //         'en': 'Proportions',
+          //       },
+          //     },
+          //     {
+          //       'type': 'image',
+          //       'title': {
+          //         'en': null,
+          //       },
+          //       'field': 'files-media',
+          //       pointer: 'files-media',
+          //     },
+          //     {
+          //       'type': 'separator',
+          //     },
+          //     {
+          //       'type': 'title',
+          //       'title': {
+          //         'en': 'Clarity',
+          //       },
+          //     },
+          //     {
+          //       'type': 'image',
+          //       'title': {
+          //         'en': null,
+          //       },
+          //       'field': 'origyn-mints-images',
+          //     },
+          //   ],
+          // },
           {
             type: "section",
             id: 7,
@@ -309,55 +304,48 @@ export const defaultTemplate = [
                 'title': {
                   'en': null,
                 },
-                'field': 'origyn-mints-images',
-              },
-              {
-                'type': 'field',
-                'title': {
-                  'en': 'Inscription',
-                },
-                'fields': [
-                  ['field_code'],
-                ],
-              }],
-          },
-          {
-            type: "section",
-            id: 8,
-            title: {
-              'en': 'Grading Scales',
-            },
-            content: [{
-              'type': 'title',
-              'title': {
-                'en': 'Color Scale',
-              },
-            },
-              {
-                'type': 'records',
-                'title': {
-                  'en': null,
-                },
-                'field': 'origyn-mints-diamonds',
-              },
-              {
-                'type': 'separator',
-              },
-              {
-                'type': 'title',
-                'title': {
-                  'en': 'Clarity Scale',
-                },
-              },
-              {
-                'type': 'records',
-                'title': {
-                  'en': null,
-                },
-                'field': 'origyn-mints-diamonds',
+                'field': 'files-media',
+                pointer: 'files-media',
               },
             ],
           },
+          // {
+          //   type: "section",
+          //   id: 8,
+          //   title: {
+          //     'en': 'Grading Scales',
+          //   },
+          //   content: [{
+          //     'type': 'title',
+          //     'title': {
+          //       'en': 'Color Scale',
+          //     },
+          //   },
+          //     {
+          //       'type': 'records',
+          //       'title': {
+          //         'en': null,
+          //       },
+          //       'field': 'origyn-mints-diamonds',
+          //     },
+          //     {
+          //       'type': 'separator',
+          //     },
+          //     {
+          //       'type': 'title',
+          //       'title': {
+          //         'en': 'Clarity Scale',
+          //       },
+          //     },
+          //     {
+          //       'type': 'records',
+          //       'title': {
+          //         'en': null,
+          //       },
+          //       'field': 'origyn-mints-diamonds',
+          //     },
+          //   ],
+          // },
           {
             type: "section",
             id: 9,
@@ -367,7 +355,7 @@ export const defaultTemplate = [
             content: [
               {
                 type: 'gallery',
-                pointer: 'gallery',
+                pointer: 'files-media',
               },
             ],
           },
@@ -403,7 +391,21 @@ export const defaultTemplate = [
                 'title': {
                   'en': null,
                 },
-                pointer: 'attachments',
+                pointer: 'files-attachments',
+              },
+            ],
+          },
+          {
+            type: "section",
+            'title': {
+              'en': 'CERTIFICATE OF AUTHENTICITY',
+            },
+            content: [
+              {
+                'type': 'certificate',
+                'title': {
+                  'en': null,
+                },
               },
             ],
           },
