@@ -75,8 +75,8 @@ const NFTPage = () => {
 
     if (tokenId) {
       setTokenId(tokenId);
-      setCanisterId(b2bCanisterId);
-      setB2bCanisterId(b2bCanisterId);
+      setCanisterId("63dd4b519e4e6389a6ab7557");
+      setB2bCanisterId("63dd4b519e4e6389a6ab7557");
       const responseNormalData = await fetch(
         `https://development.canister.origyn.ch/canister/v0/nft-token/${tokenId}/metadata`,
         {
