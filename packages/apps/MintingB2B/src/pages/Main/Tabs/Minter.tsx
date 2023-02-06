@@ -574,7 +574,7 @@ export const Minter = () => {
           value:
             type === 'images' || type === 'files'
               ? {
-                data: formDataObj[name],
+                data: files.filter(({pointer}) => pointer ===  name),
               }
               : {
                 language: true,
