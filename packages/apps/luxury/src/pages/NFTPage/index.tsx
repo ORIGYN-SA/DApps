@@ -111,8 +111,9 @@ const NFTPage = () => {
       // const parsedData = parseCandyObj(
       //   data.metadata.meta.metadata
       // );
-      const tmplt = [data.__apps.find(({ app_id }) => app_id === "public.metadata.template").data[0]];
-      const d = data.__apps.find(({ app_id }) => app_id === "public.metadata").data;
+      console.log(data);
+      const tmplt = [data?.__apps.find(({ app_id }) => app_id === "public.metadata.template").data[0]];
+      const d = data?.__apps.find(({ app_id }) => app_id === "public.metadata").data;
 
       setTemplate(tmplt);
       setData(d);
