@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { AuthContext, useRoute } from '@dapp/features-authentication'
 import { LoadingContainer } from '@dapp/features-components';
 import TemplateRender from './TemplateRender';
+import { useParams } from 'react-router-dom';
 
 const getCandyValue = (obj) => {
   const type = Object.keys(obj?.value || obj)[0];
@@ -63,20 +64,18 @@ const NFTPage = () => {
   const [template, setTemplate] = useState<any>();
   const [data, setData] = useState<any>();
   const [tokenId, setTokenId] = useState<any>();
-  const [canisterId, setCanisterId] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
     setIsLoading(true);
+    const { canisterId, tokenId } = await useRoute();
+    setTokenId(tokenId);
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const {tokenId, b2bCanisterId} = Object.fromEntries(urlSearchParams.entries());
-    console.log("TTT");
+    const params = Object.fromEntries(urlSearchParams.entries());
 
-    if (tokenId) {
-      setTokenId(tokenId);
-      setCanisterId(b2bCanisterId);
+    if (params.tokenId) {
       const responseNormalData = await fetch(
-        `https://development.canister.origyn.ch/canister/v0/nft-token/${tokenId}/metadata`,
+        `https://development.canister.origyn.ch/canister/v0/nft-token/${params.tokenId}/metadata`,
         {
           method: 'GET', // *GET, POST, PUT, DELETE, etc.
           mode: 'cors', // no-cors, *cors, same-origin
@@ -105,9 +104,6 @@ const NFTPage = () => {
       }
 
     } else {
-      const { canisterId, tokenId } = await useRoute();
-      setTokenId(tokenId);
-      setCanisterId(canisterId);
       const resp = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
       const data = await resp.json();
 
@@ -170,7 +166,7 @@ const NFTPage = () => {
             </defs>
           </svg>
           <div>
-            <TemplateRender templateObject={template} data={{...data, tokenId, canisterId}} />
+            <TemplateRender templateObject={template} data={{...data, tokenId}} />
           </div>
         </>
       )}

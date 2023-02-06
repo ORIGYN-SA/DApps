@@ -12,7 +12,7 @@
     "start:luxury": "lerna exec --scope @dapp/app-luxury -- npm run start",
     "start:minting": "lerna exec --scope @dapp/minting-b2b -- npm run start",
     "start:b2b-management": "lerna exec --scope @dapp/b2b-management -- npm run start",
-    "build:all": "npm run build:wallet && npm run build:marketplace && npm run build:ledger && npm run build:library && npm run build:nft-data && npm run build:b2b-management && npm run build:luxury",
+    "build:all": "npm run build:wallet && npm run build:marketplace && npm run build:ledger && npm run build:library && npm run build:nft-data && npm run build:b2b-management && npm run build:minting && npm run build:luxury",
     "build:wallet": "lerna exec --scope @dapp/app-wallet -- npm run build",
     "build:minting": "lerna exec --scope @dapp/minting-b2b -- npm run build",
     "build:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run build",

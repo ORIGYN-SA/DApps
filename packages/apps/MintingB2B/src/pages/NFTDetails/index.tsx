@@ -28,6 +28,7 @@ import { PreviewImage } from '../../components/lists/FilesList';
 
 const RenderDetails = ({ data }) => {
   const FT = JSON.parse(localStorage.getItem('formTemplate')) || formTemplate;
+  console.log(FT,Object.keys(FT)[0], data);
 
   return (
     <Flex flexFlow="column" gap={16}>
@@ -118,6 +119,7 @@ const WalletPage = () => {
         const toJS = new CandyToJson(metadata);
         setNftData(toJS.getAllDataFields());
       } catch (e){
+        console.log(e);
         setNftData({});
       }
       setIsLoading(false);

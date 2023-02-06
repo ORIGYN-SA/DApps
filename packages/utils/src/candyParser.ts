@@ -5,7 +5,7 @@ export class CandyValue {
   }
 
   getValue() {
-    const { Text, Bool, Nat, Array, Class } = this._candy.value;
+    const { Text, Bool, Nat, Array, Class } = this?._candy?.value || {};
     return Text ?? Bool ?? Nat ?? Class ?? Array?.thawed;
   }
 
@@ -14,7 +14,8 @@ export class CandyValue {
   }
 
   isClassOrArray() {
-    const { Array, Class } = this._candy.value;
+    console.log(this._candy);
+    const { Array, Class } = this?._candy?.value || {};
     return Array || Class || false;
   }
 }
