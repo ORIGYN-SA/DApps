@@ -64,17 +64,19 @@ const NFTPage = () => {
   const [data, setData] = useState<any>();
   const [tokenId, setTokenId] = useState<any>();
   const [canisterId, setCanisterId] = useState<any>();
+  const [b2bCanisterId, setB2bCanisterId] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
     setIsLoading(true);
     const urlSearchParams = new URLSearchParams(window.location.search);
     const {tokenId, b2bCanisterId} = Object.fromEntries(urlSearchParams.entries());
-    console.log("TTT");
+    console.log("TTT", tokenId);
 
     if (tokenId) {
       setTokenId(tokenId);
       setCanisterId(b2bCanisterId);
+      setB2bCanisterId(b2bCanisterId);
       const responseNormalData = await fetch(
         `https://development.canister.origyn.ch/canister/v0/nft-token/${tokenId}/metadata`,
         {
@@ -108,6 +110,7 @@ const NFTPage = () => {
       const { canisterId, tokenId } = await useRoute();
       setTokenId(tokenId);
       setCanisterId(canisterId);
+      console.log("canisterId", canisterId);
       const resp = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
       const data = await resp.json();
 
@@ -170,7 +173,7 @@ const NFTPage = () => {
             </defs>
           </svg>
           <div>
-            <TemplateRender templateObject={template} data={{...data, tokenId, canisterId}} />
+            <TemplateRender templateObject={template} data={{...data, tokenId, canisterId, b2bCanisterId}} />
           </div>
         </>
       )}
