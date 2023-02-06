@@ -61,10 +61,8 @@ const WrapBlock = styled.div`
 `
 
 const NFTPage = () => {
-  const { actor } = useContext(AuthContext)
   const [template, setTemplate] = useState<any>();
   const [data, setData] = useState<any>();
-  const [canisterId, setCanisterId] = useState<any>();
   const [tokenId, setTokenId] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
 
