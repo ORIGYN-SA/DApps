@@ -8,7 +8,7 @@ import {
   convertToCandyNat16,
   convertToCandyNat32,
   convertToCandyNat64,
-  convertNaturalNumberToString
+  convertNaturalNumberToString,
 } from './converters';
 
 export const NaturalsForm = (editor: CandyClassEditor) => {
@@ -113,7 +113,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
       setValue(candyValue);
       setImmutable(editor.property.immutable);
       setFormValue(convertNaturalNumberToString(candyValue, editor.candyType));
-      console.log('property', editor.property)
+      console.log('property', editor.property);
     }
   }, [editor.editorMode]);
 
@@ -157,16 +157,10 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           {editor.property.immutable ? (
             <>
               <Grid column={1}>
-                <TextInput
-                  value={name}
-                  disabled={immutable}
-                />
+                <TextInput value={name} disabled={true} />
               </Grid>
               <Grid column={2}>
-                <TextInput
-                  value={formValue}
-                  disabled={immutable}
-                />
+                <TextInput value={formValue} disabled={true} />
               </Grid>
               <Grid column={3}>
                 <span>Property is immutable</span>
@@ -182,11 +176,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
               </Grid>
               <Grid column={2}>
                 {isInvalid ? (
-                  <TextInput
-                    onChange={onValueChanged}
-                    error={validationError}
-                    value={formValue}
-                  />
+                  <TextInput onChange={onValueChanged} error={validationError} value={formValue} />
                 ) : (
                   <TextInput onChange={onValueChanged} value={formValue} />
                 )}

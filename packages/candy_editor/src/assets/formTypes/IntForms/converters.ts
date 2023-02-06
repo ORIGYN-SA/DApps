@@ -45,7 +45,7 @@ export function convertToCandyInt64(typedValue: string): CandyInt64 | undefined 
   return undefined;
 }
 
-export function convertIntergerNumberToString(
+export function convertIntegerNumberToString(
   naturalNumber: CandyIntegers,
   typeOfInteger: CandyType,
 ): string {

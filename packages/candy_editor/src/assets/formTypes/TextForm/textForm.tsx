@@ -86,16 +86,10 @@ export const TextForm = (editor: CandyClassEditor) => {
           {editor.property.immutable ? (
             <>
               <Grid column={1}>
-                <TextInput
-                  value={name}
-                  disabled={immutable}
-                />
+                <TextInput value={name} disabled={true} />
               </Grid>
               <Grid column={2}>
-                <TextInput
-                  value={value.Text}
-                  disabled={immutable}
-                />
+                <TextInput value={value.Text} disabled={true} />
               </Grid>
               <Grid column={3}>
                 <span>Property is immutable</span>
