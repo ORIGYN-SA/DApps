@@ -1,4 +1,4 @@
-import { CandyInt, CandyInt8, CandyInt16, CandyInt32, CandyInt64 } from '../../../types';
+import { CandyInt, CandyInt8, CandyInt16, CandyInt32, CandyInt64, CandyIntegers, CandyType } from '../../../types';
 import { isInRange } from '../../../utils/functions';
 
 export function convertToCandyInt(typedValue: string): CandyInt | undefined {
@@ -44,3 +44,22 @@ export function convertToCandyInt64(typedValue: string): CandyInt64 | undefined 
   }
   return undefined;
 }
+
+export function convertIntergerNumberToString(
+  naturalNumber: CandyIntegers,
+  typeOfInteger: CandyType,
+): string {
+  switch (typeOfInteger) {
+    case 'Int':
+      return (naturalNumber as CandyInt).Int.valueOf().toString();
+    case 'Int8':
+      return (naturalNumber as CandyInt8).Int8.valueOf().toString();
+    case 'Int16':
+      return (naturalNumber as CandyInt16).Int16.valueOf().toString();
+    case 'Int32':
+      return (naturalNumber as CandyInt32).Int32.valueOf().toString();
+    case 'Int64':
+      return (naturalNumber as CandyInt64).Int64.valueOf().toString();
+  }
+}
+

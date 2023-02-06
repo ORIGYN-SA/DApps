@@ -120,6 +120,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Float: (props: CandyClassEditor) => (
@@ -129,6 +130,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Principal: (props: CandyClassEditor) => (
@@ -138,6 +140,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
 };

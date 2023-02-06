@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
-import type { CandyClassEditor, CandyText, Property } from '../../../types';
+import type { CandyClassEditor, CandyText } from '../../../types';
 
 export const TextForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyText>({ Text: '' });
+  const [formValue, setFormValue] = useState<string>('');
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isRemoved, setIsRemoved] = useState<boolean>(false);
 
@@ -18,6 +19,7 @@ export const TextForm = (editor: CandyClassEditor) => {
 
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>): void => {
     setValue({ Text: typedValue.target.value });
+    setFormValue(typedValue.target.value);
   };
 
   const onRemove = (): void => {
@@ -38,6 +40,7 @@ export const TextForm = (editor: CandyClassEditor) => {
       setName(editor.property.name);
       setValue(CandyValue);
       setImmutable(editor.property.immutable);
+      setFormValue(CandyValue.Text);
     }
   }, [editor.editorMode]);
 
@@ -64,7 +67,7 @@ export const TextForm = (editor: CandyClassEditor) => {
             <TextInput label="Name" onChange={onNameChanged} value={name} />
           </Flex>
           <Flex>
-            <TextInput label="Value" onChange={onValueChanged} value={value.Text} />
+            <TextInput label="Value" onChange={onValueChanged} value={formValue} />
           </Flex>
           <Flex>
             <Flex>

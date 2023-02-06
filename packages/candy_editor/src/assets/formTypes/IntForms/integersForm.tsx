@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
+import React, { useState, useEffect } from 'react';
+import { Flex, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyIntegers } from '../../../types';
 import { VALIDATION_ERRORS } from '../../../constants';
 import {
@@ -8,14 +8,17 @@ import {
     convertToCandyInt16,
     convertToCandyInt32,
     convertToCandyInt64,
+    convertIntergerNumberToString
 } from './converters';
 
 export const IntegersForm = (editor: CandyClassEditor) => {
     const [name, setName] = useState<string>('');
     const [value, setValue] = useState<CandyIntegers>();
+    const [formValue, setFormValue] = useState<string>('');
     const [immutable, setImmutable] = useState<boolean>(false);
     const [isInvalid, setIsInvalid] = useState<boolean>(false);
     const [validationError, setValidationError] = useState<string>(null);
+    const [isRemoved, setIsRemoved] = useState<boolean>(false);
 
     const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
         setName(typedName.target.value);
@@ -32,9 +35,11 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 integerValue = convertToCandyInt(typedValue.target.value);
                 if (integerValue) {
                     setValue(integerValue);
+                    setFormValue(typedValue.target.value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
+                    setFormValue(typedValue.target.value);
                     setValidationError(VALIDATION_ERRORS.int);
                 }
                 break;
@@ -42,9 +47,11 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 integerValue = convertToCandyInt8(typedValue.target.value);
                 if (integerValue) {
                     setValue(integerValue);
+                    setFormValue(typedValue.target.value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
+                    setFormValue(typedValue.target.value);
                     setValidationError(VALIDATION_ERRORS.int8);
                 }
                 break;
@@ -52,9 +59,11 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 integerValue = convertToCandyInt16(typedValue.target.value);
                 if (integerValue) {
                     setValue(integerValue);
+                    setFormValue(typedValue.target.value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
+                    setFormValue(typedValue.target.value);
                     setValidationError(VALIDATION_ERRORS.int16);
                 }
                 break;
@@ -62,9 +71,11 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 integerValue = convertToCandyInt32(typedValue.target.value);
                 if (integerValue) {
                     setValue(integerValue);
+                    setFormValue(typedValue.target.value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
+                    setFormValue(typedValue.target.value);
                     setValidationError(VALIDATION_ERRORS.int32);
                 }
                 break;
@@ -72,54 +83,123 @@ export const IntegersForm = (editor: CandyClassEditor) => {
                 integerValue = convertToCandyInt64(typedValue.target.value);
                 if (integerValue) {
                     setValue(integerValue);
+                    setFormValue(typedValue.target.value);
                     setIsInvalid(false);
                 } else {
                     setIsInvalid(true);
+                    setFormValue(typedValue.target.value);
                     setValidationError(VALIDATION_ERRORS.int64);
                 }
                 break;
         }
     };
 
-    const saveProperty = () => {
-        switch (editor.editorMode) {
-            case "create":
-                editor.addPropertyToCandyClass({
-                    name: name,
-                    value: value,
-                    immutable: immutable,
-                });
-                break;
-            case "edit":
-                alert('edit');
-        }
+    const onRemove = (): void => {
+        setIsRemoved(true);
     };
+
+    const saveProperty = () => {
+        editor.addPropertyToCandyClass({
+            name: name,
+            value: value,
+            immutable: immutable,
+        });
+    };
+
+    useEffect(() => {
+        if (editor.editorMode === 'edit') {
+            const candyValue = editor.property.value as CandyIntegers;
+            setName(editor.property.name);
+            setValue(candyValue);
+            setImmutable(editor.property.immutable);
+            setFormValue(convertIntergerNumberToString(candyValue, editor.candyType));
+        }
+    }, [editor.editorMode]);
+
+    useEffect(() => {
+        if (editor.editorMode === 'edit') {
+            editor.editExistingProperty({
+                name: name,
+                value: value,
+                immutable: immutable,
+            });
+        }
+    }, [name, value, immutable]);
+
+    useEffect(() => {
+        if (editor.editorMode === 'edit') editor.removePropertyFromCandyClass(editor.property);
+    }, [isRemoved]);
+
+
 
     return (
         <>
-            <Flex>
-                <TextInput label="Name" onChange={onNameChanged} />
-            </Flex>
-            <Flex>
-                <TextInput label="Value" onChange={onValueChanged} />
-            </Flex>
-            <Flex>
-                <Flex>
-                    <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
-                </Flex>
-            </Flex>
             <HR marginTop={8} marginBottom={16} />
-            {isInvalid && (
+            {editor.editorMode === 'create' ? (
                 <>
-                    <Flex>{validationError}</Flex>
-                    <HR marginTop={8} marginBottom={16} />
+                    <Flex>
+                        <TextInput label="Name" onChange={onNameChanged} />
+                    </Flex>
+                    <Flex>
+                        {isInvalid ? (
+                            <TextInput label="Value" onChange={onValueChanged} error={validationError} />
+                        ) : (
+                            <TextInput label="Value" onChange={onValueChanged} />
+                        )}
+                    </Flex>
+                    <Flex>
+                        <Flex>
+                            <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+                        </Flex>
+                    </Flex>
+                    <Flex>
+                        <Button size="small" btnType="filled" onClick={saveProperty} disabled={isInvalid}>
+                            Save Property
+                        </Button>
+                    </Flex>
+                </>
+            ) : (
+                <>
+                    {editor.property.immutable ? (
+                        <>
+                            <Flex>
+                                <TextInput label="Name" value={name} disabled={immutable} />
+                            </Flex>
+                            <Flex>
+                                <TextInput label="Value" value={formValue} disabled={immutable} />
+                            </Flex>
+                        </>
+                    ) : (
+                        <>
+                            <Flex>
+                                <TextInput label="Name" onChange={onNameChanged} value={name} />
+                            </Flex>
+                            <Flex>
+                                {isInvalid ? (
+                                    <TextInput
+                                        label="Value"
+                                        onChange={onValueChanged}
+                                        error={validationError}
+                                        value={formValue}
+                                    />
+                                ) : (
+                                    <TextInput label="Value" onChange={onValueChanged} value={formValue} />
+                                )}
+                            </Flex>
+                            <Flex>
+                                <Flex>
+                                    <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+                                </Flex>
+                            </Flex>
+                            <Flex>
+                                <Button size="small" btnType="filled" onClick={onRemove}>
+                                    Remove CandyValue
+                                </Button>
+                            </Flex>
+                        </>
+                    )}
                 </>
             )}
-            <Flex>
-                <Button size="small" btnType="filled" onClick={saveProperty} disabled={isInvalid}>
-                    Save Property
-                </Button>
-            </Flex>
         </>
     );
 };
