@@ -48,11 +48,11 @@ export const BoolForm = (editor: CandyClassEditor) => {
 
     useEffect(() => {
         if (editor.editorMode === 'edit') {
-            const CandyValue = editor.property.value as CandyBool;
+            const candyValue = editor.property.value as CandyBool;
             setName(editor.property.name);
-            setValue(CandyValue);
+            setValue(candyValue);
             setImmutable(editor.property.immutable);
-            setFormValue(CandyValue.Bool.valueOf().toString());
+            setFormValue(candyValue.Bool.valueOf().toString());
         }
     }, [editor.editorMode]);
 

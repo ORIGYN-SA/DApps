@@ -108,11 +108,11 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
 
   useEffect(() => {
     if (editor.editorMode === 'edit') {
-      const CandyValue = editor.property.value as CandyNaturals;
+      const candyValue = editor.property.value as CandyNaturals;
       setName(editor.property.name);
-      setValue(CandyValue);
+      setValue(candyValue);
       setImmutable(editor.property.immutable);
-      setFormValue(convertNaturalNumberToString(CandyValue, editor.candyType));
+      setFormValue(convertNaturalNumberToString(candyValue, editor.candyType));
     }
   }, [editor.editorMode]);
 

@@ -48,11 +48,11 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
 
     useEffect(() => {
         if (editor.editorMode === 'edit') {
-            const CandyValue = editor.property.value as CandyPrincipal;
+            const candyValue = editor.property.value as CandyPrincipal;
             setName(editor.property.name);
-            setValue(CandyValue);
+            setValue(candyValue);
             setImmutable(editor.property.immutable);
-            setFormValue(CandyValue.Principal.toString());
+            setFormValue(candyValue.Principal.toString());
         }
     }, [editor.editorMode]);
 
