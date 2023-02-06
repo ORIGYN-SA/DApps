@@ -36,15 +36,16 @@ export const CandyDataEditor = () => {
           return property;
         });
         setEditableCandyClass({ Class: updated });
-        setCandyClass({ Class: updated });
       },
       removePropertyFromCandyClass: (property: Property): void => {
-        const updated = candyClass.Class.filter((item, index) => index !== propertyIndex);
-        alert(propertyIndex);
-        setEditableCandyClass({ Class: updated });
-        console.log('editableCandyClass', editableCandyClass);
-        setCandyClass({ Class: updated });
-        console.log('candyClass', candyClass)
+        const newClass = candyClass.Class;
+        const index = newClass.indexOf(property);
+        if (index !== -1) {
+          newClass.splice(index, 1);
+        }
+
+        console.log('New Class', newClass);
+        setEditableCandyClass({ Class: newClass });
       },
       property: property,
     };
@@ -66,7 +67,7 @@ export const CandyDataEditor = () => {
   };
 
   const saveCandyClass = (): void => {
-    setCandyClass({ Class: [...editableCandyClass.Class] });
+    setCandyClass(editableCandyClass);
   };
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
-import type { CandyClassEditor, CandyNaturals } from '../../../types';
+import type { CandyClassEditor, CandyNaturals, Property } from '../../../types';
 import { VALIDATION_ERRORS } from '../../../constants';
 import {
   convertToCandyNat,
@@ -15,10 +15,10 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyNaturals>();
   const [formValue, setFormValue] = useState<string>('');
+  const [property, setProperty] = useState<Property>();
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string>(null);
-  const [isRemoved, setIsRemoved] = useState<boolean>(false);
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
@@ -95,7 +95,8 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
   };
 
   const onRemove = (): void => {
-    if (editor.editorMode === 'edit') editor.removePropertyFromCandyClass(editor.property);
+    if (editor.editorMode === 'edit') editor.removePropertyFromCandyClass(property);
+    console.log('pressed');
   };
 
   const saveProperty = () => {
@@ -113,6 +114,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
       setValue(candyValue);
       setImmutable(editor.property.immutable);
       setFormValue(convertNaturalNumberToString(candyValue, editor.candyType));
+      setProperty(editor.property);
       console.log('property', editor.property);
     }
   }, [editor.editorMode]);

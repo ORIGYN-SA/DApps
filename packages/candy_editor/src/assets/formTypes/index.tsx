@@ -66,7 +66,6 @@ export const FormTypes = {
       editorMode={props.editorMode}
       property={props.property}
       removePropertyFromCandyClass={props.removePropertyFromCandyClass}
-
     />
   ),
   Int: (props: CandyClassEditor) => (
