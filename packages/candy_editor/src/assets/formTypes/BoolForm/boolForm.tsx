@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, TextInput, CheckboxInput, Button, HR, Select } from '@origyn-sa/origyn-art-ui';
+import { Flex, TextInput, CheckboxInput, Button, Grid, Select, HR } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyBool } from '../../../types';
 import { VALIDATION_ERRORS } from '../../../constants';
 import { convertToCandyBool } from './converters';
@@ -72,7 +72,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
 
     return (
         <>
-            <HR marginTop={8} marginBottom={16} />
             {editor.editorMode === 'create' ? (
                 <>
                     <Flex>
@@ -113,30 +112,34 @@ export const BoolForm = (editor: CandyClassEditor) => {
                 <>
                     {editor.property.immutable ? (
                         <>
-                            <Flex>
-                                <TextInput label="Name" onChange={onNameChanged} value={name} />
-                            </Flex>
-                            <Flex>
+                            <Grid column={1}>
+                                <TextInput value={name} />
+                            </Grid>
+                            <Grid column={2}>
                                 <Select
                                     inputSize="medium"
-                                    label="Value"
                                     selectedOption={{
                                         value: formValue,
                                         label: formValue,
                                     }}
                                 />
-                            </Flex>
+                            </Grid>
+                            <Grid column={3}>
+                                <span>Property is immutable</span>
+                            </Grid>
+                            <Grid column={4}>
+                                <span>Property is immutable</span>
+                            </Grid>
                         </>
                     ) : (
                         <>
-                            <Flex>
-                                <TextInput label="Name" onChange={onNameChanged} value={name} />
-                            </Flex>
-                            <Flex>
+                            <Grid column={1}>
+                                <TextInput onChange={onNameChanged} value={name} />
+                            </Grid>
+                            <Grid column={2}>
                                 {isInvalid ? (
                                     <Select
                                         inputSize="medium"
-                                        label="Value"
                                         handleChange={(opt) => {
                                             onValueChanged(opt.value);
                                         }}
@@ -149,7 +152,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
                                 ) : (
                                     <Select
                                         inputSize="medium"
-                                        label="Value"
                                         handleChange={(opt) => {
                                             onValueChanged(opt.value);
                                         }}
@@ -163,17 +165,19 @@ export const BoolForm = (editor: CandyClassEditor) => {
                                         }}
                                     />
                                 )}
-                            </Flex>
-                            <Flex>
+                            </Grid>
+                            <Grid column={3}>
+                                <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+                            </Grid>
+                            <Grid column={4}>
                                 <Flex>
-                                    <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+                                    <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                                        <Button size="small" btnType="filled" onClick={onRemove}>
+                                            Remove CandyValue
+                                        </Button>
+                                    </span>
                                 </Flex>
-                            </Flex>
-                            <Flex>
-                                <Button size="small" btnType="filled" onClick={onRemove}>
-                                    Remove CandyValue
-                                </Button>
-                            </Flex>
+                            </Grid>
                         </>
                     )}
                 </>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Flex, Button, HR, Select, Container, Modal } from '@origyn-sa/origyn-art-ui';
+import { Card, Flex, Grid, Button, HR, Select, Container, Modal } from '@origyn-sa/origyn-art-ui';
 import { FormTypes } from './formTypes';
 import type { Property, CandyClassEditor, CandyClass, CandyType, EditorMode } from '../types';
 import { getValueType } from '../utils/functions';
@@ -36,10 +36,15 @@ export const CandyDataEditor = () => {
           return property;
         });
         setEditableCandyClass({ Class: updated });
+        setCandyClass({ Class: updated });
       },
       removePropertyFromCandyClass: (property: Property): void => {
-        const updated = candyClass.Class.filter((item) => item !== property);
+        const updated = candyClass.Class.filter((item, index) => index !== propertyIndex);
+        alert(propertyIndex);
+        setEditableCandyClass({ Class: updated });
+        console.log('editableCandyClass', editableCandyClass);
         setCandyClass({ Class: updated });
+        console.log('candyClass', candyClass)
       },
       property: property,
     };
@@ -83,14 +88,25 @@ export const CandyDataEditor = () => {
           {candyClass.Class.length > 0 ? (
             <>
               <HR marginTop={8} marginBottom={8} />
-              <Flex flexFlow="column" gap={24}>
+              <Grid columns={4} gap={16}>
+                <Flex>Property Name</Flex>
+                <Flex>Property Value</Flex>
+                <Flex>Immutable</Flex>
+                <Flex>Actions</Flex>
+              </Grid>
+              <>
                 {candyClass.Class.map((property, index) => (
-                  <Flex flexFlow="row" gap={24} key={index}>
-                    {FormTypes[getValueType(property).type](
-                      createEditCandyClassEditor(getValueType(property).type, property, index),
-                    )}
-                  </Flex>
+                  <>
+                    <Grid columns={4} gap={16}>
+                      {FormTypes[getValueType(property).type](
+                        createEditCandyClassEditor(getValueType(property).type, property, index),
+                      )}
+                    </Grid>
+                    <HR marginTop={8} marginBottom={8} />
+                  </>
                 ))}
+              </>
+              <Flex flexFlow="column" gap={24}>
                 <Flex align="flex-end" justify="flex-end">
                   {editableCandyClass === candyClass ? null : (
                     <>

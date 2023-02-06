@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
-import type { CandyClassEditor, CandyNat, CandyNat16, CandyNat32, CandyNat64, CandyNat8, CandyNaturals } from '../../../types';
+import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
+import type { CandyClassEditor, CandyNaturals } from '../../../types';
 import { VALIDATION_ERRORS } from '../../../constants';
 import {
   convertToCandyNat,
@@ -95,7 +95,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
   };
 
   const onRemove = (): void => {
-    setIsRemoved(true);
+    if (editor.editorMode === 'edit') editor.removePropertyFromCandyClass(editor.property);
   };
 
   const saveProperty = () => {
@@ -113,6 +113,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
       setValue(candyValue);
       setImmutable(editor.property.immutable);
       setFormValue(convertNaturalNumberToString(candyValue, editor.candyType));
+      console.log('property', editor.property)
     }
   }, [editor.editorMode]);
 
@@ -126,13 +127,8 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
     }
   }, [name, value, immutable]);
 
-  useEffect(() => {
-    if (editor.editorMode === 'edit') editor.removePropertyFromCandyClass(editor.property);
-  }, [isRemoved]);
-
   return (
     <>
-      <HR marginTop={8} marginBottom={16} />
       {editor.editorMode === 'create' ? (
         <>
           <Flex>
@@ -160,40 +156,53 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         <>
           {editor.property.immutable ? (
             <>
-              <Flex>
-                <TextInput label="Name" value={name} disabled={immutable} />
-              </Flex>
-              <Flex>
-                <TextInput label="Value" value={formValue} disabled={immutable} />
-              </Flex>
+              <Grid column={1}>
+                <TextInput
+                  value={name}
+                  disabled={immutable}
+                />
+              </Grid>
+              <Grid column={2}>
+                <TextInput
+                  value={formValue}
+                  disabled={immutable}
+                />
+              </Grid>
+              <Grid column={3}>
+                <span>Property is immutable</span>
+              </Grid>
+              <Grid column={4}>
+                <span>Property is immutable</span>
+              </Grid>
             </>
           ) : (
             <>
-              <Flex>
-                <TextInput label="Name" onChange={onNameChanged} value={name} />
-              </Flex>
-              <Flex>
+              <Grid column={1}>
+                <TextInput onChange={onNameChanged} value={name} />
+              </Grid>
+              <Grid column={2}>
                 {isInvalid ? (
                   <TextInput
-                    label="Value"
                     onChange={onValueChanged}
                     error={validationError}
                     value={formValue}
                   />
                 ) : (
-                  <TextInput label="Value" onChange={onValueChanged} value={formValue} />
+                  <TextInput onChange={onValueChanged} value={formValue} />
                 )}
-              </Flex>
-              <Flex>
+              </Grid>
+              <Grid column={3}>
+                <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+              </Grid>
+              <Grid column={4}>
                 <Flex>
-                  <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+                  <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                    <Button size="small" btnType="filled" onClick={() => onRemove()}>
+                      Remove CandyValue
+                    </Button>
+                  </span>
                 </Flex>
-              </Flex>
-              <Flex>
-                <Button size="small" btnType="filled" onClick={onRemove}>
-                  Remove CandyValue
-                </Button>
-              </Flex>
+              </Grid>
             </>
           )}
         </>

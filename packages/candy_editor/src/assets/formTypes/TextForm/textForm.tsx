@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
+import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyText } from '../../../types';
 
 export const TextForm = (editor: CandyClassEditor) => {
@@ -60,7 +60,6 @@ export const TextForm = (editor: CandyClassEditor) => {
 
   return (
     <>
-      <HR marginTop={8} marginBottom={16} />
       {editor.editorMode === 'create' ? (
         <>
           <Flex>
@@ -86,41 +85,47 @@ export const TextForm = (editor: CandyClassEditor) => {
         <>
           {editor.property.immutable ? (
             <>
-              <Flex>
+              <Grid column={1}>
                 <TextInput
-                  label="Name"
-                  onChange={onNameChanged}
                   value={name}
                   disabled={immutable}
                 />
-              </Flex>
-              <Flex>
+              </Grid>
+              <Grid column={2}>
                 <TextInput
-                  label="Value"
-                  onChange={onValueChanged}
                   value={value.Text}
                   disabled={immutable}
                 />
-              </Flex>
+              </Grid>
+              <Grid column={3}>
+                <span>Property is immutable</span>
+              </Grid>
+              <Grid column={4}>
+                <span>Property is immutable</span>
+              </Grid>
             </>
           ) : (
             <>
-              <Flex>
-                <TextInput label="Name" onChange={onNameChanged} value={name} />
-              </Flex>
-              <Flex>
-                <TextInput label="Value" onChange={onValueChanged} value={value.Text} />
-              </Flex>
-              <Flex>
+              <Grid column={1}>
+                <TextInput onChange={onNameChanged} value={name} />
+              </Grid>
+              <Grid column={2}>
+                <TextInput onChange={onValueChanged} value={formValue} />
+              </Grid>
+              <Grid column={3}>
                 <Flex>
                   <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
                 </Flex>
-              </Flex>
-              <Flex>
-                <Button size="small" btnType="filled" onClick={onRemove}>
-                  Remove CandyValue
-                </Button>
-              </Flex>
+              </Grid>
+              <Grid column={4}>
+                <Flex>
+                  <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                    <Button size="small" btnType="filled" onClick={onRemove}>
+                      Remove CandyValue
+                    </Button>
+                  </span>
+                </Flex>
+              </Grid>
             </>
           )}
         </>

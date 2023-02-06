@@ -25,6 +25,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Nat8: (props: CandyClassEditor) => (
@@ -34,6 +35,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Nat16: (props: CandyClassEditor) => (
@@ -43,6 +45,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Nat32: (props: CandyClassEditor) => (
@@ -52,6 +55,7 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
     />
   ),
   Nat64: (props: CandyClassEditor) => (
@@ -61,6 +65,8 @@ export const FormTypes = {
       editExistingProperty={props.editExistingProperty}
       editorMode={props.editorMode}
       property={props.property}
+      removePropertyFromCandyClass={props.removePropertyFromCandyClass}
+
     />
   ),
   Int: (props: CandyClassEditor) => (
