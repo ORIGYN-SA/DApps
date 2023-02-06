@@ -64,13 +64,16 @@ const NFTPage = () => {
   const { actor } = useContext(AuthContext)
   const [template, setTemplate] = useState<any>();
   const [data, setData] = useState<any>();
+  const [canisterId, setCanisterId] = useState<any>();
+  const [tokenId, setTokenId] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
     setIsLoading(true);
+    const { canisterId, tokenId } = await useRoute();
+    setTokenId(tokenId);
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
-    console.log(params);
 
     if (params.tokenId) {
       const responseNormalData = await fetch(
@@ -87,8 +90,7 @@ const NFTPage = () => {
       );
 
       const data = await responseNormalData.json();
-      console.log("DATA", data);
-
+      console.log(data);
       try {
         const parsedData = parseCandyObj(
           data.metadata.meta.metadata
@@ -104,8 +106,6 @@ const NFTPage = () => {
       }
 
     } else {
-
-      const { canisterId, tokenId } = await useRoute();
       const resp = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
       const data = await resp.json();
 
@@ -115,7 +115,6 @@ const NFTPage = () => {
       // );
       const tmplt = [data.__apps.find(({ app_id }) => app_id === "public.metadata.template").data[0]];
       const d = data.__apps.find(({ app_id }) => app_id === "public.metadata").data;
-      console.log(data, tmplt, d);
 
       setTemplate(tmplt);
       setData(d);
@@ -126,6 +125,8 @@ const NFTPage = () => {
   useEffect(() => {
     fetchData();
   }, [])
+
+  console.log(data, template);
 
   return (
     <WrapBlock>
@@ -166,7 +167,7 @@ const NFTPage = () => {
             </defs>
           </svg>
           <div>
-            <TemplateRender templateObject={template} data={data} />
+            <TemplateRender templateObject={template} data={{...data, tokenId}} />
           </div>
         </>
       )}
