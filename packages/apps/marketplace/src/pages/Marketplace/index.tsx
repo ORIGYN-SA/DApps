@@ -66,7 +66,6 @@ const Marketplace = () => {
   const parseOdcData = (data: []): OdcData[] => {
     const parsed = data.map((item: any): OdcData => {
       const odc = item?.ok;
-      console.log(odc)
 
       const properties = odc?.metadata?.Class;
       const appData = getAppData(properties);
