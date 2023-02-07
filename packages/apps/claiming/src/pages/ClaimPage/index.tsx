@@ -91,9 +91,8 @@ const ClaimPage = () => {
         body: JSON.stringify({principalId: principal.toString()})
       },
     );
-    window.location.href = `/?tokenId=${tokenId}&canisterId=q7abh-kaaaa-aaaaj-qazva-cai`;
-
     setIsLoading(false);
+    navigate(`/?tokenId=${tokenId}&canisterId=q7abh-kaaaa-aaaaj-qazva-cai`);
   };
 
   useEffect(() => {

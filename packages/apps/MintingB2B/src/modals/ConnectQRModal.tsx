@@ -93,8 +93,6 @@ export const ConnectQRModal = (props) => {
     setIsLoading(false);
   };
 
-
-
   const generateQR = async () => {
     const response = await fetch(`https://development.canister.origyn.ch/canister/v0/token`, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
