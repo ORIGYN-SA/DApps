@@ -108,7 +108,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                       </Flex>
                       <Flex flexFlow="column">
                         <span style={{ color: 'grey' }}>Amount</span>
-                        <span>{tokenBalances[k]?.value}</span>
+                        <span>{parseFloat((parseInt(tokenBalances[k]?.value) * 1e-8).toString()).toFixed(2)}</span>
                       </Flex>
                       <Button
                         btnType="filled"

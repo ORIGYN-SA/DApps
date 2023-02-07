@@ -167,12 +167,25 @@ export const NFTPage = () => {
 
         if ('err' in r) throw new Error(Object.keys(r.err)[0]);
 
-        const dataObj = r?.ok.metadata.Class.find(({ name }) => name === '__apps')
-          .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-          .value.Class.reduce(
-            (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-            {},
-          );
+        const dataObj: { [key: string]: string } = {
+          tokenID: r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text,
+        };
+
+        const dataObj2 = r?.ok?.metadata?.Class?.find(
+          ({ name }) => name === '__apps',
+        )?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')?.value?.Class;
+
+        if (dataObj2) {
+          dataObj2.map((item) => {
+            dataObj[item.name] = item.value.Text;
+            if (item.name == 'custom_properties') {
+              item.value.Array.thawed.map((item) => {
+                dataObj[item.name] = item.value.Text;
+              });
+            }
+          });
+        }
+
         dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text;
 
         dataObj.owner = r?.ok?.metadata?.Class?.find(
@@ -220,7 +233,7 @@ export const NFTPage = () => {
       fetchNft();
     }
   }, [actor]);
- 
+
   return (
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
@@ -331,9 +344,11 @@ export const NFTPage = () => {
                       <HR />
                       {nftEndSale && (
                         <p className="secondary_color">
-                          {!nftEndSale || BigInt(Number(nftEndSale)) < currentTimeInNanos ? 
-                              <span>The sale has ended  {getDiffInDays(nftEndSale)}</span> 
-                              : <span>{getDiffInDays(nftEndSale)}</span>}
+                          {!nftEndSale || BigInt(Number(nftEndSale)) < currentTimeInNanos ? (
+                            <span>The sale has ended {getDiffInDays(nftEndSale)}</span>
+                          ) : (
+                            <span>{getDiffInDays(nftEndSale)}</span>
+                          )}
                         </p>
                       )}
                       <br />
@@ -342,8 +357,8 @@ export const NFTPage = () => {
                           <>
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 &&
-                              principal != verifyOwner && (
-                                BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
+                              principal != verifyOwner &&
+                              (BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={() => handleOpen('buyNow')}>
                                   Buy Now
                                 </Button>
@@ -351,10 +366,9 @@ export const NFTPage = () => {
                                 <Button disabled btnType="outlined">
                                   Buy Now
                                 </Button>
-                              )
-                            )}
+                              ))}
                             {principal == verifyOwner ? (
-                              BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
+                              BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
@@ -362,19 +376,15 @@ export const NFTPage = () => {
                                 <Button btnType="outlined" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
-
-
                               )
+                            ) : BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
+                              <Button btnType="outlined" onClick={() => handleOpen('bid')}>
+                                Place Bid
+                              </Button>
                             ) : (
-                              BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
-                                <Button btnType="outlined" onClick={() => handleOpen('bid')}>
-                                  Place Bid
-                                </Button>
-                              ) : (
-                                <Button disabled btnType="outlined">
-                                  Place Bid
-                                </Button>
-                              )
+                              <Button disabled btnType="outlined">
+                                Place Bid
+                              </Button>
                             )}
                           </>
                         ) : principal == verifyOwner ? (
