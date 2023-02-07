@@ -297,7 +297,7 @@ const Marketplace = () => {
                                         {collectionData?.display_name}
                                       </p>
                                       <p>
-                                        <b>{odc?.appData?.display_name}</b>
+                                        <b>{odc?.appData?.display_name || odc?.odcID}</b>
                                       </p>
                                     </div>
                                     <div>
