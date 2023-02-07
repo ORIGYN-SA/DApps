@@ -168,29 +168,29 @@ export const NFTPage = () => {
         if ('err' in r) throw new Error(Object.keys(r.err)[0]);
 
         const dataObj: { [key: string]: string } = {
-          tokenID: r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text,
+          tokenID: r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text || '',
         };
 
         const dataObj2 = r?.ok?.metadata?.Class?.find(
           ({ name }) => name === '__apps',
-        )?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')?.value?.Class;
+        )?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')?.value?.Class || '';
 
         if (dataObj2) {
           dataObj2.map((item) => {
-            dataObj[item.name] = item.value.Text;
+            dataObj[item.name] = item.value.Text || '';
             if (item.name == 'custom_properties') {
               item.value.Array.thawed.map((item) => {
-                dataObj[item.name] = item.value.Text;
+                dataObj[item.name] = item.value.Text || '';
               });
             }
           });
         }
 
-        dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text;
+        dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text || '';
 
         dataObj.owner = r?.ok?.metadata?.Class?.find(
           ({ name }) => name === 'owner',
-        )?.value?.Principal?.toText();
+        )?.value?.Principal?.toText() || '';
         const royal1 = r?.ok?.metadata?.Class?.find(
           ({ name }) => name === '__system',
         )?.value?.Class?.find(({ name }) => name === 'com.origyn.royalties.primary')?.value?.Array;
