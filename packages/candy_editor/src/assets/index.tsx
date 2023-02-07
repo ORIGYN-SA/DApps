@@ -14,17 +14,30 @@ export const CandyDataEditor = () => {
 
   const addCandyClassEditor: CandyClassEditor = {
     addPropertyToCandyClass: (property: Property) => {
-      setEditableCandyClass({ Class: [...editableCandyClass.Class, property] });
+      setEditableCandyClass((previous) => {
+        const newClass = [...previous.Class, property];
+        return {
+          ...{
+            Class: newClass,
+          },
+        };
+      });
     },
     candyType: candyType,
     editorMode: editorMode,
   };
 
   const removeProperty = (property: Property, propertyIndex: number): void => {
-    const newClass = editableCandyClass.Class.filter((_, index) => index !== propertyIndex);
-    setEditableCandyClass({ Class: newClass });
+    setEditableCandyClass((previous) => {
+      const firstPart = previous.Class.slice(0, propertyIndex);
+      const secondPart = previous.Class.slice(propertyIndex + 1);
+      return {
+        ...{
+          Class: [...firstPart, ...secondPart],
+        },
+      };
+    });
     console.log('remove', property);
-    console.log('newClass', newClass);
   };
 
   const createEditCandyClassEditor = (
@@ -35,7 +48,7 @@ export const CandyDataEditor = () => {
     return {
       candyType: candyType,
       editorMode: editorMode,
-      editExistingProperty: (updatedProperty: Property) => {
+      editExistingProperty: () => (updatedProperty: Property) => {
         const updated = editableCandyClass.Class.map((property, index) => {
           if (index === propertyIndex) {
             return { ...property, ...updatedProperty };
@@ -74,14 +87,6 @@ export const CandyDataEditor = () => {
     closeModal();
   }, [editableCandyClass]);
 
-  useEffect(() => {
-    console.log('Candy Class', candyClass);
-  }, [candyClass]);
-
-  useEffect(() => {
-    console.log('editableCandy', editableCandyClass);
-  }, [editableCandyClass]);
-
   return (
     <Card type="outlined" padding="16px">
       <Container>
@@ -101,29 +106,32 @@ export const CandyDataEditor = () => {
                 <Grid column={4}>Actions</Grid>
               </Grid>
               <>
-                {editableCandyClass?.Class.map((property, index) => (
-                  <>
-                    <Grid columns={4} gap={16} key={`${property.name}-${property.value}-${index}`}>
-                      {FormTypes[getValueType(property).type](
-                        createEditCandyClassEditor(getValueType(property).type, property, index),
-                      )}
-                      <Grid column={4}>
-                        <Flex>
-                          <span style={{ marginBottom: 'auto', marginTop: 'auto' }}>
-                            <Button
-                              size="small"
-                              btnType="filled"
-                              onClick={() => removeProperty(property, index)}
-                            >
-                              Remove
-                            </Button>
-                          </span>
-                        </Flex>
+                {editableCandyClass.Class.map((property, index) => {
+                  const item = getValueType(property);
+                  return (
+                    <>
+                      <Grid columns={4} gap={16} key={property.name + index}>
+                        {FormTypes[item.type](
+                          createEditCandyClassEditor(item.type, property, index),
+                        )}
+                        <Grid column={4}>
+                          <Flex>
+                            <span style={{ marginBottom: 'auto', marginTop: 'auto' }}>
+                              <Button
+                                size="small"
+                                btnType="filled"
+                                onClick={() => removeProperty(property, index)}
+                              >
+                                Remove
+                              </Button>
+                            </span>
+                          </Flex>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                    <HR marginTop={8} marginBottom={8} />
-                  </>
-                ))}
+                      <HR marginTop={8} marginBottom={8} />
+                    </>
+                  );
+                })}
               </>
               <Flex flexFlow="column" gap={24}>
                 <Flex align="flex-end" justify="flex-end">
