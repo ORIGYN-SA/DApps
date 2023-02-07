@@ -115,19 +115,23 @@ export const CandyDataEditor = () => {
                         {FormTypes[item.type](
                           createEditCandyClassEditor(item.type, property, index),
                         )}
-                        <Grid column={4}>
-                          <Flex>
-                            <span style={{ marginBottom: 'auto', marginTop: 'auto' }}>
-                              <Button
-                                size="small"
-                                btnType="filled"
-                                onClick={() => removeProperty(index)}
-                              >
-                                Remove
-                              </Button>
-                            </span>
-                          </Flex>
-                        </Grid>
+                        {property.immutable ? (
+                          <></>
+                        ) : (
+                          <Grid column={4}>
+                            <Flex>
+                              <span style={{ marginBottom: 'auto', marginTop: 'auto' }}>
+                                <Button
+                                  size="small"
+                                  btnType="filled"
+                                  onClick={() => removeProperty(index)}
+                                >
+                                  Remove
+                                </Button>
+                              </span>
+                            </Flex>
+                          </Grid>
+                        )}
                       </Grid>
                       <HR marginTop={8} marginBottom={8} />
                     </>
