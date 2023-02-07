@@ -3,9 +3,14 @@ import { Actor, HttpAgent } from '@dfinity/agent';
 import { phonebookIdl } from '@dapp/common-candid';
 
 export const useRoute = async () => {
+  const urlSearchParams = new URLSearchParams(window.location.href?.split('?')[1]);
+  const params = Object.fromEntries(urlSearchParams.entries());
   const ids = window.location.pathname.split('/');
-  let canisterId = '';
-  let tokenId = null;
+  let canisterId = params.canisterId || '';
+  let tokenId = params.tokenId || null;
+  if (canisterId && tokenId) {
+    return { canisterId, tokenId };
+  }
 
   if (ids.includes('collection')) {
     tokenId = '';

@@ -220,7 +220,7 @@ const WalletPage = () => {
     console.log(code);
     console.log(window.location.href.replace('mintingB2B.html', `claiming.html?tokenId=${nft_id}&code=${code}`));
 
-    window.location.href = window.location.href.replace('mintingB2B.html', `claiming.html?tokenId=${nft_id}&code=${code}`)
+    window.location.href = window.location.href.replace('mintingB2B.html', `claiming.html#/claim?tokenId=${nft_id}&canisterId=q7abh-kaaaa-aaaaj-qazva-cai&code=${code}`)
   }
 
   useEffect(() => {

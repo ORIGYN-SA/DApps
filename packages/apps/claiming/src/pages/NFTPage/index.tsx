@@ -36,7 +36,7 @@ const WalletPage = () => {
   };
 
   const fetchData = async () => {
-    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlSearchParams = new URLSearchParams(window.location.href?.split('?')[1]);
     const { tokenId, b2bCanisterId } = Object.fromEntries(urlSearchParams.entries());
 
     console.log(tokenId, b2bCanisterId);

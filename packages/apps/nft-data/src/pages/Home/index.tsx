@@ -6,7 +6,7 @@ import { Container } from '@origyn-sa/origyn-art-ui'
 
 const Home = () => {
   const { actor } = useContext(AuthContext);
-  const [tokenId, setTokenId] = useState();
+  const [tokenId, setTokenId] = useState<any>();
   const [NFTData, setNFTData] = useState();
   const [canisterId, setCanisterId] = useState('');
 
