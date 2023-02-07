@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyText } from '../../../types';
+import { CREATE_MODE, EDIT_MODE } from '../../../constants';
 
 export const TextForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
@@ -30,7 +31,7 @@ export const TextForm = (editor: CandyClassEditor) => {
   };
 
   useEffect(() => {
-    if (editor.editorMode === 'edit') {
+    if (editor.editorMode === EDIT_MODE) {
       const candyValue = editor.property.value as CandyText;
       setName(editor.property.name);
       setValue(candyValue);
@@ -40,7 +41,7 @@ export const TextForm = (editor: CandyClassEditor) => {
   }, [editor.editorMode]);
 
   useEffect(() => {
-    if (editor.editorMode === 'edit') {
+    if (editor.editorMode === EDIT_MODE) {
       editor.editExistingProperty({
         name: name,
         value: value,
@@ -51,7 +52,7 @@ export const TextForm = (editor: CandyClassEditor) => {
 
   return (
     <>
-      {editor.editorMode === 'create' ? (
+      {editor.editorMode === CREATE_MODE ? (
         <>
           <Flex>
             <TextInput label="Name" onChange={onNameChanged} value={name} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyPrincipal } from '../../../types';
-import { VALIDATION_ERRORS } from '../../../constants';
+import { VALIDATION_ERRORS, CREATE_MODE, EDIT_MODE } from '../../../constants';
 import { convertToCandyPrincipal } from './converters';
 
 export const PrincipalForm = (editor: CandyClassEditor) => {
@@ -42,7 +42,7 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
   };
 
   useEffect(() => {
-    if (editor.editorMode === 'edit') {
+    if (editor.editorMode === EDIT_MODE) {
       const candyValue = editor.property.value as CandyPrincipal;
       setName(editor.property.name);
       setValue(candyValue);
@@ -52,7 +52,7 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
   }, [editor.editorMode]);
 
   useEffect(() => {
-    if (editor.editorMode === 'edit') {
+    if (editor.editorMode === EDIT_MODE) {
       editor.editExistingProperty({
         name: name,
         value: value,
@@ -63,7 +63,7 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
 
   return (
     <>
-      {editor.editorMode === 'create' ? (
+      {editor.editorMode === CREATE_MODE ? (
         <>
           <Flex>
             <TextInput label="Name" onChange={onNameChanged} />

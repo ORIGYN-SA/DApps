@@ -1,4 +1,8 @@
+import { EditorMode } from "./types";
+
 export const NOT_SELECTED: string = null;
+export const CREATE_MODE: EditorMode = 'create';
+export const EDIT_MODE: EditorMode = 'edit';
 
 export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Text', value: 'Text' },

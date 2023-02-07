@@ -3,14 +3,14 @@ import { Card, Flex, Grid, Button, HR, Select, Container, Modal } from '@origyn-
 import { FormTypes } from './formTypes';
 import type { Property, CandyClassEditor, CandyClass, CandyType, EditorMode } from '../types';
 import { getValueType } from '../utils/functions';
-import { NOT_SELECTED, SELECT_OPTIONS } from '../constants';
+import { NOT_SELECTED, SELECT_OPTIONS, CREATE_MODE, EDIT_MODE } from '../constants';
 
 export const CandyDataEditor = () => {
   const [candyType, setCandyType] = useState<CandyType>(NOT_SELECTED);
   const [candyClass, setCandyClass] = useState<CandyClass>({ Class: [] });
   const [editableCandyClass, setEditableCandyClass] = useState<CandyClass>({ Class: [] });
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [editorMode, setEditorMode] = useState<EditorMode>('edit');
+  const [editorMode, setEditorMode] = useState<EditorMode>(EDIT_MODE);
 
   const addCandyClassEditor: CandyClassEditor = {
     addPropertyToCandyClass: (property: Property) => {
@@ -27,7 +27,7 @@ export const CandyDataEditor = () => {
     editorMode: editorMode,
   };
 
-  const removeProperty = (property: Property, propertyIndex: number): void => {
+  const removeProperty = (propertyIndex: number): void => {
     setEditableCandyClass((previous) => {
       const firstPart = previous.Class.slice(0, propertyIndex);
       const secondPart = previous.Class.slice(propertyIndex + 1);
@@ -37,7 +37,6 @@ export const CandyDataEditor = () => {
         },
       };
     });
-    console.log('remove', property);
   };
 
   const createEditCandyClassEditor = (
@@ -63,13 +62,13 @@ export const CandyDataEditor = () => {
 
   const displayModal = (): void => {
     setOpenModal(true);
-    setEditorMode('create');
+    setEditorMode(CREATE_MODE);
   };
 
   const closeModal = (): void => {
     setOpenModal(false);
     setCandyType(NOT_SELECTED);
-    setEditorMode('edit');
+    setEditorMode(EDIT_MODE);
   };
 
   const handleSelectChange = (candySelectedType: CandyClass): void => {
@@ -77,8 +76,6 @@ export const CandyDataEditor = () => {
   };
 
   const saveCandyClass = (): void => {
-    console.log('e', editableCandyClass);
-    console.log('c', candyClass);
     setCandyClass(editableCandyClass);
   };
 
@@ -86,6 +83,10 @@ export const CandyDataEditor = () => {
     setCandyType(NOT_SELECTED);
     closeModal();
   }, [editableCandyClass]);
+
+  useEffect(() => {
+    console.log('CANDYCLASS', candyClass)
+  }, [candyClass]);
 
   return (
     <Card type="outlined" padding="16px">
@@ -120,7 +121,7 @@ export const CandyDataEditor = () => {
                               <Button
                                 size="small"
                                 btnType="filled"
-                                onClick={() => removeProperty(property, index)}
+                                onClick={() => removeProperty(index)}
                               >
                                 Remove
                               </Button>

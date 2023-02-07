@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyIntegers } from '../../../types';
-import { VALIDATION_ERRORS } from '../../../constants';
+import { VALIDATION_ERRORS, EDIT_MODE, CREATE_MODE } from '../../../constants';
 import {
   convertToCandyInt,
   convertToCandyInt8,
@@ -102,7 +102,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
   };
 
   useEffect(() => {
-    if (editor.editorMode === 'edit') {
+    if (editor.editorMode === EDIT_MODE) {
       const candyValue = editor.property.value as CandyIntegers;
       setName(editor.property.name);
       setValue(candyValue);
@@ -112,7 +112,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
   }, [editor.editorMode]);
 
   useEffect(() => {
-    if (editor.editorMode === 'edit') {
+    if (editor.editorMode === EDIT_MODE) {
       editor.editExistingProperty({
         name: name,
         value: value,
@@ -123,7 +123,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
 
   return (
     <>
-      {editor.editorMode === 'create' ? (
+      {editor.editorMode === CREATE_MODE ? (
         <>
           <Flex>
             <TextInput label="Name" onChange={onNameChanged} />
