@@ -127,31 +127,6 @@ const WalletPage = () => {
     }
   };
 
-  const generateQR = async () => {
-    const response = await fetch(`https://development.canister.origyn.ch/canister/v0/token`, {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      headers: {
-        'x-access-token': loggedIn,
-      },
-      body: JSON.stringify({ amount: 1 }),
-    });
-    console.log(response);
-    const data = await response.blob();
-
-    const downloadUrl = URL.createObjectURL(data);
-    const a = document.createElement('a');
-    // safari doesn't support this yet
-    if (typeof a.download === 'undefined') {
-      window.location.href = downloadUrl;
-    } else {
-      a.href = downloadUrl;
-      a.download = 'qrcode.zip';
-      document.body.appendChild(a);
-      a.click();
-    }
-    console.log(data);
-  };
-
   const stageCertificate = async () => {
     setIsMinting(true);
     const requestFormData = new FormData();
@@ -221,9 +196,31 @@ const WalletPage = () => {
         return 'Pre-Stage';
       case STATUSES.pending:
         return 'Pending';
+      case STATUSES.assignedQR:
+        return 'Waiting for QR claim';
       default:
         return 'Error';
     }
+  }
+
+  const handleClaim = async () => {
+    const responseNormalData = await fetch(
+      `https://development.canister.origyn.ch/canister/v0/token/code/${nft_id}`,
+      {
+        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+          'x-access-token': loggedIn,
+        },
+      },
+    );
+    const {code} = await responseNormalData.json();
+    console.log(code);
+    console.log(window.location.href.replace('mintingB2B.html', `claiming.html?tokenId=${nft_id}&code=${code}`));
+
+    window.location.href = window.location.href.replace('mintingB2B.html', `claiming.html?tokenId=${nft_id}&code=${code}`)
   }
 
   useEffect(() => {
@@ -295,23 +292,35 @@ const WalletPage = () => {
                         }
                         {
                           normalData.status === STATUSES.waitingForOwner && (
-                            <Grid columns={2} gap={16}>
-                              <Button onClick={generateQR} btnType="filled" style={{ width: "100%" }}>
-                                Generate QR
-                              </Button>
+                            <Grid columns={1} gap={16}>
                               <Button
                                 onClick={() => setIsOpen(true)}
                                 btnType="outlined"
                                 style={{ width: "100%" }}
                               >
-                                Connect with QR
+                                Transfer Ownership
                               </Button>
-                              <Button
+                              {/* <Button
                                 onClick={() => setIsSendOpen(true)}
                                 btnType="outlined"
                                 style={{ width: "100%" }}
                               >
                                 Send to Principal
+                              </Button> */}
+                            </Grid>
+                          )
+                        }
+                        {
+                          normalData.status === STATUSES.assignedQR && (
+                            <Grid columns={1} gap={16}>
+                              {/* <QRCode
+                                size={256}
+                                style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                                value={value}
+                                viewBox={`0 0 256 256`}
+                              /> */}
+                              <Button onClick={handleClaim} btnType="filled" style={{ width: "100%" }}>
+                                Open Claiming Page
                               </Button>
                             </Grid>
                           )
@@ -425,7 +434,7 @@ const WalletPage = () => {
         </Flex>
       )}
       <ConnectQRModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-      <SendCertificateToPrincipal isOpen={isSendOpen} onClose={() => setIsSendOpen(false)} />
+      <SendCertificateToPrincipal isOpen={isSendOpen} onClose={() => setIsSendOpen(false)} loggedIn={loggedIn} />
     </>
   );
 };

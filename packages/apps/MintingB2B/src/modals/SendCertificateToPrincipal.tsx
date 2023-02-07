@@ -61,12 +61,6 @@ export const SendCertificateToPrincipal = (props) => {
           ) : (
             <>
             <h2>Send Certificate to User Principal</h2>
-            <TextInput
-              label="Principal"
-              value={principal}
-              onChange={(e) => setPrincipal(e.target.value)}
-            />
-            <Button btnType="filled" onClick={handleSend}>Mint and Send Certificate</Button>
             </>
           )}
         </Container>
