@@ -11,7 +11,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string>(null);
-  const [isRemoved, setIsRemoved] = useState<boolean>(false);
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
@@ -32,10 +31,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
       setFormValue(selectedValue);
       setValidationError(VALIDATION_ERRORS.boolean);
     }
-  };
-
-  const onRemove = (): void => {
-    setIsRemoved(true);
   };
 
   const saveProperty = () => {
@@ -65,10 +60,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
       });
     }
   }, [name, value, immutable]);
-
-  useEffect(() => {
-    if (editor.editorMode === 'edit') editor.removePropertyFromCandyClass(editor.property);
-  }, [isRemoved]);
 
   return (
     <>
@@ -168,15 +159,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
               </Grid>
               <Grid column={3}>
                 <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
-              </Grid>
-              <Grid column={4}>
-                <Flex>
-                  <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                    <Button size="small" btnType="filled" onClick={onRemove}>
-                      Remove CandyValue
-                    </Button>
-                  </span>
-                </Flex>
               </Grid>
             </>
           )}

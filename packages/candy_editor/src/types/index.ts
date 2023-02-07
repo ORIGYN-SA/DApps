@@ -90,6 +90,5 @@ export interface CandyClassEditor {
   candyType?: CandyType;
   editExistingProperty?: (updatedProperty: Property) => void;
   property?: Property;
-  removePropertyFromCandyClass?: (property: Property) => void;
   editorMode: EditorMode;
 }

@@ -15,7 +15,6 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyNaturals>();
   const [formValue, setFormValue] = useState<string>('');
-  const [property, setProperty] = useState<Property>();
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string>(null);
@@ -94,11 +93,6 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
     }
   };
 
-  const onRemove = (): void => {
-    if (editor.editorMode === 'edit') editor.removePropertyFromCandyClass(property);
-    console.log('pressed');
-  };
-
   const saveProperty = () => {
     editor.addPropertyToCandyClass({
       name: name,
@@ -114,8 +108,6 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
       setValue(candyValue);
       setImmutable(editor.property.immutable);
       setFormValue(convertNaturalNumberToString(candyValue, editor.candyType));
-      setProperty(editor.property);
-      console.log('property', editor.property);
     }
   }, [editor.editorMode]);
 
@@ -185,15 +177,6 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
               </Grid>
               <Grid column={3}>
                 <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
-              </Grid>
-              <Grid column={4}>
-                <Flex>
-                  <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                    <Button size="small" btnType="filled" onClick={() => onRemove()}>
-                      Remove CandyValue
-                    </Button>
-                  </span>
-                </Flex>
               </Grid>
             </>
           )}
