@@ -10,6 +10,7 @@
     "@dapp/common-assets": "0.1.0",
     "@dapp/common-candid": "0.1.0",
     "@dapp/features-authentication": "0.1.0",
+    "@dapp/features-sales-escrows": "0.1.0",
     "@dapp/features-components": "0.1.0",
     "@dapp/features-theme": "0.1.0",
     "@dapp/features-tokens-provider": "0.1.0",

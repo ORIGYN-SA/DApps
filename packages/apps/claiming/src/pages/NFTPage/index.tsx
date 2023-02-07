@@ -20,10 +20,15 @@ import Certificate from '../../../../luxury/src/components/Certificate';
 import SquareIcon from '@mui/icons-material/Square';
 import PlayForWorkIcon from '@mui/icons-material/PlayForWork';
 import { CandyToJson } from '../../../../../utils/src/candyParser';
+import { formTemplate } from '../../../../MintingB2B/src/pages/Main/Tabs/Minter';
+import { RenderDetails } from '../../../../MintingB2B/src/pages/NFTDetails';
 
 const WalletPage = () => {
   const [loggedIn, setLoggedIn] = useState('');
   const [nftData, setNftData] = useState<any>();
+  const [templateFormData, setTemplateFormData] = useState<any>(
+    JSON.parse(localStorage.getItem('formTemplate')) || formTemplate,
+  );
   const [libraries, setLibraries] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -131,7 +136,21 @@ const WalletPage = () => {
                         <h2>
                           <b>{normalData?.tokenId}</b>
                         </h2>
+                        <br />
+
                         <Flex align="center" justify="space-between">
+                          <Flex flexFlow="column" gap={8}>
+                            <p className="secondary_color">Status</p>
+                            <p className="secondary_color">{normalData?.status}</p>
+                          </Flex>
+                          {normalData.status === "SUCCESS" && (
+                            <Flex flexFlow="column" gap={8}>
+                              <p className="secondary_color">Minted to</p>
+                              <p title={normalData?.targetOwnerPrincipalId}>
+                                {normalData?.targetOwnerPrincipalId.substring(0, 8)}...
+                              </p>
+                            </Flex>
+                          )}
                         </Flex>
                         <br />
                         <ShowMoreBlock btnText="Read More">
@@ -152,6 +171,7 @@ const WalletPage = () => {
                       content={[
                         <Container size="sm" padding="32px" smPadding="16px">
                           <br />
+                          <RenderDetails data={nftData} />
                           <br />
                           {/* In here the array of the information of the Diamon NFT */}
                         </Container>,

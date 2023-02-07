@@ -26,7 +26,7 @@ import { SendCertificateToPrincipal } from '../../modals/SendCertificateToPrinci
 import { STATUSES } from '../../constants/minting';
 import { PreviewImage } from '../../components/lists/FilesList';
 
-const RenderDetails = ({ data }) => {
+export const RenderDetails = ({ data }) => {
   const FT = JSON.parse(localStorage.getItem('formTemplate')) || formTemplate;
   console.log(FT,Object.keys(FT)[0], data);
 

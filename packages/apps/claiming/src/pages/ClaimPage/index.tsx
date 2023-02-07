@@ -77,7 +77,7 @@ const ClaimPage = () => {
   const handleClaim = async () => {
     setIsLoading(true);
     const urlSearchParams = new URLSearchParams(window.location.href?.split('?')[1]);
-    const { code } = Object.fromEntries(urlSearchParams.entries());
+    const { code, tokenId } = Object.fromEntries(urlSearchParams.entries());
 
     const responseNormalData = await fetch(
       `https://development.canister.origyn.ch/canister/v0/token/${code}/`,
@@ -91,6 +91,7 @@ const ClaimPage = () => {
         body: JSON.stringify({principalId: principal.toString()})
       },
     );
+    window.location.href = `/?tokenId=${tokenId}&canisterId=q7abh-kaaaa-aaaaj-qazva-cai`;
 
     setIsLoading(false);
   };
