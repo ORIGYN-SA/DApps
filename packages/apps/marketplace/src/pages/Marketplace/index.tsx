@@ -78,8 +78,10 @@ const Marketplace = () => {
       const buyNow: number = Number(openAuction?.config?.auction?.buy_now[0] || 0) / 1e8;
       const currentBid: number = Number(openAuction?.current_bid_amount || 0);
       const token: string = openAuction?.config?.auction?.token?.ic?.symbol || '';
+      const hasPreviewImage: boolean = !!(odc?.metadata?.Class?.find(({ name }) => name === 'preview_asset') || odc?.metadata?.Class.find(({ name }) => name === 'preview')); 
 
       const data: OdcData = {
+        hasPreviewImage,
         odcID,
         onSale: !!openAuction,
         currentBid,
@@ -215,9 +217,10 @@ const Marketplace = () => {
               <div>
                 <Container padding="32px">
                   <Flex align="flex-start" gap={24}>
+                    {}
                     <Image
                       src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`}
-                      alt=""
+                      alt="text"
                       style={{ width: 200 }}
                     />
                     <Flex flexFlow="column" justify="space-between" gap={8}>
@@ -225,11 +228,13 @@ const Marketplace = () => {
                         <b>{collectionData?.display_name}</b>
                       </h2>
                       <p>
-                        <span className="secondary_color">Created by </span>
+                      {collectionData?.creator_name
+                            ?<span className="secondary_color">Created by </span> :  
+                        "" }
                         <span className="secondary_color">
                           {collectionData?.creator_name
                             ? collectionData?.creator_name
-                            : `${collectionData?.creator_principal?.toString()} (no creator_name)`}
+                            : ``}
                         </span>
                       </p>
                       <br />
@@ -273,6 +278,7 @@ const Marketplace = () => {
                         columns={6}
                         gap={20}
                       >
+                        {console.log(filteredOdcData)}
                         {filteredOdcData.map((odc: OdcData) => {
                           return (
                             <Link to={`/${odc?.odcID}`} key={odc?.odcID}>
@@ -280,11 +286,15 @@ const Marketplace = () => {
                                 flexFlow="column"
                                 style={{ overflow: 'hidden', height: '100%' }}
                               >
+                                {odc.hasPreviewImage ? 
                                 <img
                                   style={{ width: '100%' }}
                                   src={`https://${canisterId}.raw.ic0.app/-/${odc?.odcID}/preview`}
                                   alt=""
-                                />
+                                /> : <img
+                                style={{ width: '100%'}}
+                                alt=""
+                                /> }
                                 <Container style={{ height: '100%' }} size="full" padding="16px">
                                   <Flex
                                     style={{ height: '100%' }}
@@ -297,7 +307,7 @@ const Marketplace = () => {
                                         {collectionData?.display_name}
                                       </p>
                                       <p>
-                                        <b>{odc?.appData?.display_name}</b>
+                                        <b>{odc?.appData?.display_name || odc?.odcID}</b>
                                       </p>
                                     </div>
                                     <div>

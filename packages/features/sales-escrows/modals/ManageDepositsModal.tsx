@@ -85,6 +85,11 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
     getBalances();
   }, [open]);
 
+  const parseDecimals = (data) => {
+   const res = parseFloat((parseInt(data) * 1e-8).toString()).toFixed(2)
+   return res
+  }
+
   return (
     <div>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
@@ -108,7 +113,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                       </Flex>
                       <Flex flexFlow="column">
                         <span style={{ color: 'grey' }}>Amount</span>
-                        <span>{tokenBalances[k]?.value}</span>
+                        <span>{parseDecimals(tokenBalances[k]?.value)}</span>
                       </Flex>
                       <Button
                         btnType="filled"
