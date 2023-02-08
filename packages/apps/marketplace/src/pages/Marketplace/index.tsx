@@ -78,7 +78,7 @@ const Marketplace = () => {
       const buyNow: number = Number(openAuction?.config?.auction?.buy_now[0] || 0) / 1e8;
       const currentBid: number = Number(openAuction?.current_bid_amount || 0);
       const token: string = openAuction?.config?.auction?.token?.ic?.symbol || '';
-      const hasPreviewImage: boolean = !!(odc?.metadata?.Class?.find(({ name }) => name === 'preview_asset') || odc?.metadata?.Class.find(({ name }) => name === 'preview')); 
+      const hasPreviewImage: boolean = !!(odc?.metadata?.Class?.find(({ name }) => name === 'preview_asset') || odc?.metadata?.Class.find(({ name }) => name === 'preview'));
 
       const data: OdcData = {
         hasPreviewImage,
@@ -102,7 +102,7 @@ const Marketplace = () => {
       const stateLoaded = odcData?.length > 0;
       setIsLoading(!stateLoaded);
 
-      OrigynClient.getInstance().init(true, canisterId);
+      OrigynClient.getInstance().init(true, canisterId, { actor });
 
       // get the canister's collection metadata
       const collMetaResp = await getNftCollectionMeta([]);
@@ -217,7 +217,7 @@ const Marketplace = () => {
               <div>
                 <Container padding="32px">
                   <Flex align="flex-start" gap={24}>
-                    {}
+                    { }
                     <Image
                       src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`}
                       alt="text"
@@ -228,9 +228,9 @@ const Marketplace = () => {
                         <b>{collectionData?.display_name}</b>
                       </h2>
                       <p>
-                      {collectionData?.creator_name
-                            ?<span className="secondary_color">Created by </span> :  
-                        "" }
+                        {collectionData?.creator_name
+                          ? <span className="secondary_color">Created by </span> :
+                          ""}
                         <span className="secondary_color">
                           {collectionData?.creator_name
                             ? collectionData?.creator_name
@@ -286,15 +286,15 @@ const Marketplace = () => {
                                 flexFlow="column"
                                 style={{ overflow: 'hidden', height: '100%' }}
                               >
-                                {odc.hasPreviewImage ? 
-                                <img
-                                  style={{ width: '100%' }}
-                                  src={`https://${canisterId}.raw.ic0.app/-/${odc?.odcID}/preview`}
-                                  alt=""
-                                /> : <img
-                                style={{ width: '100%'}}
-                                alt=""
-                                /> }
+                                {odc.hasPreviewImage ?
+                                  <img
+                                    style={{ width: '100%' }}
+                                    src={`https://${canisterId}.raw.ic0.app/-/${odc?.odcID}/preview`}
+                                    alt=""
+                                  /> : <img
+                                    style={{ width: '100%' }}
+                                    alt=""
+                                  />}
                                 <Container style={{ height: '100%' }} size="full" padding="16px">
                                   <Flex
                                     style={{ height: '100%' }}
