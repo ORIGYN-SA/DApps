@@ -92,3 +92,7 @@ export interface CandyClassEditor {
   property?: Property;
   editorMode: EditorMode;
 }
+
+export interface CandyEditor {
+  candyClass?: CandyClass;
+}
