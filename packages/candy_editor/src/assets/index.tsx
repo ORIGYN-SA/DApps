@@ -38,6 +38,15 @@ export const CandyDataEditor = () => {
       };
     });
   };
+  const editExistingProperty = (updatedProperty: Property, propertyIndex: number) => {
+    const updated = editableCandyClass.Class.map((property, index) => {
+      if (index === propertyIndex) {
+        return { ...property, ...updatedProperty };
+      }
+      return property;
+    });
+    setEditableCandyClass({ Class: updated });
+  }
 
   const createEditCandyClassEditor = (
     candyType: string,
@@ -45,18 +54,10 @@ export const CandyDataEditor = () => {
     propertyIndex: number,
   ): CandyClassEditor => {
     return {
-      candyType: candyType,
-      editorMode: editorMode,
-      editExistingProperty: () => (updatedProperty: Property) => {
-        const updated = editableCandyClass.Class.map((property, index) => {
-          if (index === propertyIndex) {
-            return { ...property, ...updatedProperty };
-          }
-          return property;
-        });
-        setEditableCandyClass({ Class: updated });
-      },
-      property: property,
+      candyType,
+      editorMode,
+      editExistingProperty: () => editExistingProperty(property, propertyIndex),
+      property,
     };
   };
 

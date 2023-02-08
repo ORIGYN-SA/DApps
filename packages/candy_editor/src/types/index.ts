@@ -88,7 +88,7 @@ export type EditorMode = "create" | "edit" | null;
 export interface CandyClassEditor {
   addPropertyToCandyClass?: (property: Property) => void;
   candyType?: CandyType;
-  editExistingProperty?: (updatedProperty: Property) => void;
+  editExistingProperty?: (updatedProperty: Property, propertyIndex: number) => void;
   property?: Property;
   editorMode: EditorMode;
 }

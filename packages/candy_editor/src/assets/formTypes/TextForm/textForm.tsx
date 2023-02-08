@@ -40,16 +40,6 @@ export const TextForm = (editor: CandyClassEditor) => {
     }
   }, [editor.editorMode]);
 
-  useEffect(() => {
-    if (editor.editorMode === EDIT_MODE) {
-      editor.editExistingProperty({
-        name: name,
-        value: value,
-        immutable: immutable,
-      });
-    }
-  }, [name, value, immutable]);
-
   return (
     <>
       {editor.editorMode === CREATE_MODE ? (
