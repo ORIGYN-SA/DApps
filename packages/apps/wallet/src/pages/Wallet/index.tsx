@@ -291,7 +291,7 @@ const WalletPage = () => {
 
       useRoute().then(({ canisterId }) => {
         setCanisterId(canisterId);
-        OrigynClient.getInstance().init(true, canisterId);
+        OrigynClient.getInstance().init(true, canisterId, { actor });
         getNftCollectionMeta([]).then((r: any) => {
           if (!('err' in r)) {
             setCollectionPreview(
@@ -624,7 +624,7 @@ const WalletPage = () => {
                                       distrikt: <DistriktSVG />,
                                       website: <WebsiteSVG />,
                                     }[
-                                      links?.Class?.find(({ name }) => name === 'type')?.value?.Text
+                                    links?.Class?.find(({ name }) => name === 'type')?.value?.Text
                                     ]
                                   }
                                 </SocialMediaButton>
