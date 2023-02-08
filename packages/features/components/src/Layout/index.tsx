@@ -45,7 +45,7 @@ const initialMenuItems: MenuItem[] = [
 
 export const Layout = ({ children }: LayoutProps) => {
   const { refreshAllBalances } = useTokensContext();
-  const { principal, loggedIn } = useContext(AuthContext);
+  const { principal, loggedIn, actor } = useContext(AuthContext);
   const [darkTheme, setDarkTheme] = useState(true);
   const [menuItems, setMenuItems] = useState(initialMenuItems);
 
@@ -57,7 +57,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
   useEffect(() => {
     useRoute().then(({ canisterId }) => {
-      OrigynClient.getInstance().init(true, canisterId);
+      OrigynClient.getInstance().init(true, canisterId, { actor });
       getNftCollectionMeta([]).then((r: any) => {
         if (!('err' in r)) {
           const data = r.ok.metadata[0].Class.find(
