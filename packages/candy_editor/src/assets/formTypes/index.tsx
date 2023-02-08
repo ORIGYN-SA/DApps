@@ -9,45 +9,129 @@ import { PrincipalForm } from './PrincipalForm/principalForm';
 
 export const FormTypes = {
   Text: (props: CandyClassEditor) => (
-    <TextForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <TextForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Nat: (props: CandyClassEditor) => (
-    <NaturalsForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <NaturalsForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Nat8: (props: CandyClassEditor) => (
-    <NaturalsForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <NaturalsForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Nat16: (props: CandyClassEditor) => (
-    <NaturalsForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <NaturalsForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Nat32: (props: CandyClassEditor) => (
-    <NaturalsForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <NaturalsForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Nat64: (props: CandyClassEditor) => (
-    <NaturalsForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <NaturalsForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Int: (props: CandyClassEditor) => (
-    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <IntegersForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Int8: (props: CandyClassEditor) => (
-    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <IntegersForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Int16: (props: CandyClassEditor) => (
-    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <IntegersForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Int32: (props: CandyClassEditor) => (
-    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <IntegersForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Int64: (props: CandyClassEditor) => (
-    <IntegersForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <IntegersForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Bool: (props: CandyClassEditor) => (
-    <BoolForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <BoolForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Float: (props: CandyClassEditor) => (
-    <FloatForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <FloatForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
   Principal: (props: CandyClassEditor) => (
-    <PrincipalForm addPropertyToCandyClass={props.addPropertyToCandyClass} candyType={props.candyType} />
+    <PrincipalForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+    />
   ),
 };

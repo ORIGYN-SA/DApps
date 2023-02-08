@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
-import { Flex, Container, TextInput, CheckboxInput, Button, HR } from '@origyn-sa/origyn-art-ui';
-import type { CandyClassEditor, CandyNaturals } from '../../../types';
-import { VALIDATION_ERRORS } from '../../../constants';
+import React, { useState, useEffect } from 'react';
+import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
+import type { CandyClassEditor, CandyNaturals, Property } from '../../../types';
+import { VALIDATION_ERRORS, EDIT_MODE, CREATE_MODE } from '../../../constants';
 import {
   convertToCandyNat,
   convertToCandyNat8,
   convertToCandyNat16,
   convertToCandyNat32,
   convertToCandyNat64,
+  convertNaturalNumberToString,
 } from './converters';
 
 export const NaturalsForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyNaturals>();
+  const [formValue, setFormValue] = useState<string>('');
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string>(null);
@@ -32,9 +34,11 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         naturalValue = convertToCandyNat(typedValue.target.value);
         if (naturalValue) {
           setValue(naturalValue);
+          setFormValue(typedValue.target.value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
+          setFormValue(typedValue.target.value);
           setValidationError(VALIDATION_ERRORS.nat);
         }
         break;
@@ -42,9 +46,11 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         naturalValue = convertToCandyNat8(typedValue.target.value);
         if (naturalValue) {
           setValue(naturalValue);
+          setFormValue(typedValue.target.value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
+          setFormValue(typedValue.target.value);
           setValidationError(VALIDATION_ERRORS.nat8);
         }
         break;
@@ -52,9 +58,11 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         naturalValue = convertToCandyNat16(typedValue.target.value);
         if (naturalValue) {
           setValue(naturalValue);
+          setFormValue(typedValue.target.value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
+          setFormValue(typedValue.target.value);
           setValidationError(VALIDATION_ERRORS.nat16);
         }
         break;
@@ -62,9 +70,11 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         naturalValue = convertToCandyNat32(typedValue.target.value);
         if (naturalValue) {
           setValue(naturalValue);
+          setFormValue(typedValue.target.value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
+          setFormValue(typedValue.target.value);
           setValidationError(VALIDATION_ERRORS.nat32);
         }
         break;
@@ -72,9 +82,11 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         naturalValue = convertToCandyNat64(typedValue.target.value);
         if (naturalValue) {
           setValue(naturalValue);
+          setFormValue(typedValue.target.value);
           setIsInvalid(false);
         } else {
           setIsInvalid(true);
+          setFormValue(typedValue.target.value);
           setValidationError(VALIDATION_ERRORS.nat64);
         }
         break;
@@ -89,33 +101,87 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
     });
   };
 
+  useEffect(() => {
+    if (editor.editorMode === EDIT_MODE) {
+      const candyValue = editor.property.value as CandyNaturals;
+      setName(editor.property.name);
+      setValue(candyValue);
+      setImmutable(editor.property.immutable);
+      setFormValue(convertNaturalNumberToString(candyValue, editor.candyType));
+    }
+  }, [editor.editorMode]);
+
+  useEffect(() => {
+    if (editor.editorMode === EDIT_MODE) {
+      editor.editExistingProperty({
+        name: name,
+        value: value,
+        immutable: immutable,
+      });
+    }
+  }, [name, value, immutable]);
+
   return (
-    <Container>
-      <Flex flexFlow="row" gap={16}>
-        <Flex>
-          <TextInput label="Name" onChange={onNameChanged} />
-        </Flex>
-        <Flex>
-          <TextInput label="Value" onChange={onValueChanged} />
-        </Flex>
-        <Flex>
-          <Flex>
-            <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
-          </Flex>
-        </Flex>
-      </Flex>
-      <HR marginTop={8} marginBottom={16} />
-      {isInvalid && (
+    <>
+      {editor.editorMode === CREATE_MODE ? (
         <>
-          <Flex>{validationError}</Flex>
-          <HR marginTop={8} marginBottom={16} />
+          <Flex>
+            <TextInput label="Name" onChange={onNameChanged} />
+          </Flex>
+          <Flex>
+            {isInvalid ? (
+              <TextInput label="Value" onChange={onValueChanged} error={validationError} />
+            ) : (
+              <TextInput label="Value" onChange={onValueChanged} />
+            )}
+          </Flex>
+          <Flex>
+            <Flex>
+              <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+            </Flex>
+          </Flex>
+          <Flex>
+            <Button size="small" btnType="filled" onClick={saveProperty} disabled={isInvalid}>
+              Save Property
+            </Button>
+          </Flex>
+        </>
+      ) : (
+        <>
+          {editor.property.immutable ? (
+            <>
+              <Grid column={1}>
+                <TextInput value={name} disabled={true} />
+              </Grid>
+              <Grid column={2}>
+                <TextInput value={formValue} disabled={true} />
+              </Grid>
+              <Grid column={3}>
+                <span>Property is immutable</span>
+              </Grid>
+              <Grid column={4}>
+                <span>Property is immutable</span>
+              </Grid>
+            </>
+          ) : (
+            <>
+              <Grid column={1}>
+                <TextInput onChange={onNameChanged} value={name} />
+              </Grid>
+              <Grid column={2}>
+                {isInvalid ? (
+                  <TextInput onChange={onValueChanged} error={validationError} value={formValue} />
+                ) : (
+                  <TextInput onChange={onValueChanged} value={formValue} />
+                )}
+              </Grid>
+              <Grid column={3}>
+                <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+              </Grid>
+            </>
+          )}
         </>
       )}
-      <Flex>
-        <Button size="small" btnType="filled" onClick={saveProperty} disabled={isInvalid}>
-          Save Property
-        </Button>
-      </Flex>
-    </Container>
+    </>
   );
 };

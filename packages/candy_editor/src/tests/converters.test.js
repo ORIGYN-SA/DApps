@@ -1,5 +1,4 @@
 import {
-  isInRange,
   convertToCandyNat,
   convertToCandyNat8,
   convertToCandyNat16,
@@ -16,9 +15,10 @@ import {
 import { convertToCandyBool } from '../assets/formTypes/BoolForm/converters';
 import { convertToCandyFloat } from '../assets/formTypes/FloatForm/converters';
 import { convertToCandyPrincipal } from '../assets/formTypes/PrincipalForm/converters';
+import { isInRange } from '../utils/functions';
 import { Principal } from '@dfinity/principal';
 
-describe('NatForms > converters.ts', () => {
+describe('Utils > functions.ts', () => {
   it('isInRange > returns true for numbers within the range', () => {
     expect(isInRange(10, 0, 30)).toBe(true);
     expect(isInRange(5, 5, 5)).toBe(true);
@@ -28,7 +28,9 @@ describe('NatForms > converters.ts', () => {
     expect(isInRange(0, 4, 9)).toBe(false);
     expect(isInRange(3, 9, 10)).toBe(false);
   });
+});
 
+describe('NatForms > converters.ts', () => {
   it('convertToCandyNat > returns a CandyNat object for valid natural number strings', () => {
     expect(convertToCandyNat('152661')).toEqual({ Nat: BigInt(152661) });
     expect(convertToCandyNat('1')).toEqual({ Nat: BigInt(1) });

@@ -8,6 +8,10 @@ export interface Property {
   immutable: boolean;
 }
 
+export interface PropertyWithType extends Property {
+  type: string;
+}
+
 export interface CandyIntegers extends CandyType { }
 
 export interface CandyNaturals extends CandyType { }
@@ -79,7 +83,12 @@ export interface CandyArray extends CandyType {
   Array: { thawed: Array<CandyType> } | { frozen: Array<CandyType> };
 }
 
+export type EditorMode = "create" | "edit" | null;
+
 export interface CandyClassEditor {
-  addPropertyToCandyClass: (property: Property) => void;
-  candyType: CandyType;
+  addPropertyToCandyClass?: (property: Property) => void;
+  candyType?: CandyType;
+  editExistingProperty?: (updatedProperty: Property) => void;
+  property?: Property;
+  editorMode: EditorMode;
 }
