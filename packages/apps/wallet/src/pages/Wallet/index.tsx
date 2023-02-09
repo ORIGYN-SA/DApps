@@ -385,12 +385,14 @@ const WalletPage = () => {
               const saleToken =
                 it?.ok?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic?.symbol;
               const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text;
-              const dataObj = it?.ok?.metadata.Class.find(({ name }) => name === '__apps')
-                .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-                .value.Class.reduce(
-                  (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-                  {},
-                );
+ 
+              const dataObj = it?.ok?.metadata?.Class?.find(({ name }) => name === '__apps')
+              ?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')
+              ?.value?.Class?.reduce(
+                (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+                {},
+              ) || undefined;
+       
               const filterSale = Number(sale);
               return {
                 ...dataObj,
