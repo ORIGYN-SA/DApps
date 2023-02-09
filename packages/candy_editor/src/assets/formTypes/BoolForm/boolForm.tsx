@@ -14,10 +14,19 @@ export const BoolForm = (editor: CandyClassEditor) => {
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
+    if (editor.editorMode === EDIT_MODE) {
+      editor.editExistingProperty(
+        { name: typedName.target.value, value, immutable },
+        editor.propertyIndex,
+      );
+    }
   };
 
   const onImmutableChanged = () => {
     setImmutable(!immutable);
+    if (editor.editorMode === EDIT_MODE) {
+      editor.editExistingProperty({ name, value, immutable: !immutable }, editor.propertyIndex);
+    }
   };
 
   const onValueChanged = (selectedValue: string) => {
@@ -26,6 +35,9 @@ export const BoolForm = (editor: CandyClassEditor) => {
       setValue(boolValue);
       setFormValue(selectedValue);
       setIsInvalid(false);
+      if (editor.editorMode === EDIT_MODE) {
+        editor.editExistingProperty({ name, value: boolValue, immutable }, editor.propertyIndex);
+      }
     } else {
       setIsInvalid(true);
       setFormValue(selectedValue);
@@ -38,6 +50,7 @@ export const BoolForm = (editor: CandyClassEditor) => {
       name: name,
       value: value,
       immutable: immutable,
+      id: Math.random().toString(),
     });
   };
 
@@ -50,16 +63,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
       setFormValue(candyValue.Bool.valueOf().toString());
     }
   }, [editor.editorMode]);
-
-  useEffect(() => {
-    if (editor.editorMode === EDIT_MODE) {
-      editor.editExistingProperty({
-        name: name,
-        value: value,
-        immutable: immutable,
-      });
-    }
-  }, [name, value, immutable]);
 
   return (
     <>
