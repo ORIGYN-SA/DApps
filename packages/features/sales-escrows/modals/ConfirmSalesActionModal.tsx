@@ -149,7 +149,7 @@ export const ConfirmSalesActionModal = ({
                     decimals: BigInt(tokens[offer.token.ic.symbol]?.decimals ?? 8),
                     canister: Principal.fromText(tokens[offer.token.ic.symbol]?.canisterId),
                     standard: { Ledger: null },
-                    symbol: tokens[offer.token.ic.symbol]?.symbol,
+                    symbol: offer.token.ic.symbol,
                 },
                 token_id: currentToken,
                 seller: offer.seller.principal,
