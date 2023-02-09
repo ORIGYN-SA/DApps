@@ -447,10 +447,10 @@ const WalletPage = () => {
 
     switch (filter) {
       case 'onSale':
-        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale));
+        filtered = filtered.filter((nft) => isNaN(nft?.id?.sale));
         break;
       case 'notOnSale':
-        filtered = filtered.filter((nft) => isNaN(nft?.id?.sale));
+        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale));
         break;
     }
 
