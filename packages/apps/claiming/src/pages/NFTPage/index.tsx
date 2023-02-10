@@ -171,7 +171,22 @@ const WalletPage = () => {
                       content={[
                         <Container size="sm" padding="32px" smPadding="16px">
                           <br />
-                          <RenderDetails data={nftData} />
+
+                          <Flex flexFlow="column" gap={24}>
+                            {Object.keys(nftData)?.map((k) => (
+                              <React.Fragment key={k}>
+                                <Flex align="center" justify="space-between">
+                                  <p>{k}</p>
+
+                                  <p style={{ textAlign: 'end' }} className="secondary_color">
+                                    {nftData[k]?.toString()}
+                                  </p>
+                                </Flex>
+                                <HR />
+                              </React.Fragment>
+                            ))}
+                          </Flex>
+                          {/* <RenderDetails data={nftData} /> */}
                           <br />
                           {/* In here the array of the information of the Diamon NFT */}
                         </Container>,
