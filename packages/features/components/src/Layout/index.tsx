@@ -12,34 +12,14 @@ import { Disclaimer } from '../Disclaimer';
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
   {
-    href: '',
-    title: 'Home',
+    href: 'b2b-management.html',
+    title: 'Dashboard',
     icon: Icons.Home,
   },
   {
-    href: 'vault',
-    title: 'Vault',
-    icon: Icons.Wallet,
-  },
-  {
-    href: 'data',
-    title: 'Certificates Data',
+    href: 'mintingB2B.html',
+    title: 'Minting Application',
     icon: Icons.DataBrowse,
-  },
-  {
-    href: 'library',
-    title: 'Certificates library',
-    icon: Icons.Libraries,
-  },
-  {
-    href: 'ledger',
-    title: 'Ledger',
-    icon: Icons.TransactionIcon,
-  },
-  {
-    href: 'marketplace',
-    title: 'Marketplace',
-    icon: Icons.Marketplace,
   },
 ];
 
@@ -54,24 +34,6 @@ export const Layout = ({ children }: LayoutProps) => {
       refreshAllBalances(false, principal);
     }
   }, [loggedIn]);
-
-  useEffect(() => {
-    useRoute().then(({ canisterId }) => {
-      OrigynClient.getInstance().init(true, canisterId);
-      getNftCollectionMeta([]).then((r: any) => {
-        if ('err' in r) {
-        } else {
-          const data = r.ok.metadata[0].Class.find(
-            ({ name }) => name === 'library',
-          ).value.Array.thawed.reduce(
-            (arr, val) => [...arr, val.Class.find(({ name }) => name === 'library_id').value.Text],
-            [],
-          );
-          setMenuItems(initialMenuItems.filter((item) => data.includes(item.href)));
-        }
-      });
-    });
-  }, []);
 
   return (
     <>
