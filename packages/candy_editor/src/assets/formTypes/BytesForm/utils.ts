@@ -1,24 +1,31 @@
-import { CandyNat8, CandyBytes } from '../../../types';
-
+import { CandyBytes } from '../../../types';
 type CandyBytesType = 'thawed' | 'frozen';
 
-// TODO: Ask James if the CandyNat8 validation must be done here or in the form.
+export function isNat8(number: number): boolean {
+    return number >= 0 && number <= 255 && Number.isInteger(number);
+}
+
 export function convertNat8ArrayToCandyBytes(
-    candyNat8Array: [CandyNat8],
+    nat8Array: [number],
     candyBytesType: CandyBytesType,
 ): CandyBytes | undefined {
     let candyBytes: CandyBytes;
+
+    if (!nat8Array.every(isNat8)) {
+        return undefined;
+    }
+
     if (candyBytesType === 'thawed') {
         candyBytes = {
             Bytes: {
-                thawed: candyNat8Array.map((candyNat8: CandyNat8) => candyNat8.Nat8),
+                thawed: nat8Array.map((number) => number),
             },
         };
         return candyBytes;
     } else if (candyBytesType === 'frozen') {
         candyBytes = {
             Bytes: {
-                frozen: candyNat8Array.map((candyNat8: CandyNat8) => candyNat8.Nat8),
+                frozen: nat8Array.map((number) => number),
             },
         };
         return candyBytes;
@@ -29,34 +36,14 @@ export function convertNat8ArrayToCandyBytes(
 export function convertCandyBytesToNat8Array(
     candyBytes: CandyBytes,
     candyBytesType: CandyBytesType,
-): [CandyNat8] | undefined {
-    let candyNat8Array: [CandyNat8];
+): [number] | undefined {
+    let nat8Array: [number];
     if (candyBytesType === 'thawed') {
-        candyNat8Array.push(candyBytes.Bytes['thawed'].map((nat8: number) => ({ Nat8: nat8 })));
-        return candyNat8Array;
+        nat8Array.push(candyBytes.Bytes['thawed'].map((nat8: number) => nat8));
+        return nat8Array;
     } else if (candyBytesType === 'frozen') {
-        candyNat8Array.push(candyBytes.Bytes['frozen'].map((nat8: number) => ({ Nat8: nat8 })));
-        return candyNat8Array;
-    }
-    return undefined;
-}
-
-export function deleteCandyNat8FromCandyBytes(
-    candyBytes: CandyBytes,
-    candyBytesType: CandyBytesType,
-    candyNat8: CandyNat8,
-): CandyBytes | undefined {
-    let updatedCandyNat8Array: [CandyNat8];
-    if (candyBytesType === 'thawed') {
-        updatedCandyNat8Array = candyBytes.Bytes['thawed'].filter(
-            (nat8: number) => nat8 !== candyNat8.Nat8,
-        );
-        return convertNat8ArrayToCandyBytes(updatedCandyNat8Array, candyBytesType);
-    } else if (candyBytesType === 'frozen') {
-        updatedCandyNat8Array = candyBytes.Bytes['frozen'].filter(
-            (nat8: number) => nat8 !== candyNat8.Nat8,
-        );
-        return convertNat8ArrayToCandyBytes(updatedCandyNat8Array, candyBytesType);
+        nat8Array.push(candyBytes.Bytes['frozen'].map((nat8: number) => nat8));
+        return nat8Array;
     }
     return undefined;
 }

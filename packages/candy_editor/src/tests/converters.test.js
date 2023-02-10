@@ -16,6 +16,7 @@ import {
 import { convertToCandyBool } from '../assets/formTypes/BoolForm/converters';
 import { convertToCandyFloat } from '../assets/formTypes/FloatForm/converters';
 import { convertToCandyPrincipal } from '../assets/formTypes/PrincipalForm/converters';
+import { convertNat8ArrayToCandyBytes } from '../assets/formTypes/BytesForm/utils';
 import { Principal } from '@dfinity/principal';
 
 describe('NatForms > converters.ts', () => {
@@ -228,5 +229,24 @@ describe('PrincipalForm > converters.ts', () => {
     expect(
       convertToCandyPrincipal('no6lb-7zlb2-rky7d-pxic6-diqdb-e73ho-4znjc-gw47r-tfm7e-xwpuu-wqe'),
     ).toBe(undefined);
+  });
+});
+
+describe('FormTypes > utils.ts', () => {
+  it('convertNat8ArrayToCandyBytes > returns a CandyBytes', () => {
+    expect(convertNat8ArrayToCandyBytes([1, 2, 10, 90, 89], 'frozen')).toEqual({
+      Bytes: {
+        frozen: [1, 2, 10, 90, 89],
+      },
+    });
+    expect(convertNat8ArrayToCandyBytes([11, 22, 10, 90, 89], 'thawed')).toEqual({
+      Bytes: {
+        thawed: [11, 22, 10, 90, 89],
+      },
+    });
+  });
+  it('convertNat8ArrayToCandyBytes > returns undefined if a value in the array is not a Nat8', () => {
+    expect(convertNat8ArrayToCandyBytes([1, 2, 10, 900, 89], 'frozen')).toBe(undefined);
+    expect(convertNat8ArrayToCandyBytes([256, 220, 10, 90, 89], 'thawed')).toBe(undefined);
   });
 });
