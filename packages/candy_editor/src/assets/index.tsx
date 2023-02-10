@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Flex, Grid, Button, HR, Select, Container, Modal } from '@origyn-sa/origyn-art-ui';
 import { FormTypes } from './formTypes';
-import type { Property, CandyClassEditor, CandyClass, CandyType, EditorMode, PropertyWithId, EditableCandyClass } from '../types';
+import type {
+  Property,
+  CandyClassEditor,
+  CandyClass,
+  CandyType,
+  EditorMode,
+  PropertyWithId,
+  EditableCandyClass,
+} from '../types';
 import { getValueType } from '../utils/functions';
 import { NOT_SELECTED, SELECT_OPTIONS, CREATE_MODE, EDIT_MODE } from '../constants';
-
 
 export const CandyDataEditor = () => {
   const [candyType, setCandyType] = useState<CandyType>(NOT_SELECTED);
@@ -41,7 +48,7 @@ export const CandyDataEditor = () => {
   };
 
   const editExistingProperty = (updatedProperty: Property, propertyIndex: number) => {
-    console.log('🚀 UPDATED PROPERTY #' + propertyIndex, updatedProperty)
+    console.log('🚀 UPDATED PROPERTY #' + propertyIndex, updatedProperty);
     const updated = editableCandyClass.Class.map((property, index) => {
       if (index === propertyIndex) {
         return { ...property, ...updatedProperty };
@@ -49,7 +56,7 @@ export const CandyDataEditor = () => {
       return property;
     });
     setEditableCandyClass({ Class: updated });
-  }
+  };
 
   const createEditCandyClassEditor = (
     candyType: string,
@@ -59,7 +66,8 @@ export const CandyDataEditor = () => {
     return {
       candyType,
       editorMode,
-      editExistingProperty: (updatedProperty: Property) => editExistingProperty(updatedProperty, propertyIndex),
+      editExistingProperty: (updatedProperty: Property) =>
+        editExistingProperty(updatedProperty, propertyIndex),
       property,
     };
   };
@@ -86,7 +94,7 @@ export const CandyDataEditor = () => {
         name: propertyWithId.name,
         immutable: propertyWithId.immutable,
         value: propertyWithId.value,
-      }
+      };
       arrayProperty.push(property);
     });
     setCandyClass({ Class: arrayProperty });
@@ -98,7 +106,7 @@ export const CandyDataEditor = () => {
   }, [editableCandyClass]);
 
   useEffect(() => {
-    console.log('🍬 CANDYCLASS', candyClass)
+    console.log('🍬 CANDYCLASS', candyClass);
   }, [candyClass]);
 
   return (
@@ -162,7 +170,7 @@ export const CandyDataEditor = () => {
           ) : null}
         </Flex>
       </Container>
-      <Modal closeModal={closeModal} isOpened={openModal} mode="light" size="md">
+      <Modal closeModal={closeModal} isOpened={openModal} mode="light" size="lg">
         <Container size="full" padding="48px">
           <Flex flexFlow="column" gap={16}>
             <Flex>
