@@ -23,7 +23,7 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
         name,
         inputType: inputType.value,
         label: label,
-        type: type.value,
+        type: inputType.value === "images" || inputType.value === "files" ? "files" : type.value,
         options: selectOptions ? selectOptions.split(',') : undefined,
         pointer,
       }, section?.value)
@@ -32,7 +32,7 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
         name,
         inputType: inputType.value,
         label: label,
-        type: type.value,
+        type: inputType.value === "images" || inputType.value === "files" ? "files" : type.value,
         options: selectOptions ? selectOptions.split(',') : undefined,
         pointer,
       }, section?.value);
