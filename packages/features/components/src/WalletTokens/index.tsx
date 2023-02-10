@@ -148,7 +148,7 @@ export const WalletTokens = ({ children }: any) => {
           )}
         </Container>
       </Modal>
-      <Button btnType="outlined" onClick={handleModalOpen}>
+      <Button btnType="filled" onClick={handleModalOpen}>
         {children}
       </Button>
     </>
