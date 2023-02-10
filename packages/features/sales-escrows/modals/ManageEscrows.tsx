@@ -191,6 +191,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                         esc.token.ic.symbol
                       }`}</span>
                     </Flex>
+                    <Flex flexFlow='row' gap={8}>
                     <Button
                         btnType="filled"
                         size="small"
@@ -201,6 +202,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                     <Button btnType="outlined" size="small" onClick={() => handleClickOpenRej(esc)}>
                       Reject
                     </Button>
+                    </Flex>
                   </Flex>
                   <br />
                   <br />

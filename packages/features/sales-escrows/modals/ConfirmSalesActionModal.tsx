@@ -8,6 +8,7 @@ import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
 
+
 const Transition = React.forwardRef(
   (
     props: TransitionProps & {
@@ -133,31 +134,35 @@ export const ConfirmSalesActionModal = ({
         return handleClose(false);
       }
 
+      const escrowReceipt = {
+        seller: { principal: offer.seller.principal },
+        buyer: { principal: offer.buyer.principal },
+        token_id: currentToken,
+        token: {
+          ic: {
+            fee: BigInt(tokens[offer.token.ic.symbol]?.fee ?? 200000),
+            decimals: BigInt(tokens[offer.token.ic.symbol]?.decimals ?? 8),
+            canister: Principal.fromText(tokens[offer.token.ic.symbol]?.canisterId),
+            standard: { Ledger: null },
+            symbol: offer.token.ic.symbol,
+          },
+        },
+        amount: BigInt(offer.amount),
+      };
+
+      const saleReceipt = {
+        broker_id: [],
+        pricing: { instant: null },
+        escrow_receipt: [escrowReceipt],
+      };
+
+
       if (action === 'acceptOffer') {
         try {
           const acceptOffer = await actor.market_transfer_nft_origyn({
             token_id: currentToken,
-            sales_config: {
-              pricing: {
-                instant: null,
-              },
-              broker_id: [],
-              escrow_receipt: {
-                token: {
-                  ic: {
-                    fee: BigInt(tokens[offer.token.ic.symbol]?.fee ?? 200000),
-                    decimals: BigInt(tokens[offer.token.ic.symbol]?.decimals ?? 8),
-                    canister: Principal.fromText(tokens[offer.token.ic.symbol]?.canisterId),
-                    standard: { Ledger: null },
-                    symbol: offer.token.ic.symbol,
-                },
-                token_id: currentToken,
-                seller: offer.seller.principal,
-                buyer: offer.buyer.principal,
-                amount: BigInt(offer.amount),
-              },
-            },
-          }});
+            sales_config: saleReceipt
+          });
           console.log(acceptOffer.err);
           if ('err' in acceptOffer) {
             enqueueSnackbar('There has been an error in accepting the offer', {
@@ -188,7 +193,6 @@ export const ConfirmSalesActionModal = ({
     handleClose(false);
   };
 
-  console.log(offer?.amount)
   return (
     <div>
       <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
@@ -205,13 +209,13 @@ export const ConfirmSalesActionModal = ({
           <br />
           <Flex flexFlow="column">
             {action === 'acceptOffer' ? (
-              <>
+              <div>
                 Are you sure you want to accept the offer for token <b>{currentToken}</b> ?
-              </>
+              </div>
             ) : action === 'endSale' ? (
-              <>
-                Are you sure you want to end the sale for token <strong>{currentToken}</strong>?
-              </>
+              <div>
+                Are you sure you want to end the sale for token <b>{currentToken}</b> ?
+              </div>
             ) : action === 'withdraw' ? (
               <>Are you sure you want to withdraw the escrow?</>
             ) : (
