@@ -235,12 +235,14 @@ function Tree({ metadata }: any) {
         <Button btnType="filled" onClick={handleClose}>
           Close All
         </Button>
+        {/*
         <Button btnType="filled" onClick={handleClose}>
           Expand All
         </Button>
         <Button btnType="filled" onClick={handleClose}>
           Expand Libraries
         </Button>
+  */}
       </Flex>
       <br />
       <div>
