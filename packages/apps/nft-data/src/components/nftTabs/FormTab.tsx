@@ -92,7 +92,6 @@ const FormTab = ({ metadata }: any) => {
               <span>{app.app_id}</span>
             </Flex>
             <HR marginTop={4} marginBottom={4} />
-
             <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
               <b>
                 <span>{'read'}</span>
@@ -100,7 +99,6 @@ const FormTab = ({ metadata }: any) => {
               <span>{app.read}</span>
             </Flex>
             <HR marginTop={4} marginBottom={4} />
-
             <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
               <b>
                 <span>{'type'}</span>
@@ -122,14 +120,12 @@ const FormTab = ({ metadata }: any) => {
                 <span>{item}</span>
               </Flex>
             ))}
-
             <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
               <b>
                 <span>{'type'}</span>
               </b>
               <span>{app.permissions.type}</span>
             </Flex>
-
             <HR marginTop={4} marginBottom={4} />
             {app.permissions.list.map((item, permIndex) => (
               <Flex
@@ -162,8 +158,6 @@ const FormTab = ({ metadata }: any) => {
                 ) : null}
               </React.Fragment>
             ))}
-
-            {/* //----------------------- */}
           </Grid>
         </Grid>
       ))}
@@ -186,13 +180,10 @@ const FormTab = ({ metadata }: any) => {
           ))}
         </Grid>
       </Grid>
-
       <HR marginTop={32} marginBottom={32} />
-
       <Flex flexFlow="row" gap={32} padding={16} align="flex-start">
         <h3>Libraries</h3>
       </Flex>
-
       {library?.map((lib, libraryIndex) => (
         <>
           <HR marginTop={4} marginBottom={4} />
