@@ -89,6 +89,17 @@ function Tree({ metadata }: any) {
     for (let i in obj) {
       arr.push({ id: increment(), name: i, children: [{ id: increment(), name: obj[i] }] });
     }
+    arr.push({
+      id: increment(),
+      name: '__system',
+      children: [
+        {
+          id: increment(),
+          name: 'status',
+          children: [{ id: increment(), name: data.__system.status }],
+        },
+      ],
+    });
 
     arr.push({
       id: increment(),
@@ -185,7 +196,7 @@ function Tree({ metadata }: any) {
   };
 
   Tree.propTypes = {
-    treeData: PropTypes.array
+    treeData: PropTypes.array,
   };
 
   const TreeNode = ({ node }) => {
@@ -205,7 +216,7 @@ function Tree({ metadata }: any) {
   };
 
   TreeNode.propTypes = {
-    node: PropTypes.object
+    node: PropTypes.object,
   };
 
   const [showChildren, setShowChildren] = useState(false);
