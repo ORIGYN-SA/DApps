@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
-import type { CandyClassEditor, CandyNaturals, Property } from '../../../types';
+import type { CandyClassEditor, CandyNaturals } from '../../../types';
 import { VALIDATION_ERRORS, EDIT_MODE, CREATE_MODE } from '../../../constants';
 import {
   convertToCandyNat,
@@ -21,10 +21,19 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
+    if (editor.editorMode === EDIT_MODE) {
+      editor.editExistingProperty(
+        { name: typedName.target.value, value, immutable },
+        editor.propertyIndex,
+      );
+    }
   };
 
   const onImmutableChanged = () => {
     setImmutable(!immutable);
+    if (editor.editorMode === EDIT_MODE) {
+      editor.editExistingProperty({ name, value, immutable: !immutable }, editor.propertyIndex);
+    }
   };
 
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>): void => {
@@ -36,6 +45,12 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
+          if (editor.editorMode === EDIT_MODE) {
+            editor.editExistingProperty(
+              { name, value: naturalValue, immutable },
+              editor.propertyIndex,
+            );
+          }
         } else {
           setIsInvalid(true);
           setFormValue(typedValue.target.value);
@@ -48,6 +63,12 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
+          if (editor.editorMode === EDIT_MODE) {
+            editor.editExistingProperty(
+              { name, value: naturalValue, immutable },
+              editor.propertyIndex,
+            );
+          }
         } else {
           setIsInvalid(true);
           setFormValue(typedValue.target.value);
@@ -60,6 +81,12 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
+          if (editor.editorMode === EDIT_MODE) {
+            editor.editExistingProperty(
+              { name, value: naturalValue, immutable },
+              editor.propertyIndex,
+            );
+          }
         } else {
           setIsInvalid(true);
           setFormValue(typedValue.target.value);
@@ -72,6 +99,12 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
+          if (editor.editorMode === EDIT_MODE) {
+            editor.editExistingProperty(
+              { name, value: naturalValue, immutable },
+              editor.propertyIndex,
+            );
+          }
         } else {
           setIsInvalid(true);
           setFormValue(typedValue.target.value);
@@ -84,6 +117,12 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
+          if (editor.editorMode === EDIT_MODE) {
+            editor.editExistingProperty(
+              { name, value: naturalValue, immutable },
+              editor.propertyIndex,
+            );
+          }
         } else {
           setIsInvalid(true);
           setFormValue(typedValue.target.value);
@@ -98,6 +137,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
       name: name,
       value: value,
       immutable: immutable,
+      id: Math.random().toString(),
     });
   };
 
@@ -110,16 +150,6 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
       setFormValue(convertNaturalNumberToString(candyValue, editor.candyType));
     }
   }, [editor.editorMode]);
-
-  useEffect(() => {
-    if (editor.editorMode === EDIT_MODE) {
-      editor.editExistingProperty({
-        name: name,
-        value: value,
-        immutable: immutable,
-      });
-    }
-  }, [name, value, immutable]);
 
   return (
     <>

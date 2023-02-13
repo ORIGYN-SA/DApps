@@ -12,6 +12,10 @@ export interface PropertyWithType extends Property {
   type: string;
 }
 
+export interface PropertyWithId extends Property {
+  id: string;
+}
+
 export interface CandyIntegers extends CandyType { }
 
 export interface CandyNaturals extends CandyType { }
@@ -22,6 +26,11 @@ export interface CandyEmpty extends CandyType {
 export interface CandyClass extends CandyType {
   Class: Array<Property>;
 }
+
+export interface EditableCandyClass {
+  Class: Array<PropertyWithId>;
+}
+
 export interface CandyText extends CandyType {
   Text: string;
 }
@@ -86,13 +95,10 @@ export interface CandyArray extends CandyType {
 export type EditorMode = "create" | "edit" | null;
 
 export interface CandyClassEditor {
-  addPropertyToCandyClass?: (property: Property) => void;
+  addPropertyToCandyClass?: (property: PropertyWithId) => void;
   candyType?: CandyType;
-  editExistingProperty?: (updatedProperty: Property) => void;
-  property?: Property;
+  editExistingProperty?: (updatedProperty: Property, propertyIndex: number) => void;
   editorMode: EditorMode;
-}
-
-export interface CandyEditor {
-  candyClass?: CandyClass;
+  property?: Property;
+  propertyIndex?: number;
 }
