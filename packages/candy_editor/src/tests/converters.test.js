@@ -15,6 +15,7 @@ import {
 import { convertToCandyBool } from '../assets/formTypes/BoolForm/converters';
 import { convertToCandyFloat } from '../assets/formTypes/FloatForm/converters';
 import { convertToCandyPrincipal } from '../assets/formTypes/PrincipalForm/converters';
+import { convertNat8ArrayToCandyBytes } from '../assets/formTypes/BytesForm/utils';
 import { isInRange } from '../utils/functions';
 import { Principal } from '@dfinity/principal';
 
