@@ -1,4 +1,8 @@
+import { EditorMode } from "./types";
+
 export const NOT_SELECTED: string = null;
+export const CREATE_MODE: EditorMode = 'create';
+export const EDIT_MODE: EditorMode = 'edit';
 
 export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Text', value: 'Text' },
@@ -7,7 +11,6 @@ export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Nat16', value: 'Nat16' },
   { label: 'Nat32', value: 'Nat32' },
   { label: 'Nat64', value: 'Nat64' },
-  { label: 'Nats', value: 'Nats' },
   { label: 'Int', value: 'Int' },
   { label: 'Int8', value: 'Int8' },
   { label: 'Int16', value: 'Int16' },

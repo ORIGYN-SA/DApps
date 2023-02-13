@@ -1,12 +1,5 @@
 import { CandyFloat } from '../../../types';
-
-export function isInRange(
-    num: number | bigint,
-    min: number | bigint,
-    max: number | bigint,
-): boolean {
-    return num >= min && num <= max;
-}
+import { isInRange } from '../../../utils/functions';
 
 export function convertToCandyFloat(typedValue: string): CandyFloat | undefined {
     if (
