@@ -31,7 +31,7 @@ export const ConfirmSalesActionModal = ({
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
-  const { tokens, activeTokens } = useTokensContext();
+  const { tokens } = useTokensContext();
 
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
