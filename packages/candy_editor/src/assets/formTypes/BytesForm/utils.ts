@@ -47,3 +47,42 @@ export function convertCandyBytesToNat8Array(
     }
     return undefined;
 }
+
+export function convertNatTocandyBytes(
+    nat: bigint,
+    candyBytesType: CandyBytesType,
+): CandyBytes | undefined {
+    let candyBytes: CandyBytes;
+    let nat8Array: [number] = natToBytes(nat);
+    if (candyBytesType === 'thawed') {
+        candyBytes = {
+            Bytes: {
+                thawed: nat8Array.map((number) => number),
+            },
+        };
+        return candyBytes;
+    } else if (candyBytesType === 'frozen') {
+        candyBytes = {
+            Bytes: {
+                frozen: nat8Array.map((number) => number),
+            },
+        };
+        return candyBytes;
+    }
+    return undefined;
+}
+
+function natToBytes(natNumber: bigint): [number] {
+    let binary = natNumber.toString(2);
+    let padding = 8 - binary.length % 8;
+    if (padding !== 8) {
+        binary = Array(padding + 1).join('0') + binary;
+    }
+    let bytes: [number] = null;
+    for (let i = 0; i < binary.length; i += 8) {
+        bytes.push(parseInt(binary.substr(i, 8), 2));
+    }
+    return bytes;
+}
+
+
