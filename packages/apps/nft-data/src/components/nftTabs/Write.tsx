@@ -32,7 +32,7 @@ const FormTab = () => {
 
   return (
     <Container padding="16px">
-      <CandyDataEditor candyClass={currentCandyClass} />
+      <CandyDataEditor existingCandyClass={currentCandyClass} />
     </Container>
   );
 };

@@ -19,11 +19,12 @@ import type {
   EditorMode,
   PropertyWithId,
   EditableCandyClass,
+  CandyDataEditorProps,
 } from '../types';
 import { getValueType } from '../utils/functions';
-import { NOT_SELECTED, SELECT_OPTIONS, CREATE_MODE, EDIT_MODE } from '../constants';
+import { NOT_SELECTED, SELECT_OPTIONS, CREATE_MODE, EDIT_MODE, MESSAGES } from '../constants';
 
-export const CandyDataEditor = () => {
+export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
   const [candyType, setCandyType] = useState<CandyType>(NOT_SELECTED);
   const [candyClass, setCandyClass] = useState<CandyClass>({ Class: [] });
   const [editableCandyClass, setEditableCandyClass] = useState<EditableCandyClass>({ Class: [] });
@@ -86,6 +87,7 @@ export const CandyDataEditor = () => {
   const handleToggleReadOnly = (): void => {
     setReadOnly(!readOnly);
   };
+
   const displayModal = (): void => {
     setOpenModal(true);
     setEditorMode(CREATE_MODE);
@@ -124,68 +126,72 @@ export const CandyDataEditor = () => {
     console.log('🍬 CANDYCLASS', candyClass);
   }, [candyClass]);
 
+  useEffect(() => {
+    if (candyDataEditor.existingCandyClass) {
+      setCandyClass(candyDataEditor.existingCandyClass);
+      let arrayPropertyWithId: PropertyWithId[] = [];
+      candyDataEditor.existingCandyClass.Class.forEach((property) => {
+        const propertyWithId: PropertyWithId = {
+          name: property.name,
+          immutable: property.immutable,
+          value: property.value,
+          id: Math.random().toString(),
+        };
+        arrayPropertyWithId.push(propertyWithId);
+      });
+      setEditableCandyClass({ Class: arrayPropertyWithId });
+    }
+
+    if (candyDataEditor.readOnly) {
+      setReadOnly(true);
+    }
+  }, []);
+
   return (
     <Card type="outlined" padding="16px">
       <Container>
         <Flex flexFlow="column" gap={16}>
           <Flex>
-            <Toggle
-              checked={readOnly}
-              disabled={false}
-              handleToggle={() => handleToggleReadOnly()}
-              style={{ marginBottom: 'auto', marginTop: 'auto' }}
-            />
-            <span style={{ marginLeft: '16px' }}>Read only mode</span>
+            {candyDataEditor.readOnly ? (
+              <>
+                <Toggle
+                  checked={readOnly}
+                  disabled={true}
+                  handleToggle={() => handleToggleReadOnly()}
+                  style={{ marginBottom: 'auto', marginTop: 'auto' }}
+                />
+                <span style={{ marginLeft: '16px' }}>{MESSAGES.isReadOnlyMode}</span>
+              </>
+            ) : (
+              <>
+                <Toggle
+                  checked={readOnly}
+                  disabled={false}
+                  handleToggle={() => handleToggleReadOnly()}
+                  style={{ marginBottom: 'auto', marginTop: 'auto' }}
+                />
+                <span style={{ marginLeft: '16px' }}>Read only mode</span>
+              </>
+            )}
           </Flex>
           <HR marginTop={8} marginBottom={8} />
           {readOnly ? (
             <>
-              <HR marginTop={8} marginBottom={8} />
-              <Grid columns={4} gap={16}>
-                <Grid column={1}>Property Name</Grid>
-                <Grid column={2}>Property Value</Grid>
-                <Grid column={3}>Immutable</Grid>
-                <Grid column={4}>Actions</Grid>
-              </Grid>
-              <>
-                {editableCandyClass.Class.map((property, index) => {
-                  const item = getValueType(property);
-                  return (
-                    <>
-                      <Grid columns={4} gap={16} key={property.id}>
-                        {FormTypes[item.type](
-                          createEditCandyClassEditor(item.type, property, index),
-                        )}
-                        {property.immutable ? (
-                          <></>
-                        ) : (
-                          <Grid column={4}>
-                            <Flex>
-                              <span style={{ marginBottom: 'auto', marginTop: 'auto' }}>
-                                <Button
-                                  size="small"
-                                  btnType="filled"
-                                  onClick={() => removeProperty(index)}
-                                >
-                                  Remove
-                                </Button>
-                              </span>
-                            </Flex>
-                          </Grid>
-                        )}
-                      </Grid>
-                      <HR marginTop={8} marginBottom={8} />
-                    </>
-                  );
-                })}
-              </>
-              <Flex flexFlow="column" gap={24}>
-                <Flex align="flex-end" justify="flex-end">
-                  <Button size="medium" btnType="filled" onClick={() => saveCandyClass()}>
-                    Save Candy Class
-                  </Button>
-                </Flex>
-              </Flex>
+              {candyClass?.Class?.length > 0 ? (
+                <>
+                  <pre>
+                    {JSON.stringify(
+                      candyClass,
+                      (key, value) => (typeof value === 'bigint' ? value.toString() : value),
+                      4,
+                    )}
+                  </pre>
+                </>
+              ) : (
+                <>
+                  <span>{MESSAGES.emptyCandyClass}</span>
+                </>
+              )}
             </>
           ) : (
             <>
@@ -208,7 +214,7 @@ export const CandyDataEditor = () => {
                       const item = getValueType(property);
                       return (
                         <>
-                          <Grid columns={4} gap={16} key={property.name + index}>
+                          <Grid columns={4} gap={16} key={property.id}>
                             {FormTypes[item.type](
                               createEditCandyClassEditor(item.type, property, index),
                             )}
