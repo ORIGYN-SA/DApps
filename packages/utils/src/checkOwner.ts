@@ -35,7 +35,7 @@ export const checkOwner = async (principal: Principal, currCanisterId: string) =
     const arrayAllowed = metadataCollectionLevel.filter((res) => {
         return res.name === '__apps';
     })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed;
-    
+
     const isAllowed = () => {
         let i: any;
         for (i in arrayAllowed) {
@@ -47,14 +47,14 @@ export const checkOwner = async (principal: Principal, currCanisterId: string) =
         }
     }
 
-    const managers = metadataCollectionLevelResponse.ok?.managers || [];
+    const managers = metadataCollectionLevelResponse.ok?.managers[0] || [];
     console.log('Managers list: ', managers)
     const isManager = () => {
         let i: any;
         for (i in managers) {
             let managersPrincipals = managers[i];
             console.log(' 🔏 - MANAGER' + ' #' + i + ' ' + managersPrincipals.toString());
-            if(managersPrincipals.toString() === userPrincipal) {
+            if (managersPrincipals.toString() === userPrincipal) {
                 return true;
             }
         }
