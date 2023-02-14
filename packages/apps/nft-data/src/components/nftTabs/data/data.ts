@@ -1,4 +1,5 @@
-import { useRoute } from '@dapp/features-authentication';
+import { useContext } from 'react';
+import { useRoute, AuthContext } from '@dapp/features-authentication';
 import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 
 export type Nft_Data = {
@@ -20,8 +21,9 @@ export type Permission = {
 }
 
 const getMetadata = async () => {
+  const { actor } = useContext(AuthContext);
   const { tokenId, canisterId } = await useRoute();
-  await OrigynClient.getInstance().init(true, canisterId);
+  await OrigynClient.getInstance().init(true, canisterId, { actor });
   if (tokenId) {
     const response = await getNft(tokenId);
     console.log('responseNFT', response);
@@ -42,7 +44,7 @@ export const getData = async () => {
   const { tokenId } = await useRoute();
   let Data_Array: Nft_Data[] = [];
   const Metadata = await getMetadata();
-  console.log('Metadata',Metadata);
+  console.log('Metadata', Metadata);
   if (Metadata) {
     try {
       Data_Array.push(
@@ -88,8 +90,8 @@ export const getData = async () => {
         }
       );
       // Assets level - Only for NFTs, Not for collecrion 
-        if(tokenId){
-          Data_Array.push(
+      if (tokenId) {
+        Data_Array.push(
           {
             name: 'Preview',
             value: await Metadata.filter((res) => {
@@ -130,8 +132,8 @@ export const getData = async () => {
             })[0].immutable,
             level: 'Asset',
           },
-          );
-        }
+        );
+      }
       // Apps level 
       const apps = await Metadata.filter((res) => {
         return res.name === '__apps';
@@ -168,7 +170,7 @@ export const getData = async () => {
       console.log(e);
     }
   }
-  console.log('Data',Data_Array);
+  console.log('Data', Data_Array);
   return Data_Array;
 }
 

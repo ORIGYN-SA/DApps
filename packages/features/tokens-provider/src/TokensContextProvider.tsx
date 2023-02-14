@@ -24,24 +24,7 @@ const defaultTokens = {
     decimals: 8,
     enabled: true,
     balance: -1,
-  },
-  XTC: {
-    symbol: 'XTC',
-    canisterId: 'aanaa-xaaaa-aaaah-aaeiq-cai',
-    fee: 200000,
-    standard: IdlStandard.DIP20,
-    icon: 'https://storageapi.fleek.co/fleek-team-bucket/Dank/XTC-DAB.png',
-    enabled: false,
-    balance: -1,
-  },
-  WICP: {
-    symbol: 'WICP',
-    canisterId: 'utozz-siaaa-aaaam-qaaxq-cai',
-    fee: 200000,
-    standard: IdlStandard.WICP,
-    icon: 'https://storageapi.fleek.co/fleek-team-bucket/logos/wicp-logo.png',
-    enabled: false,
-  },
+  }
 };
 
 export type Token = {

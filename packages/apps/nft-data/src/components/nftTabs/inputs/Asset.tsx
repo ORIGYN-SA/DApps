@@ -15,7 +15,7 @@
 //   const getLibrariesFromMeta = async () => {
 
 //     const { tokenId, canisterId }= await useRoute();
-//     await OrigynClient.getInstance().init(true, canisterId);
+//     await OrigynClient.getInstance().init(true, canisterId, {actor});
 //     let getMeta = [];
 //     if (tokenId) {
 //       const response = await getNft(tokenId);

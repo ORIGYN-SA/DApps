@@ -159,25 +159,76 @@ export const NFTPage = () => {
 
   const verifyOwner = currentNFT?.owner;
 
+  const candyValueToString = (candy) => {
+    if (candy.value) {
+      const v = candy.value;
+      return (
+        v.Text ||
+        v.Nat ||
+        v.Nat8 ||
+        v.Nat16 ||
+        v.Nat32 ||
+        v.Nat64 ||
+        v.Int ||
+        v.Int8 ||
+        v.Int16 ||
+        v.Int32 ||
+        v.Int64 ||
+        v.Float ||
+        v.Bool ||
+        v.Principal?.toText() ||
+        ''
+      ).toString();
+    }
+    return '';
+  };
+
+  const isCandyClassOrArray = (candy): boolean => {
+    return !!(candy.value?.Class || candy.value?.Array);
+  };
+
   const fetchNft = () => {
     actor
       .nft_origyn(params.nft_id)
       .then((r: any) => {
         setIsLoading(false);
+        console.log(r)
 
         if ('err' in r) throw new Error(Object.keys(r.err)[0]);
 
-        const dataObj = r?.ok.metadata.Class.find(({ name }) => name === '__apps')
-          .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-          .value.Class.reduce(
-            (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-            {},
-          );
-        dataObj.tokenID = r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text;
+        const dataSummary: { [key: string]: string } = {
+          tokenID: r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text || '',
+        };
 
-        dataObj.owner = r?.ok?.metadata?.Class?.find(
-          ({ name }) => name === 'owner',
-        )?.value?.Principal?.toText();
+        const appData =
+          r?.ok?.metadata?.Class?.find(
+            ({ name }) => name === '__apps',
+          )?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')?.value?.Class ||
+          '';
+
+        if (appData) {
+          appData.forEach((item) => {
+            if (!isCandyClassOrArray(item)) {
+              dataSummary[item.name] = candyValueToString(item);
+            }
+
+            if (item.name === 'custom_properties') {
+              item.value.Array.thawed.forEach((customProperty) => {
+                if (!isCandyClassOrArray(customProperty)) {
+                  dataSummary[customProperty.name] = candyValueToString(customProperty);
+                }
+              });
+            }
+          });
+        }
+
+        dataSummary.tokenID =
+          r?.ok?.metadata?.Class?.find(({ name }) => name === 'id').value.Text || '';
+
+        dataSummary.owner =
+          r?.ok?.metadata?.Class?.find(
+            ({ name }) => name === 'owner',
+          )?.value?.Principal?.toText() || '';
         const royal1 = r?.ok?.metadata?.Class?.find(
           ({ name }) => name === '__system',
         )?.value?.Class?.find(({ name }) => name === 'com.origyn.royalties.primary')?.value?.Array;
@@ -188,7 +239,7 @@ export const NFTPage = () => {
         const _nft = r?.ok;
         setRoy2(royal2);
         setRoy1(royal1);
-        setCurrentNFT(dataObj);
+        setCurrentNFT(dataSummary);
         setSaleNft(_nft);
       })
       .catch(console.log);
@@ -196,7 +247,7 @@ export const NFTPage = () => {
   useEffect(() => {
     useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
-      OrigynClient.getInstance().init(true, canisterId);
+      OrigynClient.getInstance().init(true, canisterId, { actor });
       getNftCollectionMeta([]).then((r: any) => {
         if (!('err' in r)) {
           setCollectionPreview(
@@ -220,7 +271,7 @@ export const NFTPage = () => {
       fetchNft();
     }
   }, [actor]);
- 
+
   return (
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
@@ -281,48 +332,48 @@ export const NFTPage = () => {
                             </Flex>
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve
                               ?.length > 0 && (
-                              <Flex flexFlow="column">
-                                <span>Reserve Price</span>
-                                <strong>
-                                  <TokenIcon
-                                    symbol={
-                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.token
-                                        ?.ic?.symbol
-                                    }
-                                  />
-                                  {parseFloat(
-                                    (
-                                      parseInt(
-                                        currentOpenAuction?.sale_type?.auction?.config?.auction
-                                          ?.reserve[0],
-                                      ) * 1e-8
-                                    ).toString(),
-                                  ).toFixed(2)}
-                                </strong>
-                              </Flex>
-                            )}
+                                <Flex flexFlow="column">
+                                  <span>Reserve Price</span>
+                                  <strong>
+                                    <TokenIcon
+                                      symbol={
+                                        currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                          ?.ic?.symbol
+                                      }
+                                    />
+                                    {parseFloat(
+                                      (
+                                        parseInt(
+                                          currentOpenAuction?.sale_type?.auction?.config?.auction
+                                            ?.reserve[0],
+                                        ) * 1e-8
+                                      ).toString(),
+                                    ).toFixed(2)}
+                                  </strong>
+                                </Flex>
+                              )}
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 && (
-                              <Flex flexFlow="column">
-                                <span>Buy Now</span>
-                                <strong>
-                                  <TokenIcon
-                                    symbol={
-                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.token
-                                        ?.ic?.symbol
-                                    }
-                                  />
-                                  {parseFloat(
-                                    (
-                                      parseInt(
-                                        currentOpenAuction?.sale_type?.auction?.config?.auction
-                                          ?.buy_now[0],
-                                      ) * 1e-8
-                                    ).toString(),
-                                  ).toFixed(2)}
-                                </strong>
-                              </Flex>
-                            )}
+                                <Flex flexFlow="column">
+                                  <span>Buy Now</span>
+                                  <strong>
+                                    <TokenIcon
+                                      symbol={
+                                        currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                          ?.ic?.symbol
+                                      }
+                                    />
+                                    {parseFloat(
+                                      (
+                                        parseInt(
+                                          currentOpenAuction?.sale_type?.auction?.config?.auction
+                                            ?.buy_now[0],
+                                        ) * 1e-8
+                                      ).toString(),
+                                    ).toFixed(2)}
+                                  </strong>
+                                </Flex>
+                              )}
                           </>
                         ) : (
                           'Not on sale'
@@ -331,9 +382,11 @@ export const NFTPage = () => {
                       <HR />
                       {nftEndSale && (
                         <p className="secondary_color">
-                          {!nftEndSale || BigInt(Number(nftEndSale)) < currentTimeInNanos ? 
-                              <span>The sale has ended  {getDiffInDays(nftEndSale)}</span> 
-                              : <span>{getDiffInDays(nftEndSale)}</span>}
+                          {!nftEndSale || BigInt(Number(nftEndSale)) < currentTimeInNanos ? (
+                            <span>The sale has ended {getDiffInDays(nftEndSale)}</span>
+                          ) : (
+                            <span>{getDiffInDays(nftEndSale)}</span>
+                          )}
                         </p>
                       )}
                       <br />
@@ -342,8 +395,8 @@ export const NFTPage = () => {
                           <>
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 &&
-                              principal != verifyOwner && (
-                                BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
+                              principal != verifyOwner &&
+                              (BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={() => handleOpen('buyNow')}>
                                   Buy Now
                                 </Button>
@@ -351,10 +404,9 @@ export const NFTPage = () => {
                                 <Button disabled btnType="outlined">
                                   Buy Now
                                 </Button>
-                              )
-                            )}
+                              ))}
                             {principal == verifyOwner ? (
-                              BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
+                              BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
@@ -362,19 +414,15 @@ export const NFTPage = () => {
                                 <Button btnType="outlined" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
-
-
                               )
+                            ) : BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
+                              <Button btnType="outlined" onClick={() => handleOpen('bid')}>
+                                Place Bid
+                              </Button>
                             ) : (
-                              BigInt(Number(nftEndSale || 9 * 1e30 )) > currentTimeInNanos ? (
-                                <Button btnType="outlined" onClick={() => handleOpen('bid')}>
-                                  Place Bid
-                                </Button>
-                              ) : (
-                                <Button disabled btnType="outlined">
-                                  Place Bid
-                                </Button>
-                              )
+                              <Button disabled btnType="outlined">
+                                Place Bid
+                              </Button>
                             )}
                           </>
                         ) : principal == verifyOwner ? (

@@ -6,6 +6,7 @@ export interface AppData {
 }
 
 export interface OdcData {
+  hasPreviewImage:  boolean;
   odcID: string;
   onSale: boolean;
   currentBid: number;
