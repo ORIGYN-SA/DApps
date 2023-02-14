@@ -1,7 +1,7 @@
 import React from 'react';
 import { CandyDataEditor } from '@dapp/candy-editor';
 import { Container } from '@origyn-sa/origyn-art-ui';
-import { CandyClass, CandyEditor } from './types/origyn_nft_reference.did';
+// import { CandyClass, CandyEditor } from './types/origyn_nft_reference.did';
 
 const FormTab = () => {
   /*const currentCandyClass: CandyClass = {
