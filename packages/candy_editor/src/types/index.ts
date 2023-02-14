@@ -102,3 +102,5 @@ export interface CandyClassEditor {
   property?: Property;
   propertyIndex?: number;
 }
+
+export type ArrayType = "thawed" | "frozen";

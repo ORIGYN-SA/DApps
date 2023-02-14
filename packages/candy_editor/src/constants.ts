@@ -36,4 +36,5 @@ export const VALIDATION_ERRORS: { [key: string]: string } = {
   boolean: 'The value must be a Boolean (true or false - case insensitive)',
   float: 'The value must be a Float number',
   principal: 'The value must be a valid Principal',
+  bytesArray: 'The value must be a valid Nat8 array',
 };

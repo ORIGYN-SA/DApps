@@ -6,7 +6,7 @@ export function isNat8(number: number): boolean {
 }
 
 export function convertNat8ArrayToCandyBytes(
-    nat8Array: [number],
+    nat8Array: number[],
     candyBytesType: CandyBytesType,
 ): CandyBytes | undefined {
     let candyBytes: CandyBytes;
