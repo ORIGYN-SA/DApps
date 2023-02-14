@@ -4,7 +4,7 @@ import { Container } from '@origyn-sa/origyn-art-ui';
 import { CandyClass, CandyEditor } from './types/origyn_nft_reference.did';
 
 const FormTab = () => {
-  const currentCandyClass: CandyClass = {
+  /*const currentCandyClass: CandyClass = {
     Class: [
       {
         name: 'Text Candy',
@@ -28,11 +28,11 @@ const FormTab = () => {
         },
       },
     ],
-  };
+  };*/
 
   return (
     <Container padding="16px">
-      <CandyDataEditor existingCandyClass={currentCandyClass} />
+      <CandyDataEditor />
     </Container>
   );
 };
