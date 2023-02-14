@@ -6,6 +6,7 @@ import { IntegersForm } from './IntForms/integersForm';
 import { BoolForm } from './BoolForm/boolForm';
 import { FloatForm } from './FloatForm/floatForm';
 import { PrincipalForm } from './PrincipalForm/principalForm';
+import { BytesForm } from './BytesForm/bytesForm';
 
 export const FormTypes = {
   Text: (props: CandyClassEditor) => (
@@ -140,6 +141,16 @@ export const FormTypes = {
   ),
   Principal: (props: CandyClassEditor) => (
     <PrincipalForm
+      addPropertyToCandyClass={props.addPropertyToCandyClass}
+      candyType={props.candyType}
+      editExistingProperty={props.editExistingProperty}
+      editorMode={props.editorMode}
+      property={props.property}
+      propertyIndex={props.propertyIndex}
+    />
+  ),
+  Bytes: (props: CandyClassEditor) => (
+    <BytesForm
       addPropertyToCandyClass={props.addPropertyToCandyClass}
       candyType={props.candyType}
       editExistingProperty={props.editExistingProperty}

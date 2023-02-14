@@ -19,6 +19,7 @@ export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Bool', value: 'Bool' },
   { label: 'Float', value: 'Float' },
   { label: 'Principal', value: 'Principal' },
+  { label: 'Bytes', value: 'Bytes' },
 ];
 
 export const VALIDATION_ERRORS: { [key: string]: string } = {
