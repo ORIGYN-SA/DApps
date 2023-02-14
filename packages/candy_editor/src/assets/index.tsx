@@ -121,25 +121,26 @@ export const CandyDataEditor = () => {
           {editableCandyClass.Class.length > 0 ? (
             <>
               <HR marginTop={8} marginBottom={8} />
-              <Grid columns={4} gap={16}>
-                <Grid column={1}>Property Name</Grid>
-                <Grid column={2}>Property Value</Grid>
-                <Grid column={3}>Immutable</Grid>
-                <Grid column={4}>Actions</Grid>
+              <Grid columns={5} gap={16}>
+                <Grid column={1}>Property Type</Grid>
+                <Grid column={2}>Property Name</Grid>
+                <Grid column={3}>Property Value</Grid>
+                <Grid column={4}>Immutable</Grid>
+                <Grid column={5}>Actions</Grid>
               </Grid>
               <>
                 {editableCandyClass.Class.map((property, index) => {
                   const item = getValueType(property);
                   return (
                     <>
-                      <Grid columns={4} gap={16} key={property.id}>
+                      <Grid columns={5} gap={16} key={property.id}>
                         {FormTypes[item.type](
                           createEditCandyClassEditor(item.type, property, index),
                         )}
                         {property.immutable ? (
                           <></>
                         ) : (
-                          <Grid column={4}>
+                          <Grid column={5}>
                             <Flex>
                               <span style={{ marginBottom: 'auto', marginTop: 'auto' }}>
                                 <Button

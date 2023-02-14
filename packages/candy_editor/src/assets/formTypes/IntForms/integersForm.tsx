@@ -22,7 +22,10 @@ export const IntegersForm = (editor: CandyClassEditor) => {
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
     if (editor.editorMode === EDIT_MODE) {
-      editor.editExistingProperty({ name: typedName.target.value, value, immutable }, editor.propertyIndex);
+      editor.editExistingProperty(
+        { name: typedName.target.value, value, immutable },
+        editor.propertyIndex,
+      );
     }
   };
 
@@ -43,7 +46,10 @@ export const IntegersForm = (editor: CandyClassEditor) => {
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
           if (editor.editorMode === EDIT_MODE) {
-            editor.editExistingProperty({ name, value: integerValue, immutable }, editor.propertyIndex);
+            editor.editExistingProperty(
+              { name, value: integerValue, immutable },
+              editor.propertyIndex,
+            );
           }
         } else {
           setIsInvalid(true);
@@ -58,7 +64,10 @@ export const IntegersForm = (editor: CandyClassEditor) => {
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
           if (editor.editorMode === EDIT_MODE) {
-            editor.editExistingProperty({ name, value: integerValue, immutable }, editor.propertyIndex);
+            editor.editExistingProperty(
+              { name, value: integerValue, immutable },
+              editor.propertyIndex,
+            );
           }
         } else {
           setIsInvalid(true);
@@ -73,7 +82,10 @@ export const IntegersForm = (editor: CandyClassEditor) => {
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
           if (editor.editorMode === EDIT_MODE) {
-            editor.editExistingProperty({ name, value: integerValue, immutable }, editor.propertyIndex);
+            editor.editExistingProperty(
+              { name, value: integerValue, immutable },
+              editor.propertyIndex,
+            );
           }
         } else {
           setIsInvalid(true);
@@ -88,7 +100,10 @@ export const IntegersForm = (editor: CandyClassEditor) => {
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
           if (editor.editorMode === EDIT_MODE) {
-            editor.editExistingProperty({ name, value: integerValue, immutable }, editor.propertyIndex);
+            editor.editExistingProperty(
+              { name, value: integerValue, immutable },
+              editor.propertyIndex,
+            );
           }
         } else {
           setIsInvalid(true);
@@ -103,7 +118,10 @@ export const IntegersForm = (editor: CandyClassEditor) => {
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
           if (editor.editorMode === EDIT_MODE) {
-            editor.editExistingProperty({ name, value: integerValue, immutable }, editor.propertyIndex);
+            editor.editExistingProperty(
+              { name, value: integerValue, immutable },
+              editor.propertyIndex,
+            );
           }
         } else {
           setIsInvalid(true);
@@ -163,31 +181,41 @@ export const IntegersForm = (editor: CandyClassEditor) => {
           {editor.property.immutable ? (
             <>
               <Grid column={1}>
-                <TextInput value={name} disabled={true} />
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <b>{editor.candyType}</b>
+                </span>
               </Grid>
               <Grid column={2}>
-                <TextInput value={formValue} disabled={true} />
+                <TextInput value={name} disabled={true} />
               </Grid>
               <Grid column={3}>
-                <span>Property is immutable</span>
+                <TextInput value={formValue} disabled={true} />
               </Grid>
               <Grid column={4}>
+                <span>Property is immutable</span>
+              </Grid>
+              <Grid column={5}>
                 <span>Property is immutable</span>
               </Grid>
             </>
           ) : (
             <>
               <Grid column={1}>
-                <TextInput onChange={onNameChanged} value={name} />
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <b>{editor.candyType}</b>
+                </span>
               </Grid>
               <Grid column={2}>
+                <TextInput onChange={onNameChanged} value={name} />
+              </Grid>
+              <Grid column={3}>
                 {isInvalid ? (
                   <TextInput onChange={onValueChanged} error={validationError} value={formValue} />
                 ) : (
                   <TextInput onChange={onValueChanged} value={formValue} />
                 )}
               </Grid>
-              <Grid column={3}>
+              <Grid column={4}>
                 <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
               </Grid>
             </>

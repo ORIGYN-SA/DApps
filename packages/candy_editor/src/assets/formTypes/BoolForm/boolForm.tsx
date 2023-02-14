@@ -107,9 +107,14 @@ export const BoolForm = (editor: CandyClassEditor) => {
           {editor.property.immutable ? (
             <>
               <Grid column={1}>
-                <TextInput value={name} disabled={true} />
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <b>{editor.candyType}</b>
+                </span>
               </Grid>
               <Grid column={2}>
+                <TextInput value={name} disabled={true} />
+              </Grid>
+              <Grid column={3}>
                 <Select
                   inputSize="medium"
                   selectedOption={{
@@ -118,19 +123,24 @@ export const BoolForm = (editor: CandyClassEditor) => {
                   }}
                 />
               </Grid>
-              <Grid column={3}>
+              <Grid column={4}>
                 <span>Property is immutable</span>
               </Grid>
-              <Grid column={4}>
+              <Grid column={5}>
                 <span>Property is immutable</span>
               </Grid>
             </>
           ) : (
             <>
               <Grid column={1}>
-                <TextInput onChange={onNameChanged} value={name} />
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <b>{editor.candyType}</b>
+                </span>
               </Grid>
               <Grid column={2}>
+                <TextInput onChange={onNameChanged} value={name} />
+              </Grid>
+              <Grid column={3}>
                 {isInvalid ? (
                   <Select
                     inputSize="medium"
@@ -160,7 +170,7 @@ export const BoolForm = (editor: CandyClassEditor) => {
                   />
                 )}
               </Grid>
-              <Grid column={3}>
+              <Grid column={4}>
                 <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
               </Grid>
             </>
