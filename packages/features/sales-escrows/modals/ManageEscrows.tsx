@@ -6,6 +6,7 @@ import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const { principal, actor } = useContext(AuthContext);
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
+  const [selectedOffer, setSelectedOffer] = useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [selectdNFT, setSelectdNFT] = React.useState<any>();
   const [dialogAction, setDialogAction] = useState<any>();
@@ -23,6 +24,8 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
 
     const data2 = await data.ok.offers;
     const data3 = await data.ok.escrow;
+    console.log('escrow', data3)
+    console.log('offer', data2)
     setOffers(data2);
     setEscrow(data3);
   };
@@ -40,11 +43,13 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
     setDialogAction('withdraw');
   };
 
-  // const handleClickOpen = (token_id) => {
-  //   setOpenConfirmation(true);
-  //   setDialogAction('endSale');
-  //   setSelectdNFT(token_id);
-  // };
+  const handleClickOpen = (offer, token_id) => {
+    setOpenConfirmation(true);
+    setDialogAction('acceptOffer');
+    setSelectdNFT(token_id);
+    setSelectedOffer(offer);
+  };
+
   const handleClickOpenRej = (escrow) => {
     setOpenConfirmation(true);
     setDialogAction('reject');
@@ -186,16 +191,18 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                         esc.token.ic.symbol
                       }`}</span>
                     </Flex>
-                    {/* <Button
+                    <Flex flexFlow='row' gap={8}>
+                    <Button
                         btnType="filled"
                         size="small"
-                        onClick={()=>handleClickOpen(esc.token_id)}
+                        onClick={()=>handleClickOpen(esc, esc.token_id)}
                       >
                        Accept
-                      </Button> */}
+                      </Button>
                     <Button btnType="outlined" size="small" onClick={() => handleClickOpenRej(esc)}>
                       Reject
                     </Button>
+                    </Flex>
                   </Flex>
                   <br />
                   <br />
@@ -214,6 +221,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
         currentToken={selectdNFT}
         action={dialogAction}
         escrow={selectedEscrow}
+        offer={selectedOffer}
       />
 
       {/* <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">

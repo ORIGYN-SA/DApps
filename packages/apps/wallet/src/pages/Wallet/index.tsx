@@ -78,6 +78,7 @@ const StyledBlackCard = styled(Card)`
 `;
 const StyledBlackItemCard = styled(Card)`
   background: ${({ theme }) => theme.colors.DARK_BLACK};
+  width: 307px;
 `;
 
 const StyledCollectionImg = styled.img`
@@ -385,12 +386,14 @@ const WalletPage = () => {
               const saleToken =
                 it?.ok?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic?.symbol;
               const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text;
-              const dataObj = it?.ok?.metadata.Class.find(({ name }) => name === '__apps')
-                .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-                .value.Class.reduce(
-                  (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-                  {},
-                );
+ 
+              const dataObj = it?.ok?.metadata?.Class?.find(({ name }) => name === '__apps')
+              ?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')
+              ?.value?.Class?.reduce(
+                (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+                {},
+              ) || undefined;
+       
               const filterSale = Number(sale);
               return {
                 ...dataObj,
@@ -445,10 +448,10 @@ const WalletPage = () => {
 
     switch (filter) {
       case 'onSale':
-        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale));
+        filtered = filtered.filter((nft) => isNaN(nft?.id?.sale));
         break;
       case 'notOnSale':
-        filtered = filtered.filter((nft) => isNaN(nft?.id?.sale));
+        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale));
         break;
     }
 
@@ -533,18 +536,18 @@ const WalletPage = () => {
                           </StyledBlackItemCard>
                         ))}
                         <p className="small_text secondary_color">Last Updated: {time}</p>
+                        <h6>Token Actions</h6>
                         <Button btnType="filled" onClick={() => setOpenTrx(true)}>
                           Transfer Tokens
                         </Button>
                         <WalletTokens>Manage Tokens</WalletTokens>
+
+                        <h6>Active Transactions</h6>
+                          {activeEscrows.length > 0 || outEscrows.length > 0
+                            ? <Button btnType="filled" onClick={() => setOpenEsc(true)}>Manage Escrows</Button>
+                            : <Button disabled>No assets in Escrow</Button>}
                         <Button btnType="filled" onClick={() => setOpenManageDeposit(true)}>
                           Manage Deposits
-                        </Button>
-                        <h6>Manage Escrow</h6>
-                        <Button textButton onClick={() => setOpenEsc(true)}>
-                          {activeEscrows.length > 0 || outEscrows.length > 0
-                            ? 'Assets in Escrow'
-                            : 'No assets in Escrow'}
                         </Button>
                         <StyledBlackCard align="center" padding="12px" justify="space-between">
                           <Flex align="center" gap={12}>
