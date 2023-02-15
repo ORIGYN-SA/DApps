@@ -178,16 +178,16 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         </>
       ) : (
         <>
+          <Grid column={1}>
+            <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <b>{editor.candyType}</b>
+            </span>
+          </Grid>
+          <Grid column={2}>
+            <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
+          </Grid>
           {editor.property.immutable ? (
             <>
-              <Grid column={1}>
-                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                  <b>{editor.candyType}</b>
-                </span>
-              </Grid>
-              <Grid column={2}>
-                <TextInput value={name} disabled={true} />
-              </Grid>
               <Grid column={3}>
                 <TextInput value={formValue} disabled={true} />
               </Grid>
@@ -200,14 +200,6 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
             </>
           ) : (
             <>
-              <Grid column={1}>
-                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                  <b>{editor.candyType}</b>
-                </span>
-              </Grid>
-              <Grid column={2}>
-                <TextInput onChange={onNameChanged} value={name} />
-              </Grid>
               <Grid column={3}>
                 {isInvalid ? (
                   <TextInput onChange={onValueChanged} error={validationError} value={formValue} />

@@ -104,16 +104,16 @@ export const BoolForm = (editor: CandyClassEditor) => {
         </>
       ) : (
         <>
+          <Grid column={1}>
+            <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <b>{editor.candyType}</b>
+            </span>
+          </Grid>
+          <Grid column={2}>
+            <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
+          </Grid>
           {editor.property.immutable ? (
             <>
-              <Grid column={1}>
-                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                  <b>{editor.candyType}</b>
-                </span>
-              </Grid>
-              <Grid column={2}>
-                <TextInput value={name} disabled={true} />
-              </Grid>
               <Grid column={3}>
                 <Select
                   inputSize="medium"
@@ -132,14 +132,6 @@ export const BoolForm = (editor: CandyClassEditor) => {
             </>
           ) : (
             <>
-              <Grid column={1}>
-                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                  <b>{editor.candyType}</b>
-                </span>
-              </Grid>
-              <Grid column={2}>
-                <TextInput onChange={onNameChanged} value={name} />
-              </Grid>
               <Grid column={3}>
                 {isInvalid ? (
                   <Select
