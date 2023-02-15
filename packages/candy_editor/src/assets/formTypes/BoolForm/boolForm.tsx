@@ -113,33 +113,31 @@ export const BoolForm = (editor: CandyClassEditor) => {
             <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
           </Grid>
           <Grid column={3}>
-            {
-              editor.property.immutable ? (
-                <Select
-                  inputSize="medium"
-                  selectedOption={{
-                    value: formValue,
-                    label: formValue,
-                  }}
-                />
-              ) : (
-                <Select
-                  inputSize="medium"
-                  handleChange={(opt) => {
-                    onValueChanged(opt.value);
-                  }}
-                  selectedOption={{
-                    value: formValue,
-                    label: formValue,
-                  }}
-                  options={[
-                    { value: 'true', label: 'true' },
-                    { value: 'false', label: 'false' },
-                  ]}
-                  error={isInvalid}
-                />
-              )
-            }
+            {editor.property.immutable ? (
+              <Select
+                inputSize="medium"
+                selectedOption={{
+                  value: formValue,
+                  label: formValue,
+                }}
+              />
+            ) : (
+              <Select
+                inputSize="medium"
+                handleChange={(opt) => {
+                  onValueChanged(opt.value);
+                }}
+                selectedOption={{
+                  value: formValue,
+                  label: formValue,
+                }}
+                options={[
+                  { value: 'true', label: 'true' },
+                  { value: 'false', label: 'false' },
+                ]}
+                error={isInvalid}
+              />
+            )}
           </Grid>
           <Grid column={4}>
             {editor.property.immutable ? (
@@ -151,7 +149,9 @@ export const BoolForm = (editor: CandyClassEditor) => {
           {editor.property.immutable && (
             <>
               <Grid column={5}>
-                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  Property is immutable
+                </span>
               </Grid>
             </>
           )}

@@ -103,7 +103,9 @@ export const TextForm = (editor: CandyClassEditor) => {
           {editor.property.immutable && (
             <>
               <Grid column={5}>
-                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  Property is immutable
+                </span>
               </Grid>
             </>
           )}
