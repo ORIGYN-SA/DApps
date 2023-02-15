@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
 import { CandyClassEditor, CandyText } from '../../../types';
 import { CREATE_MODE, EDIT_MODE } from '../../../constants';
+import { fontWeight } from '@mui/system';
 
 export const TextForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
@@ -82,29 +83,29 @@ export const TextForm = (editor: CandyClassEditor) => {
       ) : (
         <>
           <Grid column={1}>
+            <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <b>{editor.candyType}</b>
+            </span>
+          </Grid>
+          <Grid column={2}>
             <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
           </Grid>
-          {editor.property.immutable ? (
+          <Grid column={3}>
+            <TextInput value={formValue} disabled={immutable} onChange={onValueChanged} />
+          </Grid>
+          <Grid column={4}>
+            {editor.property.immutable ? (
+              <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
+            ) : (
+              <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+            )}
+          </Grid>
+          {editor.property.immutable && (
             <>
-              <Grid column={2}>
-                <TextInput value={formValue} disabled={true} />
-              </Grid>
-              <Grid column={3}>
-                <span>Property is immutable</span>
-              </Grid>
-              <Grid column={4}>
-                <span>Property is immutable</span>
-              </Grid>
-            </>
-          ) : (
-            <>
-              <Grid column={2}>
-                <TextInput onChange={onValueChanged} value={formValue} />
-              </Grid>
-              <Grid column={3}>
-                <Flex>
-                  <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
-                </Flex>
+              <Grid column={5}>
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  Property is immutable
+                </span>
               </Grid>
             </>
           )}

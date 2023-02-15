@@ -110,9 +110,8 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
         immutable: property.immutable,
         value: property.value,
       };
-    }
-    );
-    setCandyClass({ Class: properties })
+    });
+    setCandyClass({ Class: properties });
   };
 
   useEffect(() => {
@@ -135,7 +134,7 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
             value: property.value,
             id: Math.random().toString(),
           };
-        }
+        },
       );
       setEditableCandyClass({ Class: propertiesWithId });
     }
@@ -159,26 +158,57 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
             <span style={{ marginLeft: '16px' }}>
               {candyDataEditor.readOnly ? MESSAGES.readOnlyMode : 'Read Only Mode'}
             </span>
-
           </Flex>
           <HR marginTop={8} marginBottom={8} />
           {readOnly ? (
             <>
-              {candyClass?.Class?.length > 0 ? (
-                <>
-                  <pre>
-                    {JSON.stringify(
-                      candyClass,
-                      (key, value) => (typeof value === 'bigint' ? value.toString() : value),
-                      4,
-                    )}
-                  </pre>
-                </>
-              ) : (
-                <>
-                  <span>{MESSAGES.emptyCandyClass}</span>
-                </>
-              )}
+              <HR marginTop={8} marginBottom={8} />
+              <Grid columns={5} gap={16}>
+                <Grid column={1}>Property Type</Grid>
+                <Grid column={2}>Property Name</Grid>
+                <Grid column={3}>Property Value</Grid>
+                <Grid column={4}>Immutable</Grid>
+                <Grid column={5}>Actions</Grid>
+              </Grid>
+              <>
+                {editableCandyClass.Class.map((property, index) => {
+                  const item = getValueType(property);
+                  return (
+                    <>
+                      <Grid columns={5} gap={16} key={property.id}>
+                        {FormTypes[item.type](
+                          createEditCandyClassEditor(item.type, property, index),
+                        )}
+                        {property.immutable ? (
+                          <></>
+                        ) : (
+                          <Grid column={5}>
+                            <Flex>
+                              <span style={{ marginBottom: 'auto', marginTop: 'auto' }}>
+                                <Button
+                                  size="small"
+                                  btnType="filled"
+                                  onClick={() => removeProperty(index)}
+                                >
+                                  Remove
+                                </Button>
+                              </span>
+                            </Flex>
+                          </Grid>
+                        )}
+                      </Grid>
+                      <HR marginTop={8} marginBottom={8} />
+                    </>
+                  );
+                })}
+              </>
+              <Flex flexFlow="column" gap={24}>
+                <Flex align="flex-end" justify="flex-end">
+                  <Button size="medium" btnType="filled" onClick={() => saveCandyClass()}>
+                    Save Candy Class
+                  </Button>
+                </Flex>
+              </Flex>
             </>
           ) : (
             <>
