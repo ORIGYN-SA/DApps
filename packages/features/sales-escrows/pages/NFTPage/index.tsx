@@ -96,9 +96,15 @@ export const NFTPage = () => {
   // };
 
   const params = useParams();
-  const currentOpenAuction = saleNft?.current_sale?.find((sale) =>
-    sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-  );
+
+  const currentOpenAuction2 = saleNft?.current_sale?.find((sale) => {
+    const status = sale?.sale_type?.auction?.status;
+    return (status === 'open' || status === 'not_started');
+  });
+  
+
+  const currentOpenAuction = saleNft?.current_sale[0] || saleNft?.current_sale?.find((sale) =>
+  sale?.sale_type?.auction?.status?.hasOwnProperty('open'));
 
   const mapCustomProperties = (customProperties) => {
     if (!customProperties) return [];
@@ -192,7 +198,6 @@ export const NFTPage = () => {
       .nft_origyn(params.nft_id)
       .then((r: any) => {
         setIsLoading(false);
-        console.log(r)
 
         if ('err' in r) throw new Error(Object.keys(r.err)[0]);
 
@@ -310,6 +315,7 @@ export const NFTPage = () => {
                       <br />
                       <HR />
                       <Flex fullWidth justify="space-between" align="center">
+                        {console.log('SALE', currentOpenAuction)}
                         {currentOpenAuction ? (
                           <>
                             <Flex flexFlow="column">
