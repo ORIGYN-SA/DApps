@@ -39,6 +39,6 @@ export const VALIDATION_ERRORS: { [key: string]: string } = {
 
 export const MESSAGES: { [key: string]: string } = {
   emptyCandyClass: 'Candy Class is empty',
-  isReadOnlyMode: 'Write mode is disabled',
+  readOnlyMode: 'Write mode is disabled',
 };
 
