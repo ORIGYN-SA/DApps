@@ -97,12 +97,6 @@ export const NFTPage = () => {
 
   const params = useParams();
 
-  const currentOpenAuction2 = saleNft?.current_sale?.find((sale) => {
-    const status = sale?.sale_type?.auction?.status;
-    return (status === 'open' || status === 'not_started');
-  });
-  
-
   const currentOpenAuction = saleNft?.current_sale[0] || saleNft?.current_sale?.find((sale) =>
   sale?.sale_type?.auction?.status?.hasOwnProperty('open'));
 
