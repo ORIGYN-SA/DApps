@@ -178,11 +178,11 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         </>
       ) : (
         <>
+          <Grid column={1}>
+            <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
+          </Grid>
           {editor.property.immutable ? (
             <>
-              <Grid column={1}>
-                <TextInput value={name} disabled={true} />
-              </Grid>
               <Grid column={2}>
                 <TextInput value={formValue} disabled={true} />
               </Grid>
@@ -195,9 +195,6 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
             </>
           ) : (
             <>
-              <Grid column={1}>
-                <TextInput onChange={onNameChanged} value={name} />
-              </Grid>
               <Grid column={2}>
                 {isInvalid ? (
                   <TextInput onChange={onValueChanged} error={validationError} value={formValue} />
