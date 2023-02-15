@@ -63,7 +63,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
     const balances = Object.keys(activeTokens).map(async (k) => {
       const val = await getBalanceByAccount(
         false,
-        r.ok.deposit_info.account_id_text,
+        r?.ok?.deposit_info?.account_id_text || '',
         activeTokens[k],
       );
       return { [k]: val };
@@ -82,13 +82,15 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
   };
 
   useEffect(() => {
-    getBalances();
-  }, [open]);
+    if (actor) {
+      getBalances();
+    }
+  }, [open, actor]);
 
   const parseDecimals = (data) => {
-   const res = parseFloat((parseInt(data) * 1e-8).toString()).toFixed(2)
-   return res
-  }
+    const res = parseFloat((parseInt(data) * 1e-8).toString()).toFixed(2);
+    return res;
+  };
 
   return (
     <div>

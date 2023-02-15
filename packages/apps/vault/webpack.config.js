@@ -1,8 +1,8 @@
 const webpack = require('../../../webpack.config');
 
 const appConfig = {
-  name: 'library',
-  openPage: '-/mludz-biaaa-aaaal-qbhwa-cai/-/brainstem-hippocampus-diencephalon/-/library',
+  name: 'vault',
+  openPage: '-/mludz-biaaa-aaaal-qbhwa-cai/-/brainstem-hippocampus-diencephalon/-/vault',
 };
 
 module.exports = (env, argv) => {

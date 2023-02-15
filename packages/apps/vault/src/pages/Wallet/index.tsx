@@ -24,6 +24,8 @@ import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrow
 import Filter from './Filter';
 import { useSnackbar } from 'notistack';
 import ManageDepositsModal from '@dapp/features-sales-escrows/modals/ManageDepositsModal';
+import { useVault } from '../../components/context';
+import { AppData, OdcData } from '../../components/context/types';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -219,19 +221,17 @@ const WalletPage = () => {
   //const [openAuction, setOpenAuction] = React.useState(false);
   const [canisterId, setCanisterId] = React.useState('');
   const [tokenId, setTokenId] = React.useState('');
-  const [collectionData, setCollectionData] = React.useState<any>();
-  const [collectionPreview, setCollectionPreview] = React.useState<any>();
+  // const [collectionData, setCollectionData] = React.useState<any>();
+  // const [collectionPreview, setCollectionPreview] = React.useState<any>();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
   // const [selectdNFT, setSelectdNFT] = React.useState<any>();
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
-  const [NFTData, setNFTData] = useState<any>();
-  const [filteredNFTData, setFilteredNFTData] = useState<any>([]);
-  const [filter, setFilter] = useState<any>();
-  const [sort, setSort] = useState<any>();
+  // const [odcData, setodcData] = useState<any>();
+  // const [filteredOdcData, setfilteredOdcData] = useState<any>([]);
+  // const [filter, setFilter] = useState<any>();
+  // const [sort, setSort] = useState<any>();
   const [inputText, setInputText] = useState('');
-  const [activeEscrows, setActiveEscrows] = useState<any>();
-  const [outEscrows, setOutEscrows] = useState<any>();
   const [dialogAction, setDialogAction] = useState<any>();
 
   // TODO: setter not used, converted to standard variable, but rows are always empty
@@ -240,7 +240,7 @@ const WalletPage = () => {
   // });
   const activeSales = { columns: activeSalesColumns, rows: [] };
 
-  const [creator, setCreator] = useState('');
+  // const [creator, setCreator] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   // TODO: setter not used, converted to standard variable
@@ -264,6 +264,90 @@ const WalletPage = () => {
   //   }
   // };
 
+  const { state, dispatch } = useVault();
+  const {
+    totalItems,
+    collectionPreview,
+    originatorPrincipal,
+    collectionData,
+    odcData,
+    filter,
+    sort,
+    filteredOdcData,
+    activeEscrows,
+    outEscrows,
+  } = state;
+
+  const getProperty = (properties: any, propertyName: string) => {
+    return properties?.find(({ name }) => name === propertyName);
+  };
+
+  const getTextValue = (properties: any, propertyName: string): string => {
+    const p = getProperty(properties, propertyName);
+    return p?.value?.Text || '';
+  };
+
+  const getPrincipalValue = (properties: any, propertyName: string): string => {
+    const p = getProperty(properties, propertyName);
+    return p?.value?.Principal?.toText() || '';
+  };
+
+  const getAppData = (metadataClass: any): AppData => {
+    const apps = getProperty(metadataClass, '__apps');
+
+    const app = apps?.value?.Array?.thawed?.find((c) =>
+      c.Class?.find((p) => p.name === 'app_id' && p.value?.Text === 'com.origyn.metadata.general'),
+    );
+
+    const data =
+      app?.Class?.find(({ name }) => name === 'data')?.value?.Class?.reduce(
+        (obj: Object, val: any) => ({ ...obj, [val.name]: Object.values(val.value)[0] }),
+        {},
+      ) || {};
+
+    data.display_name = data.display_name || '';
+    data.description = data.description || '';
+    data.custom_properties = data.custom_properties?.thawed || data.custom_properties?.frozen || [];
+
+    return data as AppData;
+  };
+
+  const parseOdcData = (data: []): OdcData[] => {
+    const parsed = data.map((item: any): OdcData => {
+      const odc = item?.ok;
+
+      const properties = odc?.metadata?.Class;
+      const appData = getAppData(properties);
+      const odcID: string = getTextValue(properties, 'id');
+
+      const openAuction = odc?.current_sale?.find((s) =>
+        s?.sale_type?.auction?.status?.hasOwnProperty('open'),
+      )?.sale_type?.auction;
+
+      const buyNow: number = Number(openAuction?.config?.auction?.buy_now[0] || 0) / 1e8;
+      const currentBid: number = Number(openAuction?.current_bid_amount || 0);
+      const token: string = openAuction?.config?.auction?.token?.ic?.symbol || '';
+      const hasPreviewImage: boolean = !!(
+        odc?.metadata?.Class?.find(({ name }) => name === 'preview_asset') ||
+        odc?.metadata?.Class.find(({ name }) => name === 'preview')
+      );
+
+      const data: OdcData = {
+        hasPreviewImage,
+        odcID,
+        onSale: !!openAuction,
+        currentBid,
+        buyNow,
+        token,
+        appData,
+      };
+
+      return data;
+    });
+
+    return parsed;
+  };
+
   const handleClose = async (dataChanged = false) => {
     setOpenEsc(false);
     setOpenTrx(false);
@@ -286,129 +370,150 @@ const WalletPage = () => {
     setDialogAction('reject');
   };
 
-  const fetchData = () => {
-    if (actor && principal) {
-      setIsLoading(true);
+  const fetchData = async () => {
+    if (!(actor && principal)) {
+      return;
+    }
 
-      useRoute().then(({ canisterId }) => {
-        setCanisterId(canisterId);
-        OrigynClient.getInstance().init(true, canisterId, { actor });
-        getNftCollectionMeta([]).then((r: any) => {
-          if (!('err' in r)) {
-            setCollectionPreview(
-              Object.values(
-                r.ok.metadata[0].Class.find(({ name }) => name === 'preview_asset').value,
-              )[0],
-            );
-            setCollectionData(
-              r.ok.metadata[0].Class.find(({ name }) => name === '__apps')
-                .value.Array.thawed[0].Class.find(({ name }) => name === 'data')
-                .value.Class.reduce(
-                  (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-                  {},
-                ),
-            );
-            setCreator(
-              r.ok.metadata[0].Class.find(
-                ({ name }) => name === 'com.origyn.originator',
-              )?.value.Principal.toText(),
-            );
-          }
+    try {
+      // show progress bar on intial load, otherwise fetch silenty
+      const stateLoaded = odcData?.length > 0;
+      setIsLoading(!stateLoaded);
+
+      const { canisterId } = await useRoute();
+      setCanisterId(canisterId);
+
+      OrigynClient.getInstance().init(true, canisterId, { actor });
+
+      // get the canister's collection metadata
+      const collMetaResp = await getNftCollectionMeta([]);
+      if (collMetaResp.err) {
+        // TODO: Display error
+        console.log(collMetaResp.err);
+        return;
+      }
+
+      const collMeta = collMetaResp.ok;
+      const metadataClass = collMeta?.metadata?.[0]?.Class;
+
+      // set the collection preview image
+      const previewAsset = getTextValue(metadataClass, 'preview_asset');
+      if (previewAsset) {
+        dispatch({ type: 'collectionPreview', payload: previewAsset });
+      }
+
+      // set the collection app data
+      const appData = getAppData(metadataClass);
+      dispatch({ type: 'collectionData', payload: appData });
+
+      const originatorPrincipal = getPrincipalValue(metadataClass, 'com.origyn.originator');
+      dispatch({ type: 'originatorPrincipal', payload: originatorPrincipal });
+
+      // set number of tokens
+      const tokenIds = collMeta?.token_ids?.[0] || [];
+      dispatch({ type: 'totalItems', payload: tokenIds.length });
+
+      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+      if (odcDataRaw.err) {
+        // TODO: Display error
+        console.log(odcDataRaw.err);
+        return;
+      }
+
+      // parse the digital certificate data (metadata and sale info)
+      const parsedOdcData = parseOdcData(odcDataRaw);
+      dispatch({ type: 'odcData', payload: parsedOdcData });
+      dispatch({ type: 'filteredOdcData', payload: parsedOdcData });
+
+      const response = actor?.balance_of_nft_origyn({ principal });
+      console.log(response);
+      if (response.err) {
+        throw new Error(Object.keys(response.err)[0]);
+      }
+
+      const escrows = response?.ok?.escrow;
+      const offers = response?.ok?.offers;
+      const inEscrows: any = [];
+      const outEscrows: any = [];
+
+      if (escrows) {
+        escrows.forEach((escrow: any, index: number) => {
+          const esc: any = {};
+          esc.token_id = escrow.token_id;
+          esc.actions = (
+            <Button onClick={() => withdrawEscrow(response?.ok?.escrow[index])} variant="contained">
+              Withdraw
+            </Button>
+          );
+          esc.symbol = (
+            <>
+              <TokenIcon symbol={activeTokens[escrow?.token?.ic?.symbol]?.icon} />
+              {escrow?.token?.ic?.symbol}
+            </>
+          );
+          esc.buyer = <p>{escrow.buyer.principal.toText().substring(0, 8)}...</p>;
+          esc.seller = <p>{escrow.seller.principal.toText().substring(0, 8)}...</p>;
+          esc.amount = parseFloat((parseInt(escrow.amount) * 1e-8).toString()).toFixed(9);
+          outEscrows.push(esc);
         });
-      });
+      }
+      if (offers) {
+        // TODO: fix offer type
+        offers.forEach((offer: any, index: number) => {
+          const esc: any = {};
+          esc.token_id = offer.token_id;
+          esc.actions = (
+            <Button onClick={() => rejectEscrow(response?.ok?.offers[index])} variant="contained">
+              Reject
+            </Button>
+          );
+          esc.symbol = (
+            <>
+              <TokenIcon symbol={activeTokens[offer?.token?.ic?.symbol]?.icon} />
+              {offer?.token?.ic?.symbol}
+            </>
+          );
+          esc.buyer = <p>{offer.buyer.principal.toText().substring(0, 8)}...</p>;
+          esc.seller = <p>{offer.seller.principal.toText().substring(0, 8)}...</p>;
 
-      actor?.balance_of_nft_origyn({ principal }).then((response) => {
-        console.log(response);
-        if ('err' in response) throw new Error(Object.keys(response.err)[0]);
-        const escrows = response?.ok?.escrow;
-        const offers = response?.ok?.offers;
-        const inEscrow: any = [];
-        const outEscrow: any = [];
-        if (escrows) {
-          escrows.forEach((escrow: any, index) => {
-            const esc: any = {};
-            esc.token_id = escrow.token_id;
-            esc.actions = (
-              <Button
-                onClick={() => withdrawEscrow(response?.ok?.escrow[index])}
-                variant="contained"
-              >
-                Withdraw
-              </Button>
-            );
-            esc.symbol = (
-              <>
-                <TokenIcon symbol={activeTokens[escrow?.token?.ic?.symbol]?.icon} />
-                {escrow?.token?.ic?.symbol}
-              </>
-            );
-            esc.buyer = <p>{escrow.buyer.principal.toText().substring(0, 8)}...</p>;
-            esc.seller = <p>{escrow.seller.principal.toText().substring(0, 8)}...</p>;
-            esc.amount = parseFloat((parseInt(escrow.amount) * 1e-8).toString()).toFixed(9);
-            outEscrow.push(esc);
-          });
-        }
-        if (offers) {
-          // TODO: fix offer type
-          offers.forEach((offer: any, index) => {
-            const esc: any = {};
-            esc.token_id = offer.token_id;
-            esc.actions = (
-              <Button onClick={() => rejectEscrow(response?.ok?.offers[index])} variant="contained">
-                Reject
-              </Button>
-            );
-            esc.symbol = (
-              <>
-                <TokenIcon symbol={activeTokens[offer?.token?.ic?.symbol]?.icon} />
-                {offer?.token?.ic?.symbol}
-              </>
-            );
-            esc.buyer = <p>{offer.buyer.principal.toText().substring(0, 8)}...</p>;
-            esc.seller = <p>{offer.seller.principal.toText().substring(0, 8)}...</p>;
+          esc.amount = parseFloat((parseInt(offer.amount) * 1e-8).toString()).toFixed(9);
+          inEscrows.push(esc);
+        });
+      }
 
-            esc.amount = parseFloat((parseInt(offer.amount) * 1e-8).toString()).toFixed(9);
-            inEscrow.push(esc);
-          });
-        }
-        setActiveEscrows(inEscrow);
-        setOutEscrows(outEscrow);
-        setOwned(response?.ok?.nfts.length);
+      dispatch({ type: 'activeEscrows', payload: inEscrows });
+      dispatch({ type: 'outEscrows', payload: outEscrows });
+      setOwned(response?.ok?.nfts.length);
 
-        actor
-          ?.nft_batch_origyn(response?.ok?.nfts)
-          .then((r) => {
-            if ('err' in r) throw new Error();
-            const parsedData = r.map((it) => {
-              const openSale =
-                it?.ok?.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open');
-              const sale = it?.ok?.current_sale[0]?.sale_type?.auction?.current_bid_amount;
-              const saleToken =
-                it?.ok?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic?.symbol;
-              const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text;
- 
-              const dataObj = it?.ok?.metadata?.Class?.find(({ name }) => name === '__apps')
-              ?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')
-              ?.value?.Class?.reduce(
-                (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-                {},
-              ) || undefined;
-       
-              const filterSale = Number(sale);
-              return {
-                ...dataObj,
-                id: { nftID: nftID, sale: filterSale, open: openSale, token: saleToken },
-              };
-            });
+      // const batchResponse = await actor?.nft_batch_origyn(response?.ok?.nfts);
 
-            setNFTData(parsedData);
-            setFilteredNFTData(parsedData);
-            setIsLoading(false);
-          })
-          .catch(() => {
-            setIsLoading(false);
-          });
-      });
+      // if ('err' in batchResponse) throw new Error();
+      // const parsedData = batchResponse.map((it) => {
+      //   const openSale = it?.ok?.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open');
+      //   const sale = it?.ok?.current_sale[0]?.sale_type?.auction?.current_bid_amount;
+      //   const saleToken =
+      //     it?.ok?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic?.symbol;
+      //   const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text;
+
+      //   const dataObj =
+      //     it?.ok?.metadata?.Class?.find(({ name }) => name === '__apps')
+      //       ?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')
+      //       ?.value?.Class?.reduce(
+      //         (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
+      //         {},
+      //       ) || undefined;
+
+      //   const filterSale = Number(sale);
+      //   return {
+      //     ...dataObj,
+      //     id: { nftID: nftID, sale: filterSale, open: openSale, token: saleToken },
+      //   };
+      // });
+    } catch (err) {
+      // TODO: Display error
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -443,39 +548,40 @@ const WalletPage = () => {
       ? activeEscrows?.out?.data?.filter((nft) => nft.token_id === tokenId)
       : activeEscrows?.out?.data;
 
+  /** Apply filter and sort to list */
   useEffect(() => {
-    let filtered = NFTData;
+    let filtered = odcData;
 
     switch (filter) {
       case 'onSale':
-        filtered = filtered.filter((nft) => isNaN(nft?.id?.sale));
+        filtered = filtered.filter((odc) => odc.onSale);
         break;
       case 'notOnSale':
-        filtered = filtered.filter((nft) => !isNaN(nft?.id?.sale));
+        filtered = filtered.filter((odc) => !odc.onSale);
         break;
     }
 
     switch (sort) {
       case 'saleASC':
-        filtered = [...filtered].sort((nft, nft2) =>
-          isNaN(nft?.id?.sale) ? 1 : isNaN(nft2?.id?.sale) ? -1 : nft?.id?.sale - nft2?.id?.sale,
-        );
+        filtered = [...filtered].sort((odc1, odc2) => {
+          return Math.max(odc2.buyNow, odc2.currentBid) - Math.max(odc1.buyNow, odc1.currentBid);
+        });
         break;
       case 'saleDESC':
-        filtered = [...filtered].sort((nft, nft2) =>
-          isNaN(nft2?.id?.sale) ? -1 : isNaN(nft?.id?.sale) ? 1 : nft2?.id?.sale - nft?.id?.sale,
-        );
+        filtered = [...filtered].sort((odc1, odc2) => {
+          return Math.max(odc1.buyNow, odc1.currentBid) - Math.max(odc2.buyNow, odc2.currentBid);
+        });
         break;
-      // default ('all'): leave filtered as NFTData
     }
 
-    if (inputText?.trim()) {
-      filtered = filtered.filter((nft) => nft?.display_name.toLowerCase().includes(inputText));
+    if (inputText?.length) {
+      filtered = filtered.filter((odc) =>
+        odc?.appData?.display_name?.toLowerCase().includes(inputText),
+      );
     }
 
-    setFilteredNFTData(filtered);
-    refreshAllBalances(false, principal);
-  }, [filter, sort, inputText]);
+    dispatch({ type: 'filteredOdcData', payload: filtered });
+  }, [filter, sort, inputText, odcData]);
 
   useEffect(() => {
     if (loggedIn) {
@@ -543,15 +649,19 @@ const WalletPage = () => {
                         <WalletTokens>Manage Tokens</WalletTokens>
 
                         <h6>Active Transactions</h6>
-                          {activeEscrows.length > 0 || outEscrows.length > 0
-                            ? <Button btnType="filled" onClick={() => setOpenEsc(true)}>Manage Escrows</Button>
-                            : <Button disabled>No assets in Escrow</Button>}
+                        {activeEscrows.length > 0 || outEscrows.length > 0 ? (
+                          <Button btnType="filled" onClick={() => setOpenEsc(true)}>
+                            Manage Escrows
+                          </Button>
+                        ) : (
+                          <Button disabled>No assets in Escrow</Button>
+                        )}
                         <Button btnType="filled" onClick={() => setOpenManageDeposit(true)}>
                           Manage Deposits
                         </Button>
                         <StyledBlackCard align="center" padding="12px" justify="space-between">
                           <Flex align="center" gap={12}>
-                            <Icons.Wallet width={24} fill="#ffffff" height="auto" />
+                            <Icons.Wallet width={24} fill="#ffffff" height="100%" />
                             <Flex flexFlow="column">
                               <p style={{ fontSize: 12, color: '#9A9A9A' }}>
                                 {activeWalletProvider.meta.name.charAt(0).toUpperCase() +
@@ -578,7 +688,7 @@ const WalletPage = () => {
                                 })
                               }
                             >
-                              <Icons.CopyIcon width={12} height="auto" />
+                              <Icons.CopyIcon width={12} height="100%" />
                             </Button>
                           </Flex>
                         </StyledBlackCard>
@@ -627,7 +737,7 @@ const WalletPage = () => {
                                       distrikt: <DistriktSVG />,
                                       website: <WebsiteSVG />,
                                     }[
-                                    links?.Class?.find(({ name }) => name === 'type')?.value?.Text
+                                      links?.Class?.find(({ name }) => name === 'type')?.value?.Text
                                     ]
                                   }
                                 </SocialMediaButton>
@@ -646,7 +756,7 @@ const WalletPage = () => {
                           <p>
                             <span className="secondary_color">Created by </span>
                             <span className="secondary_color">
-                              {creator ? creator : 'no creator_name'}
+                              {originatorPrincipal || 'no creator_name'}
                             </span>
                           </p>
                           <br />
@@ -667,8 +777,12 @@ const WalletPage = () => {
                       <HR />
                       <br />
                       <Filter
-                        onChangeFilter={setFilter}
-                        onChangeSort={setSort}
+                        onChangeFilter={(filterValue: string) =>
+                          dispatch({ type: 'filter', payload: filterValue })
+                        }
+                        onChangeSort={(sortValue: string) =>
+                          dispatch({ type: 'sort', payload: sortValue })
+                        }
                         onInput={setInputText}
                       />
                       <br />
@@ -678,7 +792,7 @@ const WalletPage = () => {
                         handleClose={handleClose}
                         collection={collectionData}
                       />
-                      {NFTData?.length > 0 ? (
+                      {odcData?.length > 0 ? (
                         <>
                           <Grid
                             smColumns={1}
@@ -688,21 +802,25 @@ const WalletPage = () => {
                             columns={6}
                             gap={20}
                           >
-                            {filteredNFTData.map((nft: any) => {
+                            {filteredOdcData.map((odc: OdcData) => {
                               return (
-                                <Link to={`/${nft.id.nftID}`} key={nft.id.nftID}>
+                                <Link to={`/${odc?.odcID}`} key={odc?.odcID}>
                                   <Card
                                     flexFlow="column"
                                     style={{ overflow: 'hidden', height: '100%' }}
                                   >
-                                    <StyledNFTImg
-                                      onError={(e) => {
-                                        e.target.onerror = null; // prevents looping
-                                        e.currentTarget.className += ' errorImage';
-                                      }}
-                                      src={`https://${canisterId}.raw.ic0.app/-/${nft.id.nftID}/preview`}
-                                      alt=""
-                                    />
+                                    {odc.hasPreviewImage ? (
+                                      <StyledNFTImg
+                                        onError={(e) => {
+                                          e.target.onerror = null; // prevents looping
+                                          e.currentTarget.className += ' errorImage';
+                                        }}
+                                        src={`https://${canisterId}.raw.ic0.app/-/${odc?.odcID}/preview`}
+                                        alt=""
+                                      />
+                                    ) : (
+                                      <img style={{ width: '100%' }} alt="" />
+                                    )}
                                     <Container
                                       style={{ height: '100%' }}
                                       size="full"
@@ -719,7 +837,7 @@ const WalletPage = () => {
                                             {collectionData?.display_name}
                                           </p>
                                           <p>
-                                            <b>{nft.display_name || nft.id.nftID}</b>
+                                            <b>{odc?.appData?.display_name || odc?.odcID}</b>
                                           </p>
                                         </div>
                                         <div>
@@ -727,13 +845,16 @@ const WalletPage = () => {
                                             Status
                                           </p>
                                           <p>
-                                            {nft.id.open ? (
-                                              <>
-                                                <TokenIcon symbol={nft.id.token} />{' '}
-                                                {parseFloat(
-                                                  (parseInt(nft.id.sale) * 1e-8).toString(),
-                                                ).toFixed(2)}
-                                              </>
+                                            {odc.onSale ? (
+                                              odc.currentBid === 0 ? (
+                                                <>
+                                                  {odc.buyNow} <TokenIcon symbol={odc.token} />
+                                                </>
+                                              ) : (
+                                                <>
+                                                  {odc.currentBid} <TokenIcon symbol={odc.token} />
+                                                </>
+                                              )
                                             ) : (
                                               'No auction started'
                                             )}
@@ -749,7 +870,7 @@ const WalletPage = () => {
                           <br />
                         </>
                       ) : (
-                        'You do not have any NFT in your wallet'
+                        'There are no digital certificates in your vault'
                       )}
                     </div>
                   </StyledCustomGrid>

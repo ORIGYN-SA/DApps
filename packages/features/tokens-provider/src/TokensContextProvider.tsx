@@ -24,7 +24,7 @@ const defaultTokens = {
     decimals: 8,
     enabled: true,
     balance: -1,
-  }
+  },
 };
 
 export type Token = {
@@ -89,24 +89,20 @@ const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
-  activeTokens:
-    Object.keys(initialTokens)
-      .filter((t) => initialTokens[t].enabled)
-      .reduce((ats,key) => ({...ats, [key]: initialTokens[key]}), {}),
-  time: timeConverter(BigInt(new Date().getTime() * 1000000))
+  activeTokens: Object.keys(initialTokens)
+    .filter((t) => initialTokens[t].enabled)
+    .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {}),
+  time: timeConverter(BigInt(new Date().getTime() * 1000000)),
 });
-
 
 export const useTokensContext = () => {
   const context = useContext(TokensContext);
   return context;
 };
 
-
-
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
-  const [time, setTime] = useState<any>()
+  const [time, setTime] = useState<any>();
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -170,8 +166,8 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
     setTokens(() => ({ ..._tokens }));
 
-    const today = timeConverter(BigInt(new Date().getTime() * 1000000))
-    setTime(today)
+    const today = timeConverter(BigInt(new Date().getTime() * 1000000));
+    setTime(today);
     // Actual balance
     return Promise.all(
       Object.keys(_tokens).map(async (symbol) => {
@@ -180,7 +176,6 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     ).then(() => {
       setTokens(() => ({ ..._tokens }));
     });
-    
   };
 
   const setLocalCanisterId = (symbol: string, canisterId: string) => {
@@ -205,10 +200,9 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         toggleToken,
         tokens,
         time,
-        activeTokens:
-          Object.keys(tokens)
-            .filter((t) => tokens[t].enabled)
-            .reduce((ats,key) => ({...ats, [key]: tokens[key]}), {}),
+        activeTokens: Object.keys(tokens)
+          .filter((t) => tokens[t].enabled)
+          .reduce((ats, key) => ({ ...ats, [key]: tokens[key] }), {}),
       }}
     >
       {children}
