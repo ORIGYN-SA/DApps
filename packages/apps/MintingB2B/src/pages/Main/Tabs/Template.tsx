@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Container, Flex, Grid, Icons, Modal, Select, TextArea, TextInput, TabContent } from '@origyn-sa/origyn-art-ui'
+import { Button, Container, Flex, Grid, Icons, Modal, Select, TextArea, TextInput, TabContent, Card } from '@origyn-sa/origyn-art-ui'
 import { LoadingContainer } from '@dapp/features-components'
 import styled from 'styled-components';
 import { genRanHex } from '../../../../../../utils'
 import TemplateRender from '../../../../../luxury/src/pages/NFTPage/TemplateRender'
-import { dataStructures } from './Minter';
+import { dataStructures, formTemplate } from './Minter';
 
 const addIds = (tObj) => {
-  return tObj.map((item) => {
+  return tObj?.map((item) => {
     const tmpTObj = item;
     tmpTObj.id = genRanHex(32);
     if (tmpTObj.content) {
@@ -28,7 +28,7 @@ const removeById = (tObj, id) => {
 
 const updateById = (tObj, id, newObj) => {
   console.log(tObj, tObj.id, id);
-  return tObj.map((item) => {
+  return tObj?.map((item) => {
     if (item.id === id) {
       console.log("FOUND ID");
       return newObj;
@@ -40,7 +40,7 @@ const updateById = (tObj, id, newObj) => {
   });
 };
 
-export const defaultTemplate = [
+export const initTemplate = [
   {
     id: 1,
     type: 'columns',
@@ -415,6 +415,11 @@ export const defaultTemplate = [
   },
 ]
 
+export const defaultTemplate = {
+  "Natural Diamond": [...initTemplate],
+  'Laboratory Grown Diamond': [...initTemplate],
+};
+
 const TemplateBlockContainer = styled(Container)`
   background-color: ${({theme}) => theme.colors.TEXT}55;
   position: relative;
@@ -609,7 +614,7 @@ const FieldBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures;
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -673,7 +678,7 @@ const ImageBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures;
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -724,7 +729,7 @@ const GalleryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -776,7 +781,7 @@ const AttachmentsBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -828,7 +833,7 @@ const HistoryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]].map(({name}) => name);
+    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
     setFields(f)
   }, [])
 
@@ -883,7 +888,7 @@ const SeparatorBlock = ({templateSeparatorObj, removeBlock}) => {
 }
 
 const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
-  return templateObject.map((tempObj) => {
+  return templateObject?.map((tempObj) => {
     switch (tempObj.type) {
       case 'columns':
         return <ColumnsBlock
@@ -978,25 +983,54 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
   })
 }
 
-export const Template = () => {
-  const [template, setTemplate] = useState(JSON.parse(localStorage.getItem('template')) || defaultTemplate);
-  const [isLoading, setIsLoading] = useState(false);
+const CustomGrid = styled(Grid)`
+  grid-template-columns: 4fr 8fr;
+  gap: 16px;
+`
 
-  useEffect(() => {
-    setTemplate(addIds(defaultTemplate))
-  }, [])
+export const Template = () => {
+  const [template, setTemplate] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDataStructure, setSelectedDataStructure] = useState(Object.keys(defaultTemplate)[0]);
+  const [templateFormData, setTemplateFormData] = useState<any>(
+    JSON.parse(localStorage.getItem('formTemplate')) || formTemplate,
+  );
 
   const removeBlock = (id) => {
-    const t = removeById(template, id);
-    setTemplate(t);
-    localStorage.setItem('template', JSON.stringify(t))
+    const tpmTemplate = template[selectedDataStructure];
+    const t = removeById(tpmTemplate, id);
+    const updatedTemplate = {...template, [selectedDataStructure]: t};
+    setTemplate(updatedTemplate);
+    localStorage.setItem('template', JSON.stringify(updatedTemplate))
   }
 
   const editBlock = (id, newObj) => {
-    const t = updateById(template, id, newObj);
-    setTemplate(t);
-    localStorage.setItem('template', JSON.stringify(t))
+    console.log(template);
+    // const tpmTemplate = template[selectedDataStructure];
+    // const t = updateById(tpmTemplate, id, newObj);
+    // const updatedTemplate = {...template, [selectedDataStructure]: t};
+    // console.log(updatedTemplate);
+    //setTemplate(updatedTemplate);
+    //localStorage.setItem('template', JSON.stringify(updatedTemplate))
   }
+
+  useEffect(() => {
+    let t = JSON.parse(localStorage.getItem('template'));
+    if (!t) {
+      localStorage.setItem('template', JSON.stringify(defaultTemplate));
+    }
+    t = JSON.parse(localStorage.getItem('template'));
+    const templatesWithIds = {}; 
+    Object.keys(t).forEach(
+      (k) => {
+        const withIds = addIds(t[k]);
+        console.log(withIds);
+        templatesWithIds[k] = addIds(t[k]);
+      });
+    console.log(templatesWithIds);
+    setTemplate(templatesWithIds);
+  }, [])
+
   return (
     <Container padding='16px'>
       <br />
@@ -1010,14 +1044,42 @@ export const Template = () => {
             <TabContent
               tabs={[{title: "Template Editor", id: "editor"},{title: "Template Preview", id: "editor"}]}
               content={[
-                <RenderTemplateBlock
-                  templateObject={template}
-                  removeBlock={removeBlock}
-                  editBlock={editBlock}
-                />,
+                <>
+                  <br />
+                  <CustomGrid>
+                    <h6>Select Data Structure</h6>
+                    <Grid columns={2} gap={20}>
+                      {
+                        Object.keys(templateFormData)?.map((key) => {
+                          return (
+                            <Card type={key === selectedDataStructure  ? "filled" : "outlined"} padding="32px" onClick={() => setSelectedDataStructure(key)}>
+                              <Flex fullWidth flexFlow="column" justify="center" align="center" gap={10}>
+                                <div>
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M20.6947 6.995C20.5247 6.685 20.2847 6.435 19.9747 6.255L13.0347 2.145C12.4147 1.785 11.5847 1.785 10.9647 2.145L4.02469 6.255C3.71469 6.435 3.46469 6.685 3.30469 6.995C3.13469 7.305 3.05469 7.645 3.05469 7.995V16.065C3.05469 16.415 3.13469 16.755 3.30469 17.065C3.47469 17.375 3.71469 17.625 4.02469 17.805L10.9347 21.855C11.2447 22.035 11.5847 22.125 11.9347 22.125C12.2847 22.125 12.6247 22.035 12.9347 21.855L19.9347 17.805C20.2447 17.625 20.4947 17.375 20.6747 17.065C20.8547 16.755 20.9447 16.415 20.9447 16.065V7.995C20.9447 7.645 20.8647 7.305 20.6947 6.995ZM10.9347 12.625V19.365L5.21469 15.935V9.345L10.9347 12.625ZM17.7147 7.405L12.0047 10.715L6.29469 7.405L12.0047 4.125L17.7147 7.405ZM18.8147 9.345V15.935L13.0647 19.365V12.625L18.8147 9.345Z" fill="#151515" />
+                                  </svg>
+                                </div>
+                                <div>
+                                  <h6>{key}</h6>
+                                </div>
+                              </Flex>
+                            </Card>
+                          )
+                        })
+                      }
+                    </Grid>
+                  </CustomGrid>
+                  <br />
+                  {console.log(template[selectedDataStructure], selectedDataStructure, template)}
+                  <RenderTemplateBlock
+                    templateObject={template[selectedDataStructure]}
+                    removeBlock={removeBlock}
+                    editBlock={editBlock}
+                  />
+                </>,
                 <TemplateRender
-                  templateObject={template}
-                  data={JSON.parse(localStorage.getItem('dataStructure')) || dataStructures}
+                  templateObject={template[selectedDataStructure]}
+                  data={{}}
                 />
               ]}
             />

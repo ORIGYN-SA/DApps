@@ -565,6 +565,7 @@ export const Minter = () => {
       const formDataObj = {};
       formMeta.forEach((value, key) => (formDataObj[key] = value));
       setMetadata(formDataObj);
+      const templates = JSON.parse(localStorage.getItem('template')) || defaultTemplate
 
       const formFullData = {
         files,
@@ -583,7 +584,7 @@ export const Minter = () => {
                 },
               },
         })),
-        display: JSON.parse(localStorage.getItem('template')) || defaultTemplate,
+        display: templates[selectedDataStructure],
       };
       console.log(formFullData);
       const jsonFile = new Blob([JSON.stringify(formFullData, null, 2)], {

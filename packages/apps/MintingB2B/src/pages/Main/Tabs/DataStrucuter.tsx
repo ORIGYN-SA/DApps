@@ -15,6 +15,7 @@ import styled from 'styled-components';
 import AddDataModal from '../../../components/lists/AddData';
 import { dataStructures, formTemplate } from './Minter';
 import AddDataSection from '../../../modals/AddDataSection';
+import { initTemplate } from './Template';
 
 const StyledSectionTitle = styled.div`
   margin: 48px 24px;
@@ -135,6 +136,8 @@ export const DataStructure = ({ isLoading }: Props) => {
   const handleCreateDataStructure = () => {
     const ds = JSON.parse(localStorage.getItem('dataStructure'));
     const ft = JSON.parse(localStorage.getItem('formTemplate'));
+    const t = JSON.parse(localStorage.getItem('template'));
+    
     const newData = {
       ...ds || dataStructure,
       [name]: [],
@@ -143,8 +146,13 @@ export const DataStructure = ({ isLoading }: Props) => {
       ...(ft || formTemplateData),
       [name]: [],
     };
+    const newTemplate = {
+      ...(t),
+      [name]: initTemplate,
+    };
     localStorage.setItem('dataStructure', JSON.stringify(newData));
     localStorage.setItem('formTemplate', JSON.stringify(newFormTemplate));
+    localStorage.setItem('template', JSON.stringify(newTemplate));
     setDataStructure(newData);
     setFormTemplateData(newFormTemplate);
     setCurrentDataStrucure({value: name, label: name});
