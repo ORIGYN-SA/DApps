@@ -102,3 +102,8 @@ export interface CandyClassEditor {
   property?: Property;
   propertyIndex?: number;
 }
+
+export interface CandyDataEditorProps {
+  existingCandyClass?: CandyClass;
+  readOnly?: boolean;
+}

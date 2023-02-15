@@ -36,3 +36,9 @@ export const VALIDATION_ERRORS: { [key: string]: string } = {
   float: 'The value must be a Float number',
   principal: 'The value must be a valid Principal',
 };
+
+export const MESSAGES: { [key: string]: string } = {
+  emptyCandyClass: 'Candy Class is empty',
+  readOnlyMode: 'Write mode is disabled',
+};
+
