@@ -112,9 +112,9 @@ export const BoolForm = (editor: CandyClassEditor) => {
           <Grid column={2}>
             <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
           </Grid>
-          {editor.property.immutable ? (
-            <>
-              <Grid column={3}>
+          <Grid column={3}>
+            {
+              editor.property.immutable ? (
                 <Select
                   inputSize="medium"
                   selectedOption={{
@@ -122,48 +122,36 @@ export const BoolForm = (editor: CandyClassEditor) => {
                     label: formValue,
                   }}
                 />
-              </Grid>
-              <Grid column={4}>
-                <span>Property is immutable</span>
-              </Grid>
-              <Grid column={5}>
-                <span>Property is immutable</span>
-              </Grid>
-            </>
-          ) : (
+              ) : (
+                <Select
+                  inputSize="medium"
+                  handleChange={(opt) => {
+                    onValueChanged(opt.value);
+                  }}
+                  selectedOption={{
+                    value: formValue,
+                    label: formValue,
+                  }}
+                  options={[
+                    { value: 'true', label: 'true' },
+                    { value: 'false', label: 'false' },
+                  ]}
+                  error={isInvalid}
+                />
+              )
+            }
+          </Grid>
+          <Grid column={4}>
+            {editor.property.immutable ? (
+              <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
+            ) : (
+              <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+            )}
+          </Grid>
+          {editor.property.immutable && (
             <>
-              <Grid column={3}>
-                {isInvalid ? (
-                  <Select
-                    inputSize="medium"
-                    handleChange={(opt) => {
-                      onValueChanged(opt.value);
-                    }}
-                    options={[
-                      { value: 'true', label: 'true' },
-                      { value: 'false', label: 'false' },
-                    ]}
-                    error={true}
-                  />
-                ) : (
-                  <Select
-                    inputSize="medium"
-                    handleChange={(opt) => {
-                      onValueChanged(opt.value);
-                    }}
-                    options={[
-                      { value: 'true', label: 'true' },
-                      { value: 'false', label: 'false' },
-                    ]}
-                    selectedOption={{
-                      value: formValue,
-                      label: formValue,
-                    }}
-                  />
-                )}
-              </Grid>
-              <Grid column={4}>
-                <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+              <Grid column={5}>
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
               </Grid>
             </>
           )}
