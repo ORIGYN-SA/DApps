@@ -78,7 +78,6 @@ const StyledBlackCard = styled(Card)`
 `;
 const StyledBlackItemCard = styled(Card)`
   background: ${({ theme }) => theme.colors.DARK_BLACK};
-  width: 307px;
 `;
 
 const StyledCollectionImg = styled.img`
