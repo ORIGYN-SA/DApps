@@ -485,30 +485,6 @@ const WalletPage = () => {
       dispatch({ type: 'outEscrows', payload: outEscrows });
       setOwned(response?.ok?.nfts.length);
 
-      // const batchResponse = await actor?.nft_batch_origyn(response?.ok?.nfts);
-
-      // if ('err' in batchResponse) throw new Error();
-      // const parsedData = batchResponse.map((it) => {
-      //   const openSale = it?.ok?.current_sale[0]?.sale_type?.auction?.status?.hasOwnProperty('open');
-      //   const sale = it?.ok?.current_sale[0]?.sale_type?.auction?.current_bid_amount;
-      //   const saleToken =
-      //     it?.ok?.current_sale[0]?.sale_type?.auction?.config?.auction?.token?.ic?.symbol;
-      //   const nftID = it?.ok?.metadata.Class.find(({ name }) => name === 'id').value.Text;
-
-      //   const dataObj =
-      //     it?.ok?.metadata?.Class?.find(({ name }) => name === '__apps')
-      //       ?.value?.Array?.thawed[0]?.Class?.find(({ name }) => name === 'data')
-      //       ?.value?.Class?.reduce(
-      //         (arr, val) => ({ ...arr, [val.name]: Object.values(val.value)[0] }),
-      //         {},
-      //       ) || undefined;
-
-      //   const filterSale = Number(sale);
-      //   return {
-      //     ...dataObj,
-      //     id: { nftID: nftID, sale: filterSale, open: openSale, token: saleToken },
-      //   };
-      // });
     } catch (err) {
       // TODO: Display error
       console.error(err);
@@ -532,21 +508,6 @@ const WalletPage = () => {
   }, []);
 
   const [openEsc, setOpenEsc] = useState(false);
-
-  const FilteredActiveSales =
-    tokenId && showOnlyTokenEntries
-      ? activeSales?.rows?.filter((nft) => nft.token_id === tokenId)
-      : activeSales?.rows;
-
-  const FilteredActiveEscrowsIn =
-    tokenId && showOnlyTokenEntries
-      ? activeEscrows?.in?.data?.filter((nft) => nft.token_id === tokenId)
-      : activeEscrows?.in?.data;
-
-  const FilteredActiveEscrowsOut =
-    tokenId && showOnlyTokenEntries
-      ? activeEscrows?.out?.data?.filter((nft) => nft.token_id === tokenId)
-      : activeEscrows?.out?.data;
 
   /** Apply filter and sort to list */
   useEffect(() => {
@@ -876,40 +837,6 @@ const WalletPage = () => {
                   </StyledCustomGrid>
                 )}
               </Flex>,
-              <div key="activeSalesTable">
-                {isLoading ? (
-                  <LoadingContainer />
-                ) : activeSales?.rows?.length > 0 ? (
-                  <Table columns={activeSales.columns} rows={FilteredActiveSales} />
-                ) : (
-                  'You do not have any active sale at this moment'
-                )}
-              </div>,
-              <div key="activeEscrowsTable">
-                {isLoading ? (
-                  <LoadingContainer />
-                ) : activeEscrows?.in?.data?.length > 0 || activeEscrows?.out?.data?.length > 0 ? (
-                  <>
-                    {activeEscrows?.in?.data?.length > 0 && (
-                      <div style={{ marginBottom: 5 }}>
-                        Received escrows
-                        <Table columns={activeEscrows.in.columns} rows={FilteredActiveEscrowsIn} />
-                      </div>
-                    )}
-                    {activeEscrows?.out?.data?.length > 0 && (
-                      <>
-                        Sent escrows
-                        <Table
-                          columns={activeEscrows.out.columns}
-                          rows={FilteredActiveEscrowsOut}
-                        />
-                      </>
-                    )}
-                  </>
-                ) : (
-                  'You do not have any active escrow at this moment'
-                )}
-              </div>,
             ]}
             onLogOut={handleLogOut}
             onConnect={open}
