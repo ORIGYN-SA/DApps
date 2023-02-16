@@ -1,5 +1,5 @@
 {
-  "name": "@dapp/app-wallet",
+  "name": "@dapp/app-vault",
   "version": "0.1.0",
   "scripts": {
     "build": "webpack",

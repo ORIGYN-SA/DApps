@@ -63,15 +63,13 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
     const balances = Object.keys(activeTokens).map(async (k) => {
       const val = await getBalanceByAccount(
         false,
-        r.ok.deposit_info.account_id_text,
+        r?.ok?.deposit_info?.account_id_text || '',
         activeTokens[k],
       );
       return { [k]: val };
     });
 
     Promise.all(Object.values(balances)).then((values) => {
-      console.log(values);
-
       const b = values.reduce(
         (obj, item) => Object.assign(obj, { [Object.keys(item)[0]]: Object.values(item)[0] }),
         {},
@@ -82,13 +80,15 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
   };
 
   useEffect(() => {
-    getBalances();
-  }, [open]);
+    if (actor) {
+      getBalances();
+    }
+  }, [open, actor]);
 
   const parseDecimals = (data) => {
-   const res = parseFloat((parseInt(data) * 1e-8).toString()).toFixed(2)
-   return res
-  }
+    const res = parseFloat((parseInt(data) * 1e-8).toString()).toFixed(2);
+    return res;
+  };
 
   return (
     <div>
@@ -103,7 +103,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
           ) : (
             <>
               {Object.keys(activeTokens).map((k) => {
-                console.log(k, tokenBalances[k]?.value);
                 return (
                   <div key={k}>
                     <Flex flexFlow="row" justify="space-around">
