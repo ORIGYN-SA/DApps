@@ -96,9 +96,10 @@ export const NFTPage = () => {
   // };
 
   const params = useParams();
-  const currentOpenAuction = saleNft?.current_sale?.find((sale) =>
-    sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-  );
+
+  const currentOpenAuction =
+    saleNft?.current_sale[0] ||
+    saleNft?.current_sale?.find((sale) => sale?.sale_type?.auction?.status?.hasOwnProperty('open'));
 
   const mapCustomProperties = (customProperties) => {
     if (!customProperties) return [];
@@ -309,6 +310,7 @@ export const NFTPage = () => {
                       <br />
                       <HR />
                       <Flex fullWidth justify="space-between" align="center">
+                        {console.log('SALE', currentOpenAuction)}
                         {currentOpenAuction ? (
                           <>
                             <Flex flexFlow="column">
@@ -404,16 +406,30 @@ export const NFTPage = () => {
                                   Buy Now
                                 </Button>
                               ))}
+
+
                             {principal == verifyOwner ? (
-                              BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
+                              Number(currentOpenAuction?.sale_type?.auction?.current_bid_amount) ==
+                                0 ||
+                              (currentOpenAuction?.sale_type?.auction?.status?.hasOwnProperty(
+                                'not_started'
+                              )) ? (
+                                <Button btnType="accent" onClick={handleClickOpenEsc}>
+                                  Cancel Sale
+                                </Button>
+                              ) : 
+                              
+                              (BigInt(Number(nftEndSale || 9 * 1e30)) < currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
                               ) : (
-                                <Button btnType="outlined" onClick={handleClickOpenEsc}>
+                                <Button disabled btnType="outlined" >
                                   Finish Sale
                                 </Button>
-                              )
+                              ))
+
+                              
                             ) : BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
                               <Button btnType="outlined" onClick={() => handleOpen('bid')}>
                                 Place Bid
@@ -423,6 +439,8 @@ export const NFTPage = () => {
                                 Place Bid
                               </Button>
                             )}
+
+
                           </>
                         ) : principal == verifyOwner ? (
                           <Button btnType="accent" onClick={handleClickOpen}>
