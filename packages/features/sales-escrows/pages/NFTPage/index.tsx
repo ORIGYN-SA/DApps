@@ -192,7 +192,6 @@ export const NFTPage = () => {
       .nft_origyn(params.nft_id)
       .then((r: any) => {
         setIsLoading(false);
-        console.log(r)
 
         if ('err' in r) throw new Error(Object.keys(r.err)[0]);
 
@@ -332,48 +331,48 @@ export const NFTPage = () => {
                             </Flex>
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve
                               ?.length > 0 && (
-                                <Flex flexFlow="column">
-                                  <span>Reserve Price</span>
-                                  <strong>
-                                    <TokenIcon
-                                      symbol={
-                                        currentOpenAuction?.sale_type?.auction?.config?.auction?.token
-                                          ?.ic?.symbol
-                                      }
-                                    />
-                                    {parseFloat(
-                                      (
-                                        parseInt(
-                                          currentOpenAuction?.sale_type?.auction?.config?.auction
-                                            ?.reserve[0],
-                                        ) * 1e-8
-                                      ).toString(),
-                                    ).toFixed(2)}
-                                  </strong>
-                                </Flex>
-                              )}
+                              <Flex flexFlow="column">
+                                <span>Reserve Price</span>
+                                <strong>
+                                  <TokenIcon
+                                    symbol={
+                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                        ?.ic?.symbol
+                                    }
+                                  />
+                                  {parseFloat(
+                                    (
+                                      parseInt(
+                                        currentOpenAuction?.sale_type?.auction?.config?.auction
+                                          ?.reserve[0],
+                                      ) * 1e-8
+                                    ).toString(),
+                                  ).toFixed(2)}
+                                </strong>
+                              </Flex>
+                            )}
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 && (
-                                <Flex flexFlow="column">
-                                  <span>Buy Now</span>
-                                  <strong>
-                                    <TokenIcon
-                                      symbol={
-                                        currentOpenAuction?.sale_type?.auction?.config?.auction?.token
-                                          ?.ic?.symbol
-                                      }
-                                    />
-                                    {parseFloat(
-                                      (
-                                        parseInt(
-                                          currentOpenAuction?.sale_type?.auction?.config?.auction
-                                            ?.buy_now[0],
-                                        ) * 1e-8
-                                      ).toString(),
-                                    ).toFixed(2)}
-                                  </strong>
-                                </Flex>
-                              )}
+                              <Flex flexFlow="column">
+                                <span>Buy Now</span>
+                                <strong>
+                                  <TokenIcon
+                                    symbol={
+                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                        ?.ic?.symbol
+                                    }
+                                  />
+                                  {parseFloat(
+                                    (
+                                      parseInt(
+                                        currentOpenAuction?.sale_type?.auction?.config?.auction
+                                          ?.buy_now[0],
+                                      ) * 1e-8
+                                    ).toString(),
+                                  ).toFixed(2)}
+                                </strong>
+                              </Flex>
+                            )}
                           </>
                         ) : (
                           'Not on sale'

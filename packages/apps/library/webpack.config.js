@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'library',
-  openPage: '-/mludz-biaaa-aaaal-qbhwa-cai/-/brainstem-hippocampus-diencephalon/-/library',
+  openPage: '-/bmdev/-/bm-1/-/library',
 };
 
 module.exports = (env, argv) => {

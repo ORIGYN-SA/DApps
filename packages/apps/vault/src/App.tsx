@@ -5,7 +5,7 @@ import { Layout } from '@dapp/features-components';
 import { NFTPage } from '@dapp/features-sales-escrows';
 import { SiteProvider } from '@dapp/features-theme';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
-import Wallet from './pages/Wallet';
+import VaultPage from './pages/Vault';
 import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
 import { VaultProvider } from './components/context';
 
@@ -19,7 +19,7 @@ const App = () => (
               <VaultProvider>
                 <Layout>
                   <Routes>
-                    <Route path="/" element={<Wallet />} />
+                    <Route path="/" element={<VaultPage />} />
                     <Route path="/:nft_id" element={<NFTPage />} />
                   </Routes>
                 </Layout>

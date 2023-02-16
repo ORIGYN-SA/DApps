@@ -12,7 +12,7 @@ import {
   SecondaryNav,
   ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui';
-import Filter from '../../../../vault/src/pages/Wallet/Filter';
+import Filter from '../../../../vault/src/pages/Vault/Filter';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { Link } from 'react-router-dom';
 import { useDialog } from '@connect2ic/react';

@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'ledger',
-  openPage: '-/mludz-biaaa-aaaal-qbhwa-cai/-/brainstem-hippocampus-diencephalon/-/ledger',
+  openPage: '-/bmdev/-/bm-1/-/ledger',
 };
 
 module.exports = (env, argv) => {

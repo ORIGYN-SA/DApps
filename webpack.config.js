@@ -118,8 +118,6 @@ module.exports = (env, argv, dAppConfig) => ({
     watchContentBase: true,
     open: true,
     disableHostCheck: true,
-    openPage: dAppConfig?.openPage
-      ? dAppConfig.openPage
-      : '-/mludz-biaaa-aaaal-qbhwa-cai/-/brainstem-hippocampus-diencephalon/-/',
+    openPage: dAppConfig?.openPage ? dAppConfig.openPage : '-/bmdev/-/bm-1/-/',
   },
 });

@@ -70,8 +70,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
     });
 
     Promise.all(Object.values(balances)).then((values) => {
-      console.log(values);
-
       const b = values.reduce(
         (obj, item) => Object.assign(obj, { [Object.keys(item)[0]]: Object.values(item)[0] }),
         {},
@@ -105,7 +103,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
           ) : (
             <>
               {Object.keys(activeTokens).map((k) => {
-                console.log(k, tokenBalances[k]?.value);
                 return (
                   <div key={k}>
                     <Flex flexFlow="row" justify="space-around">

@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'vault',
-  openPage: '-/mludz-biaaa-aaaal-qbhwa-cai/-/brainstem-hippocampus-diencephalon/-/vault',
+  openPage: '-/bmdev/-/bm-1/-/vault',
 };
 
 module.exports = (env, argv) => {

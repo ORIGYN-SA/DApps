@@ -11,8 +11,8 @@ const VaultContext = createContext<{ state: VaultState; dispatch: Dispatch } | u
 
 const reducer = (state: VaultState, action: VaultAction): VaultState => {
   switch (action.type) {
-    case 'totalItems':
-      return { ...state, totalItems: action.payload };
+    case 'ownedItems':
+      return { ...state, ownedItems: action.payload };
     case 'collectionPreview':
       return { ...state, collectionPreview: action.payload };
     case 'originatorPrincipal':
@@ -27,16 +27,16 @@ const reducer = (state: VaultState, action: VaultAction): VaultState => {
       return { ...state, sort: action.payload };
     case 'filteredOdcData':
       return { ...state, filteredOdcData: action.payload };
-    case 'activeEscrows':
-      return { ...state, activeEscrows: action.payload };
-    case 'outEscrows':
-      return { ...state, outEscrows: action.payload };
+    case 'escrows':
+      return { ...state, escrows: action.payload };
+    case 'offers':
+      return { ...state, offers: action.payload };
   }
 };
 
 const VaultProvider = ({ children }: VaultProviderProps) => {
   const [state, dispatch] = useReducer(reducer, {
-    totalItems: 0,
+    ownedItems: 0,
     collectionPreview: '',
     originatorPrincipal: '',
     collectionData: {},
@@ -44,8 +44,8 @@ const VaultProvider = ({ children }: VaultProviderProps) => {
     filter: '',
     sort: '',
     filteredOdcData: [],
-    activeEscrows: [],
-    outEscrows: [],
+    escrows: [],
+    offers: [],
   });
 
   return <VaultContext.Provider value={{ state, dispatch }}>{children}</VaultContext.Provider>;

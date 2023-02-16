@@ -16,7 +16,6 @@ export interface OdcData {
 }
 
 export type VaultState = {
-  totalItems: number | undefined;
   collectionPreview: string | undefined;
   originatorPrincipal: string | undefined;
   collectionData: any | undefined;
@@ -24,12 +23,13 @@ export type VaultState = {
   filter: string | undefined;
   sort: string | undefined;
   filteredOdcData: OdcData[] | undefined;
-  activeEscrows: any[] | undefined;
-  outEscrows: any[] | undefined;
+  escrows: any[] | undefined;
+  offers: any[] | undefined;
+  ownedItems: number;
 };
 
 export type VaultAction =
-  | { type: 'totalItems'; payload: number }
+  | { type: 'ownedItems'; payload: number }
   | { type: 'collectionPreview'; payload: string }
   | { type: 'originatorPrincipal'; payload: string }
   | { type: 'collectionData'; payload: {} }
@@ -37,5 +37,5 @@ export type VaultAction =
   | { type: 'filter'; payload: string }
   | { type: 'sort'; payload: string }
   | { type: 'filteredOdcData'; payload: OdcData[] }
-  | { type: 'activeEscrows'; payload: any[] }
-  | { type: 'outEscrows'; payload: any[] };
+  | { type: 'escrows'; payload: any[] }
+  | { type: 'offers'; payload: any[] };
