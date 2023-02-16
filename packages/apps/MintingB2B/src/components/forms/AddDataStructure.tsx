@@ -72,7 +72,7 @@ export const AddDataStructure = ({ handleAdd }) => {
         <div>
           <p></p>
           <Flex>
-            <Button type='button' onClick={addDataField} iconButton>
+            <Button type='button' onClick={addDataField} iconButton disabled={!name}>
               <Icons.CloseIcon />
             </Button>
           </Flex>

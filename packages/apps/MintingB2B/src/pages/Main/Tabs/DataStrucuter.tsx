@@ -209,13 +209,12 @@ export const DataStructure = ({ isLoading }: Props) => {
                       onChange={(e) => setName(e.target.value)}
                     />
                     <Flex>
-                      <Button onClick={handleCreateDataStructure}>Create</Button>
+                      <Button disabled={!name} onClick={handleCreateDataStructure}>Create</Button>
                     </Flex>
                   </div>
                 </CustomGrid>
               ) : (
                 <>
-
                   <Container padding="24px">
                     <Flex flexFlow="row" justify="space-between">
                       <div>

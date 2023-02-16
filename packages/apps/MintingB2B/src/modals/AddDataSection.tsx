@@ -51,7 +51,7 @@ const AddDataSection = ({ handleAdd, handleEdit, editData,  isOpened, handleClos
             onChange={(e) => setSubTitle(e.target.value)}
           />
           <Flex flexFlow="row">
-            <Button btnType="filled" type="button" onClick={addDataField}>
+            <Button disabled={!title} btnType="filled" type="button" onClick={addDataField}>
               Submit
             </Button>
           </Flex>
