@@ -118,6 +118,19 @@ export const ConnectQRModal = (props) => {
     console.log(data);
   };
 
+  const handleConnectQR = async () => {
+    const response = await fetch(`https://development.canister.origyn.ch/canister/v0/token/${nft_id}`, {
+      method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        'x-access-token': loggedIn,
+      },
+    });
+    console.log(response);
+    if (response.status === 200) {
+     // location.reload();
+    }
+  }
+
   return (
     <div>
       <Modal isOpened={isOpen} closeModal={() => onClose(false)} size="md">
@@ -147,7 +160,8 @@ export const ConnectQRModal = (props) => {
               </>
             ) : (
               <>
-                <Button onClick={generateQR} btnType="filled" style={{ width: "100%" }}>
+                <Button onClick={handleConnectQR}>Connect QR</Button>
+                {/* <Button onClick={generateQR} btnType="filled" style={{ width: "100%" }}>
                   Generate QR
                 </Button>
                 <br />
@@ -156,7 +170,7 @@ export const ConnectQRModal = (props) => {
                   value={linkCode}
                   onChange={(e) => setLinkCode(e.target.value)}
                 />
-                <Button onClick={handleLink}>Link QR</Button>
+                <Button onClick={handleLink}>Link QR</Button> */}
               </>
             )
           }
