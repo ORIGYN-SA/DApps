@@ -25,7 +25,7 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
         label: label,
         type: inputType.value === "images" || inputType.value === "files" ? "files" : type.value,
         options: selectOptions ? selectOptions.split(',') : undefined,
-        pointer,
+        pointer: inputType.value === "images" || inputType.value === "files" ? name : undefined,
       }, section?.value)
     } else {
       handleAdd({
@@ -34,7 +34,7 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
         label: label,
         type: inputType.value === "images" || inputType.value === "files" ? "files" : type.value,
         options: selectOptions ? selectOptions.split(',') : undefined,
-        pointer,
+        pointer: inputType.value === "images" || inputType.value === "files" ? name : undefined,
       }, section?.value);
     }
     closeModal();
@@ -109,17 +109,6 @@ const AddDataModal = ({ handleAdd, handleEdit, editData, openConfirmation, handl
                 ]}
                 selectedOption={type}
                 handleChange={setType}
-              />
-            )
-          }
-          {
-            (inputType.value === 'files' || inputType.value === 'images') && (
-              <TextInput
-                name="pointer"
-                type="text"
-                label="Pointer (use files-***)"
-                value={pointer}
-                onChange={(e) => setPointer(e.target.value)}
               />
             )
           }
