@@ -127,7 +127,7 @@ export const ConnectQRModal = (props) => {
     });
     console.log(response);
     if (response.status === 200) {
-     // location.reload();
+     location.reload();
     }
   }
 

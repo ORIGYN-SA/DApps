@@ -446,7 +446,7 @@ const Actions = ({handleEdit, handleDelete}) => {
   )
 }
 
-const ColumnsBlock = ({templateColumnObj, removeBlock, editBlock}) => {
+const ColumnsBlock = ({templateColumnObj, removeBlock, editBlock, selectedDataStructure}) => {
   return <TemplateBlockContainer padding="16px">
     <Flex fullWidth flexFlow="column">
       <h6>Columns Block</h6>
@@ -455,6 +455,7 @@ const ColumnsBlock = ({templateColumnObj, removeBlock, editBlock}) => {
           templateObject={templateColumnObj.content}
           removeBlock={removeBlock}
           editBlock={editBlock}
+          selectedDataStructure={selectedDataStructure}
         />
       </Grid>
     </Flex>
@@ -473,7 +474,7 @@ const MainPhotoBlock = (templateImageObj, removeBlock) => {
     />
   </TemplateBlockContainer>
 }
-const SectionBlock = ({templateSectionObj, removeBlock, editBlock}) => {
+const SectionBlock = ({templateSectionObj, removeBlock, editBlock, selectedDataStructure}) => {
   const [isOpened, setIsOpened] = useState(false);
   const [title, setTitle] = useState(templateSectionObj.title.en);
 
@@ -495,6 +496,7 @@ const SectionBlock = ({templateSectionObj, removeBlock, editBlock}) => {
         templateObject={templateSectionObj.content}
         removeBlock={removeBlock}
         editBlock={editBlock}
+        selectedDataStructure={selectedDataStructure}
       />
     </Flex>
     <Actions
@@ -521,7 +523,7 @@ const SectionBlock = ({templateSectionObj, removeBlock, editBlock}) => {
     </Modal>
   </TemplateBlockContainer>
 }
-const TextBlock = ({templateTextObj, removeBlock, editBlock}) => {
+const TextBlock = ({templateTextObj, removeBlock, editBlock, selectedDataStructure}) => {
   const [isOpened, setIsOpened] = useState(false);
   const [title, setTitle] = useState(templateTextObj.text.en);
 
@@ -562,7 +564,7 @@ const TextBlock = ({templateTextObj, removeBlock, editBlock}) => {
     </Modal>
   </TemplateBlockContainer>
 }
-const TitleBlock = ({templateTextObj, removeBlock, editBlock}) => {
+const TitleBlock = ({templateTextObj, removeBlock, editBlock, selectedDataStructure}) => {
   const [isOpened, setIsOpened] = useState(false);
   const [title, setTitle] = useState(templateTextObj.title.en);
 
@@ -604,7 +606,7 @@ const TitleBlock = ({templateTextObj, removeBlock, editBlock}) => {
   </TemplateBlockContainer>
 }
 
-const FieldBlock = ({templateFieldObj, removeBlock, editBlock}) => {
+const FieldBlock = ({templateFieldObj, removeBlock, editBlock, selectedDataStructure}) => {
   const [isOpened, setIsOpened] = useState(false);
   const [title, setTitle] = useState(templateFieldObj.title.en);
   const [selectedField, setSelectedField] = useState({value: templateFieldObj?.fields[0], label: templateFieldObj?.fields[0]});
@@ -614,9 +616,9 @@ const FieldBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures;
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
+    const f = ds[selectedDataStructure || [Object.keys(ds)[0]]]?.map(({name}) => name);
     setFields(f)
-  }, [])
+  }, [selectedDataStructure])
 
   const handleEdit = () => {
     const newBlock = {
@@ -669,7 +671,7 @@ const FieldBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   </TemplateBlockContainer>
 }
 
-const ImageBlock = ({templateFieldObj, removeBlock, editBlock}) => {
+const ImageBlock = ({templateFieldObj, removeBlock, editBlock, selectedDataStructure}) => {
   const [isOpened, setIsOpened] = useState(false);
   const [selectedField, setSelectedField] = useState({value: templateFieldObj?.field, label: templateFieldObj?.field});
   const [dataStructure, setDataStructure] = useState<any>();
@@ -678,9 +680,9 @@ const ImageBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures;
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
+    const f = ds[selectedDataStructure || [Object.keys(ds)[0]]]?.map(({name}) => name);
     setFields(f)
-  }, [])
+  }, [selectedDataStructure])
 
   const handleEdit = () => {
     const newBlock = {
@@ -720,7 +722,7 @@ const ImageBlock = ({templateFieldObj, removeBlock, editBlock}) => {
     </Modal>
   </TemplateBlockContainer>
 }
-const GalleryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
+const GalleryBlock = ({templateFieldObj, removeBlock, editBlock, selectedDataStructure}) => {
   const [isOpened, setIsOpened] = useState(false);
   const [selectedField, setSelectedField] = useState({value: templateFieldObj?.field, label: templateFieldObj?.field});
   const [dataStructure, setDataStructure] = useState<any>();
@@ -729,9 +731,9 @@ const GalleryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
+    const f = ds[selectedDataStructure || [Object.keys(ds)[0]]]?.map(({name}) => name);
     setFields(f)
-  }, [])
+  }, [selectedDataStructure])
 
   const handleEdit = () => {
     const newBlock = {
@@ -772,7 +774,7 @@ const GalleryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
     </Modal>
   </TemplateBlockContainer>
 }
-const AttachmentsBlock = ({templateFieldObj, removeBlock, editBlock}) => {
+const AttachmentsBlock = ({templateFieldObj, removeBlock, editBlock, selectedDataStructure}) => {
   const [isOpened, setIsOpened] = useState(false);
   const [selectedField, setSelectedField] = useState({value: templateFieldObj?.field, label: templateFieldObj?.field});
   const [dataStructure, setDataStructure] = useState<any>();
@@ -781,9 +783,9 @@ const AttachmentsBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
+    const f = ds[selectedDataStructure || Object.keys(ds)[0]]?.map(({name}) => name);
     setFields(f)
-  }, [])
+  }, [selectedDataStructure])
 
   const handleEdit = () => {
     const newBlock = {
@@ -824,7 +826,7 @@ const AttachmentsBlock = ({templateFieldObj, removeBlock, editBlock}) => {
     </Modal>
   </TemplateBlockContainer>
 }
-const HistoryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
+const HistoryBlock = ({templateFieldObj, removeBlock, editBlock, selectedDataStructure}) => {
   const [isOpened, setIsOpened] = useState(false);
   const [selectedField, setSelectedField] = useState({value: templateFieldObj?.field, label: templateFieldObj?.field});
   const [dataStructure, setDataStructure] = useState<any>();
@@ -833,9 +835,9 @@ const HistoryBlock = ({templateFieldObj, removeBlock, editBlock}) => {
   useEffect(() => {
     const ds = JSON.parse(localStorage.getItem("dataStructure")) || dataStructures
     setDataStructure(ds);
-    const f = ds[Object.keys(ds)[0]]?.map(({name}) => name);
+    const f = ds[selectedDataStructure || Object.keys(ds)[0]]?.map(({name}) => name);
     setFields(f)
-  }, [])
+  }, [selectedDataStructure])
 
   const handleEdit = () => {
     const newBlock = {
@@ -887,7 +889,7 @@ const SeparatorBlock = ({templateSeparatorObj, removeBlock}) => {
   </TemplateBlockContainer>
 }
 
-const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
+const RenderTemplateBlock = ({templateObject, removeBlock, editBlock, selectedDataStructure}) => {
   return templateObject?.map((tempObj) => {
     switch (tempObj.type) {
       case 'columns':
@@ -895,6 +897,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
           templateColumnObj={tempObj}
           removeBlock={removeBlock}
           editBlock={editBlock}
+          selectedDataStructure={selectedDataStructure}
         />
       case 'elements':
         return <Flex flexFlow='column' gap={8}>
@@ -902,6 +905,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateObject={tempObj.content}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </Flex>
       case 'mainPhoto':
@@ -914,6 +918,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateSectionObj={tempObj}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </>
       case 'text':
@@ -922,6 +927,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateTextObj={tempObj}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </>
       case 'title':
@@ -930,6 +936,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateTextObj={tempObj}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </>
       case 'field':
@@ -938,6 +945,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateFieldObj={tempObj}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </>
       case 'image':
@@ -946,6 +954,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateFieldObj={tempObj}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </>
       case 'gallery':
@@ -954,6 +963,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateFieldObj={tempObj}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </>
       case 'attachments':
@@ -962,6 +972,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateFieldObj={tempObj}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </>
       case 'history':
@@ -970,6 +981,7 @@ const RenderTemplateBlock = ({templateObject, removeBlock, editBlock}) => {
             templateFieldObj={tempObj}
             removeBlock={removeBlock}
             editBlock={editBlock}
+            selectedDataStructure={selectedDataStructure}
           />
         </>
       case 'separator':
@@ -1006,12 +1018,12 @@ export const Template = () => {
 
   const editBlock = (id, newObj) => {
     console.log(template);
-    // const tpmTemplate = template[selectedDataStructure];
-    // const t = updateById(tpmTemplate, id, newObj);
-    // const updatedTemplate = {...template, [selectedDataStructure]: t};
-    // console.log(updatedTemplate);
-    //setTemplate(updatedTemplate);
-    //localStorage.setItem('template', JSON.stringify(updatedTemplate))
+    const tpmTemplate = template[selectedDataStructure];
+    const t = updateById(tpmTemplate, id, newObj);
+    const updatedTemplate = {...template, [selectedDataStructure]: t};
+    console.log(updatedTemplate);
+    setTemplate(updatedTemplate);
+    localStorage.setItem('template', JSON.stringify(updatedTemplate))
   }
 
   useEffect(() => {
@@ -1073,6 +1085,7 @@ export const Template = () => {
                   {console.log(template[selectedDataStructure], selectedDataStructure, template)}
                   <RenderTemplateBlock
                     templateObject={template[selectedDataStructure]}
+                    selectedDataStructure={selectedDataStructure}
                     removeBlock={removeBlock}
                     editBlock={editBlock}
                   />
