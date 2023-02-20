@@ -8,7 +8,6 @@ import { AppData, OdcData } from '../../components/context/types';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { copyToClipboard } from '@dapp/utils';
-import { ConfirmSalesActionModal } from '@dapp/features-sales-escrows';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
@@ -209,11 +208,8 @@ const VaultPage = () => {
   const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
   const [canisterId, setCanisterId] = React.useState('');
-  const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
-  const [selectedEscrow, setSelectedEscrow] = useState<any>();
   const [inputText, setInputText] = useState('');
-  const [dialogAction, setDialogAction] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [openTrx, setOpenTrx] = useState(false);
   const [showManageEscrowsButton, setShowManageEscrowsButton] = useState(false);
@@ -305,7 +301,6 @@ const VaultPage = () => {
   const handleClose = async (dataChanged = false) => {
     setEscrowsModalOpen(false);
     setOpenTrx(false);
-    setOpenConfirmation(false);
     if (dataChanged) {
       fetchData();
     }
@@ -725,13 +720,6 @@ const VaultPage = () => {
             onLogOut={handleLogOut}
             onConnect={open}
             principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
-          />
-          <ConfirmSalesActionModal
-            open={openConfirmation}
-            handleClose={handleClose}
-            // currentToken={selectdNFT}
-            action={dialogAction}
-            escrow={selectedEscrow}
           />
           <ManageDepositsModal
             open={openManageDeposit}
