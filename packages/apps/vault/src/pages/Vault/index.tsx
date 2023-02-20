@@ -350,7 +350,6 @@ const VaultPage = () => {
       dispatch({ type: 'originatorPrincipal', payload: originatorPrincipal });
 
       const vaultBalanceInfo = await actor?.balance_of_nft_origyn({ principal });
-      console.log('response', vaultBalanceInfo);
       if (vaultBalanceInfo.err) {
         throw new Error(Object.keys(vaultBalanceInfo.err)[0]);
       }
@@ -358,7 +357,6 @@ const VaultPage = () => {
       // get list of digital certificates owned by the current user
       const ownedTokenIds = vaultBalanceInfo?.ok?.nfts || [];
       const odcDataRaw = await actor?.nft_batch_origyn(ownedTokenIds);
-      console.log('odcDataRaw', odcDataRaw);
       if (odcDataRaw.err) {
         console.log(odcDataRaw.err);
         throw new Error('Unable to retrieve metadata of tokens.');
