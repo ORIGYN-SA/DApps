@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, TextInput, CheckboxInput, Button, Grid, Select } from '@origyn-sa/origyn-art-ui';
+import {
+  Flex,
+  TextInput,
+  CheckboxInput,
+  Grid,
+  Select,
+  TabContent,
+  Container,
+} from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyBytes, ArrayType } from '../../../types';
-import { DropzoneArea } from 'mui-file-dropzone';
 import { convertNat8ArrayToCandyBytes } from './utils';
 import { VALIDATION_ERRORS, CREATE_MODE, EDIT_MODE } from '../../../constants';
+import { FileInput } from './inputs/fileInput';
 
 export const BytesForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyBytes>();
   const [arrayType, setArrayType] = useState<ArrayType>('thawed');
-  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [formValue, setFormValue] = useState<string>('');
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
@@ -62,31 +69,6 @@ export const BytesForm = (editor: CandyClassEditor) => {
     }
   };
 
-  const handleFileSelected = (files) => {
-    setSelectedFile(files[0]);
-  };
-
-  const saveProperty = () => {
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(selectedFile);
-      reader.onloadend = function () {
-        const byteArray = new Uint8Array(reader.result as ArrayBuffer);
-        console.log(byteArray);
-        const nat8Array = Array.from(byteArray);
-        const candyBytes = convertNat8ArrayToCandyBytes(nat8Array, arrayType);
-        setValue(candyBytes);
-
-        editor.addPropertyToCandyClass({
-          name: name,
-          value: candyBytes,
-          immutable: immutable,
-          id: Math.random().toString(),
-        });
-      };
-    }
-  };
-
   useEffect(() => {
     if (editor.editorMode === EDIT_MODE) {
       const candyBytes = editor.property.value as CandyBytes;
@@ -100,38 +82,33 @@ export const BytesForm = (editor: CandyClassEditor) => {
   return (
     <>
       {editor.editorMode === CREATE_MODE ? (
-        <>
-          <Flex>
-            <TextInput label="Name" onChange={onNameChanged} />
-          </Flex>
-          <Flex>
-            <Select
-              inputSize="medium"
-              label="Array Type"
-              handleChange={(opt) => {
-                onTypeChanged(opt.value);
-              }}
-              selectedOption={{ value: arrayType, label: arrayType }}
-              options={[
-                { value: 'thawed', label: 'thawed' },
-                { value: 'frozen', label: 'frozen' },
-              ]}
-            />
-          </Flex>
-          <Flex>
-            <DropzoneArea filesLimit={1} maxFileSize={16000} onChange={handleFileSelected} />
-          </Flex>
-          <Flex>
-            <Flex>
-              <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
-            </Flex>
-          </Flex>
-          <Flex>
-            <Button size="small" btnType="filled" onClick={saveProperty} disabled={isInvalid}>
-              Save Property
-            </Button>
-          </Flex>
-        </>
+        <Container size="full">
+          <TabContent
+            tabs={[
+              {
+                title: 'Base64',
+                id: 'Base64',
+              },
+              {
+                title: 'Hexadecimal',
+                id: 'Hexadecimal',
+              },
+              {
+                title: 'File upload',
+                id: 'File upload',
+              },
+            ]}
+            fullWidth={true}
+            justify="flex-start"
+            content={[
+              <div>base64</div>,
+              <div>Hex</div>,
+              <Flex flexFlow="column" gap={16}>
+                <FileInput addPropertyToCandyClass={editor.addPropertyToCandyClass} />
+              </Flex>,
+            ]}
+          />
+        </Container>
       ) : (
         <>
           {editor.property.immutable ? (

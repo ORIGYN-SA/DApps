@@ -103,4 +103,8 @@ export interface CandyClassEditor {
   propertyIndex?: number;
 }
 
+export interface BytesFormInput {
+  addPropertyToCandyClass?: (property: PropertyWithId) => void;
+}
+
 export type ArrayType = "thawed" | "frozen";
