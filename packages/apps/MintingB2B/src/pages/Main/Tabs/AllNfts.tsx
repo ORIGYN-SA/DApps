@@ -1,28 +1,48 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Pagination, Container, Flex, Card, Grid, HR, Button, CustomTable, Banner } from '@origyn-sa/origyn-art-ui';
 import { LoadingContainer } from '@dapp/features-components';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { NftsPagination } from '../types';
 
-const tableCells = [
-  {
-    id: 'tokenId',
-    label: 'Token ID',
-  },
-  {
-    id: 'type',
-    label: 'App Type',
-  },
-  {
-    id: 'status',
-    label: 'Status',
-  },
-  {
-    id: 'actions',
-    label: 'Actions',
-  },
-];
+const PaginationWrap = styled.div`
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+     > div > div {
+      width: auto;
+    }
+  }
+
+  p {
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 16px;
+    letter-spacing: -0.1px;
+    color: #5F5F5F;
+  }
+
+  button {
+    height: 40px;
+    width: 40px;
+  }
+
+  .pageCard {
+    border-radius: 50%;
+
+    &:hover {
+      background: #E3E3E3;
+    }
+  }
+  .active {
+    background: #E3E3E3;
+  }
+`
+
 export const AllNfts = ({ isLoading, nfts, pagination, onPageChange }: Props) => {
   const navigate = useNavigate();
 
@@ -51,7 +71,7 @@ export const AllNfts = ({ isLoading, nfts, pagination, onPageChange }: Props) =>
             {nfts.map((nft, index) => {
               console.log(nft);
                 return (
-                  <Banner onClick={() => navigate(`/${nft.tokenId}`)} style={{width: "100%" }} padding="16px" bgColor={index % 2 ? "BORDER" : "BACKGROUND"}>
+                  <Banner onClick={() => navigate(`/${nft.tokenId}`)} style={{width: "100%" }} padding="16px" bgColor={index % 2 ?  "BACKGROUND" : "BORDER"}>
                     <Grid columns={3} style={{width: "100%"}} gap={12}>
                       <Flex flexFlow="column">
                         <div><b>Token ID</b></div>
@@ -65,14 +85,12 @@ export const AllNfts = ({ isLoading, nfts, pagination, onPageChange }: Props) =>
               })}
           </Flex>
           <br />
-          <Grid columns={3}>
-            <div />
-            <Pagination
-              pageCount={Math.ceil(pagination?.total / pagination?.limit)}
-              onPageChange={onPageChange}
-            />
-            <div />
-          </Grid>
+            <PaginationWrap>
+              <Pagination
+                pageCount={Math.ceil(pagination?.total / pagination?.limit)}
+                onPageChange={onPageChange}
+              />
+            </PaginationWrap>
           </>
         )}
       </Container>
