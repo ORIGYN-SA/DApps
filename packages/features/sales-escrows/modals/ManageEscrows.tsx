@@ -175,18 +175,19 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                   key={`offers-${index}`}
                   flexFlow="row"
                   justify="space-around"
-                  style="margin-botom: 10px"
+                  align="flex-start"
+                  gap={8}
                 >
                   <img
                     style={{ width: '42px', height: '42px', borderRadius: '12px' }}
                     src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
                     alt=""
                   />
-                  <Flex flexFlow="column">
+                  <Flex flexFlow="column" gap={8}>
                     <span>{esc.token_id}</span>
                     <span style={{ color: 'grey' }}>{collection.name}</span>
                   </Flex>
-                  <Flex flexFlow="column">
+                  <Flex flexFlow="column" gap={8}>
                     <span style={{ color: 'grey' }}>Amount</span>
                     <span>{`${Number(esc.amount) * 0.00000001}${' '}${esc.token.ic.symbol}`}</span>
                   </Flex>
