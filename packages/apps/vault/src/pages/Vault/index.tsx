@@ -216,7 +216,7 @@ const VaultPage = () => {
   const [dialogAction, setDialogAction] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [openTrx, setOpenTrx] = useState(false);
-  const [showManageEscrowButton, setShowManageEscrowButton] = useState(false);
+  const [showManageEscrowsButton, setShowManageEscrowsButton] = useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
   const { activeTokens, time } = useTokensContext();
   const { open } = useDialog();
@@ -368,7 +368,7 @@ const VaultPage = () => {
       dispatch({ type: 'filteredOdcData', payload: parsedOdcData });
       dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
 
-      setShowManageEscrowButton(
+      setShowManageEscrowsButton(
         vaultBalanceInfo?.ok?.escrow?.length > 0 || vaultBalanceInfo?.ok?.offers?.length > 0,
       );
     } catch (err) {
@@ -494,7 +494,7 @@ const VaultPage = () => {
                         <WalletTokens>Manage Tokens</WalletTokens>
 
                         <h6>Active Transactions</h6>
-                        {showManageEscrowButton ? (
+                        {showManageEscrowsButton ? (
                           <Button btnType="filled" onClick={() => setEscrowsModalOpen(true)}>
                             Manage Escrows
                           </Button>
