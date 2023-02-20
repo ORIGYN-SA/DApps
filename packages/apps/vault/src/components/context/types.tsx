@@ -23,8 +23,6 @@ export type VaultState = {
   filter: string | undefined;
   sort: string | undefined;
   filteredOdcData: OdcData[] | undefined;
-  escrows: any[] | undefined;
-  offers: any[] | undefined;
   ownedItems: number;
 };
 
@@ -36,6 +34,4 @@ export type VaultAction =
   | { type: 'odcData'; payload: OdcData[] }
   | { type: 'filter'; payload: string }
   | { type: 'sort'; payload: string }
-  | { type: 'filteredOdcData'; payload: OdcData[] }
-  | { type: 'escrows'; payload: any[] }
-  | { type: 'offers'; payload: any[] };
+  | { type: 'filteredOdcData'; payload: OdcData[] };

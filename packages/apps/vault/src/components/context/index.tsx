@@ -27,10 +27,6 @@ const reducer = (state: VaultState, action: VaultAction): VaultState => {
       return { ...state, sort: action.payload };
     case 'filteredOdcData':
       return { ...state, filteredOdcData: action.payload };
-    case 'escrows':
-      return { ...state, escrows: action.payload };
-    case 'offers':
-      return { ...state, offers: action.payload };
   }
 };
 
@@ -44,8 +40,6 @@ const VaultProvider = ({ children }: VaultProviderProps) => {
     filter: '',
     sort: '',
     filteredOdcData: [],
-    escrows: [],
-    offers: [],
   });
 
   return <VaultContext.Provider value={{ state, dispatch }}>{children}</VaultContext.Provider>;

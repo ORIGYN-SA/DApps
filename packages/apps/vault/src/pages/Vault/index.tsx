@@ -8,7 +8,6 @@ import { AppData, OdcData } from '../../components/context/types';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { copyToClipboard } from '@dapp/utils';
-import { ConfirmSalesActionModal } from '@dapp/features-sales-escrows';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
@@ -209,13 +208,11 @@ const VaultPage = () => {
   const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
   const [canisterId, setCanisterId] = React.useState('');
-  const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
-  const [selectedEscrow, setSelectedEscrow] = useState<any>();
   const [inputText, setInputText] = useState('');
-  const [dialogAction, setDialogAction] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [openTrx, setOpenTrx] = useState(false);
+  const [showManageEscrowsButton, setShowManageEscrowsButton] = useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
   const { activeTokens, time } = useTokensContext();
   const { open } = useDialog();
@@ -229,8 +226,6 @@ const VaultPage = () => {
     filter,
     sort,
     filteredOdcData,
-    escrows,
-    offers,
   } = state;
 
   const getProperty = (properties: any, propertyName: string) => {
@@ -306,22 +301,9 @@ const VaultPage = () => {
   const handleClose = async (dataChanged = false) => {
     setEscrowsModalOpen(false);
     setOpenTrx(false);
-    setOpenConfirmation(false);
     if (dataChanged) {
       fetchData();
     }
-  };
-
-  const withdrawEscrow = async (escrow) => {
-    setOpenConfirmation(true);
-    setSelectedEscrow(escrow);
-    setDialogAction('withdraw');
-  };
-
-  const rejectEscrow = async (escrow) => {
-    setOpenConfirmation(true);
-    setSelectedEscrow(escrow);
-    setDialogAction('reject');
   };
 
   const fetchData = async () => {
@@ -362,8 +344,14 @@ const VaultPage = () => {
       const originatorPrincipal = getPrincipalValue(metadataClass, 'com.origyn.originator');
       dispatch({ type: 'originatorPrincipal', payload: originatorPrincipal });
 
-      const tokenIds = collMeta?.token_ids?.[0] || [];
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+      const vaultBalanceInfo = await actor?.balance_of_nft_origyn({ principal });
+      if (vaultBalanceInfo.err) {
+        throw new Error(Object.keys(vaultBalanceInfo.err)[0]);
+      }
+
+      // get list of digital certificates owned by the current user
+      const ownedTokenIds = vaultBalanceInfo?.ok?.nfts || [];
+      const odcDataRaw = await actor?.nft_batch_origyn(ownedTokenIds);
       if (odcDataRaw.err) {
         console.log(odcDataRaw.err);
         throw new Error('Unable to retrieve metadata of tokens.');
@@ -373,59 +361,11 @@ const VaultPage = () => {
       const parsedOdcData = parseOdcData(odcDataRaw);
       dispatch({ type: 'odcData', payload: parsedOdcData });
       dispatch({ type: 'filteredOdcData', payload: parsedOdcData });
+      dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
 
-      const response = await actor?.balance_of_nft_origyn({ principal });
-      if (response.err) {
-        throw new Error(Object.keys(response.err)[0]);
-      }
-
-      const escrows =
-        response?.ok?.escrow?.map((escrow: any, index: number) => {
-          const esc: any = {};
-          esc.token_id = escrow.token_id;
-          esc.actions = (
-            <Button onClick={() => withdrawEscrow(response?.ok?.escrow[index])} variant="contained">
-              Withdraw
-            </Button>
-          );
-          esc.symbol = (
-            <>
-              <TokenIcon symbol={activeTokens[escrow?.token?.ic?.symbol]?.icon} />
-              {escrow?.token?.ic?.symbol}
-            </>
-          );
-          esc.buyer = <p>{escrow.buyer.principal.toText().substring(0, 8)}...</p>;
-          esc.seller = <p>{escrow.seller.principal.toText().substring(0, 8)}...</p>;
-          esc.amount = parseFloat((parseInt(escrow.amount) * 1e-8).toString()).toFixed(9);
-          return esc;
-        }) || [];
-
-      // TODO: fix offer type
-      const offers =
-        response?.ok?.offers?.map((offer: any, index: number) => {
-          const esc: any = {};
-          esc.token_id = offer.token_id;
-          esc.actions = (
-            <Button onClick={() => rejectEscrow(response?.ok?.offers[index])} variant="contained">
-              Reject
-            </Button>
-          );
-          esc.symbol = (
-            <>
-              <TokenIcon symbol={activeTokens[offer?.token?.ic?.symbol]?.icon} />
-              {offer?.token?.ic?.symbol}
-            </>
-          );
-          esc.buyer = <p>{offer.buyer.principal.toText().substring(0, 8)}...</p>;
-          esc.seller = <p>{offer.seller.principal.toText().substring(0, 8)}...</p>;
-
-          esc.amount = parseFloat((parseInt(offer.amount) * 1e-8).toString()).toFixed(9);
-          return esc;
-        }) || [];
-
-      dispatch({ type: 'escrows', payload: escrows });
-      dispatch({ type: 'offers', payload: offers });
-      dispatch({ type: 'ownedItems', payload: response?.ok?.nfts?.length || 0 });
+      setShowManageEscrowsButton(
+        vaultBalanceInfo?.ok?.escrow?.length > 0 || vaultBalanceInfo?.ok?.offers?.length > 0,
+      );
     } catch (err) {
       console.error(err);
       enqueueSnackbar(err?.message || err, {
@@ -549,7 +489,7 @@ const VaultPage = () => {
                         <WalletTokens>Manage Tokens</WalletTokens>
 
                         <h6>Active Transactions</h6>
-                        {escrows.length > 0 || offers.length > 0 ? (
+                        {showManageEscrowsButton ? (
                           <Button btnType="filled" onClick={() => setEscrowsModalOpen(true)}>
                             Manage Escrows
                           </Button>
@@ -780,13 +720,6 @@ const VaultPage = () => {
             onLogOut={handleLogOut}
             onConnect={open}
             principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
-          />
-          <ConfirmSalesActionModal
-            open={openConfirmation}
-            handleClose={handleClose}
-            // currentToken={selectdNFT}
-            action={dialogAction}
-            escrow={selectedEscrow}
           />
           <ManageDepositsModal
             open={openManageDeposit}
