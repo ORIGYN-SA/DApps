@@ -375,7 +375,6 @@ const WalletPage = () => {
                           <Certificate
                             data={{
                               Name: nftData.name,
-                              'NFT Type': 'Digital Twin',
                               'Date Minted': new Date(normalData?.createdAt).toLocaleString(),
                               'Owner Principal ID': normalData?.targetOwnerPrincipalId || "Not minted yet"
                             }}
