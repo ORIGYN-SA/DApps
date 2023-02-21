@@ -275,7 +275,7 @@ const VaultPage = () => {
       )?.sale_type?.auction;
 
       const buyNow: number = Number(openAuction?.config?.auction?.buy_now[0] || 0) / 1e8;
-      const currentBid: number = Number(openAuction?.current_bid_amount || 0);
+      const currentBid: number = Number(openAuction?.current_bid_amount || 0) / 1e8;
       const token: string = openAuction?.config?.auction?.token?.ic?.symbol || '';
       const hasPreviewImage: boolean = !!(
         odc?.metadata?.Class?.find(({ name }) => name === 'preview_asset') ||
@@ -642,6 +642,7 @@ const VaultPage = () => {
                             columns={6}
                             gap={20}
                           >
+                            {console.log('nft data', filteredOdcData)}
                             {filteredOdcData.map((odc: OdcData) => {
                               return (
                                 <Link to={`/${odc?.odcID}`} key={odc?.odcID}>
