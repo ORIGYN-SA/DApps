@@ -201,10 +201,9 @@ const WalletPage = () => {
                             data={{
                               Name: nftData.name,
                               'NFT Type': 'Digital Twin',
-                              'Date Minted': '08/25/2022',
-                              'Owner Principal ID':
-                                'zevfd-yumga-hdmnw-uk7fw-qdetm-l7jk7-rbalg-mvgk4-wqh1u',
-                              'Canister ID': 'jwcfb-hyaaa-aaaaj-aac4q-cai',
+                              'Date Minted': normalData?.createdAt ? new Date(normalData?.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
+                              'Owner Principal ID': normalData?.targetOwnerPrincipalId,
+                              'Canister ID': canisterId,
                             }}
                           />
                         </Container>,
