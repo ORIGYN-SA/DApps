@@ -1,4 +1,5 @@
 import type { Principal } from '@dfinity/principal';
+import { ReactNode } from 'react';
 
 export interface CandyType { }
 
@@ -108,3 +109,19 @@ export interface BytesFormInput {
 }
 
 export type ArrayType = "thawed" | "frozen";
+
+export interface CopyToClipBoard {
+  stringToCopy: string;
+  buttonText: string;
+}
+
+export interface MenuListElements {
+  content: ListItem[];
+  children: ReactNode;
+}
+
+export interface ListItem {
+  listItemText: string;
+  listItemFunction: () => void;
+  listItemIcon?: JSX.Element;
+} 

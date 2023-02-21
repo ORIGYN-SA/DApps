@@ -37,4 +37,10 @@ export const VALIDATION_ERRORS: { [key: string]: string } = {
   float: 'The value must be a Float number',
   principal: 'The value must be a valid Principal',
   bytesArray: 'The value must be a valid Nat8 array',
+  base64: 'The value must be a valid Base64 string',
+  hexadecimal: 'The value must be a valid Hexadecimal string',
 };
+
+export const WARNING_MESSAGES: { [key: string]: string } = {
+  helpTextBytes: 'The Bytes candy type is stored as a small byte array (16 KB or less), intended for small binary data such as hashes. Large binary data such as images and videos can be added to the library.'
+}
