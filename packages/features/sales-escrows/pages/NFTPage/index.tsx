@@ -310,8 +310,8 @@ export const NFTPage = () => {
                       <br />
                       <HR />
                       <Flex fullWidth justify="space-between" align="center">
-                        {console.log('SALE', currentOpenAuction)}
-                        {currentOpenAuction ? (
+                        {currentOpenAuction && !currentOpenAuction?.sale_type?.auction?.status.hasOwnProperty('closed') ?
+                        (
                           <>
                             <Flex flexFlow="column">
                               <span>Current bid</span>
@@ -354,7 +354,7 @@ export const NFTPage = () => {
                               </Flex>
                             )}
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
-                              ?.length > 0 && (
+                              ?.length > 0  && (
                               <Flex flexFlow="column">
                                 <span>Buy Now</span>
                                 <strong>
@@ -376,7 +376,8 @@ export const NFTPage = () => {
                               </Flex>
                             )}
                           </>
-                        ) : (
+                        )
+                        : (
                           'Not on sale'
                         )}
                       </Flex>
@@ -392,7 +393,7 @@ export const NFTPage = () => {
                       )}
                       <br />
                       <Flex gap={8} flexFlow="column">
-                        {currentOpenAuction ? (
+                        {currentOpenAuction && !currentOpenAuction?.sale_type?.auction?.status.hasOwnProperty('closed') ? (
                           <>
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 &&

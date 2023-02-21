@@ -642,7 +642,6 @@ const VaultPage = () => {
                             columns={6}
                             gap={20}
                           >
-                            {console.log('nft data', filteredOdcData)}
                             {filteredOdcData.map((odc: OdcData) => {
                               return (
                                 <Link to={`/${odc?.odcID}`} key={odc?.odcID}>
