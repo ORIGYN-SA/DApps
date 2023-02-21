@@ -45,7 +45,7 @@ const WalletPage = () => {
 
     console.log(tokenId, b2bCanisterId);
     const responseNormalData = await fetch(
-      `https://development.canister.origyn.ch/canister/v0/nft-token/${tokenId}/`,
+      `https://development.canister.origyn.ch/canister/v0/nft-token/${nft_id}/`,
       {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
@@ -64,7 +64,7 @@ const WalletPage = () => {
     console.log(data, "data");
     setNormalData(data);
     const response = await fetch(
-      `https://development.canister.origyn.ch/canister/v0/nft-token/${tokenId}/metadata`,
+      `https://development.canister.origyn.ch/canister/v0/nft-token/${nft_id}/metadata`,
       {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin

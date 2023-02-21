@@ -124,12 +124,12 @@ const ClaimPage = () => {
                           </Container>
                           <Banner bgColor="NAVIGATION_BACKGROUND" padding="48px" style={{ height: 'calc(100vh - 80px)' }}>
                             <Flex flexFlow="column" gap={8} justify="center">
-                              <h4>Congratulations , Your recent diamond purchase entitles you to a digital certification of your diamond.</h4>
+                              <h4>Congratulations , Your claim your digital certificate.</h4>
                               <br />
                               <p>Click the claim button and follow the instructions on how to claim and secure your certificate</p>
                               <br />
                               <h2>
-                                <b>IGI Report #{normalData?.tokenId}</b>
+                                <b>Certificate #{normalData?.tokenId}</b>
                               </h2>
                               <br />
                               <Flex align="center" justify="space-between">
