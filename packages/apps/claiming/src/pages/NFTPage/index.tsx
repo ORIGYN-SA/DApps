@@ -31,18 +31,17 @@ const WalletPage = () => {
   );
   const [libraries, setLibraries] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
-  const [isSendOpen, setIsSendOpen] = useState(false);
+  const [canisterId, setCanisterId] = useState("");
   const [normalData, setNormalData] = useState<any>();
-  const navigate = useNavigate();
+  const {nft_id} = useParams();
   const handleLogOut = () => {
     setLoggedIn('');
   };
 
   const fetchData = async () => {
     const urlSearchParams = new URLSearchParams(window.location.href?.split('?')[1]);
-    const { tokenId, b2bCanisterId } = Object.fromEntries(urlSearchParams.entries());
+    const { tokenId, b2bCanisterId, canisterId } = Object.fromEntries(urlSearchParams.entries());
 
     console.log(tokenId, b2bCanisterId);
     const responseNormalData = await fetch(
@@ -58,6 +57,7 @@ const WalletPage = () => {
         },
       },
     );
+    setCanisterId(canisterId);
 
     const data = await responseNormalData.json();
 
@@ -130,7 +130,11 @@ const WalletPage = () => {
                 <Flex flexFlow="column" gap={8}>
                   <Container size="md" padding="50px">
                     <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                      <img style={{ borderRadius: '18px', width: '100%' }} src={libraries[0]?.library_file || libraries[0]?.source} />
+                      <img
+                        style={{ borderRadius: '18px', width: '100%' }}
+                        src={`https://${canisterId}.raw.ic0.app/-/${nft_id}/preview`}
+                        alt=''
+                        />
                       <Flex flexFlow="column" gap={8} justify="center">
                         <p className="secondary_color">Token ID</p>
                         <h2>
