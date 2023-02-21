@@ -200,7 +200,6 @@ const WalletPage = () => {
                           <Certificate
                             data={{
                               Name: nftData.name,
-                              'NFT Type': 'Digital Twin',
                               'Date Minted': normalData?.createdAt ? new Date(normalData?.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
                               'Owner Principal ID': normalData?.targetOwnerPrincipalId,
                               'Canister ID': canisterId,
