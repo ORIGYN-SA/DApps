@@ -78,8 +78,11 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   };
 
   useEffect(() => {
+  const intervalId = setInterval(() => {
     Balance();
     totalAmount();
+  }, 10000); 
+  return () => clearInterval(intervalId);
   }, [open]);
 
   return (

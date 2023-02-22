@@ -382,7 +382,10 @@ const VaultPage = () => {
 
   useEffect(() => {
     if (loggedIn) {
-      fetchData();
+      // const intervalId = setInterval(() => {
+        fetchData();
+      // }, 10000); 
+      // return () => clearInterval(intervalId);
     }
   }, [loggedIn, actor, principal]);
 
@@ -429,12 +432,6 @@ const VaultPage = () => {
 
     dispatch({ type: 'filteredOdcData', payload: filtered });
   }, [filter, sort, inputText, odcData]);
-
-  useEffect(() => {
-    if (loggedIn) {
-      fetchData();
-    }
-  }, [loggedIn]);
 
   return (
     <>

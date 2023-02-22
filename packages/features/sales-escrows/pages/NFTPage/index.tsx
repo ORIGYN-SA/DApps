@@ -244,6 +244,7 @@ export const NFTPage = () => {
       })
       .catch(console.log);
   };
+
   useEffect(() => {
     useRoute().then(({ canisterId }) => {
       setCanisterId(canisterId);
@@ -269,6 +270,10 @@ export const NFTPage = () => {
 
     if (actor) {
       fetchNft();
+      const intervalId = setInterval(() => {
+        fetchNft();
+      }, 10000); 
+      return () => clearInterval(intervalId);
     }
   }, [actor]);
 
