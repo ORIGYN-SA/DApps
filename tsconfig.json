@@ -27,7 +27,9 @@
       "@dapp/features-tokens-provider": ["./packages/features/tokens-provider/src/index.ts"],
       "@dapp/features-theme": ["./packages/features/theme/src/index.tsx"],
       "@dapp/utils": ["./packages/utils/src/index.ts"],
+      "@dapp/utils-binary-converters": ["./packages/utils/src/binaryConverters.ts"],
       "@dapp/common-candid": ["./packages/common/candid/src/index.ts"],
+      "@dapp/common-types": ["./packages/common/types/src/index.ts"],
       "@dapp/common-assets": ["./packages/common/assets/src/index.ts"],
       "@dapp/candy-editor": ["./packages/candy_editor/src/index.ts"]
     }
