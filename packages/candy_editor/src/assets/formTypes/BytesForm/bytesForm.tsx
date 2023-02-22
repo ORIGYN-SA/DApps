@@ -143,9 +143,14 @@ export const BytesForm = (editor: CandyClassEditor) => {
       ) : (
         <>
           <Grid column={1}>
-            <TextInput onChange={onNameChanged} value={name} />
+            <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <b>{editor.candyType}</b>
+            </span>
           </Grid>
           <Grid column={2}>
+            <TextInput onChange={onNameChanged} value={name} />
+          </Grid>
+          <Grid column={3}>
             <Flex flexFlow="column" gap={16}>
               <Flex>
                 <Select
@@ -203,19 +208,19 @@ export const BytesForm = (editor: CandyClassEditor) => {
               </Flex>
             </Flex>
           </Grid>
-          {editor.property.immutable ? (
+          <Grid column={4}>
+            {editor.property.immutable ? (
+              <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
+            ) : (
+              <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+            )}
+          </Grid>
+          {editor.property.immutable && (
             <>
-              <Grid column={3}>
-                <span>Property is immutable</span>
-              </Grid>
-              <Grid column={4}>
-                <span>Property is immutable</span>
-              </Grid>
-            </>
-          ) : (
-            <>
-              <Grid column={3}>
-                <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+              <Grid column={5}>
+                <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  Property is immutable
+                </span>
               </Grid>
             </>
           )}
