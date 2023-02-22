@@ -9,8 +9,8 @@ import {
   Container,
 } from '@origyn-sa/origyn-art-ui';
 import { DropzoneArea } from 'mui-file-dropzone';
-import { convertNat8ArrayToCandyBytes } from '../utils';
-import { BytesFormInput, CandyBytes, ArrayType } from '../../../../types';
+import { convertNat8ArrayToCandyBytes } from '../binaryConverters';
+import { BytesFormInput, ArrayType } from '../../../../types';
 
 export const FileInput = (input: BytesFormInput) => {
   const [name, setName] = useState<string>('');
@@ -40,7 +40,6 @@ export const FileInput = (input: BytesFormInput) => {
       reader.readAsArrayBuffer(selectedFile);
       reader.onloadend = function () {
         const byteArray = new Uint8Array(reader.result as ArrayBuffer);
-        console.log(byteArray);
         const nat8Array = Array.from(byteArray);
         const candyBytes = convertNat8ArrayToCandyBytes(nat8Array, arrayType);
 

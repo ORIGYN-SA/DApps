@@ -8,10 +8,9 @@ import {
   HR,
   Container,
 } from '@origyn-sa/origyn-art-ui';
-import { convertBase64ToCandyBytes } from '../utils';
+import { convertBase64ToCandyBytes } from '@dapp/utils-binary-converters';
 import { VALIDATION_ERRORS } from '../../../../constants';
-import { BytesFormInput, CandyBytes, ArrayType } from '../../../../types';
-import { invalid } from 'moment';
+import { BytesFormInput, CandyBytes, ArrayType } from '@dapp/common-types';
 
 export const Base64Input = (input: BytesFormInput) => {
   const [name, setName] = useState<string>('');

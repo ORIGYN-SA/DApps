@@ -9,8 +9,8 @@ import {
   theme,
 } from '@origyn-sa/origyn-art-ui';
 import type { CandyClassEditor, CandyBytes, ArrayType } from '../../../types';
-import { convertUint8ArrayToHex, convertUint8ArrayToBase64 } from './utils';
-import { VALIDATION_ERRORS, CREATE_MODE, EDIT_MODE, WARNING_MESSAGES } from '../../../constants';
+import { convertUint8ArrayToHex, convertUint8ArrayToBase64 } from './binaryConverters';
+import { CREATE_MODE, EDIT_MODE, WARNING_MESSAGES } from '../../../constants';
 import { FileInput } from './inputs/fileInput';
 import { HexadecimalInput } from './inputs/hexInput';
 import { Base64Input } from './inputs/base64Input';
@@ -23,10 +23,7 @@ export const BytesForm = (editor: CandyClassEditor) => {
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyBytes>();
   const [arrayType, setArrayType] = useState<ArrayType>('thawed');
-  const [formValue, setFormValue] = useState<string>('');
   const [immutable, setImmutable] = useState<boolean>(false);
-  const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  const [validationError, setValidationError] = useState<string>(null);
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
@@ -64,7 +61,6 @@ export const BytesForm = (editor: CandyClassEditor) => {
       setName(editor.property.name);
       setValue(candyBytes);
       setImmutable(editor.property.immutable);
-      setFormValue(candyBytes.Bytes[arrayType].toString());
     }
   }, [editor.editorMode]);
 

@@ -8,7 +8,7 @@ import {
   HR,
   Container,
 } from '@origyn-sa/origyn-art-ui';
-import { convertHexadecimalToCandyBytes } from '../utils';
+import { convertHexadecimalToCandyBytes } from '../binaryConverters';
 import { VALIDATION_ERRORS } from '../../../../constants';
 import { BytesFormInput, CandyBytes, ArrayType } from '../../../../types';
 

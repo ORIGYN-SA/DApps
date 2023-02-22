@@ -1,5 +1,4 @@
-import { limitByteArraySize } from '../../../utils/functions';
-import { CandyBytes } from '../../../types';
+import { CandyBytes } from '@dapp/common-types';
 type CandyBytesType = 'thawed' | 'frozen';
 
 export function isNat8(number: number): boolean {
@@ -115,4 +114,12 @@ export function convertUint8ArrayToHex(bytearray: Uint8Array): string {
         hexString += hex.length === 1 ? "0" + hex : hex;
     });
     return hexString;
+}
+
+export function limitByteArraySize(byteArray: Uint8Array, maxByteArraySize: number): Uint8Array | undefined {
+    if (byteArray.length > maxByteArraySize) {
+        return undefined;
+    } else {
+        return byteArray;
+    }
 }

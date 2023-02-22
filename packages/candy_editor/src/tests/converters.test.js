@@ -24,7 +24,7 @@ import {
   convertHexadecimalToCandyBytes,
   convertUint8ArrayToBase64,
   convertUint8ArrayToHex,
-} from '../assets/formTypes/BytesForm/utils';
+} from '../assets/formTypes/BytesForm/binaryConverters';
 
 describe('BytesForms > utils.ts', () => {
   test('convertUint8ArrayToHex > converts a Uint8Array to a hexadecimal string', () => {

@@ -18,11 +18,3 @@ export function getValueType(property: Property): PropertyWithType {
     value: property.value
   };
 }
-
-export function limitByteArraySize(byteArray: Uint8Array, maxByteArraySize: number): Uint8Array | undefined {
-  if (byteArray.length > maxByteArraySize) {
-    return undefined;
-  } else {
-    return byteArray;
-  }
-}
