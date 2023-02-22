@@ -1,16 +1,16 @@
 import React from 'react';
-import WalletPage from '../pages/Wallet';
+import VaultPage from '../pages/Vault';
 import { render, screen, cleanup, test } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { TabPanel } from '@mui/lab';
 
-const { asFragment } = render(<WalletPage />);
+const { asFragment } = render(<VaultPage />);
 
-describe('WalletPage', () => {
+describe('VaultPage', () => {
   //test 1
-  test('should return WalletPage rendered', () => {
-    render(<WalletPage />);
-    expect(screen.getByText('Wallet')).toBeInTheDocument();
+  test('should return VaultPage rendered', () => {
+    render(<VaultPage />);
+    expect(screen.getByText('Vault')).toBeInTheDocument();
     cleanup();
   });
   //test 2
@@ -19,7 +19,7 @@ describe('WalletPage', () => {
   });
   //test 3
   test('If is loading should display only preloader in the tabpanel', () => {
-    render(<TabPanel isLoading={true}/> );
+    render(<TabPanel isLoading={true} />);
     const Loader = screen.getByRole('progressbar');
     expect(Loader).toBeInTheDocument();
     cleanup();

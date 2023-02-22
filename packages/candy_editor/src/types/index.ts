@@ -124,4 +124,8 @@ export interface ListItem {
   listItemText: string;
   listItemFunction: () => void;
   listItemIcon?: JSX.Element;
-} 
+}
+export interface CandyDataEditorProps {
+  existingCandyClass?: CandyClass;
+  readOnly?: boolean;
+}

@@ -1,8 +1,8 @@
 const webpack = require('../../../webpack.config');
 
 const appConfig = {
-  name: 'library',
-  openPage: '-/bmdev/-/bm-1/-/library',
+  name: 'vault',
+  openPage: '-/bmdev/-/bm-1/-/vault',
 };
 
 module.exports = (env, argv) => {

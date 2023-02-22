@@ -44,3 +44,8 @@ export const VALIDATION_ERRORS: { [key: string]: string } = {
 export const WARNING_MESSAGES: { [key: string]: string } = {
   helpTextBytes: 'The Bytes candy type is stored as a small byte array (16 KB or less), intended for small binary data such as hashes. Large binary data such as images and videos can be added to the library.'
 }
+export const MESSAGES: { [key: string]: string } = {
+  emptyCandyClass: 'Candy Class is empty',
+  readOnlyMode: 'Write mode is disabled',
+};
+

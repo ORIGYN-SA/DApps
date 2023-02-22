@@ -96,9 +96,10 @@ export const NFTPage = () => {
   // };
 
   const params = useParams();
-  const currentOpenAuction = saleNft?.current_sale?.find((sale) =>
-    sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-  );
+
+  const currentOpenAuction =
+    saleNft?.current_sale[0] ||
+    saleNft?.current_sale?.find((sale) => sale?.sale_type?.auction?.status?.hasOwnProperty('open'));
 
   const mapCustomProperties = (customProperties) => {
     if (!customProperties) return [];
@@ -192,7 +193,6 @@ export const NFTPage = () => {
       .nft_origyn(params.nft_id)
       .then((r: any) => {
         setIsLoading(false);
-        console.log(r)
 
         if ('err' in r) throw new Error(Object.keys(r.err)[0]);
 
@@ -310,6 +310,7 @@ export const NFTPage = () => {
                       <br />
                       <HR />
                       <Flex fullWidth justify="space-between" align="center">
+                        {console.log('SALE', currentOpenAuction)}
                         {currentOpenAuction ? (
                           <>
                             <Flex flexFlow="column">
@@ -332,48 +333,48 @@ export const NFTPage = () => {
                             </Flex>
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.reserve
                               ?.length > 0 && (
-                                <Flex flexFlow="column">
-                                  <span>Reserve Price</span>
-                                  <strong>
-                                    <TokenIcon
-                                      symbol={
-                                        currentOpenAuction?.sale_type?.auction?.config?.auction?.token
-                                          ?.ic?.symbol
-                                      }
-                                    />
-                                    {parseFloat(
-                                      (
-                                        parseInt(
-                                          currentOpenAuction?.sale_type?.auction?.config?.auction
-                                            ?.reserve[0],
-                                        ) * 1e-8
-                                      ).toString(),
-                                    ).toFixed(2)}
-                                  </strong>
-                                </Flex>
-                              )}
+                              <Flex flexFlow="column">
+                                <span>Reserve Price</span>
+                                <strong>
+                                  <TokenIcon
+                                    symbol={
+                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                        ?.ic?.symbol
+                                    }
+                                  />
+                                  {parseFloat(
+                                    (
+                                      parseInt(
+                                        currentOpenAuction?.sale_type?.auction?.config?.auction
+                                          ?.reserve[0],
+                                      ) * 1e-8
+                                    ).toString(),
+                                  ).toFixed(2)}
+                                </strong>
+                              </Flex>
+                            )}
                             {currentOpenAuction?.sale_type?.auction?.config?.auction?.buy_now
                               ?.length > 0 && (
-                                <Flex flexFlow="column">
-                                  <span>Buy Now</span>
-                                  <strong>
-                                    <TokenIcon
-                                      symbol={
-                                        currentOpenAuction?.sale_type?.auction?.config?.auction?.token
-                                          ?.ic?.symbol
-                                      }
-                                    />
-                                    {parseFloat(
-                                      (
-                                        parseInt(
-                                          currentOpenAuction?.sale_type?.auction?.config?.auction
-                                            ?.buy_now[0],
-                                        ) * 1e-8
-                                      ).toString(),
-                                    ).toFixed(2)}
-                                  </strong>
-                                </Flex>
-                              )}
+                              <Flex flexFlow="column">
+                                <span>Buy Now</span>
+                                <strong>
+                                  <TokenIcon
+                                    symbol={
+                                      currentOpenAuction?.sale_type?.auction?.config?.auction?.token
+                                        ?.ic?.symbol
+                                    }
+                                  />
+                                  {parseFloat(
+                                    (
+                                      parseInt(
+                                        currentOpenAuction?.sale_type?.auction?.config?.auction
+                                          ?.buy_now[0],
+                                      ) * 1e-8
+                                    ).toString(),
+                                  ).toFixed(2)}
+                                </strong>
+                              </Flex>
+                            )}
                           </>
                         ) : (
                           'Not on sale'
@@ -405,16 +406,30 @@ export const NFTPage = () => {
                                   Buy Now
                                 </Button>
                               ))}
+
+
                             {principal == verifyOwner ? (
-                              BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
+                              Number(currentOpenAuction?.sale_type?.auction?.current_bid_amount) ==
+                                0 ||
+                              (currentOpenAuction?.sale_type?.auction?.status?.hasOwnProperty(
+                                'not_started'
+                              )) ? (
+                                <Button btnType="accent" onClick={handleClickOpenEsc}>
+                                  Cancel Sale
+                                </Button>
+                              ) : 
+                              
+                              (BigInt(Number(nftEndSale || 9 * 1e30)) < currentTimeInNanos ? (
                                 <Button btnType="accent" onClick={handleClickOpenEsc}>
                                   Finish Sale
                                 </Button>
                               ) : (
-                                <Button btnType="outlined" onClick={handleClickOpenEsc}>
+                                <Button disabled btnType="outlined" >
                                   Finish Sale
                                 </Button>
-                              )
+                              ))
+
+                              
                             ) : BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
                               <Button btnType="outlined" onClick={() => handleOpen('bid')}>
                                 Place Bid
@@ -424,6 +439,8 @@ export const NFTPage = () => {
                                 Place Bid
                               </Button>
                             )}
+
+
                           </>
                         ) : principal == verifyOwner ? (
                           <Button btnType="accent" onClick={handleClickOpen}>

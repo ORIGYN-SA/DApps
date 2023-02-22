@@ -24,8 +24,6 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
 
     const data2 = await data.ok.offers;
     const data3 = await data.ok.escrow;
-    console.log('escrow', data3)
-    console.log('offer', data2)
     setOffers(data2);
     setEscrow(data3);
   };
@@ -107,7 +105,6 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
           </Card> */}
           <br />
 
-          {console.log(escrow, offers)}
           {escrow.length > 0 ? (
             <>
               <h5>Escrows</h5>
@@ -168,49 +165,47 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
             ''
           )}
 
-          {offers.length > 0 ? (
+          {offers.length > 0 && (
             <>
               {' '}
               <h5>Offers</h5>
               <br />
-              {offers.map((esc: any) => (
-                <>
-                  <Flex flexFlow="row" justify="space-around">
-                    <img
-                      style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                      src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
-                      alt=""
-                    />
-                    <Flex flexFlow="column">
-                      <span>{esc.token_id}</span>
-                      <span style={{ color: 'grey' }}>{collection.name}</span>
-                    </Flex>
-                    <Flex flexFlow="column">
-                      <span style={{ color: 'grey' }}>Amount</span>
-                      <span>{`${Number(esc.amount) * 0.00000001}${' '}${
-                        esc.token.ic.symbol
-                      }`}</span>
-                    </Flex>
-                    <Flex flexFlow='row' gap={8}>
+              {offers.map((esc: any, index: number) => (
+                <Flex
+                  key={`offers-${index}`}
+                  flexFlow="row"
+                  justify="space-around"
+                  align="flex-start"
+                  gap={8}
+                >
+                  <img
+                    style={{ width: '42px', height: '42px', borderRadius: '12px' }}
+                    src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                    alt=""
+                  />
+                  <Flex flexFlow="column" gap={8}>
+                    <span>{esc.token_id}</span>
+                    <span style={{ color: 'grey' }}>{collection.name}</span>
+                  </Flex>
+                  <Flex flexFlow="column" gap={8}>
+                    <span style={{ color: 'grey' }}>Amount</span>
+                    <span>{`${Number(esc.amount) * 0.00000001}${' '}${esc.token.ic.symbol}`}</span>
+                  </Flex>
+                  <Flex flexFlow="row" gap={8}>
                     <Button
-                        btnType="filled"
-                        size="small"
-                        onClick={()=>handleClickOpen(esc, esc.token_id)}
-                      >
-                       Accept
-                      </Button>
+                      btnType="filled"
+                      size="small"
+                      onClick={() => handleClickOpen(esc, esc.token_id)}
+                    >
+                      Accept
+                    </Button>
                     <Button btnType="outlined" size="small" onClick={() => handleClickOpenRej(esc)}>
                       Reject
                     </Button>
-                    </Flex>
                   </Flex>
-                  <br />
-                  <br />
-                </>
+                </Flex>
               ))}
             </>
-          ) : (
-            ''
           )}
         </Container>
       </Modal>

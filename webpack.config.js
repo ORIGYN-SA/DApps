@@ -1,17 +1,17 @@
-const path = require('path')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-const Dotenv = require('dotenv-webpack')
-const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
+const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
 
-const repoRoot = path.join(process.cwd())
-const monorepoRoot = '../../../'
+const repoRoot = path.join(process.cwd());
+const monorepoRoot = '../../../';
 
-const asset_entry = repoRoot + '/src/index.tsx'
-const publicPath = monorepoRoot + 'public'
+const asset_entry = repoRoot + '/src/index.tsx';
+const publicPath = monorepoRoot + 'public';
 
 module.exports = (env, argv, dAppConfig) => ({
   target: 'web',
@@ -29,10 +29,7 @@ module.exports = (env, argv, dAppConfig) => ({
   },
 
   resolve: {
-    modules: [
-      path.join(__dirname, 'node_modules'),
-      path.join(repoRoot, 'node_modules'),
-    ],
+    modules: [path.join(__dirname, 'node_modules'), path.join(repoRoot, 'node_modules')],
     extensions: ['.js', '.ts', '.jsx', '.tsx'],
     alias: {
       react: path.join(__dirname, 'node_modules/react'),
@@ -101,11 +98,9 @@ module.exports = (env, argv, dAppConfig) => ({
           }
         : {
             template: path.resolve(publicPath, 'index.html'),
-            filename: dAppConfig?.name
-              ? `${dAppConfig?.name}.html`
-              : 'index.html',
+            filename: dAppConfig?.name ? `${dAppConfig?.name}.html` : 'index.html',
             inject: 'body',
-          }
+          },
     ),
     new HtmlInlineScriptPlugin(),
     new ForkTsCheckerWebpackPlugin({
@@ -123,8 +118,6 @@ module.exports = (env, argv, dAppConfig) => ({
     watchContentBase: true,
     open: true,
     disableHostCheck: true,
-    openPage: dAppConfig?.openPage
-      ? dAppConfig.openPage
-      : '-/bmdev/-/bm-1/-/',
+    openPage: dAppConfig?.openPage ? dAppConfig.openPage : '-/bmdev/-/bm-1/-/',
   },
-})
+});
