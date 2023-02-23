@@ -5,7 +5,7 @@ import {
   convertHexadecimalToCandyBytes,
   convertUint8ArrayToBase64,
   convertUint8ArrayToHex,
-} from '@dapp/utils-binary-converters';
+} from '@dapp/utils';
 
 describe('BytesForms > utils.ts', () => {
   test('convertUint8ArrayToHex > converts a Uint8Array to a hexadecimal string', () => {

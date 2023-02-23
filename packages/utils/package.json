@@ -5,7 +5,6 @@
   "main": "src/index.ts",
   "dependencies": {
     "@dapp/common-candid": "0.1.0",
-    "@dapp/common-types": "0.1.0",
-    "@dapp/utils-binary-converters": "0.1.0"
+    "@dapp/common-types": "0.1.0"
   }
 }
