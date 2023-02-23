@@ -8,7 +8,7 @@ import {
   HR,
   Container,
 } from '@origyn-sa/origyn-art-ui';
-import { convertBase64ToCandyBytes } from '@dapp/utils-binary-converters';
+import { convertBase64ToCandyBytes } from '@dapp/utils';
 import { VALIDATION_ERRORS } from '../../../../constants';
 import { BytesFormInput, CandyBytes, ArrayType } from '@dapp/common-types';
 
