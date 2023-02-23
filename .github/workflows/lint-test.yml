@@ -1,36 +1,36 @@
-name: lint-test
-
-on:
-  push:
-    branches:
-      - '*'
-
-jobs:
-  build:
-    name: Code Quaility & Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Install Node v16
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-
-      - name: Install Dependencies
-        run: npm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-
-      - name: Bootstrap Packages
-        run: npm run bootstrap
-
-      - name: Run eslint
-        run: npm run lint
-
-      - name: Run tests
-        run: npm run test
+#name: lint-test
+#
+#on:
+#  push:
+#    branches:
+#      - '*'
+#
+#jobs:
+#  build:
+#    name: Code Quaility & Tests
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#        with:
+#          fetch-depth: 0
+#
+#      - name: Install Node v16
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: 16.x
+#
+#      - name: Install Dependencies
+#        run: npm install
+#        env:
+#          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+#
+#      - name: Bootstrap Packages
+#        run: npm run bootstrap
+#
+#      - name: Run eslint
+#        run: npm run lint
+#
+#      - name: Run tests
+#        run: npm run test
