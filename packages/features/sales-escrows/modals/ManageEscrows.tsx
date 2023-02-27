@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
+import { currencyToFixed } from '@dapp/utils';
 
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const { principal, actor } = useContext(AuthContext);
@@ -57,7 +58,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const handleCloseConf = () => {
     setOpenConfirmation(false);
   };
-  
+
   const totalAmount = async () => {
     const totalEsc = [];
     // const initialValue = 0;
@@ -89,77 +90,59 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
         <Container size="full" padding="48px">
           <h3>Manage Escrow</h3>
           <br />
-
-          {/* <Card align="center" padding="12px" justify="space-between">
-            <Flex gap={8}>
-              <TokenIcon symbol={activeTokens['OGY']?.icon} />
-              {activeTokens['OGY']?.icon}
-            </Flex>
-            <Flex flexFlow="column" align="flex-end">
-              <p>
-                <b>
-                  {totalAm} {activeTokens['OGY']?.symbol}
-                </b>
-              </p>
-              <p style={{ color: '#9A9A9A' }}>${activeTokens['OGY']?.balance / 4}</p>
-            </Flex>
-          </Card> */}
           <br />
 
           {escrow.length > 0 ? (
             <>
               <h5>Escrows</h5>
               <br />
-              {escrow.map((esc: any) => (
-                <>
-                  <Flex flexFlow="row" justify="space-around">
-                    <img
-                      style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                      src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
-                      alt=""
-                    />
-                    <Flex flexFlow="column">
-                      <span>{esc.token_id}</span>
-                      <span style={{ color: 'grey' }}>{collection.name}</span>
-                    </Flex>
-                    <Flex flexFlow="column">
-                      <span style={{ color: 'grey' }}>Amount</span>
-                      <span>{`${Number(esc.amount) * 0.00000001}${' '}${
-                        esc.token.ic.symbol
-                      }`}</span>
-                    </Flex>
-                    <Flex flexFlow="column">
-                      <span style={{ color: 'grey' }}>Status</span>
-                      <span>
-                        {esc.lock_to_date
-                          ? Date.now() * 1e6 > parseInt(esc.lock_to_date)
-                            ? 'Locked'
-                            : 'Done'
-                          : 'Hey'}
-                      </span>
-                    </Flex>
-                    {Date.now() * 1e6 > parseInt(esc.lock_to_date) ? (
-                      <Button
-                        btnType="filled"
-                        size="small"
-                        onClick={() => withdrawEscrow(esc, esc.token_id)}
-                        disabled
-                      >
-                        Withdraw
-                      </Button>
-                    ) : (
-                      <Button
-                        btnType="filled"
-                        size="small"
-                        onClick={() => withdrawEscrow(esc, esc.token_id)}
-                      >
-                        Withdraw
-                      </Button>
-                    )}
+              {escrow.map((esc: any, index: number) => (
+                <Flex key={index} flexFlow="row" justify="space-around" gap={8}>
+                  <img
+                    style={{ width: '42px', height: '42px', borderRadius: '12px' }}
+                    src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                    alt=""
+                  />
+                  <Flex flexFlow="column" gap={8}>
+                    <span>{esc.token_id}</span>
+                    <span style={{ color: 'grey' }}>{collection.name}</span>
                   </Flex>
-                  <br />
-                  <br />
-                </>
+                  <Flex flexFlow="column" gap={8}>
+                    <span style={{ color: 'grey' }}>Amount</span>
+                    <span>{`${currencyToFixed(
+                      Number(esc.amount),
+                      Number(esc.token.ic.decimals),
+                    )}${' '}${esc.token.ic.symbol}`}</span>
+                  </Flex>
+                  <Flex flexFlow="column" gap={8}>
+                    <span style={{ color: 'grey' }}>Status</span>
+                    <span>
+                      {esc.lock_to_date
+                        ? Date.now() * 1e6 > parseInt(esc.lock_to_date)
+                          ? 'Locked'
+                          : 'Done'
+                        : 'Hey'}
+                    </span>
+                  </Flex>
+                  {Date.now() * 1e6 > parseInt(esc.lock_to_date) ? (
+                    <Button
+                      btnType="filled"
+                      size="small"
+                      onClick={() => withdrawEscrow(esc, esc.token_id)}
+                      disabled
+                    >
+                      Withdraw
+                    </Button>
+                  ) : (
+                    <Button
+                      btnType="filled"
+                      size="small"
+                      onClick={() => withdrawEscrow(esc, esc.token_id)}
+                    >
+                      Withdraw
+                    </Button>
+                  )}
+                </Flex>
               ))}{' '}
             </>
           ) : (
@@ -190,7 +173,10 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                   </Flex>
                   <Flex flexFlow="column" gap={8}>
                     <span style={{ color: 'grey' }}>Amount</span>
-                    <span>{`${Number(esc.amount) * 0.00000001}${' '}${esc.token.ic.symbol}`}</span>
+                    <span>{`${currencyToFixed(
+                      Number(esc.amount),
+                      Number(esc.token.ic.decimals),
+                    )}${' '}${esc.token.ic.symbol}`}</span>
                   </Flex>
                   <Flex flexFlow="row" gap={8}>
                     <Button
@@ -219,34 +205,6 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
         escrow={selectedEscrow}
         offer={selectedOffer}
       />
-
-      {/* <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
-        <Container size="full" padding="48px">
-          <h3>Withdrawing Escrow...</h3>
-          <br />
-          <span
-            style={{ color: 'gray' }}
-          >{`${'Your escrow for '}${selectdNFT}${' is being withdrawn'}`}</span>
-          {isLoading && (
-            <div style={{ marginTop: 5 }}>
-              <LoadingContainer />
-            </div>
-          )}
-        </Container>
-      </Modal> */}
-
-      {/* <Modal isOpened={openSuccess} closeModal={() => handleClose(false)} size="md">
-        <Container size="full" padding="48px">
-          <h3>Success!</h3>
-          <br />
-          <span style={{ color: 'gray' }}>Your escrow has been withdrawn successfully</span>
-          <Flex align="flex-end">
-            <Button btnType="secondary" size="small" onClick={() => setOpenSuccess(false)}>
-              Done
-            </Button>
-          </Flex>
-        </Container>
-      </Modal> */}
     </div>
   );
 };
