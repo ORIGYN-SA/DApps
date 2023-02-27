@@ -13,30 +13,27 @@ const reducer = (state: MarketplaceState, action: MarketplaceAction): Marketplac
   switch (action.type) {
     case 'totalItems':
       return { ...state, totalItems: action.payload };
-    case 'collectionPreview':
-      return { ...state, collectionPreview: action.payload };
     case 'collectionData':
       return { ...state, collectionData: action.payload };
-    case 'odcData':
-      return { ...state, odcData: action.payload };
+    case 'odcs':
+      return { ...state, odcs: action.payload };
     case 'filter':
       return { ...state, filter: action.payload };
     case 'sort':
       return { ...state, sort: action.payload };
-    case 'filteredOdcData':
-      return { ...state, filteredOdcData: action.payload };
+    case 'filteredOdcs':
+      return { ...state, filteredOdcs: action.payload };
   }
 };
 
 const MarketplaceProvider = ({ children }: MarketplaceProviderProps) => {
   const [state, dispatch] = useReducer(reducer, {
     totalItems: 0,
-    collectionPreview: '',
-    collectionData: {},
-    odcData: [],
+    collectionData: undefined,
+    odcs: [],
     filter: '',
     sort: '',
-    filteredOdcData: [],
+    filteredOdcs: [],
   });
 
   return (

@@ -57,6 +57,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const handleCloseConf = () => {
     setOpenConfirmation(false);
   };
+  
   const totalAmount = async () => {
     const totalEsc = [];
     // const initialValue = 0;
@@ -80,7 +81,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   useEffect(() => {
     Balance();
     totalAmount();
-  }, [open]);
+  }, [open, withdrawEscrow]);
 
   return (
     <div>

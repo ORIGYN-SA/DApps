@@ -43,3 +43,10 @@ export const eToNumber = (num) => {
 export const currencyFormat = (val?: number) => {
   return (val ?? 0).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 };
+
+export const currencyToFixed = (num: number, decimals: number): string => {
+  if (decimals <= 0) {
+    return num.toFixed(2);
+  }
+  return parseFloat((num / 10 ** decimals).toString()).toFixed(2);
+};
