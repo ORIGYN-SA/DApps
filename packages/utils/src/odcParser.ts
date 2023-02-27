@@ -1,5 +1,8 @@
+import { Principal } from '@dfinity/principal';
 import { NFTInfoStable, Property } from '../../common/types/src/origynNftReference';
 import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
+
+const OGY_LEDGER_CANISTER_ID = 'jwcfb-hyaaa-aaaaj-aac4q-cai';
 
 export function getProperty(properties: any, propertyName: string) {
   return properties?.find(({ name }) => name === propertyName);
@@ -70,6 +73,7 @@ function initOdcSaleData(odc: OdcData): OdcDataWithSale {
   return {
     ...odc,
     auction: undefined,
+    isDutchAuction: false,
     auctionOpen: false,
     auctionClosed: false,
     auctionNotStarted: false,
@@ -224,7 +228,14 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   }
 
   let odc = initOdcSaleData(parseMetadata(metadataClass));
-
+  // default to OGY token if no auction
+  odc.token = {
+    canister: Principal.fromText(OGY_LEDGER_CANISTER_ID),
+    decimals: 8n,
+    fee: 200000n,
+    standard: { Ledger: null },
+    symbol: 'OGY',
+  };
   odc.auction = odcInfo?.current_sale[0]?.sale_type?.auction;
   odc.saleId = odcInfo?.current_sale[0]?.sale_id || '';
 
@@ -233,6 +244,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
     odc.auctionClosed = 'closed' in odc.auction.status;
     odc.auctionNotStarted = 'not_started' in odc.auction.status;
     odc.currentBid = Number(odc.auction.current_bid_amount || 0);
+
     if ('auction' in odc.auction?.config) {
       const auctionConfig = odc.auction.config.auction;
       odc.buyNow = Number(auctionConfig.buy_now?.[0] || 0);
@@ -243,10 +255,12 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
       odc.minIncreasePercentage =
         'percentage' in auctionConfig.min_increase ? auctionConfig.min_increase.percentage : 0;
       odc.reserve = Number(auctionConfig.reserve?.[0] || 0);
+      odc.startPrice = Number(auctionConfig.start_price || 0);
     }
 
     if ('dutch' in odc.auction?.config) {
       let dutchConfig = odc.auction.config.dutch;
+      odc.isDutchAuction = true;
       odc.startPrice = Number(dutchConfig.start_price || 0);
       odc.reserve = Number(dutchConfig.reserve?.[0] || 0);
       odc.decayPerHour = Number(dutchConfig.decay_per_hour || 0);

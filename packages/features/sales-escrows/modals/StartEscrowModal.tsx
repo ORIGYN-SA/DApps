@@ -1,217 +1,235 @@
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
-import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
+import { sendTransaction, useTokensContext, Token } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
-import * as Yup from 'yup';
 import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useEffect } from 'react';
-import { OdcDataWithSale } from '@dapp/utils';
+import { currencyToFixed, eToNumber, OdcDataWithSale } from '@dapp/utils';
 
-const validationSchema = Yup.object({
-  escrowPrice: Yup.number()
-    .typeError('This must be a number')
-    .nullable()
-    .typeError('This cannot be a nullable number')
-    .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
-});
+export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
 export type StartEscrowModalProps = {
-  nft: OdcDataWithSale;
+  odc: OdcDataWithSale;
+  escrowType: EscrowType;
   open: boolean;
   handleClose: any;
-  initialValues: any;
   onSuccess: any;
 };
 
+type FormValues = {
+  offerPrice: string;
+  token: Token;
+};
+
+type FormErrors = {
+  offerPrice: string;
+  token: string;
+};
+
 export function StartEscrowModal({
-  nft,
+  odc,
+  escrowType,
   open,
   handleClose,
-  initialValues,
   onSuccess,
 }: StartEscrowModalProps) {
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
-  const [errors, setErrors] = React.useState<any>({});
-  const [values, setValues] = React.useState<any>({
-    nftId: nft?.id,
-    seller: nft?.ownerPrincipalId,
-    token: nft?.tokenSymbol,
-    openAuction: nft?.auction,
-  });
-  const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens, refreshAllBalances } = useTokensContext();
+  const { enqueueSnackbar } = useSnackbar() || {};
+
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isTransacting, setIsTransacting] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const [formValues, setFormValues] = React.useState<FormValues>();
+  const [formErrors, setFormErrors] = React.useState<FormErrors>({
+    offerPrice: '',
+    token: '',
+  });
 
   const handleCustomClose = (value: any) => {
     handleClose(value);
   };
 
-  const handleStartEscrow = async (data) => {
-    if (
-      isNaN(parseFloat(data.priceOffer)) ||
-      data.sellerId === 'undefined' ||
-      data.nftId === 'undefined'
-    ) {
-      enqueueSnackbar('Error: Fill all fields correctly', {
+  const onTokenChanged = (tokenSymbol?: any) => {
+    setFormErrors({ ...formErrors, token: undefined });
+    setFormValues({ ...formValues, token: tokens[tokenSymbol] });
+  };
+
+  const onOfferChanged = (value?: any) => {
+    setFormErrors({ ...formErrors, offerPrice: undefined });
+    setFormValues({ ...formValues, offerPrice: value });
+  };
+
+  useEffect(() => {
+    // initialize form values
+    if (odc && tokens) {
+      let minOffer = 0;
+      if (escrowType === 'BuyNow') {
+        minOffer = odc.buyNow;
+      } else if (escrowType === 'Bid') {
+        minOffer =
+          odc.currentBid > 0 ? odc.currentBid + Number(odc.minIncreaseAmount) : odc.startPrice;
+      }
+
+      setFormValues({
+        offerPrice: currencyToFixed(minOffer, Number(odc.token.decimals)),
+        token: tokens[odc.token.symbol],
+      });
+
+      setIsLoading(false);
+    }
+  }, [odc, tokens]);
+
+  const validateForm = () => {
+    let errors = { offerPrice: '', token: undefined };
+
+    if (isNaN(parseFloat(formValues.offerPrice))) {
+      errors = { ...errors, offerPrice: 'Offer must be a number' };
+    } else if (parseFloat(formValues.offerPrice) <= 0) {
+      errors = { ...errors, offerPrice: 'Offer must be greater than 0' };
+    } else if (parseFloat(formValues.offerPrice) <= odc.startPrice) {
+      errors = { ...errors, offerPrice: 'Offer must be greater than the start price' };
+    }
+
+    if (!formValues.token) {
+      errors = { ...errors, token: 'No token selected' };
+    }
+
+    // if there are any form errors, notify the user
+    if (errors.offerPrice || errors.token) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const startEscrow = async () => {
+    try {
+      if (isLoading || isTransacting || !activeWalletProvider || !validateForm()) {
+        return;
+      }
+
+      setIsTransacting(true);
+
+      const offer = Number(formValues.offerPrice) * 1e8;
+
+      // gets the deposit info for the account number of the caller
+      const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
+
+      if ('err' in saleInfo) {
+        throw new Error(saleInfo.err[0]);
+      }
+
+      if (!('deposit_info' in saleInfo.ok)) {
+        throw new Error('Deposit info not found in sale info');
+      }
+
+      const { account_id } = saleInfo?.ok?.deposit_info;
+      if (!account_id) {
+        throw new Error('Account ID not found in sale info');
+      }
+
+      const transactionHeight = await sendTransaction(
+        false,
+        activeWalletProvider,
+        tokens[formValues.token.symbol],
+        account_id,
+        offer + formValues.token.fee,
+      );
+
+      if (transactionHeight.err) {
+        throw Error(transactionHeight.err);
+      }
+
+      const escrowData = {
+        token_id: odc.id,
+        deposit: {
+          token: {
+            ic: {
+              fee: BigInt(formValues.token.fee ?? 200_000),
+              decimals: BigInt(formValues.token.decimals ?? 8),
+              canister: Principal.fromText(formValues.token.canisterId),
+              standard: { Ledger: null },
+              symbol: formValues.token.symbol,
+            },
+          },
+          trx_id: [{ nat: BigInt(transactionHeight.ok) }],
+          seller: { principal: Principal.fromText(odc.ownerPrincipalId) },
+          buyer: { principal },
+          amount: BigInt(offer),
+          sale_id: odc?.saleId ? [odc.saleId] : [],
+        },
+        lock_to_date: [],
+      };
+
+      const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
+      if ('err' in escrowResponse) {
+        throw new Error(escrowResponse.err[0]);
+      }
+
+      if (odc.auctionOpen) {
+        // if the ODC is on auction, then this is a bid in the auction
+        const bidData = {
+          broker_id: [],
+          escrow_receipt: escrowResponse?.ok?.escrow_deposit.receipt,
+          sale_id: odc.saleId,
+        };
+
+        const bidResponse = await actor.sale_nft_origyn({ bid: bidData }); // TODO: fix this
+        if ('err' in bidResponse) {
+          throw new Error(bidResponse.err[0]);
+        }
+
+        enqueueSnackbar('Your bid has been successfully placed.', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        handleCustomClose(true);
+        refreshAllBalances(false, principal);
+        setSuccess(true);
+        onSuccess();
+      } else {
+        // if there is no auction, then this is just an offer
+        enqueueSnackbar('Your escrow has been successfully sent.', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        handleCustomClose(true);
+        refreshAllBalances(false, principal);
+        setSuccess(true);
+        onSuccess();
+      }
+    } catch (e) {
+      console.log(e);
+      enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'right',
         },
       });
-      return;
-    }
-    if (isLoading) return;
-
-    if (activeWalletProvider) {
-      setIsLoading(true);
-      const amount = data.priceOffer * 1e8;
-      const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
-
-      if ('err' in saleInfo) throw new Error(Object.keys(saleInfo.err)[0]);
-
-      if (!('deposit_info' in saleInfo.ok)) throw new Error();
-
-      const { account_id } = saleInfo?.ok?.deposit_info ?? {};
-
-      try {
-        const transactionHeight = await sendTransaction(
-          false,
-          activeWalletProvider,
-          tokens[values.token],
-          account_id,
-          amount + tokens[values.token].fee,
-        );
-        if (transactionHeight.err) {
-          setIsLoading(false);
-          throw Error(transactionHeight.err);
-        }
-        const escrowData = {
-          token_id: values.nftId,
-          deposit: {
-            token: {
-              ic: {
-                fee: BigInt(tokens[values.token].fee ?? 200_000),
-                decimals: BigInt(tokens[values.token].decimals ?? 8),
-                canister: Principal.fromText(tokens[values.token].canisterId),
-                standard: { Ledger: null },
-                symbol: tokens[values.token].symbol,
-              },
-            },
-            trx_id: [{ nat: BigInt(transactionHeight.ok) }],
-            seller: {
-              principal: Principal.fromText(values.seller),
-            },
-            buyer: { principal },
-            amount: BigInt(amount),
-            sale_id: values?.openAuction?.sale_id ? [values?.openAuction?.sale_id] : [],
-          },
-          lock_to_date: [],
-        };
-        try {
-          const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
-          if ('err' in escrowResponse) throw new Error(Object.keys(escrowResponse.err)[0]);
-
-          if (!values.openAuction) {
-            enqueueSnackbar('Your escrow has been successfully sent.', {
-              variant: 'success',
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-            });
-            setIsLoading(false);
-            handleCustomClose(true);
-            refreshAllBalances(false, principal);
-            setSuccess(true);
-            onSuccess();
-          } else {
-            const bidData = {
-              broker_id: [],
-              escrow_receipt: escrowResponse?.ok?.escrow_deposit.receipt,
-              sale_id: values.openAuction?.sale_id,
-            };
-
-            const bidResponse = await actor.sale_nft_origyn({ bid: bidData }); // TODO: fix this
-
-            if ('err' in bidResponse) throw new Error(Object.keys(bidResponse.err)[0]);
-            enqueueSnackbar('Your bid has been successfully placed.', {
-              variant: 'success',
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-            });
-            setIsLoading(false);
-            handleCustomClose(true);
-            refreshAllBalances(false, principal);
-            setSuccess(true);
-            onSuccess();
-          }
-        } catch (e) {
-          console.log(e);
-          enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
-            variant: 'error',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
-        }
-        setIsLoading(false);
-      } catch (e) {
-        console.log(e);
-      }
+    } finally {
+      setIsTransacting(false);
     }
   };
 
-  const getValidationErrors = (err) => {
-    const validationErrors = {};
-
-    err.inner.forEach((error) => {
-      if (error.path) {
-        validationErrors[error.path] = error.message;
-      }
-    });
-
-    return validationErrors;
-  };
-  const handleSubmit = (e: any) => {
+  const onFormSubmitted = async (e: any) => {
     e.preventDefault();
-    validationSchema
-      .validate(values, { abortEarly: false })
-      .then(() => {
-        handleStartEscrow(values);
-      })
-      .catch(function (e) {
-        console.log(e);
-        const errs = getValidationErrors(e);
-        setErrors(errs);
-      });
+    startEscrow();
   };
-
-  const onChange = (e?: any, name?: string, value?: any) => {
-    setErrors({ ...errors, [name || e.target.name]: undefined });
-    setValues({ ...values, [name || e.target.name]: value || e.target.value });
-  };
-
-  useEffect(() => {
-    setValues({
-      ...initialValues,
-      nftId: nft.id,
-      seller: nft.ownerPrincipalId,
-      token: nft.token,
-      openAuction: nft.auction,
-    });
-  }, [nft, initialValues]);
 
   return (
     <div>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
-        <Container as="form" onSubmit={handleSubmit} size="full" padding="48px" smPadding="8px">
+        <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
           {success ? (
             <>
               <h2>Success!</h2>
@@ -222,7 +240,7 @@ export function StartEscrowModal({
             </>
           ) : (
             <>
-              {isLoading ? (
+              {isTransacting ? (
                 <>
                   <h2>Transactions in Progress</h2>
                   <br />
@@ -231,59 +249,65 @@ export function StartEscrowModal({
               ) : (
                 <>
                   <h2>
-                    Send escrow for <strong>{values.nftId}</strong>?
+                    Send escrow for <strong>{odc.id}</strong>?
                   </h2>
                   <br />
-                  <Flex flexFlow="column" gap={8}>
-                    <Select
-                      name="token"
-                      selectedOption={{ label: values.token, value: values.token }}
-                      handleChange={(opt) => onChange(null, 'token', opt.value)}
-                      label="Token"
-                      options={Object.keys(tokens).map((t) => ({
-                        label: tokens[t].symbol,
-                        value: t,
-                      }))}
-                    />
-                    <TextInput
-                      required
-                      label="Your Offer (in tokens)"
-                      id="priceOffer"
-                      name="priceOffer"
-                      error={errors.priceOffer}
-                      value={values.priceOffer}
-                      onChange={onChange}
-                    />
-                    <br />
-                    {tokens?.[values.token] && (
-                      <>
-                        <span>Transaction Fee</span>
-                        <span style={{ color: 'grey' }}>{`${
-                          tokens[values.token].fee * 0.00000001
-                        }${' '}${tokens[values.token]?.symbol}`}</span>
-                        <br />
-                        <HR />
-                        <br />
-                        <Flex flexFlow="row" align="center" justify="space-between">
-                          <h6>Total Amount</h6>
-                          <span>
-                            {parseFloat(values.priceOffer) + tokens[values.token].fee * 0.00000001}
-                          </span>
-                        </Flex>
-                        <br />
-                        <HR />
-                        <br />
-                      </>
-                    )}
-                    <Flex align="center" justify="flex-end" gap={16}>
-                      <Button btnType="outlined" onClick={() => handleCustomClose(false)}>
-                        Cancel
-                      </Button>
-                      <Button btnType="accent" type="submit">
-                        Send Escrow
-                      </Button>
+                  {!isLoading && (
+                    <Flex flexFlow="column" gap={8}>
+                      <Select
+                        name="token"
+                        selectedOption={{
+                          label: formValues.token.symbol,
+                          value: formValues.token.symbol,
+                        }}
+                        handleChange={(opt) => onTokenChanged(opt.value)}
+                        label="Token"
+                        options={Object.keys(tokens).map((t) => ({
+                          label: tokens[t].symbol,
+                          value: t,
+                        }))}
+                      />
+                      <TextInput
+                        required
+                        label="Your Offer (in tokens)"
+                        id="offerPrice"
+                        name="offerPrice"
+                        error={formErrors.offerPrice}
+                        value={formValues.offerPrice}
+                        onChange={(e) => onOfferChanged(e.target.value)}
+                      />
+                      <br />
+                      {formValues.token && (
+                        <>
+                          <span>Transaction Fee</span>
+                          <span style={{ color: 'grey' }}>{`${
+                            formValues.token.fee * 0.00000001
+                          }${' '}${formValues.token?.symbol}`}</span>
+                          <br />
+                          <HR />
+                          <br />
+                          <Flex flexFlow="row" align="center" justify="space-between">
+                            <h6>Total Amount</h6>
+                            <span>
+                              {parseFloat(formValues.offerPrice) +
+                                formValues.token.fee * 0.00000001}
+                            </span>
+                          </Flex>
+                          <br />
+                          <HR />
+                          <br />
+                        </>
+                      )}
+                      <Flex align="center" justify="flex-end" gap={16}>
+                        <Button btnType="outlined" onClick={() => handleCustomClose(false)}>
+                          Cancel
+                        </Button>
+                        <Button btnType="accent" type="submit">
+                          Send Escrow
+                        </Button>
+                      </Flex>
                     </Flex>
-                  </Flex>
+                  )}
                 </>
               )}
             </>
