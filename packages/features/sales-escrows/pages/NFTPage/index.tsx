@@ -64,18 +64,6 @@ export const NFTPage = () => {
 
   const params = useParams();
 
-  const mapCustomProperties = (customProperties) => {
-    if (!customProperties) return [];
-
-    if (customProperties?.Thawed?.length > 0) {
-      return customProperties.Thawed.map((property) => ({
-        name: property.name,
-        value: property.value.Text,
-      }));
-    }
-    return [];
-  };
-
   const handleOpen = (type) => {
     const modalInitial = {
       nftId: params.nft_id,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Buffer } from 'buffer';
 import {
   Flex,
   TextInput,
@@ -130,9 +131,12 @@ export const BytesForm = (editor: CandyClassEditor) => {
             fullWidth={true}
             justify="flex-start"
             content={[
-              <Base64Input addPropertyToCandyClass={editor.addPropertyToCandyClass} />,
-              <HexadecimalInput addPropertyToCandyClass={editor.addPropertyToCandyClass} />,
-              <FileInput addPropertyToCandyClass={editor.addPropertyToCandyClass} />,
+              <Base64Input key="base64" addPropertyToCandyClass={editor.addPropertyToCandyClass} />,
+              <HexadecimalInput
+                key="hex"
+                addPropertyToCandyClass={editor.addPropertyToCandyClass}
+              />,
+              <FileInput key="file" addPropertyToCandyClass={editor.addPropertyToCandyClass} />,
             ]}
           />
         </>
