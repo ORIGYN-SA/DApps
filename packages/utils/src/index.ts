@@ -1,14 +1,13 @@
 import { toast } from 'react-toastify';
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from 'notistack';
 
 export const isLocal = () => {
   return (
-    process.env.isLocal && (
-      window.location.hostname.indexOf('localhost') !== -1 ||
-      window.location.hostname.indexOf('127.0.0.1') !== -1
-    )
+    process.env.isLocal &&
+    (window.location.hostname.indexOf('localhost') !== -1 ||
+      window.location.hostname.indexOf('127.0.0.1') !== -1)
   );
-}
+};
 
 export function numberWithCommas(number: number, separator = ',') {
   // Split float on "."
@@ -28,12 +27,10 @@ export const formatE8S = (e8s: BigInt) => {
 };
 
 export const copyToClipboard = (text: string, onSuccess?: () => void) => {
-  navigator.clipboard.writeText(text).then(
-    function () {
-      onSuccess();
-      console.log('Async: Copying to clipboard was successful!');
-    }
-  );
+  navigator.clipboard.writeText(text).then(function () {
+    onSuccess();
+    console.log('Async: Copying to clipboard was successful!');
+  });
 };
 
 export const formatDate = (date: Date) => {
@@ -63,6 +60,8 @@ export const parseDate = (ts) => {
   return d;
 };
 
+export * from './actorTypes';
+export * from './parsedTypes';
 export * from './binary';
 export * from './dateTime';
 export * from './idl';
@@ -75,3 +74,4 @@ export * from './interfaces';
 export * from './checkCanister';
 export * from './getFormattedLink';
 export * from './checkOwner';
+export * from './odcParser';

@@ -4,10 +4,9 @@ import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
-import { AppData, OdcData } from '../../components/context/types';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { copyToClipboard } from '@dapp/utils';
+import { copyToClipboard, parseMetadata, parseOdcs } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
@@ -217,86 +216,7 @@ const VaultPage = () => {
   const { activeTokens, time } = useTokensContext();
   const { open } = useDialog();
   const { state, dispatch } = useVault();
-  const {
-    ownedItems,
-    collectionPreview,
-    originatorPrincipal,
-    collectionData,
-    odcData,
-    filter,
-    sort,
-    filteredOdcData,
-  } = state;
-
-  const getProperty = (properties: any, propertyName: string) => {
-    return properties?.find(({ name }) => name === propertyName);
-  };
-
-  const getTextValue = (properties: any, propertyName: string): string => {
-    const p = getProperty(properties, propertyName);
-    return p?.value?.Text || '';
-  };
-
-  const getPrincipalValue = (properties: any, propertyName: string): string => {
-    const p = getProperty(properties, propertyName);
-    return p?.value?.Principal?.toText() || '';
-  };
-
-  const getAppData = (metadataClass: any): AppData => {
-    const apps = getProperty(metadataClass, '__apps');
-
-    const app = apps?.value?.Array?.thawed?.find((c) =>
-      c.Class?.find((p) => p.name === 'app_id' && p.value?.Text === 'com.origyn.metadata.general'),
-    );
-
-    const data =
-      app?.Class?.find(({ name }) => name === 'data')?.value?.Class?.reduce(
-        (obj: Object, val: any) => ({ ...obj, [val.name]: Object.values(val.value)[0] }),
-        {},
-      ) || {};
-
-    data.display_name = data.display_name || '';
-    data.description = data.description || '';
-    data.custom_properties = data.custom_properties?.thawed || data.custom_properties?.frozen || [];
-
-    return data as AppData;
-  };
-
-  const parseOdcData = (data: []): OdcData[] => {
-    const parsed = data.map((item: any): OdcData => {
-      const odc = item?.ok;
-
-      const properties = odc?.metadata?.Class;
-      const appData = getAppData(properties);
-      const odcID: string = getTextValue(properties, 'id');
-
-      const openAuction = odc?.current_sale?.find((s) =>
-        s?.sale_type?.auction?.status?.hasOwnProperty('open'),
-      )?.sale_type?.auction;
-
-      const buyNow: number = Number(openAuction?.config?.auction?.buy_now[0] || 0) / 1e8;
-      const currentBid: number = Number(openAuction?.current_bid_amount || 0) / 1e8;
-      const token: string = openAuction?.config?.auction?.token?.ic?.symbol || '';
-      const hasPreviewImage: boolean = !!(
-        odc?.metadata?.Class?.find(({ name }) => name === 'preview_asset') ||
-        odc?.metadata?.Class.find(({ name }) => name === 'preview')
-      );
-
-      const data: OdcData = {
-        hasPreviewImage,
-        odcID,
-        onSale: !!openAuction,
-        currentBid,
-        buyNow,
-        token,
-        appData,
-      };
-
-      return data;
-    });
-
-    return parsed;
-  };
+  const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
 
   const handleClose = async (dataChanged = false) => {
     setEscrowsModalOpen(false);
@@ -313,7 +233,7 @@ const VaultPage = () => {
 
     try {
       // show progress bar on intial load, otherwise fetch silenty
-      const stateLoaded = odcData?.length > 0;
+      const stateLoaded = odcs?.length > 0;
       setIsLoading(!stateLoaded);
 
       const { canisterId } = await useRoute();
@@ -330,19 +250,8 @@ const VaultPage = () => {
 
       const collMeta = collMetaResp.ok;
       const metadataClass = collMeta?.metadata?.[0]?.Class;
-
-      // set the collection preview image
-      const previewAsset = getTextValue(metadataClass, 'preview_asset');
-      if (previewAsset) {
-        dispatch({ type: 'collectionPreview', payload: previewAsset });
-      }
-
-      // set the collection app data
-      const appData = getAppData(metadataClass);
-      dispatch({ type: 'collectionData', payload: appData });
-
-      const originatorPrincipal = getPrincipalValue(metadataClass, 'com.origyn.originator');
-      dispatch({ type: 'originatorPrincipal', payload: originatorPrincipal });
+      const collectionData = parseMetadata(metadataClass);
+      dispatch({ type: 'collectionData', payload: collectionData });
 
       const vaultBalanceInfo = await actor?.balance_of_nft_origyn({ principal });
       if (vaultBalanceInfo.err) {
@@ -358,9 +267,9 @@ const VaultPage = () => {
       }
 
       // parse the digital certificate data (metadata and sale info)
-      const parsedOdcData = parseOdcData(odcDataRaw);
-      dispatch({ type: 'odcData', payload: parsedOdcData });
-      dispatch({ type: 'filteredOdcData', payload: parsedOdcData });
+      const parsedOdcs = parseOdcs(odcDataRaw);
+      dispatch({ type: 'odcs', payload: parsedOdcs });
+      dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
       dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
 
       setShowManageEscrowsButton(
@@ -397,14 +306,14 @@ const VaultPage = () => {
 
   /** Apply filter and sort to list */
   useEffect(() => {
-    let filtered = odcData;
+    let filtered = odcs;
 
     switch (filter) {
       case 'onSale':
-        filtered = filtered.filter((odc) => odc.onSale);
+        filtered = filtered.filter((odc) => odc.auctionOpen);
         break;
       case 'notOnSale':
-        filtered = filtered.filter((odc) => !odc.onSale);
+        filtered = filtered.filter((odc) => !odc.auctionOpen);
         break;
     }
 
@@ -422,13 +331,11 @@ const VaultPage = () => {
     }
 
     if (inputText?.length) {
-      filtered = filtered.filter((odc) =>
-        odc?.appData?.display_name?.toLowerCase().includes(inputText),
-      );
+      filtered = filtered.filter((odc) => odc?.displayName?.toLowerCase().includes(inputText));
     }
 
-    dispatch({ type: 'filteredOdcData', payload: filtered });
-  }, [filter, sort, inputText, odcData]);
+    dispatch({ type: 'filteredOdcs', payload: filtered });
+  }, [filter, sort, inputText, odcs]);
 
   useEffect(() => {
     if (loggedIn) {
@@ -536,10 +443,12 @@ const VaultPage = () => {
                     </div>
                     <div>
                       <Flex align="flex-start" gap={24}>
-                        <StyledCollectionImg
-                          src={`https://prptl.io/-/${canisterId}/collection/-/${collectionPreview}`}
-                          alt=""
-                        />
+                        {collectionData.hasPreviewAsset && (
+                          <StyledCollectionImg
+                            src={`https://prptl.io/-/${canisterId}/collection/preview`}
+                            alt=""
+                          />
+                        )}
                         <Flex flexFlow="column" fullWidth justify="space-between" gap={8}>
                           <Flex
                             flexFlow="row"
@@ -548,7 +457,7 @@ const VaultPage = () => {
                             justify="space-between"
                             smFlexFlow="column"
                           >
-                            <h2>{collectionData?.display_name}</h2>
+                            <h2>{collectionData?.displayName}</h2>
 
                             <Flex
                               style={{
@@ -558,14 +467,12 @@ const VaultPage = () => {
                               }}
                               gap={8}
                             >
-                              {collectionData?.social_links?.thawed?.map((links, index) => (
+                              {collectionData?.socialLinks?.map((link, index) => (
                                 <SocialMediaButton
                                   as="a"
                                   iconButton
                                   target="_blank"
-                                  href={
-                                    links?.Class?.find(({ name }) => name === 'url')?.value?.Text
-                                  }
+                                  href={link.url}
                                   key={index}
                                 >
                                   {
@@ -576,9 +483,7 @@ const VaultPage = () => {
                                       dscvr: <DscvrSVG />,
                                       distrikt: <DistriktSVG />,
                                       website: <WebsiteSVG />,
-                                    }[
-                                      links?.Class?.find(({ name }) => name === 'type')?.value?.Text
-                                    ]
+                                    }[link.type]
                                   }
                                 </SocialMediaButton>
                               ))}
@@ -596,7 +501,7 @@ const VaultPage = () => {
                           <p>
                             <span className="secondary_color">Created by </span>
                             <span className="secondary_color">
-                              {originatorPrincipal || 'no creator_name'}
+                              {collectionData?.originatorPrincipalId || 'no creator name'}
                             </span>
                           </p>
                           <br />
@@ -632,7 +537,7 @@ const VaultPage = () => {
                         handleClose={handleClose}
                         collection={collectionData}
                       />
-                      {odcData?.length > 0 ? (
+                      {parseOdcs?.length > 0 ? (
                         <>
                           <Grid
                             smColumns={1}
@@ -642,20 +547,20 @@ const VaultPage = () => {
                             columns={6}
                             gap={20}
                           >
-                            {filteredOdcData.map((odc: OdcData) => {
+                            {filteredOdcs.map((odc) => {
                               return (
-                                <Link to={`/${odc?.odcID}`} key={odc?.odcID}>
+                                <Link to={`/${odc?.id}`} key={odc?.id}>
                                   <Card
                                     flexFlow="column"
                                     style={{ overflow: 'hidden', height: '100%' }}
                                   >
-                                    {odc.hasPreviewImage ? (
+                                    {odc.hasPreviewAsset ? (
                                       <StyledNFTImg
                                         onError={(e) => {
                                           e.target.onerror = null; // prevents looping
                                           e.currentTarget.className += ' errorImage';
                                         }}
-                                        src={`https://${canisterId}.raw.ic0.app/-/${odc?.odcID}/preview`}
+                                        src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                         alt=""
                                       />
                                     ) : (
@@ -674,10 +579,10 @@ const VaultPage = () => {
                                       >
                                         <div>
                                           <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                            {collectionData?.display_name}
+                                            {collectionData?.displayName}
                                           </p>
                                           <p>
-                                            <b>{odc?.appData?.display_name || odc?.odcID}</b>
+                                            <b>{odc.displayName || odc.id}</b>
                                           </p>
                                         </div>
                                         <div>
@@ -685,14 +590,16 @@ const VaultPage = () => {
                                             Status
                                           </p>
                                           <p>
-                                            {odc.onSale ? (
+                                            {odc.auctionOpen ? (
                                               odc.currentBid === 0 ? (
                                                 <>
-                                                  {odc.buyNow} <TokenIcon symbol={odc.token} />
+                                                  {odc.buyNow}{' '}
+                                                  <TokenIcon symbol={odc.tokenSymbol} />
                                                 </>
                                               ) : (
                                                 <>
-                                                  {odc.currentBid} <TokenIcon symbol={odc.token} />
+                                                  {odc.currentBid}{' '}
+                                                  <TokenIcon symbol={odc.tokenSymbol} />
                                                 </>
                                               )
                                             ) : (

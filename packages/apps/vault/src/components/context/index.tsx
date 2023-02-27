@@ -13,34 +13,30 @@ const reducer = (state: VaultState, action: VaultAction): VaultState => {
   switch (action.type) {
     case 'ownedItems':
       return { ...state, ownedItems: action.payload };
-    case 'collectionPreview':
-      return { ...state, collectionPreview: action.payload };
-    case 'originatorPrincipal':
-      return { ...state, originatorPrincipal: action.payload };
     case 'collectionData':
       return { ...state, collectionData: action.payload };
-    case 'odcData':
-      return { ...state, odcData: action.payload };
+    case 'odcs':
+      return { ...state, odcs: action.payload };
     case 'filter':
       return { ...state, filter: action.payload };
     case 'sort':
       return { ...state, sort: action.payload };
-    case 'filteredOdcData':
-      return { ...state, filteredOdcData: action.payload };
+    case 'filteredOdcs':
+      return { ...state, filteredOdcs: action.payload };
   }
 };
 
 const VaultProvider = ({ children }: VaultProviderProps) => {
-  const [state, dispatch] = useReducer(reducer, {
+  const defaultVaultState: VaultState = {
     ownedItems: 0,
-    collectionPreview: '',
-    originatorPrincipal: '',
-    collectionData: {},
-    odcData: [],
+    collectionData: undefined,
+    odcs: [],
+    filteredOdcs: [],
     filter: '',
     sort: '',
-    filteredOdcData: [],
-  });
+  };
+
+  const [state, dispatch] = useReducer(reducer, defaultVaultState);
 
   return <VaultContext.Provider value={{ state, dispatch }}>{children}</VaultContext.Provider>;
 };

@@ -7,6 +7,7 @@ import * as React from 'react';
 import * as Yup from 'yup';
 import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useEffect } from 'react';
+import { OdcDataWithSale } from '@dapp/utils';
 
 const validationSchema = Yup.object({
   escrowPrice: Yup.number()
@@ -16,21 +17,30 @@ const validationSchema = Yup.object({
     .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
 });
 
-export function StartEscrowModal({ nft, open, handleClose, initialValues, onSuccess }: any) {
+export type StartEscrowModalProps = {
+  nft: OdcDataWithSale;
+  open: boolean;
+  handleClose: any;
+  initialValues: any;
+  onSuccess: any;
+};
+
+export function StartEscrowModal({
+  nft,
+  open,
+  handleClose,
+  initialValues,
+  onSuccess,
+}: StartEscrowModalProps) {
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [errors, setErrors] = React.useState<any>({});
   const [values, setValues] = React.useState<any>({
-    nftId: nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text,
-    seller: nft?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText(),
-    token:
-      nft?.current_sale?.length > 0
-        ? nft?.current_sale[0].sale_type?.auction?.config?.auction?.token?.ic?.symbol
-        : 'OGY',
-    openAuction: nft?.current_sale?.find((sale) =>
-      sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-    ),
+    nftId: nft?.id,
+    seller: nft?.ownerPrincipalId,
+    token: nft?.tokenSymbol,
+    openAuction: nft?.auction,
   });
   const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens, refreshAllBalances } = useTokensContext();
@@ -182,24 +192,22 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues, onSucc
         setErrors(errs);
       });
   };
+
   const onChange = (e?: any, name?: string, value?: any) => {
     setErrors({ ...errors, [name || e.target.name]: undefined });
     setValues({ ...values, [name || e.target.name]: value || e.target.value });
   };
+
   useEffect(() => {
     setValues({
       ...initialValues,
-      nftId: nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text,
-      seller: nft?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText(),
-      token:
-        nft?.current_sale?.length > 0
-          ? nft?.current_sale[0].sale_type?.auction?.config?.auction?.token?.ic?.symbol
-          : 'OGY',
-      openAuction: nft?.current_sale?.find((sale) =>
-        sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-      ),
+      nftId: nft.id,
+      seller: nft.ownerPrincipalId,
+      token: nft.token,
+      openAuction: nft.auction,
     });
   }, [nft, initialValues]);
+
   return (
     <div>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
@@ -247,22 +255,26 @@ export function StartEscrowModal({ nft, open, handleClose, initialValues, onSucc
                       onChange={onChange}
                     />
                     <br />
-                    <span>Transaction Fee</span>
-                    <span style={{ color: 'grey' }}>{`${
-                      tokens[values.token].fee * 0.00000001
-                    }${' '}${tokens[values.token].symbol}`}</span>
-                    <br />
-                    <HR />
-                    <br />
-                    <Flex flexFlow="row" align="center" justify="space-between">
-                      <h6>Total Amount</h6>
-                      <span>
-                        {parseFloat(values.priceOffer) + tokens[values.token].fee * 0.00000001}
-                      </span>
-                    </Flex>
-                    <br />
-                    <HR />
-                    <br />
+                    {tokens?.[values.token] && (
+                      <>
+                        <span>Transaction Fee</span>
+                        <span style={{ color: 'grey' }}>{`${
+                          tokens[values.token].fee * 0.00000001
+                        }${' '}${tokens[values.token]?.symbol}`}</span>
+                        <br />
+                        <HR />
+                        <br />
+                        <Flex flexFlow="row" align="center" justify="space-between">
+                          <h6>Total Amount</h6>
+                          <span>
+                            {parseFloat(values.priceOffer) + tokens[values.token].fee * 0.00000001}
+                          </span>
+                        </Flex>
+                        <br />
+                        <HR />
+                        <br />
+                      </>
+                    )}
                     <Flex align="center" justify="flex-end" gap={16}>
                       <Button btnType="outlined" onClick={() => handleCustomClose(false)}>
                         Cancel
