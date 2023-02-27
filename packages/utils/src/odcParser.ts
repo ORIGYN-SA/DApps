@@ -236,6 +236,8 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
     standard: { Ledger: null },
     symbol: 'OGY',
   };
+  odc.tokenSymbol = odc.token.symbol;
+
   odc.auction = odcInfo?.current_sale[0]?.sale_type?.auction;
   odc.saleId = odcInfo?.current_sale[0]?.sale_id || '';
 
@@ -248,8 +250,10 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
     if ('auction' in odc.auction?.config) {
       const auctionConfig = odc.auction.config.auction;
       odc.buyNow = Number(auctionConfig.buy_now?.[0] || 0);
-      odc.token = 'ic' in auctionConfig.token && auctionConfig.token.ic;
-      odc.tokenSymbol = odc.token?.symbol || 'OGY';
+      if ('ic' in auctionConfig.token) {
+        odc.token = auctionConfig.token.ic;
+        odc.tokenSymbol = odc.token.symbol;
+      }
       odc.minIncreaseAmount =
         'amount' in auctionConfig.min_increase ? auctionConfig.min_increase.amount : 0n;
       odc.minIncreasePercentage =

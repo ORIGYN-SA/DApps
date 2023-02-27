@@ -6,7 +6,6 @@ import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
 import { StartAuctionModal } from '../../modals/StartAuctionModal';
 import { StartEscrowModal } from '../../modals/StartEscrowModal';
 import {
-  eToNumber,
   getDiffInDays,
   OdcData,
   OdcDataWithSale,
@@ -91,8 +90,8 @@ export const NFTPage = () => {
 
     const collMetaResp = await getNftCollectionMeta([]);
     if (collMetaResp.err) {
-      console.log(collMetaResp.err);
       setCollectionData(undefined);
+      console.log(collMetaResp.err);
     } else {
       const collMeta = collMetaResp.ok;
       const metadataClass = collMeta?.metadata?.[0]?.Class as Property[];

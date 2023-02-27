@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useEffect } from 'react';
-import { currencyToFixed, eToNumber, OdcDataWithSale } from '@dapp/utils';
+import { currencyToFixed, OdcDataWithSale } from '@dapp/utils';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -49,6 +49,9 @@ export function StartEscrowModal({
   });
 
   const handleCustomClose = (value: any) => {
+    setIsLoading(false);
+    setIsTransacting(false);
+    setSuccess(false);
     handleClose(value);
   };
 
@@ -89,8 +92,14 @@ export function StartEscrowModal({
       errors = { ...errors, offerPrice: 'Offer must be a number' };
     } else if (parseFloat(formValues.offerPrice) <= 0) {
       errors = { ...errors, offerPrice: 'Offer must be greater than 0' };
-    } else if (parseFloat(formValues.offerPrice) <= odc.startPrice) {
-      errors = { ...errors, offerPrice: 'Offer must be greater than the start price' };
+    } else if (parseFloat(formValues.offerPrice) <= odc.startPrice / 1e8) {
+      errors = {
+        ...errors,
+        offerPrice: `Offer must be greater than the start price of ${currencyToFixed(
+          odc.startPrice,
+          Number(odc.token.decimals),
+        )} ${odc.tokenSymbol}`,
+      };
     }
 
     if (!formValues.token) {
@@ -99,6 +108,7 @@ export function StartEscrowModal({
 
     // if there are any form errors, notify the user
     if (errors.offerPrice || errors.token) {
+      setFormErrors(errors);
       return false;
     }
 
@@ -108,6 +118,7 @@ export function StartEscrowModal({
   const startEscrow = async () => {
     try {
       if (isLoading || isTransacting || !activeWalletProvider || !validateForm()) {
+        console.log('validation failed');
         return;
       }
 
@@ -126,7 +137,7 @@ export function StartEscrowModal({
         throw new Error('Deposit info not found in sale info');
       }
 
-      const { account_id } = saleInfo?.ok?.deposit_info;
+      const account_id = saleInfo?.ok?.deposit_info?.account_id;
       if (!account_id) {
         throw new Error('Account ID not found in sale info');
       }
@@ -179,7 +190,7 @@ export function StartEscrowModal({
 
         const bidResponse = await actor.sale_nft_origyn({ bid: bidData }); // TODO: fix this
         if ('err' in bidResponse) {
-          throw new Error(bidResponse.err[0]);
+          throw new Error(bidResponse.err.text);
         }
 
         enqueueSnackbar('Your bid has been successfully placed.', {
@@ -228,14 +239,14 @@ export function StartEscrowModal({
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
+      <Modal isOpened={open} closeModal={() => handleCustomClose} size="md">
         <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
           {success ? (
             <>
               <h2>Success!</h2>
               <p className="secondary_color">All the transactions were made successfully.</p>
               <Flex justify="flex-end">
-                <Button onClick={handleClose}>Done</Button>
+                <Button onClick={handleCustomClose}>Done</Button>
               </Flex>
             </>
           ) : (
@@ -269,7 +280,7 @@ export function StartEscrowModal({
                       />
                       <TextInput
                         required
-                        label="Your Offer (in tokens)"
+                        label={`Your ${escrowType === 'Bid' ? 'bid' : 'offer'} (in tokens)`}
                         id="offerPrice"
                         name="offerPrice"
                         error={formErrors.offerPrice}
