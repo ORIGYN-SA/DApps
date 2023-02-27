@@ -34,7 +34,7 @@ import { EscrowType } from '../../modals/StartEscrowModal';
 export const NFTPage = () => {
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
-  const [currentNFT, setCurrentNFT] = useState<OdcDataWithSale>();
+  const [odc, setOdc] = useState<OdcDataWithSale>();
   const [collectionData, setCollectionData] = useState<OdcData>();
   const [openAuction, setOpenAuction] = React.useState(false);
   const [canisterId, setCanisterId] = React.useState('');
@@ -78,9 +78,9 @@ export const NFTPage = () => {
 
   const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
 
-  const nftEndSale = currentNFT?.auction?.end_date;
+  const nftEndSale = odc?.auction?.end_date;
 
-  const verifyOwner = currentNFT?.ownerPrincipalId || '';
+  const verifyOwner = odc?.ownerPrincipalId || '';
 
   const fetchCollection = async () => {
     const route = await useRoute();
@@ -106,8 +106,8 @@ export const NFTPage = () => {
     }
     setIsLoading(false);
 
-    let odc: OdcDataWithSale = parseOdc(r['ok']);
-    setCurrentNFT(odc);
+    let parsedOdc: OdcDataWithSale = parseOdc(r['ok']);
+    setOdc(parsedOdc);
   };
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export const NFTPage = () => {
 
   return (
     <>
-      {currentNFT && (
+      {odc && (
         <Flex fullWidth padding="0" flexFlow="column">
           <SecondaryNav
             title="Vault"
@@ -135,20 +135,20 @@ export const NFTPage = () => {
                   <Flex flexFlow="column">
                     <Container size="md" padding="80px" mdPadding="16px">
                       <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                        {currentNFT?.hasPreviewAsset && (
+                        {odc?.hasPreviewAsset && (
                           <img
                             style={{ borderRadius: '18px', width: '100%' }}
                             src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
                           />
                         )}
                         <Flex flexFlow="column" gap={8}>
-                          <p className="secondary_color">{currentNFT?.ownerPrincipalId}</p>
+                          <p className="secondary_color">{odc?.ownerPrincipalId}</p>
                           <h2>
-                            <b>{currentNFT?.displayName || currentNFT?.id}</b>
+                            <b>{odc?.displayName || odc?.id}</b>
                           </h2>
                           <br />
                           <ShowMoreBlock btnText="Read More">
-                            <p className="secondary_color">{currentNFT?.description}</p>
+                            <p className="secondary_color">{odc?.description}</p>
                           </ShowMoreBlock>
                           <br />
                           <Flex gap={8} align="center">
@@ -164,38 +164,29 @@ export const NFTPage = () => {
                           <br />
                           <HR />
                           <Flex fullWidth justify="space-between" align="center">
-                            {currentNFT?.auctionOpen ? (
+                            {odc?.auctionOpen ? (
                               <>
                                 <Flex flexFlow="column">
                                   <span>Current bid</span>
                                   <strong>
-                                    <TokenIcon symbol={currentNFT.tokenSymbol} />
-                                    {currencyToFixed(
-                                      currentNFT.currentBid,
-                                      Number(currentNFT.token.decimals),
-                                    )}
+                                    <TokenIcon symbol={odc.tokenSymbol} />
+                                    {currencyToFixed(odc.currentBid, Number(odc.token.decimals))}
                                   </strong>
                                 </Flex>
 
                                 <Flex flexFlow="column">
                                   <span>Reserve Price</span>
                                   <strong>
-                                    <TokenIcon symbol={currentNFT.tokenSymbol} />
-                                    {currencyToFixed(
-                                      currentNFT.reserve,
-                                      Number(currentNFT.token.decimals),
-                                    )}
+                                    <TokenIcon symbol={odc.tokenSymbol} />
+                                    {currencyToFixed(odc.reserve, Number(odc.token.decimals))}
                                   </strong>
                                 </Flex>
-                                {currentNFT?.buyNow && (
+                                {odc?.buyNow && (
                                   <Flex flexFlow="column">
                                     <span>Buy Now</span>
                                     <strong>
-                                      <TokenIcon symbol={currentNFT.tokenSymbol} />
-                                      {currencyToFixed(
-                                        currentNFT.buyNow,
-                                        Number(currentNFT.token.decimals),
-                                      )}
+                                      <TokenIcon symbol={odc.tokenSymbol} />
+                                      {currencyToFixed(odc.buyNow, Number(odc.token.decimals))}
                                     </strong>
                                   </Flex>
                                 )}
@@ -216,9 +207,9 @@ export const NFTPage = () => {
                           )}
                           <br />
                           <Flex gap={8} flexFlow="column">
-                            {currentNFT?.auctionOpen ? (
+                            {odc?.auctionOpen ? (
                               <>
-                                {currentNFT?.buyNow &&
+                                {odc?.buyNow &&
                                   principalId != verifyOwner &&
                                   (nftEndSale || 9 * 1e30 > currentTimeInNanos ? (
                                     <Button
@@ -234,7 +225,7 @@ export const NFTPage = () => {
                                   ))}
 
                                 {principalId === verifyOwner ? (
-                                  currentNFT.currentBid == 0 || currentNFT.auctionNotStarted ? (
+                                  odc.currentBid == 0 || odc.auctionNotStarted ? (
                                     <Button btnType="accent" onClick={handleClickOpenEsc}>
                                       Cancel Sale
                                     </Button>
@@ -293,7 +284,7 @@ export const NFTPage = () => {
                             <br />
                             <br />
                             <Flex flexFlow="column" gap={16}>
-                              {currentNFT.displayProperties.map((p) => (
+                              {odc.displayProperties.map((p) => (
                                 <div key={p.name}>
                                   <Grid columns={2}>
                                     <p>{p.name.charAt(0).toUpperCase() + p.name.slice(1)}</p>
@@ -317,7 +308,7 @@ export const NFTPage = () => {
                                 <b>Primary Royalties </b>
                               </h3>
                               <HR />
-                              {currentNFT?.primaryRoyalties?.map((royalty) => (
+                              {odc?.primaryRoyalties?.map((royalty) => (
                                 <div key={royalty.tag}>
                                   <Grid columns={2}>
                                     <p>{royalty.tag}</p>
@@ -332,7 +323,7 @@ export const NFTPage = () => {
                                 <b>Secondary Royalties</b>{' '}
                               </h3>
                               <HR />
-                              {currentNFT?.secondaryRoyalties?.map((royalty) => (
+                              {odc?.secondaryRoyalties?.map((royalty) => (
                                 <div key={royalty.tag}>
                                   <Grid columns={2}>
                                     <p>{royalty.tag}</p>
@@ -361,19 +352,19 @@ export const NFTPage = () => {
           <ConfirmSalesActionModal
             openConfirmation={openConfirmation}
             handleClose={handleClose}
-            currentToken={currentNFT?.id}
+            currentToken={odc?.id}
             action={dialogAction}
           />
           <StartAuctionModal
             open={openAuction}
             handleClose={handleClose}
             onSuccess={fetchNft}
-            currentToken={currentNFT?.id}
+            currentToken={odc?.id}
           />
           <StartEscrowModal
             open={openEscrowModal}
             handleClose={handleCloseEscrow}
-            odc={currentNFT}
+            odc={odc}
             escrowType={escrowType}
             onSuccess={fetchNft}
           />

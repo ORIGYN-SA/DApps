@@ -145,7 +145,8 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     try {
       const balance = await getBalanceFromCanister(isLocal, principal, token);
       return balance.value / 10 ** balance.decimals;
-    } catch {
+    } catch (e) {
+      console.log(e);
       return 0;
     }
   };
