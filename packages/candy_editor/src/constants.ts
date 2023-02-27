@@ -19,6 +19,7 @@ export const SELECT_OPTIONS: Array<{ label: string; value: string }> = [
   { label: 'Bool', value: 'Bool' },
   { label: 'Float', value: 'Float' },
   { label: 'Principal', value: 'Principal' },
+  { label: 'Bytes', value: 'Bytes' },
 ];
 
 export const VALIDATION_ERRORS: { [key: string]: string } = {
@@ -35,8 +36,14 @@ export const VALIDATION_ERRORS: { [key: string]: string } = {
   boolean: 'The value must be a Boolean (true or false - case insensitive)',
   float: 'The value must be a Float number',
   principal: 'The value must be a valid Principal',
+  bytesArray: 'The value must be a valid Nat8 array',
+  base64: 'The value must be a valid Base64 string',
+  hexadecimal: 'The value must be a valid Hexadecimal string',
 };
 
+export const WARNING_MESSAGES: { [key: string]: string } = {
+  helpTextBytes: 'The Bytes candy type is stored as a small byte array (16 KB or less), intended for small binary data such as hashes. Large binary data such as images and videos can be added to the library.'
+}
 export const MESSAGES: { [key: string]: string } = {
   emptyCandyClass: 'Candy Class is empty',
   readOnlyMode: 'Write mode is disabled',

@@ -1,0 +1,6 @@
+{
+  "name": "@dapp/common-types",
+  "version": "0.1.0",
+  "description": "Common TypeScript types used within the dApps.",
+  "main": "src/index.ts"
+}

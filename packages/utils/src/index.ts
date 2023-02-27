@@ -75,3 +75,4 @@ export * from './checkCanister';
 export * from './getFormattedLink';
 export * from './checkOwner';
 export * from './odcParser';
+export * from './binaryConverters';
