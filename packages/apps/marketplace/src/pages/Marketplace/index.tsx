@@ -32,20 +32,12 @@ const Marketplace = () => {
   const [inputText, setInputText] = useState('');
   const { open } = useDialog();
   const { state, dispatch } = useMarketplace();
-
-  const {
-    totalItems,
-    collectionData,
-    odcs: odcData,
-    filter,
-    sort,
-    filteredOdcs: filteredOdcData,
-  } = state;
+  const { totalItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
 
   const fetchData = async (actor: any) => {
     try {
       // show progress bar on intial load, otherwise fetch silenty
-      const stateLoaded = odcData?.length > 0;
+      const stateLoaded = odcs?.length > 0;
       setIsLoading(!stateLoaded);
 
       OrigynClient.getInstance().init(true, canisterId, { actor });
@@ -76,9 +68,9 @@ const Marketplace = () => {
       }
 
       // parse the digital certificate data (metadata and sale info)
-      const odcs = parseOdcs(odcDataRaw);
-      dispatch({ type: 'odcs', payload: odcs });
-      dispatch({ type: 'filteredOdcs', payload: odcs });
+      const parsedOdcs = parseOdcs(odcDataRaw);
+      dispatch({ type: 'odcs', payload: parsedOdcs });
+      dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
     } catch (err) {
       console.error(err);
       enqueueSnackbar(err?.message || err, {
@@ -114,7 +106,7 @@ const Marketplace = () => {
 
   /** Apply filter and sort to list */
   useEffect(() => {
-    let filtered = odcData;
+    let filtered = odcs;
 
     switch (filter) {
       case 'onSale':
@@ -143,7 +135,7 @@ const Marketplace = () => {
     }
 
     dispatch({ type: 'filteredOdcs', payload: filtered });
-  }, [filter, sort, inputText, odcData]);
+  }, [filter, sort, inputText, odcs]);
 
   return (
     <Flex fullWidth padding="0" flexFlow="column">
@@ -208,7 +200,7 @@ const Marketplace = () => {
                   />
                   <br />
                   <br />
-                  {odcData?.length > 0 ? (
+                  {odcs?.length > 0 ? (
                     <>
                       <Grid
                         smColumns={1}
@@ -218,7 +210,7 @@ const Marketplace = () => {
                         columns={6}
                         gap={20}
                       >
-                        {filteredOdcData.map((odc: OdcDataWithSale) => {
+                        {filteredOdcs.map((odc: OdcDataWithSale) => {
                           return (
                             <Link to={`/${odc?.id}`} key={odc?.id}>
                               <Card

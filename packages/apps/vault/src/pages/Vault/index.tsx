@@ -267,9 +267,9 @@ const VaultPage = () => {
       }
 
       // parse the digital certificate data (metadata and sale info)
-      const odcs = parseOdcs(odcDataRaw);
-      dispatch({ type: 'odcs', payload: odcs });
-      dispatch({ type: 'filteredOdcs', payload: odcs });
+      const parsedOdcs = parseOdcs(odcDataRaw);
+      dispatch({ type: 'odcs', payload: parsedOdcs });
+      dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
       dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
 
       setShowManageEscrowsButton(
