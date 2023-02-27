@@ -12,8 +12,9 @@ import {
   OdcDataWithSale,
   parseMetadata,
   parseOdc,
-  Property,
+  currencyToFixed,
 } from '@dapp/utils';
+import { Property } from '@dapp/common-types';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -87,7 +88,7 @@ export const NFTPage = () => {
     } else if (type === 'bid') {
       modalInitial.priceOffer = eToNumber(
         currentNFT.currentBid > 0
-          ? (currentNFT.currentBid + currentNFT.minIncreaseAmount) / 100_000_000
+          ? (currentNFT.currentBid + Number(currentNFT.minIncreaseAmount)) / 100_000_000
           : currentNFT.startPrice / 100_000_000,
       );
     }
@@ -200,29 +201,33 @@ export const NFTPage = () => {
                                 <Flex flexFlow="column">
                                   <span>Current bid</span>
                                   <strong>
-                                    <TokenIcon symbol={currentNFT.token} />
-                                    {parseFloat((currentNFT.currentBid * 1e-8).toString()).toFixed(
-                                      2,
+                                    <TokenIcon symbol={currentNFT.tokenSymbol} />
+                                    {currencyToFixed(
+                                      currentNFT.currentBid,
+                                      Number(currentNFT.token.decimals),
                                     )}
                                   </strong>
                                 </Flex>
-                                {currentNFT?.reserve && (
-                                  <Flex flexFlow="column">
-                                    <span>Reserve Price</span>
-                                    <strong>
-                                      <TokenIcon symbol={currentNFT.token} />
-                                      {parseFloat((currentNFT.reserve * 1e-8).toString()).toFixed(
-                                        2,
-                                      )}
-                                    </strong>
-                                  </Flex>
-                                )}
+
+                                <Flex flexFlow="column">
+                                  <span>Reserve Price</span>
+                                  <strong>
+                                    <TokenIcon symbol={currentNFT.tokenSymbol} />
+                                    {currencyToFixed(
+                                      currentNFT.reserve,
+                                      Number(currentNFT.token.decimals),
+                                    )}
+                                  </strong>
+                                </Flex>
                                 {currentNFT?.buyNow && (
                                   <Flex flexFlow="column">
                                     <span>Buy Now</span>
                                     <strong>
-                                      <TokenIcon symbol={currentNFT.token} />
-                                      {parseFloat((currentNFT.buyNow * 1e-8).toString()).toFixed(2)}
+                                      <TokenIcon symbol={currentNFT.tokenSymbol} />
+                                      {currencyToFixed(
+                                        currentNFT.buyNow,
+                                        Number(currentNFT.token.decimals),
+                                      )}
                                     </strong>
                                   </Flex>
                                 )}
@@ -314,29 +319,15 @@ export const NFTPage = () => {
                             <br />
                             <br />
                             <Flex flexFlow="column" gap={16}>
-                              {Object.keys(currentNFT)
-                                .filter((k) => k !== 'custom_properties')
-                                .map((k) => (
-                                  <div key={k}>
-                                    <Grid columns={2}>
-                                      <p>{k.charAt(0).toUpperCase() + k.slice(1)}</p>
-                                      <p className="secondary_color">{currentNFT[k].toString()}</p>
-                                    </Grid>
-                                    <HR marginTop={16} />
-                                  </div>
-                                ))}
-
-                              {mapCustomProperties(currentNFT?.displayPropertes).map(
-                                ({ name, value }) => (
-                                  <div key={name}>
-                                    <Grid columns={2}>
-                                      <p>{name.charAt(0).toUpperCase() + name.slice(1)}</p>
-                                      <p className="secondary_color">{value}</p>
-                                    </Grid>
-                                    <HR marginTop={16} />
-                                  </div>
-                                ),
-                              )}
+                              {currentNFT.displayProperties.map((p) => (
+                                <div key={p.name}>
+                                  <Grid columns={2}>
+                                    <p>{p.name.charAt(0).toUpperCase() + p.name.slice(1)}</p>
+                                    <p className="secondary_color">{p.value}</p>
+                                  </Grid>
+                                  <HR marginTop={16} />
+                                </div>
+                              ))}
                             </Flex>
                             <br />
                             <br />

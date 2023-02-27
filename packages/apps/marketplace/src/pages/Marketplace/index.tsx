@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { useMarketplace } from '../../components/context';
@@ -17,13 +18,14 @@ import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { Link } from 'react-router-dom';
 import { useDialog } from '@connect2ic/react';
 import styled from 'styled-components';
-import { OdcDataWithSale, parseOdcs, parseMetadata } from '@dapp/utils';
+import { OdcDataWithSale, parseOdcs, parseMetadata, currencyToFixed } from '@dapp/utils';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
 `;
 
 const Marketplace = () => {
+  const { enqueueSnackbar } = useSnackbar() || {};
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [canisterId, setCanisterId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -74,12 +76,18 @@ const Marketplace = () => {
       }
 
       // parse the digital certificate data (metadata and sale info)
-      const odcs = parseOdcs(odcDataRaw.ok);
+      const odcs = parseOdcs(odcDataRaw);
       dispatch({ type: 'odcs', payload: odcs });
       dispatch({ type: 'filteredOdcs', payload: odcs });
     } catch (err) {
-      // TODO: Display error
       console.error(err);
+      enqueueSnackbar(err?.message || err, {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      });
     } finally {
       setIsLoading(false);
     }
@@ -247,11 +255,19 @@ const Marketplace = () => {
                                         {odc.auctionOpen ? (
                                           odc.currentBid === 0 ? (
                                             <>
-                                              {odc.buyNow} <TokenIcon symbol={odc.token} />
+                                              {currencyToFixed(
+                                                odc.buyNow,
+                                                Number(odc.token.decimals),
+                                              )}{' '}
+                                              <TokenIcon symbol={odc.tokenSymbol} />
                                             </>
                                           ) : (
                                             <>
-                                              {odc.currentBid} <TokenIcon symbol={odc.token} />
+                                              {currencyToFixed(
+                                                odc.currentBid,
+                                                Number(odc.token.decimals),
+                                              )}{' '}
+                                              <TokenIcon symbol={odc.tokenSymbol} />
                                             </>
                                           )
                                         ) : (

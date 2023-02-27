@@ -6,7 +6,7 @@ import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { copyToClipboard, parseMetadata, parseOdcs } from '@dapp/utils';
+import { copyToClipboard, currencyToFixed, parseMetadata, parseOdcs } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
@@ -267,9 +267,9 @@ const VaultPage = () => {
       }
 
       // parse the digital certificate data (metadata and sale info)
-      const parsedOdcs = parseOdcs(odcDataRaw);
-      dispatch({ type: 'odcs', payload: parsedOdcs });
-      dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
+      const odcs = parseOdcs(odcDataRaw);
+      dispatch({ type: 'odcs', payload: odcs });
+      dispatch({ type: 'filteredOdcs', payload: odcs });
       dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
 
       setShowManageEscrowsButton(
@@ -593,12 +593,18 @@ const VaultPage = () => {
                                             {odc.auctionOpen ? (
                                               odc.currentBid === 0 ? (
                                                 <>
-                                                  {odc.buyNow}{' '}
+                                                  {currencyToFixed(
+                                                    odc.buyNow,
+                                                    Number(odc.token.decimals),
+                                                  )}{' '}
                                                   <TokenIcon symbol={odc.tokenSymbol} />
                                                 </>
                                               ) : (
                                                 <>
-                                                  {odc.currentBid}{' '}
+                                                  {currencyToFixed(
+                                                    odc.currentBid,
+                                                    Number(odc.token.decimals),
+                                                  )}{' '}
                                                   <TokenIcon symbol={odc.tokenSymbol} />
                                                 </>
                                               )

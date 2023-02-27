@@ -1,3 +1,4 @@
+// origyn_nft_reference Jan 13, 2023, main branch, v0.1.3, hash 484b3b6802cef29a5e40bd322b825320ffae3332
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
@@ -5,13 +6,13 @@ export type Account =
   | { account_id: string }
   | { principal: Principal }
   | { extensible: CandyValue }
-  | { account: { owner: Principal; sub_account: [] | [Array<number>] } };
+  | {
+      account: {
+        owner: Principal;
+        sub_account: [] | [Uint8Array | number[]];
+      };
+    };
 export type AccountIdentifier = string;
-export type Account__1 =
-  | { account_id: string }
-  | { principal: Principal }
-  | { extensible: CandyValue }
-  | { account: { owner: Principal; sub_account: [] | [Array<number>] } };
 export interface AllocationRecordStable {
   allocated_space: bigint;
   token_id: string;
@@ -79,9 +80,9 @@ export interface BidResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -97,9 +98,9 @@ export interface BidResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -113,7 +114,7 @@ export interface BidResponse {
         auction_bid: {
           token: TokenSpec;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: string;
         };
@@ -123,17 +124,17 @@ export interface BidResponse {
     | {
         sale_ended: {
           token: TokenSpec;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
       }
     | {
         mint: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           sale: [] | [{ token: TokenSpec; amount: bigint }];
           extensible: CandyValue;
         };
@@ -142,10 +143,10 @@ export interface BidResponse {
         royalty_paid: {
           tag: string;
           token: TokenSpec;
-          reciever: Account__1;
-          seller: Account__1;
+          reciever: Account;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
@@ -153,8 +154,8 @@ export interface BidResponse {
     | { extensible: CandyValue }
     | {
         owner_transfer: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           extensible: CandyValue;
         };
       }
@@ -177,9 +178,9 @@ export interface BidResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -189,7 +190,7 @@ export interface BidResponse {
           token: TokenSpec;
           trx_id: TransactionID;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       };
@@ -204,13 +205,15 @@ export type CandyValue =
   | { Nat16: number }
   | { Nat32: number }
   | { Nat64: bigint }
-  | { Blob: Array<number> }
+  | { Blob: Uint8Array | number[] }
   | { Bool: boolean }
   | { Int8: number }
   | { Nat8: number }
   | { Nats: { thawed: Array<bigint> } | { frozen: Array<bigint> } }
   | { Text: string }
-  | { Bytes: { thawed: Array<number> } | { frozen: Array<number> } }
+  | {
+      Bytes: { thawed: Uint8Array | number[] } | { frozen: Uint8Array | number[] };
+    }
   | { Int16: number }
   | { Int32: number }
   | { Int64: bigint }
@@ -222,8 +225,8 @@ export type CandyValue =
       Array: { thawed: Array<CandyValue> } | { frozen: Array<CandyValue> };
     }
   | { Class: Array<Property> };
-export type CanisterCyclesAggregatedData = Array<bigint>;
-export type CanisterHeapMemoryAggregatedData = Array<bigint>;
+export type CanisterCyclesAggregatedData = BigUint64Array | bigint[];
+export type CanisterHeapMemoryAggregatedData = BigUint64Array | bigint[];
 export type CanisterLogFeature = { filterMessageByContains: null } | { filterMessageByRegex: null };
 export interface CanisterLogMessages {
   data: Array<LogMessagesData>;
@@ -242,7 +245,7 @@ export type CanisterLogRequest =
 export type CanisterLogResponse =
   | { messagesInfo: CanisterLogMessagesInfo }
   | { messages: CanisterLogMessages };
-export type CanisterMemoryAggregatedData = Array<bigint>;
+export type CanisterMemoryAggregatedData = BigUint64Array | bigint[];
 export interface CanisterMetrics {
   data: CanisterMetricsData;
 }
@@ -256,7 +259,7 @@ export type ChunkContent =
   | {
       chunk: {
         total_chunks: bigint;
-        content: Array<number>;
+        content: Uint8Array | number[];
         storage_allocation: AllocationRecordStable;
         current_chunk: [] | [bigint];
       };
@@ -298,13 +301,15 @@ export type Data =
   | { Nat16: number }
   | { Nat32: number }
   | { Nat64: bigint }
-  | { Blob: Array<number> }
+  | { Blob: Uint8Array | number[] }
   | { Bool: boolean }
   | { Int8: number }
   | { Nat8: number }
   | { Nats: { thawed: Array<bigint> } | { frozen: Array<bigint> } }
   | { Text: string }
-  | { Bytes: { thawed: Array<number> } | { frozen: Array<number> } }
+  | {
+      Bytes: { thawed: Uint8Array | number[] } | { frozen: Uint8Array | number[] };
+    }
   | { Int16: number }
   | { Int32: number }
   | { Int64: bigint }
@@ -317,19 +322,23 @@ export type Data =
     }
   | { Class: Array<Property> };
 export interface DepositDetail {
-  token: TokenSpec__1;
-  trx_id: [] | [TransactionID__1];
+  token: TokenSpec;
+  trx_id: [] | [TransactionID];
   seller: Account;
   buyer: Account;
   amount: bigint;
   sale_id: [] | [string];
 }
 export interface DepositWithdrawDescription {
-  token: TokenSpec__1;
+  token: TokenSpec;
   withdraw_to: Account;
   buyer: Account;
   amount: bigint;
 }
+export interface DistributeSaleRequest {
+  seller: [] | [Account];
+}
+export type DistributeSaleResponse = Array<Result_5>;
 export interface EndSaleResponse {
   token_id: string;
   txn_type:
@@ -338,9 +347,9 @@ export interface EndSaleResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -356,9 +365,9 @@ export interface EndSaleResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -372,7 +381,7 @@ export interface EndSaleResponse {
         auction_bid: {
           token: TokenSpec;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: string;
         };
@@ -382,17 +391,17 @@ export interface EndSaleResponse {
     | {
         sale_ended: {
           token: TokenSpec;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
       }
     | {
         mint: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           sale: [] | [{ token: TokenSpec; amount: bigint }];
           extensible: CandyValue;
         };
@@ -401,10 +410,10 @@ export interface EndSaleResponse {
         royalty_paid: {
           tag: string;
           token: TokenSpec;
-          reciever: Account__1;
-          seller: Account__1;
+          reciever: Account;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
@@ -412,8 +421,8 @@ export interface EndSaleResponse {
     | { extensible: CandyValue }
     | {
         owner_transfer: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           extensible: CandyValue;
         };
       }
@@ -436,9 +445,9 @@ export interface EndSaleResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -448,7 +457,7 @@ export interface EndSaleResponse {
           token: TokenSpec;
           trx_id: TransactionID;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       };
@@ -503,19 +512,19 @@ export type Errors =
 export interface EscrowReceipt {
   token: TokenSpec;
   token_id: string;
-  seller: Account__1;
-  buyer: Account__1;
+  seller: Account;
+  buyer: Account;
   amount: bigint;
 }
 export interface EscrowRecord {
   token: TokenSpec;
   token_id: string;
-  seller: Account__1;
+  seller: Account;
   lock_to_date: [] | [bigint];
-  buyer: Account__1;
+  buyer: Account;
   amount: bigint;
   sale_id: [] | [string];
-  account_hash: [] | [Array<number>];
+  account_hash: [] | [Uint8Array | number[]];
 }
 export interface EscrowRequest {
   token_id: string;
@@ -550,13 +559,12 @@ export interface GetMetricsParameters {
 export type GovernanceRequest = { clear_shared_wallets: string };
 export type GovernanceResponse = { clear_shared_wallets: boolean };
 export interface HTTPResponse {
-  body: Array<number>;
-  headers: Array<HeaderField__1>;
+  body: Uint8Array | number[];
+  headers: Array<HeaderField>;
   streaming_strategy: [] | [StreamingStrategy];
   status_code: number;
 }
 export type HeaderField = [string, string];
-export type HeaderField__1 = [string, string];
 export interface HourlyMetricsData {
   updateCalls: UpdateCallsAggregatedData;
   canisterHeapMemorySize: CanisterHeapMemoryAggregatedData;
@@ -567,7 +575,7 @@ export interface HourlyMetricsData {
 export interface HttpRequest {
   url: string;
   method: string;
-  body: Array<number>;
+  body: Uint8Array | number[];
   headers: Array<HeaderField>;
 }
 export interface ICTokenSpec {
@@ -580,12 +588,6 @@ export interface ICTokenSpec {
 export interface InitArgs {
   owner: Principal;
   storage_space: [] | [bigint];
-}
-export interface LogEntry {
-  data: CandyValue;
-  event: string;
-  timestamp: bigint;
-  caller: [] | [Principal];
 }
 export interface LogMessagesData {
   data: Data;
@@ -607,6 +609,7 @@ export type ManageSaleRequest =
   | { withdraw: WithdrawRequest }
   | { end_sale: string }
   | { refresh_offers: [] | [Account] }
+  | { distribute_sale: DistributeSaleRequest }
   | { open_sale: string };
 export type ManageSaleResponse =
   | { bid: BidResponse }
@@ -614,6 +617,7 @@ export type ManageSaleResponse =
   | { withdraw: WithdrawResponse }
   | { end_sale: EndSaleResponse }
   | { refresh_offers: Array<EscrowRecord> }
+  | { distribute_sale: DistributeSaleResponse }
   | { open_sale: boolean };
 export type ManageStorageRequest = {
   add_storage_canisters: Array<[Principal, bigint, [bigint, bigint, bigint]]>;
@@ -633,9 +637,9 @@ export interface MarketTransferRequestReponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -651,9 +655,9 @@ export interface MarketTransferRequestReponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -667,7 +671,7 @@ export interface MarketTransferRequestReponse {
         auction_bid: {
           token: TokenSpec;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: string;
         };
@@ -677,17 +681,17 @@ export interface MarketTransferRequestReponse {
     | {
         sale_ended: {
           token: TokenSpec;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
       }
     | {
         mint: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           sale: [] | [{ token: TokenSpec; amount: bigint }];
           extensible: CandyValue;
         };
@@ -696,10 +700,10 @@ export interface MarketTransferRequestReponse {
         royalty_paid: {
           tag: string;
           token: TokenSpec;
-          reciever: Account__1;
-          seller: Account__1;
+          reciever: Account;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
@@ -707,8 +711,8 @@ export interface MarketTransferRequestReponse {
     | { extensible: CandyValue }
     | {
         owner_transfer: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           extensible: CandyValue;
         };
       }
@@ -731,9 +735,9 @@ export interface MarketTransferRequestReponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -743,24 +747,24 @@ export interface MarketTransferRequestReponse {
           token: TokenSpec;
           trx_id: TransactionID;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       };
   timestamp: bigint;
   index: bigint;
 }
-export type Memo = Array<number>;
+export type Memo = Uint8Array | number[];
 export type Metadata =
   | {
       fungible: {
         decimals: number;
-        metadata: [] | [Array<number>];
+        metadata: [] | [Uint8Array | number[]];
         name: string;
         symbol: string;
       };
     }
-  | { nonfungible: { metadata: [] | [Array<number>] } };
+  | { nonfungible: { metadata: [] | [Uint8Array | number[]] } };
 export type MetricsGranularity = { hourly: null } | { daily: null };
 export interface NFTBackupChunk {
   sales_balances: StableSalesBalances;
@@ -815,7 +819,6 @@ export interface Nft_Canister {
   bearer_batch_secure_nft_origyn: ActorMethod<[Array<string>], Array<Result_16>>;
   bearer_nft_origyn: ActorMethod<[string], Result_16>;
   bearer_secure_nft_origyn: ActorMethod<[string], Result_16>;
-  blob_from_text: ActorMethod<[string], Array<number>>;
   canister_status: ActorMethod<[{ canister_id: canister_id }], canister_status>;
   chunk_nft_origyn: ActorMethod<[ChunkRequest], Result_15>;
   chunk_secure_nft_origyn: ActorMethod<[ChunkRequest], Result_15>;
@@ -833,7 +836,6 @@ export interface Nft_Canister {
     Array<Result_13>
   >;
   collection_update_nft_origyn: ActorMethod<[ManageCollectionCommand], Result_13>;
-  current_log: ActorMethod<[], Array<LogEntry>>;
   cycles: ActorMethod<[], bigint>;
   getCanisterLog: ActorMethod<[[] | [CanisterLogRequest]], [] | [CanisterLogResponse]>;
   getCanisterMetrics: ActorMethod<[GetMetricsParameters], [] | [CanisterMetrics]>;
@@ -843,7 +845,6 @@ export interface Nft_Canister {
   get_nat_as_token_id_origyn: ActorMethod<[bigint], string>;
   get_token_id_as_nat_origyn: ActorMethod<[string], bigint>;
   governance_nft_origyn: ActorMethod<[GovernanceRequest], Result_12>;
-  harvest_log: ActorMethod<[bigint], Array<Array<LogEntry>>>;
   history_batch_nft_origyn: ActorMethod<
     [Array<[string, [] | [bigint], [] | [bigint]]>],
     Array<Result_11>
@@ -857,9 +858,6 @@ export interface Nft_Canister {
   http_access_key: ActorMethod<[], Result_2>;
   http_request: ActorMethod<[HttpRequest], HTTPResponse>;
   http_request_streaming_callback: ActorMethod<[StreamingCallbackToken], StreamingCallbackResponse>;
-  log_history_page: ActorMethod<[bigint], Array<LogEntry>>;
-  log_history_page_chunk: ActorMethod<[bigint, bigint, bigint], Array<LogEntry>>;
-  log_history_size: ActorMethod<[], bigint>;
   manage_storage_nft_origyn: ActorMethod<[ManageStorageRequest], Result_10>;
   market_transfer_batch_nft_origyn: ActorMethod<[Array<MarketTransferRequest>], Array<Result_9>>;
   market_transfer_nft_origyn: ActorMethod<[MarketTransferRequest], Result_9>;
@@ -871,7 +869,6 @@ export interface Nft_Canister {
   nft_batch_secure_origyn: ActorMethod<[Array<string>], Array<Result_7>>;
   nft_origyn: ActorMethod<[string], Result_7>;
   nft_secure_origyn: ActorMethod<[string], Result_7>;
-  nuke_log: ActorMethod<[], undefined>;
   ownerOf: ActorMethod<[bigint], OwnerOfResponse>;
   ownerOfDIP721: ActorMethod<[bigint], OwnerOfResponse>;
   sale_batch_nft_origyn: ActorMethod<[Array<ManageSaleRequest>], Array<Result_5>>;
@@ -882,7 +879,6 @@ export interface Nft_Canister {
   sale_nft_origyn: ActorMethod<[ManageSaleRequest], Result_5>;
   set_data_harvester: ActorMethod<[bigint], undefined>;
   set_halt: ActorMethod<[boolean], undefined>;
-  set_log_harvester_id: ActorMethod<[Principal], undefined>;
   share_wallet_nft_origyn: ActorMethod<[ShareWalletRequest], Result_4>;
   stage_batch_nft_origyn: ActorMethod<[Array<{ metadata: CandyValue }>], Array<Result_2>>;
   stage_library_batch_nft_origyn: ActorMethod<[Array<StageChunkArg>], Array<Result_3>>;
@@ -891,7 +887,6 @@ export interface Nft_Canister {
   state_size: ActorMethod<[], StateSize>;
   storage_info_nft_origyn: ActorMethod<[], Result_1>;
   storage_info_secure_nft_origyn: ActorMethod<[], Result_1>;
-  text_from_blob: ActorMethod<[Array<number>], string>;
   transfer: ActorMethod<[TransferRequest], TransferResponse>;
   transferDip721: ActorMethod<[Principal, bigint], Result__1>;
   transferEXT: ActorMethod<[TransferRequest], TransferResponse>;
@@ -933,13 +928,15 @@ export type PricingConfig =
         decay_per_hour: number;
       };
     };
+
 export interface Property {
   value: CandyValue;
   name: string;
   immutable: boolean;
 }
+
 export interface RejectDescription {
-  token: TokenSpec__1;
+  token: TokenSpec;
   token_id: string;
   seller: Account;
   buyer: Account;
@@ -1029,7 +1026,7 @@ export type StableNftLedger = Array<[string, TransactionRecord]>;
 export type StableOffers = Array<[Account, Account, bigint]>;
 export type StableSalesBalances = Array<[Account, Account, string, EscrowRecord]>;
 export interface StageChunkArg {
-  content: Array<number>;
+  content: Uint8Array | number[];
   token_id: string;
   chunk: bigint;
   filedata: CandyValue;
@@ -1059,7 +1056,7 @@ export interface StorageMetrics {
 }
 export interface StreamingCallbackResponse {
   token: [] | [StreamingCallbackToken];
-  body: Array<number>;
+  body: Uint8Array | number[];
 }
 export interface StreamingCallbackToken {
   key: string;
@@ -1072,18 +1069,19 @@ export type StreamingStrategy = {
     callback: [Principal, string];
   };
 };
-export type SubAccount = Array<number>;
+export type SubAccount = Uint8Array | number[];
 export interface SubAccountInfo {
-  account_id: Array<number>;
+  account_id: Uint8Array | number[];
   principal: Principal;
   account_id_text: string;
-  account: { principal: Principal; sub_account: Array<number> };
+  account: {
+    principal: Principal;
+    sub_account: Uint8Array | number[];
+  };
 }
 export type TokenIdentifier = string;
 export type TokenSpec = { ic: ICTokenSpec } | { extensible: CandyValue };
-export type TokenSpec__1 = { ic: ICTokenSpec } | { extensible: CandyValue };
 export type TransactionID = { nat: bigint } | { text: string } | { extensible: CandyValue };
-export type TransactionID__1 = { nat: bigint } | { text: string } | { extensible: CandyValue };
 export interface TransactionRecord {
   token_id: string;
   txn_type:
@@ -1092,9 +1090,9 @@ export interface TransactionRecord {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -1110,9 +1108,9 @@ export interface TransactionRecord {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -1126,7 +1124,7 @@ export interface TransactionRecord {
         auction_bid: {
           token: TokenSpec;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: string;
         };
@@ -1136,17 +1134,17 @@ export interface TransactionRecord {
     | {
         sale_ended: {
           token: TokenSpec;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
       }
     | {
         mint: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           sale: [] | [{ token: TokenSpec; amount: bigint }];
           extensible: CandyValue;
         };
@@ -1155,10 +1153,10 @@ export interface TransactionRecord {
         royalty_paid: {
           tag: string;
           token: TokenSpec;
-          reciever: Account__1;
-          seller: Account__1;
+          reciever: Account;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
@@ -1166,8 +1164,8 @@ export interface TransactionRecord {
     | { extensible: CandyValue }
     | {
         owner_transfer: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           extensible: CandyValue;
         };
       }
@@ -1190,9 +1188,9 @@ export interface TransactionRecord {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -1202,7 +1200,7 @@ export interface TransactionRecord {
           token: TokenSpec;
           trx_id: TransactionID;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       };
@@ -1233,7 +1231,7 @@ export interface Update {
   mode: UpdateMode;
   name: string;
 }
-export type UpdateCallsAggregatedData = Array<bigint>;
+export type UpdateCallsAggregatedData = BigUint64Array | bigint[];
 export type UpdateMode = { Set: CandyValue } | { Lock: CandyValue } | { Next: Array<Update> };
 export interface UpdateRequest {
   id: string;
@@ -1241,7 +1239,7 @@ export interface UpdateRequest {
 }
 export type User = { principal: Principal } | { address: AccountIdentifier };
 export interface WithdrawDescription {
-  token: TokenSpec__1;
+  token: TokenSpec;
   token_id: string;
   seller: Account;
   withdraw_to: Account;
@@ -1261,9 +1259,9 @@ export interface WithdrawResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -1279,9 +1277,9 @@ export interface WithdrawResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -1295,7 +1293,7 @@ export interface WithdrawResponse {
         auction_bid: {
           token: TokenSpec;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: string;
         };
@@ -1305,17 +1303,17 @@ export interface WithdrawResponse {
     | {
         sale_ended: {
           token: TokenSpec;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
       }
     | {
         mint: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           sale: [] | [{ token: TokenSpec; amount: bigint }];
           extensible: CandyValue;
         };
@@ -1324,10 +1322,10 @@ export interface WithdrawResponse {
         royalty_paid: {
           tag: string;
           token: TokenSpec;
-          reciever: Account__1;
-          seller: Account__1;
+          reciever: Account;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
           sale_id: [] | [string];
         };
@@ -1335,8 +1333,8 @@ export interface WithdrawResponse {
     | { extensible: CandyValue }
     | {
         owner_transfer: {
-          to: Account__1;
-          from: Account__1;
+          to: Account;
+          from: Account;
           extensible: CandyValue;
         };
       }
@@ -1359,9 +1357,9 @@ export interface WithdrawResponse {
           token: TokenSpec;
           token_id: string;
           trx_id: TransactionID;
-          seller: Account__1;
+          seller: Account;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       }
@@ -1371,7 +1369,7 @@ export interface WithdrawResponse {
           token: TokenSpec;
           trx_id: TransactionID;
           extensible: CandyValue;
-          buyer: Account__1;
+          buyer: Account;
           amount: bigint;
         };
       };
@@ -1384,7 +1382,7 @@ export interface canister_status {
   memory_size: bigint;
   cycles: bigint;
   settings: definite_canister_settings;
-  module_hash: [] | [Array<number>];
+  module_hash: [] | [Uint8Array | number[]];
 }
 export interface definite_canister_settings {
   freezing_threshold: bigint;

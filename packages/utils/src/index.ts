@@ -1,6 +1,3 @@
-import { toast } from 'react-toastify';
-import { useSnackbar } from 'notistack';
-
 export const isLocal = () => {
   return (
     process.env.isLocal &&
@@ -60,8 +57,7 @@ export const parseDate = (ts) => {
   return d;
 };
 
-export * from './actorTypes';
-export * from './parsedTypes';
+export * from './interfaces';
 export * from './binary';
 export * from './dateTime';
 export * from './idl';
@@ -70,7 +66,6 @@ export * from './number';
 export * from './principalToAccountID';
 export * from './useLocalStorage';
 export * from './collectionName';
-export * from './interfaces';
 export * from './checkCanister';
 export * from './getFormattedLink';
 export * from './checkOwner';

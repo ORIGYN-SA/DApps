@@ -1,5 +1,5 @@
-import { AuctionConfig, NFTInfoStable, Property, ICTokenSpec } from './actorTypes';
-import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './parsedTypes';
+import { NFTInfoStable, Property } from '../../common/types/src/origynNftReference';
+import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
 
 export function getProperty(properties: any, propertyName: string) {
   return properties?.find(({ name }) => name === propertyName);
@@ -61,7 +61,7 @@ function initOdcData(): OdcData {
     collectionId: '',
     displayName: '',
     description: '',
-    displayPropertes: [],
+    displayProperties: [],
     socialLinks: [],
   };
 }
@@ -74,7 +74,7 @@ function initOdcSaleData(odc: OdcData): OdcDataWithSale {
     auctionClosed: false,
     auctionNotStarted: false,
     buyNow: 0,
-    minIncreaseAmount: 0,
+    minIncreaseAmount: 0n,
     minIncreasePercentage: 0,
     currentBid: 0,
     token: undefined,
@@ -99,9 +99,6 @@ function parseRoyalties(metadataClass: Property[], royaltyType: RoyaltyType): Ro
     'Class'
   ] as Property[];
 
-  console.log('__system');
-  console.log(systemProperties);
-
   if (systemProperties) {
     const royalties = systemProperties.find((p) => p.name === name)?.value?.['Array']?.[
       'frozen'
@@ -112,8 +109,6 @@ function parseRoyalties(metadataClass: Property[], royaltyType: RoyaltyType): Ro
         const rate = (c.Class.find((p) => p.name === 'rate')?.value?.['Float'] as number) || 0;
         return { tag, rate };
       });
-    } else {
-      console.log('No royalties found in __system');
     }
   }
 
@@ -127,13 +122,12 @@ function toKeysValues(
 ): { key: string; value: string }[] {
   const keysValues: { key: string; value: string }[] = [];
 
-  if (property.value?.hasOwnProperty('Array')) {
-    const candyArray =
-      property.value?.['Array']?.['thawed'] || property.value?.['Array']?.['frozen'] || [];
+  if ('Array' in property.value) {
+    const candyArray = property.value.Array?.['thawed'] || property.value.Array?.['frozen'] || [];
 
     candyArray.forEach((item: any) => {
-      const candyClass = item.value?.['Class'] as Property[];
-      if (candyClass) {
+      if ('Class' in item.value) {
+        const candyClass = item.value.Class as Property[];
         let key: string = '';
         let value: string = '';
         candyClass.forEach((p: Property) => {
@@ -155,7 +149,6 @@ function toKeysValues(
 
 function parseAppData(metadataClass: Property[], odc: OdcData): void {
   const apps = getProperty(metadataClass, '__apps');
-
   const app = apps?.value?.Array?.thawed?.find((c: any) =>
     c.Class?.find(
       (p: Property) => p.name === 'app_id' && p.value?.['Text'] === 'com.origyn.metadata.general',
@@ -165,17 +158,15 @@ function parseAppData(metadataClass: Property[], odc: OdcData): void {
   const appDataProperties = app?.Class?.find((p: Property) => p.name === 'data')?.value
     ?.Class as Property[];
 
-  let displayProperties: DisplayProperty[] = [];
+  let displayProperties: DisplayProperty[] = [{ name: 'Token ID', value: odc.id }];
 
   appDataProperties.forEach((p: Property) => {
     if (!isCandyClassOrArray(p)) {
       displayProperties.push({ name: p.name, value: candyValueToString(p) });
     }
 
-    if (p.name === 'custom_properties' && p.value?.hasOwnProperty('Array')) {
-      const customProperties =
-        p.value?.['Array']?.['thawed'] || p.value?.['Array']?.['frozen'] || [];
-
+    if (p.name === 'custom_properties' && 'Array' in p.value) {
+      const customProperties = p.value.Array?.['thawed'] || p.value.Array?.['frozen'] || [];
       customProperties.forEach((customProperty: Property) => {
         if (!isCandyClassOrArray(customProperty)) {
           displayProperties.push({
@@ -196,7 +187,8 @@ function parseAppData(metadataClass: Property[], odc: OdcData): void {
     }
   });
 
-  odc.displayPropertes = displayProperties;
+  displayProperties.push({ name: 'Owner', value: odc.ownerPrincipalId });
+  odc.displayProperties = displayProperties;
   odc.collectionId = displayProperties.find((p) => p.name === 'collection_id')?.value || '';
   odc.displayName = displayProperties.find((p) => p.name === 'display_name')?.value || '';
   odc.description = displayProperties.find((p) => p.name === 'description')?.value || '';
@@ -226,11 +218,6 @@ export function parseMetadata(metadataClass: Property[]): OdcData {
 }
 
 export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
-  console.log('>>>> odcInfo <<<<');
-  BigInt.prototype['toJSON'] = function () {
-    return this.toString();
-  };
-  console.log(JSON.stringify(odcInfo, null, 2));
   const metadataClass = odcInfo?.metadata['Class'] as Property[];
   if (!metadataClass) {
     throw new Error('Metadata class not found when parsing');
@@ -242,29 +229,27 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   odc.saleId = odcInfo?.current_sale[0]?.sale_id || '';
 
   if (odc.auction) {
-    odc.auctionOpen = odc.auction.status?.hasOwnProperty('open') || false;
-    odc.auctionClosed = odc.auction.status?.hasOwnProperty('closed') || false;
-    odc.auctionNotStarted = odc.auction.status?.hasOwnProperty('not_started') || false;
+    odc.auctionOpen = 'open' in odc.auction.status;
+    odc.auctionClosed = 'closed' in odc.auction.status;
+    odc.auctionNotStarted = 'not_started' in odc.auction.status;
     odc.currentBid = Number(odc.auction.current_bid_amount || 0);
-
-    let auctionConfig: AuctionConfig | undefined =
-      odc.auction?.config?.hasOwnProperty('auction') &&
-      (odc.auction.config['auction'] as AuctionConfig);
-
-    if (auctionConfig) {
-      odc.buyNow = Number(auctionConfig.buy_now?.[0] || 0) / 1e8;
-      odc.token = auctionConfig.token?.hasOwnProperty('ic') && auctionConfig.token['ic'];
+    if ('auction' in odc.auction?.config) {
+      const auctionConfig = odc.auction.config.auction;
+      odc.buyNow = Number(auctionConfig.buy_now?.[0] || 0);
+      odc.token = 'ic' in auctionConfig.token && auctionConfig.token.ic;
       odc.tokenSymbol = odc.token?.symbol || 'OGY';
-      odc.minIncreaseAmount = auctionConfig.min_increase?.['amount'] || 0;
-      odc.minIncreasePercentage = auctionConfig.min_increase?.['percentage'] || 0;
+      odc.minIncreaseAmount =
+        'amount' in auctionConfig.min_increase ? auctionConfig.min_increase.amount : 0n;
+      odc.minIncreasePercentage =
+        'percentage' in auctionConfig.min_increase ? auctionConfig.min_increase.percentage : 0;
+      odc.reserve = Number(auctionConfig.reserve?.[0] || 0);
     }
 
-    let dutchConfig = odc.auction?.config?.hasOwnProperty('dutch') && odc.auction.config['dutch'];
-
-    if (dutchConfig) {
-      odc.startPrice = Number(dutchConfig['start_price'] || 0);
-      odc.reserve = Number(dutchConfig['reserve']?.[0] || 0);
-      odc.decayPerHour = Number(dutchConfig['decay_per_hour'] || 0);
+    if ('dutch' in odc.auction?.config) {
+      let dutchConfig = odc.auction.config.dutch;
+      odc.startPrice = Number(dutchConfig.start_price || 0);
+      odc.reserve = Number(dutchConfig.reserve?.[0] || 0);
+      odc.decayPerHour = Number(dutchConfig.decay_per_hour || 0);
     }
   }
 
