@@ -46,6 +46,7 @@ export interface OdcDataWithSale extends OdcData {
   // sale_type auction info
   saleId: string;
   auction: AuctionStateStable | undefined;
+  isDutchAuction: boolean;
   auctionOpen: boolean;
   auctionClosed: boolean;
   auctionNotStarted: boolean;

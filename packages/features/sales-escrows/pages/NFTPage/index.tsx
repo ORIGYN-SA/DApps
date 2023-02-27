@@ -6,7 +6,6 @@ import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
 import { StartAuctionModal } from '../../modals/StartAuctionModal';
 import { StartEscrowModal } from '../../modals/StartEscrowModal';
 import {
-  eToNumber,
   getDiffInDays,
   OdcData,
   OdcDataWithSale,
@@ -30,6 +29,7 @@ import {
 } from '@origyn-sa/origyn-art-ui';
 import { useDialog } from '@connect2ic/react';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { EscrowType } from '../../modals/StartEscrowModal';
 
 export const NFTPage = () => {
   const { principal, actor, handleLogOut } = useContext(AuthContext);
@@ -42,7 +42,7 @@ export const NFTPage = () => {
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
-  const [modalInitialValues, setModalInitialValues] = React.useState({});
+  const [escrowType, setEscrowType] = React.useState<EscrowType>();
   const { open } = useDialog();
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true);
@@ -64,28 +64,8 @@ export const NFTPage = () => {
 
   const params = useParams();
 
-  const handleOpen = (type) => {
-    const modalInitial = {
-      nftId: params.nft_id,
-      sellerId: currentNFT.ownerPrincipalId,
-      priceOffer: '0',
-    };
-
-    if (type === 'buyNow') {
-      modalInitial.priceOffer = (currentNFT.buyNow * 1e-8).toString();
-    } else if (type === 'bid') {
-      modalInitial.priceOffer = eToNumber(
-        currentNFT.currentBid > 0
-          ? (currentNFT.currentBid + Number(currentNFT.minIncreaseAmount)) / 100_000_000
-          : currentNFT.startPrice / 100_000_000,
-      );
-    }
-
-    setModalInitialValues(modalInitial);
-    setOpenEscrowModal(true);
-  };
-
-  const handleEscrow = () => {
+  const onOpenEscrowModal = (escrowType: EscrowType) => {
+    setEscrowType(escrowType);
     setOpenEscrowModal(true);
   };
 
@@ -110,8 +90,8 @@ export const NFTPage = () => {
 
     const collMetaResp = await getNftCollectionMeta([]);
     if (collMetaResp.err) {
-      console.log(collMetaResp.err);
       setCollectionData(undefined);
+      console.log(collMetaResp.err);
     } else {
       const collMeta = collMetaResp.ok;
       const metadataClass = collMeta?.metadata?.[0]?.Class as Property[];
@@ -241,7 +221,10 @@ export const NFTPage = () => {
                                 {currentNFT?.buyNow &&
                                   principalId != verifyOwner &&
                                   (nftEndSale || 9 * 1e30 > currentTimeInNanos ? (
-                                    <Button btnType="accent" onClick={() => handleOpen('buyNow')}>
+                                    <Button
+                                      btnType="accent"
+                                      onClick={() => onOpenEscrowModal('BuyNow')}
+                                    >
                                       Buy Now
                                     </Button>
                                   ) : (
@@ -266,7 +249,10 @@ export const NFTPage = () => {
                                     </Button>
                                   )
                                 ) : BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
-                                  <Button btnType="outlined" onClick={() => handleOpen('bid')}>
+                                  <Button
+                                    btnType="outlined"
+                                    onClick={() => onOpenEscrowModal('Bid')}
+                                  >
                                     Place Bid
                                   </Button>
                                 ) : (
@@ -280,7 +266,7 @@ export const NFTPage = () => {
                                 Start an Auction
                               </Button>
                             ) : (
-                              <Button btnType="accent" onClick={handleEscrow}>
+                              <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')}>
                                 Make an Offer
                               </Button>
                             )}
@@ -387,8 +373,8 @@ export const NFTPage = () => {
           <StartEscrowModal
             open={openEscrowModal}
             handleClose={handleCloseEscrow}
-            nft={currentNFT}
-            initialValues={modalInitialValues}
+            odc={currentNFT}
+            escrowType={escrowType}
             onSuccess={fetchNft}
           />
         </Flex>
