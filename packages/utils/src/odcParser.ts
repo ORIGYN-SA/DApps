@@ -1,6 +1,7 @@
 import { Principal } from '@dfinity/principal';
 import { NFTInfoStable, Property } from '../../common/types/src/origynNftReference';
 import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
+import { toSentenceCase } from './string';
 
 const OGY_LEDGER_CANISTER_ID = 'jwcfb-hyaaa-aaaaj-aac4q-cai';
 
@@ -166,7 +167,7 @@ function parseAppData(metadataClass: Property[], odc: OdcData): void {
 
   appDataProperties.forEach((p: Property) => {
     if (!isCandyClassOrArray(p)) {
-      displayProperties.push({ name: p.name, value: candyValueToString(p) });
+      displayProperties.push({ name: toSentenceCase(p.name), value: candyValueToString(p) });
     }
 
     if (p.name === 'custom_properties' && 'Array' in p.value) {
@@ -174,7 +175,7 @@ function parseAppData(metadataClass: Property[], odc: OdcData): void {
       customProperties.forEach((customProperty: Property) => {
         if (!isCandyClassOrArray(customProperty)) {
           displayProperties.push({
-            name: customProperty.name,
+            name: toSentenceCase(customProperty.name),
             value: candyValueToString(customProperty),
           });
         }
