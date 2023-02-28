@@ -1,16 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { Container, Flex, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
+import { Container, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
 import { currencyToFixed } from '@dapp/utils';
 
 const styles = {
   gridContainer: {
     display: 'grid',
-    gridTemplateColumns: '43px repeat(4, 1fr)',
+    gridTemplateColumns: '42px 3fr repeat(3, 1fr)',
     gap: '8px',
     backgroundColor: 'inherit',
     color: 'inherit',
+  },
+  gridItem: {
+    marginBottom: 'auto',
+    marginTop: 'auto',
+    verticalAlign: 'middle',
   },
 };
 
@@ -109,11 +114,10 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
               <div style={styles.gridContainer}>
                 {escrow.map((esc: any, index: number) => (
                   <>
-                    <div key={index}>
+                    <div key={index} style={styles.gridItem}>
                       <img
                         style={{
                           width: '42px',
-                          height: '42px',
                           borderRadius: '12px',
                           marginTop: 'auto',
                           marginBottom: 'auto',
@@ -122,14 +126,14 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                         alt=""
                       />
                     </div>
-                    <div>
+                    <div style={styles.gridItem}>
                       <div>
                         <p>{esc.token_id}</p>
                       </div>
 
                       <span style={{ color: 'grey' }}>{collection.name}</span>
                     </div>
-                    <div>
+                    <div style={styles.gridItem}>
                       <span style={{ color: 'grey' }}>Amount</span>
                       <br />
                       <div>
@@ -139,7 +143,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                         )}${' '}${esc.token.ic.symbol}`}</span>
                       </div>
                     </div>
-                    <div>
+                    <div style={styles.gridItem}>
                       <span style={{ color: 'grey' }}>Status</span>
                       <br />
                       <span>
@@ -150,7 +154,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                           : 'Lock date not present'}
                       </span>
                     </div>
-                    <div>
+                    <div style={styles.gridItem}>
                       {Date.now() * 1e6 > parseInt(esc.lock_to_date) ? (
                         <Button
                           btnType="filled"
@@ -185,26 +189,26 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
               <div style={styles.gridContainer}>
                 {offers.map((esc: any, index: number) => (
                   <>
-                    <div>
+                    <div style={styles.gridItem}>
                       <img
                         style={{ width: '42px', height: '42px', borderRadius: '12px' }}
                         src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
                         alt=""
                       />
                     </div>
-                    <div>
+                    <div style={styles.gridItem}>
                       <span>{esc.token_id}</span>
                       <br />
                       <span style={{ color: 'grey' }}>{collection.name}</span>
                     </div>
-                    <div>
+                    <div style={styles.gridItem}>
                       <p style={{ color: 'grey' }}>Amount</p>
                       <p>{`${currencyToFixed(
                         Number(esc.amount),
                         Number(esc.token.ic.decimals),
                       )}${' '}${esc.token.ic.symbol}`}</p>
                     </div>
-                    <div>
+                    <div style={styles.gridItem}>
                       <Button
                         btnType="filled"
                         size="small"
@@ -213,7 +217,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                         Accept
                       </Button>
                     </div>
-                    <div>
+                    <div style={styles.gridItem}>
                       <Button
                         btnType="outlined"
                         size="small"
