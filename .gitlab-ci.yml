@@ -1,0 +1,51 @@
+image: node:16
+
+stages:
+  - build
+
+.configure_aws:
+  before_script:
+    - apt update && apt install jq awscli -y
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set region $AWS_DEFAULT_REGION
+
+.publish: &publish
+  - npm install
+  - npm run bootstrap
+  - npm run build:all
+  - export PACKAGE_VERSION=$(cat package.json | jq '.version' | tr -d '"')
+  - aws s3 cp dist/ s3://${AWS_BUCKET_NAME}/dApps/${CI_COMMIT_BRANCH}/v${PACKAGE_VERSION} --recursive
+
+lint_test:
+  stage: build
+  script:
+    - npm install
+    - npm run bootstrap
+    - npm run lint
+    - npm run test
+  tags:
+    - docker
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+
+upload_to_s3:
+  stage: build
+  extends: .configure_aws
+  script:
+    - *publish
+  rules:
+    - if: ($CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop") && $CI_PIPELINE_SOURCE == "push"
+  tags:
+    - docker
+
+manual_upload_to_s3:
+  stage: build
+  extends: .configure_aws
+  script:
+    - *publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+  tags:
+    - docker
+  when: manual
