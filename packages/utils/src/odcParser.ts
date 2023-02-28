@@ -8,7 +8,7 @@ export function getProperty(properties: any, propertyName: string) {
   return properties?.find(({ name }) => name === propertyName);
 }
 
-export function getTextValue(properties: any, propertyName: string): string {
+export function getTextValue(properties: Property[], propertyName: string): string {
   const p = getProperty(properties, propertyName);
   return p?.value?.Text || '';
 }
