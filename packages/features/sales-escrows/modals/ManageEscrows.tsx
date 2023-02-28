@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { Container, Flex, Modal, Button, Grid, HR } from '@origyn-sa/origyn-art-ui';
+import { Container, Flex, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
 import { currencyToFixed } from '@dapp/utils';
 
