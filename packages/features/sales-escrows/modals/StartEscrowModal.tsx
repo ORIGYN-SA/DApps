@@ -278,15 +278,25 @@ export function StartEscrowModal({
                           value: t,
                         }))}
                       />
-                      <TextInput
-                        required
-                        label={`Your ${escrowType === 'Bid' ? 'bid' : 'offer'} (in tokens)`}
-                        id="offerPrice"
-                        name="offerPrice"
-                        error={formErrors.offerPrice}
-                        value={formValues.offerPrice}
-                        onChange={(e) => onOfferChanged(e.target.value)}
-                      />
+                      {escrowType == 'BuyNow' ? (
+                        <>
+                          <br />
+                          <span>Buy Now Price:</span>
+                          <span style={{ color: 'grey' }}>
+                            {currencyToFixed(odc.buyNow, formValues.token.decimals)}
+                          </span>
+                        </>
+                      ) : (
+                        <TextInput
+                          required
+                          label={`Your ${escrowType === 'Bid' ? 'bid' : 'offer'} (in tokens)`}
+                          id="offerPrice"
+                          name="offerPrice"
+                          error={formErrors.offerPrice}
+                          value={formValues.offerPrice}
+                          onChange={(e) => onOfferChanged(e.target.value)}
+                        />
+                      )}
                       <br />
                       {formValues.token && (
                         <>
