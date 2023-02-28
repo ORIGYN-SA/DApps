@@ -187,7 +187,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
               </div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {offers.map((esc: any, index: number) => (
+                {offers.map((esc: any) => (
                   <>
                     <div style={styles.gridItem}>
                       <img
