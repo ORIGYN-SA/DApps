@@ -4,6 +4,16 @@ import { Container, Flex, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
 import { currencyToFixed } from '@dapp/utils';
 
+const styles = {
+  gridContainer: {
+    display: 'grid',
+    gridTemplateColumns: '43px repeat(4, 1fr)',
+    gap: '8px',
+    backgroundColor: 'inherit',
+    color: 'inherit',
+  },
+};
+
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const { principal, actor } = useContext(AuthContext);
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
@@ -91,54 +101,56 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
           <h3>Manage Escrow</h3>
           <HR marginTop={16} marginBottom={16} />
           {escrow.length > 0 && (
-            <Flex flexFlow="column" gap={8}>
-              <Flex>
+            <div>
+              <div>
                 <h5>Escrows</h5>
-              </Flex>
-              <Flex>
+              </div>
+              <HR marginTop={16} marginBottom={16} />
+              <div style={styles.gridContainer}>
                 {escrow.map((esc: any, index: number) => (
-                  <Flex key={index} flexFlow="row" justify="space-around" gap={8}>
-                    <img
-                      style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                      src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
-                      alt=""
-                    />
-                    <Flex flexFlow="column" gap={8}>
-                      <Flex>
-                        <div style={{ width: '275px' }}>
-                          <p>{esc.token_id}</p>
-                        </div>
-                      </Flex>
-                      <Flex>
-                        <span style={{ color: 'grey' }}>{collection.name}</span>
-                      </Flex>
-                    </Flex>
-                    <Flex flexFlow="column" gap={8}>
-                      <Flex>
-                        <span style={{ color: 'grey' }}>Amount</span>
-                      </Flex>
-                      <Flex>
+                  <>
+                    <div key={index}>
+                      <img
+                        style={{
+                          width: '42px',
+                          height: '42px',
+                          borderRadius: '12px',
+                          marginTop: 'auto',
+                          marginBottom: 'auto',
+                        }}
+                        src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                        alt=""
+                      />
+                    </div>
+                    <div>
+                      <div>
+                        <p>{esc.token_id}</p>
+                      </div>
+
+                      <span style={{ color: 'grey' }}>{collection.name}</span>
+                    </div>
+                    <div>
+                      <span style={{ color: 'grey' }}>Amount</span>
+                      <br />
+                      <div>
                         <span>{`${currencyToFixed(
                           Number(esc.amount),
                           Number(esc.token.ic.decimals),
                         )}${' '}${esc.token.ic.symbol}`}</span>
-                      </Flex>
-                    </Flex>
-                    <Flex flexFlow="column" gap={8}>
-                      <Flex>
-                        <span style={{ color: 'grey' }}>Status</span>
-                      </Flex>
-                      <Flex>
-                        <span>
-                          {esc.lock_to_date
-                            ? Date.now() * 1e6 > parseInt(esc.lock_to_date)
-                              ? 'Locked'
-                              : 'Done'
-                            : 'Lock date not present'}
-                        </span>
-                      </Flex>
-                    </Flex>
-                    <Flex>
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ color: 'grey' }}>Status</span>
+                      <br />
+                      <span>
+                        {esc.lock_to_date
+                          ? Date.now() * 1e6 > parseInt(esc.lock_to_date)
+                            ? 'Locked'
+                            : 'Done'
+                          : 'Lock date not present'}
+                      </span>
+                    </div>
+                    <div>
                       {Date.now() * 1e6 > parseInt(esc.lock_to_date) ? (
                         <Button
                           btnType="filled"
@@ -157,61 +169,63 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                           Withdraw
                         </Button>
                       )}
-                    </Flex>
-                  </Flex>
+                    </div>
+                  </>
                 ))}{' '}
-              </Flex>
-            </Flex>
+              </div>
+            </div>
           )}
-
+          <HR marginTop={16} marginBottom={16} />
           {offers.length > 0 && (
-            <>
-              {' '}
-              <h5>Offers</h5>
-              <br />
-              {offers.map((esc: any, index: number) => (
-                <Flex
-                  key={`offers-${index}`}
-                  flexFlow="row"
-                  justify="space-around"
-                  align="flex-start"
-                  gap={8}
-                >
-                  <img
-                    style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                    src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
-                    alt=""
-                  />
-                  <Flex flexFlow="column" gap={8}>
-                    <span>{esc.token_id}</span>
-                    <span style={{ color: 'grey' }}>{collection.name}</span>
-                  </Flex>
-                  <Flex flexFlow="column" gap={4}>
-                    <Flex>
+            <div>
+              <div>
+                <h5>Offers</h5>
+              </div>
+              <HR marginTop={16} marginBottom={16} />
+              <div style={styles.gridContainer}>
+                {offers.map((esc: any, index: number) => (
+                  <>
+                    <div>
+                      <img
+                        style={{ width: '42px', height: '42px', borderRadius: '12px' }}
+                        src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                        alt=""
+                      />
+                    </div>
+                    <div>
+                      <span>{esc.token_id}</span>
+                      <br />
+                      <span style={{ color: 'grey' }}>{collection.name}</span>
+                    </div>
+                    <div>
                       <p style={{ color: 'grey' }}>Amount</p>
-                    </Flex>
-                    <Flex>
                       <p>{`${currencyToFixed(
                         Number(esc.amount),
                         Number(esc.token.ic.decimals),
                       )}${' '}${esc.token.ic.symbol}`}</p>
-                    </Flex>
-                  </Flex>
-                  <Flex flexFlow="row" gap={8}>
-                    <Button
-                      btnType="filled"
-                      size="small"
-                      onClick={() => handleClickOpen(esc, esc.token_id)}
-                    >
-                      Accept
-                    </Button>
-                    <Button btnType="outlined" size="small" onClick={() => handleClickOpenRej(esc)}>
-                      Reject
-                    </Button>
-                  </Flex>
-                </Flex>
-              ))}
-            </>
+                    </div>
+                    <div>
+                      <Button
+                        btnType="filled"
+                        size="small"
+                        onClick={() => handleClickOpen(esc, esc.token_id)}
+                      >
+                        Accept
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        btnType="outlined"
+                        size="small"
+                        onClick={() => handleClickOpenRej(esc)}
+                      >
+                        Reject
+                      </Button>
+                    </div>
+                  </>
+                ))}
+              </div>
+            </div>
           )}
         </Container>
       </Modal>
