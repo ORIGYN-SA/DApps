@@ -24,6 +24,7 @@ import {
   Container,
   ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui';
+import { Principal } from '@dfinity/principal';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -206,10 +207,11 @@ const DscvrSVG = () => {
 const VaultPage = () => {
   const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
+  const [principalId, setPrincipalId] = useState<string>();
   const [canisterId, setCanisterId] = React.useState('');
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
   const [inputText, setInputText] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [openTrx, setOpenTrx] = useState(false);
   const [showManageEscrowsButton, setShowManageEscrowsButton] = useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
@@ -217,6 +219,11 @@ const VaultPage = () => {
   const { open } = useDialog();
   const { state, dispatch } = useVault();
   const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
+
+  const logout = async () => {
+    handleLogOut();
+    fetchData();
+  };
 
   const handleClose = async (dataChanged = false) => {
     setEscrowsModalOpen(false);
@@ -227,15 +234,11 @@ const VaultPage = () => {
   };
 
   const fetchData = async () => {
-    if (!(actor && principal)) {
+    if (!actor) {
       return;
     }
 
     try {
-      // show progress bar on intial load, otherwise fetch silenty
-      const stateLoaded = odcs?.length > 0;
-      setIsLoading(!stateLoaded);
-
       const { canisterId } = await useRoute();
       setCanisterId(canisterId);
 
@@ -253,28 +256,35 @@ const VaultPage = () => {
       const collectionData = parseMetadata(metadataClass);
       dispatch({ type: 'collectionData', payload: collectionData });
 
-      const vaultBalanceInfo = await actor?.balance_of_nft_origyn({ principal });
-      if (vaultBalanceInfo.err) {
-        throw new Error(Object.keys(vaultBalanceInfo.err)[0]);
+      if (principal) {
+        const vaultBalanceInfo = await actor?.balance_of_nft_origyn({ principal });
+        if (vaultBalanceInfo.err) {
+          throw new Error(Object.keys(vaultBalanceInfo.err)[0]);
+        }
+
+        // get list of digital certificates owned by the current user
+        const ownedTokenIds = vaultBalanceInfo?.ok?.nfts || [];
+        const odcDataRaw = await actor?.nft_batch_origyn(ownedTokenIds);
+        if (odcDataRaw.err) {
+          console.log(odcDataRaw.err);
+          throw new Error('Unable to retrieve metadata of tokens.');
+        }
+
+        // parse the digital certificate data (metadata and sale info)
+        const parsedOdcs = parseOdcs(odcDataRaw);
+        dispatch({ type: 'odcs', payload: parsedOdcs });
+        dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
+        dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
+
+        setShowManageEscrowsButton(
+          vaultBalanceInfo?.ok?.escrow?.length > 0 || vaultBalanceInfo?.ok?.offers?.length > 0,
+        );
+      } else {
+        dispatch({ type: 'odcs', payload: [] });
+        dispatch({ type: 'filteredOdcs', payload: [] });
+        dispatch({ type: 'ownedItems', payload: 0 });
+        setShowManageEscrowsButton(false);
       }
-
-      // get list of digital certificates owned by the current user
-      const ownedTokenIds = vaultBalanceInfo?.ok?.nfts || [];
-      const odcDataRaw = await actor?.nft_batch_origyn(ownedTokenIds);
-      if (odcDataRaw.err) {
-        console.log(odcDataRaw.err);
-        throw new Error('Unable to retrieve metadata of tokens.');
-      }
-
-      // parse the digital certificate data (metadata and sale info)
-      const parsedOdcs = parseOdcs(odcDataRaw);
-      dispatch({ type: 'odcs', payload: parsedOdcs });
-      dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
-      dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
-
-      setShowManageEscrowsButton(
-        vaultBalanceInfo?.ok?.escrow?.length > 0 || vaultBalanceInfo?.ok?.offers?.length > 0,
-      );
     } catch (err) {
       console.error(err);
       enqueueSnackbar(err?.message || err, {
@@ -285,15 +295,9 @@ const VaultPage = () => {
         },
       });
     } finally {
-      setIsLoading(false);
+      setIsLoaded(true);
     }
   };
-
-  useEffect(() => {
-    if (loggedIn) {
-      fetchData();
-    }
-  }, [loggedIn, actor, principal]);
 
   useEffect(() => {
     document.title = 'Origyn Vault';
@@ -301,6 +305,37 @@ const VaultPage = () => {
       setCanisterId(canisterId);
     });
   }, []);
+
+  useEffect(() => {
+    setPrincipalId(
+      !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
+    );
+  }, [principal]);
+
+  /* Fetch data from canister when the actor reference
+   * is ready, then every 5 seconds */
+  useEffect(() => {
+    let intervalId: any;
+    if (actor) {
+      fetchData();
+      if (!intervalId) {
+        intervalId = setInterval(() => {
+          fetchData();
+        }, 5000);
+      }
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [actor]);
+
+  useEffect(() => {
+    if (actor && loggedIn && principal) {
+      fetchData();
+    }
+  }, [loggedIn, actor, principal]);
 
   const [escrowsModalOpen, setEscrowsModalOpen] = useState(false);
 
@@ -354,7 +389,7 @@ const VaultPage = () => {
               <Flex fullWidth flexFlow="column" key="secondaryNavContent">
                 <StyledSectionTitle>Vault Dashboard</StyledSectionTitle>
                 <HR />
-                {isLoading ? (
+                {!isLoaded ? (
                   <LoadingContainer />
                 ) : (
                   <StyledCustomGrid columns={2} gap={20}>
@@ -368,7 +403,7 @@ const VaultPage = () => {
                       >
                         <h6>Wallet Balances</h6>
                         <HR />
-                        {Object.values(activeTokens).map((k, i) => (
+                        {Object.values(activeTokens)?.map((k, i) => (
                           <StyledBlackItemCard
                             key={i}
                             align="center"
@@ -406,233 +441,237 @@ const VaultPage = () => {
                         <Button btnType="filled" onClick={() => setOpenManageDeposit(true)}>
                           Manage Deposits
                         </Button>
-                        <StyledBlackCard align="center" padding="12px" justify="space-between">
-                          <Flex align="center" gap={12}>
-                            <Icons.Wallet width={24} fill="#ffffff" height="100%" />
-                            <Flex flexFlow="column">
-                              <p style={{ fontSize: 12, color: '#9A9A9A' }}>
-                                {activeWalletProvider.meta.name.charAt(0).toUpperCase() +
-                                  activeWalletProvider.meta.name.slice(1)}
-                              </p>
-                              <p>
-                                {principal.toText().slice(0, 2)}...{principal.toText().slice(-4)}
-                              </p>
+                        {activeWalletProvider && (
+                          <StyledBlackCard align="center" padding="12px" justify="space-between">
+                            <Flex align="center" gap={12}>
+                              <Icons.Wallet width={24} fill="#ffffff" height="100%" />
+                              <Flex flexFlow="column">
+                                <p style={{ fontSize: 12, color: '#9A9A9A' }}>
+                                  {activeWalletProvider.meta.name.charAt(0).toUpperCase() +
+                                    activeWalletProvider.meta.name.slice(1)}
+                                </p>
+                                <p>
+                                  {principal.toText().slice(0, 2)}...{principal.toText().slice(-4)}
+                                </p>
+                              </Flex>
                             </Flex>
-                          </Flex>
-                          <Flex flexFlow="column" align="flex-end">
-                            <Button
-                              iconButton
-                              size="medium"
-                              onClick={() =>
-                                copyToClipboard(principal.toText(), () => {
-                                  enqueueSnackbar('Copied to clipboard', {
-                                    variant: 'success',
-                                    anchorOrigin: {
-                                      vertical: 'top',
-                                      horizontal: 'right',
-                                    },
-                                  });
-                                })
-                              }
-                            >
-                              <Icons.CopyIcon width={12} height="100%" />
-                            </Button>
-                          </Flex>
-                        </StyledBlackCard>
+                            <Flex flexFlow="column" align="flex-end">
+                              <Button
+                                iconButton
+                                size="medium"
+                                onClick={() =>
+                                  copyToClipboard(principal.toText(), () => {
+                                    enqueueSnackbar('Copied to clipboard', {
+                                      variant: 'success',
+                                      anchorOrigin: {
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                      },
+                                    });
+                                  })
+                                }
+                              >
+                                <Icons.CopyIcon width={12} height="100%" />
+                              </Button>
+                            </Flex>
+                          </StyledBlackCard>
+                        )}
                       </Card>
                     </div>
-                    <div>
-                      <Flex align="flex-start" gap={24}>
-                        {collectionData.hasPreviewAsset && (
-                          <StyledCollectionImg
-                            src={`https://prptl.io/-/${canisterId}/collection/preview`}
-                            alt=""
-                          />
-                        )}
-                        <Flex flexFlow="column" fullWidth justify="space-between" gap={8}>
-                          <Flex
-                            flexFlow="row"
-                            align="center"
-                            fullWidth
-                            justify="space-between"
-                            smFlexFlow="column"
-                          >
-                            <h2>{collectionData?.displayName}</h2>
-
+                    {collectionData && (
+                      <div>
+                        <Flex align="flex-start" gap={24}>
+                          {collectionData.hasPreviewAsset && (
+                            <StyledCollectionImg
+                              src={`https://prptl.io/-/${canisterId}/collection/preview`}
+                              alt=""
+                            />
+                          )}
+                          <Flex flexFlow="column" fullWidth justify="space-between" gap={8}>
                             <Flex
-                              style={{
-                                flexWrap: 'wrap',
-                                marginTop: '8px',
-                                alignContent: 'flex-end',
-                              }}
-                              gap={8}
+                              flexFlow="row"
+                              align="center"
+                              fullWidth
+                              justify="space-between"
+                              smFlexFlow="column"
                             >
-                              {collectionData?.socialLinks?.map((link, index) => (
+                              <h2>{collectionData.displayName}</h2>
+
+                              <Flex
+                                style={{
+                                  flexWrap: 'wrap',
+                                  marginTop: '8px',
+                                  alignContent: 'flex-end',
+                                }}
+                                gap={8}
+                              >
+                                {collectionData.socialLinks?.map((link, index) => (
+                                  <SocialMediaButton
+                                    as="a"
+                                    iconButton
+                                    target="_blank"
+                                    href={link.url}
+                                    key={index}
+                                  >
+                                    {
+                                      {
+                                        twitter: <TwitterSVG />,
+                                        discord: <DiscordSVG />,
+                                        medium: <MediumSVG />,
+                                        dscvr: <DscvrSVG />,
+                                        distrikt: <DistriktSVG />,
+                                        website: <WebsiteSVG />,
+                                      }[link.type]
+                                    }
+                                  </SocialMediaButton>
+                                ))}
                                 <SocialMediaButton
                                   as="a"
                                   iconButton
                                   target="_blank"
-                                  href={link.url}
-                                  key={index}
+                                  href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
                                 >
-                                  {
-                                    {
-                                      twitter: <TwitterSVG />,
-                                      discord: <DiscordSVG />,
-                                      medium: <MediumSVG />,
-                                      dscvr: <DscvrSVG />,
-                                      distrikt: <DistriktSVG />,
-                                      website: <WebsiteSVG />,
-                                    }[link.type]
-                                  }
+                                  Ledger
                                 </SocialMediaButton>
-                              ))}
-                              <SocialMediaButton
-                                as="a"
-                                iconButton
-                                target="_blank"
-                                href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
-                              >
-                                Ledger
-                              </SocialMediaButton>
+                              </Flex>
                             </Flex>
-                          </Flex>
 
-                          <p>
-                            <span className="secondary_color">Created by </span>
-                            <span className="secondary_color">
-                              {collectionData?.originatorPrincipalId || 'no creator name'}
-                            </span>
-                          </p>
-                          <br />
-                          <Flex>
-                            <Flex flexFlow="column">
-                              <h5>{ownedItems}</h5>
-                              <p className="secondary_color">Owned Items</p>
+                            <p>
+                              <span className="secondary_color">Created by </span>
+                              <span className="secondary_color">
+                                {collectionData.originatorPrincipalId || 'no creator name'}
+                              </span>
+                            </p>
+                            <br />
+                            <Flex>
+                              <Flex flexFlow="column">
+                                <h5>{ownedItems}</h5>
+                                <p className="secondary_color">Owned Items</p>
+                              </Flex>
                             </Flex>
+                            <br />
+                            <ShowMoreBlock btnText="Read More">
+                              <p className="secondary_color">{collectionData.description}</p>
+                            </ShowMoreBlock>
+                            <br />
+                            <br />
                           </Flex>
-                          <br />
-                          <ShowMoreBlock btnText="Read More">
-                            <p className="secondary_color">{collectionData?.description}</p>
-                          </ShowMoreBlock>
-                          <br />
-                          <br />
                         </Flex>
-                      </Flex>
-                      <HR />
-                      <br />
-                      <Filter
-                        onChangeFilter={(filterValue: string) =>
-                          dispatch({ type: 'filter', payload: filterValue })
-                        }
-                        onChangeSort={(sortValue: string) =>
-                          dispatch({ type: 'sort', payload: sortValue })
-                        }
-                        onInput={setInputText}
-                      />
-                      <br />
-                      <TransferTokensModal open={openTrx} handleClose={handleClose} />
-                      <ManageEscrowsModal
-                        open={escrowsModalOpen}
-                        handleClose={handleClose}
-                        collection={collectionData}
-                      />
-                      {parseOdcs?.length > 0 ? (
-                        <>
-                          <Grid
-                            smColumns={1}
-                            mdColumns={2}
-                            lgColumns={3}
-                            xlColumns={4}
-                            columns={6}
-                            gap={20}
-                          >
-                            {filteredOdcs.map((odc) => {
-                              return (
-                                <Link to={`/${odc?.id}`} key={odc?.id}>
-                                  <Card
-                                    flexFlow="column"
-                                    style={{ overflow: 'hidden', height: '100%' }}
-                                  >
-                                    {odc.hasPreviewAsset ? (
-                                      <StyledNFTImg
-                                        onError={(e) => {
-                                          e.target.onerror = null; // prevents looping
-                                          e.currentTarget.className += ' errorImage';
-                                        }}
-                                        src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
-                                        alt=""
-                                      />
-                                    ) : (
-                                      <img style={{ width: '100%' }} alt="" />
-                                    )}
-                                    <Container
-                                      style={{ height: '100%' }}
-                                      size="full"
-                                      padding="16px"
+                        <HR />
+                        <br />
+                        <Filter
+                          onChangeFilter={(filterValue: string) =>
+                            dispatch({ type: 'filter', payload: filterValue })
+                          }
+                          onChangeSort={(sortValue: string) =>
+                            dispatch({ type: 'sort', payload: sortValue })
+                          }
+                          onInput={setInputText}
+                        />
+                        <br />
+                        <TransferTokensModal open={openTrx} handleClose={handleClose} />
+                        <ManageEscrowsModal
+                          open={escrowsModalOpen}
+                          handleClose={handleClose}
+                          collection={collectionData}
+                        />
+                        {parseOdcs?.length > 0 ? (
+                          <>
+                            <Grid
+                              smColumns={1}
+                              mdColumns={2}
+                              lgColumns={3}
+                              xlColumns={4}
+                              columns={6}
+                              gap={20}
+                            >
+                              {filteredOdcs.map((odc) => {
+                                return (
+                                  <Link to={`/${odc?.id}`} key={odc?.id}>
+                                    <Card
+                                      flexFlow="column"
+                                      style={{ overflow: 'hidden', height: '100%' }}
                                     >
-                                      <Flex
+                                      {odc.hasPreviewAsset ? (
+                                        <StyledNFTImg
+                                          onError={(e) => {
+                                            e.target.onerror = null; // prevents looping
+                                            e.currentTarget.className += ' errorImage';
+                                          }}
+                                          src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
+                                          alt=""
+                                        />
+                                      ) : (
+                                        <img style={{ width: '100%' }} alt="" />
+                                      )}
+                                      <Container
                                         style={{ height: '100%' }}
-                                        justify="space-between"
-                                        flexFlow="column"
-                                        gap={32}
+                                        size="full"
+                                        padding="16px"
                                       >
-                                        <div>
-                                          <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                            {collectionData?.displayName}
-                                          </p>
-                                          <p>
-                                            <b>{odc.displayName || odc.id}</b>
-                                          </p>
-                                        </div>
-                                        <div>
-                                          <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                            Status
-                                          </p>
-                                          <p>
-                                            {odc.auctionOpen ? (
-                                              odc.currentBid === 0 ? (
-                                                <>
-                                                  {currencyToFixed(
-                                                    odc.buyNow,
-                                                    Number(odc.token.decimals),
-                                                  )}{' '}
-                                                  <TokenIcon symbol={odc.tokenSymbol} />
-                                                </>
+                                        <Flex
+                                          style={{ height: '100%' }}
+                                          justify="space-between"
+                                          flexFlow="column"
+                                          gap={32}
+                                        >
+                                          <div>
+                                            <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
+                                              {collectionData?.displayName}
+                                            </p>
+                                            <p>
+                                              <b>{odc.displayName || odc.id}</b>
+                                            </p>
+                                          </div>
+                                          <div>
+                                            <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
+                                              Status
+                                            </p>
+                                            <p>
+                                              {odc.auctionOpen ? (
+                                                odc.currentBid === 0 ? (
+                                                  <>
+                                                    {currencyToFixed(
+                                                      odc.buyNow,
+                                                      Number(odc.token.decimals),
+                                                    )}{' '}
+                                                    <TokenIcon symbol={odc.tokenSymbol} />
+                                                  </>
+                                                ) : (
+                                                  <>
+                                                    {currencyToFixed(
+                                                      odc.currentBid,
+                                                      Number(odc.token.decimals),
+                                                    )}{' '}
+                                                    <TokenIcon symbol={odc.tokenSymbol} />
+                                                  </>
+                                                )
                                               ) : (
-                                                <>
-                                                  {currencyToFixed(
-                                                    odc.currentBid,
-                                                    Number(odc.token.decimals),
-                                                  )}{' '}
-                                                  <TokenIcon symbol={odc.tokenSymbol} />
-                                                </>
-                                              )
-                                            ) : (
-                                              'No auction started'
-                                            )}
-                                          </p>
-                                        </div>
-                                      </Flex>
-                                    </Container>
-                                  </Card>
-                                </Link>
-                              );
-                            })}
-                          </Grid>
-                          <br />
-                        </>
-                      ) : (
-                        'There are no digital certificates in your vault'
-                      )}
-                    </div>
+                                                'No auction started'
+                                              )}
+                                            </p>
+                                          </div>
+                                        </Flex>
+                                      </Container>
+                                    </Card>
+                                  </Link>
+                                );
+                              })}
+                            </Grid>
+                            <br />
+                          </>
+                        ) : (
+                          'There are no digital certificates in your vault'
+                        )}
+                      </div>
+                    )}
                   </StyledCustomGrid>
                 )}
               </Flex>,
             ]}
-            onLogOut={handleLogOut}
+            onLogOut={logout}
             onConnect={open}
-            principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
+            principal={principalId}
           />
           <ManageDepositsModal
             open={openManageDeposit}

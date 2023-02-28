@@ -30,6 +30,7 @@ import {
 import { useDialog } from '@connect2ic/react';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { EscrowType } from '../../modals/StartEscrowModal';
+import { Principal } from '@dfinity/principal';
 
 export const NFTPage = () => {
   const { principal, actor, handleLogOut } = useContext(AuthContext);
@@ -44,6 +45,12 @@ export const NFTPage = () => {
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
   const [escrowType, setEscrowType] = React.useState<EscrowType>();
   const { open } = useDialog();
+
+  const logout = () => {
+    handleLogOut();
+    fetchData();
+  };
+
   const handleClickOpen = (item, modal = 'auction') => {
     if (modal === 'auction') setOpenAuction(true);
     else if (modal === 'confirmEnd') {
@@ -72,7 +79,7 @@ export const NFTPage = () => {
   const handleCloseEscrow = async (dataChanged = false) => {
     setOpenEscrowModal(false);
     if (dataChanged) {
-      fetchNft();
+      fetchOdc();
     }
   };
 
@@ -99,7 +106,7 @@ export const NFTPage = () => {
     }
   };
 
-  const fetchNft = async () => {
+  const fetchOdc = async () => {
     const r: any = await actor.nft_origyn(params.nft_id);
     if ('err' in r) {
       throw new Error(Object.keys(r.err)[0]);
@@ -110,14 +117,31 @@ export const NFTPage = () => {
     setOdc(parsedOdc);
   };
 
+  const fetchData = async () => {
+    Promise.all([fetchCollection(), fetchOdc()]);
+  };
+
   useEffect(() => {
-    setPrincipalId(principal?.toText() || '');
+    setPrincipalId(
+      !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
+    );
   }, [principal]);
 
   useEffect(() => {
+    let intervalId: any;
     if (actor) {
-      Promise.all([fetchCollection(), fetchNft()]);
+      fetchData();
+      if (!intervalId) {
+        intervalId = setInterval(() => {
+          fetchData();
+        }, 5000);
+      }
     }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [actor]);
 
   return (
@@ -206,62 +230,65 @@ export const NFTPage = () => {
                             </p>
                           )}
                           <br />
-                          <Flex gap={8} flexFlow="column">
-                            {odc?.auctionOpen ? (
-                              <>
-                                {odc?.buyNow &&
-                                  principalId != verifyOwner &&
-                                  (nftEndSale || 9 * 1e30 > currentTimeInNanos ? (
-                                    <Button
-                                      btnType="accent"
-                                      onClick={() => onOpenEscrowModal('BuyNow')}
-                                    >
-                                      Buy Now
-                                    </Button>
-                                  ) : (
-                                    <Button disabled btnType="outlined">
-                                      Buy Now
-                                    </Button>
-                                  ))}
+                          {principalId && (
+                            <Flex gap={8} flexFlow="column">
+                              {odc?.auctionOpen ? (
+                                <>
+                                  {odc?.buyNow &&
+                                    principalId != verifyOwner &&
+                                    (nftEndSale || 9 * 1e30 > currentTimeInNanos ? (
+                                      <Button
+                                        btnType="accent"
+                                        onClick={() => onOpenEscrowModal('BuyNow')}
+                                      >
+                                        Buy Now
+                                      </Button>
+                                    ) : (
+                                      <Button disabled btnType="outlined">
+                                        Buy Now
+                                      </Button>
+                                    ))}
 
-                                {principalId === verifyOwner ? (
-                                  odc.currentBid == 0 || odc.auctionNotStarted ? (
-                                    <Button btnType="accent" onClick={handleClickOpenEsc}>
-                                      Cancel Sale
-                                    </Button>
-                                  ) : BigInt(Number(nftEndSale || 9 * 1e30)) <
+                                  {principalId === verifyOwner ? (
+                                    odc.currentBid == 0 || odc.auctionNotStarted ? (
+                                      <Button btnType="accent" onClick={handleClickOpenEsc}>
+                                        Cancel Sale
+                                      </Button>
+                                    ) : BigInt(Number(nftEndSale || 9 * 1e30)) <
+                                      currentTimeInNanos ? (
+                                      <Button btnType="accent" onClick={handleClickOpenEsc}>
+                                        Finish Sale
+                                      </Button>
+                                    ) : (
+                                      <Button disabled btnType="outlined">
+                                        Finish Sale
+                                      </Button>
+                                    )
+                                  ) : BigInt(Number(nftEndSale || 9 * 1e30)) >
                                     currentTimeInNanos ? (
-                                    <Button btnType="accent" onClick={handleClickOpenEsc}>
-                                      Finish Sale
+                                    <Button
+                                      btnType="outlined"
+                                      onClick={() => onOpenEscrowModal('Bid')}
+                                    >
+                                      Place Bid
                                     </Button>
                                   ) : (
                                     <Button disabled btnType="outlined">
-                                      Finish Sale
+                                      Place Bid
                                     </Button>
-                                  )
-                                ) : BigInt(Number(nftEndSale || 9 * 1e30)) > currentTimeInNanos ? (
-                                  <Button
-                                    btnType="outlined"
-                                    onClick={() => onOpenEscrowModal('Bid')}
-                                  >
-                                    Place Bid
-                                  </Button>
-                                ) : (
-                                  <Button disabled btnType="outlined">
-                                    Place Bid
-                                  </Button>
-                                )}
-                              </>
-                            ) : principalId === verifyOwner ? (
-                              <Button btnType="accent" onClick={handleClickOpen}>
-                                Start an Auction
-                              </Button>
-                            ) : (
-                              <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')}>
-                                Make an Offer
-                              </Button>
-                            )}
-                          </Flex>
+                                  )}
+                                </>
+                              ) : principalId === verifyOwner ? (
+                                <Button btnType="accent" onClick={handleClickOpen}>
+                                  Start an Auction
+                                </Button>
+                              ) : (
+                                <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')}>
+                                  Make an Offer
+                                </Button>
+                              )}
+                            </Flex>
+                          )}
                         </Flex>
                       </Grid>
                     </Container>
@@ -344,9 +371,9 @@ export const NFTPage = () => {
                 )}
               </Flex>,
             ]}
-            onLogOut={handleLogOut}
+            onLogOut={logout}
             onConnect={open}
-            principal={principal.isAnonymous() ? '' : principalId}
+            principal={principalId}
           />
 
           <ConfirmSalesActionModal
@@ -358,7 +385,7 @@ export const NFTPage = () => {
           <StartAuctionModal
             open={openAuction}
             handleClose={handleClose}
-            onSuccess={fetchNft}
+            onSuccess={fetchOdc}
             currentToken={odc?.id}
           />
           <StartEscrowModal
@@ -366,7 +393,7 @@ export const NFTPage = () => {
             handleClose={handleCloseEscrow}
             odc={odc}
             escrowType={escrowType}
-            onSuccess={fetchNft}
+            onSuccess={fetchOdc}
           />
         </Flex>
       )}
