@@ -115,9 +115,20 @@ export const NFTPage = () => {
   }, [principal]);
 
   useEffect(() => {
+    let intervalId: any;
     if (actor) {
       Promise.all([fetchCollection(), fetchNft()]);
+      if (!intervalId) {
+        intervalId = setInterval(() => {
+          Promise.all([fetchCollection(), fetchNft()]);
+        }, 5000);
+      }
     }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [actor]);
 
   return (
