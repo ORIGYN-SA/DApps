@@ -24,6 +24,7 @@ import {
   Container,
   ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui';
+import { Principal } from '@dfinity/principal';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -206,6 +207,7 @@ const DscvrSVG = () => {
 const VaultPage = () => {
   const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
+  const [principalId, setPrincipalId] = useState<string>();
   const [canisterId, setCanisterId] = React.useState('');
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
   const [inputText, setInputText] = useState('');
@@ -217,6 +219,11 @@ const VaultPage = () => {
   const { open } = useDialog();
   const { state, dispatch } = useVault();
   const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
+
+  const logout = async () => {
+    handleLogOut();
+    fetchData();
+  };
 
   const handleClose = async (dataChanged = false) => {
     setEscrowsModalOpen(false);
@@ -299,6 +306,14 @@ const VaultPage = () => {
     });
   }, []);
 
+  useEffect(() => {
+    setPrincipalId(
+      !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
+    );
+  }, [principal]);
+
+  /* Fetch data from canister when the actor reference
+   * is ready, then every 5 seconds */
   useEffect(() => {
     let intervalId: any;
     if (actor) {
@@ -654,9 +669,9 @@ const VaultPage = () => {
                 )}
               </Flex>,
             ]}
-            onLogOut={handleLogOut}
+            onLogOut={logout}
             onConnect={open}
-            principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
+            principal={principalId}
           />
           <ManageDepositsModal
             open={openManageDeposit}
