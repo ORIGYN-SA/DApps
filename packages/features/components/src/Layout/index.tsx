@@ -1,218 +1,95 @@
-import React from 'react';
-import { ConnectButton } from '@connect2ic/react';
-import { useAuthContext, useSessionContext } from '@dapp/features-authentication';
-import ThemeConfig, { SiteContext } from '@dapp/features-theme';
-import { useTokensContext } from '@dapp/features-tokens-provider';
-import { currencyFormat, isLocal } from '@dapp/utils';
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
-import DarkIcon from '@mui/icons-material/Brightness4Rounded';
-import LightIcon from '@mui/icons-material/Brightness7Rounded';
-import CheckIcon from '@mui/icons-material/Check';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
-import LogoutIcon from '@mui/icons-material/Logout';
-import {
-  Box,
-  Divider,
-  Drawer,
-  Hidden,
-  Link,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import { useContext, useEffect } from 'react';
+import { Flex, GlobalStyle, Navbar } from '@origyn-sa/origyn-art-ui';
+import { Icons, theme, themeLight } from '@origyn-sa/origyn-art-ui';
+import React, { useContext, useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
-import { LocalDevelopmentModal } from '../LocalDevelopmentModal';
-import { ThemeLogo } from '../Logo';
-import { TokenIcon } from '../TokenIcon';
-import { WalletTokens } from '../WalletTokens';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { ThemeProvider } from 'styled-components';
 import './connect2ic.css';
+import { AuthContext, useRoute } from '../../../authentication';
+import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { Disclaimer } from '../Disclaimer';
 
+// TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
   {
-    page: 'ledger',
+    href: '',
+    title: 'Home',
+    icon: Icons.Home,
+  },
+  {
+    href: 'vault',
+    title: 'Vault',
+    icon: Icons.Wallet,
+  },
+  {
+    href: 'data',
+    title: 'Certificates Data',
+    icon: Icons.DataBrowse,
+  },
+  {
+    href: 'library',
+    title: 'Certificates library',
+    icon: Icons.Libraries,
+  },
+  {
+    href: 'ledger',
     title: 'Ledger',
-    icon: <ListAltOutlinedIcon />,
+    icon: Icons.TransactionIcon,
   },
   {
-    page: 'data',
-    title: 'NFT info',
-    icon: <InfoOutlinedIcon />,
-  },
-  {
-    page: 'wallet',
-    title: 'Wallet',
-    icon: <AccountBalanceWalletOutlinedIcon />,
+    href: 'marketplace',
+    title: 'Marketplace',
+    icon: Icons.Marketplace,
   },
 ];
 
-export const Layout = ({ menuItems, children }: LayoutProps) => {
-  const { onChangeMode, themeMode }: any = useContext(SiteContext);
-
-  const { loggedIn, principal, handleLogOut } = useAuthContext();
-  const { tokens, refreshAllBalances } = useTokensContext();
-  const { localDevelopment } = useSessionContext();
-
-  const toggleTheme = () => {
-    const t = themeMode === 'light' ? 'dark' : 'light';
-    onChangeMode(t);
-  };
-
-  const handleNavigation = (i) => {
-    window.location.href =
-      window.location.href.substr(0, window.location.href.lastIndexOf('\\') + 1) + i.page;
-  };
+export const Layout = ({ children }: LayoutProps) => {
+  const { refreshAllBalances } = useTokensContext();
+  const { principal, loggedIn, actor } = useContext(AuthContext);
+  const [darkTheme, setDarkTheme] = useState(true);
+  const [menuItems, setMenuItems] = useState(initialMenuItems);
 
   useEffect(() => {
-    if (principal && principal.toText() !== '2vxsx-fae') {
-      refreshAllBalances(isLocal() && localDevelopment, principal);
+    if (loggedIn) {
+      refreshAllBalances(false, principal);
     }
-  }, [principal]);
+  }, [loggedIn]);
+
+  useEffect(() => {
+    useRoute().then(({ canisterId }) => {
+      OrigynClient.getInstance().init(true, canisterId, { actor });
+      getNftCollectionMeta([]).then((r: any) => {
+        if (!('err' in r)) {
+          const data = r.ok.metadata[0].Class.find(
+            ({ name }) => name === 'library',
+          ).value.Array.thawed.reduce(
+            (arr, val) => [...arr, val.Class.find(({ name }) => name === 'library_id').value.Text],
+            [],
+          );
+          setMenuItems(initialMenuItems.filter((item) => data.includes(item.href)));
+        }
+      });
+    });
+  }, []);
 
   return (
     <>
-      <ThemeConfig>
-        <Box
-          sx={{
-            display: 'flex',
-          }}
-        >
-          <Hidden lgDown>
-            <Box width="320px" bgcolor="red">
-              <Drawer variant="permanent" open>
-                <Box width="320px">
-                  <Box
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      padding: '1rem 2rem',
-                    }}
-                  >
-                    <Box sx={{ padding: '8px' }}>
-                      <ThemeLogo />
-                    </Box>
-                  </Box>
-                  <Divider />
-                  <Box>
-                    <List>
-                      {!loggedIn ? (
-                        <>
-                          <ListItem
-                            button
-                            style={{ justifyContent: 'center', flexDirection: 'column' }}
-                          >
-                            <ConnectButton />
-                            {isLocal && (
-                              <LocalDevelopmentModal>
-                                <Link>Local Development Settings</Link>
-                              </LocalDevelopmentModal>
-                            )}
-                          </ListItem>
-                        </>
-                      ) : (
-                        <ListItem button style={{ color: '#00b400' }}>
-                          <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
-                            <CheckIcon style={{ color: '#00b400' }} />
-                          </ListItemIcon>
-                          <div style={{ flexDirection: 'row', display: 'flex', flexWrap: 'wrap' }}>
-                            <WalletTokens>
-                              <ListItemText
-                                primary="WALLET CONNECTED"
-                                secondary={`${principal?.toText().substring(0, 25)}...`}
-                              />
-                              {['OGY', 'ICP'].map((token, index) => (
-                                <div key={`${token}+${index}`}>
-                                  <TokenIcon symbol={token} />{' '}
-                                  <span
-                                    style={{
-                                      color: 'white',
-                                      marginRight: '5px',
-                                      marginBottom: '-3px',
-                                    }}
-                                  >
-                                    {tokens[token]?.balance > -1 ? (
-                                      currencyFormat(tokens[token]?.balance)
-                                    ) : (
-                                      <CircularProgress size={10} />
-                                    )}
-                                  </span>
-                                </div>
-                              ))}
-                            </WalletTokens>
-                            {isLocal && (
-                              <LocalDevelopmentModal>
-                                <Link>Local Development Settings</Link>
-                              </LocalDevelopmentModal>
-                            )}
-                          </div>
-                        </ListItem>
-                      )}
-                      <Divider />
-                      {initialMenuItems.map((i) => (
-                        <ListItem key={i.page} onClick={() => handleNavigation(i)} button>
-                          <ListItemIcon sx={{ pading: '8px' }}>{i.icon}</ListItemIcon>
-                          <ListItemText primary={i.title} />
-                        </ListItem>
-                      ))}
-                      {menuItems?.map((i) => (
-                        <ListItem key={i.page} onClick={() => handleNavigation(i)} button>
-                          <ListItemIcon sx={{ pading: '8px' }}>{i.icon}</ListItemIcon>
-                          <ListItemText primary={i.title} />
-                        </ListItem>
-                      ))}
-                    </List>
-                    <Divider />
-                    <List>
-                      {loggedIn && (
-                        <ListItem button>
-                          <ListItemIcon sx={{ pl: { xs: 0, sm: 0 } }}>
-                            <LogoutIcon />
-                          </ListItemIcon>
-                          <ListItemText primary="Log Out" onClick={handleLogOut} />
-                        </ListItem>
-                      )}
-                    </List>
-                    {}
-                  </Box>
-                </Box>
-                <div
-                  style={{
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'end',
-                  }}
-                >
-                  <div style={{ paddingBottom: '25px', cursor: 'pointer' }} onClick={toggleTheme}>
-                    {themeMode === 'light' ? <DarkIcon /> : <LightIcon />}
-                  </div>
-                </div>
-              </Drawer>
-            </Box>
-          </Hidden>
-          <Box
-            sx={{
-              marginTop: '50px',
-              flexGrow: '1',
-              padding: (theme) => theme.spacing(1),
-              width: 'calc(100% - 320px)',
-            }}
-          >
-            {children}
-          </Box>
-        </Box>
-      </ThemeConfig>
+      <ThemeProvider theme={darkTheme ? theme : themeLight}>
+        <GlobalStyle />
+        <Disclaimer />
+        <Flex fullWidth mdFlexFlow="column">
+          <Navbar navItems={menuItems} onChangeTheme={() => setDarkTheme(!darkTheme)} />
+          <Flex fullWidth>{children}</Flex>
+        </Flex>
+      </ThemeProvider>
     </>
   );
 };
 
 export type MenuItem = {
-  page: string;
+  href: string;
   title: string;
-  icon: JSX.Element;
+  icon: any;
 };
 
 export type LayoutProps = {

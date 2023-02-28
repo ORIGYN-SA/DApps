@@ -1,315 +1,340 @@
 import { AuthContext } from '@dapp/features-authentication';
-import { LoadingContainer, TokenIcon } from '@dapp/features-components';
-import { sendTransaction, useTokensContext } from '@dapp/features-tokens-provider';
-import { isLocal } from '@dapp/utils';
+import { LoadingContainer } from '@dapp/features-components';
+import { sendTransaction, useTokensContext, Token } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
-import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from '@mui/material';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
-import * as Yup from 'yup';
+import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
+import { useEffect } from 'react';
+import { currencyToFixed, OdcDataWithSale } from '@dapp/utils';
 
-export function StartEscrowModal({ nft, open, handleClose, initialValues = undefined }: any) {
-  const { actor, principal, localDevelopment, activeWalletProvider } =
-    React.useContext(AuthContext);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [token, setToken] = React.useState('OGY');
-  const [searchParams, setSearchParams] = useSearchParams({});
-  const { enqueueSnackbar } = useSnackbar() || {};
+export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
+
+export type StartEscrowModalProps = {
+  odc: OdcDataWithSale;
+  escrowType: EscrowType;
+  open: boolean;
+  handleClose: any;
+  onSuccess: any;
+};
+
+type FormValues = {
+  offerPrice: string;
+  token: Token;
+};
+
+type FormErrors = {
+  offerPrice: string;
+  token: string;
+};
+
+export function StartEscrowModal({
+  odc,
+  escrowType,
+  open,
+  handleClose,
+  onSuccess,
+}: StartEscrowModalProps) {
+  const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
   const { tokens, refreshAllBalances } = useTokensContext();
-  const validationSchema = Yup.object().shape({
-    nftId: Yup.string().required(),
-    escrowPrice: Yup.number()
-      .typeError('This must be a number')
-      .nullable()
-      .typeError('This cannot be a nullable number')
-      .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price'),
+  const { enqueueSnackbar } = useSnackbar() || {};
+
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isTransacting, setIsTransacting] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const [formValues, setFormValues] = React.useState<FormValues>();
+  const [formErrors, setFormErrors] = React.useState<FormErrors>({
+    offerPrice: '',
+    token: '',
   });
 
   const handleCustomClose = (value: any) => {
-    setSearchParams(searchParams);
+    setIsLoading(false);
+    setIsTransacting(false);
+    setSuccess(false);
     handleClose(value);
   };
-  const {
-    register,
-    getValues,
-    reset,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-    defaultValues: React.useMemo(() => initialValues, [initialValues]),
-  });
 
-  React.useEffect(() => {
-    reset(initialValues);
-    const params = getValues();
-    setSearchParams(params);
-  }, [initialValues]);
-
-  const customSubmit = (data) => {
-    handleStartEscrow(data);
+  const onTokenChanged = (tokenSymbol?: any) => {
+    setFormErrors({ ...formErrors, token: undefined });
+    setFormValues({ ...formValues, token: tokens[tokenSymbol] });
   };
-  React.useEffect(() => {
-    const subscription = watch(() => {
-      const params = getValues();
-      setSearchParams(params);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
 
-  React.useEffect(() => {
-    const params = getValues();
-    if (open && params.priceOffer) {
-      setSearchParams(params);
+  const onOfferChanged = (value?: any) => {
+    setFormErrors({ ...formErrors, offerPrice: undefined });
+    setFormValues({ ...formValues, offerPrice: value });
+  };
+
+  useEffect(() => {
+    // initialize form values
+    if (odc && tokens) {
+      let minOffer = 0;
+      if (escrowType === 'BuyNow') {
+        minOffer = odc.buyNow;
+      } else if (escrowType === 'Bid') {
+        minOffer =
+          odc.currentBid > 0 ? odc.currentBid + Number(odc.minIncreaseAmount) : odc.startPrice;
+      }
+
+      setFormValues({
+        offerPrice: currencyToFixed(minOffer, Number(odc.token.decimals)),
+        token: tokens[odc.token.symbol],
+      });
+
+      setIsLoading(false);
     }
-  }, [open]);
-  const _nft = {
-    id: nft?.metadata?.Class?.find(({ name }) => name === 'id').value.Text,
-    seller: nft?.metadata?.Class?.find(({ name }) => name === 'owner').value.Principal.toText(),
-    token:
-      nft?.current_sale?.length > 0
-        ? nft?.current_sale[0].sale_type?.auction?.config?.auction?.token?.ic?.symbol
-        : 'OGY',
+  }, [odc, tokens]);
 
-    openAuction: nft?.current_sale?.find((sale) =>
-      sale?.sale_type?.auction?.status?.hasOwnProperty('open'),
-    ),
+  const validateForm = () => {
+    let errors = { offerPrice: '', token: undefined };
+
+    if (isNaN(parseFloat(formValues.offerPrice))) {
+      errors = { ...errors, offerPrice: 'Offer must be a number' };
+    } else if (parseFloat(formValues.offerPrice) <= 0) {
+      errors = { ...errors, offerPrice: 'Offer must be greater than 0' };
+    } else if (parseFloat(formValues.offerPrice) <= odc.startPrice / 1e8) {
+      errors = {
+        ...errors,
+        offerPrice: `Offer must be greater than the start price of ${currencyToFixed(
+          odc.startPrice,
+          Number(odc.token.decimals),
+        )} ${odc.tokenSymbol}`,
+      };
+    }
+
+    if (!formValues.token) {
+      errors = { ...errors, token: 'No token selected' };
+    }
+
+    // if there are any form errors, notify the user
+    if (errors.offerPrice || errors.token) {
+      setFormErrors(errors);
+      return false;
+    }
+
+    return true;
   };
 
-  const handleStartEscrow = async (data) => {
-    console.log(data);
-    if (
-      isNaN(parseFloat(data.priceOffer)) ||
-      data.sellerId === 'undefined' ||
-      data.nftId === 'undefined'
-    ) {
-      enqueueSnackbar('Error: Fill all fields correctly', {
+  const startEscrow = async () => {
+    try {
+      if (isLoading || isTransacting || !activeWalletProvider || !validateForm()) {
+        console.log('validation failed');
+        return;
+      }
+
+      setIsTransacting(true);
+
+      const offer = Number(formValues.offerPrice) * 1e8;
+
+      // gets the deposit info for the account number of the caller
+      const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
+
+      if ('err' in saleInfo) {
+        throw new Error(saleInfo.err[0]);
+      }
+
+      if (!('deposit_info' in saleInfo.ok)) {
+        throw new Error('Deposit info not found in sale info');
+      }
+
+      const account_id = saleInfo?.ok?.deposit_info?.account_id;
+      if (!account_id) {
+        throw new Error('Account ID not found in sale info');
+      }
+
+      const transactionHeight = await sendTransaction(
+        false,
+        activeWalletProvider,
+        tokens[formValues.token.symbol],
+        account_id,
+        offer + formValues.token.fee,
+      );
+
+      if (transactionHeight.err) {
+        throw Error(transactionHeight.err);
+      }
+
+      const escrowData = {
+        token_id: odc.id,
+        deposit: {
+          token: {
+            ic: {
+              fee: BigInt(formValues.token.fee ?? 200_000),
+              decimals: BigInt(formValues.token.decimals ?? 8),
+              canister: Principal.fromText(formValues.token.canisterId),
+              standard: { Ledger: null },
+              symbol: formValues.token.symbol,
+            },
+          },
+          trx_id: [{ nat: BigInt(transactionHeight.ok) }],
+          seller: { principal: Principal.fromText(odc.ownerPrincipalId) },
+          buyer: { principal },
+          amount: BigInt(offer),
+          sale_id: odc?.saleId ? [odc.saleId] : [],
+        },
+        lock_to_date: [],
+      };
+
+      const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
+      if ('err' in escrowResponse) {
+        throw new Error(escrowResponse.err[0]);
+      }
+
+      if (odc.auctionOpen) {
+        // if the ODC is on auction, then this is a bid in the auction
+        const bidData = {
+          broker_id: [],
+          escrow_receipt: escrowResponse?.ok?.escrow_deposit.receipt,
+          sale_id: odc.saleId,
+        };
+
+        const bidResponse = await actor.sale_nft_origyn({ bid: bidData }); // TODO: fix this
+        if ('err' in bidResponse) {
+          throw new Error(bidResponse.err.text);
+        }
+
+        enqueueSnackbar('Your bid has been successfully placed.', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        handleCustomClose(true);
+        refreshAllBalances(false, principal);
+        setSuccess(true);
+        onSuccess();
+      } else {
+        // if there is no auction, then this is just an offer
+        enqueueSnackbar('Your escrow has been successfully sent.', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+        handleCustomClose(true);
+        refreshAllBalances(false, principal);
+        setSuccess(true);
+        onSuccess();
+      }
+    } catch (e) {
+      console.log(e);
+      enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'right',
         },
       });
-      return;
-    }
-    if (isLoading) return;
-
-    if (activeWalletProvider) {
-      setIsLoading(true);
-      const amount = data.priceOffer * 1e8;
-      const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
-      const { account_id } = saleInfo?.ok?.deposit_info ?? {};
-      console.log(tokens[token]);
-      const amountWithFee = amount + tokens[token].fee;
-      console.log(
-        '🚀 ~ file: StartEscrowModal.tsx ~ line 121 ~ handleStartEscrow ~ amountWithFee',
-        amountWithFee,
-      );
-      try {
-        const transactionHeight = await sendTransaction(
-          isLocal() && localDevelopment,
-          activeWalletProvider,
-          tokens[token],
-          new Uint8Array(account_id),
-          amount + tokens[token].fee,
-        );
-        if (transactionHeight.err) {
-          setIsLoading(false);
-          throw Error(transactionHeight.err);
-        }
-        const escrowData = {
-          token_id: _nft.id,
-          deposit: {
-            token: {
-              ic: {
-                fee: BigInt(tokens[token].fee ?? 200_000),
-                decimals: BigInt(tokens[token].decimals ?? 8),
-                canister: Principal.fromText(
-                  isLocal ? tokens[token].localCanisterId : tokens[token].canisterId,
-                ),
-                standard: { Ledger: null },
-                symbol: tokens[token].symbol,
-              },
-            },
-            trx_id: [{ nat: BigInt(transactionHeight.ok) }],
-            seller: {
-              principal: Principal.fromText(_nft.seller),
-            },
-            buyer: { principal },
-            amount: BigInt(amount),
-            sale_id: _nft?.openAuction?.sale_id ? [_nft?.openAuction?.sale_id] : [],
-          },
-          lock_to_date: [],
-        };
-        const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
-        if (!_nft.openAuction) {
-          if (escrowResponse.ok) {
-            enqueueSnackbar('Your escrow has been successfully sent.', {
-              variant: 'success',
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-            });
-            setIsLoading(false);
-            handleCustomClose(true);
-            refreshAllBalances(isLocal() && localDevelopment, principal);
-          } else {
-            throw escrowResponse.err.text;
-          }
-        } else {
-          if (!escrowResponse?.ok) throw escrowResponse.err.text;
-          console.log("🚀 ~ file: StartEscrowModal.tsx ~ line 179 ~ handleStartEscrow ~ escrowResponse", escrowResponse)
-
-          const bidData = {
-            broker_id: [],
-            escrow_receipt: escrowResponse?.ok?.escrow_deposit.receipt,
-            sale_id: _nft.openAuction?.sale_id,
-          };
-          console.log("bid data", bidData);
-          const bidResponse = await actor.sale_nft_origyn({ bid: bidData });
-          if (bidResponse.ok) {
-            enqueueSnackbar('Your bid has been successfully placed.', {
-              variant: 'success',
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-            });
-            setIsLoading(false);
-            handleCustomClose(true);
-            refreshAllBalances(isLocal() && localDevelopment, principal);
-          } else {
-            throw bidResponse.err;
-          }
-        }
-      } catch (e) {
-        console.log(e?.message ?? e);
-
-        enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
-      }
-      setIsLoading(false);
+    } finally {
+      setIsTransacting(false);
     }
   };
+
+  const onFormSubmitted = async (e: any) => {
+    e.preventDefault();
+    startEscrow();
+  };
+
   return (
     <div>
-      <Dialog
-        open={open}
-        onClose={() => handleCustomClose(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Send escrow for <strong>{_nft.id}</strong>?
-        </DialogTitle>
-        <DialogContent style={{ opacity: isLoading ? '0.4' : '1' }}>
-          <Grid container spacing={3} mt={2}>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                required
-                label="NFT ID"
-                fullWidth
-                id="nftId"
-                variant="outlined"
-                inputProps={{ 'aria-label': 'nftId' }}
-                value={_nft.id}
-                {...register('nftId')}
-                error={!!errors.nftId}
-              />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.nftId?.message}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={12}>
-              <TextField
-                required
-                label="Seller"
-                fullWidth
-                id="sellerId"
-                inputProps={{ 'aria-label': 'sellerId' }}
-                variant="outlined"
-                value={_nft.seller}
-                {...register('sellerId')}
-                error={!!errors.sellerId}
-              />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.sellerId?.message}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={12}>
-              <TextField
-                required
-                label="Your Offer (in tokens)"
-                fullWidth
-                id="priceOffer"
-                inputProps={{ 'aria-label': 'priceOffer' }}
-                variant="outlined"
-                {...register('priceOffer')}
-                error={!!errors.priceOffer}
-              />
-              <Typography variant="inherit" color="textSecondary">
-                {errors.priceOffer?.message}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={12}>
-              <FormControl fullWidth>
-                <InputLabel id="token-select-label">Token</InputLabel>
-                <Select
-                  labelId="token-select-label"
-                  id="token-select"
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  label="Token"
-                >
-                  {Object.keys(tokens).map((t, index) => (
-                    <MenuItem key={`${t}+${index}`} value={t}>
-                      <TokenIcon symbol={tokens[t].icon} />
-                      {tokens[t].symbol}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-          {isLoading && (
-            <div style={{ marginTop: 5 }}>
-              <LoadingContainer data-testid="loading-container" />
-            </div>
+      <Modal isOpened={open} closeModal={() => handleCustomClose} size="md">
+        <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
+          {success ? (
+            <>
+              <h2>Success!</h2>
+              <p className="secondary_color">All the transactions were made successfully.</p>
+              <Flex justify="flex-end">
+                <Button onClick={handleCustomClose}>Done</Button>
+              </Flex>
+            </>
+          ) : (
+            <>
+              {isTransacting ? (
+                <>
+                  <h2>Transactions in Progress</h2>
+                  <br />
+                  <LoadingContainer data-testid="loading-container" />
+                </>
+              ) : (
+                <>
+                  <h2>
+                    Send escrow for <strong>{odc.id}</strong>?
+                  </h2>
+                  <br />
+                  {!isLoading && (
+                    <Flex flexFlow="column" gap={8}>
+                      <Select
+                        name="token"
+                        selectedOption={{
+                          label: formValues.token.symbol,
+                          value: formValues.token.symbol,
+                        }}
+                        handleChange={(opt) => onTokenChanged(opt.value)}
+                        label="Token"
+                        options={Object.keys(tokens).map((t) => ({
+                          label: tokens[t].symbol,
+                          value: t,
+                        }))}
+                      />
+                      {escrowType == 'BuyNow' ? (
+                        <>
+                          <br />
+                          <span>Buy Now Price:</span>
+                          <span style={{ color: 'grey' }}>
+                            {currencyToFixed(odc.buyNow, formValues.token.decimals)}
+                          </span>
+                        </>
+                      ) : (
+                        <TextInput
+                          required
+                          label={`Your ${escrowType === 'Bid' ? 'bid' : 'offer'} (in tokens)`}
+                          id="offerPrice"
+                          name="offerPrice"
+                          error={formErrors.offerPrice}
+                          value={formValues.offerPrice}
+                          onChange={(e) => onOfferChanged(e.target.value)}
+                        />
+                      )}
+                      <br />
+                      {formValues.token && (
+                        <>
+                          <span>Transaction Fee</span>
+                          <span style={{ color: 'grey' }}>{`${
+                            formValues.token.fee * 0.00000001
+                          }${' '}${formValues.token?.symbol}`}</span>
+                          <br />
+                          <HR />
+                          <br />
+                          <Flex flexFlow="row" align="center" justify="space-between">
+                            <h6>Total Amount</h6>
+                            <span>
+                              {parseFloat(formValues.offerPrice) +
+                                formValues.token.fee * 0.00000001}
+                            </span>
+                          </Flex>
+                          <br />
+                          <HR />
+                          <br />
+                        </>
+                      )}
+                      <Flex align="center" justify="flex-end" gap={16}>
+                        <Button btnType="outlined" onClick={() => handleCustomClose(false)}>
+                          Cancel
+                        </Button>
+                        <Button btnType="accent" type="submit">
+                          Send Escrow
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  )}
+                </>
+              )}
+            </>
           )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleCustomClose(false)}>Cancel</Button>
-          <Button onClick={handleSubmit(customSubmit)} autoFocus>
-            Send Escrow
-          </Button>
-        </DialogActions>
-      </Dialog>
+        </Container>
+      </Modal>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { getAccountId } from '@dapp/utils';
 import { toHex } from '@dfinity/agent/lib/esm/utils/buffer';
 
 // OGY and ICP
-const sendICP = async (actor: any, token: Token, to: any, amount: number) => {
+const sendICP = async (actor: any, token: Token, to: any, amount: number, memo?: number) => {
   const defaultArgs = {
     fee: token?.symbol === 'OGY' ? BigInt(200_000) : BigInt(10_000),
     memo: BigInt(0),
@@ -18,7 +18,7 @@ const sendICP = async (actor: any, token: Token, to: any, amount: number) => {
         typeof to === 'string' ? getAccountId(Principal.fromText(to)) : toHex(to),
       fee: { e8s: token?.fee || defaultArgs.fee },
       amount: { e8s: BigInt(amount) },
-      memo: defaultArgs.memo,
+      memo: memo || defaultArgs.memo,
       from_subaccount: [],
       created_at_time: [],
     });
@@ -30,7 +30,7 @@ const sendICP = async (actor: any, token: Token, to: any, amount: number) => {
 };
 
 // DIP20 and WICP
-export const sendWICP = async (actor: any, to: any, amount: number) => {
+export const sendWICP = async (actor: any, to: any, amount: number, memo?: number) => {
   const transferResult = await actor.transfer(
     typeof to === 'string' ? Principal.fromText(to) : to,
     BigInt(amount),
@@ -40,7 +40,7 @@ export const sendWICP = async (actor: any, to: any, amount: number) => {
 
   throw new Error(Object.keys(transferResult.Err)[0]);
 };
-export const sendXTC = async (actor: any, to: any, amount: number) => {
+export const sendXTC = async (actor: any, to: any, amount: number, memo?: number) => {
   const transferResult = await actor.transferErc20(
     typeof to === 'string' ? Principal.fromText(to) : to,
     BigInt(amount),
@@ -50,7 +50,7 @@ export const sendXTC = async (actor: any, to: any, amount: number) => {
 
   throw new Error(Object.keys(transferResult.Err)[0]);
 };
-export const sendEXT = async (actor: any, token: Token, to: any, from: string, amount: number) => {
+export const sendEXT = async (actor: any, token: Token, to: any, from: string, amount: number, memo?: number) => {
   const dummyMemmo = new Array(32).fill(0);
   const _to = typeof to === 'string' ? { principal: Principal.fromText(to) } : { account_id: to };
 
@@ -77,6 +77,7 @@ export const sendTransaction = async (
   token: Token,
   to: any,
   amount: number,
+  memo?: number,
   from?: string,
 ) => {
   const ledgerCanisterId = isLocal ? token.localCanisterId : token.canisterId;
@@ -85,14 +86,14 @@ export const sendTransaction = async (
   try {
     switch (token.standard) {
       case IdlStandard.ICP:
-        return { ok: await sendICP(actor, token, to, amount) };
+        return { ok: await sendICP(actor, token, to, amount, memo) };
       case IdlStandard.WICP:
       case IdlStandard.DIP20:
-        return { ok: await sendWICP(actor, to, amount) };
+        return { ok: await sendWICP(actor, to, amount, memo) };
       case IdlStandard.XTC:
-        return { ok: await sendXTC(actor, to, amount) };
+        return { ok: await sendXTC(actor, to, amount, memo) };
       case IdlStandard.EXT:
-        return { ok: await sendEXT(actor, token, to, from, amount) };
+        return { ok: await sendEXT(actor, token, to, from, amount, memo) };
     }
   } catch (e) {
     return { err: e.message };

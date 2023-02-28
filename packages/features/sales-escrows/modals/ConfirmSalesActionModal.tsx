@@ -1,15 +1,13 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useSnackbar } from 'notistack';
+import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { Principal } from '@dfinity/principal';
+
 
 const Transition = React.forwardRef(
   (
@@ -23,24 +21,28 @@ const Transition = React.forwardRef(
 Transition.displayName = 'Transition';
 
 export const ConfirmSalesActionModal = ({
-  open,
+  openConfirmation,
   handleClose,
   currentToken,
   action,
   escrow = null,
+  offer,
 }: any) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
+  const { tokens } = useTokensContext();
+
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
       if (isLoading) return;
       setIsLoading(true);
-      const tokenId = currentToken?.Class?.find(({ name }) => name === 'id').value.Text;
       if (action === 'endSale') {
-        const endSaleResponse = await actor.sale_nft_origyn({end_sale: tokenId});
+        const endSaleResponse = await actor.sale_nft_origyn({
+          end_sale: currentToken,
+        });
         if (endSaleResponse.ok) {
-          enqueueSnackbar(`You have successfully ended the sale for ${tokenId}.`, {
+          enqueueSnackbar(`You have successfully ended the sale for ${currentToken}.`, {
             variant: 'success',
             anchorOrigin: {
               vertical: 'top',
@@ -72,7 +74,16 @@ export const ConfirmSalesActionModal = ({
             },
           },
         });
-        if (withdrawResponse.ok) {
+
+        if ('err' in withdrawResponse) {
+          enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
           enqueueSnackbar('Your escrow has been successfully withdrawn.', {
             variant: 'success',
             anchorOrigin: {
@@ -83,16 +94,11 @@ export const ConfirmSalesActionModal = ({
           setIsLoading(false);
           return handleClose(true);
         }
-        enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+
         setIsLoading(false);
         return handleClose(false);
       }
+
       if (action === 'reject') {
         if (!escrow) {
           return handleClose(false);
@@ -104,7 +110,16 @@ export const ConfirmSalesActionModal = ({
             },
           },
         });
-        if (rejectResponse.ok) {
+
+        if ('err' in rejectResponse) {
+          enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
           enqueueSnackbar('The escrow has been rejected.', {
             variant: 'success',
             anchorOrigin: {
@@ -115,66 +130,111 @@ export const ConfirmSalesActionModal = ({
           setIsLoading(false);
           return handleClose(true);
         }
-        enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
         setIsLoading(false);
         return handleClose(false);
+      }
+
+      const escrowReceipt = {
+        seller: { principal: offer.seller.principal },
+        buyer: { principal: offer.buyer.principal },
+        token_id: currentToken,
+        token: {
+          ic: {
+            fee: BigInt(tokens[offer.token.ic.symbol]?.fee ?? 200000),
+            decimals: BigInt(tokens[offer.token.ic.symbol]?.decimals ?? 8),
+            canister: Principal.fromText(tokens[offer.token.ic.symbol]?.canisterId),
+            standard: { Ledger: null },
+            symbol: offer.token.ic.symbol,
+          },
+        },
+        amount: BigInt(offer.amount),
+      };
+
+      const saleReceipt = {
+        broker_id: [],
+        pricing: { instant: null },
+        escrow_receipt: [escrowReceipt],
+      };
+
+
+      if (action === 'acceptOffer') {
+        try {
+          const acceptOffer = await actor.market_transfer_nft_origyn({
+            token_id: currentToken,
+            sales_config: saleReceipt
+          });
+          console.log(acceptOffer.err);
+          if ('err' in acceptOffer) {
+            enqueueSnackbar('There has been an error in accepting the offer', {
+              variant: 'error',
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+            });
+          } else {
+            enqueueSnackbar('The offer has been accepted.', {
+              variant: 'success',
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+            });
+            setIsLoading(false);
+            return handleClose(true);
+          }
+          setIsLoading(false);
+          return handleClose(false);
+        } catch (e) {
+          console.log(e);
+        }
       }
     }
     handleClose(false);
   };
+
   return (
     <div>
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={() => handleClose(false)}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle>
-          {action === 'endSale'
-            ? 'Confirm End Sale?'
-            : action === 'withdraw'
-            ? 'Confirm Escrow Withdraw'
-            : 'Confirm Escrow Rejection'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            <div style={{ opacity: isLoading ? '0.4' : '1' }}>
-              {action === 'endSale' ? (
-                <>
-                  Are you sure you want to end the sale for token{' '}
-                  <strong>
-                    {currentToken?.Class?.find(({ name }) => name === 'id').value.Text}
-                  </strong>
-                  ?
-                </>
-              ) : action === 'withdraw' ? (
-                <>Are you sure you want to withdraw the escrow?</>
-              ) : (
-                <>Are you sure you want to reject the escrow?</>
-              )}
-            </div>
-            {isLoading && (
-              <div style={{ marginTop: 5 }}>
-                <LoadingContainer />
+      <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
+        <Container size="full" padding="48px">
+          <h2>
+            {action === 'acceptOffer'
+              ? 'Confirm Accept Offer'
+              : action === 'endSale'
+              ? 'Confirm End Sale'
+              : action === 'withdraw'
+              ? 'Confirm Escrow Withdraw'
+              : 'Confirm Escrow Rejection'}
+          </h2>
+          <br />
+          <Flex flexFlow="column">
+            {action === 'acceptOffer' ? (
+              <div>
+                Are you sure you want to accept the offer for token <b>{currentToken}</b> ?
               </div>
+            ) : action === 'endSale' ? (
+              <div>
+                Are you sure you want to end the sale for token <b>{currentToken}</b> ?
+              </div>
+            ) : action === 'withdraw' ? (
+              <>Are you sure you want to withdraw the escrow?</>
+            ) : (
+              <>Are you sure you want to reject the escrow?</>
             )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => _handleClose(false)}>Cancel</Button>
-          <Button onClick={() => _handleClose(true)} variant="contained">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </Flex>
+          <Flex flow="row" justify="flex-end">
+            <Button onClick={() => _handleClose(false)}>Cancel</Button>
+            <Button onClick={() => _handleClose(true)} variant="contained">
+              Confirm
+            </Button>
+          </Flex>
+          {isLoading && (
+            <div style={{ marginTop: 5 }}>
+              <LoadingContainer />
+            </div>
+          )}
+        </Container>
+      </Modal>
     </div>
   );
 };

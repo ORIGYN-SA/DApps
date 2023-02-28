@@ -39,7 +39,6 @@ const extMethod = async (isLocal: boolean, token: Token): Promise<MetadataRepons
   const metadataResult: any = await actor.metadata(token.symbol);
 
   if ('ok' in metadataResult) {
-    console.log('🚀 ~ file: getMetadata.ts ~ line 45 ~ metadataResult', metadataResult);
     return metadataResult.ok;
   }
 

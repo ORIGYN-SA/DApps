@@ -4,6 +4,7 @@ import JSONBig from 'json-bigint';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
+import { timeConverter } from '@dapp/utils';
 
 const defaultTokens = {
   ICP: {
@@ -23,23 +24,6 @@ const defaultTokens = {
     decimals: 8,
     enabled: true,
     balance: -1,
-  },
-  XTC: {
-    symbol: 'XTC',
-    canisterId: 'aanaa-xaaaa-aaaah-aaeiq-cai',
-    fee: 200000,
-    standard: IdlStandard.DIP20,
-    icon: 'https://storageapi.fleek.co/fleek-team-bucket/Dank/XTC-DAB.png',
-    enabled: false,
-    balance: -1,
-  },
-  WICP: {
-    symbol: 'WICP',
-    canisterId: 'utozz-siaaa-aaaam-qaaxq-cai',
-    fee: 200000,
-    standard: IdlStandard.WICP,
-    icon: 'https://storageapi.fleek.co/fleek-team-bucket/logos/wicp-logo.png',
-    enabled: false,
   },
 };
 
@@ -63,6 +47,10 @@ export const AddTokenError = {
 
 export type TokensContext = {
   tokens: {
+    [key: string]: Token;
+  };
+  time?: string | number | void;
+  activeTokens: {
     [key: string]: Token;
   };
   addToken?: (
@@ -101,6 +89,10 @@ const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
+  activeTokens: Object.keys(initialTokens)
+    .filter((t) => initialTokens[t].enabled)
+    .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {}),
+  time: timeConverter(BigInt(new Date().getTime() * 1000000)),
 });
 
 export const useTokensContext = () => {
@@ -110,7 +102,7 @@ export const useTokensContext = () => {
 
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
-
+  const [time, setTime] = useState<any>();
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -153,7 +145,8 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     try {
       const balance = await getBalanceFromCanister(isLocal, principal, token);
       return balance.value / 10 ** balance.decimals;
-    } catch {
+    } catch (e) {
+      console.log(e);
       return 0;
     }
   };
@@ -167,7 +160,6 @@ export const TokensContextProvider: React.FC = ({ children }) => {
   };
 
   const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
-    console.log('refreshAllBalances > calling');
     // Refresh icon
     const _tokens = tokens;
     Object.keys(_tokens).map((symbol) => {
@@ -175,6 +167,8 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
     setTokens(() => ({ ..._tokens }));
 
+    const today = timeConverter(BigInt(new Date().getTime() * 1000000));
+    setTime(today);
     // Actual balance
     return Promise.all(
       Object.keys(_tokens).map(async (symbol) => {
@@ -206,6 +200,10 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         setLocalCanisterId,
         toggleToken,
         tokens,
+        time,
+        activeTokens: Object.keys(tokens)
+          .filter((t) => tokens[t].enabled)
+          .reduce((ats, key) => ({ ...ats, [key]: tokens[key] }), {}),
       }}
     >
       {children}

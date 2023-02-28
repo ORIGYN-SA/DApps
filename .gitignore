@@ -16,3 +16,6 @@ dist/
 
 **/node_modules
 **/dist
+
+# unit test snapshots
+**/*.snap

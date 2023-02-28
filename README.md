@@ -16,7 +16,7 @@ Once all required dependencies are installed, we are needed to bootstrap all pac
 
 Each dApp can be started using webpack as a local development server by running the following script from the root of the monorepo:
 
-`$ npm run start:wallet`
+`$ npm run start:vault`
 
 ### Building
 
@@ -24,7 +24,7 @@ The following script will build every dApp within the monorepo:
 
 `$ npm run build:all`
 
-The `dist` folder contains built html files for each dApp. A single package can be build by running its specific script, e.g: `npm run build:wallet` to build the wallet only.
+The `dist` folder contains built html files for each dApp. A single package can be build by running its specific script, e.g: `npm run build:vault` to build the vault only.
 
 ## 🚀 Local Development
 
@@ -44,7 +44,7 @@ In order to make your dApp connect to local canisters, you will need to:
 Example:
 
 ```
-http://localhost:8080/-/sp3hj-caaaa-aaaaa-aaajq-cai/-/bm-1/-/wallet
+http://localhost:8080/-/sp3hj-caaaa-aaaaa-aaajq-cai/-/bm-1/-/vault
 ```
 
 This will make [Connect2IC](https://github.com/Connect2IC/connect2ic) create an actor for the canister `sp3hj-caaaa-aaaaa-aaajq-cai`.

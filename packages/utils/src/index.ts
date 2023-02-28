@@ -1,8 +1,10 @@
-import { toast } from 'react-toastify';
-
-export const isLocal = () =>
-  window.location.hostname.indexOf('localhost') !== -1 ||
-  window.location.hostname.indexOf('127.0.0.1') !== -1;
+export const isLocal = () => {
+  return (
+    process.env.isLocal &&
+    (window.location.hostname.indexOf('localhost') !== -1 ||
+      window.location.hostname.indexOf('127.0.0.1') !== -1)
+  );
+};
 
 export function numberWithCommas(number: number, separator = ',') {
   // Split float on "."
@@ -21,16 +23,11 @@ export const formatE8S = (e8s: BigInt) => {
   return [n.slice(0, -8), '.', n.slice(-8)].join('');
 };
 
-export const copyToClipboard = (text: string, msg?: string) => {
-  navigator.clipboard.writeText(text).then(
-    function () {
-      toast.success(msg || 'Copied to clipboard');
-      console.log('Async: Copying to clipboard was successful!');
-    },
-    function (err) {
-      toast.error('Cant copy :(');
-    },
-  );
+export const copyToClipboard = (text: string, onSuccess?: () => void) => {
+  navigator.clipboard.writeText(text).then(function () {
+    onSuccess();
+    console.log('Async: Copying to clipboard was successful!');
+  });
 };
 
 export const formatDate = (date: Date) => {
@@ -60,6 +57,7 @@ export const parseDate = (ts) => {
   return d;
 };
 
+export * from './interfaces';
 export * from './binary';
 export * from './dateTime';
 export * from './idl';
@@ -68,4 +66,8 @@ export * from './number';
 export * from './principalToAccountID';
 export * from './useLocalStorage';
 export * from './collectionName';
-export * from './interfaces';
+export * from './checkCanister';
+export * from './getFormattedLink';
+export * from './checkOwner';
+export * from './odcParser';
+export * from './binaryConverters';
