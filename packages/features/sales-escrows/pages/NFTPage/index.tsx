@@ -31,6 +31,7 @@ import { useDialog } from '@connect2ic/react';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
+import { PlaceholderImage } from '@dapp/common-assets';
 
 export const NFTPage = () => {
   const { principal, actor, handleLogOut } = useContext(AuthContext);
@@ -176,9 +177,15 @@ export const NFTPage = () => {
                           </ShowMoreBlock>
                           <br />
                           <Flex gap={8} align="center">
-                            {collectionData?.hasPreviewAsset && (
+                            {collectionData?.hasPreviewAsset ? (
                               <img
                                 src={`https://prptl.io/-/${canisterId}/collection/preview`}
+                                alt=""
+                                style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
+                              />
+                            ) : (
+                              <img
+                                src={PlaceholderImage}
                                 alt=""
                                 style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
                               />

@@ -7,6 +7,7 @@ import { useDialog } from '@connect2ic/react';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { copyToClipboard, currencyToFixed, parseMetadata, parseOdcs } from '@dapp/utils';
+import { PlaceholderImage } from '@dapp/common-assets';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
@@ -481,10 +482,16 @@ const VaultPage = () => {
                     {collectionData && (
                       <div>
                         <Flex align="flex-start" gap={24}>
-                          {collectionData.hasPreviewAsset && (
+                          {collectionData.hasPreviewAsset ? (
                             <StyledCollectionImg
                               src={`https://prptl.io/-/${canisterId}/collection/preview`}
                               alt=""
+                            />
+                          ) : (
+                            <StyledCollectionImg
+                              src={PlaceholderImage}
+                              alt="text"
+                              style={{ width: 200 }}
                             />
                           )}
                           <Flex flexFlow="column" fullWidth justify="space-between" gap={8}>
@@ -602,7 +609,14 @@ const VaultPage = () => {
                                           alt=""
                                         />
                                       ) : (
-                                        <img style={{ width: '100%' }} alt="" />
+                                        <StyledNFTImg
+                                          src={PlaceholderImage}
+                                          alt=""
+                                          onError={(e) => {
+                                            e.target.onerror = null; // prevents looping
+                                            e.currentTarget.className += ' errorImage';
+                                          }}
+                                        />
                                       )}
                                       <Container
                                         style={{ height: '100%' }}

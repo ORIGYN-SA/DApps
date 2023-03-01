@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Container, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
-import { currencyToFixed } from '@dapp/utils';
+import { currencyToFixed, checkImageSource } from '@dapp/utils';
+import { PlaceholderImage } from '@dapp/common-assets';
 
 const styles = {
   gridContainer: {
@@ -122,7 +123,10 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                           marginTop: 'auto',
                           marginBottom: 'auto',
                         }}
-                        src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                        src={checkImageSource(
+                          `https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`,
+                          PlaceholderImage,
+                        )}
                         alt=""
                       />
                     </div>
@@ -192,7 +196,10 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                     <div style={styles.gridItem}>
                       <img
                         style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                        src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
+                        src={checkImageSource(
+                          `https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`,
+                          PlaceholderImage,
+                        )}
                         alt=""
                       />
                     </div>

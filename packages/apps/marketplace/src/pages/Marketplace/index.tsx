@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
+import { PlaceholderImage } from '@dapp/common-assets';
 import { useMarketplace } from '../../components/context';
 import {
   Card,
@@ -178,12 +179,14 @@ const Marketplace = () => {
                   <div>
                     <Container padding="32px">
                       <Flex align="flex-start" gap={24}>
-                        {collectionData.hasPreviewAsset && (
+                        {collectionData.hasPreviewAsset ? (
                           <Image
                             src={`https://prptl.io/-/${canisterId}/collection/preview`}
                             alt="text"
                             style={{ width: 200 }}
                           />
+                        ) : (
+                          <Image src={PlaceholderImage} alt="text" style={{ width: 200 }} />
                         )}
                         <Flex flexFlow="column" justify="space-between" gap={8}>
                           <h2>
@@ -250,7 +253,11 @@ const Marketplace = () => {
                                         alt=""
                                       />
                                     ) : (
-                                      <img style={{ width: '100%' }} alt="" />
+                                      <Image
+                                        src={PlaceholderImage}
+                                        alt="text"
+                                        style={{ width: 200 }}
+                                      />
                                     )}
                                     <Container
                                       style={{ height: '100%' }}
