@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Container, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
-import { currencyToFixed } from '@dapp/utils';
+import { toLargerUnit } from '@dapp/utils';
 
 const styles = {
   gridContainer: {
@@ -137,7 +137,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                       <span style={{ color: 'grey' }}>Amount</span>
                       <br />
                       <div>
-                        <span>{`${currencyToFixed(
+                        <span>{`${toLargerUnit(
                           Number(esc.amount),
                           Number(esc.token.ic.decimals),
                         )}${' '}${esc.token.ic.symbol}`}</span>
@@ -203,7 +203,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: 'grey' }}>Amount</p>
-                      <p>{`${currencyToFixed(
+                      <p>{`${toLargerUnit(
                         Number(esc.amount),
                         Number(esc.token.ic.decimals),
                       )}${' '}${esc.token.ic.symbol}`}</p>
