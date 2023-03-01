@@ -71,4 +71,3 @@ export * from './getFormattedLink';
 export * from './checkOwner';
 export * from './odcParser';
 export * from './binaryConverters';
-export * from './checkImageSource';

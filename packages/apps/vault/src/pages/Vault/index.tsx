@@ -25,6 +25,7 @@ import {
   ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui';
 import { Principal } from '@dfinity/principal';
+import { PlaceholderImage } from '@dapp/common-assets';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -485,6 +486,9 @@ const VaultPage = () => {
                             <StyledCollectionImg
                               src={`https://prptl.io/-/${canisterId}/collection/preview`}
                               alt=""
+                              onError={(e) => {
+                                e.currentTarget.src = PlaceholderImage;
+                              }}
                             />
                           ) : (
                             <StyledCollectionImg
@@ -601,8 +605,7 @@ const VaultPage = () => {
                                       {odc.hasPreviewAsset ? (
                                         <StyledNFTImg
                                           onError={(e) => {
-                                            e.target.onerror = null; // prevents looping
-                                            e.currentTarget.className += ' errorImage';
+                                            e.currentTarget.src = PlaceholderImage;
                                           }}
                                           src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                           alt=""

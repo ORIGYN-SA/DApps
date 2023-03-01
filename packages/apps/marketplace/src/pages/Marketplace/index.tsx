@@ -184,6 +184,9 @@ const Marketplace = () => {
                             src={`https://prptl.io/-/${canisterId}/collection/preview`}
                             alt="text"
                             style={{ width: 200 }}
+                            onError={(e) => {
+                              e.currentTarget.src = PlaceholderImage;
+                            }}
                           />
                         ) : (
                           <Image src={PlaceholderImage} alt="text" style={{ width: 200 }} />
@@ -251,6 +254,9 @@ const Marketplace = () => {
                                         style={{ width: '100%' }}
                                         src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                         alt=""
+                                        onError={(e) => {
+                                          e.currentTarget.src = PlaceholderImage;
+                                        }}
                                       />
                                     ) : (
                                       <Image
