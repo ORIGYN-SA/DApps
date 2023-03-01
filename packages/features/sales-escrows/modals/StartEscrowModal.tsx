@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useEffect } from 'react';
-import { currencyToFixed, OdcDataWithSale } from '@dapp/utils';
+import { toLargerUnit, OdcDataWithSale, toSmallerUnit, isPositiveFloat } from '@dapp/utils';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -19,13 +19,15 @@ export type StartEscrowModalProps = {
 };
 
 type FormValues = {
-  offerPrice: string;
   token: Token;
+  amount: number;
+  fee: number;
+  total: number;
 };
 
 type FormErrors = {
-  offerPrice: string;
   token: string;
+  amount: string;
 };
 
 export function StartEscrowModal({
@@ -44,61 +46,84 @@ export function StartEscrowModal({
   const [success, setSuccess] = React.useState(false);
   const [formValues, setFormValues] = React.useState<FormValues>();
   const [formErrors, setFormErrors] = React.useState<FormErrors>({
-    offerPrice: '',
+    amount: '',
     token: '',
   });
 
-  const handleCustomClose = (value: any) => {
-    setIsLoading(false);
-    setIsTransacting(false);
-    setSuccess(false);
-    handleClose(value);
-  };
-
-  const onTokenChanged = (tokenSymbol?: any) => {
-    setFormErrors({ ...formErrors, token: undefined });
-    setFormValues({ ...formValues, token: tokens[tokenSymbol] });
-  };
-
-  const onOfferChanged = (value?: any) => {
-    setFormErrors({ ...formErrors, offerPrice: undefined });
-    setFormValues({ ...formValues, offerPrice: value });
-  };
-
   useEffect(() => {
     // initialize form values
-    if (odc && tokens) {
-      let minOffer = 0;
+    if (open && odc && tokens) {
+      let minAmount = 0;
       if (escrowType === 'BuyNow') {
-        minOffer = odc.buyNow;
+        minAmount = odc.buyNow;
       } else if (escrowType === 'Bid') {
-        minOffer =
+        minAmount =
           odc.currentBid > 0 ? odc.currentBid + Number(odc.minIncreaseAmount) : odc.startPrice;
+      } else if (escrowType === 'Offer') {
+        minAmount = odc.startPrice;
       }
 
-      setFormValues({
-        offerPrice: currencyToFixed(minOffer, Number(odc.token.decimals)),
-        token: tokens[odc.token.symbol],
-      });
+      const amount = toLargerUnit(minAmount, Number(odc.token.decimals));
+      const token = tokens[odc.token.symbol];
+      const fee = toLargerUnit(token.fee, token.decimals);
+      const total = getTotal(amount, token);
 
+      setFormValues({ ...formValues, amount, token, fee, total });
       setIsLoading(false);
     }
-  }, [odc, tokens]);
+  }, [open]);
+
+  const onTokenChanged = (tokenSymbol?: any) => {
+    const token = tokens[tokenSymbol];
+    const fee = toLargerUnit(token.fee, token.decimals);
+    const total = getTotal(formValues.amount, token);
+    setFormValues({ ...formValues, token, fee, total });
+    setFormErrors({ ...formErrors, token: undefined });
+  };
+
+  const onAmountChanged = (enteredAmount: string) => {
+    let amount = 0;
+    let isValid = true;
+    if (enteredAmount.trim()) {
+      isValid = enteredAmount.trim() && isPositiveFloat(enteredAmount.trim());
+      amount = isValid ? parseFloat(enteredAmount) : 0;
+    }
+
+    if (isValid) {
+      const total = getTotal(amount, formValues.token);
+      setFormValues({ ...formValues, amount, total });
+      setFormErrors({ ...formErrors, amount: undefined });
+    } else {
+      setFormErrors({ ...formErrors, amount: 'Invalid amount' });
+    }
+  };
+
+  const getTotal = (amount: number, token: Token) => {
+    return toLargerUnit(toSmallerUnit(amount, token.decimals) + token.fee, token.decimals);
+  };
+
+  const hasErrors = (): boolean => {
+    return !!(formErrors.amount || formErrors.token);
+  };
 
   const validateForm = () => {
-    let errors = { offerPrice: '', token: undefined };
+    let errors = { amount: '', token: undefined };
+    const amount = formValues.amount;
 
-    if (isNaN(parseFloat(formValues.offerPrice))) {
-      errors = { ...errors, offerPrice: 'Offer must be a number' };
-    } else if (parseFloat(formValues.offerPrice) <= 0) {
-      errors = { ...errors, offerPrice: 'Offer must be greater than 0' };
-    } else if (parseFloat(formValues.offerPrice) <= odc.startPrice / 1e8) {
+    if (isNaN(amount)) {
+      errors = { ...errors, amount: `${escrowType} must be a number` };
+    } else if (amount <= 0) {
+      errors = { ...errors, amount: `${escrowType} must be greater than 0` };
+    } else if (escrowType == 'Bid') {
+      const minBid = (odc.currentBid + Number(odc.minIncreaseAmount)) / 1e8;
+      if (amount < minBid) {
+        errors = { ...errors, amount: `The minimum bid is ${minBid} ${odc.tokenSymbol}` };
+      }
+    } else if (escrowType === 'Offer' && amount <= odc.startPrice / 1e8) {
+      const startPrice = toLargerUnit(odc.startPrice, Number(odc.token.decimals));
       errors = {
         ...errors,
-        offerPrice: `Offer must be greater than the start price of ${currencyToFixed(
-          odc.startPrice,
-          Number(odc.token.decimals),
-        )} ${odc.tokenSymbol}`,
+        amount: `Offer must be greater than the start price of ${startPrice} ${odc.tokenSymbol}`,
       };
     }
 
@@ -107,7 +132,7 @@ export function StartEscrowModal({
     }
 
     // if there are any form errors, notify the user
-    if (errors.offerPrice || errors.token) {
+    if (errors.amount || errors.token) {
       setFormErrors(errors);
       return false;
     }
@@ -117,14 +142,14 @@ export function StartEscrowModal({
 
   const startEscrow = async () => {
     try {
-      if (isLoading || isTransacting || !activeWalletProvider || !validateForm()) {
+      if (isLoading || isTransacting || !activeWalletProvider || hasErrors() || !validateForm()) {
         console.log('validation failed');
         return;
       }
 
       setIsTransacting(true);
 
-      const offer = Number(formValues.offerPrice) * 1e8;
+      const amount = toSmallerUnit(formValues.amount, formValues.token.decimals);
 
       // gets the deposit info for the account number of the caller
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
@@ -147,7 +172,7 @@ export function StartEscrowModal({
         activeWalletProvider,
         tokens[formValues.token.symbol],
         account_id,
-        offer + formValues.token.fee,
+        amount + formValues.token.fee,
       );
 
       if (transactionHeight.err) {
@@ -169,7 +194,7 @@ export function StartEscrowModal({
           trx_id: [{ nat: BigInt(transactionHeight.ok) }],
           seller: { principal: Principal.fromText(odc.ownerPrincipalId) },
           buyer: { principal },
-          amount: BigInt(offer),
+          amount: BigInt(amount),
           sale_id: odc?.saleId ? [odc.saleId] : [],
         },
         lock_to_date: [],
@@ -232,6 +257,13 @@ export function StartEscrowModal({
     }
   };
 
+  const handleCustomClose = (value: any) => {
+    setIsLoading(false);
+    setIsTransacting(false);
+    setSuccess(false);
+    handleClose(value);
+  };
+
   const onFormSubmitted = async (e: any) => {
     e.preventDefault();
     startEscrow();
@@ -265,54 +297,62 @@ export function StartEscrowModal({
                   <br />
                   {!isLoading && (
                     <Flex flexFlow="column" gap={8}>
-                      <Select
-                        name="token"
-                        selectedOption={{
-                          label: formValues.token.symbol,
-                          value: formValues.token.symbol,
-                        }}
-                        handleChange={(opt) => onTokenChanged(opt.value)}
-                        label="Token"
-                        options={Object.keys(tokens).map((t) => ({
-                          label: tokens[t].symbol,
-                          value: t,
-                        }))}
-                      />
+                      {escrowType === 'Offer' ? (
+                        <Select
+                          name="token"
+                          selectedOption={{
+                            label: formValues.token.symbol,
+                            value: formValues.token.symbol,
+                          }}
+                          handleChange={(opt) => onTokenChanged(opt.value)}
+                          label="Token"
+                          options={Object.keys(tokens).map((t) => ({
+                            label: tokens[t].symbol,
+                            value: t,
+                          }))}
+                        />
+                      ) : (
+                        <>
+                          <span>Token:</span>
+                          <span style={{ color: 'grey' }}>{formValues.token.symbol}</span>
+                        </>
+                      )}
                       {escrowType == 'BuyNow' ? (
                         <>
                           <br />
-                          <span>Buy Now Price:</span>
+                          <span>Buy Now Price (in {formValues.token.symbol})</span>
                           <span style={{ color: 'grey' }}>
-                            {currencyToFixed(odc.buyNow, formValues.token.decimals)}
+                            {toLargerUnit(odc.buyNow, formValues.token.decimals)}
                           </span>
                         </>
                       ) : (
-                        <TextInput
-                          required
-                          label={`Your ${escrowType === 'Bid' ? 'bid' : 'offer'} (in tokens)`}
-                          id="offerPrice"
-                          name="offerPrice"
-                          error={formErrors.offerPrice}
-                          value={formValues.offerPrice}
-                          onChange={(e) => onOfferChanged(e.target.value)}
-                        />
+                        <>
+                          <br />
+                          <TextInput
+                            required
+                            label={`Your ${escrowType === 'Bid' ? 'bid' : 'offer'} (in ${
+                              formValues.token.symbol
+                            })`}
+                            id="offerPrice"
+                            name="offerPrice"
+                            error={formErrors.amount}
+                            onChange={(e) => onAmountChanged(e.target.value)}
+                          />
+                        </>
                       )}
                       <br />
                       {formValues.token && (
                         <>
                           <span>Transaction Fee</span>
-                          <span style={{ color: 'grey' }}>{`${
-                            formValues.token.fee * 0.00000001
-                          }${' '}${formValues.token?.symbol}`}</span>
+                          <span style={{ color: 'grey' }}>{`${formValues.fee}${' '}${
+                            formValues.token?.symbol
+                          }`}</span>
                           <br />
                           <HR />
                           <br />
                           <Flex flexFlow="row" align="center" justify="space-between">
                             <h6>Total Amount</h6>
-                            <span>
-                              {parseFloat(formValues.offerPrice) +
-                                formValues.token.fee * 0.00000001}
-                            </span>
+                            <span>{formValues.total}</span>
                           </Flex>
                           <br />
                           <HR />
@@ -323,7 +363,7 @@ export function StartEscrowModal({
                         <Button btnType="outlined" onClick={() => handleCustomClose(false)}>
                           Cancel
                         </Button>
-                        <Button btnType="accent" type="submit">
+                        <Button btnType="accent" type="submit" disabled={hasErrors()}>
                           Send Escrow
                         </Button>
                       </Flex>
