@@ -6,8 +6,7 @@ import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { copyToClipboard, currencyToFixed, parseMetadata, parseOdcs } from '@dapp/utils';
-import { PlaceholderImage } from '@dapp/common-assets';
+import { copyToClipboard, toLargerUnit, parseMetadata, parseOdcs } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
@@ -645,7 +644,7 @@ const VaultPage = () => {
                                               {odc.auctionOpen ? (
                                                 odc.currentBid === 0 ? (
                                                   <>
-                                                    {currencyToFixed(
+                                                    {toLargerUnit(
                                                       odc.buyNow,
                                                       Number(odc.token.decimals),
                                                     )}{' '}
@@ -653,7 +652,7 @@ const VaultPage = () => {
                                                   </>
                                                 ) : (
                                                   <>
-                                                    {currencyToFixed(
+                                                    {toLargerUnit(
                                                       odc.currentBid,
                                                       Number(odc.token.decimals),
                                                     )}{' '}

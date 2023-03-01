@@ -11,7 +11,7 @@ import {
   OdcDataWithSale,
   parseMetadata,
   parseOdc,
-  currencyToFixed,
+  toLargerUnit,
 } from '@dapp/utils';
 import { Property } from '@dapp/common-types';
 import React, { useContext, useEffect, useState } from 'react';
@@ -103,7 +103,8 @@ export const NFTPage = () => {
     } else {
       const collMeta = collMetaResp.ok;
       const metadataClass = collMeta?.metadata?.[0]?.Class as Property[];
-      setCollectionData(parseMetadata(metadataClass));
+      const parsedCollData = parseMetadata(metadataClass);
+      setCollectionData(parsedCollData);
     }
   };
 
@@ -201,7 +202,7 @@ export const NFTPage = () => {
                                   <span>Current bid</span>
                                   <strong>
                                     <TokenIcon symbol={odc.tokenSymbol} />
-                                    {currencyToFixed(odc.currentBid, Number(odc.token.decimals))}
+                                    {toLargerUnit(odc.currentBid, Number(odc.token.decimals))}
                                   </strong>
                                 </Flex>
 
@@ -209,7 +210,7 @@ export const NFTPage = () => {
                                   <span>Reserve Price</span>
                                   <strong>
                                     <TokenIcon symbol={odc.tokenSymbol} />
-                                    {currencyToFixed(odc.reserve, Number(odc.token.decimals))}
+                                    {toLargerUnit(odc.reserve, Number(odc.token.decimals))}
                                   </strong>
                                 </Flex>
                                 {odc?.buyNow && (
@@ -217,7 +218,7 @@ export const NFTPage = () => {
                                     <span>Buy Now</span>
                                     <strong>
                                       <TokenIcon symbol={odc.tokenSymbol} />
-                                      {currencyToFixed(odc.buyNow, Number(odc.token.decimals))}
+                                      {toLargerUnit(odc.buyNow, Number(odc.token.decimals))}
                                     </strong>
                                   </Flex>
                                 )}
@@ -383,25 +384,31 @@ export const NFTPage = () => {
             principal={principalId}
           />
 
-          <ConfirmSalesActionModal
-            openConfirmation={openConfirmation}
-            handleClose={handleClose}
-            currentToken={odc?.id}
-            action={dialogAction}
-          />
-          <StartAuctionModal
-            open={openAuction}
-            handleClose={handleClose}
-            onSuccess={fetchOdc}
-            currentToken={odc?.id}
-          />
-          <StartEscrowModal
-            open={openEscrowModal}
-            handleClose={handleCloseEscrow}
-            odc={odc}
-            escrowType={escrowType}
-            onSuccess={fetchOdc}
-          />
+          {openConfirmation && (
+            <ConfirmSalesActionModal
+              openConfirmation={openConfirmation}
+              handleClose={handleClose}
+              currentToken={odc?.id}
+              action={dialogAction}
+            />
+          )}
+          {openAuction && (
+            <StartAuctionModal
+              open={openAuction}
+              handleClose={handleClose}
+              onSuccess={fetchOdc}
+              currentToken={odc?.id}
+            />
+          )}
+          {openEscrowModal && (
+            <StartEscrowModal
+              open={openEscrowModal}
+              handleClose={handleCloseEscrow}
+              odc={odc}
+              escrowType={escrowType}
+              onSuccess={fetchOdc}
+            />
+          )}
         </Flex>
       )}
     </>

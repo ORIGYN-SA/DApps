@@ -19,7 +19,7 @@ import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { Link } from 'react-router-dom';
 import { useDialog } from '@connect2ic/react';
 import styled from 'styled-components';
-import { OdcDataWithSale, parseOdcs, parseMetadata, currencyToFixed } from '@dapp/utils';
+import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 
 const StyledSectionTitle = styled.h2`
@@ -286,7 +286,7 @@ const Marketplace = () => {
                                             {odc.auctionOpen ? (
                                               odc.currentBid === 0 ? (
                                                 <>
-                                                  {currencyToFixed(
+                                                  {toLargerUnit(
                                                     odc.buyNow,
                                                     Number(odc.token.decimals),
                                                   )}{' '}
@@ -294,7 +294,7 @@ const Marketplace = () => {
                                                 </>
                                               ) : (
                                                 <>
-                                                  {currencyToFixed(
+                                                  {toLargerUnit(
                                                     odc.currentBid,
                                                     Number(odc.token.decimals),
                                                   )}{' '}

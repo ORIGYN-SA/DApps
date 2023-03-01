@@ -167,7 +167,20 @@ function parseAppData(metadataClass: Property[], odc: OdcData): void {
 
   appDataProperties.forEach((p: Property) => {
     if (!isCandyClassOrArray(p)) {
-      displayProperties.push({ name: toSentenceCase(p.name), value: candyValueToString(p) });
+      const value = candyValueToString(p);
+      displayProperties.push({ name: toSentenceCase(p.name), value });
+
+      switch (p.name) {
+        case 'collection_id':
+          odc.collectionId = value;
+          break;
+        case 'display_name':
+          odc.displayName = value;
+          break;
+        case 'description':
+          odc.description = value;
+          break;
+      }
     }
 
     if (p.name === 'custom_properties' && 'Array' in p.value) {
@@ -194,9 +207,6 @@ function parseAppData(metadataClass: Property[], odc: OdcData): void {
 
   displayProperties.push({ name: 'Owner', value: odc.ownerPrincipalId });
   odc.displayProperties = displayProperties;
-  odc.collectionId = displayProperties.find((p) => p.name === 'collection_id')?.value || '';
-  odc.displayName = displayProperties.find((p) => p.name === 'display_name')?.value || '';
-  odc.description = displayProperties.find((p) => p.name === 'description')?.value || '';
 }
 
 export function parseMetadata(metadataClass: Property[]): OdcData {
