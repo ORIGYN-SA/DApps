@@ -37,10 +37,9 @@ export const getDiffInDays = (expirationDate, end_date = new Date()) => {
     endStr = `${Math.floor(diffInHrs)}hrs`;
   } else {
     if (diffInHrs >= 24 * 30) {
-      endStr = `${
-        Math.floor(diffInHrs / 24 / 30) +
+      endStr = `${Math.floor(diffInHrs / 24 / 30) +
         Math.ceil((Math.floor(diffInHrs / 24) % 30) / 30)
-      } month(s)`;
+        } month(s)`;
     } else {
       endStr = `${Math.floor(diffInHrs / 24)} days`;
     }

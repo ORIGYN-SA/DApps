@@ -1,4 +1,9 @@
-import { createContext, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
+
+// enables JSON.stringify for objects with bigints
+BigInt.prototype['toJSON'] = function () {
+  return this.toString();
+};
 
 interface DebugContextType {
   log: (...args: any[]) => void;

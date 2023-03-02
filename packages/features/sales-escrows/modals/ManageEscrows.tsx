@@ -1,25 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { Container, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
+import { Container, Modal, HR, TabContent } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
-import { toLargerUnit } from '@dapp/utils';
-import { PlaceholderImage } from '@dapp/common-assets';
-
-const styles = {
-  gridContainer: {
-    display: 'grid',
-    gridTemplateColumns: '42px 3fr repeat(3, 1fr)',
-    gap: '8px',
-    backgroundColor: 'inherit',
-    color: 'inherit',
-  },
-  gridItem: {
-    marginBottom: 'auto',
-    marginTop: 'auto',
-    verticalAlign: 'middle',
-  },
-};
+import { OffersReceivedTab } from './offersReceivedTab';
+import { BidsReceivedTab } from './bidsReceivedTab';
+import { OffersSentTab } from './offersSentTab';
+import { BidsSentTab } from './bidsSentTab';
 
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const debug = useDebug();
@@ -32,27 +19,35 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
 
   const [canisterId, setCanisterId] = React.useState('');
   const [escrow, setEscrow] = useState([]);
-  const [offers, setOffers] = useState([]);
+  const [offersReceived, setOffersReceived] = useState([]);
+  const [bidsReceived, setBidsReceived] = useState([]);
+  const [offersSent, setOffersSent] = useState([]);
+  const [bidsSent, setBidsSent] = useState([]);
 
   // TODO: uncomment when totalAm is used
   // const [totalAm, setTotalAm] = useState();
 
   //-----------------
   const Balance = async () => {
-    const data = await actor?.balance_of_nft_origyn({ principal });
+    const balance = await actor?.balance_of_nft_origyn({ principal });
+    debug.log('response from actor?.balance_of_nft_origyn({ principal })');
+    debug.log(JSON.stringify(balance, null, 2));
 
-    if (debug) {
-      console.log('>>>>> principal sent to actor?.balance_of_nft_origyn({ principal })');
-      console.log(principal.toText());
-
-      console.log('>>>>> response from actor?.balance_of_nft_origyn({ principal })');
-      console.log(JSON.stringify(data, null, 2));
-    }
-
-    const data2 = await data.ok.offers;
-    const data3 = await data.ok.escrow;
-    setOffers(data2);
-    setEscrow(data3);
+    const offersAndBidsReceived = await balance?.ok.offers;
+    const sentEscrows = await balance?.ok.escrow;
+    // If there is a sale_id, it means that the Escrow is Associated to a Sale Process
+    // and it is a Bid, otherwise it is an Offer
+    const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
+    const offersReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length === 0);
+    const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
+    //debug.log('bidsSent', bidsSent);
+    const offersSent = sentEscrows?.filter((element) => element.sale_id.length === 0);
+    //debug.log('offersSent', offersSent);
+    setOffersReceived(offersReceived);
+    setBidsReceived(bidsReceived);
+    setEscrow(sentEscrows);
+    setOffersSent(offersSent);
+    setBidsSent(bidsSent);
   };
 
   useEffect(() => {
@@ -116,138 +111,57 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
         <Container size="full" padding="48px">
           <h3>Manage Escrow</h3>
           <HR marginTop={16} marginBottom={16} />
-          {escrow.length > 0 && (
-            <div>
-              <div>
-                <h5>Escrows</h5>
-              </div>
-              <HR marginTop={16} marginBottom={16} />
-              <div style={styles.gridContainer}>
-                {escrow.map((esc: any, index: number) => (
-                  <div key={index}>
-                    <div style={styles.gridItem}>
-                      <img
-                        style={{
-                          width: '42px',
-                          borderRadius: '12px',
-                          marginTop: 'auto',
-                          marginBottom: 'auto',
-                        }}
-                        src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
-                        onError={(e) => {
-                          e.currentTarget.src = PlaceholderImage;
-                        }}
-                        alt=""
-                      />
-                    </div>
-                    <div style={styles.gridItem}>
-                      <div>
-                        <p>{esc.token_id}</p>
-                      </div>
-
-                      <span style={{ color: 'grey' }}>{collection.name}</span>
-                    </div>
-                    <div style={styles.gridItem}>
-                      <span style={{ color: 'grey' }}>Amount</span>
-                      <br />
-                      <div>
-                        <span>{`${toLargerUnit(
-                          Number(esc.amount),
-                          Number(esc.token.ic.decimals),
-                        )}${' '}${esc.token.ic.symbol}`}</span>
-                      </div>
-                    </div>
-                    <div style={styles.gridItem}>
-                      <span style={{ color: 'grey' }}>Status</span>
-                      <br />
-                      <span>
-                        {esc.lock_to_date
-                          ? Date.now() * 1e6 > parseInt(esc.lock_to_date)
-                            ? 'Locked'
-                            : 'Done'
-                          : 'Lock date not present'}
-                      </span>
-                    </div>
-                    <div style={styles.gridItem}>
-                      {Date.now() * 1e6 > parseInt(esc.lock_to_date) ? (
-                        <Button
-                          btnType="filled"
-                          size="small"
-                          onClick={() => withdrawEscrow(esc, esc.token_id)}
-                          disabled
-                        >
-                          Withdraw
-                        </Button>
-                      ) : (
-                        <Button
-                          btnType="filled"
-                          size="small"
-                          onClick={() => withdrawEscrow(esc, esc.token_id)}
-                        >
-                          Withdraw
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}{' '}
-              </div>
-            </div>
-          )}
-          <HR marginTop={16} marginBottom={16} />
-          {offers.length > 0 && (
-            <div>
-              <div>
-                <h5>Offers</h5>
-              </div>
-              <HR marginTop={16} marginBottom={16} />
-              <div style={styles.gridContainer}>
-                {offers.map((esc: any, index: number) => (
-                  <div key={index}>
-                    <div style={styles.gridItem}>
-                      <img
-                        style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                        src={`https://${canisterId}.raw.ic0.app/-/${esc.token_id}/preview`}
-                        onError={(e) => {
-                          e.currentTarget.src = PlaceholderImage;
-                        }}
-                        alt=""
-                      />
-                    </div>
-                    <div style={styles.gridItem}>
-                      <span>{esc.token_id}</span>
-                      <br />
-                      <span style={{ color: 'grey' }}>{collection.name}</span>
-                    </div>
-                    <div style={styles.gridItem}>
-                      <p style={{ color: 'grey' }}>Amount</p>
-                      <p>{`${toLargerUnit(
-                        Number(esc.amount),
-                        Number(esc.token.ic.decimals),
-                      )}${' '}${esc.token.ic.symbol}`}</p>
-                    </div>
-                    <div style={styles.gridItem}>
-                      <Button
-                        btnType="filled"
-                        size="small"
-                        onClick={() => handleClickOpen(esc, esc.token_id)}
-                      >
-                        Accept
-                      </Button>
-                    </div>
-                    <div style={styles.gridItem}>
-                      <Button
-                        btnType="outlined"
-                        size="small"
-                        onClick={() => handleClickOpenRej(esc)}
-                      >
-                        Reject
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <TabContent
+            tabs={[
+              {
+                title: 'Offers Sent',
+                id: 'offersSent',
+              },
+              {
+                title: 'Offers Received',
+                id: 'offersReceived',
+              },
+              {
+                title: 'Bids Sent',
+                id: 'bidsSent',
+              },
+              {
+                title: 'Bids Received',
+                id: 'bidsReceived',
+              },
+            ]}
+            fullWidth={true}
+            justify="flex-start"
+            content={[
+              <OffersSentTab
+                key="offers-sent"
+                offersSent={offersSent}
+                collection={collection}
+                canisterId={canisterId}
+                withdrawEscrow={withdrawEscrow}
+              />,
+              <OffersReceivedTab
+                key="offers-received"
+                offersReceived={offersReceived}
+                handleClickOpen={handleClickOpen}
+                handleClickOpenRej={handleClickOpenRej}
+                collection={collection}
+                canisterId={canisterId}
+              />,
+              <BidsSentTab
+                key="bids-sent"
+                bidsSent={bidsSent}
+                collection={collection}
+                canisterId={canisterId}
+              />,
+              <BidsReceivedTab
+                key="bids-received"
+                bidsReceived={bidsReceived}
+                collection={collection}
+                canisterId={canisterId}
+              />,
+            ]}
+          />
         </Container>
       </Modal>
 
