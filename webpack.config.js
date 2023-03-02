@@ -118,6 +118,6 @@ module.exports = (env, argv, dAppConfig) => ({
     watchContentBase: true,
     open: true,
     disableHostCheck: true,
-    openPage: dAppConfig?.openPage ? dAppConfig.openPage : '-/bmdev/-/bm-1/-/',
+    openPage: dAppConfig?.openPage ? dAppConfig.openPage : '-/brain-matters-dev/collection/-/',
   },
 });

@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/dot-notation */
+import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
@@ -31,8 +32,10 @@ import { useDialog } from '@connect2ic/react';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
+import { PlaceholderImage } from '@dapp/common-assets';
 
 export const NFTPage = () => {
+  const debug = useDebug();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [odc, setOdc] = useState<OdcDataWithSale>();
@@ -96,9 +99,12 @@ export const NFTPage = () => {
     OrigynClient.getInstance().init(true, canisterId, { actor });
 
     const collMetaResp = await getNftCollectionMeta([]);
+    debug.log('return value from getNftCollectionMeta([])');
+    debug.log(JSON.stringify(collMetaResp, null, 2));
+
     if (collMetaResp.err) {
       setCollectionData(undefined);
-      console.log(collMetaResp.err);
+      debug.error(collMetaResp.err);
     } else {
       const collMeta = collMetaResp.ok;
       const metadataClass = collMeta?.metadata?.[0]?.Class as Property[];
@@ -109,12 +115,18 @@ export const NFTPage = () => {
 
   const fetchOdc = async () => {
     const r: any = await actor.nft_origyn(params.nft_id);
+    debug.log('return value from actor.nft_origyn(params.nft_id)');
+    debug.log(JSON.stringify(r, null, 2));
+
     if ('err' in r) {
       throw new Error(Object.keys(r.err)[0]);
     }
     setIsLoading(false);
 
     let parsedOdc: OdcDataWithSale = parseOdc(r['ok']);
+    debug.log('parsedOdc');
+    debug.log(parsedOdc);
+
     setOdc(parsedOdc);
   };
 
@@ -160,10 +172,18 @@ export const NFTPage = () => {
                   <Flex flexFlow="column">
                     <Container size="md" padding="80px" mdPadding="16px">
                       <Grid columns={2} mdColumns={2} gap={120} smGap={16} mdGap={40}>
-                        {odc?.hasPreviewAsset && (
+                        {odc?.hasPreviewAsset ? (
                           <img
                             style={{ borderRadius: '18px', width: '100%' }}
                             src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
+                            onError={(e) => {
+                              e.currentTarget.src = PlaceholderImage;
+                            }}
+                          />
+                        ) : (
+                          <img
+                            style={{ borderRadius: '18px', width: '100%' }}
+                            src={PlaceholderImage}
                           />
                         )}
                         <Flex flexFlow="column" gap={8}>
@@ -177,9 +197,15 @@ export const NFTPage = () => {
                           </ShowMoreBlock>
                           <br />
                           <Flex gap={8} align="center">
-                            {collectionData?.hasPreviewAsset && (
+                            {collectionData?.hasPreviewAsset ? (
                               <img
                                 src={`https://prptl.io/-/${canisterId}/collection/preview`}
+                                alt=""
+                                style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
+                              />
+                            ) : (
+                              <img
+                                src={PlaceholderImage}
                                 alt=""
                                 style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
                               />

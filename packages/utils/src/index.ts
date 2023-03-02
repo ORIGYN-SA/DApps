@@ -1,3 +1,7 @@
+BigInt.prototype['toJSON'] = function () {
+  return this.toString();
+};
+
 export const isLocal = () => {
   return (
     process.env.isLocal &&

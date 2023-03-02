@@ -1,3 +1,4 @@
+import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { sendTransaction, useTokensContext, Token } from '@dapp/features-tokens-provider';
@@ -37,6 +38,7 @@ export function StartEscrowModal({
   handleClose,
   onSuccess,
 }: StartEscrowModalProps) {
+  const debug = useDebug();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
   const { tokens, refreshAllBalances } = useTokensContext();
   const { enqueueSnackbar } = useSnackbar() || {};
@@ -154,6 +156,11 @@ export function StartEscrowModal({
       // gets the deposit info for the account number of the caller
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
 
+      if (debug) {
+        console.log('>>>>> return value of actor.sale_info_nft_origyn({ deposit_info: [] })');
+        console.log(JSON.stringify(saleInfo, null, 2));
+      }
+
       if ('err' in saleInfo) {
         throw new Error(saleInfo.err[0]);
       }
@@ -195,10 +202,17 @@ export function StartEscrowModal({
           seller: { principal: Principal.fromText(odc.ownerPrincipalId) },
           buyer: { principal },
           amount: BigInt(amount),
-          sale_id: odc?.saleId ? [odc.saleId] : [],
+          sale_id: odc.saleId ? [odc.saleId] : [],
         },
         lock_to_date: [],
       };
+
+      if (debug) {
+        console.log(
+          '>>>>> escrowData sent to actor.sale_nft_origyn({ escrow_deposit: escrowData })',
+        );
+        console.log(JSON.stringify(escrowData, null, 2));
+      }
 
       const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
       if ('err' in escrowResponse) {
@@ -214,6 +228,14 @@ export function StartEscrowModal({
         };
 
         const bidResponse = await actor.sale_nft_origyn({ bid: bidData }); // TODO: fix this
+
+        if (debug) {
+          console.log('>>>>> bidData sent to actor.sale_nft_origyn({ bid: bidData })');
+          console.log(JSON.stringify(bidData, null, 2));
+          console.log('>>>>> response from actor.sale_nft_origyn({ bid: bidData })');
+          console.log(JSON.stringify(bidResponse, null, 2));
+        }
+
         if ('err' in bidResponse) {
           throw new Error(bidResponse.err.text);
         }

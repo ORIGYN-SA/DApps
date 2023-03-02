@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
@@ -25,6 +26,7 @@ import {
   ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui';
 import { Principal } from '@dfinity/principal';
+import { PlaceholderImage } from '@dapp/common-assets';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -205,6 +207,7 @@ const DscvrSVG = () => {
 };
 
 const VaultPage = () => {
+  const debug = useDebug();
   const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
@@ -246,8 +249,11 @@ const VaultPage = () => {
 
       // get the canister's collection metadata
       const collMetaResp = await getNftCollectionMeta([]);
+      debug.log('return value from getNftCollectionMeta([])');
+      debug.log(JSON.stringify(collMetaResp, null, 2));
+
       if (collMetaResp.err) {
-        console.log(collMetaResp.err);
+        debug.error(collMetaResp.err);
         throw new Error('Unable to retrieve collection metadata.');
       }
 
@@ -258,6 +264,10 @@ const VaultPage = () => {
 
       if (principal) {
         const vaultBalanceInfo = await actor?.balance_of_nft_origyn({ principal });
+
+        debug.log('actor?.balance_of_nft_origyn({ principal })');
+        debug.log(JSON.stringify(vaultBalanceInfo, null, 2));
+
         if (vaultBalanceInfo.err) {
           throw new Error(Object.keys(vaultBalanceInfo.err)[0]);
         }
@@ -265,13 +275,19 @@ const VaultPage = () => {
         // get list of digital certificates owned by the current user
         const ownedTokenIds = vaultBalanceInfo?.ok?.nfts || [];
         const odcDataRaw = await actor?.nft_batch_origyn(ownedTokenIds);
+        debug.log('actor?.nft_batch_origyn(ownedTokenIds)');
+        debug.log(JSON.stringify(odcDataRaw, null, 2));
+
         if (odcDataRaw.err) {
-          console.log(odcDataRaw.err);
+          debug.error(odcDataRaw.err);
           throw new Error('Unable to retrieve metadata of tokens.');
         }
 
         // parse the digital certificate data (metadata and sale info)
         const parsedOdcs = parseOdcs(odcDataRaw);
+        debug.log('parsed odcs');
+        debug.log(parsedOdcs);
+
         dispatch({ type: 'odcs', payload: parsedOdcs });
         dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
         dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
@@ -481,10 +497,19 @@ const VaultPage = () => {
                     {collectionData && (
                       <div>
                         <Flex align="flex-start" gap={24}>
-                          {collectionData.hasPreviewAsset && (
+                          {collectionData.hasPreviewAsset ? (
                             <StyledCollectionImg
                               src={`https://prptl.io/-/${canisterId}/collection/preview`}
                               alt=""
+                              onError={(e) => {
+                                e.currentTarget.src = PlaceholderImage;
+                              }}
+                            />
+                          ) : (
+                            <StyledCollectionImg
+                              src={PlaceholderImage}
+                              alt="text"
+                              style={{ width: 200 }}
                             />
                           )}
                           <Flex flexFlow="column" fullWidth justify="space-between" gap={8}>
@@ -595,14 +620,20 @@ const VaultPage = () => {
                                       {odc.hasPreviewAsset ? (
                                         <StyledNFTImg
                                           onError={(e) => {
-                                            e.target.onerror = null; // prevents looping
-                                            e.currentTarget.className += ' errorImage';
+                                            e.currentTarget.src = PlaceholderImage;
                                           }}
                                           src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                           alt=""
                                         />
                                       ) : (
-                                        <img style={{ width: '100%' }} alt="" />
+                                        <StyledNFTImg
+                                          src={PlaceholderImage}
+                                          alt=""
+                                          onError={(e) => {
+                                            e.target.onerror = null; // prevents looping
+                                            e.currentTarget.className += ' errorImage';
+                                          }}
+                                        />
                                       )}
                                       <Container
                                         style={{ height: '100%' }}

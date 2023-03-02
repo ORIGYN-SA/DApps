@@ -1,3 +1,4 @@
+import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
 import { NFTInfoStable, Property } from '../../common/types/src/origynNftReference';
 import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
@@ -250,13 +251,21 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   odc.tokenSymbol = odc.token.symbol;
 
   odc.auction = odcInfo?.current_sale[0]?.sale_type?.auction;
-  odc.saleId = odcInfo?.current_sale[0]?.sale_id || '';
+  odc.saleId = '';
+  odc.currentBid = 0;
 
   if (odc.auction) {
     odc.auctionOpen = 'open' in odc.auction.status;
     odc.auctionClosed = 'closed' in odc.auction.status;
     odc.auctionNotStarted = 'not_started' in odc.auction.status;
-    odc.currentBid = Number(odc.auction.current_bid_amount || 0);
+
+    // only assign the saleId if the auction is open
+    // this ensures that sale ids from closed auctions are not
+    // used to create escrows for offers or bids
+    if (odc.auctionOpen) {
+      odc.saleId = odcInfo.current_sale[0].sale_id;
+      odc.currentBid = Number(odc.auction.current_bid_amount || 0);
+    }
 
     if ('auction' in odc.auction?.config) {
       const auctionConfig = odc.auction.config.auction;

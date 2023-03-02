@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
+import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
+import { PlaceholderImage } from '@dapp/common-assets';
 import { useMarketplace } from '../../components/context';
 import {
   Card,
@@ -26,6 +28,7 @@ const StyledSectionTitle = styled.h2`
 `;
 
 const Marketplace = () => {
+  const debug = useDebug();
   const { enqueueSnackbar } = useSnackbar() || {};
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
@@ -51,9 +54,12 @@ const Marketplace = () => {
 
       // get the canister's collection metadata
       const collMetaResp = await getNftCollectionMeta([]);
+      debug.log('return value from getNftCollectionMeta([])');
+      debug.log(JSON.stringify(collMetaResp, null, 2));
+
       if (collMetaResp.err) {
         // TODO: Display error
-        console.log(collMetaResp.err);
+        debug.error(collMetaResp.err);
         return;
       }
 
@@ -68,18 +74,24 @@ const Marketplace = () => {
 
       // get a list of all digital certificates in the collection
       const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+      debug.log('actor?.nft_batch_origyn(ownedTokenIds)');
+      debug.log(JSON.stringify(odcDataRaw, null, 2));
+
       if (odcDataRaw.err) {
         // TODO: Display error
-        console.log(odcDataRaw.err);
+        debug.error(odcDataRaw.err);
         return;
       }
 
       // parse the digital certificate data (metadata and sale info)
       const parsedOdcs = parseOdcs(odcDataRaw);
+      debug.log('parsed odcs');
+      debug.log(parsedOdcs);
+
       dispatch({ type: 'odcs', payload: parsedOdcs });
       dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
     } catch (err) {
-      console.error(err);
+      debug.error(err);
       enqueueSnackbar(err?.message || err, {
         variant: 'error',
         anchorOrigin: {
@@ -178,12 +190,17 @@ const Marketplace = () => {
                   <div>
                     <Container padding="32px">
                       <Flex align="flex-start" gap={24}>
-                        {collectionData.hasPreviewAsset && (
+                        {collectionData.hasPreviewAsset ? (
                           <Image
                             src={`https://prptl.io/-/${canisterId}/collection/preview`}
                             alt="text"
                             style={{ width: 200 }}
+                            onError={(e) => {
+                              e.currentTarget.src = PlaceholderImage;
+                            }}
                           />
+                        ) : (
+                          <Image src={PlaceholderImage} alt="text" style={{ width: 200 }} />
                         )}
                         <Flex flexFlow="column" justify="space-between" gap={8}>
                           <h2>
@@ -248,9 +265,16 @@ const Marketplace = () => {
                                         style={{ width: '100%' }}
                                         src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                         alt=""
+                                        onError={(e) => {
+                                          e.currentTarget.src = PlaceholderImage;
+                                        }}
                                       />
                                     ) : (
-                                      <img style={{ width: '100%' }} alt="" />
+                                      <Image
+                                        src={PlaceholderImage}
+                                        alt="text"
+                                        style={{ width: 200 }}
+                                      />
                                     )}
                                     <Container
                                       style={{ height: '100%' }}
