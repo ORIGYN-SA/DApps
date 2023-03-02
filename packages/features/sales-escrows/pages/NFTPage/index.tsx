@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/dot-notation */
+import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
@@ -34,6 +35,7 @@ import { Principal } from '@dfinity/principal';
 import { PlaceholderImage } from '@dapp/common-assets';
 
 export const NFTPage = () => {
+  const debug = useDebug();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [odc, setOdc] = useState<OdcDataWithSale>();
@@ -97,9 +99,12 @@ export const NFTPage = () => {
     OrigynClient.getInstance().init(true, canisterId, { actor });
 
     const collMetaResp = await getNftCollectionMeta([]);
+    debug.log('return value from getNftCollectionMeta([])');
+    debug.log(JSON.stringify(collMetaResp, null, 2));
+
     if (collMetaResp.err) {
       setCollectionData(undefined);
-      console.log(collMetaResp.err);
+      debug.error(collMetaResp.err);
     } else {
       const collMeta = collMetaResp.ok;
       const metadataClass = collMeta?.metadata?.[0]?.Class as Property[];
@@ -110,12 +115,18 @@ export const NFTPage = () => {
 
   const fetchOdc = async () => {
     const r: any = await actor.nft_origyn(params.nft_id);
+    debug.log('return value from actor.nft_origyn(params.nft_id)');
+    debug.log(JSON.stringify(r, null, 2));
+
     if ('err' in r) {
       throw new Error(Object.keys(r.err)[0]);
     }
     setIsLoading(false);
 
     let parsedOdc: OdcDataWithSale = parseOdc(r['ok']);
+    debug.log('parsedOdc');
+    debug.log(parsedOdc);
+
     setOdc(parsedOdc);
   };
 

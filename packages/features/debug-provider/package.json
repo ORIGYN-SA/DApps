@@ -1,0 +1,6 @@
+{
+  "name": "@dapp/features-debug-provider",
+  "version": "0.1.0",
+  "description": "Debug provider for all dApps.",
+  "main": "src/index.tsx"
+}

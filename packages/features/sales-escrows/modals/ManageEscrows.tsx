@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Container, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
@@ -21,6 +22,7 @@ const styles = {
 };
 
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
+  const debug = useDebug();
   const { principal, actor } = useContext(AuthContext);
   const [selectedEscrow, setSelectedEscrow] = useState<any>();
   const [selectedOffer, setSelectedOffer] = useState<any>();
@@ -38,6 +40,14 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   //-----------------
   const Balance = async () => {
     const data = await actor?.balance_of_nft_origyn({ principal });
+
+    if (debug) {
+      console.log('>>>>> principal sent to actor?.balance_of_nft_origyn({ principal })');
+      console.log(principal.toText());
+
+      console.log('>>>>> response from actor?.balance_of_nft_origyn({ principal })');
+      console.log(JSON.stringify(data, null, 2));
+    }
 
     const data2 = await data.ok.offers;
     const data3 = await data.ok.escrow;
@@ -114,8 +124,8 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
                 {escrow.map((esc: any, index: number) => (
-                  <>
-                    <div key={index} style={styles.gridItem}>
+                  <div key={index}>
+                    <div style={styles.gridItem}>
                       <img
                         style={{
                           width: '42px',
@@ -178,7 +188,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                         </Button>
                       )}
                     </div>
-                  </>
+                  </div>
                 ))}{' '}
               </div>
             </div>
@@ -191,8 +201,8 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
               </div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {offers.map((esc: any) => (
-                  <>
+                {offers.map((esc: any, index: number) => (
+                  <div key={index}>
                     <div style={styles.gridItem}>
                       <img
                         style={{ width: '42px', height: '42px', borderRadius: '12px' }}
@@ -233,7 +243,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
                         Reject
                       </Button>
                     </div>
-                  </>
+                  </div>
                 ))}
               </div>
             </div>
