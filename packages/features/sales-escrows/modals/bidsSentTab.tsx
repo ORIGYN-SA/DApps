@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn-sa/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { getDiffInDays, OdcDataWithSale, parseOdc, toLargerUnit } from '@dapp/utils';
+import { OdcDataWithSale, parseOdc, toLargerUnit } from '@dapp/utils';
+import { formatDistanceToNow } from 'date-fns';
 
 const styles = {
   gridContainer: {
@@ -96,8 +97,8 @@ export const BidsSentTab = ({ bidsSent: bidsSent, collection, canisterId }: Bids
                   {bid.amount}
                 </div>
                 <div style={styles.gridItem}>
-                  <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends in</p>
-                  <span>{getDiffInDays(bid?.auction?.end_date)}</span>
+                  <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
+                  {formatDistanceToNow(Number(bid.auction.end_date / BigInt(1e6)))}
                 </div>
               </>
             ))}

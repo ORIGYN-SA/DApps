@@ -3,10 +3,10 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { Container, Modal, HR, TabContent } from '@origyn-sa/origyn-art-ui';
 import { ConfirmSalesActionModal } from './ConfirmSalesActionModal';
-import { OffersReceivedTab } from '../../../apps/vault/src/components/offersReceivedTab';
-import { BidsReceivedTab } from '../../../apps/vault/src/components/bidsReceivedTab';
-import { OffersSentTab } from '../../../apps/vault/src/components/offersSentTab';
-import { BidsSentTab } from '../../../apps/vault/src/components/bidsSentTab';
+import { OffersReceivedTab } from './offersReceivedTab';
+import { BidsReceivedTab } from './bidsReceivedTab';
+import { OffersSentTab } from './offersSentTab';
+import { BidsSentTab } from './bidsSentTab';
 
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const debug = useDebug();
@@ -30,6 +30,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   //-----------------
   const Balance = async () => {
     const balance = await actor?.balance_of_nft_origyn({ principal });
+    debug.log('response from actor?.balance_of_nft_origyn({ principal })');
     debug.log(JSON.stringify(balance, null, 2));
 
     const offersAndBidsReceived = await balance?.ok.offers;
@@ -39,9 +40,9 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
     const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
     const offersReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length === 0);
     const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
-    debug.log('bidsSent', bidsSent);
+    //debug.log('bidsSent', bidsSent);
     const offersSent = sentEscrows?.filter((element) => element.sale_id.length === 0);
-    debug.log('offersSent', offersSent);
+    //debug.log('offersSent', offersSent);
     setOffersReceived(offersReceived);
     setBidsReceived(bidsReceived);
     setEscrow(sentEscrows);
@@ -133,20 +134,28 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
             justify="flex-start"
             content={[
               <OffersSentTab
+                key="offers-sent"
                 offersSent={offersSent}
                 collection={collection}
                 canisterId={canisterId}
                 withdrawEscrow={withdrawEscrow}
               />,
               <OffersReceivedTab
+                key="offers-received"
                 offersReceived={offersReceived}
                 handleClickOpen={handleClickOpen}
                 handleClickOpenRej={handleClickOpenRej}
                 collection={collection}
                 canisterId={canisterId}
               />,
-              <BidsSentTab bidsSent={bidsSent} collection={collection} canisterId={canisterId} />,
+              <BidsSentTab
+                key="bids-sent"
+                bidsSent={bidsSent}
+                collection={collection}
+                canisterId={canisterId}
+              />,
               <BidsReceivedTab
+                key="bids-received"
                 bidsReceived={bidsReceived}
                 collection={collection}
                 canisterId={canisterId}

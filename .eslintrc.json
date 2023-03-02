@@ -1,78 +1,70 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "airbnb-typescript/base",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {},
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "globals": {
+    "JSX": true,
+    "describe": true,
+    "expect": true,
+    "it": true,
+    "jsx": true
+  },
+  "plugins": ["prettier", "react", "@typescript-eslint", "import"],
+  "rules": {
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "no-redeclare": "off",
+    "@typescript-eslint/no-redeclare": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "off",
+    "no-underscore-dangle": "off",
+    "@typescript-eslint/no-prototype-builtins": "off",
+    "no-prototype-builtins": "off",
+    "@typescript-eslint/no-underscore-dangle": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "camelcase": "off",
+    "@typescript-eslint/camelcase": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
+    "object-curly-spacing": "off",
+    "object-curly-newline": "off",
+    "@typescript-eslint/object-curly-spacing": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/dot-notation": "off",
+    "react/prop-types": ["warn"],
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-filename-extension": "off",
+    "react/function-component-definition": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "ts": "never",
+        "tsx": "never"
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
     },
-    "extends": [
-        "airbnb-typescript/base",
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "prettier"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            
-        },
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "project": "./tsconfig.json"
-    },
-    "globals": {
-        "JSX": true,
-        "describe": true,
-        "expect": true,
-        "it": true,
-        "jsx": true
-    },
-    "plugins": [
-        "prettier",
-        "react",
-        "@typescript-eslint",
-        "import"
-    ],
-    "rules": {
-        "no-use-before-define": "off",
-        "@typescript-eslint/no-use-before-define": "off",
-        "no-redeclare": "off",
-        "@typescript-eslint/no-redeclare": "off",
-        "no-shadow": "off",
-        "@typescript-eslint/no-shadow": "off",
-        "no-underscore-dangle": "off",
-        "@typescript-eslint/no-prototype-builtins": "off",
-        "no-prototype-builtins": "off",
-        "@typescript-eslint/no-underscore-dangle": "off",
-        "@typescript-eslint/naming-convention": "off",
-        "camelcase": "off",
-        "@typescript-eslint/camelcase": "off",
-        "import/no-extraneous-dependencies": "off",
-        "import/prefer-default-export": "off",
-        "object-curly-spacing": "off",
-        "object-curly-newline": "off",
-        "@typescript-eslint/object-curly-spacing": "off",
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": [
-            "error"
-        ],
-        "react/prop-types": ["warn"],
-        "react/jsx-one-expression-per-line": "off",
-        "react/jsx-filename-extension": "off",
-        "react/function-component-definition": "off",
-        "import/extensions": [
-            "error",
-            "ignorePackages",
-            {
-                "ts": "never",
-                "tsx": "never"
-            }
-        ]
-    },
-    "settings": {
-        "import/resolver": {
-            "typescript": {}
-        },
-        "react": {
-            "version": "detect"
-        }
+    "react": {
+      "version": "detect"
     }
+  }
 }

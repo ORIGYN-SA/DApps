@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn-sa/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { getDiffInDays, OdcDataWithSale, parseOdc, toLargerUnit } from '@dapp/utils';
-
+import { OdcDataWithSale, parseOdc, toLargerUnit } from '@dapp/utils';
+import { formatDistanceToNow } from 'date-fns';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -50,6 +50,7 @@ export const BidsReceivedTab = ({
         ...parsedOdc,
         token_id: bid.token_id,
       };
+
       if (receivedBid.auction?.end_date > currentTimeInNanos) {
         // Add only the Active Bids
         setReceivedActiveBids((prev) => [...prev, receivedBid]);
@@ -92,8 +93,10 @@ export const BidsReceivedTab = ({
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>The sale has ended</span>
                     ) : (
                       <>
-                        <p style={{ color: theme.colors.SECONDARY_TEXT }}>End Date</p>
-                        <span>{getDiffInDays(bid?.auction?.end_date)}</span>
+                        <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
+                        <span>
+                          {formatDistanceToNow(Number(bid.auction.end_date / BigInt(1e6)))}
+                        </span>
                       </>
                     )}
                   </>
