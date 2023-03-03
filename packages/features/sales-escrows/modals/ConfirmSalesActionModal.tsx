@@ -216,7 +216,7 @@ export const ConfirmSalesActionModal = ({
               Are you sure you want to end the sale for token <b>{currentToken}</b> ?
             </div>
           ) : action === 'withdraw' ? (
-            <>Are you sure you want to withdraw the escroww?</>
+            <>Are you sure you want to withdraw the escrow?</>
           ) : (
             <>Are you sure you want to reject the escrow?</>
           )}
