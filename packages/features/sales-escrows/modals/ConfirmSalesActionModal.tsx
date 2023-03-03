@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
@@ -7,7 +7,6 @@ import { useSnackbar } from 'notistack';
 import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
-
 
 const Transition = React.forwardRef(
   (
@@ -32,11 +31,13 @@ export const ConfirmSalesActionModal = ({
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens } = useTokensContext();
+  const [confirmed, setConfirmed] = useState(false);
 
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
       if (isLoading) return;
       setIsLoading(true);
+      setConfirmed(true);
       if (action === 'endSale') {
         const endSaleResponse = await actor.sale_nft_origyn({
           end_sale: currentToken,
@@ -156,12 +157,11 @@ export const ConfirmSalesActionModal = ({
         escrow_receipt: [escrowReceipt],
       };
 
-
       if (action === 'acceptOffer') {
         try {
           const acceptOffer = await actor.market_transfer_nft_origyn({
             token_id: currentToken,
-            sales_config: saleReceipt
+            sales_config: saleReceipt,
           });
           console.log(acceptOffer.err);
           if ('err' in acceptOffer) {
@@ -194,47 +194,45 @@ export const ConfirmSalesActionModal = ({
   };
 
   return (
-    <div>
-      <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
-        <Container size="full" padding="48px">
-          <h2>
-            {action === 'acceptOffer'
-              ? 'Confirm Accept Offer'
-              : action === 'endSale'
-              ? 'Confirm End Sale'
-              : action === 'withdraw'
-              ? 'Confirm Escrow Withdraw'
-              : 'Confirm Escrow Rejection'}
-          </h2>
-          <br />
-          <Flex flexFlow="column">
-            {action === 'acceptOffer' ? (
-              <div>
-                Are you sure you want to accept the offer for token <b>{currentToken}</b> ?
-              </div>
-            ) : action === 'endSale' ? (
-              <div>
-                Are you sure you want to end the sale for token <b>{currentToken}</b> ?
-              </div>
-            ) : action === 'withdraw' ? (
-              <>Are you sure you want to withdraw the escrow?</>
-            ) : (
-              <>Are you sure you want to reject the escrow?</>
-            )}
-          </Flex>
-          <Flex flow="row" justify="flex-end">
-            <Button onClick={() => _handleClose(false)}>Cancel</Button>
-            <Button onClick={() => _handleClose(true)} variant="contained">
-              Confirm
-            </Button>
-          </Flex>
-          {isLoading && (
-            <div style={{ marginTop: 5 }}>
-              <LoadingContainer />
+    <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
+      <Container size="full" padding="48px">
+        <h2>
+          {action === 'acceptOffer'
+            ? 'Confirm Accept Offer'
+            : action === 'endSale'
+            ? 'Confirm End Sale'
+            : action === 'withdraw'
+            ? 'Confirm Escrow Withdraw'
+            : 'Confirm Escrow Rejection'}
+        </h2>
+        <br />
+        <Flex flexFlow="column">
+          {action === 'acceptOffer' ? (
+            <div>
+              Are you sure you want to accept the offer for token <b>{currentToken}</b> ?
             </div>
+          ) : action === 'endSale' ? (
+            <div>
+              Are you sure you want to end the sale for token <b>{currentToken}</b> ?
+            </div>
+          ) : action === 'withdraw' ? (
+            <>Are you sure you want to withdraw the escroww?</>
+          ) : (
+            <>Are you sure you want to reject the escrow?</>
           )}
-        </Container>
-      </Modal>
-    </div>
+        </Flex>
+        <Flex flow="row" justify="flex-end">
+          <Button onClick={() => _handleClose(false)}>Cancel</Button>
+          <Button onClick={() => _handleClose(true)} variant="contained" disabled={confirmed}>
+            Confirm
+          </Button>
+        </Flex>
+        {isLoading && (
+          <div style={{ marginTop: 5 }}>
+            <LoadingContainer />
+          </div>
+        )}
+      </Container>
+    </Modal>
   );
 };
