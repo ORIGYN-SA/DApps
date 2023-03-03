@@ -27,6 +27,7 @@ import {
   Banner,
   TabContent,
   ShowMoreBlock,
+  theme,
 } from '@origyn-sa/origyn-art-ui';
 import { useDialog } from '@connect2ic/react';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
@@ -34,50 +35,55 @@ import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderImage } from '@dapp/common-assets';
 
-export interface PromptToWithdrawProps {
-  tokenId: string;
+export interface CheckOfferProps {
+  odc: OdcDataWithSale;
   onOpenEscrowModal: (escrowType: EscrowType) => void;
 }
 
-export const PromptToWithdraw = ({ tokenId, onOpenEscrowModal }: PromptToWithdrawProps) => {
+export const CheckOffer = ({ odc, onOpenEscrowModal }: CheckOfferProps) => {
   const debug = useDebug();
   const { principal, actor } = useContext(AuthContext);
-  const [offersSent, setOffersSent] = useState<[]>();
-  const [existingOffer, setExistingOffer] = useState<any>();
+  const [existingOffer, setExistingOffer] = useState<any | null>(null);
 
   const compareOfferSentWithSelectedToken = async () => {
     const balance = await actor?.balance_of_nft_origyn({ principal });
     const escrowsSent = await balance?.ok.escrow;
     const offersSent = escrowsSent?.filter((element) => element.sale_id.length === 0);
     debug.log('offersSent', offersSent);
-    setOffersSent(offersSent);
 
-    const existingOffer: any | null = offersSent?.filter((offer) => offer.token_id === tokenId);
+    const existingOffer: any | null = offersSent?.filter((offer) => offer.token_id === odc.id);
     debug.log('existing', existingOffer);
-    setExistingOffer(existingOffer);
+    if (existingOffer?.length > 0) {
+      setExistingOffer(existingOffer[0]);
+    }
   };
 
   useEffect(() => {
     compareOfferSentWithSelectedToken();
-  }, []);
+  }, [odc]);
 
   return (
     <>
       {existingOffer ? (
         <Container padding={12}>
-          <Flex>
-            <p style={{ display: 'flex', alignItems: 'center' }}>
-              You have made an offer of
-              {toLargerUnit(
-                Number(existingOffer.amount),
-                Number(existingOffer.token.ic.decimals),
-              )}{' '}
-              <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-                <TokenIcon symbol={existingOffer.token.ic.symbol} />
-              </span>{' '}
-              which has not been accepted or declined by the owner. You can make a new offer by
-              withdrawing your current offer
-            </p>
+          <Flex flexFlow="column" gap={16}>
+            <Flex>
+              <p
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: theme.colors.SECONDARY_TEXT,
+                }}
+              >
+                You have made an offer of{' '}
+                {toLargerUnit(
+                  Number(existingOffer?.amount),
+                  Number(existingOffer?.token?.ic?.decimals),
+                )}{' '}
+                {existingOffer?.token?.ic?.symbol} which has not been accepted or declined by the
+                owner. You can make a new offer by withdrawing your current offer.
+              </p>
+            </Flex>
           </Flex>
         </Container>
       ) : (
@@ -365,18 +371,7 @@ export const NFTPage = () => {
                                   Start an Auction
                                 </Button>
                               ) : (
-                                <>
-                                  <PromptToWithdraw
-                                    tokenId={odc.id}
-                                    onOpenEscrowModal={onOpenEscrowModal}
-                                  />
-                                  <Button
-                                    btnType="accent"
-                                    onClick={() => onOpenEscrowModal('Offer')}
-                                  >
-                                    Make an Offer
-                                  </Button>
-                                </>
+                                <CheckOffer odc={odc} onOpenEscrowModal={onOpenEscrowModal} />
                               )}
                             </Flex>
                           )}
