@@ -6,6 +6,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { OdcDataWithSale, toLargerUnit } from '@dapp/utils';
 import React, { useContext, useEffect, useState } from 'react';
 import { Flex, Button, Container, theme } from '@origyn-sa/origyn-art-ui';
+import { BalanceResponse, OrigynError } from '../../../../../common/types/src/origynNftReference';
 
 import { EscrowType } from '../../../modals/StartEscrowModal';
 
@@ -20,15 +21,24 @@ export const OffersPanel = ({ odc, onOpenEscrowModal }: OffersPanelProps) => {
   const [existingOffer, setExistingOffer] = useState<any | null>(null);
 
   const compareOfferSentWithSelectedToken = async () => {
-    const balance = await actor?.balance_of_nft_origyn({ principal });
-    const escrowsSent = await balance?.ok.escrow;
-    const offersSent = escrowsSent?.filter((element) => element.sale_id.length === 0);
-    debug.log('offersSent', offersSent);
-
-    const existingOffer: any | null = offersSent?.filter((offer) => offer.token_id === odc.id);
-    debug.log('existing', existingOffer);
-    if (existingOffer?.length > 0) {
-      setExistingOffer(existingOffer[0]);
+    try {
+      const balance = await actor?.balance_of_nft_origyn({ principal });
+      if ('err' in balance) {
+        const error: OrigynError = balance.err;
+        debug.log('error', error);
+      } else {
+        const balanceResponse: BalanceResponse = balance.ok;
+        const escrowsSent = balanceResponse?.escrow;
+        const offersSent = escrowsSent?.filter((element) => element.sale_id.length === 0);
+        debug.log('offersSent', offersSent);
+        const existingOffer: any | null = offersSent?.filter((offer) => offer.token_id === odc.id);
+        debug.log('existing', existingOffer);
+        if (existingOffer?.length > 0) {
+          setExistingOffer(existingOffer[0]);
+        }
+      }
+    } catch (e) {
+      debug.log(e);
     }
   };
 
