@@ -60,7 +60,7 @@ export const OffersPanel = ({ odc, onOpenEscrowModal }: OffersPanelProps) => {
                 You have made an offer of{' '}
                 {toLargerUnit(
                   Number(existingOffer.amount),
-                  Number(existingOffer.token?.ic?.decimals),
+                  Number(existingOffer.token.ic.decimals),
                 )}{' '}
                 {existingOffer.token.ic.symbol} which has not been accepted or declined by the
                 owner. You can make a new offer by withdrawing your current offer.
