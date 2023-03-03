@@ -27,7 +27,8 @@ export const OffersPanel = ({ odc, onOpenEscrowModal }: OffersPanelProps) => {
         const escrowsSent = balanceResponse?.escrow;
         const offersSent = escrowsSent?.filter((element) => element.sale_id.length === 0);
         debug.log('offersSent', offersSent);
-        if (offersSent?.filter((offer) => offer.token_id === odc.id).length > 0) {
+        const existingOffer = offersSent?.filter((offer) => offer.token_id === odc.id);
+        if (existingOffer.length > 0) {
           setExistingOffer(existingOffer[0]);
         }
       }
