@@ -1,13 +1,9 @@
-/* eslint-disable react/jsx-key */
-/* eslint-disable @typescript-eslint/dot-notation */
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
-
 import { OdcDataWithSale, toLargerUnit } from '@dapp/utils';
 import React, { useContext, useEffect, useState } from 'react';
 import { Flex, Button, Container, theme } from '@origyn-sa/origyn-art-ui';
-import { BalanceResponse, OrigynError } from '../../../../../common/types/src/origynNftReference';
-
+import { BalanceResponse, OrigynError } from '@dapp/common-types';
 import { EscrowType } from '../../../modals/StartEscrowModal';
 
 export interface OffersPanelProps {
