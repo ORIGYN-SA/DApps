@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
@@ -192,6 +192,10 @@ export const ConfirmSalesActionModal = ({
     }
     handleClose(false);
   };
+
+  useEffect(() => {
+    setConfirmed(false);
+  }, [openConfirmation]);
 
   return (
     <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
