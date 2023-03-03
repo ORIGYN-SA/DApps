@@ -33,6 +33,7 @@ import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderImage } from '@dapp/common-assets';
+import { OffersPanel } from './components/OffersPanel';
 
 export const NFTPage = () => {
   const debug = useDebug();
@@ -310,9 +311,7 @@ export const NFTPage = () => {
                                   Start an Auction
                                 </Button>
                               ) : (
-                                <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')}>
-                                  Make an Offer
-                                </Button>
+                                <OffersPanel odc={odc} onOpenEscrowModal={onOpenEscrowModal} />
                               )}
                             </Flex>
                           )}
