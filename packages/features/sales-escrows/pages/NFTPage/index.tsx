@@ -34,6 +34,61 @@ import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderImage } from '@dapp/common-assets';
 
+export interface PromptToWithdrawProps {
+  tokenId: string;
+  onOpenEscrowModal: (escrowType: EscrowType) => void;
+}
+
+export const PromptToWithdraw = ({ tokenId, onOpenEscrowModal }: PromptToWithdrawProps) => {
+  const debug = useDebug();
+  const { principal, actor } = useContext(AuthContext);
+  const [offersSent, setOffersSent] = useState<[]>();
+  const [existingOffer, setExistingOffer] = useState<any>();
+
+  const compareOfferSentWithSelectedToken = async () => {
+    const balance = await actor?.balance_of_nft_origyn({ principal });
+    const escrowsSent = await balance?.ok.escrow;
+    const offersSent = escrowsSent?.filter((element) => element.sale_id.length === 0);
+    debug.log('offersSent', offersSent);
+    setOffersSent(offersSent);
+
+    const existingOffer: any | null = offersSent?.filter((offer) => offer.token_id === tokenId);
+    debug.log('existing', existingOffer);
+    setExistingOffer(existingOffer);
+  };
+
+  useEffect(() => {
+    compareOfferSentWithSelectedToken();
+  }, []);
+
+  return (
+    <>
+      {existingOffer ? (
+        <Container padding={12}>
+          <Flex>
+            <p style={{ display: 'flex', alignItems: 'center' }}>
+              You have made an offer of
+              {toLargerUnit(
+                Number(existingOffer.amount),
+                Number(existingOffer.token.ic.decimals),
+              )}{' '}
+              <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                <TokenIcon symbol={existingOffer.token.ic.symbol} />
+              </span>{' '}
+              which has not been accepted or declined by the owner. You can make a new offer by
+              withdrawing your current offer
+            </p>
+          </Flex>
+        </Container>
+      ) : (
+        <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')}>
+          Make an Offer
+        </Button>
+      )}
+    </>
+  );
+};
+
 export const NFTPage = () => {
   const debug = useDebug();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
@@ -115,8 +170,8 @@ export const NFTPage = () => {
 
   const fetchOdc = async () => {
     const r: any = await actor.nft_origyn(params.nft_id);
-    debug.log('return value from actor.nft_origyn(params.nft_id)');
-    debug.log(JSON.stringify(r, null, 2));
+    //debug.log('return value from actor.nft_origyn(params.nft_id)');
+    //debug.log(JSON.stringify(r, null, 2));
 
     if ('err' in r) {
       throw new Error(Object.keys(r.err)[0]);
@@ -310,9 +365,18 @@ export const NFTPage = () => {
                                   Start an Auction
                                 </Button>
                               ) : (
-                                <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')}>
-                                  Make an Offer
-                                </Button>
+                                <>
+                                  <PromptToWithdraw
+                                    tokenId={odc.id}
+                                    onOpenEscrowModal={onOpenEscrowModal}
+                                  />
+                                  <Button
+                                    btnType="accent"
+                                    onClick={() => onOpenEscrowModal('Offer')}
+                                  >
+                                    Make an Offer
+                                  </Button>
+                                </>
                               )}
                             </Flex>
                           )}
