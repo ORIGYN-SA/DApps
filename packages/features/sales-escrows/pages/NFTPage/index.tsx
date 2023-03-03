@@ -27,73 +27,13 @@ import {
   Banner,
   TabContent,
   ShowMoreBlock,
-  theme,
 } from '@origyn-sa/origyn-art-ui';
 import { useDialog } from '@connect2ic/react';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderImage } from '@dapp/common-assets';
-
-export interface CheckOfferProps {
-  odc: OdcDataWithSale;
-  onOpenEscrowModal: (escrowType: EscrowType) => void;
-}
-
-export const CheckOffer = ({ odc, onOpenEscrowModal }: CheckOfferProps) => {
-  const debug = useDebug();
-  const { principal, actor } = useContext(AuthContext);
-  const [existingOffer, setExistingOffer] = useState<any | null>(null);
-
-  const compareOfferSentWithSelectedToken = async () => {
-    const balance = await actor?.balance_of_nft_origyn({ principal });
-    const escrowsSent = await balance?.ok.escrow;
-    const offersSent = escrowsSent?.filter((element) => element.sale_id.length === 0);
-    debug.log('offersSent', offersSent);
-
-    const existingOffer: any | null = offersSent?.filter((offer) => offer.token_id === odc.id);
-    debug.log('existing', existingOffer);
-    if (existingOffer?.length > 0) {
-      setExistingOffer(existingOffer[0]);
-    }
-  };
-
-  useEffect(() => {
-    compareOfferSentWithSelectedToken();
-  }, [odc]);
-
-  return (
-    <>
-      {existingOffer ? (
-        <Container padding={12}>
-          <Flex flexFlow="column" gap={16}>
-            <Flex>
-              <p
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: theme.colors.SECONDARY_TEXT,
-                }}
-              >
-                You have made an offer of{' '}
-                {toLargerUnit(
-                  Number(existingOffer?.amount),
-                  Number(existingOffer?.token?.ic?.decimals),
-                )}{' '}
-                {existingOffer?.token?.ic?.symbol} which has not been accepted or declined by the
-                owner. You can make a new offer by withdrawing your current offer.
-              </p>
-            </Flex>
-          </Flex>
-        </Container>
-      ) : (
-        <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')}>
-          Make an Offer
-        </Button>
-      )}
-    </>
-  );
-};
+import { OffersPanel } from './components/OffersPanel';
 
 export const NFTPage = () => {
   const debug = useDebug();
@@ -371,7 +311,7 @@ export const NFTPage = () => {
                                   Start an Auction
                                 </Button>
                               ) : (
-                                <CheckOffer odc={odc} onOpenEscrowModal={onOpenEscrowModal} />
+                                <OffersPanel odc={odc} onOpenEscrowModal={onOpenEscrowModal} />
                               )}
                             </Flex>
                           )}
