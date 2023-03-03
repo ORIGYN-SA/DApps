@@ -116,8 +116,8 @@ export const NFTPage = () => {
 
   const fetchOdc = async () => {
     const r: any = await actor.nft_origyn(params.nft_id);
-    //debug.log('return value from actor.nft_origyn(params.nft_id)');
-    //debug.log(JSON.stringify(r, null, 2));
+    debug.log('return value from actor.nft_origyn(params.nft_id)');
+    debug.log(JSON.stringify(r, null, 2));
 
     if ('err' in r) {
       throw new Error(Object.keys(r.err)[0]);
