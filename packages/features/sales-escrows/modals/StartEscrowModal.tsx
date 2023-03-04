@@ -114,20 +114,26 @@ export function StartEscrowModal({
 
     // && amount > tokens[formValues.token.symbol].fee
 
-    console.log('token2', tokens[formValues.token.symbol].fee)
+    console.log('tested', amount < tokens[formValues.token.symbol].fee);
 
     if (isNaN(amount)) {
       errors = { ...errors, amount: `${escrowType} must be a number` };
-    } else if (amount <= 0 ) {
+    } else if (amount <= 0) {
       errors = { ...errors, amount: `${escrowType} must be greater than 0` };
-    } else if ( amount < tokens[formValues.token.symbol].fee) {
+    } else if (amount < tokens[formValues.token.symbol].fee) {
       errors = { ...errors, amount: `${escrowType} must be greater than the fee` };
     } else if (escrowType == 'Bid') {
-      const minBid = (odc.currentBid + Number(odc.minIncreaseAmount)) / 1e8;
+      const minBid = toSmallerUnit(
+        odc.currentBid + Number(odc.minIncreaseAmount),
+        formValues.token.decimals,
+      );
       if (amount < minBid) {
         errors = { ...errors, amount: `The minimum bid is ${minBid} ${odc.tokenSymbol}` };
       }
-    } else if (escrowType === 'Offer' && amount <= odc.startPrice / 1e8 ) {
+    } else if (
+      escrowType === 'Offer' &&
+      amount <= toSmallerUnit(odc.startPrice, formValues.token.decimals)
+    ) {
       const startPrice = toLargerUnit(odc.startPrice, Number(odc.token.decimals));
       errors = {
         ...errors,
