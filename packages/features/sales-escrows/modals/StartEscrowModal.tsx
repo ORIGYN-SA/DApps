@@ -66,7 +66,10 @@ export function StartEscrowModal({
       const amount = toLargerUnit(minAmount, Number(odc.token.decimals));
       const token = tokens[odc.token.symbol];
       const total = getTotal(amount, token);
-      const minBid = toSmallerUnit(odc.currentBid + Number(odc.minIncreaseAmount), token.decimals);
+      const minBid = toLargerUnit(
+        odc.currentBid + Number(odc.minIncreaseAmount),
+        Number(odc.token.decimals),
+      );
 
       setToken(token);
       setAmount(amount);
@@ -347,16 +350,13 @@ export function StartEscrowModal({
                       ) : (
                         <>
                           <br />
-                          {escrowType == 'Bid' && (
-                            <span>
-                              Minimum bid: {minBid} {token.symbol}
-                            </span>
-                          )}
                           <TextInput
                             required
-                            label={`Your ${escrowType === 'Bid' ? 'bid' : 'offer'} (in ${
-                              token.symbol
-                            })`}
+                            label={
+                              escrowType == 'Bid'
+                                ? `Your bid (min ${minBid} ${token.symbol})`
+                                : `Your offer (in ${token.symbol})`
+                            }
                             id="offerPrice"
                             name="offerPrice"
                             error={formErrors.amount}
