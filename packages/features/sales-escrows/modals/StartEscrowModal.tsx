@@ -112,16 +112,22 @@ export function StartEscrowModal({
     let errors = { amount: '', token: undefined };
     const amount = formValues.amount;
 
+    // && amount > tokens[formValues.token.symbol].fee
+
+    console.log('token2', tokens[formValues.token.symbol].fee)
+
     if (isNaN(amount)) {
       errors = { ...errors, amount: `${escrowType} must be a number` };
-    } else if (amount <= 0) {
+    } else if (amount <= 0 ) {
       errors = { ...errors, amount: `${escrowType} must be greater than 0` };
+    } else if ( amount < tokens[formValues.token.symbol].fee) {
+      errors = { ...errors, amount: `${escrowType} must be greater than the fee` };
     } else if (escrowType == 'Bid') {
       const minBid = (odc.currentBid + Number(odc.minIncreaseAmount)) / 1e8;
       if (amount < minBid) {
         errors = { ...errors, amount: `The minimum bid is ${minBid} ${odc.tokenSymbol}` };
       }
-    } else if (escrowType === 'Offer' && amount <= odc.startPrice / 1e8) {
+    } else if (escrowType === 'Offer' && amount <= odc.startPrice / 1e8 ) {
       const startPrice = toLargerUnit(odc.startPrice, Number(odc.token.decimals));
       errors = {
         ...errors,
