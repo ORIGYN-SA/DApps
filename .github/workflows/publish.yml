@@ -20,6 +20,10 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@origyn-sa'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Install Dependencies
         run: npm install
