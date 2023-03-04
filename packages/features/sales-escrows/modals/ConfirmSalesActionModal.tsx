@@ -226,7 +226,9 @@ export const ConfirmSalesActionModal = ({
           )}
         </Flex>
         <Flex flow="row" justify="flex-end">
-          <Button onClick={() => _handleClose(false)}>Cancel</Button>
+          <Button onClick={() => _handleClose(false)} disabled={confirmed}>
+            Cancel
+          </Button>
           <Button onClick={() => _handleClose(true)} variant="contained" disabled={confirmed}>
             Confirm
           </Button>
