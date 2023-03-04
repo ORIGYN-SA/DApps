@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
-import Container from '@mui/material/Container';
-import { Box } from '@mui/material';
-import {VersionLabel, TransactionFilter, TransactionsTable, SearchbarNft } from '@dapp/features-components';
+import React, { useEffect, useState, useContext } from 'react';
+import { AuthContext } from '@dapp/features-authentication';
+import {
+  VersionLabel,
+  TransactionFilter,
+  TransactionsTable,
+  SearchbarNft,
+} from '@dapp/features-components';
+import { SecondaryNav, Container, Flex, HR } from '@origyn-sa/origyn-art-ui';
+import styled from 'styled-components'
 
-const container_style = {
-  size: 'l',
-  padding: '12px',
-};
+const StyledSectionTitle = styled.h2`
+  margin: 48px 24px;
+`
 
 const Ledger = () => {
   const ledgerVersion: string = '0.1.0';
-  const [isLoading, setIsLoading] = useState(false);
+  const { principal, actor, handleLogOut } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
+  const [invalidToken, setInvalidToken] = React.useState<boolean>(false);
   const [indexID, setIndexID] = React.useState('');
   const [filter, setFilter] = useState<{
     searchInputValue: string;
@@ -28,44 +35,79 @@ const Ledger = () => {
   const [transactionData, setTransactionData] = useState([]);
   const [trans_types, setTrans_types] = React.useState([]);
 
-  return (
-    <Container sx={container_style}>
-      <Box
-        margin="0 0 0 0"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-      > 
-        <SearchbarNft
-          setSearchBarTokenId={setSearchBarTokenId}
-          setIndexID={setIndexID}
-          searchBarTokenId={searchBarTokenId}
-          isLoading={isLoading}
-        />
+  useEffect(() => {
+    setSearchBarTokenId('');
+    setIsLoading(true);
+  }, [actor]);
 
-        <TransactionFilter
-          isLoading={isLoading}
-          setFilter={setFilter}
-          trans_types={trans_types}
-          setTrans_types={setTrans_types}
-          transactionData={transactionData}
-          searchBarTokenId={searchBarTokenId}
-        />
-      </Box>
-      <TransactionsTable
-        setIsLoading={setIsLoading}
-        isLoading={isLoading}
-        searchBarTokenId={searchBarTokenId}
-        indexID={indexID}
-        setIndexID={setIndexID}
-        filter={filter}
-        setFilter={setFilter}
-        setTrans_types={setTrans_types}
-        setTransactionData={setTransactionData}
-        transactionData={transactionData}
-      />
-      <VersionLabel
-        ledgerVersion={ledgerVersion}
+  useEffect(() => {
+    document.title = 'Origyn Digital Certificates Ledger';
+  }, []);
+
+  return (
+    <Container fullWidth padding="0" flexFlow="column">
+      <SecondaryNav
+        title="Ledger"
+        tabs={[{ title: 'Dashboard', id: 'Transactions' }]}
+        content={[
+          <>
+            <Flex fullWidth flexFlow='column'>
+              <StyledSectionTitle>Ledger Dashboard</StyledSectionTitle>
+              <HR />
+            </Flex>
+            <Container>
+              <>
+                {
+                  invalidToken ? (
+                    <>
+                    <Container padding="16px">
+                    <Flex align="center" justify="center">
+                    <h4>Token Id is invalid</h4>
+                    </Flex>
+                    <HR marginTop={16} marginBottom={16}/>
+                    </Container>
+                    </>
+                  ) : (
+                    <>
+                      <SearchbarNft
+                        setSearchBarTokenId={setSearchBarTokenId}
+                        setIndexID={setIndexID}
+                        searchBarTokenId={searchBarTokenId}
+                        isLoading={isLoading}
+                        setInvalidToken={setInvalidToken}
+                      />
+                      <HR marginTop="16px" marginBottom="16px" />
+                      <TransactionFilter
+                        isLoading={isLoading}
+                        setFilter={setFilter}
+                        trans_types={trans_types}
+                        setTrans_types={setTrans_types}
+                        transactionData={transactionData}
+                        searchBarTokenId={searchBarTokenId}
+                      />
+                      <HR marginTop="16px" marginBottom="16px" />
+                      <TransactionsTable
+                        setIsLoading={setIsLoading}
+                        isLoading={isLoading}
+                        searchBarTokenId={searchBarTokenId}
+                        indexID={indexID}
+                        setIndexID={setIndexID}
+                        filter={filter}
+                        setFilter={setFilter}
+                        setTrans_types={setTrans_types}
+                        setTransactionData={setTransactionData}
+                        transactionData={transactionData}
+                      />
+                    </>)
+                }
+              </>
+              <VersionLabel ledgerVersion={ledgerVersion} />
+            </Container>
+          </>
+        ]}
+        onLogOut={handleLogOut}
+        onConnect={open}
+        principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
       />
     </Container>
   );

@@ -1,11 +1,15 @@
 import React from 'react';
 import { JsonToTable } from 'react-json-to-table';
+import { Container } from '@origyn-sa/origyn-art-ui';
 
 const RawTab = ({ metadata }: any) => {
   return (
-    <div>
-      <JsonToTable json={metadata} />
-    </div>
+    <Container padding="16px">
+      <div>
+      <JsonToTable 
+      json={metadata} />
+      </div>
+    </Container>
   );
 };
 

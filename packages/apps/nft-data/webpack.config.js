@@ -1,10 +1,11 @@
 const webpack = require('../../../webpack.config');
 
 const appConfig = {
-  name: 'nftData',
-  openPage: '-/baycdev/-/bayc-1/-/nftData',
+  name: 'data',
+  openPage: '-/brain-matters-dev/collection/-/data',
 };
 module.exports = (env, argv) => {
   const res = webpack(env, argv, appConfig);
+  res.output.publicPath = '/';
   return res;
 };

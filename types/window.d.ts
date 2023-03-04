@@ -1,9 +1,6 @@
-export {}
-
+export {};
 declare global {
   interface Window {
-    ic: any
+    ic: any;
   }
 }
-
-window.ic = window.ic || {}

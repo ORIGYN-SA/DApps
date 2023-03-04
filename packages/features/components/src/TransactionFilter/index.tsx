@@ -1,68 +1,37 @@
 import React, { useEffect } from 'react';
-import { Box } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import Paper from '@mui/material/Paper';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import Switch from '@mui/material/Switch';
-import Collapse from '@mui/material/Collapse';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Autocomplete from '@mui/material/Autocomplete';
-import { Filter } from '@dapp/utils'
-
-
-// Select menu styling
-const ITEM_HEIGHT: number = 48;
-const ITEM_PADDING_TOP: number = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
+import { Filter } from '@dapp/utils';
+import { Container, Select, Grid, Icons, Flex, Button } from '@origyn-sa/origyn-art-ui';
 
 // Search into categories
 const search_into = ['All', 'Principal', 'Account', 'Transaction Id'];
 
 const removeDuplicates = (arr: string[]) => {
   return arr.filter((item, index) => arr.indexOf(item) === index);
-}
+};
 
-export const TransactionFilter = (props : any) => {
-  // Collapse - switch btn
-  const [checked, setChecked] = React.useState(false);
-  const handleChangeCollapse = () => {
-    setChecked((prev) => !prev);
-  };
+export const TransactionFilter = (props: any) => {
+
   // AutocompleteVals
-  const [AutocompleteVals, SetAutocompleteVals] = React.useState([]);
+  const [AutocompleteVals, SetAutocompleteVals] = React.useState(['-']);
   // Update
   const [_update, setUpdate] = React.useState(1);
   // Fn for search on keyup event
-  const [typedVal, setTypedVal] = React.useState('');
+  const [typedVal, setTypedVal] = React.useState('-');
 
-  const handleSelectIds = (event, value) => {
+  const handleSelectIds = (value) => {
     myFilter.searchInputValue = '';
     if (value == null) {
       value = '';
     }
     setTypedVal(value);
-    console.log(value);
     setUpdate(1);
   };
 
   // Fn for select category to filter
   const [searchTrough, setSearchTrough] = React.useState('All');
-  const handleCategoryFilter = (event) => {
+
+  const handleCategoryFilter = (value) => {
     myFilter.categoryToFilter = '';
-    const {
-      target: { value },
-    } = event;
     setSearchTrough(value);
     setUpdate(1);
     let i: string;
@@ -70,7 +39,7 @@ export const TransactionFilter = (props : any) => {
     const autocompleteArray: string[] = [];
     const objTransactions = props.transactionData;
     switch (value) {
-      case 'Account': 
+      case 'Account':
         for (i in objTransactions) {
           const accountArray: string[] = objTransactions[i].accounts;
           if (accountArray.length >= 1) {
@@ -81,7 +50,7 @@ export const TransactionFilter = (props : any) => {
         }
         setTypedVal('');
         break;
-      case 'Principal':     
+      case 'Principal':
         for (i in objTransactions) {
           const principalArray: string[] = objTransactions[i].principals;
           if (principalArray.length >= 1) {
@@ -92,7 +61,7 @@ export const TransactionFilter = (props : any) => {
         }
         setTypedVal('');
         break;
-      case 'Transaction Id':      
+      case 'Transaction Id':
         for (i in objTransactions) {
           const id: string = objTransactions[i].trans_index;
           autocompleteArray.push(id);
@@ -105,11 +74,8 @@ export const TransactionFilter = (props : any) => {
   };
 
   // Fn for select transaction types
-  const [transType, setType] = React.useState('');
-  const handleChangeSelect = (event) => {
-    const {
-      target: { value },
-    } = event;
+  const [transType, setType] = React.useState('All types');
+  const handleChangeSelect = (value) => {
     setType(value);
     setUpdate(0);
   };
@@ -129,148 +95,130 @@ export const TransactionFilter = (props : any) => {
     props.setTrans_types(array_types);
   }, [typedVal, searchTrough, transType]);
 
+
   return (
-    <Box
-      component={Paper}
-      elevation={2}
-      sx={{ margin: 2, width: '100%', padding: 2 }}
-    >
+    <Container padding="16px">
       {props.searchBarTokenId == 'Not selected' ? (
-        <div>
-          <FormControlLabel
-            control={
-              <Switch checked={checked} onChange={handleChangeCollapse} />
-            }
-            label="Filters unavailables, select a Token ID"
-          />
-        </div>
-        ) : (
-          <div>
-            <FormControlLabel
-              control={
-                <Switch checked={checked} onChange={handleChangeCollapse} />
-            }
-              label="Filter transactions"
-            />
-            <Collapse in={checked}>
-              <div>
-                {props.isLoading ? (
-                  <FormControl sx={{ m: 1, width: 400 }}>
-                    <Autocomplete
-                      disablePortal
-                      disabled
-                      id="combo-box-demo"
-                      options={AutocompleteVals}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Enter a value" />
-                      )}
-                      value={typedVal}
-                      onChange={(event, newValue) => {
-                        handleSelectIds(event, newValue);
-                      }}
-                    />
-                  </FormControl>
-                ) : (
-                  <FormControl sx={{ m: 1, width: 400 }}>
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      options={AutocompleteVals}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Enter a value" />
-                      )}
-                      value={typedVal}
-                      onChange={(event, newValue) => {
-                        handleSelectIds(event, newValue);
-                      }}
-                    />
-                  </FormControl>
-                )}
-                {props.isLoading ? (
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="label-search-into-select">
-                      Loading...
-                    </InputLabel>
-                    <Select
-                      labelId="label-search-into-select"
-                      id="search-into-select"
-                      label="Loading..."
-                      value="Loading..."
-                      onChange={handleCategoryFilter}
-                      MenuProps={MenuProps}
-                      disabled
-                      input={<OutlinedInput label="Loading..." />}
-                    >
-                      <MenuItem value="Loading..." key="0">
-                        Loading...
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                ) : (
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="label-search-into-select">Search</InputLabel>
-                    <Select
-                      labelId="label-search-into-select"
-                      id="search-into-select"
-                      label="Search"
-                      value={searchTrough}
-                      onChange={handleCategoryFilter}
-                      MenuProps={MenuProps}
-                      input={<OutlinedInput label="Search" />}
-                    >
-                      {search_into.map((filter_to_choose) => (
-                        <MenuItem key={filter_to_choose} value={filter_to_choose}>
-                        {filter_to_choose}
-                      </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-                {props.isLoading ? (
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="label-transaction-types-select">
-                      Loading...
-                    </InputLabel>
-                    <Select
-                      labelId="label-transaction-types-select"
-                      id="transaction-select"
-                      label="Loading..."
-                      value="Loading..."
-                      input={<OutlinedInput label="Loading..." />}
-                      MenuProps={MenuProps}
-                      disabled
-                    >
-                      <MenuItem key="0" value="Loading...">
-                        Loading...
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                ) : (
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="label-transaction-types-select">
-                      Transaction type
-                    </InputLabel>
-                    <Select
-                      labelId="label-transaction-types-select"
-                      id="transaction-select"
-                      label="Transaction type"
-                      value={transType}
-                      onChange={handleChangeSelect}
-                      input={<OutlinedInput label="Transaction type" />}
-                      MenuProps={MenuProps}
-                    >
-                      {array_types.map((typeOf) => (
-                        <MenuItem key={typeOf} value={typeOf}>
-                        {typeOf}
-                      </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              </div>
-            </Collapse>
-          </div>
-        )}
-    </Box>
+        <Container>Filters unavailable, select a Token.</Container>
+      ) : (
+        <>
+
+          <Grid columns={2}>
+            <Grid column={1}>
+            <Flex flexFlow='row' align='center' fullWidth>
+          <Button iconButton>
+        <Icons.FilterIcon width={18} height={18}/>
+        </Button>
+              {props.isLoading ? (
+                <Container padding="16px">
+                  <Select
+                    options={[
+                      {
+                        value: 'Loading...',
+                        label: 'Loading...',
+                      },
+                    ]}
+                    placeholder="Loading..."
+                  />
+                </Container>
+              ) : (
+                <Container padding="16px">
+                  
+                  <Select
+                    options={search_into.map((val) => {
+                      return {
+                        value: val,
+                        label: val,
+                      };
+                    })}
+                    placeholder="Search"
+                    selectedOption={{ value: searchTrough, label: searchTrough }}
+                    handleChange={(opt) => {
+                      handleCategoryFilter(opt.value);
+                    }}
+                  />
+                </Container>
+              )}
+            
+            
+              {props.isLoading ? (
+                <Container padding="16px">
+
+                  <Select
+                    options={AutocompleteVals.map((val) => {
+                      return {
+                        value: val,
+                        label: val,
+                      };
+                    })}
+                    placeholder="Enter Value"
+                    selectedOption={
+                    { value: typedVal, label: typedVal }
+                    }
+                    handleChange={(opt) => {
+                      handleSelectIds(opt.value);
+                    }}
+                  />
+                </Container>
+              ) : (
+                <Container padding="16px">
+                  <Select
+                    options={AutocompleteVals.map((val) => {
+                      return {
+                        value: val,
+                        label: val,
+                      };
+                    })}
+                    placeholder="Enter Value"
+                    selectedOption={{ value: typedVal, label: typedVal }}
+                    handleChange={(opt) => {
+                      handleSelectIds(opt.value);
+                    }}
+                  />
+                </Container>
+              )}
+            
+            
+            {props.isLoading ? (
+            <>
+            <Container padding="16px">
+              <Select
+                options={[
+                  {
+                    value: 'Loading...',
+                    label: 'Loading...',
+                  },
+                ]}
+                placeholder="Loading..."
+              />
+            </Container>
+            </>
+          ) : (
+            <>
+            <Container padding="16px">
+              <Select
+                options={array_types.map((val) => {
+                  return {
+                    value: val,
+                    label: val,
+                  };
+                })}
+                placeholder="Search transactions types"
+                selectedOption={{ value: transType, label: transType }}
+                handleChange={(opt) => {
+                  handleChangeSelect(opt.value);
+                }}
+              />
+            </Container>
+            </>
+          )}
+                    </Flex>
+            </Grid>
+          </Grid>
+
+
+        </>
+      )}
+    </Container>
   );
 };

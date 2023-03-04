@@ -184,8 +184,8 @@ module.exports = {
                 },
                 {
                   Class: [
-                    { value: { Text: 'wallet' }, name: 'library_id', immutable: true },
-                    { value: { Text: 'Wallet dApp' }, name: 'title', immutable: true },
+                    { value: { Text: 'vault' }, name: 'library_id', immutable: true },
+                    { value: { Text: 'vault dApp' }, name: 'title', immutable: true },
                     {
                       value: { Text: 'collection' },
                       name: 'location_type',
@@ -193,7 +193,7 @@ module.exports = {
                     },
                     {
                       value: {
-                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/wallet',
+                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/vault',
                       },
                       name: 'location',
                       immutable: true,

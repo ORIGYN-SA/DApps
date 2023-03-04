@@ -1,0 +1,23 @@
+name: Sync repo from Github to Gitlab
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    types: [closed]
+
+jobs:
+  to_gitlab:
+    if: ${{ github.event.pull_request.merged }}
+    name: sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: yesolutions/mirror-action@master
+        with:
+          REMOTE: ssh://${{ secrets.TARGET_REPO_SSH_URL }}
+          GIT_SSH_PRIVATE_KEY: ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
+          GIT_SSH_NO_VERIFY_HOST: "true"

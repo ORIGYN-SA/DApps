@@ -9,14 +9,15 @@ type MetadataReponse = {
   symbol: string;
 };
 
-const agent = new HttpAgent({
-  host: 'https://boundary.ic0.app/',
-});
+const createAgent = (isLocal: boolean) =>
+  new HttpAgent({
+    host: isLocal ? 'http://localhost:8000' : 'https://boundary.ic0.app/',
+  });
 
-const dip20Method = async (token: Token): Promise<MetadataReponse> => {
+const dip20Method = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.DIP20), {
-    canisterId: token.canisterId,
-    agent,
+    canisterId: isLocal ? token.localCanisterId : token.canisterId,
+    agent: createAgent(isLocal),
   });
   const metadataResult: any = await actor.getMetadata();
   return {
@@ -27,33 +28,27 @@ const dip20Method = async (token: Token): Promise<MetadataReponse> => {
   };
 };
 
-const extMethod = async (token: Token): Promise<MetadataReponse> => {
+const extMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.EXT), {
-    canisterId: token.canisterId,
-    agent,
+    canisterId: isLocal ? token.localCanisterId : token.canisterId,
+    agent: createAgent(isLocal),
   });
   const extensions: any = await actor.extensions();
   if (!extensions.includes('@ext/common'))
-    throw new Error(
-      'The provided canister does not implement commont extension',
-    );
+    throw new Error('The provided canister does not implement commont extension');
   const metadataResult: any = await actor.metadata(token.symbol);
 
   if ('ok' in metadataResult) {
-    console.log(
-      '🚀 ~ file: getMetadata.ts ~ line 45 ~ metadataResult',
-      metadataResult,
-    );
     return metadataResult.ok;
   }
 
   throw new Error(Object.keys(metadataResult.err)[0]);
 };
 
-const xtcMethod = async (token: Token): Promise<MetadataReponse> => {
+const xtcMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.XTC), {
-    canisterId: token.canisterId,
-    agent,
+    canisterId: isLocal ? token.localCanisterId : token.canisterId,
+    agent: createAgent(isLocal),
   });
   const metadataResult: any = await actor.getMetadata();
   return {
@@ -64,16 +59,12 @@ const xtcMethod = async (token: Token): Promise<MetadataReponse> => {
   };
 };
 
-const wicpMethod = async (token: Token): Promise<MetadataReponse> => {
+const wicpMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
   const actor = Actor.createActor(getIdl(IdlStandard.WICP), {
-    canisterId: token.canisterId,
-    agent,
+    canisterId: isLocal ? token.localCanisterId : token.canisterId,
+    agent: createAgent(isLocal),
   });
   const metadataResult: any = await actor.getMetadata();
-  console.log(
-    '🚀 ~ file: getMetadata.ts ~ line 70 ~ wicpMethod ~ metadataResult',
-    metadataResult,
-  );
   return {
     decimals: metadataResult.decimals,
     fee: metadataResult.fee,
@@ -82,10 +73,7 @@ const wicpMethod = async (token: Token): Promise<MetadataReponse> => {
   };
 };
 
-export const getMetadata = async (
-  canisterId: string,
-  standard: IdlStandard,
-) => {
+export const getMetadata = async (isLocal: boolean, canisterId: string, standard: IdlStandard) => {
   const token: Token = {
     canisterId,
     standard,
@@ -93,12 +81,12 @@ export const getMetadata = async (
   };
   switch (standard) {
     case IdlStandard.DIP20:
-      return dip20Method(token);
+      return dip20Method(isLocal, token);
     case IdlStandard.EXT:
-      return extMethod(token);
+      return extMethod(isLocal, token);
     case IdlStandard.WICP:
-      return wicpMethod(token);
+      return wicpMethod(isLocal, token);
     case IdlStandard.XTC:
-      return xtcMethod(token);
+      return xtcMethod(isLocal, token);
   }
 };

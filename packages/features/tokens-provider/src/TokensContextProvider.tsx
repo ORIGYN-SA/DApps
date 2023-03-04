@@ -1,10 +1,10 @@
-import { useAuthContext } from '@dapp/features-authentication';
 import { IdlStandard } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
 import JSONBig from 'json-bigint';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
+import { timeConverter } from '@dapp/utils';
 
 const defaultTokens = {
   ICP: {
@@ -25,27 +25,11 @@ const defaultTokens = {
     enabled: true,
     balance: -1,
   },
-  XTC: {
-    symbol: 'XTC',
-    canisterId: 'aanaa-xaaaa-aaaah-aaeiq-cai',
-    fee: 200000,
-    standard: IdlStandard.DIP20,
-    icon: 'https://storageapi.fleek.co/fleek-team-bucket/Dank/XTC-DAB.png',
-    enabled: false,
-    balance: -1,
-  },
-  // WICP: {
-  //   symbol: "WICP",
-  //   canisterId: "utozz-siaaa-aaaam-qaaxq-cai",
-  //   fee: 200000,
-  //   standard: IdlStandard.WICP,
-  //   icon: "https://storageapi.fleek.co/fleek-team-bucket/logos/wicp-logo.png",
-  //   enabled: false,
-  // },
 };
 
 export type Token = {
   balance?: number;
+  localCanisterId?: string;
   canisterId: string;
   decimals?: number;
   enabled?: boolean;
@@ -65,11 +49,21 @@ export type TokensContext = {
   tokens: {
     [key: string]: Token;
   };
-  addToken?: (canisterId: string, standard: IdlStandard) => Promise<Token | string>;
-  getBalance?: (principal: Principal, token: Token) => Promise<number>;
+  time?: string | number | void;
+  activeTokens: {
+    [key: string]: Token;
+  };
+  addToken?: (
+    isLocal: boolean,
+    canisterId: string,
+    standard: IdlStandard,
+    principal: Principal,
+  ) => Promise<Token | string>;
+  getBalance?: (isLocal: boolean, principal: Principal, token: Token) => Promise<number>;
   toggleToken?: (symbol: string) => void;
-  refreshBalance?: (symbol: string) => void;
-  refreshAllBalances?: () => void;
+  refreshBalance?: (isLocal: boolean, principal: Principal, symbol: string) => void;
+  refreshAllBalances?: (isLocal: boolean, principal: Principal) => void;
+  setLocalCanisterId?: (symbol: string, cansterId: string) => void;
 };
 
 const defaultTokensMapped = () => {
@@ -95,6 +89,10 @@ const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
+  activeTokens: Object.keys(initialTokens)
+    .filter((t) => initialTokens[t].enabled)
+    .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {}),
+  time: timeConverter(BigInt(new Date().getTime() * 1000000)),
 });
 
 export const useTokensContext = () => {
@@ -104,10 +102,14 @@ export const useTokensContext = () => {
 
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
-  const { principal } = useAuthContext();
-
-  const addToken = async (canisterId: string, standard: IdlStandard) => {
-    const metadata: any = await getMetadata(canisterId, standard);
+  const [time, setTime] = useState<any>();
+  const addToken = async (
+    isLocal: boolean,
+    canisterId: string,
+    standard: IdlStandard,
+    principal: Principal,
+  ) => {
+    const metadata: any = await getMetadata(isLocal, canisterId, standard);
     const { symbol, fee, decimals, icon } = metadata || {};
 
     if (tokens[symbol]) return AddTokenError.ALREADY_EXIST;
@@ -122,7 +124,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       decimals,
     };
 
-    token.balance = await getBalance(principal, token);
+    token.balance = await getBalance(isLocal, principal, token);
     const _tokens = tokens;
     _tokens[token.symbol] = token;
     setTokens(_tokens);
@@ -139,31 +141,48 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
   };
 
-  const getBalance = async (principal: Principal, token: Token) => {
+  const getBalance = async (isLocal: boolean, principal: Principal, token: Token) => {
     try {
-      const balance = await getBalanceFromCanister(principal, token);
+      const balance = await getBalanceFromCanister(isLocal, principal, token);
       return balance.value / 10 ** balance.decimals;
-    } catch {
+    } catch (e) {
+      console.log(e);
       return 0;
     }
   };
 
-  const refreshBalance = async (symbol: string) => {
-    const balance = await getBalance(principal, tokens[symbol]);
+  const refreshBalance = async (isLocal: boolean, principal: Principal, symbol: string) => {
+    const balance = await getBalance(isLocal, principal, tokens[symbol]);
     setTokens((pTokens) => {
       pTokens[symbol].balance = balance;
       return { ...pTokens };
     });
   };
 
-  const refreshAllBalances = () => {
+  const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
+    // Refresh icon
     const _tokens = tokens;
-    Promise.all(
+    Object.keys(_tokens).map((symbol) => {
+      _tokens[symbol].balance = -2;
+    });
+    setTokens(() => ({ ..._tokens }));
+
+    const today = timeConverter(BigInt(new Date().getTime() * 1000000));
+    setTime(today);
+    // Actual balance
+    return Promise.all(
       Object.keys(_tokens).map(async (symbol) => {
-        _tokens[symbol].balance = await getBalance(principal, _tokens[symbol]);
+        _tokens[symbol].balance = await getBalance(isLocal, principal, _tokens[symbol]);
       }),
     ).then(() => {
       setTokens(() => ({ ..._tokens }));
+    });
+  };
+
+  const setLocalCanisterId = (symbol: string, canisterId: string) => {
+    setTokens((pTokens) => {
+      pTokens[symbol].localCanisterId = canisterId;
+      return { ...pTokens };
     });
   };
 
@@ -174,12 +193,17 @@ export const TokensContextProvider: React.FC = ({ children }) => {
   return (
     <TokensContext.Provider
       value={{
-        tokens,
         addToken,
-        toggleToken,
         getBalance,
-        refreshBalance,
         refreshAllBalances,
+        refreshBalance,
+        setLocalCanisterId,
+        toggleToken,
+        tokens,
+        time,
+        activeTokens: Object.keys(tokens)
+          .filter((t) => tokens[t].enabled)
+          .reduce((ats, key) => ({ ...ats, [key]: tokens[key] }), {}),
       }}
     >
       {children}

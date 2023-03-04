@@ -1,8 +1,7 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid';
 // Icons ICP & OGY
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
+import { Grid, Container, HR } from '@origyn-sa/origyn-art-ui';
 
 export const SaleOpened = (props: any) => {
   const singleT_type = props.data.type_txn;
@@ -16,7 +15,7 @@ export const SaleOpened = (props: any) => {
 
   const type_of_pricing = singleT_pricing.type_of_pricing_config;
   const pricingType = type_of_pricing.toUpperCase();
-  const {token} = singleT_pricing;
+  const { token } = singleT_pricing;
   const {
     start_price,
     decay_per_hour,
@@ -28,242 +27,175 @@ export const SaleOpened = (props: any) => {
     start_date,
     ending_date,
   } = singleT_pricing;
-  
+
   // Depending on the pricing type I show different data
   // Switch here
 
   switch (type_of_pricing) {
     case 'dutch':
       display_pricing_config = (
-        <Box
-          sx={{
-            padding: 1,
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Pricing type:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {pricingType}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Start price:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {start_price}
-              </Typography>
+        <Container padding="16px">
+          <Grid columns={2}>
+            <Grid colum={1}>
+              Pricing type:
+              <br />
+              <span style={{color: 'grey'}}>{pricingType}</span>
+              <br />
+              Start price:
+              <br />
+              <span style={{color: 'grey'}}>{start_price}</span>
             </Grid>
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Decay per hour:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {decay_per_hour}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Reserve:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {reserve}
-              </Typography>
+            <Grid colum={2}>
+              Decay per hour:
+              <br />
+              <span style={{color: 'grey'}}>{decay_per_hour}</span>
+              <br />
+              Reserve:
+              <br />
+              <span style={{color: 'grey'}}>  {reserve}</span>
             </Grid>
           </Grid>
-        </Box>
+        </Container>
       );
       break;
     case 'flat':
       display_pricing_config = (
-        <Box
-          sx={{
-            padding: 1,
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Pricing type:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {pricingType}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Amount:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {amount}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Canister:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {token.canister_string}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Fee:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {token.fee}
-              </Typography>
+        <Container padding="16px">
+          <Grid columns={2}>
+            <Grid colum={1}>
+              Pricing type:
+              <br />
+              <span style={{color: 'grey'}}>{pricingType}</span>
+              <br />
+              Amount:
+              <br />
+              <span style={{color: 'grey'}}>{amount}</span>
+              <br />
+              Canister:
+              <br />
+              <span style={{color: 'grey'}}> {token.canister_string}</span>
+              <br />
+              Fee:
+              <br />
+              <span style={{color: 'grey'}}>{token.fee}</span>
             </Grid>
 
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Symbol:
-              </Typography>
-              <Typography>
-                {token.symbol === 'OGY' ? (
-                  <OGYIcon className="token-symbol" />
-                ) : (
-                  <ICPIcon className="token-symbol" />
-                )}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Decimals:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {token.decimal}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Standard:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {token.standard}
-              </Typography>
+            <Grid colum={2}>
+              Symbol:
+              <br />
+              {token.symbol === 'OGY' ? (
+                <OGYIcon className="token-symbol" />
+              ) : (
+                <ICPIcon className="token-symbol" />
+              )}
+              <br />
+              Decimals:
+              <br />
+              <span style={{color: 'grey'}}>{token.decimal}</span>
+              <br />
+              Standard:
+              <br />
+              <span style={{color: 'grey'}}>  {token.standard}</span>
             </Grid>
           </Grid>
-        </Box>
+        </Container>
       );
 
       break;
     case 'auction':
       display_pricing_config = (
-        <Box
-          sx={{
-            padding: 1,
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Start date:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {start_date}
-              </Typography>
+        <Container padding="16px">
+          <Grid columns={2}>
+            <Grid colum={1}>
+              Start date:
+              <br />
+              <span style={{color: 'grey'}}> {start_date}</span>
             </Grid>
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Ending date:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {ending_date}
-              </Typography>
+            <Grid colum={1}>
+              Ending date:
+              <br />
+              <span style={{color: 'grey'}}>  {ending_date}</span>
             </Grid>
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Pricing type:
-              </Typography>
-              <Typography gutterBottom>{pricingType}</Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Reserve:
-              </Typography>
-              <Typography gutterBottom>{reserve}</Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Buy now:
-              </Typography>
-              <Typography gutterBottom>{buy_now}</Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Start price:
-              </Typography>
-              <Typography gutterBottom>{start_price}</Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Min increase:
-              </Typography>
-              <Typography gutterBottom>{min_increase}</Typography>
+            <Grid colum={1}>
+              Pricing type:
+              <br />
+              <span style={{color: 'grey'}}>{pricingType}</span>
+              <br />
+              Reserve:
+              <br />
+              <span style={{color: 'grey'}}> {reserve}</span>
+              <br />
+              Buy now:
+              <br />
+              <span style={{color: 'grey'}}>  {buy_now}</span>
+              <br />
+              Start price:
+              <br />
+              <span style={{color: 'grey'}}> {start_price}</span>
+              <br />
+              Min increase:
+              <br />
+              <span style={{color: 'grey'}}> {min_increase}</span>
             </Grid>
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Symbol:
-              </Typography>
-              <Typography>
-                {token.symbol === 'OGY' ? (
-                  <OGYIcon className="token-symbol" />
-                ) : (
-                  <ICPIcon className="token-symbol" />
-                )}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Canister:
-              </Typography>
-              <Typography gutterBottom>{token.canister_string}</Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Fee:
-              </Typography>
-              <Typography gutterBottom>{token.fee}</Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Decimals:
-              </Typography>
-              <Typography gutterBottom>{token.decimal}</Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Standard:
-              </Typography>
-              <Typography gutterBottom>{token.standard}</Typography>
+            <Grid colum={2}>
+              Symbol:
+              <br />
+              {token.symbol === 'OGY' ? (
+                <OGYIcon className="token-symbol" />
+              ) : (
+                <ICPIcon className="token-symbol" />
+              )}
+              <br />
+              Canister:
+              <br />
+              <span style={{color: 'grey'}}> {token.canister_string}</span>
+              <br />
+              Fee:
+              <br />
+              <span style={{color: 'grey'}}> {token.fee}</span>
+              <br />
+              Decimals:
+              <br />
+              <span style={{color: 'grey'}}>{token.decimal}</span>
+              <br />
+              Standard:
+              <br />
+              <span style={{color: 'grey'}}>{token.standard}</span>
             </Grid>
           </Grid>
-        </Box>
+        </Container>
       );
 
       break;
     case 'instant':
       display_pricing_config = (
-        <Box
-          sx={{
-            padding: 1,
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={6} md={6}>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Pricing type:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {pricingType}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Transaction ID:
-              </Typography>
-              <Typography sx={{ fontSize: 12 }} gutterBottom>
-                {txn_id}
-              </Typography>
+        <Container padding="16px">
+          <Grid columns={1}>
+            <Grid colum={1}>
+              Pricing type:
+              <br />
+              <span style={{color: 'grey'}}> {pricingType}</span>
+              <br />
+              Transaction ID:
+              <br />
+              <span style={{color: 'grey'}}> {txn_id}</span>
             </Grid>
           </Grid>
-        </Box>
+        </Container>
       );
       break;
   }
 
   return (
-    <Box>
-      <Box
-        sx={{
-          padding: 1,
-          borderBottom: '1px solid',
-        }}
-      >
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Transaction type:
-        </Typography>
-        <Typography variant="h5" gutterBottom>
-          {singleT_type}
-        </Typography>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Sale ID:
-        </Typography>
-        <Typography gutterBottom>{singleT_sale_id}</Typography>
-      </Box>
+    <Container>
+      <Container padding="16px">
+        Transaction type: <span style={{color: 'grey'}}>{singleT_type}</span>
+        <br />
+        Sale ID: <span style={{color: 'grey'}}>{singleT_sale_id}</span>
+      </Container>
+      <HR marginTop="8px" marginBottom="8px" />
       {display_pricing_config}
-    </Box>
+      <HR marginTop="8px" marginBottom="8px" />
+    </Container>
   );
 };

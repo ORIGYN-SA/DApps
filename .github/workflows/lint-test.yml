@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Code Quaility & Tests
+    name: Code Quality & Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -20,11 +20,16 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
-
-      - name: Install Dependencies
-        run: npm install
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@origyn-sa'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Install Dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bootstrap Packages
         run: npm run bootstrap

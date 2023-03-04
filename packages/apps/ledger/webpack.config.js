@@ -1,11 +1,12 @@
-const webpack = require('../../../webpack.config')
+const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'ledger',
-  openPage: '-/baycdev/-/bayc-1/-/ledger',
-}
+  openPage: '-/brain-matters-dev/collection/-/ledger',
+};
 
 module.exports = (env, argv) => {
-  const res = webpack(env, argv, appConfig)
-  return res
-}
+  const res = webpack(env, argv, appConfig);
+  res.output.publicPath = '/';
+  return res;
+};

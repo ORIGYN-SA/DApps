@@ -39,3 +39,26 @@ export const eToNumber = (num) => {
     return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`);
   }
 };
+
+export const currencyFormat = (val?: number) => {
+  return (val ?? 0).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+};
+
+export const isPositiveFloat = (s: string): boolean => {
+  // allows number to end with decimal point for validating form input
+  return /^(?:[1-9][0-9]*|0)?(?:\.[0-9]*)?$/.test(s);
+};
+
+export const toLargerUnit = (num: number, decimals: number): number => {
+  if (decimals <= 0) {
+    return num;
+  }
+  return num / 10 ** decimals;
+};
+
+export const toSmallerUnit = (num: number, decimals: number): number => {
+  if (decimals <= 0) {
+    return num;
+  }
+  return num * 10 ** decimals;
+};

@@ -6,5 +6,7 @@ import OGYIcon from './ogy.svg';
 import OrigynLogo from './logo.svg';
 // @ts-ignore
 import QuestionIcon from './question.svg';
+// @ts-ignore 
+import PlaceholderImage from './placeholder.png';
 
-export { ICPIcon, OrigynLogo, OGYIcon, QuestionIcon };
+export { ICPIcon, OrigynLogo, OGYIcon, QuestionIcon, PlaceholderImage };
