@@ -7,6 +7,7 @@ import { OffersReceivedTab } from './offersReceivedTab';
 import { BidsReceivedTab } from './bidsReceivedTab';
 import { OffersSentTab } from './offersSentTab';
 import { BidsSentTab } from './bidsSentTab';
+import { BalanceResponse, OrigynError, EscrowRecord } from '@dapp/common-types';
 
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const debug = useDebug();
@@ -18,36 +19,48 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const [dialogAction, setDialogAction] = useState<any>();
 
   const [canisterId, setCanisterId] = React.useState('');
-  const [escrow, setEscrow] = useState([]);
-  const [offersReceived, setOffersReceived] = useState([]);
-  const [bidsReceived, setBidsReceived] = useState([]);
-  const [offersSent, setOffersSent] = useState([]);
-  const [bidsSent, setBidsSent] = useState([]);
+  const [escrow, setEscrow] = useState<EscrowRecord[]>();
+  const [offersReceived, setOffersReceived] = useState<EscrowRecord[]>();
+  const [bidsReceived, setBidsReceived] = useState<EscrowRecord[]>();
+  const [offersSent, setOffersSent] = useState<EscrowRecord[]>();
+  const [bidsSent, setBidsSent] = useState<EscrowRecord[]>();
 
   // TODO: uncomment when totalAm is used
   // const [totalAm, setTotalAm] = useState();
 
   //-----------------
   const Balance = async () => {
-    const balance = await actor?.balance_of_nft_origyn({ principal });
-    debug.log('response from actor?.balance_of_nft_origyn({ principal })');
-    debug.log(JSON.stringify(balance, null, 2));
-
-    const offersAndBidsReceived = await balance?.ok.offers;
-    const sentEscrows = await balance?.ok.escrow;
-    // If there is a sale_id, it means that the Escrow is Associated to a Sale Process
-    // and it is a Bid, otherwise it is an Offer
-    const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
-    const offersReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length === 0);
-    const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
-    //debug.log('bidsSent', bidsSent);
-    const offersSent = sentEscrows?.filter((element) => element.sale_id.length === 0);
-    //debug.log('offersSent', offersSent);
-    setOffersReceived(offersReceived);
-    setBidsReceived(bidsReceived);
-    setEscrow(sentEscrows);
-    setOffersSent(offersSent);
-    setBidsSent(bidsSent);
+    try {
+      const response = await actor?.balance_of_nft_origyn({ principal });
+      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
+      debug.log(JSON.stringify(response, null, 2));
+      if ('err' in response) {
+        const error: OrigynError = response.err;
+        debug.log('error', error);
+        return;
+      } else {
+        const balanceResponse: BalanceResponse = response.ok;
+        const offersAndBidsReceived = await balanceResponse.offers;
+        const sentEscrows = await balanceResponse.escrow;
+        // If there is a sale_id, it means that the Escrow is Associated to a Sale Process
+        // and it is a Bid, otherwise it is an Offer
+        const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
+        const offersReceived = offersAndBidsReceived?.filter(
+          (element) => element.sale_id.length === 0,
+        );
+        const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
+        //debug.log('bidsSent', bidsSent);
+        const offersSent = sentEscrows?.filter((element) => element.sale_id.length === 0);
+        //debug.log('offersSent', offersSent);
+        setOffersReceived(offersReceived);
+        setBidsReceived(bidsReceived);
+        setEscrow(sentEscrows);
+        setOffersSent(offersSent);
+        setBidsSent(bidsSent);
+      }
+    } catch (e) {
+      debug.log('error', e);
+    }
   };
 
   useEffect(() => {
@@ -56,21 +69,21 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
     });
   }, []);
 
-  const withdrawEscrow = async (escrow, token_id) => {
+  const withdrawEscrow = async (escrow: EscrowRecord, token_id: string) => {
     setSelectdNFT(token_id);
     setOpenConfirmation(true);
     setSelectedEscrow(escrow);
     setDialogAction('withdraw');
   };
 
-  const handleClickOpen = (offer, token_id) => {
+  const handleClickOpen = (offer: EscrowRecord, token_id: string) => {
     setOpenConfirmation(true);
     setDialogAction('acceptOffer');
     setSelectdNFT(token_id);
     setSelectedOffer(offer);
   };
 
-  const handleClickOpenRej = (escrow) => {
+  const handleClickOpenRej = (escrow: EscrowRecord) => {
     setOpenConfirmation(true);
     setDialogAction('reject');
     setSelectedEscrow(escrow);
@@ -84,7 +97,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
     const totalEsc = [];
     // const initialValue = 0;
 
-    escrow.map((esc: any) => totalEsc.push(Number(esc.amount) * 0.00000001));
+    escrow.map((esc: EscrowRecord) => totalEsc.push(Number(esc.amount) * 0.00000001));
     // const escrowSum = totalEsc.reduce(
     //   (accumulator, currentValue) => accumulator + currentValue,
     //   initialValue,

@@ -408,6 +408,7 @@ export const NFTPage = () => {
               handleClose={handleClose}
               currentToken={odc?.id}
               action={dialogAction}
+              onSaleCancelled={fetchData}
             />
           )}
           {openAuction && (
