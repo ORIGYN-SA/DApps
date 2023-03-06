@@ -50,7 +50,7 @@ interface StartAuctionModalProps {
   open: boolean;
   handleClose: (any) => void;
   onSuccess: (any) => Promise<void>;
-  setInProcess: React.Dispatch<React.SetStateAction<boolean>>;
+  setInProcess: (any) => void;
 }
 
 export function StartAuctionModal({
@@ -78,9 +78,9 @@ export function StartAuctionModal({
     endDate,
     token: saleToken,
   }) => {
-    setInProgress(true);
-    setInProcess(true);
     try {
+      setInProgress(true);
+      setInProcess(true);
       const resp = await actor.market_transfer_nft_origyn({
         token_id: currentToken,
         sales_config: {
@@ -142,9 +142,10 @@ export function StartAuctionModal({
           horizontal: 'right',
         },
       });
+    } finally {
+      setInProgress(false);
+      setInProcess(false);
     }
-    setInProgress(false);
-    setInProcess(false);
   };
 
   const getValidationErrors = (err) => {

@@ -29,7 +29,7 @@ interface ConfirmSalesActionModalProps {
   escrow?: EscrowRecord;
   offer?: EscrowRecord;
   onSaleCancelled?: () => void;
-  setInProcess?: React.Dispatch<React.SetStateAction<boolean>>;
+  setInProcess?: (any) => void;
 }
 
 export const ConfirmSalesActionModal = ({
@@ -50,8 +50,9 @@ export const ConfirmSalesActionModal = ({
   const debug = useDebug();
 
   const _handleClose = async (confirm = false) => {
-    if (confirm && actor) {
-      if (isLoading) return;
+    if (!confirm || !actor || isLoading) return;
+
+    try {
       setIsLoading(true);
       setConfirmed(true);
       setInProcess?.(true);
@@ -67,10 +68,7 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setInProcess?.(false);
           onSaleCancelled();
-          setIsLoading(false);
-          return handleClose(true);
         }
         enqueueSnackbar(`Error: ${endSaleResponse.err.flag_point}.`, {
           variant: 'error',
@@ -79,9 +77,6 @@ export const ConfirmSalesActionModal = ({
             horizontal: 'right',
           },
         });
-        setInProcess?.(false);
-        setIsLoading(false);
-        return handleClose(false);
       }
       if (action === 'withdraw') {
         if (!escrow) {
@@ -112,13 +107,7 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setInProcess?.(false);
-          setIsLoading(false);
-          return handleClose(true);
         }
-        setInProcess?.(false);
-        setIsLoading(false);
-        return handleClose(false);
       }
 
       if (action === 'reject') {
@@ -149,13 +138,7 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setInProcess?.(false);
-          setIsLoading(false);
-          return handleClose(true);
         }
-        setInProcess?.(false);
-        setIsLoading(false);
-        return handleClose(false);
       }
 
       const escrowReceipt: EscrowReceipt = {
@@ -203,18 +186,19 @@ export const ConfirmSalesActionModal = ({
                 horizontal: 'right',
               },
             });
-            setIsLoading(false);
-            return handleClose(true);
           }
-          setInProcess?.(false);
-          setIsLoading(false);
-          return handleClose(false);
         } catch (e) {
           debug.log(e);
         }
       }
+      handleClose(false);
+    } catch (e) {
+      debug.log(e);
+    } finally {
+      setInProcess?.(false);
+      setIsLoading(false);
+      handleClose(false);
     }
-    handleClose(false);
   };
 
   useEffect(() => {

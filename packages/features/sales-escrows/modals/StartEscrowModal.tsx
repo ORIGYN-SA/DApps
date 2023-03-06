@@ -17,7 +17,7 @@ export type StartEscrowModalProps = {
   open: boolean;
   handleClose: any;
   onSuccess: any;
-  setInProcess: React.Dispatch<React.SetStateAction<boolean>>;
+  setInProcess: (any) => void;
 };
 
 type FormErrors = {
@@ -154,13 +154,13 @@ export function StartEscrowModal({
 
   const startEscrow = async () => {
     try {
+      setIsTransacting(true);
+      setInProcess(true);
+
       if (isLoading || isTransacting || !activeWalletProvider || hasErrors() || !validateForm()) {
         debug.log('validation failed');
         return;
       }
-
-      setIsTransacting(true);
-      setInProcess(true);
 
       // gets the deposit info for the account number of the caller
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
