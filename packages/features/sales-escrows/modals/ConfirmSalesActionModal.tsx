@@ -7,6 +7,7 @@ import { useSnackbar } from 'notistack';
 import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
+import { EscrowReceipt, EscrowRecord } from '@dapp/common-types';
 
 const Transition = React.forwardRef(
   (
@@ -19,6 +20,16 @@ const Transition = React.forwardRef(
 
 Transition.displayName = 'Transition';
 
+interface ConfirmSalesActionModalProps {
+  openConfirmation: boolean;
+  handleClose: (confirm: boolean) => void;
+  currentToken: string;
+  action: string;
+  escrow?: EscrowRecord;
+  offer?: EscrowRecord;
+  onSaleCancel?: () => void;
+}
+
 export const ConfirmSalesActionModal = ({
   openConfirmation,
   handleClose,
@@ -26,7 +37,8 @@ export const ConfirmSalesActionModal = ({
   action,
   escrow = null,
   offer,
-}: any) => {
+  onSaleCancel,
+}: ConfirmSalesActionModalProps) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
@@ -50,6 +62,7 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
+          onSaleCancel();
           setIsLoading(false);
           return handleClose(true);
         }
@@ -135,17 +148,17 @@ export const ConfirmSalesActionModal = ({
         return handleClose(false);
       }
 
-      const escrowReceipt = {
-        seller: { principal: offer.seller.principal },
-        buyer: { principal: offer.buyer.principal },
+      const escrowReceipt: EscrowReceipt = {
+        seller: { principal: offer.seller['principal'] },
+        buyer: { principal: offer.buyer['principal'] },
         token_id: currentToken,
         token: {
           ic: {
-            fee: BigInt(tokens[offer.token.ic.symbol]?.fee ?? 200000),
-            decimals: BigInt(tokens[offer.token.ic.symbol]?.decimals ?? 8),
-            canister: Principal.fromText(tokens[offer.token.ic.symbol]?.canisterId),
+            fee: BigInt(tokens[offer.token['ic'].symbol]?.fee ?? 200000),
+            decimals: BigInt(tokens[offer.token['ic'].symbol]?.decimals ?? 8),
+            canister: Principal.fromText(tokens[offer.token['ic'].symbol]?.canisterId),
             standard: { Ledger: null },
-            symbol: offer.token.ic.symbol,
+            symbol: offer.token['ic'].symbol,
           },
         },
         amount: BigInt(offer.amount),
