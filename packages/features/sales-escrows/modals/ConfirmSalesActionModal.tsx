@@ -27,7 +27,7 @@ interface ConfirmSalesActionModalProps {
   action: string;
   escrow?: EscrowRecord;
   offer?: EscrowRecord;
-  onSaleCancel?: () => void;
+  onSaleCancelled?: () => void;
 }
 
 export const ConfirmSalesActionModal = ({
@@ -37,7 +37,7 @@ export const ConfirmSalesActionModal = ({
   action,
   escrow = null,
   offer,
-  onSaleCancel,
+  onSaleCancelled: onSaleCancel,
 }: ConfirmSalesActionModalProps) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
