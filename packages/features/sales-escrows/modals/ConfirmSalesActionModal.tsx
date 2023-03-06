@@ -54,7 +54,7 @@ export const ConfirmSalesActionModal = ({
       if (isLoading) return;
       setIsLoading(true);
       setConfirmed(true);
-      setInProcess(true);
+      setInProcess?.(true);
       if (action === 'endSale') {
         const endSaleResponse = await actor.sale_nft_origyn({
           end_sale: currentToken,
@@ -67,7 +67,7 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setInProcess(false);
+          setInProcess?.(false);
           onSaleCancelled();
           setIsLoading(false);
           return handleClose(true);
@@ -79,7 +79,7 @@ export const ConfirmSalesActionModal = ({
             horizontal: 'right',
           },
         });
-        setInProcess(false);
+        setInProcess?.(false);
         setIsLoading(false);
         return handleClose(false);
       }
@@ -112,11 +112,11 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setInProcess(false);
+          setInProcess?.(false);
           setIsLoading(false);
           return handleClose(true);
         }
-        setInProcess(false);
+        setInProcess?.(false);
         setIsLoading(false);
         return handleClose(false);
       }
@@ -149,11 +149,11 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setInProcess(false);
+          setInProcess?.(false);
           setIsLoading(false);
           return handleClose(true);
         }
-        setInProcess(false);
+        setInProcess?.(false);
         setIsLoading(false);
         return handleClose(false);
       }
@@ -206,7 +206,7 @@ export const ConfirmSalesActionModal = ({
             setIsLoading(false);
             return handleClose(true);
           }
-          setInProcess(false);
+          setInProcess?.(false);
           setIsLoading(false);
           return handleClose(false);
         } catch (e) {
