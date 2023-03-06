@@ -45,7 +45,21 @@ const validationSchema = Yup.object({
     .default(dateNow),
 });
 
-export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }: any) {
+interface StartAuctionModalProps {
+  currentToken: string;
+  open: boolean;
+  handleClose: (any) => void;
+  onSuccess: (any) => Promise<void>;
+  setInProcess: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export function StartAuctionModal({
+  currentToken,
+  open,
+  handleClose,
+  onSuccess,
+  setInProcess,
+}: StartAuctionModalProps) {
   const { actor } = React.useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
   const [errors, setErrors] = React.useState<any>({});
@@ -65,6 +79,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
     token: saleToken,
   }) => {
     setInProgress(true);
+    setInProcess(true);
     try {
       const resp = await actor.market_transfer_nft_origyn({
         token_id: currentToken,
@@ -129,6 +144,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
       });
     }
     setInProgress(false);
+    setInProcess(false);
   };
 
   const getValidationErrors = (err) => {

@@ -17,6 +17,7 @@ export type StartEscrowModalProps = {
   open: boolean;
   handleClose: any;
   onSuccess: any;
+  setInProcess: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type FormErrors = {
@@ -30,6 +31,7 @@ export function StartEscrowModal({
   open,
   handleClose,
   onSuccess,
+  setInProcess,
 }: StartEscrowModalProps) {
   const debug = useDebug();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
@@ -158,6 +160,7 @@ export function StartEscrowModal({
       }
 
       setIsTransacting(true);
+      setInProcess(true);
 
       // gets the deposit info for the account number of the caller
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
@@ -276,6 +279,7 @@ export function StartEscrowModal({
       });
     } finally {
       setIsTransacting(false);
+      setInProcess(false);
     }
   };
 

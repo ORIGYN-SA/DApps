@@ -8,6 +8,7 @@ import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
 import { EscrowReceipt, EscrowRecord } from '@dapp/common-types';
+import { useDebug } from '@dapp/features-debug-provider';
 
 const Transition = React.forwardRef(
   (
@@ -28,6 +29,7 @@ interface ConfirmSalesActionModalProps {
   escrow?: EscrowRecord;
   offer?: EscrowRecord;
   onSaleCancelled?: () => void;
+  setInProcess?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ConfirmSalesActionModal = ({
@@ -38,18 +40,21 @@ export const ConfirmSalesActionModal = ({
   escrow = null,
   offer,
   onSaleCancelled,
+  setInProcess,
 }: ConfirmSalesActionModalProps) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens } = useTokensContext();
   const [confirmed, setConfirmed] = useState(false);
+  const debug = useDebug();
 
   const _handleClose = async (confirm = false) => {
     if (confirm && actor) {
       if (isLoading) return;
       setIsLoading(true);
       setConfirmed(true);
+      setInProcess(true);
       if (action === 'endSale') {
         const endSaleResponse = await actor.sale_nft_origyn({
           end_sale: currentToken,
@@ -62,6 +67,7 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
+          setInProcess(false);
           onSaleCancelled();
           setIsLoading(false);
           return handleClose(true);
@@ -73,6 +79,7 @@ export const ConfirmSalesActionModal = ({
             horizontal: 'right',
           },
         });
+        setInProcess(false);
         setIsLoading(false);
         return handleClose(false);
       }
@@ -105,10 +112,11 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
+          setInProcess(false);
           setIsLoading(false);
           return handleClose(true);
         }
-
+        setInProcess(false);
         setIsLoading(false);
         return handleClose(false);
       }
@@ -141,9 +149,11 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
+          setInProcess(false);
           setIsLoading(false);
           return handleClose(true);
         }
+        setInProcess(false);
         setIsLoading(false);
         return handleClose(false);
       }
@@ -176,7 +186,7 @@ export const ConfirmSalesActionModal = ({
             token_id: currentToken,
             sales_config: saleReceipt,
           });
-          console.log(acceptOffer.err);
+          debug.log(acceptOffer.err);
           if ('err' in acceptOffer) {
             enqueueSnackbar('There has been an error in accepting the offer', {
               variant: 'error',
@@ -196,10 +206,11 @@ export const ConfirmSalesActionModal = ({
             setIsLoading(false);
             return handleClose(true);
           }
+          setInProcess(false);
           setIsLoading(false);
           return handleClose(false);
         } catch (e) {
-          console.log(e);
+          debug.log(e);
         }
       }
     }
