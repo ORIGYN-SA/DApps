@@ -37,7 +37,7 @@ export const ConfirmSalesActionModal = ({
   action,
   escrow = null,
   offer,
-  onSaleCancelled: onSaleCancel,
+  onSaleCancelled,
 }: ConfirmSalesActionModalProps) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -62,7 +62,7 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          onSaleCancel();
+          onSaleCancelled();
           setIsLoading(false);
           return handleClose(true);
         }
