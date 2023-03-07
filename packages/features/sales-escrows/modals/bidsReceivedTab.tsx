@@ -2,9 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn-sa/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { OdcDataWithSale, parseOdc, toLargerUnit } from '@dapp/utils';
+import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
+import { EscrowRecord } from '@dapp/common-types';
+
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -21,7 +23,7 @@ const styles = {
 };
 
 interface OffersTabProps {
-  bidsReceived: any[];
+  bidsReceived: EscrowRecord[];
   collection: any;
   canisterId: string;
 }
@@ -40,21 +42,23 @@ export const BidsReceivedTab = ({
   const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
 
   const parseBids = async () => {
-    bidsReceived.map(async (bid) => {
-      const r: any = await actor.nft_origyn(bid.token_id);
-      if ('err' in r) {
-        throw new Error(Object.keys(r.err)[0]);
-      }
+    const tokenIds = bidsReceived.map((offer) => offer.token_id);
+    const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
 
-      let parsedOdc: OdcDataWithSale = parseOdc(r['ok']);
-      let receivedBid: ReceivedActiveBidsProps = {
-        ...parsedOdc,
+    if (odcDataRaw.err) {
+      throw new Error('Unable to retrieve metadata of tokens.');
+    }
+
+    const parsedOdcs = parseOdcs(odcDataRaw);
+    parsedOdcs.map((odc: OdcDataWithSale, index) => {
+      const bid = bidsReceived[index];
+      let sentBid: ReceivedActiveBidsProps = {
+        ...odc,
         token_id: bid.token_id,
       };
-
-      if (receivedBid.auction?.end_date > currentTimeInNanos) {
+      if (sentBid.auction?.end_date > currentTimeInNanos) {
         // Add only the Active Bids
-        setReceivedActiveBids((prev) => [...prev, receivedBid]);
+        setReceivedActiveBids((prev) => [...prev, sentBid]);
       }
     });
   };

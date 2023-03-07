@@ -29,9 +29,9 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   // const [totalAm, setTotalAm] = useState();
 
   //-----------------
-  const Balance = async () => {
+  const getBalances = async () => {
     try {
-      const response = await actor?.balance_of_nft_origyn({ principal });
+      const response = await actor.balance_of_nft_origyn({ principal });
       debug.log('response from actor?.balance_of_nft_origyn({ principal })');
       debug.log(JSON.stringify(response, null, 2));
       if ('err' in response) {
@@ -114,9 +114,9 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   };
 
   useEffect(() => {
-    Balance();
+    getBalances();
     totalAmount();
-  }, [open, withdrawEscrow]);
+  }, [open, withdrawEscrow, actor]);
 
   return (
     <>

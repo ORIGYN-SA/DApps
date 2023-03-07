@@ -2,9 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn-sa/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { OdcDataWithSale, parseOdc, toLargerUnit } from '@dapp/utils';
+import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
+import { useDebug } from '@dapp/features-debug-provider';
+import { EscrowRecord } from '@dapp/common-types';
 
 const styles = {
   gridContainer: {
@@ -22,7 +24,7 @@ const styles = {
 };
 
 interface BidsSentTabProps {
-  bidsSent: any[];
+  bidsSent: EscrowRecord[];
   collection: any;
   canisterId: string;
 }
@@ -34,28 +36,36 @@ interface SentActiveBidsProps extends OdcDataWithSale {
 
 export const BidsSentTab = ({ bidsSent: bidsSent, collection, canisterId }: BidsSentTabProps) => {
   const { actor } = useContext(AuthContext);
+  const debug = useDebug();
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
   const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
 
   const parseBids = async () => {
-    bidsSent.map(async (bid) => {
-      const r: any = await actor.nft_origyn(bid.token_id);
-      if ('err' in r) {
-        throw new Error(Object.keys(r.err)[0]);
+    try {
+      const tokenIds = bidsSent.map((offer) => offer.token_id);
+      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+
+      if (odcDataRaw.err) {
+        throw new Error('Unable to retrieve metadata of tokens.');
       }
 
-      let parsedOdc: OdcDataWithSale = parseOdc(r['ok']);
-      let sentBid: SentActiveBidsProps = {
-        ...parsedOdc,
-        token_id: bid.token_id,
-        amount: toLargerUnit(Number(bid.amount), Number(bid.token.ic.decimals)).toString(),
-        symbol: bid.token.ic.symbol,
-      };
-      if (sentBid.auction?.end_date > currentTimeInNanos) {
-        // Add only the Active Bids
-        setSentActiveBids((prev) => [...prev, sentBid]);
-      }
-    });
+      const parsedOdcs = parseOdcs(odcDataRaw);
+      parsedOdcs.map((odc: OdcDataWithSale, index) => {
+        const bid = bidsSent[index];
+        let sentBid: SentActiveBidsProps = {
+          ...odc,
+          token_id: bid.token_id,
+          amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toString(),
+          symbol: bid.token['ic'].symbol,
+        };
+        if (sentBid.auction?.end_date > currentTimeInNanos) {
+          // Add only the Active Bids
+          setSentActiveBids((prev) => [...prev, sentBid]);
+        }
+      });
+    } catch (e) {
+      debug.log(e);
+    }
   };
 
   useEffect(() => {
