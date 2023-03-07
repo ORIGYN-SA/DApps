@@ -15,8 +15,9 @@ export type StartEscrowModalProps = {
   odc: OdcDataWithSale;
   escrowType: EscrowType;
   open: boolean;
-  handleClose: any;
+  onClose: any;
   onSuccess: any;
+  onProcessing: (boolean) => void;
 };
 
 type FormErrors = {
@@ -28,8 +29,9 @@ export function StartEscrowModal({
   odc,
   escrowType,
   open,
-  handleClose,
+  onClose,
   onSuccess,
+  onProcessing,
 }: StartEscrowModalProps) {
   const debug = useDebug();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
@@ -152,12 +154,13 @@ export function StartEscrowModal({
 
   const startEscrow = async () => {
     try {
+      setIsTransacting(true);
+      onProcessing(true);
+
       if (isLoading || isTransacting || !activeWalletProvider || hasErrors() || !validateForm()) {
         debug.log('validation failed');
         return;
       }
-
-      setIsTransacting(true);
 
       // gets the deposit info for the account number of the caller
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
@@ -247,7 +250,7 @@ export function StartEscrowModal({
             horizontal: 'right',
           },
         });
-        handleCustomClose(true);
+        onCustomClose(true);
         refreshAllBalances(false, principal);
         setSuccess(true);
         onSuccess();
@@ -260,7 +263,7 @@ export function StartEscrowModal({
             horizontal: 'right',
           },
         });
-        handleCustomClose(true);
+        onCustomClose(true);
         refreshAllBalances(false, principal);
         setSuccess(true);
         onSuccess();
@@ -276,14 +279,15 @@ export function StartEscrowModal({
       });
     } finally {
       setIsTransacting(false);
+      onProcessing(false);
     }
   };
 
-  const handleCustomClose = (value: any) => {
+  const onCustomClose = (value: any) => {
     setIsLoading(false);
     setIsTransacting(false);
     setSuccess(false);
-    handleClose(value);
+    onClose(value);
   };
 
   const onFormSubmitted = async (e: any) => {
@@ -293,14 +297,14 @@ export function StartEscrowModal({
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => handleCustomClose} size="md">
+      <Modal isOpened={open} closeModal={() => onCustomClose} size="md">
         <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
           {success ? (
             <>
               <h2>Success!</h2>
               <p className="secondary_color">All the transactions were made successfully.</p>
               <Flex justify="flex-end">
-                <Button onClick={handleCustomClose}>Done</Button>
+                <Button onClick={onCustomClose}>Done</Button>
               </Flex>
             </>
           ) : (
@@ -385,7 +389,7 @@ export function StartEscrowModal({
                         </>
                       )}
                       <Flex align="center" justify="flex-end" gap={16}>
-                        <Button btnType="outlined" onClick={() => handleCustomClose(false)}>
+                        <Button btnType="outlined" onClick={() => onCustomClose(false)}>
                           Cancel
                         </Button>
                         <Button btnType="accent" type="submit" disabled={hasErrors()}>
