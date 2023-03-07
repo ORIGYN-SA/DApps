@@ -29,7 +29,7 @@ interface ConfirmSalesActionModalProps {
   escrow?: EscrowRecord;
   offer?: EscrowRecord;
   onSaleCancelled?: () => void;
-  setInProcess?: (any) => void;
+  setInProcess?: (boolean) => void;
 }
 
 export const ConfirmSalesActionModal = ({

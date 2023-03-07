@@ -50,7 +50,7 @@ interface StartAuctionModalProps {
   open: boolean;
   onClose: (any) => void;
   onSuccess: (any) => Promise<void>;
-  setInProcess: (any) => void;
+  setInProcess: (boolean) => void;
 }
 
 export function StartAuctionModal({

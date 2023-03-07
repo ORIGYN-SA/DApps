@@ -17,7 +17,7 @@ export type StartEscrowModalProps = {
   open: boolean;
   onClose: any;
   onSuccess: any;
-  setInProcess: (any) => void;
+  setInProcess: (boolean) => void;
 };
 
 type FormErrors = {
