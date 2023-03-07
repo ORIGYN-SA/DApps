@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
-import { PlaceholderImage } from '@dapp/common-assets';
+import { PlaceholderIcon } from '@dapp/common-assets';
 import { useMarketplace } from '../../components/context';
 import {
   Card,
@@ -195,12 +195,11 @@ const Marketplace = () => {
                             src={`https://prptl.io/-/${canisterId}/collection/preview`}
                             alt="text"
                             style={{ width: 200 }}
-                            onError={(e) => {
-                              e.currentTarget.src = PlaceholderImage;
-                            }}
                           />
                         ) : (
-                          <Image src={PlaceholderImage} alt="text" style={{ width: 200 }} />
+                          <Flex align="center" justify="center">
+                            <PlaceholderIcon width={200} height={200} />
+                          </Flex>
                         )}
                         <Flex flexFlow="column" justify="space-between" gap={8}>
                           <h2>
@@ -261,20 +260,15 @@ const Marketplace = () => {
                                     style={{ overflow: 'hidden', height: '100%' }}
                                   >
                                     {odc.hasPreviewAsset ? (
-                                      <img
-                                        style={{ width: '100%' }}
+                                      <Image
+                                        style={{ width: 200 }}
                                         src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                         alt=""
-                                        onError={(e) => {
-                                          e.currentTarget.src = PlaceholderImage;
-                                        }}
                                       />
                                     ) : (
-                                      <Image
-                                        src={PlaceholderImage}
-                                        alt="text"
-                                        style={{ width: 200 }}
-                                      />
+                                      <Flex align="center" justify="center">
+                                        <PlaceholderIcon width={200} height={200} />
+                                      </Flex>
                                     )}
                                     <Container
                                       style={{ height: '100%' }}

@@ -26,7 +26,7 @@ import {
   ShowMoreBlock,
 } from '@origyn-sa/origyn-art-ui';
 import { Principal } from '@dfinity/principal';
-import { PlaceholderImage } from '@dapp/common-assets';
+import { PlaceholderIcon } from '@dapp/common-assets';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -501,16 +501,11 @@ const VaultPage = () => {
                             <StyledCollectionImg
                               src={`https://prptl.io/-/${canisterId}/collection/preview`}
                               alt=""
-                              onError={(e) => {
-                                e.currentTarget.src = PlaceholderImage;
-                              }}
                             />
                           ) : (
-                            <StyledCollectionImg
-                              src={PlaceholderImage}
-                              alt="text"
-                              style={{ width: 200 }}
-                            />
+                            <Flex justify="center" align="center" style={{ height: '100%' }}>
+                              <PlaceholderIcon width={96} height={96} />
+                            </Flex>
                           )}
                           <Flex flexFlow="column" fullWidth justify="space-between" gap={8}>
                             <Flex
@@ -619,21 +614,20 @@ const VaultPage = () => {
                                     >
                                       {odc.hasPreviewAsset ? (
                                         <StyledNFTImg
-                                          onError={(e) => {
-                                            e.currentTarget.src = PlaceholderImage;
-                                          }}
                                           src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                           alt=""
                                         />
                                       ) : (
-                                        <StyledNFTImg
-                                          src={PlaceholderImage}
-                                          alt=""
-                                          onError={(e) => {
-                                            e.target.onerror = null; // prevents looping
-                                            e.currentTarget.className += ' errorImage';
-                                          }}
-                                        />
+                                        <Flex
+                                          justify="center"
+                                          align="center"
+                                          style={{ height: '100%' }}
+                                        >
+                                          <PlaceholderIcon
+                                            width={'100%'}
+                                            height={`calc(15vw - 20px)`}
+                                          />
+                                        </Flex>
                                       )}
                                       <Container
                                         style={{ height: '100%' }}
