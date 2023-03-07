@@ -32,7 +32,7 @@ import { useDialog } from '@connect2ic/react';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
-import { PlaceholderImage } from '@dapp/common-assets';
+import { PlaceholderIcon } from '@dapp/common-assets';
 import { OffersPanel } from './components/OffersPanel';
 
 export const NFTPage = () => {
@@ -178,15 +178,11 @@ export const NFTPage = () => {
                           <img
                             style={{ borderRadius: '18px', width: '100%' }}
                             src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
-                            onError={(e) => {
-                              e.currentTarget.src = PlaceholderImage;
-                            }}
                           />
                         ) : (
-                          <img
-                            style={{ borderRadius: '18px', width: '100%' }}
-                            src={PlaceholderImage}
-                          />
+                          <Flex align="center" justify="center">
+                            <PlaceholderIcon />
+                          </Flex>
                         )}
                         <Flex flexFlow="column" gap={8}>
                           <p className="secondary_color">{odc?.ownerPrincipalId}</p>
@@ -206,11 +202,7 @@ export const NFTPage = () => {
                                 style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
                               />
                             ) : (
-                              <img
-                                src={PlaceholderImage}
-                                alt=""
-                                style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
-                              />
+                              <PlaceholderIcon width={32} height={32} />
                             )}
                             <b>{collectionData?.displayName}</b>
                           </Flex>

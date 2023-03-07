@@ -8,5 +8,7 @@ import OrigynLogo from './logo.svg';
 import QuestionIcon from './question.svg';
 // @ts-ignore 
 import PlaceholderImage from './placeholder.png';
+// @ts-ignore
+import PlaceholderIcon from './placeholder.svg';
 
-export { ICPIcon, OrigynLogo, OGYIcon, QuestionIcon, PlaceholderImage };
+export { ICPIcon, OrigynLogo, OGYIcon, QuestionIcon, PlaceholderImage, PlaceholderIcon };

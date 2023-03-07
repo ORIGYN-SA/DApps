@@ -4,6 +4,7 @@ import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { OdcDataWithSale, parseOdc, toLargerUnit } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
+import { PlaceholderIcon } from '@dapp/common-assets';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -71,11 +72,15 @@ export const BidsReceivedTab = ({
             {receivedActivedBids.map((bid: ReceivedActiveBidsProps) => (
               <>
                 <div style={styles.gridItem}>
-                  <img
-                    style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                    src={`https://${canisterId}.raw.ic0.app/-/${bid.token_id}/preview`}
-                    alt=""
-                  />
+                  {bid.hasPreviewAsset ? (
+                    <img
+                      style={{ width: '42px', height: '42px', borderRadius: '12px' }}
+                      src={`https://${canisterId}.raw.ic0.app/-/${bid.token_id}/preview`}
+                      alt=""
+                    />
+                  ) : (
+                    <PlaceholderIcon width={42} height={42} />
+                  )}
                 </div>
                 <div style={styles.gridItem}>
                   <span>{bid.token_id}</span>
