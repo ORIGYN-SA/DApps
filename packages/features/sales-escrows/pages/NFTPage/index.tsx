@@ -428,16 +428,16 @@ export const NFTPage = () => {
               currentToken={odc?.id}
               action={dialogAction}
               onSaleCancelled={fetchData}
-              setInProcess={setInProcess}
+              onProcessing={setInProcess}
             />
           )}
           {openAuction && (
             <StartAuctionModal
               open={openAuction}
-              handleClose={handleClose}
+              onClose={handleClose}
               onSuccess={fetchOdc}
               currentToken={odc?.id}
-              setInProcess={setInProcess}
+              onProcessing={setInProcess}
             />
           )}
           {openEscrowModal && (
@@ -447,7 +447,7 @@ export const NFTPage = () => {
               odc={odc}
               escrowType={escrowType}
               onSuccess={fetchOdc}
-              setInProcess={setInProcess}
+              onProcessing={setInProcess}
             />
           )}
         </Flex>

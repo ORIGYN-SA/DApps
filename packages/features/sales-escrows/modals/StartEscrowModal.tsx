@@ -17,7 +17,7 @@ export type StartEscrowModalProps = {
   open: boolean;
   onClose: any;
   onSuccess: any;
-  setInProcess: (boolean) => void;
+  onProcessing: (boolean) => void;
 };
 
 type FormErrors = {
@@ -31,7 +31,7 @@ export function StartEscrowModal({
   open,
   onClose,
   onSuccess,
-  setInProcess,
+  onProcessing,
 }: StartEscrowModalProps) {
   const debug = useDebug();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
@@ -155,7 +155,7 @@ export function StartEscrowModal({
   const startEscrow = async () => {
     try {
       setIsTransacting(true);
-      setInProcess(true);
+      onProcessing(true);
 
       if (isLoading || isTransacting || !activeWalletProvider || hasErrors() || !validateForm()) {
         debug.log('validation failed');
@@ -279,7 +279,7 @@ export function StartEscrowModal({
       });
     } finally {
       setIsTransacting(false);
-      setInProcess(false);
+      onProcessing(false);
     }
   };
 

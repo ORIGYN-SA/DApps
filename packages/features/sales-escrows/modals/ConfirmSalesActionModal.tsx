@@ -23,13 +23,13 @@ Transition.displayName = 'Transition';
 
 interface ConfirmSalesActionModalProps {
   openConfirmation: boolean;
-  onClose: (confirm: boolean) => void;
+  onClose: () => void;
   currentToken: string;
   action: string;
   escrow?: EscrowRecord;
   offer?: EscrowRecord;
   onSaleCancelled?: () => void;
-  setInProcess?: (boolean) => void;
+  onProcessing?: (boolean) => void;
 }
 
 export const ConfirmSalesActionModal = ({
@@ -40,7 +40,7 @@ export const ConfirmSalesActionModal = ({
   escrow = null,
   offer,
   onSaleCancelled,
-  setInProcess,
+  onProcessing,
 }: ConfirmSalesActionModalProps) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -51,14 +51,14 @@ export const ConfirmSalesActionModal = ({
 
   const _handleClose = async (confirm = false) => {
     if (!confirm) {
-      onClose(false);
+      onClose();
     } else if (isLoading || !actor) {
       return;
     }
     try {
       setIsLoading(true);
       setConfirmed(true);
-      setInProcess?.(true);
+      onProcessing?.(true);
       if (action === 'endSale') {
         const endSaleResponse = await actor.sale_nft_origyn({
           end_sale: currentToken,
@@ -83,7 +83,7 @@ export const ConfirmSalesActionModal = ({
       }
       if (action === 'withdraw') {
         if (!escrow) {
-          return onClose(false);
+          return onClose();
         }
         const withdrawResponse = await actor?.sale_nft_origyn({
           withdraw: {
@@ -115,7 +115,7 @@ export const ConfirmSalesActionModal = ({
 
       if (action === 'reject') {
         if (!escrow) {
-          return onClose(false);
+          return onClose();
         }
         const rejectResponse = await actor?.sale_nft_origyn({
           withdraw: {
@@ -197,9 +197,9 @@ export const ConfirmSalesActionModal = ({
     } catch (e) {
       debug.log(e);
     } finally {
-      setInProcess?.(false);
+      onProcessing?.(false);
       setIsLoading(false);
-      onClose(false);
+      onClose();
     }
   };
 
@@ -208,7 +208,7 @@ export const ConfirmSalesActionModal = ({
   }, [openConfirmation]);
 
   return (
-    <Modal isOpened={openConfirmation} closeModal={() => onClose(false)} size="md">
+    <Modal isOpened={openConfirmation} closeModal={() => onClose()} size="md">
       <Container size="full" padding="48px">
         <h2>
           {action === 'acceptOffer'

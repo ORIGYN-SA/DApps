@@ -48,9 +48,9 @@ const validationSchema = Yup.object({
 interface StartAuctionModalProps {
   currentToken: string;
   open: boolean;
-  onClose: (any) => void;
+  onClose: () => void;
   onSuccess: (any) => Promise<void>;
-  setInProcess: (boolean) => void;
+  onProcessing: (boolean) => void;
 }
 
 export function StartAuctionModal({
@@ -58,7 +58,7 @@ export function StartAuctionModal({
   open,
   onClose,
   onSuccess,
-  setInProcess,
+  onProcessing,
 }: StartAuctionModalProps) {
   const { actor } = React.useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
@@ -80,7 +80,7 @@ export function StartAuctionModal({
   }) => {
     try {
       setInProgress(true);
-      setInProcess(true);
+      onProcessing(true);
       const resp = await actor.market_transfer_nft_origyn({
         token_id: currentToken,
         sales_config: {
@@ -144,7 +144,7 @@ export function StartAuctionModal({
       });
     } finally {
       setInProgress(false);
-      setInProcess(false);
+      onProcessing(false);
     }
   };
 
@@ -178,7 +178,7 @@ export function StartAuctionModal({
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => onClose(false)} size="md">
+      <Modal isOpened={open} closeModal={() => onClose()} size="md">
         <Container size="full" padding="48px">
           {success ? (
             <>
@@ -258,7 +258,7 @@ export function StartAuctionModal({
                     <br />
                     <HR />
                     <Flex align="center" justify="flex-end" gap={16}>
-                      <Button onClick={() => onClose(false)}>Cancel</Button>
+                      <Button onClick={() => onClose()}>Cancel</Button>
                       <Button type="submit">Start</Button>
                     </Flex>
                   </Flex>
