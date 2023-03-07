@@ -114,7 +114,10 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   };
 
   useEffect(() => {
-    getBalances();
+    if (open && actor) {
+      getBalances();
+      totalAmount();
+    }
     totalAmount();
   }, [open, withdrawEscrow, actor]);
 
