@@ -119,7 +119,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
       totalAmount();
     }
     totalAmount();
-  }, [open, withdrawEscrow, actor]);
+  }, [open, actor]);
 
   return (
     <>
