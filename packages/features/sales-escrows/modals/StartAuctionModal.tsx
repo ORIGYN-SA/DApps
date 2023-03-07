@@ -45,7 +45,21 @@ const validationSchema = Yup.object({
     .default(dateNow),
 });
 
-export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }: any) {
+interface StartAuctionModalProps {
+  currentToken: string;
+  open: boolean;
+  onClose: () => void;
+  onSuccess: (any) => Promise<void>;
+  onProcessing: (boolean) => void;
+}
+
+export function StartAuctionModal({
+  currentToken,
+  open,
+  onClose,
+  onSuccess,
+  onProcessing,
+}: StartAuctionModalProps) {
   const { actor } = React.useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
   const [errors, setErrors] = React.useState<any>({});
@@ -56,7 +70,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
   const [success, setSuccess] = React.useState(false);
   const { tokens, activeTokens } = useTokensContext();
 
-  const handleStartAuction = async ({
+  const onStartAuction = async ({
     startPrice,
     buyNowPrice,
     reservePrice,
@@ -64,8 +78,9 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
     endDate,
     token: saleToken,
   }) => {
-    setInProgress(true);
     try {
+      setInProgress(true);
+      onProcessing(true);
       const resp = await actor.market_transfer_nft_origyn({
         token_id: currentToken,
         sales_config: {
@@ -127,8 +142,10 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
           horizontal: 'right',
         },
       });
+    } finally {
+      setInProgress(false);
+      onProcessing(false);
     }
-    setInProgress(false);
   };
 
   const getValidationErrors = (err) => {
@@ -142,12 +159,12 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
 
     return validationErrors;
   };
-  const handleSubmit = (e: any) => {
+  const onSubmit = (e: any) => {
     e.preventDefault();
     validationSchema
       .validate(values, { abortEarly: false })
       .then(() => {
-        handleStartAuction(values);
+        onStartAuction(values);
       })
       .catch(function (e) {
         const errs = getValidationErrors(e);
@@ -161,7 +178,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
+      <Modal isOpened={open} closeModal={() => onClose()} size="md">
         <Container size="full" padding="48px">
           {success ? (
             <>
@@ -172,7 +189,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
               </p>
               <br />
               <Flex justify="flex-end">
-                <Button onClick={handleClose}>Done</Button>
+                <Button onClick={onClose}>Done</Button>
               </Flex>
             </>
           ) : (
@@ -187,7 +204,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
                 <>
                   <h2>Start an Auction</h2>
                   <br />
-                  <Flex as="form" onSubmit={handleSubmit} action="" flexFlow="column" gap={8}>
+                  <Flex as="form" onSubmit={onSubmit} action="" flexFlow="column" gap={8}>
                     <Select
                       label="Token"
                       name="token"
@@ -241,7 +258,7 @@ export function StartAuctionModal({ currentToken, open, handleClose, onSuccess }
                     <br />
                     <HR />
                     <Flex align="center" justify="flex-end" gap={16}>
-                      <Button onClick={() => handleClose(false)}>Cancel</Button>
+                      <Button onClick={() => onClose()}>Cancel</Button>
                       <Button type="submit">Start</Button>
                     </Flex>
                   </Flex>

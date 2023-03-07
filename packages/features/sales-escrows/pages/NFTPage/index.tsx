@@ -48,6 +48,7 @@ export const NFTPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
   const [escrowType, setEscrowType] = React.useState<EscrowType>();
+  const [inProcess, setInProcess] = useState<boolean>(false);
   const { open } = useDialog();
 
   const logout = () => {
@@ -268,6 +269,7 @@ export const NFTPage = () => {
                                       <Button
                                         btnType="accent"
                                         onClick={() => onOpenEscrowModal('BuyNow')}
+                                        disabled={inProcess}
                                       >
                                         Buy Now
                                       </Button>
@@ -279,12 +281,20 @@ export const NFTPage = () => {
 
                                   {principalId === verifyOwner ? (
                                     odc.currentBid == 0 || odc.auctionNotStarted ? (
-                                      <Button btnType="accent" onClick={handleClickOpenEsc}>
+                                      <Button
+                                        btnType="accent"
+                                        onClick={handleClickOpenEsc}
+                                        disabled={inProcess}
+                                      >
                                         Cancel Sale
                                       </Button>
                                     ) : BigInt(Number(nftEndSale || 9 * 1e30)) <
                                       currentTimeInNanos ? (
-                                      <Button btnType="accent" onClick={handleClickOpenEsc}>
+                                      <Button
+                                        btnType="accent"
+                                        onClick={handleClickOpenEsc}
+                                        disabled={inProcess}
+                                      >
                                         Finish Sale
                                       </Button>
                                     ) : (
@@ -297,6 +307,7 @@ export const NFTPage = () => {
                                     <Button
                                       btnType="outlined"
                                       onClick={() => onOpenEscrowModal('Bid')}
+                                      disabled={inProcess}
                                     >
                                       Place Bid
                                     </Button>
@@ -307,11 +318,19 @@ export const NFTPage = () => {
                                   )}
                                 </>
                               ) : principalId === verifyOwner ? (
-                                <Button btnType="accent" onClick={handleClickOpen}>
+                                <Button
+                                  btnType="accent"
+                                  onClick={handleClickOpen}
+                                  disabled={inProcess}
+                                >
                                   Start an Auction
                                 </Button>
                               ) : (
-                                <OffersPanel odc={odc} onOpenEscrowModal={onOpenEscrowModal} />
+                                <OffersPanel
+                                  odc={odc}
+                                  onOpenEscrowModal={onOpenEscrowModal}
+                                  inProcess={inProcess}
+                                />
                               )}
                             </Flex>
                           )}
@@ -405,26 +424,30 @@ export const NFTPage = () => {
           {openConfirmation && (
             <ConfirmSalesActionModal
               openConfirmation={openConfirmation}
-              handleClose={handleClose}
+              onClose={handleClose}
               currentToken={odc?.id}
               action={dialogAction}
+              onSaleCancelled={fetchData}
+              onProcessing={setInProcess}
             />
           )}
           {openAuction && (
             <StartAuctionModal
               open={openAuction}
-              handleClose={handleClose}
+              onClose={handleClose}
               onSuccess={fetchOdc}
               currentToken={odc?.id}
+              onProcessing={setInProcess}
             />
           )}
           {openEscrowModal && (
             <StartEscrowModal
               open={openEscrowModal}
-              handleClose={handleCloseEscrow}
+              onClose={handleCloseEscrow}
               odc={odc}
               escrowType={escrowType}
               onSuccess={fetchOdc}
+              onProcessing={setInProcess}
             />
           )}
         </Flex>

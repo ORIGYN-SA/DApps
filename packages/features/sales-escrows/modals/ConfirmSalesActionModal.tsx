@@ -7,6 +7,8 @@ import { useSnackbar } from 'notistack';
 import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
+import { EscrowReceipt, EscrowRecord } from '@dapp/common-types';
+import { useDebug } from '@dapp/features-debug-provider';
 
 const Transition = React.forwardRef(
   (
@@ -19,25 +21,44 @@ const Transition = React.forwardRef(
 
 Transition.displayName = 'Transition';
 
+interface ConfirmSalesActionModalProps {
+  openConfirmation: boolean;
+  onClose: () => void;
+  currentToken: string;
+  action: string;
+  escrow?: EscrowRecord;
+  offer?: EscrowRecord;
+  onSaleCancelled?: () => void;
+  onProcessing?: (boolean) => void;
+}
+
 export const ConfirmSalesActionModal = ({
   openConfirmation,
-  handleClose,
+  onClose,
   currentToken,
   action,
   escrow = null,
   offer,
-}: any) => {
+  onSaleCancelled,
+  onProcessing,
+}: ConfirmSalesActionModalProps) => {
   const { actor, principal } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
   const { tokens } = useTokensContext();
   const [confirmed, setConfirmed] = useState(false);
+  const debug = useDebug();
 
   const _handleClose = async (confirm = false) => {
-    if (confirm && actor) {
-      if (isLoading) return;
+    if (!confirm) {
+      onClose();
+    } else if (isLoading || !actor) {
+      return;
+    }
+    try {
       setIsLoading(true);
       setConfirmed(true);
+      onProcessing?.(true);
       if (action === 'endSale') {
         const endSaleResponse = await actor.sale_nft_origyn({
           end_sale: currentToken,
@@ -50,8 +71,7 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setIsLoading(false);
-          return handleClose(true);
+          onSaleCancelled();
         }
         enqueueSnackbar(`Error: ${endSaleResponse.err.flag_point}.`, {
           variant: 'error',
@@ -60,12 +80,10 @@ export const ConfirmSalesActionModal = ({
             horizontal: 'right',
           },
         });
-        setIsLoading(false);
-        return handleClose(false);
       }
       if (action === 'withdraw') {
         if (!escrow) {
-          return handleClose(false);
+          return onClose();
         }
         const withdrawResponse = await actor?.sale_nft_origyn({
           withdraw: {
@@ -92,17 +110,12 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setIsLoading(false);
-          return handleClose(true);
         }
-
-        setIsLoading(false);
-        return handleClose(false);
       }
 
       if (action === 'reject') {
         if (!escrow) {
-          return handleClose(false);
+          return onClose();
         }
         const rejectResponse = await actor?.sale_nft_origyn({
           withdraw: {
@@ -128,24 +141,20 @@ export const ConfirmSalesActionModal = ({
               horizontal: 'right',
             },
           });
-          setIsLoading(false);
-          return handleClose(true);
         }
-        setIsLoading(false);
-        return handleClose(false);
       }
 
-      const escrowReceipt = {
-        seller: { principal: offer.seller.principal },
-        buyer: { principal: offer.buyer.principal },
+      const escrowReceipt: EscrowReceipt = {
+        seller: { principal: offer.seller['principal'] },
+        buyer: { principal: offer.buyer['principal'] },
         token_id: currentToken,
         token: {
           ic: {
-            fee: BigInt(tokens[offer.token.ic.symbol]?.fee ?? 200000),
-            decimals: BigInt(tokens[offer.token.ic.symbol]?.decimals ?? 8),
-            canister: Principal.fromText(tokens[offer.token.ic.symbol]?.canisterId),
+            fee: BigInt(tokens[offer.token['ic'].symbol]?.fee ?? 200000),
+            decimals: BigInt(tokens[offer.token['ic'].symbol]?.decimals ?? 8),
+            canister: Principal.fromText(tokens[offer.token['ic'].symbol]?.canisterId),
             standard: { Ledger: null },
-            symbol: offer.token.ic.symbol,
+            symbol: offer.token['ic'].symbol,
           },
         },
         amount: BigInt(offer.amount),
@@ -163,7 +172,7 @@ export const ConfirmSalesActionModal = ({
             token_id: currentToken,
             sales_config: saleReceipt,
           });
-          console.log(acceptOffer.err);
+          debug.log(acceptOffer.err);
           if ('err' in acceptOffer) {
             enqueueSnackbar('There has been an error in accepting the offer', {
               variant: 'error',
@@ -180,17 +189,18 @@ export const ConfirmSalesActionModal = ({
                 horizontal: 'right',
               },
             });
-            setIsLoading(false);
-            return handleClose(true);
           }
-          setIsLoading(false);
-          return handleClose(false);
         } catch (e) {
-          console.log(e);
+          debug.log(e);
         }
       }
+    } catch (e) {
+      debug.log(e);
+    } finally {
+      onProcessing?.(false);
+      setIsLoading(false);
+      onClose();
     }
-    handleClose(false);
   };
 
   useEffect(() => {
@@ -198,7 +208,7 @@ export const ConfirmSalesActionModal = ({
   }, [openConfirmation]);
 
   return (
-    <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
+    <Modal isOpened={openConfirmation} closeModal={() => onClose()} size="md">
       <Container size="full" padding="48px">
         <h2>
           {action === 'acceptOffer'
