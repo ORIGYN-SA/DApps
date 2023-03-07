@@ -161,8 +161,8 @@ function parseAppData(metadataClass: Property[], odc: OdcData): void {
     ),
   );
 
-  const appDataProperties = app?.Class?.find((p: Property) => p.name === 'data')?.value
-    ?.Class as Property[];
+  const appDataProperties = (app?.Class?.find((p: Property) => p.name === 'data')?.value?.Class ||
+    []) as Property[];
 
   let displayProperties: DisplayProperty[] = [{ name: 'Token ID', value: odc.id }];
 
