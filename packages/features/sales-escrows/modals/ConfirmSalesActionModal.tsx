@@ -23,7 +23,7 @@ Transition.displayName = 'Transition';
 
 interface ConfirmSalesActionModalProps {
   openConfirmation: boolean;
-  handleClose: (confirm: boolean) => void;
+  onClose: (confirm: boolean) => void;
   currentToken: string;
   action: string;
   escrow?: EscrowRecord;
@@ -34,7 +34,7 @@ interface ConfirmSalesActionModalProps {
 
 export const ConfirmSalesActionModal = ({
   openConfirmation,
-  handleClose,
+  onClose,
   currentToken,
   action,
   escrow = null,
@@ -50,8 +50,11 @@ export const ConfirmSalesActionModal = ({
   const debug = useDebug();
 
   const _handleClose = async (confirm = false) => {
-    if (!confirm || !actor || isLoading) return;
-
+    if (!confirm) {
+      onClose(false);
+    } else if (isLoading || !actor) {
+      return;
+    }
     try {
       setIsLoading(true);
       setConfirmed(true);
@@ -80,7 +83,7 @@ export const ConfirmSalesActionModal = ({
       }
       if (action === 'withdraw') {
         if (!escrow) {
-          return handleClose(false);
+          return onClose(false);
         }
         const withdrawResponse = await actor?.sale_nft_origyn({
           withdraw: {
@@ -112,7 +115,7 @@ export const ConfirmSalesActionModal = ({
 
       if (action === 'reject') {
         if (!escrow) {
-          return handleClose(false);
+          return onClose(false);
         }
         const rejectResponse = await actor?.sale_nft_origyn({
           withdraw: {
@@ -191,13 +194,12 @@ export const ConfirmSalesActionModal = ({
           debug.log(e);
         }
       }
-      handleClose(false);
     } catch (e) {
       debug.log(e);
     } finally {
       setInProcess?.(false);
       setIsLoading(false);
-      handleClose(false);
+      onClose(false);
     }
   };
 
@@ -206,7 +208,7 @@ export const ConfirmSalesActionModal = ({
   }, [openConfirmation]);
 
   return (
-    <Modal isOpened={openConfirmation} closeModal={() => handleClose(false)} size="md">
+    <Modal isOpened={openConfirmation} closeModal={() => onClose(false)} size="md">
       <Container size="full" padding="48px">
         <h2>
           {action === 'acceptOffer'

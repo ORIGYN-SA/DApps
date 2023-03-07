@@ -180,7 +180,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
 
       <ConfirmSalesActionModal
         openConfirmation={openConfirmation}
-        handleClose={handleCloseConf}
+        onClose={handleCloseConf}
         currentToken={selectdNFT}
         action={dialogAction}
         escrow={selectedEscrow}

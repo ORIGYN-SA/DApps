@@ -48,7 +48,7 @@ const validationSchema = Yup.object({
 interface StartAuctionModalProps {
   currentToken: string;
   open: boolean;
-  handleClose: (any) => void;
+  onClose: (any) => void;
   onSuccess: (any) => Promise<void>;
   setInProcess: (any) => void;
 }
@@ -56,7 +56,7 @@ interface StartAuctionModalProps {
 export function StartAuctionModal({
   currentToken,
   open,
-  handleClose,
+  onClose,
   onSuccess,
   setInProcess,
 }: StartAuctionModalProps) {
@@ -70,7 +70,7 @@ export function StartAuctionModal({
   const [success, setSuccess] = React.useState(false);
   const { tokens, activeTokens } = useTokensContext();
 
-  const handleStartAuction = async ({
+  const onStartAuction = async ({
     startPrice,
     buyNowPrice,
     reservePrice,
@@ -159,12 +159,12 @@ export function StartAuctionModal({
 
     return validationErrors;
   };
-  const handleSubmit = (e: any) => {
+  const onSubmit = (e: any) => {
     e.preventDefault();
     validationSchema
       .validate(values, { abortEarly: false })
       .then(() => {
-        handleStartAuction(values);
+        onStartAuction(values);
       })
       .catch(function (e) {
         const errs = getValidationErrors(e);
@@ -178,7 +178,7 @@ export function StartAuctionModal({
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
+      <Modal isOpened={open} closeModal={() => onClose(false)} size="md">
         <Container size="full" padding="48px">
           {success ? (
             <>
@@ -189,7 +189,7 @@ export function StartAuctionModal({
               </p>
               <br />
               <Flex justify="flex-end">
-                <Button onClick={handleClose}>Done</Button>
+                <Button onClick={onClose}>Done</Button>
               </Flex>
             </>
           ) : (
@@ -204,7 +204,7 @@ export function StartAuctionModal({
                 <>
                   <h2>Start an Auction</h2>
                   <br />
-                  <Flex as="form" onSubmit={handleSubmit} action="" flexFlow="column" gap={8}>
+                  <Flex as="form" onSubmit={onSubmit} action="" flexFlow="column" gap={8}>
                     <Select
                       label="Token"
                       name="token"
@@ -258,7 +258,7 @@ export function StartAuctionModal({
                     <br />
                     <HR />
                     <Flex align="center" justify="flex-end" gap={16}>
-                      <Button onClick={() => handleClose(false)}>Cancel</Button>
+                      <Button onClick={() => onClose(false)}>Cancel</Button>
                       <Button type="submit">Start</Button>
                     </Flex>
                   </Flex>

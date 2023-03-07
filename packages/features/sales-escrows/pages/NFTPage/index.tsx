@@ -424,7 +424,7 @@ export const NFTPage = () => {
           {openConfirmation && (
             <ConfirmSalesActionModal
               openConfirmation={openConfirmation}
-              handleClose={handleClose}
+              onClose={handleClose}
               currentToken={odc?.id}
               action={dialogAction}
               onSaleCancelled={fetchData}
@@ -443,7 +443,7 @@ export const NFTPage = () => {
           {openEscrowModal && (
             <StartEscrowModal
               open={openEscrowModal}
-              handleClose={handleCloseEscrow}
+              onClose={handleCloseEscrow}
               odc={odc}
               escrowType={escrowType}
               onSuccess={fetchOdc}
