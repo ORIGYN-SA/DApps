@@ -43,9 +43,9 @@ export function StartEscrowModal({
   const [success, setSuccess] = React.useState(false);
 
   const [token, setToken] = React.useState<Token>();
-  const [amount, setAmount] = React.useState<number>(0);
-  const [total, setTotal] = React.useState<number>(0);
-  const [minBid, setMinBid] = React.useState<number>(0);
+  const [enteredAmount, setEnteredAmount] = React.useState('');
+  const [total, setTotal] = React.useState(0);
+  const [minBid, setMinBid] = React.useState(0);
 
   const [formErrors, setFormErrors] = React.useState<FormErrors>({
     amount: '',
@@ -65,18 +65,18 @@ export function StartEscrowModal({
         minAmount = odc.startPrice;
       }
 
-      const amount = toLargerUnit(minAmount, Number(odc.token.decimals));
-      const token = tokens[odc.token.symbol];
-      const total = getTotal(amount, token);
-      const minBid = toLargerUnit(
+      const initialAmount = toLargerUnit(minAmount, Number(odc.token.decimals));
+      const initialToken = tokens[odc.token.symbol];
+      const initialTotal = getTotal(initialAmount, initialToken);
+      const initialMinBid = toLargerUnit(
         odc.currentBid + Number(odc.minIncreaseAmount),
         Number(odc.token.decimals),
       );
 
-      setToken(token);
-      setAmount(amount);
-      setTotal(total);
-      setMinBid(minBid);
+      setToken(initialToken);
+      setEnteredAmount(initialAmount.toString());
+      setTotal(initialTotal);
+      setMinBid(initialMinBid);
 
       setIsLoading(false);
     }
@@ -84,24 +84,31 @@ export function StartEscrowModal({
 
   const onTokenChanged = (tokenSymbol?: any) => {
     const newToken = tokens[tokenSymbol];
-    const newTotal = getTotal(amount, newToken);
+    const newTotal = getTotal(Number(enteredAmount), newToken);
 
     setToken(newToken);
     setTotal(newTotal);
     setFormErrors({ ...formErrors, token: undefined, amount: undefined });
   };
 
-  const onAmountChanged = (enteredAmount: string) => {
-    let amount = 0;
-    let isValid = true;
+  const isValidAmount = (enteredAmount: string) => {
     if (enteredAmount.trim()) {
-      isValid = enteredAmount.trim() && isPositiveFloat(enteredAmount.trim());
-      amount = isValid ? parseFloat(enteredAmount) : 0;
+      return enteredAmount.trim() && isPositiveFloat(enteredAmount.trim());
     }
+    return true;
+  };
 
-    if (isValid) {
-      const newTotal = getTotal(amount, token);
-      setAmount(amount);
+  const onAmountChanged = (enteredAmount: string) => {
+    let newAmount = 0;
+
+    if (isValidAmount(enteredAmount)) {
+      setEnteredAmount(enteredAmount);
+
+      if (enteredAmount.trim().length) {
+        newAmount = parseFloat(enteredAmount.trim());
+      }
+
+      const newTotal = getTotal(newAmount, token);
       setTotal(newTotal);
       setFormErrors({ ...formErrors, amount: undefined });
     } else {
@@ -109,8 +116,9 @@ export function StartEscrowModal({
     }
   };
 
-  const getTotal = (amount: number, token: Token) => {
-    return toLargerUnit(toSmallerUnit(amount, token.decimals) + token.fee, token.decimals);
+  const getTotal = (amount: number, token: Token): number => {
+    const feeLargeUnit = toLargerUnit(token.fee, token.decimals);
+    return Number((amount + feeLargeUnit).toFixed(token.decimals));
   };
 
   const hasErrors = (): boolean => {
@@ -121,9 +129,13 @@ export function StartEscrowModal({
     let errors = { amount: '', token: undefined };
     const fee = toLargerUnit(token.fee, token.decimals);
 
-    if (isNaN(amount)) {
+    if (!isValidAmount(enteredAmount)) {
       errors = { ...errors, amount: `${escrowType} must be a number` };
-    } else if (amount <= 0) {
+      return false;
+    }
+
+    const amount = Number(enteredAmount.trim());
+    if (amount <= 0) {
       errors = { ...errors, amount: `${escrowType} must be greater than 0` };
     } else if (escrowType === 'Offer' && amount <= fee) {
       errors = {
@@ -152,8 +164,11 @@ export function StartEscrowModal({
     return true;
   };
 
-  const startEscrow = async () => {
+  const sendEscrow = async () => {
     try {
+      const totalEscrow = toSmallerUnit(total, token.decimals);
+      debug.log('total escrow amount with fee', totalEscrow);
+
       setIsTransacting(true);
       onProcessing(true);
 
@@ -186,14 +201,12 @@ export function StartEscrowModal({
         activeWalletProvider,
         token,
         account_id,
-        toSmallerUnit(total, token.decimals),
+        totalEscrow,
       );
 
       if (transactionHeight.err) {
         throw Error(transactionHeight.err);
       }
-
-      const totalAmount = toSmallerUnit(total, token.decimals);
 
       const escrowData = {
         token_id: odc.id,
@@ -210,7 +223,7 @@ export function StartEscrowModal({
           trx_id: [{ nat: BigInt(transactionHeight.ok) }],
           seller: { principal: Principal.fromText(odc.ownerPrincipalId) },
           buyer: { principal },
-          amount: BigInt(totalAmount),
+          amount: totalEscrow,
           sale_id: odc.saleId ? [odc.saleId] : [],
         },
         lock_to_date: [],
@@ -292,7 +305,7 @@ export function StartEscrowModal({
 
   const onFormSubmitted = async (e: any) => {
     e.preventDefault();
-    startEscrow();
+    sendEscrow();
   };
 
   return (
@@ -365,6 +378,7 @@ export function StartEscrowModal({
                             name="offerPrice"
                             error={formErrors.amount}
                             onChange={(e) => onAmountChanged(e.target.value)}
+                            value={enteredAmount}
                           />
                         </>
                       )}
