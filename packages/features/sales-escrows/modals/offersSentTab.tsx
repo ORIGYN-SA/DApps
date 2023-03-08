@@ -3,6 +3,7 @@ import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { Button, HR, theme, Modal, Container, Flex } from '@origyn-sa/origyn-art-ui';
 import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
+import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
 import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
@@ -38,6 +39,7 @@ interface SentOffersProps extends OdcDataWithSale {
 
 export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) => {
   const debug = useDebug();
+  const { refreshAllBalances } = useTokensContext();
   const { actor, principal } = useContext(AuthContext);
   const [offerSentWithSaleData, setOffersSentWithSaleData] = useState<SentOffersProps[]>([]);
   const [offersSent, setOffersSent] = useState<EscrowRecord[]>([]);
@@ -115,6 +117,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     } catch (e) {
       debug.log(e);
     } finally {
+      refreshAllBalances(false, principal);
       setIsLoading(false);
       getOffersSentBalance();
       onModalClose();
