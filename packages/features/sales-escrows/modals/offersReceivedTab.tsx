@@ -72,7 +72,7 @@ export const OffersReceivedTab = ({
 
   return (
     <>
-      {offers.length > 0 ? (
+      {offers?.length > 0 ? (
         <div>
           <HR marginTop={16} marginBottom={16} />
           <div style={styles.gridContainer}>

@@ -69,7 +69,7 @@ export const BidsReceivedTab = ({
 
   return (
     <>
-      {bidsReceived.length > 0 ? (
+      {bidsReceived?.length > 0 ? (
         <div>
           <HR marginTop={16} marginBottom={16} />
           <div style={styles.gridContainer}>

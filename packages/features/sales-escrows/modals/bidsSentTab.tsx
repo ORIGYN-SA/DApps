@@ -73,7 +73,7 @@ export const BidsSentTab = ({ bidsSent: bidsSent, collection, canisterId }: Bids
   }, []);
   return (
     <>
-      {bidsSent.length > 0 ? (
+      {bidsSent?.length > 0 ? (
         <div>
           <HR marginTop={16} marginBottom={16} />
           <div style={styles.gridContainer}>
