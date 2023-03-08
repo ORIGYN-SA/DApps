@@ -283,11 +283,11 @@ export function StartEscrowModal({
     }
   };
 
-  const onCustomClose = () => {
+  const onCustomClose = (value: any) => {
     setIsLoading(false);
     setIsTransacting(false);
     setSuccess(false);
-    onClose(false);
+    onClose(value);
   };
 
   const onFormSubmitted = async (e: any) => {
@@ -297,7 +297,7 @@ export function StartEscrowModal({
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => onCustomClose()} size="md">
+      <Modal isOpened={open} closeModal={() => onCustomClose(false)} size="md">
         <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
           {success ? (
             <>
