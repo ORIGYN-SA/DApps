@@ -79,13 +79,13 @@ const defaultTokensMapped = () => {
   return defaultTokensMapped;
 };
 
-const localStorageTokens = () => {
-  const localStorageTokens = localStorage.getItem('tokensContext');
-  if (!localStorageTokens) return undefined;
+// const localStorageTokens = () => {
+//   const localStorageTokens = localStorage.getItem('tokensContext');
+//   if (!localStorageTokens) return undefined;
 
-  return JSONBig.parse(localStorageTokens ?? '');
-};
-const initialTokens = localStorageTokens() ?? defaultTokensMapped();
+//   return JSONBig.parse(localStorageTokens ?? '');
+// };
+const initialTokens = defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
@@ -128,7 +128,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     const _tokens = tokens;
     _tokens[token.symbol] = token;
     setTokens(_tokens);
-    localStorage.setItem('tokensContext', JSONBig.stringify(_tokens));
+    // localStorage.setItem('tokensContext', JSONBig.stringify(_tokens));
     return token;
   };
 
@@ -186,9 +186,9 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
   };
 
-  useEffect(() => {
-    localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
-  }, [tokens]);
+  // useEffect(() => {
+  //   localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
+  // }, [tokens]);
 
   return (
     <TokensContext.Provider
