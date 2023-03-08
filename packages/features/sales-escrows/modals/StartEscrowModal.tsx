@@ -15,7 +15,7 @@ export type StartEscrowModalProps = {
   odc: OdcDataWithSale;
   escrowType: EscrowType;
   open: boolean;
-  onClose: any;
+  onClose: (any) => void;
   onSuccess: any;
   onProcessing: (boolean) => void;
 };
@@ -297,7 +297,7 @@ export function StartEscrowModal({
 
   return (
     <div>
-      <Modal isOpened={open} closeModal={() => onCustomClose} size="md">
+      <Modal isOpened={open} closeModal={() => onClose(false)} size="md">
         <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
           {success ? (
             <>
