@@ -6,7 +6,7 @@ import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord } from '@dapp/common-types';
+import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
 
 const styles = {
   gridContainer: {
@@ -24,7 +24,6 @@ const styles = {
 };
 
 interface BidsSentTabProps {
-  bidsSent: EscrowRecord[];
   collection: any;
   canisterId: string;
 }
@@ -34,10 +33,11 @@ interface SentActiveBidsProps extends OdcDataWithSale {
   symbol: string;
 }
 
-export const BidsSentTab = ({ bidsSent: bidsSent, collection, canisterId }: BidsSentTabProps) => {
-  const { actor } = useContext(AuthContext);
+export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const debug = useDebug();
+  const { actor, principal } = useContext(AuthContext);
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
+  const [bidsSent, setBidsSent] = useState<EscrowRecord[]>(); // [
   const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
 
   const parseBids = async () => {
@@ -68,9 +68,37 @@ export const BidsSentTab = ({ bidsSent: bidsSent, collection, canisterId }: Bids
     }
   };
 
+  const getSentBidBalance = async () => {
+    try {
+      const response = await actor.balance_of_nft_origyn({ principal });
+      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
+      debug.log(JSON.stringify(response, null, 2));
+      if ('err' in response) {
+        const error: OrigynError = response.err;
+        debug.log('error', error);
+        return;
+      } else {
+        const balanceResponse: BalanceResponse = response.ok;
+        const sentEscrows = await balanceResponse.escrow;
+        const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
+
+        setBidsSent(bidsSent);
+      }
+    } catch (e) {
+      debug.log('error', e);
+    }
+  };
+
   useEffect(() => {
-    parseBids();
+    getSentBidBalance();
   }, []);
+
+  useEffect(() => {
+    if (bidsSent?.length) {
+      parseBids();
+    }
+  }, [bidsSent]);
+
   return (
     <>
       {bidsSent?.length > 0 ? (

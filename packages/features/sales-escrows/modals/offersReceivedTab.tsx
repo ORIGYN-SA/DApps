@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { Button, HR, theme } from '@origyn-sa/origyn-art-ui';
+import { useTokensContext } from '@dapp/features-tokens-provider';
+import { Button, HR, theme, Modal, Flex, Container } from '@origyn-sa/origyn-art-ui';
 import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { EscrowRecord } from '@dapp/common-types';
+import { EscrowRecord, EscrowReceipt, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { LoadingContainer } from '@dapp/features-components';
+import { useSnackbar } from 'notistack';
+import { useDebug } from '@dapp/features-debug-provider';
+import { Principal } from '@dfinity/principal';
 
 const styles = {
   gridContainer: {
@@ -22,31 +27,65 @@ const styles = {
 };
 
 interface OffersTabProps {
-  offersReceived: EscrowRecord[];
   collection: any;
   canisterId: string;
-  handleClickOpen: (esc: any, token_id: any) => void;
-  handleClickOpenRej: (esc: any) => void;
 }
 
 interface ReceivedOffersProps extends OdcDataWithSale {
   token_id: string;
   amount: string;
   symbol: string;
+  escrow_record: EscrowRecord;
 }
 
-export const OffersReceivedTab = ({
-  offersReceived: offers,
-  collection,
-  canisterId,
-  handleClickOpen,
-  handleClickOpenRej,
-}: OffersTabProps) => {
-  const { actor } = useContext(AuthContext);
-  const [receivedOffers, setReceivedOffers] = useState<ReceivedOffersProps[]>([]);
+type ActionType = 'accept' | 'reject';
+
+export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
+  const debug = useDebug();
+  const { actor, principal } = useContext(AuthContext);
+  const { tokens } = useTokensContext();
+  const [offersReceived, setOffersReceived] = useState<EscrowRecord[]>([]);
+  const [parsedOffersReceived, setParsedOffersReceived] = useState<ReceivedOffersProps[]>([]);
+  const [selectedOffer, setSelectedOffer] = React.useState<EscrowRecord>();
+  const [actionType, setActionType] = React.useState<ActionType>();
+  const [openModal, setOpenModal] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { enqueueSnackbar } = useSnackbar() || {};
+
+  const onOfferSelected = (offer: EscrowRecord, action: ActionType) => {
+    setActionType(action);
+    setSelectedOffer(offer);
+    setOpenModal(true);
+  };
+
+  const onModalClose = () => {
+    setOpenModal(false);
+  };
+
+  const getOffersReceivedBalance = async () => {
+    try {
+      const response = await actor.balance_of_nft_origyn({ principal });
+      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
+      debug.log(JSON.stringify(response, null, 2));
+      if ('err' in response) {
+        const error: OrigynError = response.err;
+        debug.log('error', error);
+        return;
+      } else {
+        const balanceResponse: BalanceResponse = response.ok;
+        const offersAndBidsReceived = await balanceResponse.offers;
+        const offersReceived = offersAndBidsReceived?.filter(
+          (element) => element.sale_id.length === 0,
+        );
+        setOffersReceived(offersReceived);
+      }
+    } catch (e) {
+      debug.log('error', e);
+    }
+  };
 
   const parseOffers = async () => {
-    const tokenIds = offers.map((offer) => offer.token_id);
+    const tokenIds = offersReceived.map((offer) => offer.token_id);
     const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
 
     if (odcDataRaw.err) {
@@ -55,28 +94,122 @@ export const OffersReceivedTab = ({
 
     const parsedOdcs = parseOdcs(odcDataRaw);
     parsedOdcs.map((odc: OdcDataWithSale, index) => {
-      const offer = offers[index];
+      const offer = offersReceived[index];
       let sentOffer: ReceivedOffersProps = {
         ...odc,
         token_id: offer.token_id,
         amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
         symbol: offer.token['ic'].symbol,
+        escrow_record: offer,
       };
-      setReceivedOffers((prev) => [...prev, sentOffer]);
+      setParsedOffersReceived((prev) => [...prev, sentOffer]);
     });
   };
 
+  const onConfirmOfferAcceptOrReject = async (offer: EscrowRecord, action: ActionType) => {
+    try {
+      setIsLoading(true);
+      if (!offer) {
+        return onModalClose();
+      }
+      if (action == 'reject') {
+        const rejectResponse = await actor?.sale_nft_origyn({
+          withdraw: {
+            reject: {
+              ...offer,
+            },
+          },
+        });
+
+        if ('err' in rejectResponse) {
+          enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
+          enqueueSnackbar('The escrow has been rejected.', {
+            variant: 'success',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        }
+      }
+      if (action == 'accept') {
+        const escrowReceipt: EscrowReceipt = {
+          seller: { principal: offer.seller['principal'] },
+          buyer: { principal: offer.buyer['principal'] },
+          token_id: offer.token_id,
+          token: {
+            ic: {
+              fee: BigInt(tokens[offer.token['ic'].symbol]?.fee ?? 200000),
+              decimals: BigInt(tokens[offer.token['ic'].symbol]?.decimals ?? 8),
+              canister: Principal.fromText(tokens[offer.token['ic'].symbol]?.canisterId),
+              standard: { Ledger: null },
+              symbol: offer.token['ic'].symbol,
+            },
+          },
+          amount: BigInt(offer.amount),
+        };
+
+        const saleReceipt = {
+          broker_id: [],
+          pricing: { instant: null },
+          escrow_receipt: [escrowReceipt],
+        };
+        const acceptOffer = await actor.market_transfer_nft_origyn({
+          token_id: offer.token_id,
+          sales_config: saleReceipt,
+        });
+        debug.log(acceptOffer.err);
+        if ('err' in acceptOffer) {
+          enqueueSnackbar('There has been an error in accepting the offer', {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        } else {
+          enqueueSnackbar('The offer has been accepted.', {
+            variant: 'success',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+          });
+        }
+      }
+    } catch (e) {
+      debug.log(e);
+    } finally {
+      setIsLoading(false);
+      getOffersReceivedBalance();
+      onModalClose();
+    }
+  };
+
   useEffect(() => {
-    parseOffers();
+    getOffersReceivedBalance();
   }, []);
+
+  useEffect(() => {
+    if (offersReceived?.length > 0) {
+      parseOffers();
+    }
+  }, [offersReceived]);
 
   return (
     <>
-      {offers?.length > 0 ? (
+      {offersReceived?.length > 0 ? (
         <div>
           <HR marginTop={16} marginBottom={16} />
           <div style={styles.gridContainer}>
-            {receivedOffers.map((offer: ReceivedOffersProps) => (
+            {parsedOffersReceived.map((offer: ReceivedOffersProps) => (
               <>
                 <div style={styles.gridItem}>
                   {offer.hasPreviewAsset ? (
@@ -103,13 +236,17 @@ export const OffersReceivedTab = ({
                   <Button
                     btnType="filled"
                     size="small"
-                    onClick={() => handleClickOpen(offer, offer.token_id)}
+                    onClick={() => onOfferSelected(offer.escrow_record, 'accept')}
                   >
                     Accept
                   </Button>
                 </div>
                 <div style={styles.gridItem}>
-                  <Button btnType="outlined" size="small" onClick={() => handleClickOpenRej(offer)}>
+                  <Button
+                    btnType="outlined"
+                    size="small"
+                    onClick={() => onOfferSelected(offer.escrow_record, 'reject')}
+                  >
                     Reject
                   </Button>
                 </div>
@@ -125,6 +262,43 @@ export const OffersReceivedTab = ({
           </p>
         </>
       )}
+      <Modal isOpened={openModal} closeModal={() => onModalClose} size="md">
+        <Container size="full" padding="48px">
+          <h2>Confirm offer {actionType === 'accept' ? 'accept' : 'reject'}</h2>
+          <br />
+          <Flex flexFlow="column">
+            {
+              <p>
+                Are you sure you want to {actionType == 'accept' ? 'accept' : 'reject'} the offer
+                for <b>Token:</b> {selectedOffer?.token_id}
+              </p>
+            }
+          </Flex>
+          <HR marginTop={24} marginBottom={24} />
+          <Flex flow="row" justify="flex-end" gap={16}>
+            <Flex>
+              <Button onClick={() => onModalClose()} disabled={isLoading}>
+                Cancel
+              </Button>
+            </Flex>
+            <Flex>
+              <Button
+                onClick={() => onConfirmOfferAcceptOrReject(selectedOffer, actionType)}
+                variant="contained"
+                disabled={isLoading}
+              >
+                Confirm
+              </Button>
+            </Flex>
+          </Flex>
+          {isLoading && (
+            <>
+              <HR marginTop={24} marginBottom={24} />
+              <LoadingContainer />
+            </>
+          )}
+        </Container>
+      </Modal>
     </>
   );
 };
