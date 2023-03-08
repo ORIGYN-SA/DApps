@@ -261,7 +261,7 @@ const Marketplace = () => {
                                   >
                                     {odc.hasPreviewAsset ? (
                                       <Image
-                                        style={{ width: 200 }}
+                                        style={{ width: '100%' }}
                                         src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                         alt=""
                                       />
