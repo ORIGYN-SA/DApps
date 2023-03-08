@@ -283,7 +283,7 @@ export function StartEscrowModal({
     }
   };
 
-  const onCustomClose = (value: any) => {
+  const onCustomClose = (value: boolean) => {
     setIsLoading(false);
     setIsTransacting(false);
     setSuccess(false);
