@@ -1,7 +1,6 @@
 import { IdlStandard } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
-import JSONBig from 'json-bigint';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
 import { timeConverter } from '@dapp/utils';
