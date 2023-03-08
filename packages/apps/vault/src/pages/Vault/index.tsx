@@ -6,7 +6,7 @@ import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
-import { useTokensContext } from '@dapp/features-tokens-provider';
+import { useTokensContext, Token } from '@dapp/features-tokens-provider';
 import { copyToClipboard, toLargerUnit, parseMetadata, parseOdcs } from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
@@ -419,7 +419,7 @@ const VaultPage = () => {
                       >
                         <h6>Wallet Balances</h6>
                         <HR />
-                        {Object.values(activeTokens)?.map((k, i) => (
+                        {Object.values(activeTokens)?.map((token: Token, i) => (
                           <StyledBlackItemCard
                             key={i}
                             align="center"
@@ -427,13 +427,13 @@ const VaultPage = () => {
                             justify="space-between"
                           >
                             <Flex gap={8}>
-                              <TokenIcon symbol={k.icon} />
-                              {k.symbol}
+                              <TokenIcon symbol={token.icon} />
+                              {token.symbol}
                             </Flex>
                             <Flex flexFlow="column" align="flex-end">
                               <p>
                                 <b>
-                                  {k.balance} {k.symbol}
+                                  {token.balance} {token.symbol}
                                 </b>
                               </p>
                             </Flex>

@@ -5,55 +5,63 @@ import { getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-pro
 import { Principal } from '@dfinity/principal';
 import { useSnackbar } from 'notistack';
 import { LoadingContainer } from '@dapp/features-components';
+import { useDebug } from '@dapp/features-debug-provider';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const { principal, actor } = useContext(AuthContext);
+  const debug = useDebug();
   //const [depositPrincipal, setDepositPrincipal] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const [tokenBalances, setTokenBalances] = useState<any>({});
-  const { activeTokens } = useTokensContext();
+  const { activeTokens, refreshAllBalances } = useTokensContext();
 
   const withdraw = async (token) => {
-    setIsLoading(true);
-    const withdrawResp = await actor.sale_nft_origyn({
-      withdraw: {
-        deposit: {
-          token: {
-            ic: {
-              fee: activeTokens[token]?.fee,
-              decimals: activeTokens[token]?.decimals,
-              canister: Principal.fromText(activeTokens[token]?.canisterId),
-              standard: { Ledger: null },
-              symbol: activeTokens[token]?.symbol,
+    try {
+      setIsLoading(true);
+      const withdrawResp = await actor.sale_nft_origyn({
+        withdraw: {
+          deposit: {
+            token: {
+              ic: {
+                fee: activeTokens[token]?.fee,
+                decimals: activeTokens[token]?.decimals,
+                canister: Principal.fromText(activeTokens[token]?.canisterId),
+                standard: { Ledger: null },
+                symbol: activeTokens[token]?.symbol,
+              },
             },
+            withdraw_to: { principal },
+            buyer: { principal },
+            amount: BigInt(tokenBalances[token].value),
           },
-          withdraw_to: { principal },
-          buyer: { principal },
-          amount: BigInt(tokenBalances[token].value),
-        },
-      },
-    });
-    if ('err' in withdrawResp) {
-      enqueueSnackbar('Failed to withdraw', {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
         },
       });
-    } else {
-      enqueueSnackbar('Succesfully withdrawned', {
-        variant: 'success',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      if ('err' in withdrawResp) {
+        enqueueSnackbar('Failed to withdraw', {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      } else {
+        enqueueSnackbar('Succesfully withdrawned', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
+    } catch (e) {
+      debug.log(e);
+    } finally {
+      setIsLoading(false);
+      await getBalances();
+      refreshAllBalances(false, principal);
     }
-    await getBalances();
-    setIsLoading(false);
   };
 
   const getBalances = async () => {
