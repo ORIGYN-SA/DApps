@@ -5,7 +5,8 @@ import { AuthContext } from '@dapp/features-authentication';
 import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { EscrowRecord } from '@dapp/common-types';
+import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { useDebug } from '@dapp/features-debug-provider';
 
 const styles = {
   gridContainer: {
@@ -23,7 +24,6 @@ const styles = {
 };
 
 interface OffersTabProps {
-  bidsReceived: EscrowRecord[];
   collection: any;
   canisterId: string;
 }
@@ -32,13 +32,11 @@ interface ReceivedActiveBidsProps extends OdcDataWithSale {
   token_id: string;
 }
 
-export const BidsReceivedTab = ({
-  bidsReceived: bidsReceived,
-  collection,
-  canisterId,
-}: OffersTabProps) => {
-  const { actor } = useContext(AuthContext);
+export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
+  const { actor, principal } = useContext(AuthContext);
+  const debug = useDebug();
   const [receivedActivedBids, setReceivedActiveBids] = useState<ReceivedActiveBidsProps[]>([]);
+  const [bidsReceived, setBidsReceived] = useState<EscrowRecord[]>([]);
   const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
 
   const parseBids = async () => {
@@ -63,9 +61,35 @@ export const BidsReceivedTab = ({
     });
   };
 
+  const getBidsReceivedBalance = async () => {
+    try {
+      const response = await actor.balance_of_nft_origyn({ principal });
+      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
+      debug.log(JSON.stringify(response, null, 2));
+      if ('err' in response) {
+        const error: OrigynError = response.err;
+        debug.log('error', error);
+        return;
+      } else {
+        const balanceResponse: BalanceResponse = response.ok;
+        const offersAndBidsReceived = await balanceResponse.offers;
+        const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
+        setBidsReceived(bidsReceived);
+      }
+    } catch (e) {
+      debug.log('error', e);
+    }
+  };
+
   useEffect(() => {
-    parseBids();
+    getBidsReceivedBalance();
   }, []);
+
+  useEffect(() => {
+    if (bidsReceived?.length) {
+      parseBids();
+    }
+  }, [bidsReceived]);
 
   return (
     <>

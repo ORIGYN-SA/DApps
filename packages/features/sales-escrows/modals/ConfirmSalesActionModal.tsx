@@ -4,7 +4,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useSnackbar } from 'notistack';
-import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
+import { Container, Flex, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
 import { EscrowReceipt, EscrowRecord } from '@dapp/common-types';
@@ -235,18 +235,24 @@ export const ConfirmSalesActionModal = ({
             <>Are you sure you want to reject the escrow?</>
           )}
         </Flex>
-        <Flex flow="row" justify="flex-end">
-          <Button onClick={() => _handleClose(false)} disabled={confirmed}>
-            Cancel
-          </Button>
-          <Button onClick={() => _handleClose(true)} variant="contained" disabled={confirmed}>
-            Confirm
-          </Button>
+        <HR marginTop={24} marginBottom={24} />
+        <Flex flow="row" justify="flex-end" gap={16}>
+          <Flex>
+            <Button onClick={() => _handleClose(false)} disabled={confirmed}>
+              Cancel
+            </Button>
+          </Flex>
+          <Flex>
+            <Button onClick={() => _handleClose(true)} variant="contained" disabled={confirmed}>
+              Confirm
+            </Button>
+          </Flex>
         </Flex>
         {isLoading && (
-          <div style={{ marginTop: 5 }}>
+          <>
+            <HR marginTop={24} marginBottom={24} />
             <LoadingContainer />
-          </div>
+          </>
         )}
       </Container>
     </Modal>
