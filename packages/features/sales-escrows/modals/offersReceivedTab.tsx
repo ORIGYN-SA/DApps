@@ -233,13 +233,19 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                   {offer.amount}
                 </div>
                 <div style={styles.gridItem}>
-                  <Button
-                    btnType="filled"
-                    size="small"
-                    onClick={() => onOfferSelected(offer.escrow_record, 'accept')}
-                  >
-                    Accept
-                  </Button>
+                  {offer.ownerPrincipalId === principal.toText() ? (
+                    <Button
+                      btnType="filled"
+                      size="small"
+                      onClick={() => onOfferSelected(offer.escrow_record, 'accept')}
+                    >
+                      Accept
+                    </Button>
+                  ) : (
+                    <Button btnType="filled" size="small" disabled={true}>
+                      Accept
+                    </Button>
+                  )}
                 </div>
                 <div style={styles.gridItem}>
                   <Button
