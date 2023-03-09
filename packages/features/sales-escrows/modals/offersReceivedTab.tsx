@@ -36,6 +36,7 @@ interface ReceivedOffersProps extends OdcDataWithSale {
   amount: string;
   symbol: string;
   escrow_record: EscrowRecord;
+  isNftOwner: boolean;
 }
 
 type ActionType = 'accept' | 'reject';
@@ -101,6 +102,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
         symbol: offer.token['ic'].symbol,
         escrow_record: offer,
+        isNftOwner: odc.ownerPrincipalId === principal?.toText(),
       };
     });
     setParsedOffersReceived(parsedOffersReceived);
@@ -237,6 +239,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                     btnType="filled"
                     size="small"
                     onClick={() => onOfferSelected(offer.escrow_record, 'accept')}
+                    disabled={offer.isNftOwner}
                   >
                     Accept
                   </Button>
