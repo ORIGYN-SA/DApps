@@ -81,7 +81,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
         const balanceResponse: BalanceResponse = response.ok;
         const sentEscrows = balanceResponse.escrow;
         const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
-
+        debug.log('bidsSent', bidsSent);
         setBidsSent(bidsSent);
       }
     } catch (e) {
@@ -101,7 +101,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
 
   return (
     <>
-      {bidsSent?.length > 0 ? (
+      {sentActivedBids?.length > 0 ? (
         <div>
           <HR marginTop={16} marginBottom={16} />
           <div style={styles.gridContainer}>
