@@ -24,7 +24,7 @@ export const toLargerUnit = (num: number, decimals: number): number => {
   }
 
   if (decimals === 0) {
-    num;
+    return num;
   }
 
   const result = new BigNumber(num.toString())
@@ -42,7 +42,7 @@ export const toSmallerUnit = (num: number, decimals: number): number => {
   }
 
   if (decimals === 0) {
-    num;
+    return num;
   }
 
   const result = new BigNumber(num.toString())
