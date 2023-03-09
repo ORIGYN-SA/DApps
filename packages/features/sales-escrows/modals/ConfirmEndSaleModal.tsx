@@ -73,6 +73,13 @@ export const ConfirmEndSaleModal = ({
       }
     } catch (e) {
       debug.log(e);
+      enqueueSnackbar(`Error: ${e}.`, {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      });
     } finally {
       onProcessing?.(false);
       setIsLoading(false);
