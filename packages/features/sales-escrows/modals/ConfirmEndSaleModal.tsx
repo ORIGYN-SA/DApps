@@ -73,7 +73,7 @@ export const ConfirmEndSaleModal = ({
       }
     } catch (e) {
       debug.log(e);
-      enqueueSnackbar(`Error: ${e}.`, {
+      enqueueSnackbar(`An unexpected error has occurred`, {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
