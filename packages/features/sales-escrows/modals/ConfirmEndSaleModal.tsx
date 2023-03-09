@@ -62,14 +62,15 @@ export const ConfirmEndSaleModal = ({
           },
         });
         onSaleCancelled();
+      } else {
+        enqueueSnackbar(`Error: ${endSaleResponse.err.flag_point}.`, {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
       }
-      enqueueSnackbar(`Error: ${endSaleResponse.err.flag_point}.`, {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
     } catch (e) {
       debug.log(e);
     } finally {
