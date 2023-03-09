@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useRoute } from '@dapp/features-authentication';
 import { Container, Modal, HR, TabContent } from '@origyn-sa/origyn-art-ui';
-import { OffersReceivedTab } from './OffersReceivedTab';
-import { BidsReceivedTab } from './BidsReceivedTab';
-import { OffersSentTab } from './OffersSentTab';
-import { BidsSentTab } from './BidsSentTab';
+import { OffersReceivedTab } from './offersReceivedTab';
+import { BidsReceivedTab } from './bidsReceivedTab';
+import { OffersSentTab } from './offersSentTab';
+import { BidsSentTab } from './bidsSentTab';
 
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
   const [canisterId, setCanisterId] = React.useState('');
