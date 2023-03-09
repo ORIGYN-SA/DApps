@@ -86,7 +86,7 @@ export const ConfirmEndSaleModal = ({
   return (
     <Modal isOpened={onModalOpen} closeModal={() => onModalClose()} size="md">
       <Container size="full" padding="48px">
-        <h2>'Confirm End Sale'</h2>
+        <h2>Confirm End Sale</h2>
         <br />
         <Flex flexFlow="column">
           <div>
