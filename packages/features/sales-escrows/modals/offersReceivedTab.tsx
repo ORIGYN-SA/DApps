@@ -95,14 +95,12 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
     const parsedOdcs = parseOdcs(odcDataRaw);
     const parsedOffersReceived = parsedOdcs.map((odc: OdcDataWithSale, index) => {
       const offer = offersReceived[index];
-      debug.log('symbol', offer.token['ic'].symbol);
-      debug.log('tokenSymbol', odc.tokenSymbol);
       return {
         ...odc,
         token_id: offer.token_id,
         amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
         escrow_record: offer,
-        isNftOwner: odc.ownerPrincipalId === principal?.toText(),
+        isNftOwner: odc.ownerPrincipalId !== principal?.toText(),
       };
     });
     setParsedOffersReceived(parsedOffersReceived);

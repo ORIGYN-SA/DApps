@@ -59,7 +59,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
           };
         })
         .filter((sentBid) => sentBid.auction?.end_date > currentTimeInNanos);
-
+      debug.log('parsedActiveBids', parsedActiveBids);
       setSentActiveBids(parsedActiveBids);
     } catch (e) {
       debug.log(e);
