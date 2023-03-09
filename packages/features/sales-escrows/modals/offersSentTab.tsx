@@ -68,9 +68,9 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     }
 
     const parsedOdcs = parseOdcs(odcDataRaw);
-    parsedOdcs.map((odc: OdcDataWithSale, index) => {
+    const offersSentWithSaleData = parsedOdcs.map((odc: OdcDataWithSale, index) => {
       const offer = offersSent[index];
-      let sentOffer: SentOffersProps = {
+      return {
         ...odc,
         token_id: offer.token_id,
         amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
@@ -78,8 +78,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
         lock_to_date: offer.lock_to_date,
         escrow_record: offer,
       };
-      setOffersSentWithSaleData((prev) => [...prev, sentOffer]);
     });
+    setOffersSentWithSaleData(offersSentWithSaleData);
   };
 
   const confirmOfferWithdraw = async (escrow: EscrowRecord) => {
@@ -135,7 +135,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
         return;
       } else {
         const balanceResponse: BalanceResponse = response.ok;
-        const sentEscrows = await balanceResponse.escrow;
+        const sentEscrows = balanceResponse.escrow;
         const offersSent = sentEscrows?.filter((element) => element.sale_id.length === 0);
         setOffersSent(offersSent);
       }

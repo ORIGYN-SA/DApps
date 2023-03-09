@@ -75,7 +75,7 @@ export function StartEscrowModal({
       const initialToken = tokens[odc.token.symbol];
       const initialTotal = getTotal(initialAmount, initialToken);
       const initialMinBid = toLargerUnit(
-        odc.currentBid + Number(odc.minIncreaseAmount),
+        Math.max(odc.startPrice, odc.currentBid + Number(odc.minIncreaseAmount)),
         Number(odc.token.decimals),
       );
 
@@ -172,9 +172,6 @@ export function StartEscrowModal({
 
   const sendEscrow = async () => {
     try {
-      const totalEscrow = toSmallerUnit(total, token.decimals);
-      debug.log('total escrow amount with fee', totalEscrow);
-
       setIsTransacting(true);
       onProcessing(true);
 
@@ -202,12 +199,16 @@ export function StartEscrowModal({
         throw new Error('Account ID not found in sale info');
       }
 
+      // DO NOT ADD FEE TO AMOUNT. FEE WILL BE TAKEN BY THE CANISTER.
+      const amount = toSmallerUnit(parseFloat(enteredAmount), token.decimals);
+      console.log('escrow amount', amount);
+
       const transactionHeight = await sendTransaction(
         false,
         activeWalletProvider,
         token,
         account_id,
-        totalEscrow,
+        amount,
       );
 
       if (transactionHeight.err) {
@@ -229,7 +230,7 @@ export function StartEscrowModal({
           trx_id: [{ nat: BigInt(transactionHeight.ok) }],
           seller: { principal: Principal.fromText(odc.ownerPrincipalId) },
           buyer: { principal },
-          amount: totalEscrow,
+          amount,
           sale_id: odc.saleId ? [odc.saleId] : [],
         },
         lock_to_date: [],
@@ -289,7 +290,7 @@ export function StartEscrowModal({
       }
     } catch (e) {
       debug.log(e);
-      enqueueSnackbar(`Error: ${e?.message ?? e}.`, {
+      enqueueSnackbar('Failed to send escrow', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
