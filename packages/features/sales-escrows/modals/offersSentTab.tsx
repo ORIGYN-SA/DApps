@@ -32,7 +32,6 @@ interface OffersSentTabProps {
 interface SentOffersProps extends OdcDataWithSale {
   token_id: string;
   amount: string;
-  symbol: string;
   lock_to_date: any;
   escrow_record: EscrowRecord;
 }
@@ -74,7 +73,6 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
         ...odc,
         token_id: offer.token_id,
         amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
-        symbol: offer.token['ic'].symbol,
         lock_to_date: offer.lock_to_date,
         escrow_record: offer,
       };
@@ -189,7 +187,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                   <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
                   <br />
                   <div>
-                    <TokenIcon symbol={offer.token.symbol} />
+                    <TokenIcon symbol={offer.tokenSymbol} />
                     {offer.amount}
                   </div>
                 </div>
