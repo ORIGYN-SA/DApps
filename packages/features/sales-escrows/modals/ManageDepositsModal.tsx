@@ -59,37 +59,39 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       debug.log(e);
     } finally {
       setIsLoading(false);
-      await getBalances();
+      await getDepositInfo();
       refreshAllBalances(false, principal);
     }
   };
 
-  const getBalances = async () => {
-    const r = await actor?.sale_info_nft_origyn({ deposit_info: [{ principal }] });
-    //setDepositPrincipal(r.ok.deposit_info.principal);
+  const getDepositInfo = async () => {
+    try {
+      const r = await actor?.sale_info_nft_origyn({ deposit_info: [{ principal }] });
+      //setDepositPrincipal(r.ok.deposit_info.principal);
+      const balances = Object.keys(activeTokens).map(async (k) => {
+        const val = await getBalanceByAccount(
+          false,
+          r?.ok?.deposit_info?.account_id_text || '',
+          activeTokens[k],
+        );
+        return { [k]: val };
+      });
 
-    const balances = Object.keys(activeTokens).map(async (k) => {
-      const val = await getBalanceByAccount(
-        false,
-        r?.ok?.deposit_info?.account_id_text || '',
-        activeTokens[k],
-      );
-      return { [k]: val };
-    });
-
-    Promise.all(Object.values(balances)).then((values) => {
-      const b = values.reduce(
-        (obj, item) => Object.assign(obj, { [Object.keys(item)[0]]: Object.values(item)[0] }),
-        {},
-      );
-
-      setTokenBalances(b);
-    });
+      Promise.all(Object.values(balances)).then((values) => {
+        const b = values.reduce(
+          (obj, item) => Object.assign(obj, { [Object.keys(item)[0]]: Object.values(item)[0] }),
+          {},
+        );
+        setTokenBalances(b);
+      });
+    } catch (e) {
+      debug.log(e);
+    }
   };
 
   useEffect(() => {
     if (actor) {
-      getBalances();
+      getDepositInfo();
     }
   }, [open, actor]);
 

@@ -189,7 +189,7 @@ export function StartAuctionModal({
               </p>
               <br />
               <Flex justify="flex-end">
-                <Button onClick={onClose}>Done</Button>
+                <Button onClick={() => onClose()}>Done</Button>
               </Flex>
             </>
           ) : (

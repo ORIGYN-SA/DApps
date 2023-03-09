@@ -3,7 +3,7 @@
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
-import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
+import { ConfirmEndSaleModal } from '../../modals/ConfirmEndSaleModal';
 import { StartAuctionModal } from '../../modals/StartAuctionModal';
 import { StartEscrowModal } from '../../modals/StartEscrowModal';
 import {
@@ -41,10 +41,9 @@ export const NFTPage = () => {
   const [principalId, setPrincipalId] = useState<string>();
   const [odc, setOdc] = useState<OdcDataWithSale>();
   const [collectionData, setCollectionData] = useState<OdcData>();
-  const [openAuction, setOpenAuction] = React.useState(false);
+  const [openAuctionModal, setOpenAuctionModal] = React.useState(false);
   const [canisterId, setCanisterId] = React.useState('');
-  const [dialogAction, setDialogAction] = useState<any>();
-  const [openConfirmation, setOpenConfirmation] = React.useState(false);
+  const [onConfirmationModalOpen, setConfirmationModalOpen] = React.useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
   const [escrowType, setEscrowType] = React.useState<EscrowType>();
@@ -56,22 +55,17 @@ export const NFTPage = () => {
     fetchData();
   };
 
-  const handleClickOpen = (item, modal = 'auction') => {
-    if (modal === 'auction') setOpenAuction(true);
-    else if (modal === 'confirmEnd') {
-      setOpenConfirmation(true);
-      setDialogAction('endSale');
-    }
+  const onAuctionModalOpen = () => {
+    setOpenAuctionModal(true);
   };
 
   const handleClickOpenEsc = () => {
-    setOpenConfirmation(true);
-    setDialogAction('endSale');
+    setConfirmationModalOpen(true);
   };
 
-  const handleClose = async () => {
-    setOpenAuction(false);
-    setOpenConfirmation(false);
+  const onModalClose = () => {
+    setOpenAuctionModal(false);
+    setConfirmationModalOpen(false);
   };
 
   const params = useParams();
@@ -312,7 +306,7 @@ export const NFTPage = () => {
                               ) : principalId === verifyOwner ? (
                                 <Button
                                   btnType="accent"
-                                  onClick={handleClickOpen}
+                                  onClick={onAuctionModalOpen}
                                   disabled={inProcess}
                                 >
                                   Start an Auction
@@ -413,20 +407,19 @@ export const NFTPage = () => {
             principal={principalId}
           />
 
-          {openConfirmation && (
-            <ConfirmSalesActionModal
-              openConfirmation={openConfirmation}
-              onClose={handleClose}
+          {onConfirmationModalOpen && (
+            <ConfirmEndSaleModal
+              onModalOpen={onConfirmationModalOpen}
+              onModalClose={onModalClose}
               currentToken={odc?.id}
-              action={dialogAction}
               onSaleCancelled={fetchData}
               onProcessing={setInProcess}
             />
           )}
-          {openAuction && (
+          {openAuctionModal && (
             <StartAuctionModal
-              open={openAuction}
-              onClose={handleClose}
+              open={openAuctionModal}
+              onClose={onModalClose}
               onSuccess={fetchOdc}
               currentToken={odc?.id}
               onProcessing={setInProcess}
