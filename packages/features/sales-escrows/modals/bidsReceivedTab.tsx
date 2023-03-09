@@ -74,6 +74,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
         const balanceResponse: BalanceResponse = response.ok;
         const offersAndBidsReceived = balanceResponse.offers;
         const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
+        debug.log('bidsReceived', bidsReceived);
         setBidsReceived(bidsReceived);
       }
     } catch (e) {
@@ -93,7 +94,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
 
   return (
     <>
-      {bidsReceived?.length > 0 ? (
+      {receivedActivedBids?.length > 0 ? (
         <div>
           <HR marginTop={16} marginBottom={16} />
           <div style={styles.gridContainer}>
