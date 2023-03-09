@@ -48,17 +48,17 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
     }
 
     const parsedOdcs = parseOdcs(odcDataRaw);
-    parsedOdcs.map((odc: OdcDataWithSale, index) => {
-      const bid = bidsReceived[index];
-      let sentBid: ReceivedActiveBidsProps = {
-        ...odc,
-        token_id: bid.token_id,
-      };
-      if (sentBid.auction?.end_date > currentTimeInNanos) {
-        // Add only the Active Bids
-        setReceivedActiveBids((prev) => [...prev, sentBid]);
-      }
-    });
+    const receivedActiveBids = parsedOdcs
+      .map((odc: OdcDataWithSale, index) => {
+        const bid = bidsReceived[index];
+        return {
+          ...odc,
+          token_id: bid.token_id,
+        };
+      })
+      .filter((sentBid) => sentBid.auction?.end_date > currentTimeInNanos);
+
+    setReceivedActiveBids(receivedActiveBids);
   };
 
   const getBidsReceivedBalance = async () => {
@@ -72,7 +72,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
         return;
       } else {
         const balanceResponse: BalanceResponse = response.ok;
-        const offersAndBidsReceived = await balanceResponse.offers;
+        const offersAndBidsReceived = balanceResponse.offers;
         const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
         setBidsReceived(bidsReceived);
       }

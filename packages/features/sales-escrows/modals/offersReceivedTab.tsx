@@ -73,7 +73,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         return;
       } else {
         const balanceResponse: BalanceResponse = response.ok;
-        const offersAndBidsReceived = await balanceResponse.offers;
+        const offersAndBidsReceived = balanceResponse.offers;
         const offersReceived = offersAndBidsReceived?.filter(
           (element) => element.sale_id.length === 0,
         );
@@ -93,17 +93,17 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
     }
 
     const parsedOdcs = parseOdcs(odcDataRaw);
-    parsedOdcs.map((odc: OdcDataWithSale, index) => {
+    const parsedOffersReceived = parsedOdcs.map((odc: OdcDataWithSale, index) => {
       const offer = offersReceived[index];
-      let sentOffer: ReceivedOffersProps = {
+      return {
         ...odc,
         token_id: offer.token_id,
         amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
         symbol: offer.token['ic'].symbol,
         escrow_record: offer,
       };
-      setParsedOffersReceived((prev) => [...prev, sentOffer]);
     });
+    setParsedOffersReceived(parsedOffersReceived);
   };
 
   const onConfirmOfferAcceptOrReject = async (offer: EscrowRecord, action: ActionType) => {

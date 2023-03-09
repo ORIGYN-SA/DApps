@@ -50,19 +50,19 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
       }
 
       const parsedOdcs = parseOdcs(odcDataRaw);
-      parsedOdcs.map((odc: OdcDataWithSale, index) => {
-        const bid = bidsSent[index];
-        let sentBid: SentActiveBidsProps = {
-          ...odc,
-          token_id: bid.token_id,
-          amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toString(),
-          symbol: bid.token['ic'].symbol,
-        };
-        if (sentBid.auction?.end_date > currentTimeInNanos) {
-          // Add only the Active Bids
-          setSentActiveBids((prev) => [...prev, sentBid]);
-        }
-      });
+      const parsedActiveBids = parsedOdcs
+        .map((odc: OdcDataWithSale, index) => {
+          const bid = bidsSent[index];
+          return {
+            ...odc,
+            token_id: bid.token_id,
+            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toString(),
+            symbol: bid.token['ic'].symbol,
+          };
+        })
+        .filter((sentBid) => sentBid.auction?.end_date > currentTimeInNanos);
+
+      setSentActiveBids(parsedActiveBids);
     } catch (e) {
       debug.log(e);
     }
@@ -79,7 +79,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
         return;
       } else {
         const balanceResponse: BalanceResponse = response.ok;
-        const sentEscrows = await balanceResponse.escrow;
+        const sentEscrows = balanceResponse.escrow;
         const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
 
         setBidsSent(bidsSent);
