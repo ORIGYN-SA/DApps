@@ -164,6 +164,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
               <>
                 <div key={index} style={styles.gridItem}>
                   {offer.hasPreviewAsset ? (
+                    
                     <img
                       style={{ height: '42px', width: 'auto', borderRadius: '12px' }}
                       src={`https://${canisterId}.raw.ic0.app/-/${offer.token_id}/preview`}
@@ -182,14 +183,13 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                   <div>
                     <p>{offer.token_id}</p>
                   </div>
-
                   <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                 </div>
                 <div style={styles.gridItem}>
                   <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
                   <br />
                   <div>
-                    <TokenIcon symbol={offer.token.symbol} />
+                    <TokenIcon symbol={offer.symbol} />
                     {offer.amount}
                   </div>
                 </div>
