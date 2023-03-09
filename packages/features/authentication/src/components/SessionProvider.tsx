@@ -1,6 +1,10 @@
-import { createClient } from '@connect2ic/core';
-import { defaultProviders } from '@connect2ic/core/providers';
 import { Connect2ICProvider } from '@connect2ic/react';
+import { createClient } from '@connect2ic/core';
+import { InternetIdentity } from '@connect2ic/core/providers/internet-identity';
+import { PlugWallet } from '@connect2ic/core/providers/plug-wallet';
+import { NFID } from '@connect2ic/core/providers/nfid';
+import { StoicWallet } from '@connect2ic/core/providers/stoic-wallet';
+
 import { origynNftIdl } from '@dapp/common-candid';
 import { isLocal } from '@dapp/utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
@@ -41,7 +45,7 @@ export const SessionProvider: React.FC = ({ children }) => {
     localStorage.setItem('localDevelopment', localDevelopment.toString());
   }, [localDevelopment]);
 
-const dev = isLocal() && localDevelopment;
+  const dev = isLocal() && localDevelopment;
 
   if (canisterId === 'loading') return <></>;
   return (
@@ -61,7 +65,7 @@ const dev = isLocal() && localDevelopment;
               idlFactory: origynNftIdl,
             },
           },
-          providers: defaultProviders,
+          providers: [new InternetIdentity(), new NFID(), new PlugWallet(), new StoicWallet()],
           globalProviderConfig: {
             host: dev ? 'http://localhost:8000' : 'https://boundary.ic0.app',
             dev,
