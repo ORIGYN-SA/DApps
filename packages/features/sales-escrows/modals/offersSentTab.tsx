@@ -180,7 +180,6 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                   <div>
                     <p>{offer.token_id}</p>
                   </div>
-
                   <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                 </div>
                 <div style={styles.gridItem}>
