@@ -235,7 +235,7 @@ export const NFTPage = () => {
                             )}
                           </Flex>
                           <HR />
-                          {nftEndSale && (
+                          {odc?.auctionOpen && (
                             <p className="secondary_color">
                               {!nftEndSale || nftEndSale < currentTimeInNanos ? (
                                 <span>The sale has ended {getDiffInDays(nftEndSale)}</span>
