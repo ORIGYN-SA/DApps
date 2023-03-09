@@ -231,7 +231,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                 </div>
                 <div style={styles.gridItem}>
                   <p style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</p>
-                  <TokenIcon symbol={offer.tokenSymbol} />
+                  <TokenIcon symbol={offer.symbol} />
                   {offer.amount}
                 </div>
                 <div style={styles.gridItem}>
