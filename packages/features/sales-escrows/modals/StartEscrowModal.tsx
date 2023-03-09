@@ -7,7 +7,13 @@ import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useEffect } from 'react';
-import { toLargerUnit, OdcDataWithSale, toSmallerUnit, isPositiveFloat } from '@dapp/utils';
+import {
+  toLargerUnit,
+  OdcDataWithSale,
+  toSmallerUnit,
+  isPositiveFloat,
+  addCurrencies,
+} from '@dapp/utils';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -117,8 +123,8 @@ export function StartEscrowModal({
   };
 
   const getTotal = (amount: number, token: Token): number => {
-    const feeLargeUnit = toLargerUnit(token.fee, token.decimals);
-    return Number((amount + feeLargeUnit).toFixed(token.decimals));
+    const fee = toLargerUnit(token.fee, token.decimals);
+    return addCurrencies(amount, fee, token.decimals);
   };
 
   const hasErrors = (): boolean => {

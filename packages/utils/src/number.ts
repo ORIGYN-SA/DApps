@@ -25,5 +25,21 @@ export const toSmallerUnit = (num: number, decimals: number): number => {
   if (decimals <= 0) {
     return num;
   }
-  return num * 10 ** decimals;
+  return Number((num * 10 ** decimals).toFixed(decimals));
+};
+
+export const addCurrencies = (amount1: number, amount2: number, decimals: number): number => {
+  /** Fixes floating point arithmetic
+   * 899999.999999999.toFixed(8);
+   * '900000.00000000'
+   */
+  return Number((amount1 + amount2).toFixed(decimals));
+};
+
+export const subtractCurrencies = (amount1: number, amount2: number, decimals: number): number => {
+  /** Fixes floating point arithmetic
+   * 899999.999999999.toFixed(8);
+   * '900000.00000000'
+   */
+  return Number((amount1 - amount2).toFixed(decimals));
 };
