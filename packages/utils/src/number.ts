@@ -23,7 +23,7 @@ export const toLargerUnit = (num: number, decimals: number): number => {
     throw new Error('decimals can not be negative');
   }
 
-  if (decimals <= 0) {
+  if (decimals === 0) {
     num;
   }
 
@@ -41,7 +41,7 @@ export const toSmallerUnit = (num: number, decimals: number): number => {
     throw new Error('decimals can not be negative');
   }
 
-  if (decimals <= 0) {
+  if (decimals === 0) {
     num;
   }
 
