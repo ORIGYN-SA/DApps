@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 export const padNum = (num: number | string, size: number = 2) => {
   let res = num.toString();
   while (res.length < size) res = '0' + res;
@@ -15,31 +17,53 @@ export const isPositiveFloat = (s: string): boolean => {
 };
 
 export const toLargerUnit = (num: number, decimals: number): number => {
-  if (decimals <= 0) {
-    return num;
+  // Fixes floating point arithmetic
+  // Converts a number like 12300000 to 0.123 (if decimals = 8)
+  if (decimals < 0) {
+    throw new Error('decimals can not be negative');
   }
-  return Number((num / 10 ** decimals).toFixed(decimals));
+
+  if (decimals <= 0) {
+    num;
+  }
+
+  const result = new BigNumber(num.toString())
+    .dividedBy(new BigNumber('10').pow(decimals))
+    .decimalPlaces(decimals);
+
+  return parseFloat(result.toString());
 };
 
 export const toSmallerUnit = (num: number, decimals: number): number => {
-  if (decimals <= 0) {
-    return num;
+  // Fixes floating point arithmetic
+  // Converts a number like 0.123 to 12300000 (if decimals = 8)
+  if (decimals < 0) {
+    throw new Error('decimals can not be negative');
   }
-  return Number((num * 10 ** decimals).toFixed(decimals));
+
+  if (decimals <= 0) {
+    num;
+  }
+
+  const result = new BigNumber(num.toString())
+    .times(new BigNumber('10').pow(decimals))
+    .decimalPlaces(decimals);
+
+  return parseFloat(result.toString());
 };
 
 export const addCurrencies = (amount1: number, amount2: number, decimals: number): number => {
-  /** Fixes floating point arithmetic
-   * 899999.999999999.toFixed(8);
-   * '900000.00000000'
-   */
-  return Number((amount1 + amount2).toFixed(decimals));
+  // Fixes floating point arithmetic
+  const bnAmount1 = new BigNumber(amount1.toString());
+  const bnAmount2 = new BigNumber(amount2.toString());
+  const result = bnAmount1.plus(bnAmount2).decimalPlaces(decimals);
+  return parseFloat(result.toString());
 };
 
 export const subtractCurrencies = (amount1: number, amount2: number, decimals: number): number => {
-  /** Fixes floating point arithmetic
-   * 899999.999999999.toFixed(8);
-   * '900000.00000000'
-   */
-  return Number((amount1 - amount2).toFixed(decimals));
+  // Fixes floating point arithmetic
+  const bnAmount1 = new BigNumber(amount1.toString());
+  const bnAmount2 = new BigNumber(amount2.toString());
+  const result = bnAmount1.minus(bnAmount2).decimalPlaces(decimals);
+  return parseFloat(result.toString());
 };

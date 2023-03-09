@@ -17,6 +17,9 @@ import {
   Button,
 } from '@origyn-sa/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
+import { toSmallerUnit } from '@dapp/utils';
+import { MarketTransferRequest } from '@dapp/common-types';
+import { useDebug } from '@dapp/features-debug-provider';
 
 const dateNow = new Date();
 const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
@@ -60,6 +63,7 @@ export function StartAuctionModal({
   onSuccess,
   onProcessing,
 }: StartAuctionModalProps) {
+  const debug = useDebug();
   const { actor } = React.useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
   const [errors, setErrors] = React.useState<any>({});
@@ -81,29 +85,31 @@ export function StartAuctionModal({
     try {
       setInProgress(true);
       onProcessing(true);
-      const resp = await actor.market_transfer_nft_origyn({
+
+      const token = tokens[saleToken];
+
+      const marketTransferRequest: MarketTransferRequest = {
         token_id: currentToken,
         sales_config: {
           pricing: {
             auction: {
-              start_price: BigInt(startPrice * 1e8),
+              start_price: BigInt(toSmallerUnit(startPrice, token.decimals)),
               token: {
                 ic: {
-                  fee: BigInt(tokens[saleToken]?.fee ?? 200000),
-                  decimals: BigInt(tokens[saleToken]?.decimals ?? 8),
+                  fee: BigInt(token.fee),
+                  decimals: BigInt(token.decimals),
                   canister: Principal.fromText(tokens[saleToken]?.canisterId),
                   standard: { Ledger: null },
                   symbol: tokens[saleToken]?.symbol,
                 },
               },
-              reserve: [BigInt(reservePrice * 1e8)],
+              reserve: [BigInt(toSmallerUnit(reservePrice, token.decimals))],
               start_date: BigInt(Math.floor(new Date().getTime() * 1e6)),
               min_increase: {
-                amount: BigInt(priceStep * 1e8),
+                amount: BigInt(toSmallerUnit(priceStep, token.decimals)),
               },
               allow_list: [],
-              buy_now: [BigInt(buyNowPrice * 1e8)],
-              // end_date: BigInt(new Date(endDate).getTime() * 1e6), TODO: figure this out
+              buy_now: [BigInt(toSmallerUnit(buyNowPrice, token.decimals))],
               ending: {
                 date: BigInt(endDate.getTime() * 1e6),
               },
@@ -112,8 +118,14 @@ export function StartAuctionModal({
           broker_id: [],
           escrow_receipt: [],
         },
-      });
-      console.log(resp);
+      };
+
+      debug.log('marketTransferRequest', marketTransferRequest);
+
+      const resp = await actor.market_transfer_nft_origyn(marketTransferRequest);
+
+      debug.log(resp);
+
       if ('err' in resp) {
         enqueueSnackbar('There was an error when starting your auction.', {
           variant: 'error',
@@ -134,7 +146,7 @@ export function StartAuctionModal({
         setSuccess(true);
       }
     } catch (e) {
-      console.log('this ie error', e.message);
+      debug.log(e);
       enqueueSnackbar('There was an error when starting your auction.', {
         variant: 'error',
         anchorOrigin: {
