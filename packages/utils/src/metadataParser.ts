@@ -1,6 +1,6 @@
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
-import { NFTInfoStable, Property } from '../../common/types/src/origynNftReference';
+import { EscrowReceipt, EscrowRecord, NFTInfoStable, Property } from '../../common/types/src/origynNftReference';
 import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
 import { toSentenceCase } from './string';
 
@@ -272,7 +272,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
       odc.buyNow = Number(auctionConfig.buy_now?.[0] || 0);
       if ('ic' in auctionConfig.token) {
         odc.token = auctionConfig.token.ic;
-        odc.tokenSymbol = odc.token.symbol;
+        odc.tokenSymbol = auctionConfig.token.ic.symbol;
       }
       odc.minIncreaseAmount =
         'amount' in auctionConfig.min_increase ? auctionConfig.min_increase.amount : 0n;
@@ -299,3 +299,10 @@ export function parseOdcs(data: NFTInfoStable[]): OdcDataWithSale[] {
     return parseOdc(odc['ok']);
   });
 }
+
+export function parseTokenSymbol(escrow: EscrowRecord): string {
+  if ('ic' in escrow.token) {
+    return escrow.token.ic.symbol;
+  }
+};
+
