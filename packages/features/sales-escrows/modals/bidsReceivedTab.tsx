@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn-sa/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
+import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
@@ -33,6 +33,7 @@ interface OffersTabProps {
 interface ReceivedActiveBidsProps extends OdcDataWithSale {
   token_id: string;
   isNftOwner: boolean;
+  escrow_record: EscrowRecord;
 }
 
 export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
@@ -60,6 +61,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
             ...odc,
             token_id: bid.token_id,
             isNftOwner: odc.ownerPrincipalId == principal?.toText(),
+            escrow_record: bid,
           };
         })
         .filter((receivedBid) => receivedBid.auctionOpen && receivedBid.isNftOwner);
@@ -141,7 +143,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
-                      <TokenIcon symbol={bid.tokenSymbol} />
+                      <TokenIcon symbol={parseTokenSymbol(bid.escrow_record)} />
                       {toLargerUnit(bid.currentBid, Number(bid.token.decimals))}
                     </div>
                     <div style={styles.gridItem}>

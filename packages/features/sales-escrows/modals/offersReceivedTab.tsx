@@ -3,7 +3,7 @@ import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Button, HR, theme, Modal, Flex, Container } from '@origyn-sa/origyn-art-ui';
-import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
+import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { EscrowRecord, EscrowReceipt, OrigynError, BalanceResponse } from '@dapp/common-types';
 import { LoadingContainer } from '@dapp/features-components';
@@ -228,7 +228,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</p>
-                      <TokenIcon symbol={offer.tokenSymbol} />
+                      <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
                       {offer.amount}
                     </div>
                     <div style={styles.gridItem}>

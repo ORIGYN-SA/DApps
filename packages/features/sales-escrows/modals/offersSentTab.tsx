@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { Button, HR, theme, Modal, Container, Flex } from '@origyn-sa/origyn-art-ui';
-import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
+import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
@@ -200,7 +200,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
                       <br />
                       <div>
-                        <TokenIcon symbol={offer.tokenSymbol} />
+                        <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
                         {offer.amount}
                       </div>
                     </div>

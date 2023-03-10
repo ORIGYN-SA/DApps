@@ -32,4 +32,4 @@ export function showUnexpectedErrorMessage(): void {
             horizontal: 'right',
         },
     });
-}
+};

@@ -89,6 +89,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
         const sentEscrows = balanceResponse.escrow;
         const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
         debug.log('bidsSent', bidsSent);
+        debug.log('response', response);
         setBidsSent(bidsSent);
       }
     } catch (e) {
