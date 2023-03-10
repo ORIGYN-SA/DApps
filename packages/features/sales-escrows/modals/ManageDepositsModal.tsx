@@ -44,8 +44,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         showSuccessMessage('Withdrawal successful');
       }
     } catch (e) {
-      debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
       await getDepositInfo();

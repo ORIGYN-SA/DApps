@@ -68,8 +68,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
       debug.log('parsedActiveBids', parsedActiveBids);
       setSentActiveBids(parsedActiveBids);
     } catch (e) {
-      debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
     }
@@ -94,8 +93,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
         setBidsSent(bidsSent);
       }
     } catch (e) {
-      debug.log('An unexpected error occurred', e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
     }
