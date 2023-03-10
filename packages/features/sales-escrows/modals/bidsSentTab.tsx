@@ -30,7 +30,6 @@ interface BidsSentTabProps {
 interface SentActiveBidsProps extends OdcDataWithSale {
   token_id: string;
   amount: string;
-  symbol: string;
 }
 
 export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
@@ -57,11 +56,10 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
             ...odc,
             token_id: bid.token_id,
             amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toString(),
-            symbol: bid.token['ic'].symbol,
           };
         })
         .filter((sentBid) => sentBid.auction?.end_date > currentTimeInNanos);
-
+      debug.log('parsedActiveBids', parsedActiveBids);
       setSentActiveBids(parsedActiveBids);
     } catch (e) {
       debug.log(e);

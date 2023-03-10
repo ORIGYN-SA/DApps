@@ -34,7 +34,6 @@ interface OffersTabProps {
 interface ReceivedOffersProps extends OdcDataWithSale {
   token_id: string;
   amount: string;
-  symbol: string;
   escrow_record: EscrowRecord;
   isNftOwner: boolean;
 }
@@ -100,9 +99,8 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         ...odc,
         token_id: offer.token_id,
         amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
-        symbol: offer.token['ic'].symbol,
         escrow_record: offer,
-        isNftOwner: odc.ownerPrincipalId === principal?.toText(),
+        isNftOwner: odc.ownerPrincipalId !== principal?.toText(),
       };
     });
     setParsedOffersReceived(parsedOffersReceived);
