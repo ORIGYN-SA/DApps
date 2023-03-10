@@ -8,7 +8,7 @@ import { PlaceholderIcon } from '@dapp/common-assets';
 import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
 import { useDebug } from '@dapp/features-debug-provider';
 import { LoadingContainer } from '@dapp/features-components';
-import { showUnexpectedErrorMessage } from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 const styles = {
   gridContainer: {
@@ -39,6 +39,7 @@ interface ReceivedActiveBidsProps extends OdcDataWithSale {
 export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
   const { actor, principal } = useContext(AuthContext);
   const debug = useDebug();
+  const { showUnexpectedErrorMessage } = useUserMessages();
   const [receivedActivedBids, setReceivedActiveBids] = useState<ReceivedActiveBidsProps[]>([]);
   const [bidsReceived, setBidsReceived] = useState<EscrowRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);

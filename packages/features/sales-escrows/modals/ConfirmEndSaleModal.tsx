@@ -5,11 +5,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { Container, Flex, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useDebug } from '@dapp/features-debug-provider';
-import {
-  showUnexpectedErrorMessage,
-  showSuccessMessage,
-  showErrorMessage,
-} from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 const Transition = React.forwardRef(
   (
@@ -38,6 +34,7 @@ export const ConfirmEndSaleModal = ({
   onProcessing,
 }: ConfirmEndSaleModalProps) => {
   const { actor } = React.useContext(AuthContext);
+  const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
   const [isLoading, setIsLoading] = React.useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const debug = useDebug();

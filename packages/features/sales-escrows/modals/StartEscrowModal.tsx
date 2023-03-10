@@ -13,7 +13,7 @@ import {
   isPositiveFloat,
   addCurrencies,
 } from '@dapp/utils';
-import { showSuccessMessage, showUnexpectedErrorMessage } from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -40,6 +40,7 @@ export function StartEscrowModal({
   onProcessing,
 }: StartEscrowModalProps) {
   const debug = useDebug();
+  const { showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
   const { tokens, refreshAllBalances } = useTokensContext();
 
@@ -170,14 +171,13 @@ export function StartEscrowModal({
   };
 
   const sendEscrow = async () => {
+    if (isLoading || isTransacting || !activeWalletProvider || hasErrors() || !validateForm()) {
+      debug.log('validation failed');
+      return;
+    }
     try {
       setIsTransacting(true);
       onProcessing(true);
-
-      if (isLoading || isTransacting || !activeWalletProvider || hasErrors() || !validateForm()) {
-        debug.log('validation failed');
-        return;
-      }
 
       // gets the deposit info for the account number of the caller
       const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });

@@ -8,11 +8,7 @@ import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
 import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
 import { LoadingContainer } from '@dapp/features-components';
-import {
-  showUnexpectedErrorMessage,
-  showErrorMessage,
-  showSuccessMessage,
-} from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -42,6 +38,7 @@ interface SentOffersProps extends OdcDataWithSale {
 
 export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) => {
   const debug = useDebug();
+  const { showUnexpectedErrorMessage, showErrorMessage, showSuccessMessage } = useUserMessages();
   const { refreshAllBalances } = useTokensContext();
   const { actor, principal } = useContext(AuthContext);
   const [offerSentWithSaleData, setOffersSentWithSaleData] = useState<SentOffersProps[]>([]);

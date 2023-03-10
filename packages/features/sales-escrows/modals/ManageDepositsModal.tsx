@@ -5,15 +5,12 @@ import { getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-pro
 import { Principal } from '@dfinity/principal';
 import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
-import {
-  showErrorMessage,
-  showSuccessMessage,
-  showUnexpectedErrorMessage,
-} from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const { principal, actor } = useContext(AuthContext);
   const debug = useDebug();
+  const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
   //const [depositPrincipal, setDepositPrincipal] = useState();
   const [isLoading, setIsLoading] = useState(false);
 

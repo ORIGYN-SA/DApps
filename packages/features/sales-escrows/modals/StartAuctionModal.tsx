@@ -19,11 +19,7 @@ import { LinearProgress } from '@mui/material';
 import { toSmallerUnit } from '@dapp/utils';
 import { MarketTransferRequest } from '@dapp/common-types';
 import { useDebug } from '@dapp/features-debug-provider';
-import {
-  showUnexpectedErrorMessage,
-  showErrorMessage,
-  showSuccessMessage,
-} from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 const dateNow = new Date();
 const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
@@ -68,6 +64,7 @@ export function StartAuctionModal({
   onProcessing,
 }: StartAuctionModalProps) {
   const debug = useDebug();
+  const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { actor } = React.useContext(AuthContext);
   const [errors, setErrors] = React.useState<any>({});
   // @ts-ignore

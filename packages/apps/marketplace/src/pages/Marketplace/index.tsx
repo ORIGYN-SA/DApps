@@ -21,7 +21,7 @@ import { useDialog } from '@connect2ic/react';
 import styled from 'styled-components';
 import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
-import { showErrorMessage } from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
@@ -29,6 +29,7 @@ const StyledSectionTitle = styled.h2`
 
 const Marketplace = () => {
   const debug = useDebug();
+  const { showErrorMessage } = useUserMessages();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [canisterId, setCanisterId] = useState('');
