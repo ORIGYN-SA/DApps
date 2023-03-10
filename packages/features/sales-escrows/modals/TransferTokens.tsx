@@ -4,8 +4,8 @@ import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-s
 import { LinearProgress } from '@mui/material';
 import * as Yup from 'yup';
 import { AuthContext } from '../../authentication';
-import { useSnackbar } from 'notistack';
 import { isLocal } from '../../../utils';
+import { showErrorMessage } from '@dapp/features-user-messages';
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
@@ -23,7 +23,6 @@ const validationSchema = Yup.object().shape({
 const TransferTokensModal = ({ open, handleClose }: any) => {
   const { tokens, activeTokens } = useTokensContext();
   const { activeWalletProvider } = useContext(AuthContext);
-  const { enqueueSnackbar } = useSnackbar();
   const [switchTransfer, setSwitchTransfer] = useState(false);
   // @ts-ignore
   const [values, setValues] = React.useState<any>(validationSchema.default());
@@ -53,13 +52,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
       .catch((e) => {
         console.error(e);
         setSwitchTransfer(false);
-        enqueueSnackbar('There was an error when starting your auction.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showErrorMessage('There was an error when starting your auction.', e);
       })
       .then(() => {
         setSwitchTransfer(false);

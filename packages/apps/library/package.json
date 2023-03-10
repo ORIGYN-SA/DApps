@@ -11,6 +11,7 @@
     "@dapp/common-candid": "0.1.0",
     "@dapp/common-types": "0.1.0",
     "@dapp/features-debug-provider": "0.1.0",
+    "@dapp/features-user-messages": "0.1.0",
     "@dapp/features-authentication": "0.1.0",
     "@dapp/features-components": "0.1.0",
     "@dapp/features-theme": "0.1.0",

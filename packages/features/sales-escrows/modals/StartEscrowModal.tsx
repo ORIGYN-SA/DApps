@@ -3,7 +3,6 @@ import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { sendTransaction, useTokensContext, Token } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
-import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useEffect } from 'react';
@@ -14,6 +13,7 @@ import {
   isPositiveFloat,
   addCurrencies,
 } from '@dapp/utils';
+import { showSuccessMessage, showUnexpectedErrorMessage } from '@dapp/features-user-messages';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -42,7 +42,6 @@ export function StartEscrowModal({
   const debug = useDebug();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
   const { tokens, refreshAllBalances } = useTokensContext();
-  const { enqueueSnackbar } = useSnackbar() || {};
 
   const [isLoading, setIsLoading] = React.useState(true);
   const [isTransacting, setIsTransacting] = React.useState(false);
@@ -262,27 +261,15 @@ export function StartEscrowModal({
         if ('err' in bidResponse) {
           throw new Error(bidResponse.err.text);
         }
-
-        enqueueSnackbar('Your bid has been successfully placed.', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showSuccessMessage('Your bid has been successfully placed.');
         onCustomClose(true);
         refreshAllBalances(false, principal);
         setSuccess(true);
         onSuccess();
       } else {
         // if there is no auction, then this is just an offer
-        enqueueSnackbar('Your escrow has been successfully sent.', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+
+        showSuccessMessage('Your escrow has been successfully sent.');
         onCustomClose(true);
         refreshAllBalances(false, principal);
         setSuccess(true);
@@ -290,13 +277,7 @@ export function StartEscrowModal({
       }
     } catch (e) {
       debug.log(e);
-      enqueueSnackbar('Failed to send escrow', {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      showUnexpectedErrorMessage();
     } finally {
       setIsTransacting(false);
       onProcessing(false);

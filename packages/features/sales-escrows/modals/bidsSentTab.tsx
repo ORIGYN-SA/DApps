@@ -7,6 +7,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
 import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { LoadingContainer } from '@dapp/features-components';
+import { showUnexpectedErrorMessage } from '@dapp/features-user-messages';
 
 const styles = {
   gridContainer: {
@@ -30,17 +32,19 @@ interface BidsSentTabProps {
 interface SentActiveBidsProps extends OdcDataWithSale {
   token_id: string;
   amount: string;
+  isNftOwner: boolean;
 }
 
 export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const debug = useDebug();
   const { actor, principal } = useContext(AuthContext);
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
-  const [bidsSent, setBidsSent] = useState<EscrowRecord[]>(); // [
-  const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
+  const [bidsSent, setBidsSent] = useState<EscrowRecord[]>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const parseBids = async () => {
     try {
+      setIsLoading(true);
       const tokenIds = bidsSent.map((offer) => offer.token_id);
       const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
 
@@ -56,18 +60,23 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
             ...odc,
             token_id: bid.token_id,
             amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toString(),
+            isNftOwner: odc.ownerPrincipalId == principal?.toText(),
           };
         })
-        .filter((sentBid) => sentBid.auction?.end_date > currentTimeInNanos);
+        .filter((sentBid) => sentBid.auctionOpen && !sentBid.isNftOwner);
       debug.log('parsedActiveBids', parsedActiveBids);
       setSentActiveBids(parsedActiveBids);
     } catch (e) {
       debug.log(e);
+      showUnexpectedErrorMessage();
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const getSentBidBalance = async () => {
     try {
+      setIsLoading(true);
       const response = await actor.balance_of_nft_origyn({ principal });
       debug.log('response from actor?.balance_of_nft_origyn({ principal })');
       debug.log(JSON.stringify(response, null, 2));
@@ -83,7 +92,10 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
         setBidsSent(bidsSent);
       }
     } catch (e) {
-      debug.log('error', e);
+      debug.log('An unexpected error occurred', e);
+      showUnexpectedErrorMessage();
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -99,58 +111,67 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
 
   return (
     <>
-      {sentActivedBids?.length > 0 ? (
-        <div>
-          <HR marginTop={16} marginBottom={16} />
-          <div style={styles.gridContainer}>
-            {sentActivedBids.map((bid: any, index: number) => (
-              <>
-                <div key={index} style={styles.gridItem}>
-                  {bid.hasPreviewAsset ? (
-                    <img
-                      style={{
-                        width: '42px',
-                        borderRadius: '12px',
-                        marginTop: 'auto',
-                        marginBottom: 'auto',
-                      }}
-                      src={`https://${canisterId}.raw.ic0.app/-/${bid.token_id}/preview`}
-                      alt=""
-                    />
-                  ) : (
-                    <PlaceholderIcon width={42} height={42} />
-                  )}
-                </div>
-                <div style={styles.gridItem}>
-                  <div>
-                    <p>{bid.token_id}</p>
-                  </div>
-                  <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
-                </div>
-                <div style={styles.gridItem}>
-                  <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
-                  <TokenIcon symbol={bid.tokenSymbol} />
-                  {toLargerUnit(bid.currentBid, Number(bid.token.decimals))}
-                </div>
-                <div style={styles.gridItem}>
-                  <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
-                  <TokenIcon symbol={bid.tokenSymbol} />
-                  {bid.amount}
-                </div>
-                <div style={styles.gridItem}>
-                  <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
-                  {formatDistanceToNow(Number(bid.auction.end_date / BigInt(1e6)))}
-                </div>
-              </>
-            ))}
-          </div>
-        </div>
+      {isLoading ? (
+        <>
+          <HR marginTop={24} marginBottom={24} />
+          <LoadingContainer />
+        </>
       ) : (
         <>
-          <HR marginTop={16} marginBottom={16} />
-          <p>
-            <b>No bids sent yet</b>
-          </p>
+          {sentActivedBids?.length > 0 ? (
+            <div>
+              <HR marginTop={16} marginBottom={16} />
+              <div style={styles.gridContainer}>
+                {sentActivedBids.map((bid: any, index: number) => (
+                  <>
+                    <div key={index} style={styles.gridItem}>
+                      {bid.hasPreviewAsset ? (
+                        <img
+                          style={{
+                            width: '42px',
+                            borderRadius: '12px',
+                            marginTop: 'auto',
+                            marginBottom: 'auto',
+                          }}
+                          src={`https://${canisterId}.raw.ic0.app/-/${bid.token_id}/preview`}
+                          alt=""
+                        />
+                      ) : (
+                        <PlaceholderIcon width={42} height={42} />
+                      )}
+                    </div>
+                    <div style={styles.gridItem}>
+                      <div>
+                        <p>{bid.token_id}</p>
+                      </div>
+                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
+                    </div>
+                    <div style={styles.gridItem}>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
+                      <TokenIcon symbol={bid.tokenSymbol} />
+                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals))}
+                    </div>
+                    <div style={styles.gridItem}>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
+                      <TokenIcon symbol={bid.tokenSymbol} />
+                      {bid.amount}
+                    </div>
+                    <div style={styles.gridItem}>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
+                      {formatDistanceToNow(Number(bid.auction.end_date / BigInt(1e6)))}
+                    </div>
+                  </>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              <HR marginTop={16} marginBottom={16} />
+              <p>
+                <b>No bids sent yet</b>
+              </p>
+            </>
+          )}
         </>
       )}
     </>

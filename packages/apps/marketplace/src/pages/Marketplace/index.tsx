@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useSnackbar } from 'notistack';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
@@ -22,6 +21,7 @@ import { useDialog } from '@connect2ic/react';
 import styled from 'styled-components';
 import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
+import { showErrorMessage } from '@dapp/features-user-messages';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
@@ -29,7 +29,6 @@ const StyledSectionTitle = styled.h2`
 
 const Marketplace = () => {
   const debug = useDebug();
-  const { enqueueSnackbar } = useSnackbar() || {};
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [canisterId, setCanisterId] = useState('');
@@ -92,13 +91,7 @@ const Marketplace = () => {
       dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
     } catch (err) {
       debug.error(err);
-      enqueueSnackbar(err?.message || err, {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      showErrorMessage(`${err.message || err}`, err?.message || err);
     } finally {
       setIsLoaded(true);
     }

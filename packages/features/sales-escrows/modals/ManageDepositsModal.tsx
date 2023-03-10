@@ -3,16 +3,19 @@ import { AuthContext } from '@dapp/features-authentication';
 import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
 import { getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
-import { useSnackbar } from 'notistack';
 import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
+import {
+  showErrorMessage,
+  showSuccessMessage,
+  showUnexpectedErrorMessage,
+} from '@dapp/features-user-messages';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const { principal, actor } = useContext(AuthContext);
   const debug = useDebug();
   //const [depositPrincipal, setDepositPrincipal] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
 
   const [tokenBalances, setTokenBalances] = useState<any>({});
   const { activeTokens, refreshAllBalances } = useTokensContext();
@@ -39,24 +42,13 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         },
       });
       if ('err' in withdrawResp) {
-        enqueueSnackbar('Failed to withdraw', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showErrorMessage('Failed to withdraw', withdrawResp.err);
       } else {
-        enqueueSnackbar('Succesfully withdrawned', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showSuccessMessage('Withdrawal successful');
       }
     } catch (e) {
       debug.log(e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
       await getDepositInfo();

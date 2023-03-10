@@ -1,0 +1,6 @@
+{
+  "name": "@dapp/features-user-messages",
+  "version": "0.1.0",
+  "description": "Snackbars and toasts for user messages",
+  "main": "src/index.ts"
+}

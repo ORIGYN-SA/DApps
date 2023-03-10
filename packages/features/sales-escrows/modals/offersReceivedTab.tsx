@@ -7,10 +7,13 @@ import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { EscrowRecord, EscrowReceipt, OrigynError, BalanceResponse } from '@dapp/common-types';
 import { LoadingContainer } from '@dapp/features-components';
-import { useSnackbar } from 'notistack';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
-
+import {
+  showUnexpectedErrorMessage,
+  showSuccessMessage,
+  showErrorMessage,
+} from '@dapp/features-user-messages';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -50,7 +53,6 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
   const [actionType, setActionType] = React.useState<ActionType>();
   const [openModal, setOpenModal] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const { enqueueSnackbar } = useSnackbar() || {};
 
   const onOfferSelected = (offer: EscrowRecord, action: ActionType) => {
     setActionType(action);
@@ -64,6 +66,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
 
   const getOffersReceivedBalance = async () => {
     try {
+      setIsLoading(true);
       const response = await actor.balance_of_nft_origyn({ principal });
       debug.log('response from actor?.balance_of_nft_origyn({ principal })');
       debug.log(JSON.stringify(response, null, 2));
@@ -80,30 +83,42 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         setOffersReceived(offersReceived);
       }
     } catch (e) {
-      debug.log('error', e);
+      debug.log('An unexpected error occurred', e);
+      showUnexpectedErrorMessage();
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const parseOffers = async () => {
-    const tokenIds = offersReceived.map((offer) => offer.token_id);
-    const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+    try {
+      setIsLoading(true);
+      const tokenIds = offersReceived.map((offer) => offer.token_id);
+      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+      debug.log('odcDataRaw', odcDataRaw);
+      if (odcDataRaw.err) {
+        throw new Error('Unable to retrieve metadata of tokens.');
+      }
 
-    if (odcDataRaw.err) {
-      throw new Error('Unable to retrieve metadata of tokens.');
+      const parsedOdcs = parseOdcs(odcDataRaw);
+      const parsedOffersReceived = parsedOdcs.map((odc: OdcDataWithSale, index) => {
+        const offer = offersReceived[index];
+        return {
+          ...odc,
+          token_id: offer.token_id,
+          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
+          escrow_record: offer,
+          isNftOwner: odc.ownerPrincipalId == principal?.toText(),
+        };
+      });
+      setParsedOffersReceived(parsedOffersReceived);
+      debug.log('parsedOffersReceived', parsedOffersReceived);
+    } catch (e) {
+      debug.log('error', e);
+      showUnexpectedErrorMessage();
+    } finally {
+      setIsLoading(false);
     }
-
-    const parsedOdcs = parseOdcs(odcDataRaw);
-    const parsedOffersReceived = parsedOdcs.map((odc: OdcDataWithSale, index) => {
-      const offer = offersReceived[index];
-      return {
-        ...odc,
-        token_id: offer.token_id,
-        amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
-        escrow_record: offer,
-        isNftOwner: odc.ownerPrincipalId !== principal?.toText(),
-      };
-    });
-    setParsedOffersReceived(parsedOffersReceived);
   };
 
   const onConfirmOfferAcceptOrReject = async (offer: EscrowRecord, action: ActionType) => {
@@ -122,21 +137,9 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         });
 
         if ('err' in rejectResponse) {
-          enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
-            variant: 'error',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
+          showErrorMessage(`Error: ${rejectResponse.err.text}.`, rejectResponse.err.text);
         } else {
-          enqueueSnackbar('The escrow has been rejected.', {
-            variant: 'success',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
+          showSuccessMessage('Offer rejected successfully.');
         }
       }
       if (action == 'accept') {
@@ -167,25 +170,14 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         });
         debug.log(acceptOffer.err);
         if ('err' in acceptOffer) {
-          enqueueSnackbar('There has been an error in accepting the offer', {
-            variant: 'error',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
+          showErrorMessage('There has been an error in accepting the offer', acceptOffer.err.text);
         } else {
-          enqueueSnackbar('The offer has been accepted.', {
-            variant: 'success',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
+          showSuccessMessage('Offer accepted successfully.');
         }
       }
     } catch (e) {
       debug.log(e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
       getOffersReceivedBalance();
@@ -205,64 +197,79 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
 
   return (
     <>
-      {offersReceived?.length > 0 ? (
-        <div>
-          <HR marginTop={16} marginBottom={16} />
-          <div style={styles.gridContainer}>
-            {parsedOffersReceived.map((offer: ReceivedOffersProps) => (
-              <>
-                <div style={styles.gridItem}>
-                  {offer.hasPreviewAsset ? (
-                    <img
-                      style={{ width: 'auto', height: '42px', borderRadius: '12px' }}
-                      src={`https://${canisterId}.raw.ic0.app/-/${offer.token_id}/preview`}
-                      alt=""
-                    />
-                  ) : (
-                    <PlaceholderIcon width={42} height={42} />
-                  )}
-                </div>
-                <div style={styles.gridItem}>
-                  <span>{offer.token_id}</span>
-                  <br />
-                  <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
-                </div>
-                <div style={styles.gridItem}>
-                  <p style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</p>
-                  <TokenIcon symbol={offer.tokenSymbol} />
-                  {offer.amount}
-                </div>
-                <div style={styles.gridItem}>
-                  <Button
-                    btnType="filled"
-                    size="small"
-                    onClick={() => onOfferSelected(offer.escrow_record, 'accept')}
-                    disabled={offer.isNftOwner}
-                  >
-                    Accept
-                  </Button>
-                </div>
-                <div style={styles.gridItem}>
-                  <Button
-                    btnType="outlined"
-                    size="small"
-                    onClick={() => onOfferSelected(offer.escrow_record, 'reject')}
-                  >
-                    Reject
-                  </Button>
-                </div>
-              </>
-            ))}
-          </div>
-        </div>
+      {isLoading ? (
+        <>
+          <HR marginTop={24} marginBottom={24} />
+          <LoadingContainer />
+        </>
       ) : (
         <>
-          <HR marginTop={16} marginBottom={16} />
-          <p>
-            <b>No offers received yet</b>
-          </p>
+          {offersReceived?.length > 0 ? (
+            <div>
+              <HR marginTop={16} marginBottom={16} />
+              <div style={styles.gridContainer}>
+                {parsedOffersReceived.map((offer: ReceivedOffersProps) => (
+                  <>
+                    <div style={styles.gridItem}>
+                      {offer.hasPreviewAsset ? (
+                        <img
+                          style={{ width: 'auto', height: '42px', borderRadius: '12px' }}
+                          src={`https://${canisterId}.raw.ic0.app/-/${offer.token_id}/preview`}
+                          alt=""
+                        />
+                      ) : (
+                        <PlaceholderIcon width={42} height={42} />
+                      )}
+                    </div>
+                    <div style={styles.gridItem}>
+                      <span>{offer.token_id}</span>
+                      <br />
+                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
+                    </div>
+                    <div style={styles.gridItem}>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</p>
+                      <TokenIcon symbol={offer.tokenSymbol} />
+                      {offer.amount}
+                    </div>
+                    <div style={styles.gridItem}>
+                      {offer.isNftOwner ? (
+                        <Button
+                          btnType="filled"
+                          size="small"
+                          onClick={() => onOfferSelected(offer.escrow_record, 'accept')}
+                        >
+                          Accept
+                        </Button>
+                      ) : (
+                        <Button btnType="filled" size="small" disabled={true}>
+                          Accept
+                        </Button>
+                      )}
+                    </div>
+                    <div style={styles.gridItem}>
+                      <Button
+                        btnType="outlined"
+                        size="small"
+                        onClick={() => onOfferSelected(offer.escrow_record, 'reject')}
+                      >
+                        Reject
+                      </Button>
+                    </div>
+                  </>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              <HR marginTop={16} marginBottom={16} />
+              <p>
+                <b>No offers received yet</b>
+              </p>
+            </>
+          )}
         </>
       )}
+
       <Modal isOpened={openModal} closeModal={() => onModalClose} size="md">
         <Container size="full" padding="48px">
           <h2>Confirm offer {actionType === 'accept' ? 'accept' : 'reject'}</h2>

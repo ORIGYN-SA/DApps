@@ -2,7 +2,6 @@ import React from 'react';
 import { Principal } from '@dfinity/principal';
 import { AuthContext } from '@dapp/features-authentication';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { useTokensContext } from '@dapp/features-tokens-provider';
@@ -20,6 +19,11 @@ import { LinearProgress } from '@mui/material';
 import { toSmallerUnit } from '@dapp/utils';
 import { MarketTransferRequest } from '@dapp/common-types';
 import { useDebug } from '@dapp/features-debug-provider';
+import {
+  showUnexpectedErrorMessage,
+  showErrorMessage,
+  showSuccessMessage,
+} from '@dapp/features-user-messages';
 
 const dateNow = new Date();
 const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
@@ -65,9 +69,7 @@ export function StartAuctionModal({
 }: StartAuctionModalProps) {
   const debug = useDebug();
   const { actor } = React.useContext(AuthContext);
-  const { enqueueSnackbar } = useSnackbar();
   const [errors, setErrors] = React.useState<any>({});
-  // const [tokenID, setTokenID] = useState<any>();
   // @ts-ignore
   const [values, setValues] = React.useState<any>(validationSchema.default());
   const [inProgress, setInProgress] = React.useState(false);
@@ -127,33 +129,15 @@ export function StartAuctionModal({
       debug.log(resp);
 
       if ('err' in resp) {
-        enqueueSnackbar('There was an error when starting your auction.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showErrorMessage('There was an error when starting your auction.', resp.err);
       } else {
-        enqueueSnackbar('Your auction has been started.', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showSuccessMessage('Your auction has been started successfully.');
         onSuccess(resp.ok);
         setSuccess(true);
       }
     } catch (e) {
       debug.log(e);
-      enqueueSnackbar('There was an error when starting your auction.', {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      showUnexpectedErrorMessage();
     } finally {
       setInProgress(false);
       onProcessing(false);
