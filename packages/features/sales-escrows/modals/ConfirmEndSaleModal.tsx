@@ -3,9 +3,13 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
-import { useSnackbar } from 'notistack';
 import { Container, Flex, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
 import { useDebug } from '@dapp/features-debug-provider';
+import {
+  showUnexpectedErrorMessage,
+  showSuccessMessage,
+  showErrorMessage,
+} from '@dapp/features-user-messages';
 
 const Transition = React.forwardRef(
   (
@@ -35,7 +39,6 @@ export const ConfirmEndSaleModal = ({
 }: ConfirmEndSaleModalProps) => {
   const { actor } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
-  const { enqueueSnackbar } = useSnackbar() || {};
   const [confirmed, setConfirmed] = useState(false);
   const debug = useDebug();
 
@@ -54,32 +57,17 @@ export const ConfirmEndSaleModal = ({
         end_sale: currentToken,
       });
       if (endSaleResponse.ok) {
-        enqueueSnackbar(`You have successfully ended the sale for ${currentToken}.`, {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showSuccessMessage(`You have successfully ended the sale for ${currentToken}.`);
         onSaleCancelled();
       } else {
-        enqueueSnackbar(`Error: ${endSaleResponse.err.flag_point}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showErrorMessage(
+          `Error: ${endSaleResponse.err.flag_point}.`,
+          endSaleResponse.err.flag_point,
+        );
       }
     } catch (e) {
       debug.log(e);
-      enqueueSnackbar(`An unexpected error has occurred`, {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      showUnexpectedErrorMessage();
     } finally {
       onProcessing?.(false);
       setIsLoading(false);

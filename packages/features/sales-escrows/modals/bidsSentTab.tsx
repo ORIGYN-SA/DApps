@@ -8,6 +8,7 @@ import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
 import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
 import { LoadingContainer } from '@dapp/features-components';
+import { showUnexpectedErrorMessage } from '@dapp/features-user-messages';
 
 const styles = {
   gridContainer: {
@@ -67,6 +68,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
       setSentActiveBids(parsedActiveBids);
     } catch (e) {
       debug.log(e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +92,8 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
         setBidsSent(bidsSent);
       }
     } catch (e) {
-      debug.log('error', e);
+      debug.log('An unexpected error occurred', e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
     }

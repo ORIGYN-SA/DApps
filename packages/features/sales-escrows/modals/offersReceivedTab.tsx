@@ -7,10 +7,13 @@ import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { EscrowRecord, EscrowReceipt, OrigynError, BalanceResponse } from '@dapp/common-types';
 import { LoadingContainer } from '@dapp/features-components';
-import { useSnackbar } from 'notistack';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
-
+import {
+  showUnexpectedErrorMessage,
+  showSuccessMessage,
+  showErrorMessage,
+} from '@dapp/features-user-messages';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -50,7 +53,6 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
   const [actionType, setActionType] = React.useState<ActionType>();
   const [openModal, setOpenModal] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const { enqueueSnackbar } = useSnackbar() || {};
 
   const onOfferSelected = (offer: EscrowRecord, action: ActionType) => {
     setActionType(action);
@@ -81,7 +83,8 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         setOffersReceived(offersReceived);
       }
     } catch (e) {
-      debug.log('error', e);
+      debug.log('An unexpected error occurred', e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
     }
@@ -112,6 +115,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
       debug.log('parsedOffersReceived', parsedOffersReceived);
     } catch (e) {
       debug.log('error', e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
     }
@@ -133,21 +137,9 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         });
 
         if ('err' in rejectResponse) {
-          enqueueSnackbar(`Error: ${rejectResponse.err.text}.`, {
-            variant: 'error',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
+          showErrorMessage(`Error: ${rejectResponse.err.text}.`, rejectResponse.err.text);
         } else {
-          enqueueSnackbar('The escrow has been rejected.', {
-            variant: 'success',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
+          showSuccessMessage('Offer rejected successfully.');
         }
       }
       if (action == 'accept') {
@@ -178,25 +170,14 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         });
         debug.log(acceptOffer.err);
         if ('err' in acceptOffer) {
-          enqueueSnackbar('There has been an error in accepting the offer', {
-            variant: 'error',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
+          showErrorMessage('There has been an error in accepting the offer', acceptOffer.err.text);
         } else {
-          enqueueSnackbar('The offer has been accepted.', {
-            variant: 'success',
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-          });
+          showSuccessMessage('Offer accepted successfully.');
         }
       }
     } catch (e) {
       debug.log(e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
       getOffersReceivedBalance();

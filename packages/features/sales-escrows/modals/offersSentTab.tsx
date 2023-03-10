@@ -7,8 +7,12 @@ import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
 import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
-import { useSnackbar } from 'notistack';
 import { LoadingContainer } from '@dapp/features-components';
+import {
+  showUnexpectedErrorMessage,
+  showErrorMessage,
+  showSuccessMessage,
+} from '@dapp/features-user-messages';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -45,7 +49,6 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   const [openModal, setOpenModal] = React.useState(false);
   const [selectedOffer, setSelectedOffer] = React.useState<EscrowRecord>();
   const [isLoading, setIsLoading] = React.useState(false);
-  const { enqueueSnackbar } = useSnackbar() || {};
 
   const onModalClose = () => {
     setOpenModal(false);
@@ -81,7 +84,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       });
       setOffersSentWithSaleData(offersSentWithSaleData);
     } catch (e) {
-      debug.log('error', e);
+      debug.log('An unexpected error occurred', e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
     }
@@ -103,24 +107,16 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       });
 
       if ('err' in withdrawResponse) {
-        enqueueSnackbar(`Error: ${withdrawResponse.err.flag_point}.`, {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showErrorMessage(
+          `Error: ${withdrawResponse.err.flag_point}.`,
+          withdrawResponse.err.flag_point,
+        );
       } else {
-        enqueueSnackbar('Your escrow has been successfully withdrawn.', {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showSuccessMessage('Offer withdrawn successfully.');
       }
     } catch (e) {
       debug.log(e);
+      showUnexpectedErrorMessage();
     } finally {
       refreshAllBalances(false, principal);
       setIsLoading(false);
@@ -147,6 +143,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       }
     } catch (e) {
       debug.log('error', e);
+      showUnexpectedErrorMessage();
     } finally {
       setIsLoading(false);
     }

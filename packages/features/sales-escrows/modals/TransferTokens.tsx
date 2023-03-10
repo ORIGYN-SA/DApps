@@ -4,8 +4,8 @@ import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn-s
 import { LinearProgress } from '@mui/material';
 import * as Yup from 'yup';
 import { AuthContext } from '../../authentication';
-import { useSnackbar } from 'notistack';
 import { isLocal } from '../../../utils';
+import { showUnexpectedErrorMessage } from '@dapp/features-user-messages';
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
@@ -23,7 +23,6 @@ const validationSchema = Yup.object().shape({
 const TransferTokensModal = ({ open, handleClose }: any) => {
   const { tokens, activeTokens } = useTokensContext();
   const { activeWalletProvider } = useContext(AuthContext);
-  const { enqueueSnackbar } = useSnackbar();
   const [switchTransfer, setSwitchTransfer] = useState(false);
   // @ts-ignore
   const [values, setValues] = React.useState<any>(validationSchema.default());
@@ -53,13 +52,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
       .catch((e) => {
         console.error(e);
         setSwitchTransfer(false);
-        enqueueSnackbar('There was an error when starting your auction.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-        });
+        showUnexpectedErrorMessage;
       })
       .then(() => {
         setSwitchTransfer(false);
@@ -68,26 +61,6 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         setSwitchTransfer(false);
       });
   };
-
-  //   <Container size='full' padding='48px'>
-  //             <h2>Success!</h2>
-  //             <br/>
-  //             <span>Your transfer of {amount} {selectedToken} is complete.
-  //             Click done to return to the dashboard.</span>
-  //             <br/>
-  //             <Button btnType="secondary" onClick={() => handleClose(false)}>Done</Button>
-
-  //        </Container>
-
-  // const {
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<any>({
-  //   resolver: yupResolver(validationSchema),
-  // });
-  // const customSubmit = (data) => {
-  //   sendTrx(data);
-  // };
 
   const getValidationErrors = (err) => {
     const validationErrors = {};
