@@ -266,12 +266,13 @@ export function StartEscrowModal({
         onCustomClose(true);
         refreshAllBalances(false, principal);
         setSuccess(true);
+        onClose(false);
         onSuccess();
       } else {
         // if there is no auction, then this is just an offer
-
         showSuccessMessage('Your escrow has been successfully sent.');
         onCustomClose(true);
+        onClose(false);
         refreshAllBalances(false, principal);
         setSuccess(true);
         onSuccess();
@@ -282,6 +283,7 @@ export function StartEscrowModal({
     } finally {
       setIsTransacting(false);
       onProcessing(false);
+      onClose(false);
     }
   };
 
@@ -298,115 +300,113 @@ export function StartEscrowModal({
   };
 
   return (
-    <div>
-      <Modal isOpened={open} closeModal={() => onCustomClose(false)} size="md">
-        <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
-          {success ? (
-            <>
-              <h2>Success!</h2>
-              <p className="secondary_color">All the transactions were made successfully.</p>
-              <Flex justify="flex-end">
-                <Button onClick={onCustomClose}>Done</Button>
-              </Flex>
-            </>
-          ) : (
-            <>
-              {isTransacting ? (
-                <>
-                  <h2>Transactions in Progress</h2>
-                  <br />
-                  <LoadingContainer data-testid="loading-container" />
-                </>
-              ) : (
-                <>
-                  <h2>
-                    Send escrow for <strong>{odc.id}</strong>?
-                  </h2>
-                  <br />
-                  {!isLoading && (
-                    <Flex flexFlow="column" gap={8}>
-                      {escrowType === 'Offer' ? (
-                        <Select
-                          name="token"
-                          selectedOption={{
-                            label: token.symbol,
-                            value: token.symbol,
-                          }}
-                          handleChange={(opt) => onTokenChanged(opt.value)}
-                          label="Token"
-                          options={Object.keys(tokens).map((t) => ({
-                            label: tokens[t].symbol,
-                            value: t,
-                          }))}
+    <Modal isOpened={open} closeModal={() => onCustomClose(false)} size="md">
+      <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
+        {success ? (
+          <>
+            <h2>Success!</h2>
+            <p className="secondary_color">All the transactions were made successfully.</p>
+            <Flex justify="flex-end">
+              <Button onClick={onCustomClose}>Done</Button>
+            </Flex>
+          </>
+        ) : (
+          <>
+            {isTransacting ? (
+              <>
+                <h2>Transactions in Progress</h2>
+                <br />
+                <LoadingContainer data-testid="loading-container" />
+              </>
+            ) : (
+              <>
+                <h2>
+                  Send escrow for <strong>{odc.id}</strong>?
+                </h2>
+                <br />
+                {!isLoading && (
+                  <Flex flexFlow="column" gap={8}>
+                    {escrowType === 'Offer' ? (
+                      <Select
+                        name="token"
+                        selectedOption={{
+                          label: token.symbol,
+                          value: token.symbol,
+                        }}
+                        handleChange={(opt) => onTokenChanged(opt.value)}
+                        label="Token"
+                        options={Object.keys(tokens).map((t) => ({
+                          label: tokens[t].symbol,
+                          value: t,
+                        }))}
+                      />
+                    ) : (
+                      <>
+                        <span>Token:</span>
+                        <span style={{ color: 'grey' }}>{token.symbol}</span>
+                      </>
+                    )}
+                    {escrowType == 'BuyNow' ? (
+                      <>
+                        <br />
+                        <span>Buy Now Price (in {token.symbol})</span>
+                        <span style={{ color: 'grey' }}>
+                          {toLargerUnit(odc.buyNow, token.decimals)}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <br />
+                        <TextInput
+                          required
+                          label={
+                            escrowType == 'Bid'
+                              ? `Your bid (min ${minBid} ${token.symbol})`
+                              : `Your offer (in ${token.symbol})`
+                          }
+                          id="offerPrice"
+                          name="offerPrice"
+                          error={formErrors.amount}
+                          onChange={(e) => onAmountChanged(e.target.value)}
+                          value={enteredAmount}
                         />
-                      ) : (
-                        <>
-                          <span>Token:</span>
-                          <span style={{ color: 'grey' }}>{token.symbol}</span>
-                        </>
-                      )}
-                      {escrowType == 'BuyNow' ? (
-                        <>
-                          <br />
-                          <span>Buy Now Price (in {token.symbol})</span>
-                          <span style={{ color: 'grey' }}>
-                            {toLargerUnit(odc.buyNow, token.decimals)}
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <br />
-                          <TextInput
-                            required
-                            label={
-                              escrowType == 'Bid'
-                                ? `Your bid (min ${minBid} ${token.symbol})`
-                                : `Your offer (in ${token.symbol})`
-                            }
-                            id="offerPrice"
-                            name="offerPrice"
-                            error={formErrors.amount}
-                            onChange={(e) => onAmountChanged(e.target.value)}
-                            value={enteredAmount}
-                          />
-                        </>
-                      )}
-                      <br />
-                      {token && (
-                        <>
-                          <span>Transaction Fee</span>
-                          <span style={{ color: 'grey' }}>{`${toLargerUnit(
-                            token.fee * 2,
-                            token.decimals,
-                          )}${' '}${token?.symbol}`}</span>
-                          <br />
-                          <HR />
-                          <br />
-                          <Flex flexFlow="row" align="center" justify="space-between">
-                            <h6>Total Amount</h6>
-                            <span>{total}</span>
-                          </Flex>
-                          <br />
-                          <HR />
-                          <br />
-                        </>
-                      )}
-                      <Flex align="center" justify="flex-end" gap={16}>
-                        <Button btnType="outlined" onClick={() => onCustomClose(false)}>
-                          Cancel
-                        </Button>
-                        <Button btnType="accent" type="submit" disabled={hasErrors()}>
-                          Send Escrow
-                        </Button>
-                      </Flex>
+                      </>
+                    )}
+                    <br />
+                    {token && (
+                      <>
+                        <span>Transaction Fee</span>
+                        <span style={{ color: 'grey' }}>{`${toLargerUnit(
+                          token.fee * 2,
+                          token.decimals,
+                        )}${' '}${token?.symbol}`}</span>
+                        <br />
+                        <HR />
+                        <br />
+                        <Flex flexFlow="row" align="center" justify="space-between">
+                          <h6>Total Amount</h6>
+                          <span>{total}</span>
+                        </Flex>
+                        <br />
+                        <HR />
+                        <br />
+                      </>
+                    )}
+                    <Flex align="center" justify="flex-end" gap={16}>
+                      <Button btnType="outlined" onClick={() => onCustomClose(false)}>
+                        Cancel
+                      </Button>
+                      <Button btnType="accent" type="submit" disabled={hasErrors()}>
+                        Send Escrow
+                      </Button>
                     </Flex>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </Container>
-      </Modal>
-    </div>
+                  </Flex>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </Container>
+    </Modal>
   );
 }
