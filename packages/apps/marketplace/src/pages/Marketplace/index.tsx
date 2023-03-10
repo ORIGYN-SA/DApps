@@ -127,11 +127,13 @@ const Marketplace = () => {
     let intervalId: any;
     if (actor) {
       fetchData();
-      if (!intervalId) {
+      if (!intervalId && inputText != '') {
         intervalId = setInterval(() => {
           fetchData();
+
         }, 5000);
       }
+      
     }
     return () => {
       if (intervalId) {
