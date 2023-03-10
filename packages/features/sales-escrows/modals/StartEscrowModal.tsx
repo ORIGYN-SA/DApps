@@ -13,11 +13,7 @@ import {
   isPositiveFloat,
   addCurrencies,
 } from '@dapp/utils';
-import {
-  showErrorMessage,
-  showSuccessMessage,
-  showUnexpectedErrorMessage,
-} from '@dapp/features-user-messages';
+import { showSuccessMessage, showUnexpectedErrorMessage } from '@dapp/features-user-messages';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 

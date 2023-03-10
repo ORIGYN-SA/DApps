@@ -5,7 +5,7 @@ import { LinearProgress } from '@mui/material';
 import * as Yup from 'yup';
 import { AuthContext } from '../../authentication';
 import { isLocal } from '../../../utils';
-import { showUnexpectedErrorMessage } from '@dapp/features-user-messages';
+import { showErrorMessage } from '@dapp/features-user-messages';
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
@@ -52,7 +52,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
       .catch((e) => {
         console.error(e);
         setSwitchTransfer(false);
-        showUnexpectedErrorMessage;
+        showErrorMessage('There was an error when starting your auction.', e);
       })
       .then(() => {
         setSwitchTransfer(false);
@@ -61,6 +61,26 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         setSwitchTransfer(false);
       });
   };
+
+  //   <Container size='full' padding='48px'>
+  //             <h2>Success!</h2>
+  //             <br/>
+  //             <span>Your transfer of {amount} {selectedToken} is complete.
+  //             Click done to return to the dashboard.</span>
+  //             <br/>
+  //             <Button btnType="secondary" onClick={() => handleClose(false)}>Done</Button>
+
+  //        </Container>
+
+  // const {
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<any>({
+  //   resolver: yupResolver(validationSchema),
+  // });
+  // const customSubmit = (data) => {
+  //   sendTrx(data);
+  // };
 
   const getValidationErrors = (err) => {
     const validationErrors = {};
