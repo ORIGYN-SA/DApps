@@ -5,7 +5,7 @@ import { LinearProgress } from '@mui/material';
 import * as Yup from 'yup';
 import { AuthContext } from '../../authentication';
 import { isLocal } from '../../../utils';
-import { showErrorMessage } from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
@@ -22,6 +22,7 @@ const validationSchema = Yup.object().shape({
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
   const { tokens, activeTokens } = useTokensContext();
+  const { showErrorMessage } = useUserMessages();
   const { activeWalletProvider } = useContext(AuthContext);
   const [switchTransfer, setSwitchTransfer] = useState(false);
   // @ts-ignore

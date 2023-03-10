@@ -9,11 +9,7 @@ import { EscrowRecord, EscrowReceipt, OrigynError, BalanceResponse } from '@dapp
 import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
-import {
-  showUnexpectedErrorMessage,
-  showSuccessMessage,
-  showErrorMessage,
-} from '@dapp/features-user-messages';
+import { useUserMessages } from '@dapp/features-user-messages';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -47,6 +43,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
   const debug = useDebug();
   const { actor, principal } = useContext(AuthContext);
   const { tokens } = useTokensContext();
+  const { showUnexpectedErrorMessage, showErrorMessage, showSuccessMessage } = useUserMessages();
   const [offersReceived, setOffersReceived] = useState<EscrowRecord[]>([]);
   const [parsedOffersReceived, setParsedOffersReceived] = useState<ReceivedOffersProps[]>([]);
   const [selectedOffer, setSelectedOffer] = React.useState<EscrowRecord>();
