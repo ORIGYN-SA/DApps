@@ -57,27 +57,34 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   };
 
   const parseOffers = async () => {
-    debug.log('offersSent', offersSent);
-    const tokenIds = offersSent.map((offer) => offer.token_id);
-    const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-    debug.log('odcDataRaw', odcDataRaw);
-    if (odcDataRaw.err) {
-      debug.error(odcDataRaw.err);
-      throw new Error('Unable to retrieve metadata of tokens.');
-    }
+    try {
+      setIsLoading(true);
+      debug.log('offersSent', offersSent);
+      const tokenIds = offersSent.map((offer) => offer.token_id);
+      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+      debug.log('odcDataRaw', odcDataRaw);
+      if (odcDataRaw.err) {
+        debug.error(odcDataRaw.err);
+        throw new Error('Unable to retrieve metadata of tokens.');
+      }
 
-    const parsedOdcs = parseOdcs(odcDataRaw);
-    const offersSentWithSaleData = parsedOdcs.map((odc: OdcDataWithSale, index) => {
-      const offer = offersSent[index];
-      return {
-        ...odc,
-        token_id: offer.token_id,
-        amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
-        lock_to_date: offer.lock_to_date,
-        escrow_record: offer,
-      };
-    });
-    setOffersSentWithSaleData(offersSentWithSaleData);
+      const parsedOdcs = parseOdcs(odcDataRaw);
+      const offersSentWithSaleData = parsedOdcs.map((odc: OdcDataWithSale, index) => {
+        const offer = offersSent[index];
+        return {
+          ...odc,
+          token_id: offer.token_id,
+          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
+          lock_to_date: offer.lock_to_date,
+          escrow_record: offer,
+        };
+      });
+      setOffersSentWithSaleData(offersSentWithSaleData);
+    } catch (e) {
+      debug.log('error', e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const confirmOfferWithdraw = async (escrow: EscrowRecord) => {
@@ -124,6 +131,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
 
   const getOffersSentBalance = async () => {
     try {
+      setIsLoading(true);
       const response = await actor.balance_of_nft_origyn({ principal });
       debug.log('response from actor?.balance_of_nft_origyn({ principal })');
       debug.log(JSON.stringify(response, null, 2));
@@ -139,6 +147,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       }
     } catch (e) {
       debug.log('error', e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -154,80 +164,90 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
 
   return (
     <>
-      {offersSent?.length > 0 ? (
-        <div>
-          <HR marginTop={16} marginBottom={16} />
-          <div style={styles.gridContainer}>
-            {offerSentWithSaleData.map((offer: SentOffersProps, index: number) => (
-              <>
-                <div key={index} style={styles.gridItem}>
-                  {offer.hasPreviewAsset ? (
-                    <img
-                      style={{ height: '42px', width: 'auto', borderRadius: '12px' }}
-                      src={`https://${canisterId}.raw.ic0.app/-/${offer.token_id}/preview`}
-                      alt=""
-                    />
-                  ) : (
-                    <PlaceholderIcon
-                      width={42}
-                      height={42}
-                      marginTop={'auto'}
-                      marginBottom={'auto'}
-                    />
-                  )}
-                </div>
-                <div style={styles.gridItem}>
-                  <div>
-                    <p>{offer.token_id}</p>
-                  </div>
-                  <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
-                </div>
-                <div style={styles.gridItem}>
-                  <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
-                  <br />
-                  <div>
-                    <TokenIcon symbol={offer.tokenSymbol} />
-                    {offer.amount}
-                  </div>
-                </div>
-                <div style={styles.gridItem}>
-                  <span style={{ color: theme.colors.SECONDARY_TEXT }}>Status</span>
-                  <br />
-                  <span>
-                    {offer.lock_to_date
-                      ? Date.now() * 1e6 > parseInt(offer.lock_to_date)
-                        ? 'Locked'
-                        : 'Done'
-                      : 'Lock date not present'}
-                  </span>
-                </div>
-                <div style={styles.gridItem}>
-                  {Date.now() * 1e6 > parseInt(offer.lock_to_date) ? (
-                    <Button btnType="filled" size="small" disabled>
-                      Withdraw
-                    </Button>
-                  ) : (
-                    <Button
-                      btnType="filled"
-                      size="small"
-                      onClick={() => onOfferSelected(offer.escrow_record)}
-                    >
-                      Withdraw
-                    </Button>
-                  )}
-                </div>
-              </>
-            ))}{' '}
-          </div>
-        </div>
+      {isLoading ? (
+        <>
+          <HR marginTop={24} marginBottom={24} />
+          <LoadingContainer />
+        </>
       ) : (
         <>
-          <HR marginTop={16} marginBottom={16} />
-          <p>
-            <b>No offers sent yet</b>
-          </p>
+          {offersSent?.length > 0 ? (
+            <div>
+              <HR marginTop={16} marginBottom={16} />
+              <div style={styles.gridContainer}>
+                {offerSentWithSaleData.map((offer: SentOffersProps, index: number) => (
+                  <>
+                    <div key={index} style={styles.gridItem}>
+                      {offer.hasPreviewAsset ? (
+                        <img
+                          style={{ height: '42px', width: 'auto', borderRadius: '12px' }}
+                          src={`https://${canisterId}.raw.ic0.app/-/${offer.token_id}/preview`}
+                          alt=""
+                        />
+                      ) : (
+                        <PlaceholderIcon
+                          width={42}
+                          height={42}
+                          marginTop={'auto'}
+                          marginBottom={'auto'}
+                        />
+                      )}
+                    </div>
+                    <div style={styles.gridItem}>
+                      <div>
+                        <p>{offer.token_id}</p>
+                      </div>
+                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
+                    </div>
+                    <div style={styles.gridItem}>
+                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
+                      <br />
+                      <div>
+                        <TokenIcon symbol={offer.tokenSymbol} />
+                        {offer.amount}
+                      </div>
+                    </div>
+                    <div style={styles.gridItem}>
+                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>Status</span>
+                      <br />
+                      <span>
+                        {offer.lock_to_date
+                          ? Date.now() * 1e6 > parseInt(offer.lock_to_date)
+                            ? 'Locked'
+                            : 'Done'
+                          : 'Lock date not present'}
+                      </span>
+                    </div>
+                    <div style={styles.gridItem}>
+                      {Date.now() * 1e6 > parseInt(offer.lock_to_date) ? (
+                        <Button btnType="filled" size="small" disabled>
+                          Withdraw
+                        </Button>
+                      ) : (
+                        <Button
+                          btnType="filled"
+                          size="small"
+                          onClick={() => onOfferSelected(offer.escrow_record)}
+                        >
+                          Withdraw
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                ))}{' '}
+              </div>
+            </div>
+          ) : (
+            <>
+              <HR marginTop={16} marginBottom={16} />
+              <p>
+                <b>No offers sent yet</b>
+              </p>
+            </>
+          )}
         </>
       )}
+
       <Modal isOpened={openModal} closeModal={() => onModalClose} size="md">
         <Container size="full" padding="48px">
           <h2>Confirm Offer Withdraw</h2>

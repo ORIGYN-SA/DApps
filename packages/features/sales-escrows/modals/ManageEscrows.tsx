@@ -19,7 +19,7 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
     <>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
         <Container size="full" padding="48px">
-          <h3>Manage Escrow</h3>
+          <h3>Manage Escrows</h3>
           <HR marginTop={16} marginBottom={16} />
           <TabContent
             tabs={[
