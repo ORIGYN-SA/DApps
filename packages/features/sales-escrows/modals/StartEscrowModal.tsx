@@ -122,8 +122,8 @@ export function StartEscrowModal({
   };
 
   const getTotal = (amount: number, token: Token): number => {
-    const fee = toLargerUnit(token.fee, token.decimals);
-    return addCurrencies(amount, fee, token.decimals);
+    const twoPartTxFees = toLargerUnit(token.fee * 2, token.decimals);
+    return addCurrencies(amount, twoPartTxFees, token.decimals);
   };
 
   const hasErrors = (): boolean => {
@@ -198,16 +198,17 @@ export function StartEscrowModal({
         throw new Error('Account ID not found in sale info');
       }
 
-      // DO NOT ADD FEE TO AMOUNT. FEE WILL BE TAKEN BY THE CANISTER.
-      const amount = toSmallerUnit(parseFloat(enteredAmount), token.decimals);
-      console.log('escrow amount', amount);
+      const amount = toSmallerUnit(Number(enteredAmount), token.decimals);
+      const totalAmount = addCurrencies(amount, token.fee, token.decimals);
+
+      debug.log('escrow amount with fee', totalAmount);
 
       const transactionHeight = await sendTransaction(
         false,
         activeWalletProvider,
         token,
         account_id,
-        amount,
+        totalAmount,
       );
 
       if (transactionHeight.err) {
@@ -229,7 +230,7 @@ export function StartEscrowModal({
           trx_id: [{ nat: BigInt(transactionHeight.ok) }],
           seller: { principal: Principal.fromText(odc.ownerPrincipalId) },
           buyer: { principal },
-          amount,
+          amount: totalAmount,
           sale_id: odc.saleId ? [odc.saleId] : [],
         },
         lock_to_date: [],
@@ -375,7 +376,7 @@ export function StartEscrowModal({
                         <>
                           <span>Transaction Fee</span>
                           <span style={{ color: 'grey' }}>{`${toLargerUnit(
-                            token.fee,
+                            token.fee * 2,
                             token.decimals,
                           )}${' '}${token?.symbol}`}</span>
                           <br />
