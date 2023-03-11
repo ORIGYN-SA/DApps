@@ -279,7 +279,7 @@ export function StartEscrowModal({
       }
     } catch (e) {
       debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsTransacting(false);
       onProcessing(false);

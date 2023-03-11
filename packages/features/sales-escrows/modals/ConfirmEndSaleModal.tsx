@@ -64,7 +64,7 @@ export const ConfirmEndSaleModal = ({
       }
     } catch (e) {
       debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       onProcessing?.(false);
       setIsLoading(false);

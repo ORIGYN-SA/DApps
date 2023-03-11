@@ -45,7 +45,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       }
     } catch (e) {
       debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
       await getDepositInfo();

@@ -134,7 +134,7 @@ export function StartAuctionModal({
       }
     } catch (e) {
       debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setInProgress(false);
       onProcessing(false);

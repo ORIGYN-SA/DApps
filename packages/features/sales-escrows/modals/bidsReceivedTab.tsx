@@ -70,7 +70,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
       setReceivedActiveBids(receivedActiveBids);
     } catch (e) {
       debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
     }
@@ -95,7 +95,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
       }
     } catch (e) {
       debug.log('An unexpected error occurred', e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
     }

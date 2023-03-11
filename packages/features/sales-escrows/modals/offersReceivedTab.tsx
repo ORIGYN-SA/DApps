@@ -81,7 +81,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
       }
     } catch (e) {
       debug.log('An unexpected error occurred', e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +112,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
       debug.log('parsedOffersReceived', parsedOffersReceived);
     } catch (e) {
       debug.log('error', e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
     }
@@ -174,7 +174,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
       }
     } catch (e) {
       debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
       getOffersReceivedBalance();

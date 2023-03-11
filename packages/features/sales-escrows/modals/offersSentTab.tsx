@@ -82,7 +82,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       setOffersSentWithSaleData(offersSentWithSaleData);
     } catch (e) {
       debug.log('An unexpected error occurred', e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +113,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       }
     } catch (e) {
       debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       refreshAllBalances(false, principal);
       setIsLoading(false);
@@ -140,7 +140,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       }
     } catch (e) {
       debug.log('error', e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       setIsLoading(false);
     }

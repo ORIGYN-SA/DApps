@@ -21,10 +21,10 @@ export function useUserMessages() {
                 horizontal: 'right',
             },
         });
-        console.error('Error:' + error);
+        console.log('Error:' + error);
     };
 
-    function showUnexpectedErrorMessage(): void {
+    function showUnexpectedErrorMessage(error: any): void {
         enqueueSnackbar('An unexpected error occurred', {
             variant: 'error',
             anchorOrigin: {
@@ -32,6 +32,7 @@ export function useUserMessages() {
                 horizontal: 'right',
             },
         });
+        console.log('Error:' + error)
     };
 
     return { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage };
