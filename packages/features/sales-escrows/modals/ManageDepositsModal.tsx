@@ -79,7 +79,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         });
       }
     } catch (e) {
-      throw showUnexpectedErrorMessage(e);
+      showUnexpectedErrorMessage(e);
     }
   };
 
@@ -88,11 +88,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       getDepositInfo();
     }
   }, [open, actor]);
-
-  const parseDecimals = (data) => {
-    const res = parseFloat((parseInt(data) * 1e-8).toString()).toFixed(2);
-    return res;
-  };
 
   return (
     <div>
