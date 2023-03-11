@@ -6,10 +6,11 @@ import { Principal } from '@dfinity/principal';
 import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { toLargerUnit } from '@dapp/utils';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
-  const { principal, actor } = useContext(AuthContext);
   const debug = useDebug();
+  const { principal, actor } = useContext(AuthContext);
   const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
   //const [depositPrincipal, setDepositPrincipal] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -54,26 +55,31 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
 
   const getDepositInfo = async () => {
     try {
-      const r = await actor?.sale_info_nft_origyn({ deposit_info: [{ principal }] });
-      //setDepositPrincipal(r.ok.deposit_info.principal);
-      const balances = Object.keys(activeTokens).map(async (k) => {
-        const val = await getBalanceByAccount(
-          false,
-          r?.ok?.deposit_info?.account_id_text || '',
-          activeTokens[k],
-        );
-        return { [k]: val };
-      });
+      const result = await actor?.sale_info_nft_origyn({ deposit_info: [{ principal }] });
+      debug.log('sale_info_nft_origyn result', result);
 
-      Promise.all(Object.values(balances)).then((values) => {
-        const b = values.reduce(
-          (obj, item) => Object.assign(obj, { [Object.keys(item)[0]]: Object.values(item)[0] }),
-          {},
-        );
-        setTokenBalances(b);
-      });
+      if ('err' in result) {
+        throw new Error(result.err.text);
+      } else {
+        const balances = Object.keys(activeTokens).map(async (tokenSymbol) => {
+          const val = await getBalanceByAccount(
+            false,
+            result.ok?.deposit_info?.account_id_text || '',
+            activeTokens[tokenSymbol],
+          );
+          return { [tokenSymbol]: val };
+        });
+
+        Promise.all(Object.values(balances)).then((values) => {
+          const b = values.reduce(
+            (obj, item) => Object.assign(obj, { [Object.keys(item)[0]]: Object.values(item)[0] }),
+            {},
+          );
+          setTokenBalances(b);
+        });
+      }
     } catch (e) {
-      debug.log(e);
+      throw showUnexpectedErrorMessage(e);
     }
   };
 
@@ -100,23 +106,29 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
             </>
           ) : (
             <>
-              {Object.keys(activeTokens).map((k) => {
+              {Object.keys(activeTokens).map((tokenSymbol) => {
                 return (
-                  <div key={k}>
+                  <div key={tokenSymbol}>
                     <Flex flexFlow="row" justify="space-around">
                       <Flex flexFlow="column">
                         <span>Token</span>
-                        <span style={{ color: 'grey' }}>{k}</span>
+                        <span style={{ color: 'grey' }}>{tokenSymbol}</span>
                       </Flex>
                       <Flex flexFlow="column">
                         <span style={{ color: 'grey' }}>Amount</span>
-                        <span>{parseDecimals(tokenBalances[k]?.value)}</span>
+                        <span>
+                          {toLargerUnit(
+                            tokenBalances[tokenSymbol]?.value || 0,
+                            activeTokens[tokenSymbol].decimals,
+                          )}
+                        </span>
                       </Flex>
+                      {console.log(typeof tokenBalances[tokenSymbol]?.value)}
                       <Button
                         btnType="filled"
                         size="small"
-                        onClick={() => withdraw(k)}
-                        disabled={tokenBalances[k]?.value.toString() === '0'}
+                        onClick={() => withdraw(tokenSymbol)}
+                        disabled={(tokenBalances[tokenSymbol]?.value || 0) == 0}
                       >
                         Withdraw
                       </Button>
