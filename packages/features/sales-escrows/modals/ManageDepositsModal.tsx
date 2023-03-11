@@ -118,7 +118,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                           )}
                         </span>
                       </Flex>
-                      {console.log(typeof tokenBalances[tokenSymbol]?.value)}
                       <Button
                         btnType="filled"
                         size="small"
