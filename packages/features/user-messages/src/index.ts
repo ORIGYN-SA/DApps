@@ -1,38 +1,39 @@
 import { useSnackbar } from 'notistack';
 
 export function useUserMessages() {
-    const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
-    function showSuccessMessage(message: string): void {
-        enqueueSnackbar(message, {
-            variant: 'success',
-            anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-            },
-        });
-    };
+  function showSuccessMessage(message: string): void {
+    enqueueSnackbar(message, {
+      variant: 'success',
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      },
+    });
+  }
 
-    function showErrorMessage(message: string, error: any): void {
-        enqueueSnackbar(message, {
-            variant: 'error',
-            anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-            },
-        });
-        console.error('Error:' + error);
-    };
+  function showErrorMessage(message: string, error: any): void {
+    enqueueSnackbar(message, {
+      variant: 'error',
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      },
+    });
+    console.error('Error:' + error);
+  }
 
-    function showUnexpectedErrorMessage(): void {
-        enqueueSnackbar('An unexpected error occurred', {
-            variant: 'error',
-            anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-            },
-        });
-    };
+  function showUnexpectedErrorMessage(error: any): void {
+    enqueueSnackbar('An unexpected error occurred', {
+      variant: 'error',
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      },
+    });
+    console.error('Error:' + error);
+  }
 
-    return { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage };
+  return { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage };
 }

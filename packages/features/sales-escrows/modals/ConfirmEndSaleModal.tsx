@@ -4,7 +4,6 @@ import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { Container, Flex, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
-import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 
 const Transition = React.forwardRef(
@@ -37,7 +36,6 @@ export const ConfirmEndSaleModal = ({
   const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
   const [isLoading, setIsLoading] = React.useState(false);
   const [confirmed, setConfirmed] = useState(false);
-  const debug = useDebug();
 
   const onEndSaleConfirm = async (confirm = false) => {
     if (!confirm) {
@@ -63,8 +61,7 @@ export const ConfirmEndSaleModal = ({
         );
       }
     } catch (e) {
-      debug.log(e);
-      showUnexpectedErrorMessage();
+      showUnexpectedErrorMessage(e);
     } finally {
       onProcessing?.(false);
       setIsLoading(false);
