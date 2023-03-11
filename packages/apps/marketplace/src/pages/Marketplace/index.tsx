@@ -161,7 +161,9 @@ const Marketplace = () => {
     }
 
     if (inputText?.length) {
-      filtered = filtered.filter((odc) => odc?.displayName?.toLowerCase().includes(inputText));
+      filtered = filtered.filter((odc) =>
+        (odc.displayName || odc.id)?.toLowerCase().includes(inputText),
+      );
     }
 
     dispatch({ type: 'filteredOdcs', payload: filtered });
