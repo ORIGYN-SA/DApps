@@ -29,7 +29,7 @@ const StyledSectionTitle = styled.h2`
 
 const Marketplace = () => {
   const debug = useDebug();
-  const { showErrorMessage } = useUserMessages();
+  const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [canisterId, setCanisterId] = useState('');
@@ -54,12 +54,11 @@ const Marketplace = () => {
 
       // get the canister's collection metadata
       const collMetaResp = await getNftCollectionMeta([]);
-      debug.log('return value from getNftCollectionMeta([])');
-      debug.log(JSON.stringify(collMetaResp, null, 2));
+      debug.log('getNftCollectionMeta result', collMetaResp);
 
-      if (collMetaResp.err) {
-        // TODO: Display error
-        debug.error(collMetaResp.err);
+      if ('err' in collMetaResp) {
+        console.error(collMetaResp.err);
+        showErrorMessage('Get collection data failed');
         return;
       }
 
@@ -74,25 +73,21 @@ const Marketplace = () => {
 
       // get a list of all digital certificates in the collection
       const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      debug.log('actor?.nft_batch_origyn(ownedTokenIds)');
-      debug.log(JSON.stringify(odcDataRaw, null, 2));
+      debug.log('nft_batch_origyn result', odcDataRaw);
 
-      if (odcDataRaw.err) {
-        // TODO: Display error
-        debug.error(odcDataRaw.err);
+      if ('err' in odcDataRaw) {
+        console.error(odcDataRaw.err);
+        showErrorMessage('Get batch tokens failed');
         return;
       }
 
       // parse the digital certificate data (metadata and sale info)
       const parsedOdcs = parseOdcs(odcDataRaw);
-      debug.log('parsed odcs');
-      debug.log(parsedOdcs);
+      debug.log('parsed odcs', parsedOdcs);
 
       dispatch({ type: 'odcs', payload: parsedOdcs });
-      dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
     } catch (err) {
-      debug.error(err);
-      showErrorMessage(`${err.message || err}`, err?.message || err);
+      showUnexpectedErrorMessage(err);
     } finally {
       setIsLoaded(true);
     }
