@@ -27,6 +27,7 @@ import {
 } from '@origyn-sa/origyn-art-ui';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderIcon } from '@dapp/common-assets';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -208,6 +209,7 @@ const DscvrSVG = () => {
 
 const VaultPage = () => {
   const debug = useDebug();
+  const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
@@ -249,12 +251,12 @@ const VaultPage = () => {
 
       // get the canister's collection metadata
       const collMetaResp = await getNftCollectionMeta([]);
-      debug.log('return value from getNftCollectionMeta([])');
-      debug.log(JSON.stringify(collMetaResp, null, 2));
+      debug.log('getNftCollectionMeta result', collMetaResp);
 
-      if (collMetaResp.err) {
-        debug.error(collMetaResp.err);
-        throw new Error('Unable to retrieve collection metadata.');
+      if ('err' in collMetaResp) {
+        console.error(collMetaResp.err);
+        showErrorMessage('Get collection data failed');
+        return;
       }
 
       const collMeta = collMetaResp.ok;
@@ -264,9 +266,7 @@ const VaultPage = () => {
 
       if (principal) {
         const vaultBalanceInfo = await actor?.balance_of_nft_origyn({ principal });
-
-        debug.log('actor?.balance_of_nft_origyn({ principal })');
-        debug.log(JSON.stringify(vaultBalanceInfo, null, 2));
+        debug.log('balance_of_nft_origyn result', vaultBalanceInfo);
 
         if (vaultBalanceInfo.err) {
           throw new Error(Object.keys(vaultBalanceInfo.err)[0]);
@@ -275,21 +275,20 @@ const VaultPage = () => {
         // get list of digital certificates owned by the current user
         const ownedTokenIds = vaultBalanceInfo?.ok?.nfts || [];
         const odcDataRaw = await actor?.nft_batch_origyn(ownedTokenIds);
-        debug.log('actor?.nft_batch_origyn(ownedTokenIds)');
-        debug.log(JSON.stringify(odcDataRaw, null, 2));
+        debug.log('ownedTokenIds', ownedTokenIds);
+        debug.log('nft_batch_origyn result', odcDataRaw);
 
-        if (odcDataRaw.err) {
-          debug.error(odcDataRaw.err);
-          throw new Error('Unable to retrieve metadata of tokens.');
+        if ('err' in odcDataRaw) {
+          console.error(odcDataRaw.err);
+          showErrorMessage('Get batch tokens failed');
+          return;
         }
 
         // parse the digital certificate data (metadata and sale info)
         const parsedOdcs = parseOdcs(odcDataRaw);
-        debug.log('parsed odcs');
-        debug.log(parsedOdcs);
+        debug.log('parsed odcs', parsedOdcs);
 
         dispatch({ type: 'odcs', payload: parsedOdcs });
-        dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
         dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
 
         setShowManageEscrowsButton(
@@ -297,19 +296,11 @@ const VaultPage = () => {
         );
       } else {
         dispatch({ type: 'odcs', payload: [] });
-        dispatch({ type: 'filteredOdcs', payload: [] });
         dispatch({ type: 'ownedItems', payload: 0 });
         setShowManageEscrowsButton(false);
       }
     } catch (err) {
-      console.error(err);
-      enqueueSnackbar(err?.message || err, {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      showUnexpectedErrorMessage(err);
     } finally {
       setIsLoaded(true);
     }
