@@ -1,0 +1,26 @@
+<svg viewBox="0 0 330 330" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+  <rect width="100%" height="100%" fill="url(#pattern0)" />
+  <path d="M164.9 99.4482L222.521 132.714L165.284 165.987L107.653 132.712L164.9 99.4482Z" fill="#DCDCDC"
+    stroke="#121212" stroke-width="0.775625" />
+  <path d="M165.673 166.659L222.906 133.388L222.731 197.063L165.488 230.325L165.673 166.659Z" fill="#C5C5C5"
+    stroke="#121212" stroke-width="0.775625" />
+  <path d="M107.268 133.384L164.899 166.659L164.714 230.329L107.092 197.063L107.268 133.384Z" fill="#898989"
+    stroke="#121212" stroke-width="0.775625" />
+  <rect x="34" y="34" width="262" height="262" rx="131" stroke="url(#paint0_linear_2509_6686)" stroke-width="2" />
+  <defs>
+    <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+      <use xlinkHref="#image0_2509_6686" transform="scale(0.00123457)" />
+    </pattern>
+    <linearGradient id="paint0_linear_2509_6686" x1="165" y1="33" x2="165" y2="297" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EED926" />
+      <stop offset="0.135417" stop-color="#EF8712" />
+      <stop offset="0.244792" stop-color="#DD1C1F" />
+      <stop offset="0.385417" stop-color="#833183" />
+      <stop offset="0.510417" stop-color="#363373" />
+      <stop offset="0.604167" stop-color="#1A87C4" />
+      <stop offset="0.75" stop-color="#1E2345" />
+      <stop offset="0.833333" stop-color="#65AE35" />
+      <stop offset="1" stop-color="#046D31" />
+    </linearGradient>
+  </defs>
+</svg>

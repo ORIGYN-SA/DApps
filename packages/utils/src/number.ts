@@ -1,47 +1,14 @@
-export const formatNumber = (val: number) => {
-  let parts = val.toString().split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return parts.join('.');
-};
+import BigNumber from 'bignumber.js';
 
 export const padNum = (num: number | string, size: number = 2) => {
   let res = num.toString();
   while (res.length < size) res = '0' + res;
   return res;
 };
+
+// TODO: We can't assume 8 decimals. It's based on the token defininition.
 export const natToFloat = (n: string) => {
   return parseFloat((parseInt(n) * 1e-8).toString()).toFixed(8);
-};
-export const eToNumber = (num) => {
-  let sign = '';
-  (num += '').charAt(0) == '-' && ((num = num.substring(1)), (sign = '-'));
-  let arr = num.split(/[e]/gi);
-  if (arr.length < 2) return sign + num;
-  let dot = (0.1).toLocaleString().substr(1, 1),
-    n = arr[0],
-    exp = +arr[1],
-    w = (n = n.replace(/^0+/, '')).replace(dot, ''),
-    pos = n.split(dot)[1] ? n.indexOf(dot) + exp : w.length + exp,
-    L = pos - w.length,
-    s = '' + BigInt(w);
-  w =
-    exp >= 0
-      ? L >= 0
-        ? s + '0'.repeat(L)
-        : r()
-      : pos <= 0
-      ? '0' + dot + '0'.repeat(Math.abs(pos)) + s
-      : r();
-  L = w.split(dot);
-  if ((L[0] == 0 && L[1] == 0) || (+w == 0 && +s == 0)) w = 0; //** added 9/10/2021
-  return sign + w;
-  function r() {
-    return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`);
-  }
-};
-
-export const currencyFormat = (val?: number) => {
-  return (val ?? 0).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 };
 
 export const isPositiveFloat = (s: string): boolean => {
@@ -50,15 +17,53 @@ export const isPositiveFloat = (s: string): boolean => {
 };
 
 export const toLargerUnit = (num: number, decimals: number): number => {
-  if (decimals <= 0) {
+  // Fixes floating point arithmetic
+  // Converts a number like 12300000 to 0.123 (if decimals = 8)
+  if (decimals < 0) {
+    throw new Error('decimals can not be negative');
+  }
+
+  if (decimals === 0) {
     return num;
   }
-  return num / 10 ** decimals;
+
+  const result = new BigNumber(num.toString())
+    .dividedBy(new BigNumber('10').pow(decimals))
+    .decimalPlaces(decimals);
+
+  return parseFloat(result.toString());
 };
 
 export const toSmallerUnit = (num: number, decimals: number): number => {
-  if (decimals <= 0) {
+  // Fixes floating point arithmetic
+  // Converts a number like 0.123 to 12300000 (if decimals = 8)
+  if (decimals < 0) {
+    throw new Error('decimals can not be negative');
+  }
+
+  if (decimals === 0) {
     return num;
   }
-  return num * 10 ** decimals;
+
+  const result = new BigNumber(num.toString())
+    .times(new BigNumber('10').pow(decimals))
+    .decimalPlaces(decimals);
+
+  return parseFloat(result.toString());
+};
+
+export const addCurrencies = (amount1: number, amount2: number, decimals: number): number => {
+  // Fixes floating point arithmetic
+  const bnAmount1 = new BigNumber(amount1.toString());
+  const bnAmount2 = new BigNumber(amount2.toString());
+  const result = bnAmount1.plus(bnAmount2).decimalPlaces(decimals);
+  return parseFloat(result.toString());
+};
+
+export const subtractCurrencies = (amount1: number, amount2: number, decimals: number): number => {
+  // Fixes floating point arithmetic
+  const bnAmount1 = new BigNumber(amount1.toString());
+  const bnAmount2 = new BigNumber(amount2.toString());
+  const result = bnAmount1.minus(bnAmount2).decimalPlaces(decimals);
+  return parseFloat(result.toString());
 };

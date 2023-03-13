@@ -3,7 +3,7 @@
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
-import { ConfirmSalesActionModal } from '../../modals/ConfirmSalesActionModal';
+import { ConfirmEndSaleModal } from '../../modals/ConfirmEndSaleModal';
 import { StartAuctionModal } from '../../modals/StartAuctionModal';
 import { StartEscrowModal } from '../../modals/StartEscrowModal';
 import {
@@ -32,7 +32,7 @@ import { useDialog } from '@connect2ic/react';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
-import { PlaceholderImage } from '@dapp/common-assets';
+import { PlaceholderIcon } from '@dapp/common-assets';
 import { OffersPanel } from './components/OffersPanel';
 
 export const NFTPage = () => {
@@ -41,13 +41,13 @@ export const NFTPage = () => {
   const [principalId, setPrincipalId] = useState<string>();
   const [odc, setOdc] = useState<OdcDataWithSale>();
   const [collectionData, setCollectionData] = useState<OdcData>();
-  const [openAuction, setOpenAuction] = React.useState(false);
+  const [openAuctionModal, setOpenAuctionModal] = React.useState(false);
   const [canisterId, setCanisterId] = React.useState('');
-  const [dialogAction, setDialogAction] = useState<any>();
-  const [openConfirmation, setOpenConfirmation] = React.useState(false);
+  const [onConfirmationModalOpen, setConfirmationModalOpen] = React.useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
   const [escrowType, setEscrowType] = React.useState<EscrowType>();
+  const [inProcess, setInProcess] = useState<boolean>(false);
   const { open } = useDialog();
 
   const logout = () => {
@@ -55,22 +55,17 @@ export const NFTPage = () => {
     fetchData();
   };
 
-  const handleClickOpen = (item, modal = 'auction') => {
-    if (modal === 'auction') setOpenAuction(true);
-    else if (modal === 'confirmEnd') {
-      setOpenConfirmation(true);
-      setDialogAction('endSale');
-    }
+  const onAuctionModalOpen = () => {
+    setOpenAuctionModal(true);
   };
 
   const handleClickOpenEsc = () => {
-    setOpenConfirmation(true);
-    setDialogAction('endSale');
+    setConfirmationModalOpen(true);
   };
 
-  const handleClose = async () => {
-    setOpenAuction(false);
-    setOpenConfirmation(false);
+  const onModalClose = () => {
+    setOpenAuctionModal(false);
+    setConfirmationModalOpen(false);
   };
 
   const params = useParams();
@@ -177,15 +172,11 @@ export const NFTPage = () => {
                           <img
                             style={{ borderRadius: '18px', width: '100%' }}
                             src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
-                            onError={(e) => {
-                              e.currentTarget.src = PlaceholderImage;
-                            }}
                           />
                         ) : (
-                          <img
-                            style={{ borderRadius: '18px', width: '100%' }}
-                            src={PlaceholderImage}
-                          />
+                          <Flex align="center" justify="center">
+                            <PlaceholderIcon />
+                          </Flex>
                         )}
                         <Flex flexFlow="column" gap={8}>
                           <p className="secondary_color">{odc?.ownerPrincipalId}</p>
@@ -205,11 +196,7 @@ export const NFTPage = () => {
                                 style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
                               />
                             ) : (
-                              <img
-                                src={PlaceholderImage}
-                                alt=""
-                                style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
-                              />
+                              <PlaceholderIcon width={32} height={32} />
                             )}
                             <b>{collectionData?.displayName}</b>
                           </Flex>
@@ -248,7 +235,7 @@ export const NFTPage = () => {
                             )}
                           </Flex>
                           <HR />
-                          {nftEndSale && (
+                          {odc?.auctionOpen && (
                             <p className="secondary_color">
                               {!nftEndSale || nftEndSale < currentTimeInNanos ? (
                                 <span>The sale has ended {getDiffInDays(nftEndSale)}</span>
@@ -268,6 +255,7 @@ export const NFTPage = () => {
                                       <Button
                                         btnType="accent"
                                         onClick={() => onOpenEscrowModal('BuyNow')}
+                                        disabled={inProcess}
                                       >
                                         Buy Now
                                       </Button>
@@ -279,12 +267,20 @@ export const NFTPage = () => {
 
                                   {principalId === verifyOwner ? (
                                     odc.currentBid == 0 || odc.auctionNotStarted ? (
-                                      <Button btnType="accent" onClick={handleClickOpenEsc}>
+                                      <Button
+                                        btnType="accent"
+                                        onClick={handleClickOpenEsc}
+                                        disabled={inProcess}
+                                      >
                                         Cancel Sale
                                       </Button>
                                     ) : BigInt(Number(nftEndSale || 9 * 1e30)) <
                                       currentTimeInNanos ? (
-                                      <Button btnType="accent" onClick={handleClickOpenEsc}>
+                                      <Button
+                                        btnType="accent"
+                                        onClick={handleClickOpenEsc}
+                                        disabled={inProcess}
+                                      >
                                         Finish Sale
                                       </Button>
                                     ) : (
@@ -297,6 +293,7 @@ export const NFTPage = () => {
                                     <Button
                                       btnType="outlined"
                                       onClick={() => onOpenEscrowModal('Bid')}
+                                      disabled={inProcess}
                                     >
                                       Place Bid
                                     </Button>
@@ -307,11 +304,19 @@ export const NFTPage = () => {
                                   )}
                                 </>
                               ) : principalId === verifyOwner ? (
-                                <Button btnType="accent" onClick={handleClickOpen}>
+                                <Button
+                                  btnType="accent"
+                                  onClick={onAuctionModalOpen}
+                                  disabled={inProcess}
+                                >
                                   Start an Auction
                                 </Button>
                               ) : (
-                                <OffersPanel odc={odc} onOpenEscrowModal={onOpenEscrowModal} />
+                                <OffersPanel
+                                  odc={odc}
+                                  onOpenEscrowModal={onOpenEscrowModal}
+                                  inProcess={inProcess}
+                                />
                               )}
                             </Flex>
                           )}
@@ -402,29 +407,32 @@ export const NFTPage = () => {
             principal={principalId}
           />
 
-          {openConfirmation && (
-            <ConfirmSalesActionModal
-              openConfirmation={openConfirmation}
-              handleClose={handleClose}
+          {onConfirmationModalOpen && (
+            <ConfirmEndSaleModal
+              onModalOpen={onConfirmationModalOpen}
+              onModalClose={onModalClose}
               currentToken={odc?.id}
-              action={dialogAction}
+              onSaleCancelled={fetchData}
+              onProcessing={setInProcess}
             />
           )}
-          {openAuction && (
+          {openAuctionModal && (
             <StartAuctionModal
-              open={openAuction}
-              handleClose={handleClose}
+              open={openAuctionModal}
+              onClose={onModalClose}
               onSuccess={fetchOdc}
               currentToken={odc?.id}
+              onProcessing={setInProcess}
             />
           )}
           {openEscrowModal && (
             <StartEscrowModal
               open={openEscrowModal}
-              handleClose={handleCloseEscrow}
+              onClose={handleCloseEscrow}
               odc={odc}
               escrowType={escrowType}
               onSuccess={fetchOdc}
+              onProcessing={setInProcess}
             />
           )}
         </Flex>

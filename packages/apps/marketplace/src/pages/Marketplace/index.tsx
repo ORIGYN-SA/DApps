@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useSnackbar } from 'notistack';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
-import { PlaceholderImage } from '@dapp/common-assets';
+import { PlaceholderIcon } from '@dapp/common-assets';
 import { useMarketplace } from '../../components/context';
 import {
   Card,
@@ -22,6 +21,7 @@ import { useDialog } from '@connect2ic/react';
 import styled from 'styled-components';
 import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
+import { useUserMessages } from '@dapp/features-user-messages';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
@@ -29,7 +29,7 @@ const StyledSectionTitle = styled.h2`
 
 const Marketplace = () => {
   const debug = useDebug();
-  const { enqueueSnackbar } = useSnackbar() || {};
+  const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [canisterId, setCanisterId] = useState('');
@@ -54,12 +54,11 @@ const Marketplace = () => {
 
       // get the canister's collection metadata
       const collMetaResp = await getNftCollectionMeta([]);
-      debug.log('return value from getNftCollectionMeta([])');
-      debug.log(JSON.stringify(collMetaResp, null, 2));
+      debug.log('getNftCollectionMeta result', collMetaResp);
 
-      if (collMetaResp.err) {
-        // TODO: Display error
-        debug.error(collMetaResp.err);
+      if ('err' in collMetaResp) {
+        console.error(collMetaResp.err);
+        showErrorMessage('Get collection data failed');
         return;
       }
 
@@ -74,31 +73,21 @@ const Marketplace = () => {
 
       // get a list of all digital certificates in the collection
       const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      debug.log('actor?.nft_batch_origyn(ownedTokenIds)');
-      debug.log(JSON.stringify(odcDataRaw, null, 2));
+      debug.log('nft_batch_origyn result', odcDataRaw);
 
-      if (odcDataRaw.err) {
-        // TODO: Display error
-        debug.error(odcDataRaw.err);
+      if ('err' in odcDataRaw) {
+        console.error(odcDataRaw.err);
+        showErrorMessage('Get batch tokens failed');
         return;
       }
 
       // parse the digital certificate data (metadata and sale info)
       const parsedOdcs = parseOdcs(odcDataRaw);
-      debug.log('parsed odcs');
-      debug.log(parsedOdcs);
+      debug.log('parsed odcs', parsedOdcs);
 
       dispatch({ type: 'odcs', payload: parsedOdcs });
-      dispatch({ type: 'filteredOdcs', payload: parsedOdcs });
     } catch (err) {
-      debug.error(err);
-      enqueueSnackbar(err?.message || err, {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+      showUnexpectedErrorMessage(err);
     } finally {
       setIsLoaded(true);
     }
@@ -167,7 +156,9 @@ const Marketplace = () => {
     }
 
     if (inputText?.length) {
-      filtered = filtered.filter((odc) => odc?.displayName?.toLowerCase().includes(inputText));
+      filtered = filtered.filter((odc) =>
+        (odc.displayName || odc.id)?.toLowerCase().includes(inputText),
+      );
     }
 
     dispatch({ type: 'filteredOdcs', payload: filtered });
@@ -195,12 +186,11 @@ const Marketplace = () => {
                             src={`https://prptl.io/-/${canisterId}/collection/preview`}
                             alt="text"
                             style={{ width: 200 }}
-                            onError={(e) => {
-                              e.currentTarget.src = PlaceholderImage;
-                            }}
                           />
                         ) : (
-                          <Image src={PlaceholderImage} alt="text" style={{ width: 200 }} />
+                          <Flex align="center" justify="center">
+                            <PlaceholderIcon width={200} height={200} />
+                          </Flex>
                         )}
                         <Flex flexFlow="column" justify="space-between" gap={8}>
                           <h2>
@@ -261,20 +251,15 @@ const Marketplace = () => {
                                     style={{ overflow: 'hidden', height: '100%' }}
                                   >
                                     {odc.hasPreviewAsset ? (
-                                      <img
+                                      <Image
                                         style={{ width: '100%' }}
                                         src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
                                         alt=""
-                                        onError={(e) => {
-                                          e.currentTarget.src = PlaceholderImage;
-                                        }}
                                       />
                                     ) : (
-                                      <Image
-                                        src={PlaceholderImage}
-                                        alt="text"
-                                        style={{ width: 200 }}
-                                      />
+                                      <Flex align="center" justify="center">
+                                        <PlaceholderIcon width={200} height={200} />
+                                      </Flex>
                                     )}
                                     <Container
                                       style={{ height: '100%' }}

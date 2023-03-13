@@ -9,9 +9,10 @@ import { EscrowType } from '../../../modals/StartEscrowModal';
 export interface OffersPanelProps {
   odc: OdcDataWithSale;
   onOpenEscrowModal: (escrowType: EscrowType) => void;
+  inProcess: boolean;
 }
 
-export const OffersPanel = ({ odc, onOpenEscrowModal }: OffersPanelProps) => {
+export const OffersPanel = ({ odc, onOpenEscrowModal, inProcess }: OffersPanelProps) => {
   const debug = useDebug();
   const { principal, actor } = useContext(AuthContext);
   const [existingOffer, setExistingOffer] = useState<any | null>(null);
@@ -66,7 +67,7 @@ export const OffersPanel = ({ odc, onOpenEscrowModal }: OffersPanelProps) => {
           </Flex>
         </Container>
       ) : (
-        <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')}>
+        <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')} disabled={inProcess}>
           Make an Offer
         </Button>
       )}

@@ -73,5 +73,6 @@ export * from './collectionName';
 export * from './checkCanister';
 export * from './getFormattedLink';
 export * from './checkOwner';
-export * from './odcParser';
+export * from './metadataParser';
 export * from './binaryConverters';
+
