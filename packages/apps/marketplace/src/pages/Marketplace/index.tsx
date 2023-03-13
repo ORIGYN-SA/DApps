@@ -93,6 +93,13 @@ const Marketplace = () => {
     }
   };
 
+  const getPrice = (odc: OdcDataWithSale): string => {
+    const price = odc.currentBid
+      ? toLargerUnit(odc.currentBid, odc.token.decimals)
+      : toLargerUnit(odc.buyNow, odc.token.decimals);
+    return price.toFixed();
+  };
+
   useEffect(() => {
     document.title = 'Origyn Marketplace';
 
@@ -286,23 +293,10 @@ const Marketplace = () => {
                                           </p>
                                           <p>
                                             {odc.auctionOpen ? (
-                                              odc.currentBid === 0 ? (
-                                                <>
-                                                  {toLargerUnit(
-                                                    odc.buyNow,
-                                                    Number(odc.token.decimals),
-                                                  )}{' '}
-                                                  <TokenIcon symbol={odc.tokenSymbol} />
-                                                </>
-                                              ) : (
-                                                <>
-                                                  {toLargerUnit(
-                                                    odc.currentBid,
-                                                    Number(odc.token.decimals),
-                                                  )}{' '}
-                                                  <TokenIcon symbol={odc.tokenSymbol} />
-                                                </>
-                                              )
+                                              <>
+                                                {getPrice(odc)}{' '}
+                                                <TokenIcon symbol={odc.tokenSymbol} />
+                                              </>
                                             ) : (
                                               'No auction started'
                                             )}

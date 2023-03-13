@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { AuthContext } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { IdlStandard, isLocal } from '@dapp/utils';
@@ -15,7 +16,6 @@ import {
   TabContent,
   TextInput,
 } from '@origyn-sa/origyn-art-ui';
-import { AuthContext } from '../../../authentication';
 
 export const WalletTokens = ({ children }: any) => {
   const { principal } = useContext(AuthContext);

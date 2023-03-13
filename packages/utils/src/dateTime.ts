@@ -1,5 +1,9 @@
 import { padNum } from './number';
 
+export const timeInNanos = (): BigInt => {
+  return BigInt(new Date().getTime() * 1e6);
+};
+
 export const timeConverter = (timestamp: bigint) => {
   const a = new Date(Number(timestamp / 1000000n));
   const months = [
@@ -37,9 +41,9 @@ export const getDiffInDays = (expirationDate, end_date = new Date()) => {
     endStr = `${Math.floor(diffInHrs)}hrs`;
   } else {
     if (diffInHrs >= 24 * 30) {
-      endStr = `${Math.floor(diffInHrs / 24 / 30) +
-        Math.ceil((Math.floor(diffInHrs / 24) % 30) / 30)
-        } month(s)`;
+      endStr = `${
+        Math.floor(diffInHrs / 24 / 30) + Math.ceil((Math.floor(diffInHrs / 24) % 30) / 30)
+      } month(s)`;
     } else {
       endStr = `${Math.floor(diffInHrs / 24)} days`;
     }
@@ -64,4 +68,3 @@ export const formatTime = (timestamp: bigint) => {
   const time = `${hour}:${min}`;
   return `${date}/${month}/${year} ${time}${apm}`;
 };
-

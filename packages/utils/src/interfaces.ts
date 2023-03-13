@@ -1,4 +1,4 @@
-import { AuctionStateStable, ICTokenSpec } from '../../common/types/src/origynNftReference';
+import { AuctionStateStable, ICTokenSpec } from '@dapp/common-types';
 
 export enum RoyaltyType {
   primary,

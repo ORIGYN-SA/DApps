@@ -7,7 +7,13 @@ import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
-import { copyToClipboard, toLargerUnit, parseMetadata, parseOdcs } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  toLargerUnit,
+  parseMetadata,
+  parseOdcs,
+  copyToClipboard,
+} from '@dapp/utils';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
@@ -224,6 +230,7 @@ const VaultPage = () => {
   const { open } = useDialog();
   const { state, dispatch } = useVault();
   const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
+  const [escrowsModalOpen, setEscrowsModalOpen] = useState(false);
 
   const logout = async () => {
     handleLogOut();
@@ -344,8 +351,6 @@ const VaultPage = () => {
     }
   }, [loggedIn, actor, principal]);
 
-  const [escrowsModalOpen, setEscrowsModalOpen] = useState(false);
-
   /** Apply filter and sort to list */
   useEffect(() => {
     let filtered = odcs;
@@ -386,6 +391,13 @@ const VaultPage = () => {
       fetchData();
     }
   }, [loggedIn]);
+
+  const getPrice = (odc: OdcDataWithSale): string => {
+    const price = odc.currentBid
+      ? toLargerUnit(odc.currentBid, odc.token.decimals)
+      : toLargerUnit(odc.buyNow, odc.token.decimals);
+    return price.toFixed();
+  };
 
   return (
     <>
@@ -598,7 +610,7 @@ const VaultPage = () => {
                               columns={6}
                               gap={20}
                             >
-                              {filteredOdcs.map((odc) => {
+                              {filteredOdcs.map((odc: OdcDataWithSale) => {
                                 return (
                                   <Link to={`/${odc?.id}`} key={odc?.id}>
                                     <Card
@@ -647,23 +659,10 @@ const VaultPage = () => {
                                             </p>
                                             <p>
                                               {odc.auctionOpen ? (
-                                                odc.currentBid === 0 ? (
-                                                  <>
-                                                    {toLargerUnit(
-                                                      odc.buyNow,
-                                                      Number(odc.token.decimals),
-                                                    )}{' '}
-                                                    <TokenIcon symbol={odc.tokenSymbol} />
-                                                  </>
-                                                ) : (
-                                                  <>
-                                                    {toLargerUnit(
-                                                      odc.currentBid,
-                                                      Number(odc.token.decimals),
-                                                    )}{' '}
-                                                    <TokenIcon symbol={odc.tokenSymbol} />
-                                                  </>
-                                                )
+                                                <>
+                                                  {getPrice(odc)}{' '}
+                                                  <TokenIcon symbol={odc.tokenSymbol} />
+                                                </>
                                               ) : (
                                                 'No auction started'
                                               )}

@@ -29,6 +29,7 @@
       "@dapp/features-user-messages": ["./packages/features/user-messages/src/index.ts"],
       "@dapp/features-theme": ["./packages/features/theme/src/index.tsx"],
       "@dapp/utils": ["./packages/utils/src/index.ts"],
+      "@dapp/common-api": ["./packages/common/api/src/index.ts"],
       "@dapp/common-candid": ["./packages/common/candid/src/index.ts"],
       "@dapp/common-types": ["./packages/common/types/src/index.ts"],
       "@dapp/common-assets": ["./packages/common/assets/src/index.ts"],

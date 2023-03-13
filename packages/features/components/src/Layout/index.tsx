@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { ThemeProvider } from 'styled-components';
 import './connect2ic.css';
-import { AuthContext, useRoute } from '../../../authentication';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
 import { Disclaimer } from '../Disclaimer';
 

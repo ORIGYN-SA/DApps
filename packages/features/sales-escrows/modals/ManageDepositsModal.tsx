@@ -115,7 +115,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                           {toLargerUnit(
                             tokenBalances[tokenSymbol]?.value || 0,
                             activeTokens[tokenSymbol].decimals,
-                          )}
+                          ).toFixed()}
                         </span>
                       </Flex>
                       <Button

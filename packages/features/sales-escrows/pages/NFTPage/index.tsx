@@ -12,6 +12,7 @@ import {
   OdcDataWithSale,
   parseMetadata,
   parseOdc,
+  timeInNanos,
   toLargerUnit,
 } from '@dapp/utils';
 import { Property } from '@dapp/common-types';
@@ -48,6 +49,7 @@ export const NFTPage = () => {
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
   const [escrowType, setEscrowType] = React.useState<EscrowType>();
   const [inProcess, setInProcess] = useState<boolean>(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
   const { open } = useDialog();
 
   const logout = () => {
@@ -82,11 +84,7 @@ export const NFTPage = () => {
     }
   };
 
-  const currentTimeInNanos = BigInt(new Date().getTime() * 1e6);
-
   const nftEndSale = odc?.auction?.end_date;
-
-  const verifyOwner = odc?.ownerPrincipalId || '';
 
   const fetchCollection = async () => {
     const route = await useRoute();
@@ -130,11 +128,27 @@ export const NFTPage = () => {
     Promise.all([fetchCollection(), fetchOdc()]);
   };
 
+  const getBuyNowPrice = (odc: OdcDataWithSale): string => {
+    return toLargerUnit(odc.buyNow, odc.token.decimals).toFixed();
+  };
+
+  const getCurrentBidPrice = (odc: OdcDataWithSale): string => {
+    return toLargerUnit(odc.currentBid, odc.token.decimals).toFixed();
+  };
+
+  const getReservePrice = (odc: OdcDataWithSale): string => {
+    return toLargerUnit(odc.reserve, odc.token.decimals).toFixed();
+  };
+
   useEffect(() => {
     setPrincipalId(
       !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
     );
   }, [principal]);
+
+  useEffect(() => {
+    setIsOwner(principalId === odc?.ownerPrincipalId);
+  }, [principal, odc]);
 
   useEffect(() => {
     let intervalId: any;
@@ -209,7 +223,7 @@ export const NFTPage = () => {
                                   <span>Current bid</span>
                                   <strong>
                                     <TokenIcon symbol={odc.tokenSymbol} />
-                                    {toLargerUnit(odc.currentBid, Number(odc.token.decimals))}
+                                    {getCurrentBidPrice(odc)}
                                   </strong>
                                 </Flex>
 
@@ -217,7 +231,7 @@ export const NFTPage = () => {
                                   <span>Reserve Price</span>
                                   <strong>
                                     <TokenIcon symbol={odc.tokenSymbol} />
-                                    {toLargerUnit(odc.reserve, Number(odc.token.decimals))}
+                                    {getReservePrice(odc)}
                                   </strong>
                                 </Flex>
                                 {odc?.buyNow && (
@@ -225,7 +239,7 @@ export const NFTPage = () => {
                                     <span>Buy Now</span>
                                     <strong>
                                       <TokenIcon symbol={odc.tokenSymbol} />
-                                      {toLargerUnit(odc.buyNow, Number(odc.token.decimals))}
+                                      {getBuyNowPrice(odc)}
                                     </strong>
                                   </Flex>
                                 )}
@@ -237,7 +251,7 @@ export const NFTPage = () => {
                           <HR />
                           {odc?.auctionOpen && (
                             <p className="secondary_color">
-                              {!nftEndSale || nftEndSale < currentTimeInNanos ? (
+                              {!nftEndSale || nftEndSale < timeInNanos() ? (
                                 <span>The sale has ended {getDiffInDays(nftEndSale)}</span>
                               ) : (
                                 <span>{getDiffInDays(nftEndSale)}</span>
@@ -249,23 +263,17 @@ export const NFTPage = () => {
                             <Flex gap={8} flexFlow="column">
                               {odc?.auctionOpen ? (
                                 <>
-                                  {odc?.buyNow &&
-                                    principalId != verifyOwner &&
-                                    (nftEndSale || 9 * 1e30 > currentTimeInNanos ? (
-                                      <Button
-                                        btnType="accent"
-                                        onClick={() => onOpenEscrowModal('BuyNow')}
-                                        disabled={inProcess}
-                                      >
-                                        Buy Now
-                                      </Button>
-                                    ) : (
-                                      <Button disabled btnType="outlined">
-                                        Buy Now
-                                      </Button>
-                                    ))}
+                                  {odc?.buyNow && !isOwner && (
+                                    <Button
+                                      btnType="accent"
+                                      onClick={() => onOpenEscrowModal('BuyNow')}
+                                      disabled={inProcess}
+                                    >
+                                      Buy Now
+                                    </Button>
+                                  )}
 
-                                  {principalId === verifyOwner ? (
+                                  {isOwner ? (
                                     odc.currentBid == 0 || odc.auctionNotStarted ? (
                                       <Button
                                         btnType="accent"
@@ -274,8 +282,7 @@ export const NFTPage = () => {
                                       >
                                         Cancel Sale
                                       </Button>
-                                    ) : BigInt(Number(nftEndSale || 9 * 1e30)) <
-                                      currentTimeInNanos ? (
+                                    ) : BigInt(Number(nftEndSale || 9 * 1e30)) < timeInNanos() ? (
                                       <Button
                                         btnType="accent"
                                         onClick={handleClickOpenEsc}
@@ -288,8 +295,7 @@ export const NFTPage = () => {
                                         Finish Sale
                                       </Button>
                                     )
-                                  ) : BigInt(Number(nftEndSale || 9 * 1e30)) >
-                                    currentTimeInNanos ? (
+                                  ) : BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() ? (
                                     <Button
                                       btnType="outlined"
                                       onClick={() => onOpenEscrowModal('Bid')}
@@ -303,7 +309,7 @@ export const NFTPage = () => {
                                     </Button>
                                   )}
                                 </>
-                              ) : principalId === verifyOwner ? (
+                              ) : isOwner ? (
                                 <Button
                                   btnType="accent"
                                   onClick={onAuctionModalOpen}
