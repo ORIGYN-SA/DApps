@@ -4,7 +4,7 @@ import RawTab from '../../components/nftTabs/RawTab';
 import FormTab from '../../components/nftTabs/FormTab';
 import JSONTab from '../../components/nftTabs/JSONTab';
 import Write from '../../components/nftTabs/Write';
-import { SecondaryNav } from '@origyn-sa/origyn-art-ui';
+import { SecondaryNav } from '@origyn/origyn-art-ui';
 import { useContext } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import { useDialog } from '@connect2ic/react';

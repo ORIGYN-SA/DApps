@@ -7,7 +7,7 @@ import {
   Select,
   HR,
   Container,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { DropzoneArea } from 'mui-file-dropzone';
 import { convertNat8ArrayToCandyBytes } from '../binaryConverters';
 import { BytesFormInput, ArrayType } from '../../../../types';

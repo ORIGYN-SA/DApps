@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'vault',
-  openPage: '-/brain-matters-dev/collection/-/vault',
+  open: '-/brain-matters-dev/collection/-/vault',
 };
 
 module.exports = (env, argv) => {

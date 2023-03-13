@@ -13,9 +13,9 @@ import {
   Image,
   SecondaryNav,
   ShowMoreBlock,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import Filter from '../../../../vault/src/pages/Vault/Filter';
-import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 import { Link } from 'react-router-dom';
 import { useDialog } from '@connect2ic/react';
 import styled from 'styled-components';

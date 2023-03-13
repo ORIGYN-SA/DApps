@@ -4,7 +4,7 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
-import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
+import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn/origyn-art-ui';
 import { useEffect } from 'react';
 import {
   toBigNumber,

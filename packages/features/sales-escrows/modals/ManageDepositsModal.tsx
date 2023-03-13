@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-import { Container, Flex, Modal, Button } from '@origyn-sa/origyn-art-ui';
+import { Container, Flex, Modal, Button } from '@origyn/origyn-art-ui';
 import { getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
 import { LoadingContainer } from '@dapp/features-components';

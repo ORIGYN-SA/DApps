@@ -1,6 +1,6 @@
 import React from 'react';
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { Grid, Container, HR } from '@origyn-sa/origyn-art-ui';
+import { Grid, Container, HR } from '@origyn/origyn-art-ui';
 
 export const EscrowDeposit = (props: any) => {
   const { type_txn, buyer, seller, token, token_id, amount, trx_id } = props.data;
@@ -24,9 +24,9 @@ export const EscrowDeposit = (props: any) => {
     <>
       <Container>
         <Container padding="16px">
-          Transaction type: <span style={{color: 'grey'}}>{type_txn}</span>
+          Transaction type: <span style={{ color: 'grey' }}>{type_txn}</span>
           <br />
-          Transaction ID: <span style={{color: 'grey'}}>{id_trans}</span>
+          Transaction ID: <span style={{ color: 'grey' }}>{id_trans}</span>
         </Container>
         <HR marginTop="8px" marginBottom="8px" />
         <Container padding="16px">
@@ -34,22 +34,22 @@ export const EscrowDeposit = (props: any) => {
             <Grid column={1}>
               Buyer:
               <br />
-              <span style={{color: 'grey'}}>{buyer.acc_principal_string}</span>
+              <span style={{ color: 'grey' }}>{buyer.acc_principal_string}</span>
               <br />
               Seller:
               <br />
-              <span style={{color: 'grey'}}>{seller.acc_principal_string}</span>
+              <span style={{ color: 'grey' }}>{seller.acc_principal_string}</span>
               <br />
               Token ID: {token_id}
             </Grid>
             <Grid column={2}>
               Amount:
               <br />
-              <span style={{color: 'grey'}}>{amount}</span>
+              <span style={{ color: 'grey' }}>{amount}</span>
               <br />
               Fee:
               <br />
-              <span style={{color: 'grey'}}> {token_fee}</span>
+              <span style={{ color: 'grey' }}> {token_fee}</span>
             </Grid>
           </Grid>
         </Container>
@@ -57,11 +57,11 @@ export const EscrowDeposit = (props: any) => {
         <Container padding="16px">
           <Grid columns={2}>
             <Grid column={1}>
-              Canister: <span style={{color: 'grey'}}>{token.canister_string}</span>
+              Canister: <span style={{ color: 'grey' }}>{token.canister_string}</span>
               <br />
-              Fee: <span style={{color: 'grey'}}>{token.fee}</span>
+              Fee: <span style={{ color: 'grey' }}>{token.fee}</span>
               <br />
-              Decimals: <span style={{color: 'grey'}}>{token.decimal}</span>
+              Decimals: <span style={{ color: 'grey' }}>{token.decimal}</span>
             </Grid>
             <Grid column={2}>
               Symbol:{' '}
@@ -71,7 +71,7 @@ export const EscrowDeposit = (props: any) => {
                 <ICPIcon className="token-symbol" />
               )}
               <br />
-              Standard: <span style={{color: 'grey'}}>{token.standard}</span>
+              Standard: <span style={{ color: 'grey' }}>{token.standard}</span>
             </Grid>
           </Grid>
         </Container>

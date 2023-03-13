@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
-import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
-import { Button, Modal, Flex, Container, HR } from '@origyn-sa/origyn-art-ui';
+import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '@origyn/mintjs';
+import { Button, Modal, Flex, Container, HR } from '@origyn/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 export const DeleteLibrary = (props: any) => {

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Container, Grid, Flex, HR } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, Flex, HR } from '@origyn/origyn-art-ui';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { Layouts } from '../LayoutsType';
 import { DeleteLibrary } from '../DeleteLibrary';

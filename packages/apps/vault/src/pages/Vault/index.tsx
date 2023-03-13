@@ -14,7 +14,7 @@ import {
   parseOdcs,
   copyToClipboard,
 } from '@dapp/utils';
-import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
 import ManageDepositsModal from '@dapp/features-sales-escrows/modals/ManageDepositsModal';
@@ -30,7 +30,7 @@ import {
   SecondaryNav,
   Container,
   ShowMoreBlock,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useUserMessages } from '@dapp/features-user-messages';

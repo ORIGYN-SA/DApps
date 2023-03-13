@@ -15,7 +15,7 @@ import {
   Select,
   TabContent,
   TextInput,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 
 export const WalletTokens = ({ children }: any) => {
   const { principal } = useContext(AuthContext);

@@ -1,7 +1,7 @@
 import React from 'react';
 // Icons ICP & OGY
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
-import { Grid, Container, HR } from '@origyn-sa/origyn-art-ui';
+import { Grid, Container, HR } from '@origyn/origyn-art-ui';
 
 export const SaleOpened = (props: any) => {
   const singleT_type = props.data.type_txn;
@@ -39,20 +39,20 @@ export const SaleOpened = (props: any) => {
             <Grid colum={1}>
               Pricing type:
               <br />
-              <span style={{color: 'grey'}}>{pricingType}</span>
+              <span style={{ color: 'grey' }}>{pricingType}</span>
               <br />
               Start price:
               <br />
-              <span style={{color: 'grey'}}>{start_price}</span>
+              <span style={{ color: 'grey' }}>{start_price}</span>
             </Grid>
             <Grid colum={2}>
               Decay per hour:
               <br />
-              <span style={{color: 'grey'}}>{decay_per_hour}</span>
+              <span style={{ color: 'grey' }}>{decay_per_hour}</span>
               <br />
               Reserve:
               <br />
-              <span style={{color: 'grey'}}>  {reserve}</span>
+              <span style={{ color: 'grey' }}> {reserve}</span>
             </Grid>
           </Grid>
         </Container>
@@ -65,19 +65,19 @@ export const SaleOpened = (props: any) => {
             <Grid colum={1}>
               Pricing type:
               <br />
-              <span style={{color: 'grey'}}>{pricingType}</span>
+              <span style={{ color: 'grey' }}>{pricingType}</span>
               <br />
               Amount:
               <br />
-              <span style={{color: 'grey'}}>{amount}</span>
+              <span style={{ color: 'grey' }}>{amount}</span>
               <br />
               Canister:
               <br />
-              <span style={{color: 'grey'}}> {token.canister_string}</span>
+              <span style={{ color: 'grey' }}> {token.canister_string}</span>
               <br />
               Fee:
               <br />
-              <span style={{color: 'grey'}}>{token.fee}</span>
+              <span style={{ color: 'grey' }}>{token.fee}</span>
             </Grid>
 
             <Grid colum={2}>
@@ -91,11 +91,11 @@ export const SaleOpened = (props: any) => {
               <br />
               Decimals:
               <br />
-              <span style={{color: 'grey'}}>{token.decimal}</span>
+              <span style={{ color: 'grey' }}>{token.decimal}</span>
               <br />
               Standard:
               <br />
-              <span style={{color: 'grey'}}>  {token.standard}</span>
+              <span style={{ color: 'grey' }}> {token.standard}</span>
             </Grid>
           </Grid>
         </Container>
@@ -109,33 +109,33 @@ export const SaleOpened = (props: any) => {
             <Grid colum={1}>
               Start date:
               <br />
-              <span style={{color: 'grey'}}> {start_date}</span>
+              <span style={{ color: 'grey' }}> {start_date}</span>
             </Grid>
             <Grid colum={1}>
               Ending date:
               <br />
-              <span style={{color: 'grey'}}>  {ending_date}</span>
+              <span style={{ color: 'grey' }}> {ending_date}</span>
             </Grid>
             <Grid colum={1}>
               Pricing type:
               <br />
-              <span style={{color: 'grey'}}>{pricingType}</span>
+              <span style={{ color: 'grey' }}>{pricingType}</span>
               <br />
               Reserve:
               <br />
-              <span style={{color: 'grey'}}> {reserve}</span>
+              <span style={{ color: 'grey' }}> {reserve}</span>
               <br />
               Buy now:
               <br />
-              <span style={{color: 'grey'}}>  {buy_now}</span>
+              <span style={{ color: 'grey' }}> {buy_now}</span>
               <br />
               Start price:
               <br />
-              <span style={{color: 'grey'}}> {start_price}</span>
+              <span style={{ color: 'grey' }}> {start_price}</span>
               <br />
               Min increase:
               <br />
-              <span style={{color: 'grey'}}> {min_increase}</span>
+              <span style={{ color: 'grey' }}> {min_increase}</span>
             </Grid>
             <Grid colum={2}>
               Symbol:
@@ -148,19 +148,19 @@ export const SaleOpened = (props: any) => {
               <br />
               Canister:
               <br />
-              <span style={{color: 'grey'}}> {token.canister_string}</span>
+              <span style={{ color: 'grey' }}> {token.canister_string}</span>
               <br />
               Fee:
               <br />
-              <span style={{color: 'grey'}}> {token.fee}</span>
+              <span style={{ color: 'grey' }}> {token.fee}</span>
               <br />
               Decimals:
               <br />
-              <span style={{color: 'grey'}}>{token.decimal}</span>
+              <span style={{ color: 'grey' }}>{token.decimal}</span>
               <br />
               Standard:
               <br />
-              <span style={{color: 'grey'}}>{token.standard}</span>
+              <span style={{ color: 'grey' }}>{token.standard}</span>
             </Grid>
           </Grid>
         </Container>
@@ -174,11 +174,11 @@ export const SaleOpened = (props: any) => {
             <Grid colum={1}>
               Pricing type:
               <br />
-              <span style={{color: 'grey'}}> {pricingType}</span>
+              <span style={{ color: 'grey' }}> {pricingType}</span>
               <br />
               Transaction ID:
               <br />
-              <span style={{color: 'grey'}}> {txn_id}</span>
+              <span style={{ color: 'grey' }}> {txn_id}</span>
             </Grid>
           </Grid>
         </Container>
@@ -189,9 +189,9 @@ export const SaleOpened = (props: any) => {
   return (
     <Container>
       <Container padding="16px">
-        Transaction type: <span style={{color: 'grey'}}>{singleT_type}</span>
+        Transaction type: <span style={{ color: 'grey' }}>{singleT_type}</span>
         <br />
-        Sale ID: <span style={{color: 'grey'}}>{singleT_sale_id}</span>
+        Sale ID: <span style={{ color: 'grey' }}>{singleT_sale_id}</span>
       </Container>
       <HR marginTop="8px" marginBottom="8px" />
       {display_pricing_config}

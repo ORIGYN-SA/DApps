@@ -7,7 +7,7 @@ import {
   Select,
   HR,
   Container,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { convertBase64ToCandyBytes } from '@dapp/utils';
 import { VALIDATION_ERRORS } from '../../../../constants';
 import { BytesFormInput, CandyBytes, ArrayType } from '@dapp/common-types';

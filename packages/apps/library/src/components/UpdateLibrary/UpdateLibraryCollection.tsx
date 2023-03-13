@@ -2,13 +2,8 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 // mint.js
-import {
-  OrigynClient,
-  updateLibraryMetadata,
-  getNftCollectionMeta,
-  getNft,
-} from '@origyn-sa/mintjs';
-import { Button, Modal, Container, Flex, HR, TextInput, Select } from '@origyn-sa/origyn-art-ui';
+import { OrigynClient, updateLibraryMetadata, getNftCollectionMeta, getNft } from '@origyn/mintjs';
+import { Button, Modal, Container, Flex, HR, TextInput, Select } from '@origyn/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 type Props = {

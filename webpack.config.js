@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
@@ -114,10 +113,10 @@ module.exports = (env, argv, dAppConfig) => ({
   devServer: {
     hot: true,
     historyApiFallback: true,
-    contentBase: path.resolve(__dirname, './'),
-    watchContentBase: true,
-    open: true,
-    disableHostCheck: true,
-    openPage: dAppConfig?.openPage ? dAppConfig.openPage : '-/brain-matters-dev/collection/-/',
+    static: {
+      directory: path.resolve(__dirname, './'),
+    },
+    allowedHosts: ['localhost'],
+    open: dAppConfig?.open ? dAppConfig.open : '-/brain-matters-dev/collection/-/',
   },
 });

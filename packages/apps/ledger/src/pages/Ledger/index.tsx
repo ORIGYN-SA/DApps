@@ -6,12 +6,12 @@ import {
   TransactionsTable,
   SearchbarNft,
 } from '@dapp/features-components';
-import { SecondaryNav, Container, Flex, HR } from '@origyn-sa/origyn-art-ui';
-import styled from 'styled-components'
+import { SecondaryNav, Container, Flex, HR } from '@origyn/origyn-art-ui';
+import styled from 'styled-components';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
-`
+`;
 
 const Ledger = () => {
   const ledgerVersion: string = '0.1.0';
@@ -51,59 +51,58 @@ const Ledger = () => {
         tabs={[{ title: 'Dashboard', id: 'Transactions' }]}
         content={[
           <>
-            <Flex fullWidth flexFlow='column'>
+            <Flex fullWidth flexFlow="column">
               <StyledSectionTitle>Ledger Dashboard</StyledSectionTitle>
               <HR />
             </Flex>
             <Container>
               <>
-                {
-                  invalidToken ? (
-                    <>
+                {invalidToken ? (
+                  <>
                     <Container padding="16px">
-                    <Flex align="center" justify="center">
-                    <h4>Token Id is invalid</h4>
-                    </Flex>
-                    <HR marginTop={16} marginBottom={16}/>
+                      <Flex align="center" justify="center">
+                        <h4>Token Id is invalid</h4>
+                      </Flex>
+                      <HR marginTop={16} marginBottom={16} />
                     </Container>
-                    </>
-                  ) : (
-                    <>
-                      <SearchbarNft
-                        setSearchBarTokenId={setSearchBarTokenId}
-                        setIndexID={setIndexID}
-                        searchBarTokenId={searchBarTokenId}
-                        isLoading={isLoading}
-                        setInvalidToken={setInvalidToken}
-                      />
-                      <HR marginTop="16px" marginBottom="16px" />
-                      <TransactionFilter
-                        isLoading={isLoading}
-                        setFilter={setFilter}
-                        trans_types={trans_types}
-                        setTrans_types={setTrans_types}
-                        transactionData={transactionData}
-                        searchBarTokenId={searchBarTokenId}
-                      />
-                      <HR marginTop="16px" marginBottom="16px" />
-                      <TransactionsTable
-                        setIsLoading={setIsLoading}
-                        isLoading={isLoading}
-                        searchBarTokenId={searchBarTokenId}
-                        indexID={indexID}
-                        setIndexID={setIndexID}
-                        filter={filter}
-                        setFilter={setFilter}
-                        setTrans_types={setTrans_types}
-                        setTransactionData={setTransactionData}
-                        transactionData={transactionData}
-                      />
-                    </>)
-                }
+                  </>
+                ) : (
+                  <>
+                    <SearchbarNft
+                      setSearchBarTokenId={setSearchBarTokenId}
+                      setIndexID={setIndexID}
+                      searchBarTokenId={searchBarTokenId}
+                      isLoading={isLoading}
+                      setInvalidToken={setInvalidToken}
+                    />
+                    <HR marginTop="16px" marginBottom="16px" />
+                    <TransactionFilter
+                      isLoading={isLoading}
+                      setFilter={setFilter}
+                      trans_types={trans_types}
+                      setTrans_types={setTrans_types}
+                      transactionData={transactionData}
+                      searchBarTokenId={searchBarTokenId}
+                    />
+                    <HR marginTop="16px" marginBottom="16px" />
+                    <TransactionsTable
+                      setIsLoading={setIsLoading}
+                      isLoading={isLoading}
+                      searchBarTokenId={searchBarTokenId}
+                      indexID={indexID}
+                      setIndexID={setIndexID}
+                      filter={filter}
+                      setFilter={setFilter}
+                      setTrans_types={setTrans_types}
+                      setTransactionData={setTransactionData}
+                      transactionData={transactionData}
+                    />
+                  </>
+                )}
               </>
               <VersionLabel ledgerVersion={ledgerVersion} />
             </Container>
-          </>
+          </>,
         ]}
         onLogOut={handleLogOut}
         onConnect={open}

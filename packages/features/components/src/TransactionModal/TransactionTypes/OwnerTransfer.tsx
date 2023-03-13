@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Container, HR } from '@origyn-sa/origyn-art-ui';
+import { Grid, Container, HR } from '@origyn/origyn-art-ui';
 
 export const OwnerTransfer = (props: any) => {
   const { type_txn, from, to } = props.data;
@@ -12,12 +12,12 @@ export const OwnerTransfer = (props: any) => {
         <Grid column={1}>
           Transfer from:
           <br />
-          <span style={{color: 'grey'}}>{from.acc_principal_string}</span>
+          <span style={{ color: 'grey' }}>{from.acc_principal_string}</span>
         </Grid>
         <Grid column={2}>
           Transfer to:
           <br />
-          <span style={{color: 'grey'}}>{to.acc_principal_string}</span>
+          <span style={{ color: 'grey' }}>{to.acc_principal_string}</span>
         </Grid>
       </Grid>
     </Container>

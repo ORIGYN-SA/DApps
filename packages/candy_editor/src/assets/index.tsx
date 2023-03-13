@@ -9,7 +9,7 @@ import {
   Container,
   Modal,
   Toggle,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { FormTypes } from './formTypes';
 import type {
   Property,

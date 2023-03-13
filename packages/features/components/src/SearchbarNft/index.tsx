@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { collectionName } from '@dapp/utils';
-import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 import {
   Container,
   Card,
@@ -12,7 +12,7 @@ import {
   Flex,
   Button,
   TextInput,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 
 export const SearchbarNft = (props: any) => {
   const { actor } = useContext(AuthContext);

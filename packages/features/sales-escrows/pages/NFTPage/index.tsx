@@ -28,9 +28,9 @@ import {
   Banner,
   TabContent,
   ShowMoreBlock,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { useDialog } from '@connect2ic/react';
-import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderIcon } from '@dapp/common-assets';

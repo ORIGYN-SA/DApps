@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
-import { Flex, HR } from '@origyn-sa/origyn-art-ui';
+import { Flex, HR } from '@origyn/origyn-art-ui';
 
 const LibraryPdf = (props: any) => {
   const [canisterId, setCanisterId] = useState('');

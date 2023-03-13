@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import ColumnView from '../../components/ColumnView';
-import { SecondaryNav, Container } from '@origyn-sa/origyn-art-ui';
+import { SecondaryNav, Container } from '@origyn/origyn-art-ui';
 import { AuthContext } from '@dapp/features-authentication';
 import { useDialog } from '@connect2ic/react';
 

@@ -8,7 +8,7 @@ import {
   Select,
   TabContent,
   theme,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import type { CandyClassEditor, CandyBytes, ArrayType } from '../../../types';
 import { convertUint8ArrayToHex, convertUint8ArrayToBase64 } from './binaryConverters';
 import { CREATE_MODE, EDIT_MODE, WARNING_MESSAGES } from '../../../constants';

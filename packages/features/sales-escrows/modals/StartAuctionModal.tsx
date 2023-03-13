@@ -14,7 +14,7 @@ import {
   DatePicker,
   Select,
   Button,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 import { toSmallerUnit, validateTokenAmount } from '@dapp/utils';
 import { MarketTransferRequest } from '@dapp/common-types';
