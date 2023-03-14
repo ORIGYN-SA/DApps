@@ -265,7 +265,7 @@ const Marketplace = () => {
                                       />
                                     ) : (
                                       <Flex align="center" justify="center">
-                                        <PlaceholderIcon width={200} height={200} />
+                                        <PlaceholderIcon width={'100%'} />
                                       </Flex>
                                     )}
                                     <Container
