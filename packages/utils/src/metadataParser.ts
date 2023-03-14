@@ -1,6 +1,6 @@
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
-import { EscrowReceipt, EscrowRecord, NFTInfoStable, Property } from '../../common/types/src/origynNftReference';
+import { EscrowRecord, NFTInfoStable, Property, TransactionRecord } from '../../common/types/src/origynNftReference';
 import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
 import { toSentenceCase } from './string';
 
@@ -305,4 +305,18 @@ export function parseTokenSymbol(escrow: EscrowRecord): string {
     return escrow.token.ic.symbol;
   }
 };
+
+export function parseHighestSentBids(transactions: TransactionRecord[]): TransactionRecord[] {
+  const tokenBidsMap = new Map<string, TransactionRecord>();
+  for (const transaction of transactions) {
+    const auctionBid = ('auction_bid' in transaction.txn_type) ? transaction.txn_type.auction_bid : null;
+    if (auctionBid) {
+      const token = transaction.token_id;
+      if (!tokenBidsMap.has(token) || transaction.timestamp > tokenBidsMap.get(token)!.timestamp) {
+        tokenBidsMap.set(token, transaction);
+      }
+    }
+  }
+  return Array.from(tokenBidsMap.values());
+}
 
