@@ -151,7 +151,17 @@ export function StartEscrowModal({
           amount: `The minimum bid is ${minBid.toFixed()} ${odc.tokenSymbol}`,
         };
       }
+      if (toSmallerUnit(enteredAmount, token.decimals).isLessThan(toLargerUnit(odc.buyNow, 8).s)) {
+        console.log('amount', amount)
+        console.log('buyNow', odc.buyNow)
+        errors = {
+          ...errors,
+          amount: `The maximum bid needs to be less than  ${toLargerUnit(odc.buyNow, 8)} ${odc.tokenSymbol}`,
+        };
+      }
     }
+
+
 
     if (!token) {
       errors = { ...errors, token: 'No token selected' };
@@ -283,6 +293,12 @@ export function StartEscrowModal({
     }
     refreshAllBalances(false, principal);
   };
+
+  // React.useEffect(() => {
+  //   console.log('amount', enteredAmount)
+  //   console.log('buyNow', toLargerUnit(odc.buyNow, 8).s)
+  //   console.log('type', typeof toSmallerUnit(enteredAmount, token.decimals))
+  // },[enteredAmount])
 
   return (
     <Modal isOpened={open} closeModal={() => onCustomClose(false)} size="md">
