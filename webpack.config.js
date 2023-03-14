@@ -111,12 +111,14 @@ module.exports = (env, argv, dAppConfig) => ({
   ],
   // proxy /api to port 8000 during development
   devServer: {
-    hot: true,
-    historyApiFallback: true,
     static: {
       directory: path.resolve(__dirname, './'),
+      watch: true,
     },
+    historyApiFallback: true,
+    hot: 'only',
+    compress: true,
     allowedHosts: ['localhost'],
-    open: dAppConfig?.open ? dAppConfig.open : '-/brain-matters-dev/collection/-/',
+    open: dAppConfig?.open || '-/brain-matters-dev/collection/-/',
   },
 });
