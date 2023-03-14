@@ -42,7 +42,6 @@ export const OffersPanel = ({ odc, onOpenEscrowModal, inProcess }: OffersPanelPr
   };
 
   const getOfferAmount = (offer) => {
-    console.log(offer);
     return `${toLargerUnit(offer.amount.toString(), offer.token.ic.decimals).toFixed()} ${
       offer.token.ic.symbol
     }`;
