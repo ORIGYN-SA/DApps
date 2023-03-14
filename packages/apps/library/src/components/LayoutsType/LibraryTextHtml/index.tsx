@@ -3,7 +3,7 @@ import { useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
 import { WebContentsType } from './HtmlContents';
 import LibraryDefault from '../LibraryDefault';
-import { Flex, Container, HR } from '@origyn-sa/origyn-art-ui';
+import { Flex, Container, HR } from '@origyn/origyn-art-ui';
 
 const LibraryTextHtml = (props: any) => {
   const [canisterId, setCanisterId] = useState('');

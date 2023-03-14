@@ -1,8 +1,8 @@
-import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
-import { EscrowReceipt, EscrowRecord, NFTInfoStable, Property } from '../../common/types/src/origynNftReference';
+import { EscrowRecord, NFTInfoStable, Property } from '@dapp/common-types';
 import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
 import { toSentenceCase } from './string';
+import { timeInNanos } from './dateTime';
 
 const OGY_LEDGER_CANISTER_ID = 'jwcfb-hyaaa-aaaaj-aac4q-cai';
 
@@ -255,7 +255,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   odc.currentBid = 0;
 
   if (odc.auction) {
-    odc.auctionOpen = 'open' in odc.auction.status;
+    odc.auctionOpen = 'open' in odc.auction.status && odc.auction.end_date > timeInNanos();
     odc.auctionClosed = 'closed' in odc.auction.status;
     odc.auctionNotStarted = 'not_started' in odc.auction.status;
 
@@ -304,5 +304,4 @@ export function parseTokenSymbol(escrow: EscrowRecord): string {
   if ('ic' in escrow.token) {
     return escrow.token.ic.symbol;
   }
-};
-
+}

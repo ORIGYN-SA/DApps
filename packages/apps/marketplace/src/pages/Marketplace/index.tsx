@@ -13,9 +13,9 @@ import {
   Image,
   SecondaryNav,
   ShowMoreBlock,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import Filter from '../../../../vault/src/pages/Vault/Filter';
-import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 import { Link } from 'react-router-dom';
 import { useDialog } from '@connect2ic/react';
 import styled from 'styled-components';
@@ -91,6 +91,13 @@ const Marketplace = () => {
     } finally {
       setIsLoaded(true);
     }
+  };
+
+  const getPrice = (odc: OdcDataWithSale): string => {
+    const price = odc.currentBid
+      ? toLargerUnit(odc.currentBid, odc.token.decimals)
+      : toLargerUnit(odc.buyNow, odc.token.decimals);
+    return price.toFixed();
   };
 
   useEffect(() => {
@@ -286,23 +293,10 @@ const Marketplace = () => {
                                           </p>
                                           <p>
                                             {odc.auctionOpen ? (
-                                              odc.currentBid === 0 ? (
-                                                <>
-                                                  {toLargerUnit(
-                                                    odc.buyNow,
-                                                    Number(odc.token.decimals),
-                                                  )}{' '}
-                                                  <TokenIcon symbol={odc.tokenSymbol} />
-                                                </>
-                                              ) : (
-                                                <>
-                                                  {toLargerUnit(
-                                                    odc.currentBid,
-                                                    Number(odc.token.decimals),
-                                                  )}{' '}
-                                                  <TokenIcon symbol={odc.tokenSymbol} />
-                                                </>
-                                              )
+                                              <>
+                                                {getPrice(odc)}{' '}
+                                                <TokenIcon symbol={odc.tokenSymbol} />
+                                              </>
                                             ) : (
                                               'No auction started'
                                             )}

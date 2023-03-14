@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Filter } from '@dapp/utils';
-import { Container, Select, Grid, Icons, Flex, Button } from '@origyn-sa/origyn-art-ui';
+import { Container, Select, Grid, Icons, Flex, Button } from '@origyn/origyn-art-ui';
 
 // Search into categories
 const search_into = ['All', 'Principal', 'Account', 'Transaction Id'];
@@ -10,7 +10,6 @@ const removeDuplicates = (arr: string[]) => {
 };
 
 export const TransactionFilter = (props: any) => {
-
   // AutocompleteVals
   const [AutocompleteVals, SetAutocompleteVals] = React.useState(['-']);
   // Update
@@ -95,128 +94,118 @@ export const TransactionFilter = (props: any) => {
     props.setTrans_types(array_types);
   }, [typedVal, searchTrough, transType]);
 
-
   return (
     <Container padding="16px">
       {props.searchBarTokenId == 'Not selected' ? (
         <Container>Filters unavailable, select a Token.</Container>
       ) : (
         <>
-
           <Grid columns={2}>
             <Grid column={1}>
-            <Flex flexFlow='row' align='center' fullWidth>
-          <Button iconButton>
-        <Icons.FilterIcon width={18} height={18}/>
-        </Button>
-              {props.isLoading ? (
-                <Container padding="16px">
-                  <Select
-                    options={[
-                      {
-                        value: 'Loading...',
-                        label: 'Loading...',
-                      },
-                    ]}
-                    placeholder="Loading..."
-                  />
-                </Container>
-              ) : (
-                <Container padding="16px">
-                  
-                  <Select
-                    options={search_into.map((val) => {
-                      return {
-                        value: val,
-                        label: val,
-                      };
-                    })}
-                    placeholder="Search"
-                    selectedOption={{ value: searchTrough, label: searchTrough }}
-                    handleChange={(opt) => {
-                      handleCategoryFilter(opt.value);
-                    }}
-                  />
-                </Container>
-              )}
-            
-            
-              {props.isLoading ? (
-                <Container padding="16px">
+              <Flex flexFlow="row" align="center" fullWidth>
+                <Button iconButton>
+                  <Icons.FilterIcon width={18} height={18} />
+                </Button>
+                {props.isLoading ? (
+                  <Container padding="16px">
+                    <Select
+                      options={[
+                        {
+                          value: 'Loading...',
+                          label: 'Loading...',
+                        },
+                      ]}
+                      placeholder="Loading..."
+                    />
+                  </Container>
+                ) : (
+                  <Container padding="16px">
+                    <Select
+                      options={search_into.map((val) => {
+                        return {
+                          value: val,
+                          label: val,
+                        };
+                      })}
+                      placeholder="Search"
+                      selectedOption={{ value: searchTrough, label: searchTrough }}
+                      handleChange={(opt) => {
+                        handleCategoryFilter(opt.value);
+                      }}
+                    />
+                  </Container>
+                )}
 
-                  <Select
-                    options={AutocompleteVals.map((val) => {
-                      return {
-                        value: val,
-                        label: val,
-                      };
-                    })}
-                    placeholder="Enter Value"
-                    selectedOption={
-                    { value: typedVal, label: typedVal }
-                    }
-                    handleChange={(opt) => {
-                      handleSelectIds(opt.value);
-                    }}
-                  />
-                </Container>
-              ) : (
-                <Container padding="16px">
-                  <Select
-                    options={AutocompleteVals.map((val) => {
-                      return {
-                        value: val,
-                        label: val,
-                      };
-                    })}
-                    placeholder="Enter Value"
-                    selectedOption={{ value: typedVal, label: typedVal }}
-                    handleChange={(opt) => {
-                      handleSelectIds(opt.value);
-                    }}
-                  />
-                </Container>
-              )}
-            
-            
-            {props.isLoading ? (
-            <>
-            <Container padding="16px">
-              <Select
-                options={[
-                  {
-                    value: 'Loading...',
-                    label: 'Loading...',
-                  },
-                ]}
-                placeholder="Loading..."
-              />
-            </Container>
-            </>
-          ) : (
-            <>
-            <Container padding="16px">
-              <Select
-                options={array_types.map((val) => {
-                  return {
-                    value: val,
-                    label: val,
-                  };
-                })}
-                placeholder="Search transactions types"
-                selectedOption={{ value: transType, label: transType }}
-                handleChange={(opt) => {
-                  handleChangeSelect(opt.value);
-                }}
-              />
-            </Container>
-            </>
-          )}
-                    </Flex>
+                {props.isLoading ? (
+                  <Container padding="16px">
+                    <Select
+                      options={AutocompleteVals.map((val) => {
+                        return {
+                          value: val,
+                          label: val,
+                        };
+                      })}
+                      placeholder="Enter Value"
+                      selectedOption={{ value: typedVal, label: typedVal }}
+                      handleChange={(opt) => {
+                        handleSelectIds(opt.value);
+                      }}
+                    />
+                  </Container>
+                ) : (
+                  <Container padding="16px">
+                    <Select
+                      options={AutocompleteVals.map((val) => {
+                        return {
+                          value: val,
+                          label: val,
+                        };
+                      })}
+                      placeholder="Enter Value"
+                      selectedOption={{ value: typedVal, label: typedVal }}
+                      handleChange={(opt) => {
+                        handleSelectIds(opt.value);
+                      }}
+                    />
+                  </Container>
+                )}
+
+                {props.isLoading ? (
+                  <>
+                    <Container padding="16px">
+                      <Select
+                        options={[
+                          {
+                            value: 'Loading...',
+                            label: 'Loading...',
+                          },
+                        ]}
+                        placeholder="Loading..."
+                      />
+                    </Container>
+                  </>
+                ) : (
+                  <>
+                    <Container padding="16px">
+                      <Select
+                        options={array_types.map((val) => {
+                          return {
+                            value: val,
+                            label: val,
+                          };
+                        })}
+                        placeholder="Search transactions types"
+                        selectedOption={{ value: transType, label: transType }}
+                        handleChange={(opt) => {
+                          handleChangeSelect(opt.value);
+                        }}
+                      />
+                    </Container>
+                  </>
+                )}
+              </Flex>
             </Grid>
           </Grid>
-
-
         </>
       )}
     </Container>

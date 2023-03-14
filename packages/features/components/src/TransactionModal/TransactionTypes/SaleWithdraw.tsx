@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Container } from '@origyn-sa/origyn-art-ui';
+import { Grid, Container } from '@origyn/origyn-art-ui';
 import { ICPIcon, OGYIcon } from '@dapp/common-assets';
 
 export const SaleWithdraw = (props: any) => {

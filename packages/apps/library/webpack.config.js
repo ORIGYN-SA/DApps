@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'library',
-  openPage: '-/brain-matters-dev/collection/-/library',
+  open: '-/brain-matters-dev/collection/-/library',
 };
 
 module.exports = (env, argv) => {

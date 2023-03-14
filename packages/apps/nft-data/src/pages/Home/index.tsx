@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useRoute } from '@dapp/features-authentication';
 import NFTInfo from '../NFTInfo';
-import { OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import { Container } from '@origyn-sa/origyn-art-ui';
+import { OrigynClient, getNftCollectionMeta } from '@origyn/mintjs';
+import { Container } from '@origyn/origyn-art-ui';
 
 const Home = () => {
   // const { actor } = useContext(AuthContext);

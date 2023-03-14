@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { OrigynClient, stageLibraryAsset, getNft, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import { OrigynClient, stageLibraryAsset, getNft, getNftCollectionMeta } from '@origyn/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { useSnackbar } from 'notistack';
-import { Container, TextInput, Button, HR, Flex, CheckboxInput } from '@origyn-sa/origyn-art-ui';
+import { Container, TextInput, Button, HR, Flex, CheckboxInput } from '@origyn/origyn-art-ui';
 import { Buffer } from 'buffer';
 
 export const CanisterLocation = (props: any) => {

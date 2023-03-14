@@ -14,9 +14,9 @@ import {
   DatePicker,
   Select,
   Button,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
-import { toSmallerUnit } from '@dapp/utils';
+import { toSmallerUnit, validateTokenAmount } from '@dapp/utils';
 import { MarketTransferRequest } from '@dapp/common-types';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
@@ -92,7 +92,7 @@ export function StartAuctionModal({
         sales_config: {
           pricing: {
             auction: {
-              start_price: BigInt(toSmallerUnit(startPrice, token.decimals)),
+              start_price: BigInt(toSmallerUnit(startPrice, token.decimals).toFixed()),
               token: {
                 ic: {
                   fee: BigInt(token.fee),
@@ -102,13 +102,13 @@ export function StartAuctionModal({
                   symbol: tokens[saleToken]?.symbol,
                 },
               },
-              reserve: [BigInt(toSmallerUnit(reservePrice, token.decimals))],
+              reserve: [BigInt(toSmallerUnit(reservePrice, token.decimals).toFixed())],
               start_date: BigInt(Math.floor(new Date().getTime() * 1e6)),
               min_increase: {
-                amount: BigInt(toSmallerUnit(priceStep, token.decimals)),
+                amount: BigInt(toSmallerUnit(priceStep, token.decimals).toFixed()),
               },
               allow_list: [],
-              buy_now: [BigInt(toSmallerUnit(buyNowPrice, token.decimals))],
+              buy_now: [BigInt(toSmallerUnit(buyNowPrice, token.decimals).toFixed())],
               ending: {
                 date: BigInt(endDate.getTime() * 1e6),
               },
@@ -140,6 +140,10 @@ export function StartAuctionModal({
     }
   };
 
+  const hasErrors = (): boolean => {
+    return !!Object.keys(errors).find((key) => errors[key]);
+  };
+
   const getValidationErrors = (err) => {
     const validationErrors = {};
 
@@ -151,6 +155,7 @@ export function StartAuctionModal({
 
     return validationErrors;
   };
+
   const onSubmit = (e: any) => {
     e.preventDefault();
     validationSchema
@@ -163,9 +168,16 @@ export function StartAuctionModal({
         setErrors(errs);
       });
   };
+
   const onChange = (e?: any, name?: string, value?: any) => {
     setErrors({ ...errors, [name || e.target.name]: undefined });
     setValues({ ...values, [name || e.target.name]: value || e.target.value });
+  };
+
+  const onCurrencyChanged = (name: string, value: string) => {
+    let validationMsg = validateTokenAmount(value, tokens[values.token].decimals);
+    setErrors({ ...errors, [name]: validationMsg });
+    setValues({ ...values, [name]: value });
   };
 
   return (
@@ -213,14 +225,14 @@ export function StartAuctionModal({
                       label="Starting Price"
                       name="startPrice"
                       value={values.startPrice}
-                      onChange={onChange}
+                      onChange={(e) => onCurrencyChanged('startPrice', e.target.value)}
                       error={errors?.startPrice}
                     />
                     <TextInput
                       label="Buy Now Price"
                       name="buyNowPrice"
                       value={values.buyNowPrice}
-                      onChange={onChange}
+                      onChange={(e) => onCurrencyChanged('buyNowPrice', e.target.value)}
                       error={errors?.buyNowPrice}
                     />
                     <TextInput
@@ -228,14 +240,14 @@ export function StartAuctionModal({
                       label="Minimum Increase"
                       name="minIncrease"
                       value={values.minIncrease}
-                      onChange={onChange}
+                      onChange={(e) => onCurrencyChanged('minIncrease', e.target.value)}
                       error={errors?.minIncrease}
                     />
                     <TextInput
                       label="Reserve Price"
                       name="reservePrice"
                       value={values.reservePrice}
-                      onChange={onChange}
+                      onChange={(e) => onCurrencyChanged('reservePrice', e.target.value)}
                       error={errors?.reservePrice}
                     />
                     <LocalizationProvider fullWidth dateAdapter={AdapterMoment}>
@@ -251,7 +263,9 @@ export function StartAuctionModal({
                     <HR />
                     <Flex align="center" justify="flex-end" gap={16}>
                       <Button onClick={() => onClose()}>Cancel</Button>
-                      <Button type="submit">Start</Button>
+                      <Button type="submit" disabled={hasErrors()}>
+                        Start
+                      </Button>
                     </Flex>
                   </Flex>
                 </>

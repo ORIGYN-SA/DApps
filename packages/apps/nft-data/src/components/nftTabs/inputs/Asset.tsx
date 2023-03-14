@@ -1,5 +1,5 @@
 // import React, { useEffect, useState, useContext, createContext } from 'react';
-// import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+// import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 // import { useRoute } from '@dapp/features-authentication';
 // import MenuItem from '@mui/material/MenuItem';
 // import InputLabel from '@mui/material/InputLabel';

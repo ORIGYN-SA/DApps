@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { Button, HR, theme, Modal, Container, Flex } from '@origyn-sa/origyn-art-ui';
+import { Button, HR, theme, Modal, Container, Flex } from '@origyn/origyn-art-ui';
 import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';

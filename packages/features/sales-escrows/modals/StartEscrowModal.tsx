@@ -1,19 +1,20 @@
+import * as React from 'react';
+import BigNumber from 'bignumber.js';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
-import { sendTransaction, useTokensContext, Token } from '@dapp/features-tokens-provider';
-import { Principal } from '@dfinity/principal';
-import * as React from 'react';
-import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn-sa/origyn-art-ui';
+import { useTokensContext, Token } from '@dapp/features-tokens-provider';
+import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn/origyn-art-ui';
 import { useEffect } from 'react';
 import {
+  toBigNumber,
   toLargerUnit,
-  OdcDataWithSale,
   toSmallerUnit,
-  isPositiveFloat,
-  addCurrencies,
+  OdcDataWithSale,
+  validateTokenAmount,
 } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { useApi } from '@dapp/common-api';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -40,18 +41,20 @@ export function StartEscrowModal({
   onProcessing,
 }: StartEscrowModalProps) {
   const debug = useDebug();
-  const { showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
-  const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
+  const { getDepositAccountNumber, sendTokensToDepositAccount, sendEscrow, createBid } = useApi();
+  const { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
+  const { principal, activeWalletProvider } = React.useContext(AuthContext);
   const { tokens, refreshAllBalances } = useTokensContext();
 
   const [isLoading, setIsLoading] = React.useState(true);
   const [isTransacting, setIsTransacting] = React.useState(false);
+  const [status, setStatus] = React.useState('');
   const [success, setSuccess] = React.useState(false);
 
   const [token, setToken] = React.useState<Token>();
   const [enteredAmount, setEnteredAmount] = React.useState('');
-  const [total, setTotal] = React.useState(0);
-  const [minBid, setMinBid] = React.useState(0);
+  const [total, setTotal] = React.useState<BigNumber>(new BigNumber(0));
+  const [minBid, setMinBid] = React.useState<BigNumber>(new BigNumber(0));
 
   const [formErrors, setFormErrors] = React.useState<FormErrors>({
     amount: '',
@@ -71,16 +74,17 @@ export function StartEscrowModal({
         minAmount = odc.startPrice;
       }
 
-      const initialAmount = toLargerUnit(minAmount, Number(odc.token.decimals));
+      const decimals = Number(odc.token.decimals);
+      const initialAmount = toLargerUnit(minAmount, Number(decimals));
       const initialToken = tokens[odc.token.symbol];
-      const initialTotal = getTotal(initialAmount, initialToken);
+      const initialTotal = getDisplayTotal(initialAmount, initialToken);
       const initialMinBid = toLargerUnit(
         Math.max(odc.startPrice, odc.currentBid + Number(odc.minIncreaseAmount)),
-        Number(odc.token.decimals),
+        Number(decimals),
       );
 
       setToken(initialToken);
-      setEnteredAmount(initialAmount.toString());
+      setEnteredAmount(initialAmount.toFixed());
       setTotal(initialTotal);
       setMinBid(initialMinBid);
 
@@ -90,41 +94,30 @@ export function StartEscrowModal({
 
   const onTokenChanged = (tokenSymbol?: any) => {
     const newToken = tokens[tokenSymbol];
-    const newTotal = getTotal(Number(enteredAmount), newToken);
+    const newTotal = getDisplayTotal(toBigNumber(enteredAmount), newToken);
 
     setToken(newToken);
     setTotal(newTotal);
     setFormErrors({ ...formErrors, token: undefined, amount: undefined });
   };
 
-  const isValidAmount = (enteredAmount: string) => {
-    if (enteredAmount.trim()) {
-      return enteredAmount.trim() && isPositiveFloat(enteredAmount.trim());
-    }
-    return true;
-  };
-
   const onAmountChanged = (enteredAmount: string) => {
-    let newAmount = 0;
+    setEnteredAmount(enteredAmount);
 
-    if (isValidAmount(enteredAmount)) {
-      setEnteredAmount(enteredAmount);
-
-      if (enteredAmount.trim().length) {
-        newAmount = parseFloat(enteredAmount.trim());
-      }
-
-      const newTotal = getTotal(newAmount, token);
+    let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
+    if (validationMsg) {
+      setFormErrors({ ...formErrors, amount: validationMsg });
+    } else {
+      let newAmount = toBigNumber(enteredAmount.trim() || 0);
+      const newTotal = getDisplayTotal(newAmount, token);
       setTotal(newTotal);
       setFormErrors({ ...formErrors, amount: undefined });
-    } else {
-      setFormErrors({ ...formErrors, amount: 'Invalid amount' });
     }
   };
 
-  const getTotal = (amount: number, token: Token): number => {
+  const getDisplayTotal = (amount: BigNumber, token: Token): BigNumber => {
     const twoPartTxFees = toLargerUnit(token.fee * 2, token.decimals);
-    return addCurrencies(amount, twoPartTxFees, token.decimals);
+    return amount.plus(twoPartTxFees); //.decimalPlaces(token.decimals);
   };
 
   const hasErrors = (): boolean => {
@@ -135,24 +128,27 @@ export function StartEscrowModal({
     let errors = { amount: '', token: undefined };
     const fee = toLargerUnit(token.fee, token.decimals);
 
-    if (!isValidAmount(enteredAmount)) {
-      errors = { ...errors, amount: `${escrowType} must be a number` };
+    let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
+    if (validationMsg) {
+      errors = { ...errors, amount: validationMsg };
       return false;
     }
 
-    const amount = Number(enteredAmount.trim());
-    if (amount <= 0) {
+    const amount = toBigNumber(enteredAmount);
+    if (amount.isLessThanOrEqualTo(0)) {
       errors = { ...errors, amount: `${escrowType} must be greater than 0` };
-    } else if (escrowType === 'Offer' && amount <= fee) {
+    } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
       errors = {
         ...errors,
-        amount: `Offer must be greater than the transaction fee of ${fee} ${token.symbol}`,
+        amount: `Offer must be greater than the transaction fee of ${fee.toFixed(token.decimals)} ${
+          token.symbol
+        }`,
       };
     } else if (escrowType == 'Bid') {
-      if (amount < minBid) {
+      if (amount.isLessThan(minBid)) {
         errors = {
           ...errors,
-          amount: `The minimum bid is ${minBid} ${odc.tokenSymbol}`,
+          amount: `The minimum bid is ${minBid.toFixed()} ${odc.tokenSymbol}`,
         };
       }
     }
@@ -170,132 +166,122 @@ export function StartEscrowModal({
     return true;
   };
 
-  const sendEscrow = async () => {
-    if (isLoading || isTransacting || !activeWalletProvider || hasErrors() || !validateForm()) {
-      debug.log('validation failed');
+  const onFormSubmitted = async (e: any) => {
+    e.preventDefault();
+
+    if (isLoading || isTransacting) {
       return;
     }
+
+    if (!activeWalletProvider) {
+      showErrorMessage('Wallet not connected');
+      return;
+    }
+
+    if (!validateForm() || hasErrors()) {
+      showErrorMessage('Please correct all form errors');
+      return;
+    }
+
     try {
       setIsTransacting(true);
       onProcessing(true);
 
-      // gets the deposit info for the account number of the caller
-      const saleInfo = await actor.sale_info_nft_origyn({ deposit_info: [] });
-
-      debug.log('return value of actor.sale_info_nft_origyn({ deposit_info: [] })');
-      debug.log(JSON.stringify(saleInfo, null, 2));
-
-      if ('err' in saleInfo) {
-        throw new Error(saleInfo.err[0]);
-      }
-
-      if (!('deposit_info' in saleInfo.ok)) {
-        throw new Error('Deposit info not found in sale info');
-      }
-
-      const account_id = saleInfo?.ok?.deposit_info?.account_id;
-      if (!account_id) {
-        throw new Error('Account ID not found in sale info');
-      }
-
+      // Add a tx fee to the total escrow amount (second tx fee).
+      // This is needed to move the money from the deposit account to the escrow account.
       const amount = toSmallerUnit(Number(enteredAmount), token.decimals);
-      const totalAmount = addCurrencies(amount, token.fee, token.decimals);
+      const totalAmount = amount.plus(toBigNumber(token.fee)).decimalPlaces(token.decimals);
+      debug.log('escrow amount with fee', totalAmount.toString());
 
-      debug.log('escrow amount with fee', totalAmount);
+      // Get deposit account number
+      const getDepositAccountResult = await getDepositAccountNumber();
+      const depositAccountId = getDepositAccountResult.result;
+      if (!depositAccountId) {
+        showErrorMessage(getDepositAccountResult.errorMessage);
+        return;
+      }
+      debug.log('deposit account', depositAccountId);
 
-      const transactionHeight = await sendTransaction(
-        false,
-        activeWalletProvider,
-        token,
-        account_id,
+      // Transfer tokens from buyer's wallet to the deposit account.
+      // If this fails, the tokens should still be in the buyer's wallet.
+      setStatus('Sending tokens to deposit account...');
+      const sendTokensResult = await sendTokensToDepositAccount(
+        depositAccountId,
         totalAmount,
+        token,
       );
-
-      if (transactionHeight.err) {
-        throw Error(transactionHeight.err);
+      if (!sendTokensResult.result) {
+        showErrorMessage(sendTokensResult.errorMessage);
+        return;
       }
+      const transactionHeight = sendTokensResult.result;
 
-      const escrowData = {
-        token_id: odc.id,
-        deposit: {
-          token: {
-            ic: {
-              fee: BigInt(token.fee),
-              decimals: BigInt(token.decimals),
-              canister: Principal.fromText(token.canisterId),
-              standard: { Ledger: null },
-              symbol: token.symbol,
-            },
-          },
-          trx_id: [{ nat: BigInt(transactionHeight.ok) }],
-          seller: { principal: Principal.fromText(odc.ownerPrincipalId) },
-          buyer: { principal },
-          amount: totalAmount,
-          sale_id: odc.saleId ? [odc.saleId] : [],
-        },
-        lock_to_date: [],
-      };
-
-      debug.log('escrowData sent to actor.sale_nft_origyn({ escrow_deposit: escrowData })');
-      debug.log(JSON.stringify(escrowData, null, 2));
-
-      const escrowResponse = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
-      if ('err' in escrowResponse) {
-        throw new Error(escrowResponse.err[0]);
+      setStatus('Sending tokens to escrow account...');
+      // Transfer tokens from the deposit account to the escrow account.
+      // If this fails, the buyer can withdraw the tokens from Manage Deposits in Vault.
+      const sendEscrowResponse = await sendEscrow(
+        token,
+        totalAmount,
+        transactionHeight,
+        odc.id,
+        odc.ownerPrincipalId,
+        odc.saleId,
+      );
+      if (!sendEscrowResponse.result) {
+        showErrorMessage(sendEscrowResponse.errorMessage);
+        return;
       }
+      const escrowReceipt = sendEscrowResponse.result;
 
+      // If there's an open auction, this is a bid, not an offer
+      // so create a bid from the escrow receipt and sale id.
       if (odc.auctionOpen) {
-        // if the ODC is on auction, then this is a bid in the auction
-        const bidData = {
-          broker_id: [],
-          escrow_receipt: escrowResponse?.ok?.escrow_deposit.receipt,
-          sale_id: odc.saleId,
-        };
-
-        const bidResponse = await actor.sale_nft_origyn({ bid: bidData }); // TODO: fix this
-
-        debug.log('bidData sent to actor.sale_nft_origyn({ bid: bidData })');
-        debug.log(JSON.stringify(bidData, null, 2));
-        debug.log('response from actor.sale_nft_origyn({ bid: bidData })');
-        debug.log(JSON.stringify(bidResponse, null, 2));
-
-        if ('err' in bidResponse) {
-          throw new Error(bidResponse.err.text);
+        setStatus('Creating bid...');
+        const createBidResponse = await createBid(escrowReceipt, odc.saleId);
+        if (!createBidResponse.result) {
+          showErrorMessage(createBidResponse.errorMessage);
+          return;
         }
-        showSuccessMessage('Your bid has been successfully placed.');
-        onCustomClose(true);
-        refreshAllBalances(false, principal);
-        setSuccess(true);
-        onClose(false);
-        onSuccess();
+
+        const purchased = !!createBidResponse.result?.['bid']?.txn_type?.sale_ended;
+        if (purchased) {
+          showSuccessMessage('Purchase successful!');
+        } else {
+          showSuccessMessage('Bid placed');
+        }
       } else {
-        // if there is no auction, then this is just an offer
-        showSuccessMessage('Your escrow has been successfully sent.');
-        onCustomClose(true);
-        onClose(false);
-        refreshAllBalances(false, principal);
-        setSuccess(true);
-        onSuccess();
+        showSuccessMessage('Offer placed');
       }
+
+      onCustomClose(true);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
+      setStatus('');
       setIsTransacting(false);
       onProcessing(false);
-      onClose(false);
     }
   };
 
-  const onCustomClose = (value: boolean) => {
-    setIsLoading(false);
-    setIsTransacting(false);
-    setSuccess(false);
-    onClose(value);
+  const getBuyNowPrice = (odc: OdcDataWithSale): string => {
+    return toLargerUnit(odc.buyNow, odc.token.decimals).toFixed();
   };
 
-  const onFormSubmitted = async (e: any) => {
-    e.preventDefault();
-    sendEscrow();
+  const getTransactionFee = (): string => {
+    const doubleFee = toBigNumber(token.fee).times(toBigNumber(2));
+    return `${toLargerUnit(doubleFee, token.decimals).toFixed()} ${token.symbol}`;
+  };
+
+  const onCustomClose = (isSuccess: boolean) => {
+    setIsLoading(false);
+    setIsTransacting(false);
+    onProcessing(false);
+    onClose(isSuccess);
+    setSuccess(isSuccess);
+    if (isSuccess) {
+      onSuccess();
+    }
+    refreshAllBalances(false, principal);
   };
 
   return (
@@ -315,6 +301,14 @@ export function StartEscrowModal({
               <>
                 <h2>Transactions in Progress</h2>
                 <br />
+                {status && (
+                  <>
+                    <p>{status}</p>
+                    <br />
+                    <br />
+                  </>
+                )}
+
                 <LoadingContainer data-testid="loading-container" />
               </>
             ) : (
@@ -341,7 +335,7 @@ export function StartEscrowModal({
                       />
                     ) : (
                       <>
-                        <span>Token:</span>
+                        <span>Token</span>
                         <span style={{ color: 'grey' }}>{token.symbol}</span>
                       </>
                     )}
@@ -349,20 +343,21 @@ export function StartEscrowModal({
                       <>
                         <br />
                         <span>Buy Now Price (in {token.symbol})</span>
-                        <span style={{ color: 'grey' }}>
-                          {toLargerUnit(odc.buyNow, token.decimals)}
-                        </span>
+                        <span style={{ color: 'grey' }}>{getBuyNowPrice(odc)}</span>
                       </>
                     ) : (
                       <>
                         <br />
+                        <span>
+                          {escrowType == 'Bid' ? 'Your bid' : `Your offer (in ${token.symbol})`}
+                        </span>
+                        {escrowType == 'Bid' && (
+                          <span style={{ color: 'grey' }}>
+                            {`Minimum bid: ${minBid.toFixed()} ${token.symbol}`}
+                          </span>
+                        )}
                         <TextInput
                           required
-                          label={
-                            escrowType == 'Bid'
-                              ? `Your bid (min ${minBid} ${token.symbol})`
-                              : `Your offer (in ${token.symbol})`
-                          }
                           id="offerPrice"
                           name="offerPrice"
                           error={formErrors.amount}
@@ -375,16 +370,13 @@ export function StartEscrowModal({
                     {token && (
                       <>
                         <span>Transaction Fee</span>
-                        <span style={{ color: 'grey' }}>{`${toLargerUnit(
-                          token.fee * 2,
-                          token.decimals,
-                        )}${' '}${token?.symbol}`}</span>
+                        <span style={{ color: 'grey' }}>{getTransactionFee()}</span>
                         <br />
                         <HR />
                         <br />
                         <Flex flexFlow="row" align="center" justify="space-between">
                           <h6>Total Amount</h6>
-                          <span>{total}</span>
+                          <span>{total.toFixed()}</span>
                         </Flex>
                         <br />
                         <HR />

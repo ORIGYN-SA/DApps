@@ -1,0 +1,12 @@
+{
+  "name": "@dapp/common-api",
+  "version": "0.1.0",
+  "description": "API wrapper functions for the origyn_nft canister",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@dapp/common-types": "0.1.0",
+    "@dapp/features-authentication": "0.1.0",
+    "@dapp/features-debug-provider": "0.1.0",
+    "@dapp/features-tokens-provider": "0.1.0"
+  }
+}

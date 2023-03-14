@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import pick from 'lodash/pick';
-import { Container, HR, Grid, Flex } from '@origyn-sa/origyn-art-ui';
+import { Container, HR, Grid, Flex } from '@origyn/origyn-art-ui';
 
 const FormTab = ({ metadata }: any) => {
   const [owner, setOwner] = useState('');

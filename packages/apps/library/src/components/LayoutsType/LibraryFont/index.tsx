@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
-import { Flex, HR } from '@origyn-sa/origyn-art-ui';
+import { Flex, HR } from '@origyn/origyn-art-ui';
 
 const LibraryFont = (props: any) => {
   const [canisterId, setCanisterId] = useState('');
@@ -25,13 +25,15 @@ const LibraryFont = (props: any) => {
   return (
     <>
       <Flex flexFlow="row" justify="center">
-          <a
-            style={{
-              fontSize: 12,
-            }}
-            href={link}
-            download
-          >{link}</a>
+        <a
+          style={{
+            fontSize: 12,
+          }}
+          href={link}
+          download
+        >
+          {link}
+        </a>
       </Flex>
       <HR marginTop={16} marginBottom={16} />
     </>

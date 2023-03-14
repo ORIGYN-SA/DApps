@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
+import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn/origyn-art-ui';
 import type { CandyClassEditor, CandyFloat } from '../../../types';
 import { VALIDATION_ERRORS, CREATE_MODE, EDIT_MODE } from '../../../constants';
 import { convertToCandyFloat } from './converters';

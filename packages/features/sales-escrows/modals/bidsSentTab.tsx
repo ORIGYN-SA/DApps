@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { HR, theme } from '@origyn-sa/origyn-art-ui';
+import { HR, theme } from '@origyn/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
