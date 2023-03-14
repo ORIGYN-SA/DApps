@@ -194,14 +194,14 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
-                      <TokenIcon symbol={bid.tokenSymbol} />
-                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals)).toString()}
-                    </div>
-                    <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
                       <TokenIcon symbol={bid.tokenSymbol} />
                       {bid.latest_bid.toString()}
+                    </div>
+                    <div style={styles.gridItem}>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
+                      <TokenIcon symbol={bid.tokenSymbol} />
+                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals)).toString()}
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
