@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { timeConverter } from '@dapp/utils';
 import { AuthContext } from '@dapp/features-authentication';
-import { CustomTable } from '@origyn-sa/origyn-art-ui';
+import { CustomTable } from '@origyn/origyn-art-ui';
 // Import Interfaces TS
 import { Transactions, Row } from '@dapp/utils';
 // Import fn to get the TransactionObj
@@ -14,11 +14,11 @@ import { EscrowDeposit } from './functions/EscrowDeposit';
 import { EscrowWithdraw } from './functions/EscrowWithdraw';
 import { SaleWithdraw } from './functions/SaleWithdraw';
 // mintjs
-import { getNftHistory, OrigynClient } from '@origyn-sa/mintjs';
+import { getNftHistory, OrigynClient } from '@origyn/mintjs';
 // Modal Box - Component
 import { Transaction } from '../TransactionModal';
 
-import { Container, Modal, Button } from '@origyn-sa/origyn-art-ui';
+import { Container, Modal, Button } from '@origyn/origyn-art-ui';
 
 declare type CellType = {
   id: string;

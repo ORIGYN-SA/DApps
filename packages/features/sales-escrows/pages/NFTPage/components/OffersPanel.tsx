@@ -2,7 +2,7 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
 import { OdcDataWithSale, toLargerUnit } from '@dapp/utils';
 import React, { useContext, useEffect, useState } from 'react';
-import { Flex, Button, Container, theme } from '@origyn-sa/origyn-art-ui';
+import { Flex, Button, Container, theme } from '@origyn/origyn-art-ui';
 import { BalanceResponse, OrigynError } from '@dapp/common-types';
 import { EscrowType } from '../../../modals/StartEscrowModal';
 
@@ -15,7 +15,7 @@ export interface OffersPanelProps {
 export const OffersPanel = ({ odc, onOpenEscrowModal, inProcess }: OffersPanelProps) => {
   const debug = useDebug();
   const { principal, actor } = useContext(AuthContext);
-  const [existingOffer, setExistingOffer] = useState<any | null>(null);
+  const [existingOffer, setExistingOffer] = useState<any | null | undefined>(undefined);
 
   const compareOfferSentWithSelectedToken = async () => {
     try {
@@ -28,14 +28,23 @@ export const OffersPanel = ({ odc, onOpenEscrowModal, inProcess }: OffersPanelPr
         const escrowsSent = balanceResponse?.escrow;
         const offersSent = escrowsSent?.filter((element) => element.sale_id.length === 0);
         debug.log('offersSent', offersSent);
+
         const existingOffer = offersSent?.filter((offer) => offer.token_id === odc.id);
         if (existingOffer.length > 0) {
           setExistingOffer(existingOffer[0]);
+        } else {
+          setExistingOffer(null);
         }
       }
     } catch (e) {
       debug.log(e);
     }
+  };
+
+  const getOfferAmount = (offer) => {
+    return `${toLargerUnit(offer.amount.toString(), offer.token.ic.decimals).toFixed()} ${
+      offer.token.ic.symbol
+    }`;
   };
 
   useEffect(() => {
@@ -55,21 +64,25 @@ export const OffersPanel = ({ odc, onOpenEscrowModal, inProcess }: OffersPanelPr
                   color: theme.colors.SECONDARY_TEXT,
                 }}
               >
-                You have made an offer of{' '}
-                {toLargerUnit(
-                  Number(existingOffer.amount),
-                  Number(existingOffer.token.ic.decimals),
-                )}{' '}
-                {existingOffer.token.ic.symbol} which has not been accepted or declined by the
-                owner. You can make a new offer by withdrawing your current offer.
+                You have made an offer of {getOfferAmount(existingOffer)} which has not been
+                accepted or declined by the owner. You can make a new offer by withdrawing your
+                current offer.
               </p>
             </Flex>
           </Flex>
         </Container>
       ) : (
-        <Button btnType="accent" onClick={() => onOpenEscrowModal('Offer')} disabled={inProcess}>
-          Make an Offer
-        </Button>
+        <>
+          {existingOffer === null && (
+            <Button
+              btnType="accent"
+              onClick={() => onOpenEscrowModal('Offer')}
+              disabled={inProcess}
+            >
+              Make an Offer
+            </Button>
+          )}
+        </>
       )}
     </>
   );

@@ -12,8 +12,8 @@ import {
   getNftCollectionMeta,
   getNft,
   setLibraryImmutable,
-} from '@origyn-sa/mintjs';
-import { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
+} from '@origyn/mintjs';
+import { StageFile } from '@origyn/mintjs/lib/methods/nft/types';
 import {
   Button,
   Modal,
@@ -23,7 +23,7 @@ import {
   TextInput,
   Select,
   CheckboxInput,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 type Props = {

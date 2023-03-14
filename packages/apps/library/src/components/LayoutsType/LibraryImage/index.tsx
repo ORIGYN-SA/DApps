@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRoute } from '@dapp/features-authentication';
 import { GetFormattedLink } from '@dapp/utils';
-import { Modal, Flex, Container, HR, Image, Grid } from '@origyn-sa/origyn-art-ui';
+import { Modal, Flex, Container, HR, Image, Grid } from '@origyn/origyn-art-ui';
 
 const LibraryImage = (props: any) => {
   // MODAL

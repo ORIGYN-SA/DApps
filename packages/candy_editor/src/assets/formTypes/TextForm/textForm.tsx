@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn-sa/origyn-art-ui';
+import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn/origyn-art-ui';
 import { CandyClassEditor, CandyText } from '../../../types';
 import { CREATE_MODE, EDIT_MODE } from '../../../constants';
 

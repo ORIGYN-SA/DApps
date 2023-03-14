@@ -9,8 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SnackbarProvider } from 'notistack';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import { Layout } from '@dapp/features-components';
-import { GlobalStyle } from '@origyn-sa/origyn-art-ui';
-
+import { GlobalStyle } from '@origyn/origyn-art-ui';
 
 const App = () => {
   return (

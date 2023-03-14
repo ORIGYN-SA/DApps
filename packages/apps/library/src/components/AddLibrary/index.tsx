@@ -4,9 +4,9 @@ import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
 import { LinearProgress } from '@mui/material';
-import { Container, Flex, HR, Select } from '@origyn-sa/origyn-art-ui';
+import { Container, Flex, HR, Select } from '@origyn/origyn-art-ui';
 
-interface PropsLayout  {
+interface PropsLayout {
   setInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   tokenId: string;
   isOpen: boolean;
@@ -14,7 +14,7 @@ interface PropsLayout  {
 }
 
 const locationTypeLayouts = {
-  Canister: (setInProgress, tokenId, isOpen, updateData : PropsLayout) => (
+  Canister: (setInProgress, tokenId, isOpen, updateData: PropsLayout) => (
     <CanisterLocation
       setInProgress={setInProgress}
       tokenId={tokenId}

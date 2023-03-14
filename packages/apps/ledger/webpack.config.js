@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'ledger',
-  openPage: '-/brain-matters-dev/collection/-/ledger',
+  open: '-/brain-matters-dev/collection/-/ledger',
 };
 
 module.exports = (env, argv) => {

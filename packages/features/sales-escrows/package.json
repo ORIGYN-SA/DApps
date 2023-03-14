@@ -4,6 +4,7 @@
   "description": "Feature for handling sales and escrows within the dApps.",
   "main": "src/index.ts",
   "dependencies": {
+    "@dapp/common-api": "0.1.0",
     "@dapp/common-assets": "0.1.0",
     "@dapp/common-types": "0.1.0",
     "@dapp/features-debug-provider": "0.1.0",

@@ -2,9 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 // mint.js
-import { OrigynClient, stageCollectionLibraryAsset, getNftCollectionMeta, getNft } from '@origyn-sa/mintjs';
-import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
-import { Select, TextInput, Button, HR, Flex, Container } from '@origyn-sa/origyn-art-ui';
+import {
+  OrigynClient,
+  stageCollectionLibraryAsset,
+  getNftCollectionMeta,
+  getNft,
+} from '@origyn/mintjs';
+import type { StageFile } from '@origyn/mintjs/lib/methods/nft/types';
+import { Select, TextInput, Button, HR, Flex, Container } from '@origyn/origyn-art-ui';
 
 export const CollectionLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -74,9 +79,9 @@ export const CollectionLocation = (props: any) => {
       console.log('error', e);
     }
     props.setInProgress(false);
-    props.isOpen(false)
+    props.isOpen(false);
 
-    if (props.tokenId == "") {
+    if (props.tokenId == '') {
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
         props.updateData(
@@ -95,7 +100,6 @@ export const CollectionLocation = (props: any) => {
         );
       });
     }
-
   };
   const handleSelectChange = (val) => {
     setSelectedLibrary(val);
@@ -110,7 +114,12 @@ export const CollectionLocation = (props: any) => {
       <Container size="full">
         <Flex flexFlow="column" gap={8}>
           <Flex>
-            <TextInput id="title" label="Library title" placeholder="Enter Title" onChange={getTypedTitle} />
+            <TextInput
+              id="title"
+              label="Library title"
+              placeholder="Enter Title"
+              onChange={getTypedTitle}
+            />
           </Flex>
 
           <Flex>

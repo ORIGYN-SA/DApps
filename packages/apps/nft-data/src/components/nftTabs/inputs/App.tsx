@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { TextInput } from '@origyn-sa/origyn-art-ui';
+import { TextInput } from '@origyn/origyn-art-ui';
 
 // Context
 import { MetadataContext } from '../context';

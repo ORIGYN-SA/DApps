@@ -1,7 +1,7 @@
 import React from 'react';
 import pick from 'lodash/pick';
 import { useState } from 'react';
-import { Container, Button, Flex } from '@origyn-sa/origyn-art-ui';
+import { Container, Button, Flex } from '@origyn/origyn-art-ui';
 import PropTypes from 'prop-types';
 
 interface RenderTree {
