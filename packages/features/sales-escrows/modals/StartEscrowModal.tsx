@@ -150,12 +150,10 @@ export function StartEscrowModal({
           ...errors,
           amount: `The minimum bid is ${minBid.toFixed()} ${odc.tokenSymbol}`,
         };
-      }
-      if ((amount.isGreaterThan(toLargerUnit(odc.buyNow, token.decimals)))) {
+      } else if ((amount.isGreaterThan(toLargerUnit(odc.buyNow, token.decimals)))) {
         errors = {
           ...errors,
-          amount: `The maximum bid needs to be less than  ${toLargerUnit(odc.buyNow, token.decimals)} ${odc.tokenSymbol}`,
-        };
+          amount: `Bid must be less than buy now price (${toLargerUnit(odc.buyNow, token.decimals)} ${odc.tokenSymbol})`,        };
       }
     }
 
