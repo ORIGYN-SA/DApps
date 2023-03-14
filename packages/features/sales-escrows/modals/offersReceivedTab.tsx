@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { Button, HR, theme, Modal, Flex, Container } from '@origyn-sa/origyn-art-ui';
+import { Button, HR, theme, Modal, Flex, Container } from '@origyn/origyn-art-ui';
 import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { EscrowRecord, EscrowReceipt, OrigynError, BalanceResponse } from '@dapp/common-types';

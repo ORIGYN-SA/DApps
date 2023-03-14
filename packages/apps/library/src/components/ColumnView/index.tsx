@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
-import { getNft, OrigynClient, getNftCollectionMeta } from '@origyn-sa/mintjs';
+import { getNft, OrigynClient, getNftCollectionMeta } from '@origyn/mintjs';
 import { checkOwner } from '@dapp/utils';
 // Library components
 import { CollectionLibrary } from '../CollectionLibrary';
 import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
-import { Container, Grid, Flex, Modal, theme } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, Flex, Modal, theme } from '@origyn/origyn-art-ui';
 
 function replaceSelectedTokenInTheUrl(selectedToken: string) {
   const URL = window.location.href;

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRoute } from '@dapp/features-authentication';
-import { Container, Modal, HR, TabContent } from '@origyn-sa/origyn-art-ui';
+import { Container, Modal, HR, TabContent } from '@origyn/origyn-art-ui';
 import { OffersReceivedTab } from './offersReceivedTab';
 import { BidsReceivedTab } from './bidsReceivedTab';
 import { OffersSentTab } from './offersSentTab';

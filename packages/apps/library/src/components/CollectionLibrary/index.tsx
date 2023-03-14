@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
 import { DeleteLibrary } from '../DeleteLibrary';
-import { Container, Grid, HR, Flex } from '@origyn-sa/origyn-art-ui';
+import { Container, Grid, HR, Flex } from '@origyn/origyn-art-ui';
 import { UpdateLibrary } from '../UpdateLibrary';
 import { immutableLibrary } from '../Constants/constants';
 
@@ -44,8 +44,7 @@ export const CollectionLibrary = (props: any) => {
         metadata.filter((res) => res.name === 'library_id')[0].value.Text || 'No Library ID';
       const title = metadata.filter((res) => res.name === 'title')[0].value.Text || 'No Title';
       const contentType =
-        metadata.filter((res) => res.name === 'content_type')[0].value.Text ||
-        'No Content Type';
+        metadata.filter((res) => res.name === 'content_type')[0].value.Text || 'No Content Type';
       const location =
         metadata.filter((res) => res.name === 'location')[0].value.Text || 'No Location';
       const locationType =

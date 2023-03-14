@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
-import type { StageFile } from '@origyn-sa/mintjs/lib/methods/nft/types';
+import type { StageFile } from '@origyn/mintjs/lib/methods/nft/types';
 // mint.js
-import { OrigynClient, stageWebLibraryAsset, getNft, getNftCollectionMeta } from '@origyn-sa/mintjs';
-import { TextInput, Button, HR, Flex, CheckboxInput, Container } from '@origyn-sa/origyn-art-ui';
+import { OrigynClient, stageWebLibraryAsset, getNft, getNftCollectionMeta } from '@origyn/mintjs';
+import { TextInput, Button, HR, Flex, CheckboxInput, Container } from '@origyn/origyn-art-ui';
 
 export const WebLocation = (props: any) => {
   const { actor } = useContext(AuthContext);
@@ -67,9 +67,9 @@ export const WebLocation = (props: any) => {
       console.log(e);
     }
     props.setInProgress(false);
-    props.isOpen(false)
+    props.isOpen(false);
 
-    if(props.tokenId==""){
+    if (props.tokenId == '') {
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
         props.updateData(
@@ -78,7 +78,7 @@ export const WebLocation = (props: any) => {
           })[0].value.Array.thawed,
         );
       });
-    }else{
+    } else {
       //Update the library data for the Token
       getNft(props.tokenId).then((r) => {
         props.updateData(
@@ -92,30 +92,30 @@ export const WebLocation = (props: any) => {
 
   return (
     <>
-    <Container size="full">
-    <Flex flexFlow="column" gap={8}>
-        <Flex>
-          <TextInput
-            label="Library title"
-            id="title"
-            placeholder="Enter Title"
-            onChange={getTypedTitle}
-          />
-        </Flex>
-        <Flex>
-          <TextInput label="Library Id" id="id" placeholder="Library ID" onChange={getTypedId} />
-        </Flex>
-        <Flex>
-          <TextInput
-            label="URL"
-            id="web"
-            placeholder="https://www.example.com"
-            onChange={getTypedUrl}
-          />
-        </Flex>
-        <HR marginTop={16} marginBottom={16} />
-        <Flex>
-        <Flex flexFlow="row" gap={8}>
+      <Container size="full">
+        <Flex flexFlow="column" gap={8}>
+          <Flex>
+            <TextInput
+              label="Library title"
+              id="title"
+              placeholder="Enter Title"
+              onChange={getTypedTitle}
+            />
+          </Flex>
+          <Flex>
+            <TextInput label="Library Id" id="id" placeholder="Library ID" onChange={getTypedId} />
+          </Flex>
+          <Flex>
+            <TextInput
+              label="URL"
+              id="web"
+              placeholder="https://www.example.com"
+              onChange={getTypedUrl}
+            />
+          </Flex>
+          <HR marginTop={16} marginBottom={16} />
+          <Flex>
+            <Flex flexFlow="row" gap={8}>
               <Flex>
                 <CheckboxInput
                   name="immutable"
@@ -123,17 +123,21 @@ export const WebLocation = (props: any) => {
                   checked={immutable}
                 />
               </Flex>
-              <Flex><p>Make this Library <b>immutable</b></p></Flex>
+              <Flex>
+                <p>
+                  Make this Library <b>immutable</b>
+                </p>
+              </Flex>
             </Flex>
+          </Flex>
+          <HR marginTop={16} marginBottom={16} />
+          <Flex>
+            <Button btnType="filled" onClick={StageWebLibrary}>
+              Stage Library
+            </Button>
+          </Flex>
         </Flex>
-        <HR marginTop={16} marginBottom={16} />
-        <Flex>
-          <Button btnType="filled" onClick={StageWebLibrary}>
-            Stage Library
-          </Button>
-        </Flex>
-      </Flex>
-    </Container>
+      </Container>
     </>
   );
 };

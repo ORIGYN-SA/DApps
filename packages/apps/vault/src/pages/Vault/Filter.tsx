@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Flex, Select, Icons, TextInput, Modal, Container } from '@origyn-sa/origyn-art-ui';
+import { Button, Flex, Select, Icons, TextInput, Modal, Container } from '@origyn/origyn-art-ui';
 import styled from 'styled-components';
 
 const StyledFilter = styled.div`

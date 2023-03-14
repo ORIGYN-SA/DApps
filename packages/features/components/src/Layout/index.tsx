@@ -1,12 +1,12 @@
-import { Flex, GlobalStyle, Navbar } from '@origyn-sa/origyn-art-ui';
-import { Icons, theme, themeLight } from '@origyn-sa/origyn-art-ui';
+import { Flex, GlobalStyle, Navbar } from '@origyn/origyn-art-ui';
+import { Icons, theme, themeLight } from '@origyn/origyn-art-ui';
 import React, { useContext, useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { ThemeProvider } from 'styled-components';
 import './connect2ic.css';
-import { AuthContext, useRoute } from '../../../authentication';
-import { getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 import { Disclaimer } from '../Disclaimer';
 
 // TODO: get APPS from NFT data

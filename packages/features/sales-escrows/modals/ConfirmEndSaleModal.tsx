@@ -3,7 +3,7 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
-import { Container, Flex, Modal, Button, HR } from '@origyn-sa/origyn-art-ui';
+import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
 import { useUserMessages } from '@dapp/features-user-messages';
 
 const Transition = React.forwardRef(

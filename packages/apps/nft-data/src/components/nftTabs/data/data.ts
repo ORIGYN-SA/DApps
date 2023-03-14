@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useRoute, AuthContext } from '@dapp/features-authentication';
-import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn-sa/mintjs';
+import { getNft, getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 
 export type Nft_Data = {
   name: string;
@@ -18,7 +18,7 @@ export type Permission = {
   value?: string;
   list?: any[];
   immutable: boolean;
-}
+};
 
 const getMetadata = async () => {
   const { actor } = useContext(AuthContext);
@@ -38,7 +38,7 @@ const getMetadata = async () => {
     console.log('collectionMeta', metadata);
     return metadata;
   }
-}
+};
 
 export const getData = async () => {
   const { tokenId } = await useRoute();
@@ -87,9 +87,9 @@ export const getData = async () => {
             return res.name === '__apps';
           })[0].value.Array.thawed[0].Class[1].immutable,
           level: 'Permission',
-        }
+        },
       );
-      // Assets level - Only for NFTs, Not for collecrion 
+      // Assets level - Only for NFTs, Not for collecrion
       if (tokenId) {
         Data_Array.push(
           {
@@ -134,7 +134,7 @@ export const getData = async () => {
           },
         );
       }
-      // Apps level 
+      // Apps level
       const apps = await Metadata.filter((res) => {
         return res.name === '__apps';
       })[0].value.Array.thawed[0].Class[4].value.Class;
@@ -164,18 +164,15 @@ export const getData = async () => {
           });
         }
       }
-
-
     } catch (e) {
       console.log(e);
     }
   }
   console.log('Data', Data_Array);
   return Data_Array;
-}
+};
 
 export const getPermissions = async () => {
-
   let Allowed_Array: Permission[] = [];
   const Metadata = await getMetadata();
 
@@ -187,7 +184,6 @@ export const getPermissions = async () => {
       let i: any;
       for (i in array_write) {
         if (array_write[i].value.hasOwnProperty('Array')) {
-
           let list = [];
           let j: any;
           for (j in array_write[i].value.Array.thawed) {
@@ -218,7 +214,6 @@ export const getPermissions = async () => {
       let k: any;
       for (k in array_permission) {
         if (array_permission[k].value.hasOwnProperty('Array')) {
-
           let list = [];
           let l: any;
           for (l in array_permission[k].value.Array.thawed) {

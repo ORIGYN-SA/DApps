@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MenuListElements } from '../../types';
-import { Flex, theme } from '@origyn-sa/origyn-art-ui';
+import { Flex, theme } from '@origyn/origyn-art-ui';
 
 const styles = `
   .tooltip-container {

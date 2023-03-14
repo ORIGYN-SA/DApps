@@ -8,7 +8,7 @@ import {
   getNftCollectionMeta,
   getNft,
   setLibraryImmutable,
-} from '@origyn-sa/mintjs';
+} from '@origyn/mintjs';
 import {
   Button,
   Modal,
@@ -18,7 +18,7 @@ import {
   TextInput,
   Select,
   CheckboxInput,
-} from '@origyn-sa/origyn-art-ui';
+} from '@origyn/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 
 type Props = {
