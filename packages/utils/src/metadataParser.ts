@@ -306,17 +306,17 @@ export function parseTokenSymbol(escrow: EscrowRecord): string {
   }
 };
 
-export function parseHighestSentBids(transactions: TransactionRecord[]): TransactionRecord[] {
-  const tokenBidsMap = new Map<string, TransactionRecord>();
-  for (const transaction of transactions) {
-    const auctionBid = ('auction_bid' in transaction.txn_type) ? transaction.txn_type.auction_bid : null;
+export function parseHighestSentBids(transactionsRecords: TransactionRecord[]): TransactionRecord[] {
+  const bidsTokenIds = new Map<string, TransactionRecord>();
+  for (const transactionRecord of transactionsRecords) {
+    const auctionBid = ('auction_bid' in transactionRecord.txn_type) ? transactionRecord.txn_type.auction_bid : null;
     if (auctionBid) {
-      const token = transaction.token_id;
-      if (!tokenBidsMap.has(token) || transaction.timestamp > tokenBidsMap.get(token)!.timestamp) {
-        tokenBidsMap.set(token, transaction);
+      const token = transactionRecord.token_id;
+      if (!bidsTokenIds.has(token) || transactionRecord.timestamp > bidsTokenIds.get(token)!.timestamp) {
+        bidsTokenIds.set(token, transactionRecord);
       }
     }
   }
-  return Array.from(tokenBidsMap.values());
+  return Array.from(bidsTokenIds.values());
 }
 
