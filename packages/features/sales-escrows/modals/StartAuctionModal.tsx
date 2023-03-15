@@ -40,7 +40,7 @@ const validationSchema = Yup.object({
   reservePrice: Yup.number()
     .typeError('This must be a number')
     .nullable()
-    .lessThan(Yup.ref('buyNowPrice'), 'Reserve buy price must be smaller than the buy now price')
+    .lessThan(Yup.ref('buyNowPrice'), 'Reserve buy price must be less than the buy now price')
     .default(0),
   buyNowPrice: Yup.number()
     .typeError('This must be a number')
