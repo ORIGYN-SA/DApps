@@ -112,15 +112,16 @@ export function StartEscrowModal({
 
   const onAmountChanged = (enteredAmount: string) => {
     setEnteredAmount(enteredAmount);
-    const fee = toLargerUnit(token.fee, token.decimals);
-    const amount = toBigNumber(enteredAmount);
-    const amountWithFee = amount.plus(fee);
-    const balance = toBigNumber(tokens[token.symbol].balance);
 
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
+
+    const fee = toLargerUnit(token.fee, token.decimals);
+    const amount = toBigNumber(enteredAmount);
+    const balance = toBigNumber(tokens[token.symbol].balance);
+
     if (validationMsg) {
       setFormErrors({ ...formErrors, amount: validationMsg });
-    } else if (amountWithFee > balance) {
+    } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       setFormErrors({ ...formErrors, amount: `Insufficient funds` });
     } else {
       let newAmount = toBigNumber(enteredAmount.trim() || 0);
@@ -142,8 +143,6 @@ export function StartEscrowModal({
   const validateForm = () => {
     let errors = { amount: '', token: undefined };
     const fee = toLargerUnit(token.fee, token.decimals);
-    const amount = toBigNumber(enteredAmount);
-    const amountWithFee = amount.plus(fee);
     const balance = toBigNumber(tokens[token.symbol].balance);
 
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
@@ -151,10 +150,10 @@ export function StartEscrowModal({
       errors = { ...errors, amount: validationMsg };
       return false;
     }
-
+    const amount = toBigNumber(enteredAmount);
     if (amount.isLessThanOrEqualTo(0)) {
       errors = { ...errors, amount: `${escrowType} must be greater than 0` };
-    } else if (amountWithFee > balance) {
+    } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       errors = { ...errors, amount: `Insufficient funds` };
     } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
       errors = {
