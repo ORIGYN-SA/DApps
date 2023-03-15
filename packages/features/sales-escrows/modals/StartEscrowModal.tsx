@@ -112,20 +112,18 @@ export function StartEscrowModal({
 
   const onAmountChanged = (enteredAmount: string) => {
     setEnteredAmount(enteredAmount);
-
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
-
+    if (validationMsg) {
+      setFormErrors({ ...formErrors, amount: validationMsg });
+      return false;
+    }
     const fee = toLargerUnit(token.fee, token.decimals);
     const amount = toBigNumber(enteredAmount);
     const balance = toBigNumber(tokens[token.symbol].balance);
-
-    if (validationMsg) {
-      setFormErrors({ ...formErrors, amount: validationMsg });
-    } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
+    if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       setFormErrors({ ...formErrors, amount: `Insufficient funds` });
     } else {
-      let newAmount = toBigNumber(enteredAmount.trim() || 0);
-      const newTotal = getDisplayTotal(newAmount, token);
+      const newTotal = getDisplayTotal(amount, token);
       setTotal(newTotal);
       setFormErrors({ ...formErrors, amount: undefined });
     }
@@ -279,7 +277,7 @@ export function StartEscrowModal({
         showSuccessMessage('Offer placed');
       }
 
-      onCustomClose(true);
+      onModalClose(true);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -298,7 +296,7 @@ export function StartEscrowModal({
     return `${toLargerUnit(doubleFee, token.decimals).toFixed()} ${token.symbol}`;
   };
 
-  const onCustomClose = (isSuccess: boolean) => {
+  const onModalClose = (isSuccess: boolean) => {
     setIsLoading(false);
     setIsTransacting(false);
     onProcessing(false);
@@ -311,14 +309,14 @@ export function StartEscrowModal({
   };
 
   return (
-    <Modal isOpened={open} closeModal={() => onCustomClose(false)} size="md">
+    <Modal isOpened={open} closeModal={() => onModalClose(false)} size="md">
       <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
         {success ? (
           <>
             <h2>Success!</h2>
             <p className="secondary_color">All the transactions were made successfully.</p>
             <Flex justify="flex-end">
-              <Button onClick={onCustomClose}>Done</Button>
+              <Button onClick={onModalClose}>Done</Button>
             </Flex>
           </>
         ) : (
@@ -418,10 +416,7 @@ export function StartEscrowModal({
                         <br />
                       </>
                     )}
-                    <Flex align="center" justify="flex-end" gap={16}>
-                      <Button btnType="outlined" onClick={() => onCustomClose(false)}>
-                        Cancel
-                      </Button>
+                    <Flex align="center" justify="flex-end">
                       <Button btnType="accent" type="submit" disabled={hasErrors()}>
                         Send Escrow
                       </Button>
