@@ -74,7 +74,10 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
         return {
           ...odc,
           token_id: offer.token_id,
-          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
+          amount: toLargerUnit(
+            Number(offer.amount),
+            Number(offer.token['ic'].decimals),
+          ).toFixed.toString(),
           lock_to_date: offer.lock_to_date,
           escrow_record: offer,
         };

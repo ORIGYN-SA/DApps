@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-import { Container, Flex, Modal, Button } from '@origyn/origyn-art-ui';
+import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
 import { getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
 import { LoadingContainer } from '@dapp/features-components';
@@ -94,7 +94,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
         <Container size="full" padding="48px">
           <h3>Manage Token Deposits</h3>
-          <br />
+          <HR marginTop={16} marginBottom={16} />
           {isLoading ? (
             <>
               <LoadingContainer />
@@ -103,7 +103,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
             <>
               {Object.keys(activeTokens).map((tokenSymbol) => {
                 return (
-                  <div key={tokenSymbol}>
+                  <div key={tokenSymbol} style={{ marginBottom: '16px' }}>
                     <Flex flexFlow="row" justify="space-around">
                       <Flex flexFlow="column">
                         <span>Token</span>
@@ -127,8 +127,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                         Withdraw
                       </Button>
                     </Flex>
-                    <br />
-                    <br />
                   </div>
                 );
               })}
