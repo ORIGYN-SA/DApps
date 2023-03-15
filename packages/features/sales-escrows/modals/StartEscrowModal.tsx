@@ -4,7 +4,16 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
-import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn/origyn-art-ui';
+import {
+  Modal,
+  Container,
+  TextInput,
+  Flex,
+  Select,
+  Button,
+  HR,
+  theme,
+} from '@origyn/origyn-art-ui';
 import { useEffect } from 'react';
 import {
   toBigNumber,
@@ -127,14 +136,15 @@ export function StartEscrowModal({
   const validateForm = () => {
     let errors = { amount: '', token: undefined };
     const fee = toLargerUnit(token.fee, token.decimals);
-
+    const amount = toBigNumber(enteredAmount);
+    const amountWithFee = amount.plus(fee);
+    const balance = toBigNumber(tokens[token.symbol].balance);
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       errors = { ...errors, amount: validationMsg };
       return false;
     }
 
-    const amount = toBigNumber(enteredAmount);
     if (amount.isLessThanOrEqualTo(0)) {
       errors = { ...errors, amount: `${escrowType} must be greater than 0` };
     } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
@@ -344,23 +354,28 @@ export function StartEscrowModal({
                     ) : (
                       <>
                         <span>Token</span>
-                        <span style={{ color: 'grey' }}>{token.symbol}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>{token.symbol}</span>
                       </>
                     )}
                     {escrowType == 'BuyNow' ? (
                       <>
                         <br />
                         <span>Buy Now Price (in {token.symbol})</span>
-                        <span style={{ color: 'grey' }}>{getBuyNowPrice(odc)}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          {getBuyNowPrice(odc)}
+                        </span>
                       </>
                     ) : (
                       <>
                         <br />
-                        <span>
-                          {escrowType == 'Bid' ? 'Your bid' : `Your offer (in ${token.symbol})`}
-                        </span>
+                        <Flex flexFlow="row" align="center" justify="space-between">
+                          <b>{escrowType == 'Bid' ? 'Your bid' : 'Price'}</b>
+                          <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                            Balance: {tokens[token.symbol].balance.toString()} {token.symbol}
+                          </span>
+                        </Flex>
                         {escrowType == 'Bid' && (
-                          <span style={{ color: 'grey' }}>
+                          <span style={{ color: theme.colors.SECONDARY_TEXT }}>
                             {`Minimum bid: ${minBid.toFixed()} ${token.symbol}`}
                           </span>
                         )}
@@ -377,8 +392,12 @@ export function StartEscrowModal({
                     <br />
                     {token && (
                       <>
-                        <span>Transaction Fee</span>
-                        <span style={{ color: 'grey' }}>{getTransactionFee()}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          Network Fee (deducted from bid amount for the transaction cost)
+                        </span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          {getTransactionFee()}
+                        </span>
                         <br />
                         <HR />
                         <br />
