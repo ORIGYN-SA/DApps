@@ -60,9 +60,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
           return {
             ...odc,
             token_id: bid.token_id,
-            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals))
-              .toFixed()
-              .toString(),
+            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toFixed(),
             isNftOwner: odc.ownerPrincipalId == principal?.toText(),
           };
         })
