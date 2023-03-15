@@ -112,10 +112,16 @@ export function StartEscrowModal({
 
   const onAmountChanged = (enteredAmount: string) => {
     setEnteredAmount(enteredAmount);
+    const fee = toLargerUnit(token.fee, token.decimals);
+    const amount = toBigNumber(enteredAmount);
+    const amountWithFee = amount.plus(fee);
+    const balance = toBigNumber(tokens[token.symbol].balance);
 
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       setFormErrors({ ...formErrors, amount: validationMsg });
+    } else if (amountWithFee > balance) {
+      setFormErrors({ ...formErrors, amount: `Insufficient funds` });
     } else {
       let newAmount = toBigNumber(enteredAmount.trim() || 0);
       const newTotal = getDisplayTotal(newAmount, token);
@@ -139,6 +145,7 @@ export function StartEscrowModal({
     const amount = toBigNumber(enteredAmount);
     const amountWithFee = amount.plus(fee);
     const balance = toBigNumber(tokens[token.symbol].balance);
+
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       errors = { ...errors, amount: validationMsg };
@@ -147,6 +154,8 @@ export function StartEscrowModal({
 
     if (amount.isLessThanOrEqualTo(0)) {
       errors = { ...errors, amount: `${escrowType} must be greater than 0` };
+    } else if (amountWithFee > balance) {
+      errors = { ...errors, amount: `Insufficient funds` };
     } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
       errors = {
         ...errors,
