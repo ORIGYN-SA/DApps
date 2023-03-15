@@ -37,7 +37,11 @@ const validationSchema = Yup.object({
     .nullable()
     .required('Minimum increase step is required')
     .default(0),
-  reservePrice: Yup.number().typeError('This must be a number').nullable().default(0),
+  reservePrice: Yup.number()
+    .typeError('This must be a number')
+    .nullable()
+    .lessThan(Yup.ref('buyNowPrice'), 'Reserve buy price must be smaller than the buy now price')
+    .default(0),
   buyNowPrice: Yup.number()
     .typeError('This must be a number')
     .nullable()
