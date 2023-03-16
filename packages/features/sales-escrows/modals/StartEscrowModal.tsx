@@ -157,9 +157,9 @@ export function StartEscrowModal({
     } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
       errors = {
         ...errors,
-        amount: `${VALIDATION.offerMustBeGreaterThanTransactionFee} ${fee.toFixed(
-          token.decimals,
-        )} ${token.symbol}`,
+        amount: `${VALIDATION.offerMustBeGreaterThanTxFee} ${fee.toFixed(token.decimals)} ${
+          token.symbol
+        }`,
       };
     } else if (escrowType == 'Bid') {
       if (amount.isLessThan(minBid)) {

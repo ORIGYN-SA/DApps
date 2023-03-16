@@ -6,7 +6,7 @@ export const VALIDATION: ConstantsMap = {
     insufficientFunds: 'Insufficient funds',
     amountLessThanFee: 'Amount must not be less than the fee',
     mustBeGreaterThan: 'Must be greater than',
-    offerMustBeGreaterThanTransactionFee: 'Offer must be greater than the transaction fee of',
+    offerMustBeGreaterThanTxFee: 'Offer must be greater than the transaction fee of',
     minimumBid: 'Minimum bid is',
     bidHigherThanBuyNow: 'Bid must be less than buy now price',
     notANumber: 'This must be a number',
