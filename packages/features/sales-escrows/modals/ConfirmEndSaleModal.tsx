@@ -3,6 +3,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { SUCCESS, ERROR } from '../constants';
 
 interface ConfirmEndSaleModalProps {
   onModalOpen: boolean;
@@ -40,13 +41,10 @@ export const ConfirmEndSaleModal = ({
         end_sale: currentToken,
       });
       if (endSaleResponse.ok) {
-        showSuccessMessage(`You have successfully ended the sale for ${currentToken}.`);
+        showSuccessMessage(`${SUCCESS.endSale} ${currentToken}`);
         onSaleCancelled();
       } else {
-        showErrorMessage(
-          `Error: ${endSaleResponse.err.flag_point}.`,
-          endSaleResponse.err.flag_point,
-        );
+        showErrorMessage(`${ERROR.endSale} ${currentToken}`, endSaleResponse.err.flag_point);
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);

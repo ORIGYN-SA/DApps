@@ -10,6 +10,7 @@ import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { ERROR, SUCCESS } from '../constants';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -67,9 +68,9 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
       const response = await actor.balance_of_nft_origyn({ principal });
       debug.log('response from actor?.balance_of_nft_origyn({ principal })');
       debug.log(JSON.stringify(response, null, 2));
+
       if ('err' in response) {
-        const error: OrigynError = response.err;
-        debug.log('error', error);
+        showErrorMessage(ERROR.tokenBalanceRetrieval, response.err);
         return;
       } else {
         const balanceResponse: BalanceResponse = response.ok;
@@ -92,23 +93,28 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
       const tokenIds = offersReceived.map((offer) => offer.token_id);
       const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
       debug.log('odcDataRaw', odcDataRaw);
-      if (odcDataRaw.err) {
-        throw new Error('Unable to retrieve metadata of tokens.');
-      }
 
-      const parsedOdcs = parseOdcs(odcDataRaw);
-      const parsedOffersReceived = parsedOdcs.map((odc: OdcDataWithSale, index) => {
-        const offer = offersReceived[index];
-        return {
-          ...odc,
-          token_id: offer.token_id,
-          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toFixed(),
-          escrow_record: offer,
-          isNftOwner: odc.ownerPrincipalId == principal?.toText(),
-        };
-      });
-      setParsedOffersReceived(parsedOffersReceived);
-      debug.log('parsedOffersReceived', parsedOffersReceived);
+      if ('err' in odcDataRaw) {
+        showErrorMessage(ERROR.tokenMetadataRetrieval, odcDataRaw.err);
+        return;
+      } else {
+        const parsedOdcs = parseOdcs(odcDataRaw);
+        const parsedOffersReceived = parsedOdcs.map((odc: OdcDataWithSale, index) => {
+          const offer = offersReceived[index];
+          return {
+            ...odc,
+            token_id: offer.token_id,
+            amount: toLargerUnit(
+              Number(offer.amount),
+              Number(offer.token['ic'].decimals),
+            ).toFixed(),
+            escrow_record: offer,
+            isNftOwner: odc.ownerPrincipalId == principal?.toText(),
+          };
+        });
+        setParsedOffersReceived(parsedOffersReceived);
+        debug.log('parsedOffersReceived', parsedOffersReceived);
+      }
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -132,9 +138,9 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         });
 
         if ('err' in rejectResponse) {
-          showErrorMessage(`Error: ${rejectResponse.err.text}.`, rejectResponse.err.text);
+          showErrorMessage(ERROR.rejectOffer, rejectResponse.err.text);
         } else {
-          showSuccessMessage('Offer rejected successfully.');
+          showSuccessMessage(SUCCESS.rejectOffer);
         }
       }
       if (action == 'accept') {
@@ -163,11 +169,11 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
           token_id: offer.token_id,
           sales_config: saleReceipt,
         });
-        debug.log(acceptOffer.err);
+
         if ('err' in acceptOffer) {
-          showErrorMessage('There has been an error in accepting the offer', acceptOffer.err.text);
+          showErrorMessage(ERROR.acceptOffer, acceptOffer.err.text);
         } else {
-          showSuccessMessage('Offer accepted successfully.');
+          showSuccessMessage(SUCCESS.acceptOffer);
         }
       }
     } catch (e) {

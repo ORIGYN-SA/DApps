@@ -9,6 +9,7 @@ import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
 import { useDebug } from '@dapp/features-debug-provider';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { ERROR } from '../constants';
 
 const styles = {
   gridContainer: {
@@ -39,7 +40,7 @@ interface ReceivedActiveBidsProps extends OdcDataWithSale {
 export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
   const { actor, principal } = useContext(AuthContext);
   const debug = useDebug();
-  const { showUnexpectedErrorMessage } = useUserMessages();
+  const { showUnexpectedErrorMessage, showErrorMessage } = useUserMessages();
   const [receivedActivedBids, setReceivedActiveBids] = useState<ReceivedActiveBidsProps[]>([]);
   const [bidsReceived, setBidsReceived] = useState<EscrowRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +51,9 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
       const tokenIds = bidsReceived.map((offer) => offer.token_id);
       const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
 
-      if (odcDataRaw.err) {
-        throw new Error('Unable to retrieve metadata of tokens.');
+      if ('err' in odcDataRaw) {
+        showErrorMessage(ERROR.tokenMetadataRetrieval, odcDataRaw.err);
+        return;
       }
 
       const parsedOdcs = parseOdcs(odcDataRaw);
@@ -82,8 +84,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
       debug.log('response from actor?.balance_of_nft_origyn({ principal })');
       debug.log(JSON.stringify(response, null, 2));
       if ('err' in response) {
-        const error: OrigynError = response.err;
-        debug.log('error', error);
+        showErrorMessage(ERROR.tokenBalanceRetrieval, response.err);
         return;
       } else {
         const balanceResponse: BalanceResponse = response.ok;

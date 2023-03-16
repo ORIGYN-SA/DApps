@@ -7,6 +7,7 @@ import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { toLargerUnit } from '@dapp/utils';
+import { ERROR, SUCCESS } from '../constants';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
@@ -40,9 +41,9 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         },
       });
       if ('err' in withdrawResp) {
-        showErrorMessage('Failed to withdraw', withdrawResp.err);
+        showErrorMessage(ERROR.depositWithdraw, withdrawResp.err);
       } else {
-        showSuccessMessage('Withdrawal successful');
+        showSuccessMessage(SUCCESS.depositWithdraw);
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -59,7 +60,8 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       debug.log('sale_info_nft_origyn result', result);
 
       if ('err' in result) {
-        throw new Error(result.err.text);
+        showErrorMessage(ERROR.tokenSaleInfoRetrieval, result.err);
+        return;
       } else {
         const balances = Object.keys(activeTokens).map(async (tokenSymbol) => {
           const val = await getBalanceByAccount(
