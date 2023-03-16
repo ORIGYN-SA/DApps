@@ -1,11 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-import {
-  VersionLabel,
-  TransactionFilter,
-  TransactionsTable,
-  SearchbarNft,
-} from '@dapp/features-components';
+import { TransactionFilter, TransactionsTable, SearchbarNft } from '@dapp/features-components';
 import { SecondaryNav, Container, Flex, HR } from '@origyn/origyn-art-ui';
 import styled from 'styled-components';
 
@@ -14,7 +9,6 @@ const StyledSectionTitle = styled.h2`
 `;
 
 const Ledger = () => {
-  const ledgerVersion: string = '0.1.0';
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
@@ -100,7 +94,6 @@ const Ledger = () => {
                   </>
                 )}
               </>
-              <VersionLabel ledgerVersion={ledgerVersion} />
             </Container>
           </>,
         ]}
