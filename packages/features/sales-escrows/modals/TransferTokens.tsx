@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
+import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
 import { sendTransaction, Token, useTokensContext } from '@dapp/features-tokens-provider';
 import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn/origyn-art-ui';
@@ -15,22 +16,24 @@ import {
   getAccountId,
 } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { VALIDATION } from '../constants';
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
-    .typeError('This must be a number')
+    .typeError(VALIDATION.notANumber)
     .nullable()
-    .required('An amount is required!')
+    .required(VALIDATION.amountRequired)
     .default(0),
   recipientAddress: Yup.string()
-    .typeError('This must be a principal or account number')
-    .required('Recipient address is required!')
+    .typeError(VALIDATION.invalidRecipientAddress)
+    .required(VALIDATION.recipientAddressRequired)
     .default(''),
   memo: Yup.string().default(''),
   token: Yup.string().default('OGY'),
 });
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
+  const debug = useDebug();
   const { tokens, activeTokens } = useTokensContext();
   const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { activeWalletProvider } = useContext(AuthContext);
@@ -92,7 +95,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         address = getAccountId(Principal.fromText(address));
       }
 
-      console.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
+      debug.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
 
       const result = await sendTransaction(
         isLocal(),

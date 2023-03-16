@@ -6,9 +6,10 @@ import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dap
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { EscrowRecord, BalanceResponse } from '@dapp/common-types';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { ERROR, SUCCESS } from '../constants';
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -59,13 +60,13 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   const parseOffers = async () => {
     try {
       setIsLoading(true);
-      debug.log('offersSent', offersSent);
+
       const tokenIds = offersSent.map((offer) => offer.token_id);
       const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      debug.log('odcDataRaw', odcDataRaw);
-      if (odcDataRaw.err) {
-        debug.error(odcDataRaw.err);
-        throw new Error('Unable to retrieve metadata of tokens.');
+
+      if ('err' in odcDataRaw) {
+        showErrorMessage(ERROR.tokenMetadataRetrieval, odcDataRaw.err);
+        return;
       }
 
       const parsedOdcs = parseOdcs(odcDataRaw);
@@ -103,12 +104,9 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       });
 
       if ('err' in withdrawResponse) {
-        showErrorMessage(
-          `Error: ${withdrawResponse.err.flag_point}.`,
-          withdrawResponse.err.flag_point,
-        );
+        showErrorMessage(ERROR.offerWithdraw, withdrawResponse.err);
       } else {
-        showSuccessMessage('Offer withdrawn successfully.');
+        showSuccessMessage(SUCCESS.offerWithdraw);
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -127,8 +125,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
       debug.log('response from actor?.balance_of_nft_origyn({ principal })');
       debug.log(JSON.stringify(response, null, 2));
       if ('err' in response) {
-        const error: OrigynError = response.err;
-        debug.log('error', error);
+        showErrorMessage(ERROR.tokenBalanceRetrieval, response.err);
         return;
       } else {
         const balanceResponse: BalanceResponse = response.ok;

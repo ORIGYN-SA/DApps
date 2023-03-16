@@ -24,6 +24,7 @@ import {
 } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
+import { ERROR, STATUS, SUCCESS, VALIDATION } from '../constants';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -121,7 +122,7 @@ export function StartEscrowModal({
     const amount = toBigNumber(enteredAmount);
     const balance = toBigNumber(tokens[token.symbol].balance);
     if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
-      setFormErrors({ ...formErrors, amount: `Insufficient funds` });
+      setFormErrors({ ...formErrors, amount: VALIDATION.insufficientFunds });
     } else {
       const newTotal = getDisplayTotal(amount, token);
       setTotal(newTotal);
@@ -150,13 +151,13 @@ export function StartEscrowModal({
     }
     const amount = toBigNumber(enteredAmount);
     if (amount.isLessThanOrEqualTo(0)) {
-      errors = { ...errors, amount: `${escrowType} must be greater than 0` };
+      errors = { ...errors, amount: `${escrowType} ${VALIDATION.mustBeGreaterThan} 0` };
     } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
-      errors = { ...errors, amount: `Insufficient funds` };
+      errors = { ...errors, amount: VALIDATION.insufficientFunds };
     } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
       errors = {
         ...errors,
-        amount: `Offer must be greater than the transaction fee of ${fee.toFixed(token.decimals)} ${
+        amount: `${VALIDATION.offerMustBeGreaterThanTxFee} ${fee.toFixed(token.decimals)} ${
           token.symbol
         }`,
       };
@@ -164,21 +165,20 @@ export function StartEscrowModal({
       if (amount.isLessThan(minBid)) {
         errors = {
           ...errors,
-          amount: `The minimum bid is ${minBid.toFixed()} ${odc.tokenSymbol}`,
+          amount: `${VALIDATION.minimumBid} ${minBid.toFixed()} ${odc.tokenSymbol}`,
         };
       } else if (amount.isGreaterThan(toLargerUnit(odc.buyNow, token.decimals))) {
         errors = {
           ...errors,
-          amount: `Bid must be less than buy now price (${toLargerUnit(
-            odc.buyNow,
-            token.decimals,
-          )} ${odc.tokenSymbol})`,
+          amount: `${VALIDATION.bidHigherThanBuyNow} (${toLargerUnit(odc.buyNow, token.decimals)} ${
+            odc.tokenSymbol
+          })`,
         };
       }
     }
 
     if (!token) {
-      errors = { ...errors, token: 'No token selected' };
+      errors = { ...errors, token: ERROR.tokenNotSelected };
     }
 
     // if there are any form errors, notify the user
@@ -198,12 +198,12 @@ export function StartEscrowModal({
     }
 
     if (!activeWalletProvider) {
-      showErrorMessage('Wallet not connected');
+      showErrorMessage(ERROR.walletNotConnected);
       return;
     }
 
     if (!validateForm() || hasErrors()) {
-      showErrorMessage('Please correct all form errors');
+      showErrorMessage(ERROR.formHasErrors);
       return;
     }
 
@@ -225,7 +225,6 @@ export function StartEscrowModal({
         return;
       }
       debug.log('deposit account', depositAccountId);
-
       // Transfer tokens from buyer's wallet to the deposit account.
       // If this fails, the tokens should still be in the buyer's wallet.
       setStatus('Sending tokens to deposit account...');
@@ -240,7 +239,7 @@ export function StartEscrowModal({
       }
       const transactionHeight = sendTokensResult.result;
 
-      setStatus('Sending tokens to escrow account...');
+      setStatus(STATUS.sendingTokens);
       // Transfer tokens from the deposit account to the escrow account.
       // If this fails, the buyer can withdraw the tokens from Manage Deposits in Vault.
       const sendEscrowResponse = await sendEscrow(
@@ -260,7 +259,7 @@ export function StartEscrowModal({
       // If there's an open auction, this is a bid, not an offer
       // so create a bid from the escrow receipt and sale id.
       if (odc.auctionOpen) {
-        setStatus('Creating bid...');
+        setStatus(STATUS.creatingBid);
         const createBidResponse = await createBid(escrowReceipt, odc.saleId);
         if (!createBidResponse.result) {
           showErrorMessage(createBidResponse.errorMessage);
@@ -269,12 +268,12 @@ export function StartEscrowModal({
 
         const purchased = !!createBidResponse.result?.['bid']?.txn_type?.sale_ended;
         if (purchased) {
-          showSuccessMessage('Purchase successful!');
+          showSuccessMessage(SUCCESS.purchase);
         } else {
-          showSuccessMessage('Bid placed');
+          showSuccessMessage(SUCCESS.placeBid);
         }
       } else {
-        showSuccessMessage('Offer placed');
+        showSuccessMessage(SUCCESS.placeOffer);
       }
 
       onModalClose(true);

@@ -20,6 +20,7 @@ import { toSmallerUnit, validateTokenAmount } from '@dapp/utils';
 import { MarketTransferRequest } from '@dapp/common-types';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { ERROR, SUCCESS, VALIDATION } from '../constants';
 
 const dateNow = new Date();
 const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
@@ -27,29 +28,27 @@ const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
 const validationSchema = Yup.object({
   token: Yup.string().default('OGY'),
   startPrice: Yup.number()
-    .typeError('This must be a number')
+    .typeError(VALIDATION.notANumber)
     .nullable()
-    .typeError('This cannot be a nullable number')
-    .required('Start Price is required')
+    .typeError(VALIDATION.notANullableNumber)
+    .required(VALIDATION.startPriceRequired)
     .default(0),
   minIncrease: Yup.number()
-    .typeError('This must be a number')
+    .typeError(VALIDATION.notANumber)
     .nullable()
-    .required('Minimum increase step is required')
+    .required(VALIDATION.startPriceRequired)
     .default(0),
   reservePrice: Yup.number()
-    .typeError('This must be a number')
+    .typeError(VALIDATION.notANumber)
     .nullable()
-    .lessThan(Yup.ref('buyNowPrice'), 'Reserve buy price must be less than the buy now price')
+    .lessThan(Yup.ref('buyNowPrice'), VALIDATION.reserveBuyPriceGreaterThanBuyNowPrice)
     .default(0),
   buyNowPrice: Yup.number()
-    .typeError('This must be a number')
+    .typeError(VALIDATION.notANumber)
     .nullable()
-    .moreThan(Yup.ref('startPrice'), 'Instant buy price must be greater than the start price')
+    .moreThan(Yup.ref('startPrice'), VALIDATION.instantBuyPriceSmallerThanStartPrice)
     .default(0),
-  endDate: Yup.date()
-    .min(dateTomorrow, 'The end date needs to be at least one day after start date')
-    .default(dateNow),
+  endDate: Yup.date().min(dateTomorrow, VALIDATION.endDateSmallerThanStartDate).default(dateNow),
 });
 
 interface StartAuctionModalProps {
@@ -130,9 +129,9 @@ export function StartAuctionModal({
       debug.log(resp);
 
       if ('err' in resp) {
-        showErrorMessage('There was an error when starting your auction.', resp.err);
+        showErrorMessage(ERROR.auction, resp.err);
       } else {
-        showSuccessMessage('Your auction has been started successfully.');
+        showSuccessMessage(SUCCESS.auction);
         onSuccess(resp.ok);
         setSuccess(true);
       }
