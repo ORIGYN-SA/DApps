@@ -151,13 +151,13 @@ export function StartEscrowModal({
     }
     const amount = toBigNumber(enteredAmount);
     if (amount.isLessThanOrEqualTo(0)) {
-      errors = { ...errors, amount: `${escrowType} ${VALIDATION.mustBeGreatherThan} 0` };
+      errors = { ...errors, amount: `${escrowType} ${VALIDATION.mustBeGreaterThan} 0` };
     } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       errors = { ...errors, amount: VALIDATION.insufficientFunds };
     } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
       errors = {
         ...errors,
-        amount: `${VALIDATION.offerMustBeGreatherThanTransactionFee} ${fee.toFixed(
+        amount: `${VALIDATION.offerMustBeGreaterThanTransactionFee} ${fee.toFixed(
           token.decimals,
         )} ${token.symbol}`,
       };

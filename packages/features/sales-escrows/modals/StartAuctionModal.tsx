@@ -41,7 +41,7 @@ const validationSchema = Yup.object({
   reservePrice: Yup.number()
     .typeError(VALIDATION.notANumber)
     .nullable()
-    .lessThan(Yup.ref('buyNowPrice'), VALIDATION.reserveBuyPriceGreatherThanBuyNowPrice)
+    .lessThan(Yup.ref('buyNowPrice'), VALIDATION.reserveBuyPriceGreaterThanBuyNowPrice)
     .default(0),
   buyNowPrice: Yup.number()
     .typeError(VALIDATION.notANumber)
