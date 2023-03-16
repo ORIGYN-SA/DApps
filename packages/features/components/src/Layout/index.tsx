@@ -79,6 +79,7 @@ export const Layout = ({ children }: LayoutProps) => {
         <Disclaimer />
         <Flex fullWidth mdFlexFlow="column">
           <Navbar navItems={menuItems} onChangeTheme={() => setDarkTheme(!darkTheme)} />
+          <p>Hello</p>
           <Flex fullWidth>{children}</Flex>
         </Flex>
       </ThemeProvider>
