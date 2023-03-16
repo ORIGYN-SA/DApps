@@ -185,99 +185,97 @@ export function StartAuctionModal({
   };
 
   return (
-    <div>
-      <Modal isOpened={open} closeModal={() => onClose()} size="md">
-        <Container size="full" padding="48px">
-          {success ? (
-            <>
-              <h2>Success!</h2>
-              <br />
-              <p className="secondary_color">
-                Your auction has started. Click done to view the status.
-              </p>
-              <br />
-              <Flex justify="flex-end">
-                <Button onClick={() => onClose()}>Done</Button>
-              </Flex>
-            </>
-          ) : (
-            <>
-              {inProgress ? (
-                <>
-                  <h2>Start an Auction in Progress</h2>
+    <Modal isOpened={open} closeModal={() => onClose()} size="md">
+      <Container size="full" padding="48px">
+        {success ? (
+          <>
+            <h2>Success!</h2>
+            <br />
+            <p className="secondary_color">
+              Your auction has started. Click done to view the status.
+            </p>
+            <br />
+            <Flex justify="flex-end">
+              <Button onClick={() => onClose()}>Done</Button>
+            </Flex>
+          </>
+        ) : (
+          <>
+            {inProgress ? (
+              <>
+                <h2>Start an Auction in Progress</h2>
+                <br />
+                <LinearProgress color="secondary" />
+              </>
+            ) : (
+              <>
+                <h2>Start an Auction</h2>
+                <br />
+                <Flex as="form" onSubmit={onSubmit} action="" flexFlow="column" gap={8}>
+                  <Select
+                    label="Token"
+                    name="token"
+                    /*@ts-ignore*/
+                    selectedOption={{ label: values.token, value: values.token }}
+                    handleChange={(v) => onChange(null, 'token', v.value)}
+                    options={Object.keys(activeTokens).map((t) => ({
+                      label: activeTokens[t].symbol,
+                      value: t,
+                    }))}
+                  />
+                  <TextInput
+                    required
+                    label="Starting Price"
+                    name="startPrice"
+                    value={values.startPrice}
+                    onChange={(e) => onCurrencyChanged('startPrice', e.target.value)}
+                    error={errors?.startPrice}
+                  />
+                  <TextInput
+                    label="Buy Now Price"
+                    name="buyNowPrice"
+                    value={values.buyNowPrice}
+                    onChange={(e) => onCurrencyChanged('buyNowPrice', e.target.value)}
+                    error={errors?.buyNowPrice}
+                  />
+                  <TextInput
+                    required
+                    label="Minimum Increase"
+                    name="minIncrease"
+                    value={values.minIncrease}
+                    onChange={(e) => onCurrencyChanged('minIncrease', e.target.value)}
+                    error={errors?.minIncrease}
+                  />
+                  <TextInput
+                    label="Reserve Price"
+                    name="reservePrice"
+                    value={values.reservePrice}
+                    onChange={(e) => onCurrencyChanged('reservePrice', e.target.value)}
+                    error={errors?.reservePrice}
+                  />
+                  <LocalizationProvider fullWidth dateAdapter={AdapterMoment}>
+                    <DatePicker
+                      label="Set Auction Length"
+                      name="endDate"
+                      selected={values.endDate}
+                      onChange={(d) => onChange(null, 'endDate', d)}
+                      error={errors?.endDate}
+                    />
+                  </LocalizationProvider>
                   <br />
-                  <LinearProgress color="secondary" />
-                </>
-              ) : (
-                <>
-                  <h2>Start an Auction</h2>
-                  <br />
-                  <Flex as="form" onSubmit={onSubmit} action="" flexFlow="column" gap={8}>
-                    <Select
-                      label="Token"
-                      name="token"
-                      /*@ts-ignore*/
-                      selectedOption={{ label: values.token, value: values.token }}
-                      handleChange={(v) => onChange(null, 'token', v.value)}
-                      options={Object.keys(activeTokens).map((t) => ({
-                        label: activeTokens[t].symbol,
-                        value: t,
-                      }))}
-                    />
-                    <TextInput
-                      required
-                      label="Starting Price"
-                      name="startPrice"
-                      value={values.startPrice}
-                      onChange={(e) => onCurrencyChanged('startPrice', e.target.value)}
-                      error={errors?.startPrice}
-                    />
-                    <TextInput
-                      label="Buy Now Price"
-                      name="buyNowPrice"
-                      value={values.buyNowPrice}
-                      onChange={(e) => onCurrencyChanged('buyNowPrice', e.target.value)}
-                      error={errors?.buyNowPrice}
-                    />
-                    <TextInput
-                      required
-                      label="Minimum Increase"
-                      name="minIncrease"
-                      value={values.minIncrease}
-                      onChange={(e) => onCurrencyChanged('minIncrease', e.target.value)}
-                      error={errors?.minIncrease}
-                    />
-                    <TextInput
-                      label="Reserve Price"
-                      name="reservePrice"
-                      value={values.reservePrice}
-                      onChange={(e) => onCurrencyChanged('reservePrice', e.target.value)}
-                      error={errors?.reservePrice}
-                    />
-                    <LocalizationProvider fullWidth dateAdapter={AdapterMoment}>
-                      <DatePicker
-                        label="Set Auction Length"
-                        name="endDate"
-                        selected={values.endDate}
-                        onChange={(d) => onChange(null, 'endDate', d)}
-                        error={errors?.endDate}
-                      />
-                    </LocalizationProvider>
-                    <br />
-                    <HR />
-                    <Flex align="center" justify="flex-end" gap={16}>
-                      <Button onClick={() => onClose()}>Cancel</Button>
-                      <Button type="submit" disabled={hasErrors()}>
-                        Start
-                      </Button>
-                    </Flex>
+                  <HR />
+                  <Flex align="center" justify="flex-end" gap={16}>
+                    <Button onClick={() => onClose()}>Cancel</Button>
+                    <Button type="submit" disabled={hasErrors()}>
+                      Start
+                    </Button>
                   </Flex>
-                </>
-              )}
-            </>
-          )}
-        </Container>
-      </Modal>
-    </div>
+                </Flex>
+              </>
+            )}
+          </>
+        )}
+      </Container>
+    </Modal>
   );
 }
