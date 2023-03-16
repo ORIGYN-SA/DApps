@@ -204,7 +204,9 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
             <br />
             <Flex flexFlow="row" justify="space-between">
               <span>Amount</span>
-              <span id="balance">{tokens[values.token]?.balance}</span>
+              <span id="balance" className="secondary_color">
+                Balance: {tokens[values.token]?.balance} {values.token}
+              </span>
             </Flex>
             <TextInput
               name="amount"
