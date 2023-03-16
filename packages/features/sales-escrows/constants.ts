@@ -28,7 +28,7 @@ export const STATUS: ConstantsMap = {
 export const ERROR: ConstantsMap = {
     tokenNotSelected: 'Token not selected',
     walletNotConnected: 'Wallet not connected',
-    formHasErrors: 'Please, correct the errors in the form',
+    formHasErrors: 'Please correct the errors in the form',
     tokenMetadataRetrieval: 'Unable to retrieve metadata of tokens',
     tokenBalanceRetrieval: 'Unable to retrieve balance of tokens',
     tokenSaleInfoRetrieval: 'Unable to retrieve sale information of tokens',
@@ -37,7 +37,7 @@ export const ERROR: ConstantsMap = {
     offerWithdraw: 'Unable to withdraw offer',
     rejectOffer: 'Unable to reject offer',
     acceptOffer: 'Unable to accept offer',
-    auction: 'Unable to start auction for token',
+    auction: 'Unable to start an auction',
 }
 
 export const SUCCESS: ConstantsMap = {
