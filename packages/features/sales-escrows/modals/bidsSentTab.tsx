@@ -6,7 +6,7 @@ import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { EscrowRecord, BalanceResponse } from '@dapp/common-types';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { ERROR } from '../constants';

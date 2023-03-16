@@ -5,7 +5,7 @@ import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Button, HR, theme, Modal, Flex, Container } from '@origyn/origyn-art-ui';
 import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { EscrowRecord, EscrowReceipt, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { EscrowRecord, EscrowReceipt, BalanceResponse } from '@dapp/common-types';
 import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';

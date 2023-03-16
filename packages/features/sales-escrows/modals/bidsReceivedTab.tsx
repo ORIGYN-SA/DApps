@@ -5,7 +5,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { EscrowRecord, BalanceResponse } from '@dapp/common-types';
 import { useDebug } from '@dapp/features-debug-provider';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
