@@ -167,91 +167,91 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   }));
 
   return (
-    <div>
-      <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
-        {success ? (
-          <Container size="full" padding="48px">
-            <h2>Success!</h2>
+    <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
+      {success ? (
+        <Container size="full" padding="48px">
+          <h2>Success!</h2>
+          <br />
+          <span>
+            Your transfer of {amountDisplay} {values.token} is complete. Click done to return to the
+            dashboard.
+          </span>
+          <br />
+          <br />
+          <Button btnType="filled" onClick={handleSuccess}>
+            Done
+          </Button>
+        </Container>
+      ) : inProcess ? (
+        <Container size="full" padding="48px">
+          <h2>Transfer in Progress</h2>
+          <br />
+          <LinearProgress color="secondary" />
+        </Container>
+      ) : (
+        <Container as="form" onSubmit={handleSubmit} size="full" padding="48px">
+          <h2>Transfer Tokens</h2>
+          <br />
+          <Flex flexFlow="column" gap={8}>
             <br />
-            <span>
-              Your transfer of {amountDisplay} {values.token} is complete. Click done to return to
-              the dashboard.
-            </span>
+            <span>Select token</span>
+            <Select
+              placeholder="OGY"
+              handleChange={(option) => onChange('token', option.value)}
+              options={tokenOptions}
+              selectedOption={tokenOptions.find((opt) => opt.label === values.token)}
+            />
             <br />
+            <Flex flexFlow="row" justify="space-between">
+              <span>Amount</span>
+              <span id="balance" className="secondary_color">
+                Balance: {tokens[values.token]?.balance} {values.token}
+              </span>
+            </Flex>
+            <TextInput
+              name="amount"
+              onChange={(e) => onChange('amount', e.target.value)}
+              value={values?.amount}
+              error={errors?.amount}
+            />
             <br />
-            <Button btnType="filled" onClick={handleSuccess}>
-              Done
+            <span>Recipient Address</span>
+            <TextInput
+              name="recipientAddress"
+              onChange={(e) => onChange('recipientAddress', e.target.value)}
+              value={values.recipientAddress}
+              error={errors.recipientAddress}
+            />
+            <br />
+            <span>Memo</span>
+            <TextInput
+              name="memo"
+              value={values.memo}
+              onChange={(e) => onChange('memo', e.target.value)}
+            />
+            <br />
+            <span>Transaction Fee</span>
+            <span style={{ color: 'grey' }}>{`${feeDisplay}${' '}${values.token}`}</span>
+            <br />
+          </Flex>
+          <br />
+          <HR />
+          <br />
+          <Flex flexFlow="row" align="center" justify="space-between">
+            <h6>Total Amount</h6>
+            <span>{totalDisplay}</span>
+          </Flex>
+          <br />
+          <HR />
+          <br />
+          <Flex justify="flex-end">
+            <Button btnType="filled" type="submit">
+              Transfer {values.token}
             </Button>
-          </Container>
-        ) : inProcess ? (
-          <Container size="full" padding="48px">
-            <h2>Transfer in Progress</h2>
-            <br />
-            <LinearProgress color="secondary" />
-          </Container>
-        ) : (
-          <Container as="form" onSubmit={handleSubmit} size="full" padding="48px">
-            <h2>Transfer Tokens</h2>
-            <br />
-            <Flex flexFlow="column" gap={8}>
-              <br />
-              <span>Select token</span>
-              <Select
-                placeholder="OGY"
-                handleChange={(option) => onChange('token', option.value)}
-                options={tokenOptions}
-                selectedOption={tokenOptions.find((opt) => opt.label === values.token)}
-              />
-              <br />
-              <Flex flexFlow="row" justify="space-between">
-                <span>Amount</span>
-                <span id="balance" className="secondary_color">Balance: {tokens[values.token]?.balance} {values.token}</span>
-              </Flex>
-              <TextInput
-                name="amount"
-                onChange={(e) => onChange('amount', e.target.value)}
-                value={values?.amount}
-                error={errors?.amount}
-              />
-              <br />
-              <span>Recipient Address</span>
-              <TextInput
-                name="recipientAddress"
-                onChange={(e) => onChange('recipientAddress', e.target.value)}
-                value={values.recipientAddress}
-                error={errors.recipientAddress}
-              />
-              <br />
-              <span>Memo</span>
-              <TextInput
-                name="memo"
-                value={values.memo}
-                onChange={(e) => onChange('memo', e.target.value)}
-              />
-              <br />
-              <span>Transaction Fee</span>
-              <span style={{ color: 'grey' }}>{`${feeDisplay}${' '}${values.token}`}</span>
-              <br />
-            </Flex>
-            <br />
-            <HR />
-            <br />
-            <Flex flexFlow="row" align="center" justify="space-between">
-              <h6>Total Amount</h6>
-              <span>{totalDisplay}</span>
-            </Flex>
-            <br />
-            <HR />
-            <br />
-            <Flex justify="flex-end">
-              <Button btnType="filled" type="submit">
-                Transfer {values.token}
-              </Button>
-            </Flex>
-          </Container>
-        )}
-      </Modal>
-    </div>
+          </Flex>
+        </Container>
+      )}
+    </Modal>
   );
 };
 

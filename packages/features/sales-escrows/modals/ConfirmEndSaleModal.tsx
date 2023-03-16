@@ -1,21 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
 import { useUserMessages } from '@dapp/features-user-messages';
-
-const Transition = React.forwardRef(
-  (
-    props: TransitionProps & {
-      children: React.ReactElement<any, any>;
-    },
-    ref: React.Ref<unknown>,
-  ) => <Slide direction="up" ref={ref} {...props} />,
-);
-
-Transition.displayName = 'Transition';
 
 interface ConfirmEndSaleModalProps {
   onModalOpen: boolean;
@@ -37,9 +24,10 @@ export const ConfirmEndSaleModal = ({
   const [isLoading, setIsLoading] = React.useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
-  const onEndSaleConfirm = async (confirm = false) => {
+  const onEndSaleConfirm = async (confirm: boolean) => {
     if (!confirm) {
       onModalClose();
+      return;
     } else if (isLoading || !actor) {
       return;
     }
@@ -74,7 +62,7 @@ export const ConfirmEndSaleModal = ({
   }, [onModalOpen]);
 
   return (
-    <Modal isOpened={onModalOpen} closeModal={() => onModalClose()} size="md">
+    <Modal isOpened={onModalOpen} closeModal={() => onEndSaleConfirm(false)} size="md">
       <Container size="full" padding="48px">
         <h2>Confirm End Sale</h2>
         <br />
@@ -85,11 +73,6 @@ export const ConfirmEndSaleModal = ({
         </Flex>
         <HR marginTop={24} marginBottom={24} />
         <Flex flow="row" justify="flex-end" gap={16}>
-          <Flex>
-            <Button onClick={() => onEndSaleConfirm(false)} disabled={confirmed}>
-              Cancel
-            </Button>
-          </Flex>
           <Flex>
             <Button onClick={() => onEndSaleConfirm(true)} variant="contained" disabled={confirmed}>
               Confirm

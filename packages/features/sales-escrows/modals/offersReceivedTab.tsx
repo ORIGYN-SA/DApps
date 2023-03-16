@@ -102,7 +102,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         return {
           ...odc,
           token_id: offer.token_id,
-          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
+          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toFixed(),
           escrow_record: offer,
           isNftOwner: odc.ownerPrincipalId == principal?.toText(),
         };

@@ -4,7 +4,16 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
-import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn/origyn-art-ui';
+import {
+  Modal,
+  Container,
+  TextInput,
+  Flex,
+  Select,
+  Button,
+  HR,
+  theme,
+} from '@origyn/origyn-art-ui';
 import { useEffect } from 'react';
 import {
   toBigNumber,
@@ -103,13 +112,18 @@ export function StartEscrowModal({
 
   const onAmountChanged = (enteredAmount: string) => {
     setEnteredAmount(enteredAmount);
-
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       setFormErrors({ ...formErrors, amount: validationMsg });
+      return false;
+    }
+    const fee = toLargerUnit(token.fee, token.decimals);
+    const amount = toBigNumber(enteredAmount);
+    const balance = toBigNumber(tokens[token.symbol].balance);
+    if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
+      setFormErrors({ ...formErrors, amount: `Insufficient funds` });
     } else {
-      let newAmount = toBigNumber(enteredAmount.trim() || 0);
-      const newTotal = getDisplayTotal(newAmount, token);
+      const newTotal = getDisplayTotal(amount, token);
       setTotal(newTotal);
       setFormErrors({ ...formErrors, amount: undefined });
     }
@@ -127,16 +141,18 @@ export function StartEscrowModal({
   const validateForm = () => {
     let errors = { amount: '', token: undefined };
     const fee = toLargerUnit(token.fee, token.decimals);
+    const balance = toBigNumber(tokens[token.symbol].balance);
 
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       errors = { ...errors, amount: validationMsg };
       return false;
     }
-
     const amount = toBigNumber(enteredAmount);
     if (amount.isLessThanOrEqualTo(0)) {
       errors = { ...errors, amount: `${escrowType} must be greater than 0` };
+    } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
+      errors = { ...errors, amount: `Insufficient funds` };
     } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
       errors = {
         ...errors,
@@ -261,7 +277,7 @@ export function StartEscrowModal({
         showSuccessMessage('Offer placed');
       }
 
-      onCustomClose(true);
+      onModalClose(true);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -280,7 +296,7 @@ export function StartEscrowModal({
     return `${toLargerUnit(doubleFee, token.decimals).toFixed()} ${token.symbol}`;
   };
 
-  const onCustomClose = (isSuccess: boolean) => {
+  const onModalClose = (isSuccess: boolean) => {
     setIsLoading(false);
     setIsTransacting(false);
     onProcessing(false);
@@ -293,14 +309,14 @@ export function StartEscrowModal({
   };
 
   return (
-    <Modal isOpened={open} closeModal={() => onCustomClose(false)} size="md">
+    <Modal isOpened={open} closeModal={() => onModalClose(false)} size="md">
       <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
         {success ? (
           <>
             <h2>Success!</h2>
             <p className="secondary_color">All the transactions were made successfully.</p>
             <Flex justify="flex-end">
-              <Button onClick={onCustomClose}>Done</Button>
+              <Button onClick={onModalClose}>Done</Button>
             </Flex>
           </>
         ) : (
@@ -344,23 +360,28 @@ export function StartEscrowModal({
                     ) : (
                       <>
                         <span>Token</span>
-                        <span style={{ color: 'grey' }}>{token.symbol}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>{token.symbol}</span>
                       </>
                     )}
                     {escrowType == 'BuyNow' ? (
                       <>
                         <br />
                         <span>Buy Now Price (in {token.symbol})</span>
-                        <span style={{ color: 'grey' }}>{getBuyNowPrice(odc)}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          {getBuyNowPrice(odc)}
+                        </span>
                       </>
                     ) : (
                       <>
                         <br />
-                        <span>
-                          {escrowType == 'Bid' ? 'Your bid' : `Your offer (in ${token.symbol})`}
-                        </span>
+                        <Flex flexFlow="row" align="center" justify="space-between">
+                          <b>{escrowType == 'Bid' ? 'Your bid' : 'Price'}</b>
+                          <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                            Balance: {tokens[token.symbol].balance.toString()} {token.symbol}
+                          </span>
+                        </Flex>
                         {escrowType == 'Bid' && (
-                          <span style={{ color: 'grey' }}>
+                          <span style={{ color: theme.colors.SECONDARY_TEXT }}>
                             {`Minimum bid: ${minBid.toFixed()} ${token.symbol}`}
                           </span>
                         )}
@@ -377,8 +398,12 @@ export function StartEscrowModal({
                     <br />
                     {token && (
                       <>
-                        <span>Transaction Fee</span>
-                        <span style={{ color: 'grey' }}>{getTransactionFee()}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          Network Fee (deducted from bid amount for the transaction cost)
+                        </span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          {getTransactionFee()}
+                        </span>
                         <br />
                         <HR />
                         <br />
@@ -391,10 +416,7 @@ export function StartEscrowModal({
                         <br />
                       </>
                     )}
-                    <Flex align="center" justify="flex-end" gap={16}>
-                      <Button btnType="outlined" onClick={() => onCustomClose(false)}>
-                        Cancel
-                      </Button>
+                    <Flex align="center" justify="flex-end">
                       <Button btnType="accent" type="submit" disabled={hasErrors()}>
                         Send Escrow
                       </Button>
