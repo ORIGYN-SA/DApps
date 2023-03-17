@@ -1,8 +1,14 @@
 import React from 'react';
-import { Box, LinearProgress } from '@mui/material';
+import { Container, Flex, LoadingBar } from '@origyn/origyn-art-ui';
 
-export const LoadingContainer = () => (
-  <Box sx={{ width: '100%' }}>
-    <LinearProgress color='secondary' />
-  </Box>
+interface LoadingContainerProps {
+  margin?: string;
+}
+
+export const LoadingContainer = ({ margin }: LoadingContainerProps) => (
+  <div style={{ marginTop: margin, marginBottom: margin }}>
+    <Flex justify="center" align="center">
+      <LoadingBar />
+    </Flex>
+  </div>
 );

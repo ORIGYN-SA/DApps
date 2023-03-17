@@ -386,7 +386,7 @@ const VaultPage = () => {
                 <StyledSectionTitle>Vault Dashboard</StyledSectionTitle>
                 <HR />
                 {!isLoaded ? (
-                  <LoadingContainer />
+                  <LoadingContainer margin="48px" />
                 ) : (
                   <StyledCustomGrid columns={2} gap={20}>
                     <div>

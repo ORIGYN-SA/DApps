@@ -137,8 +137,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     <>
       {isLoading ? (
         <>
-          <HR marginTop={24} marginBottom={24} />
-          <LoadingContainer />
+          <HR marginTop={24} />
+          <LoadingContainer margin="24px" />
         </>
       ) : (
         <>
@@ -243,8 +243,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
           </Flex>
           {isLoading && (
             <>
-              <HR marginTop={24} marginBottom={24} />
-              <LoadingContainer />
+              <HR marginTop={24} />
+              <LoadingContainer margin="24px" />
             </>
           )}
         </Container>

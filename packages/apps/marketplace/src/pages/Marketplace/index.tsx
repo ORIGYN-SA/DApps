@@ -162,7 +162,7 @@ const Marketplace = () => {
             <StyledSectionTitle>Marketplace Dashboard</StyledSectionTitle>
             <HR />
             {!isLoaded ? (
-              <LoadingContainer />
+              <LoadingContainer margin="48px" />
             ) : (
               <>
                 {collectionData && (
