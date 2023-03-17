@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
+import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
 import { sendTransaction, Token, useTokensContext } from '@dapp/features-tokens-provider';
 import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn/origyn-art-ui';
@@ -15,22 +16,24 @@ import {
   getAccountId,
 } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { VALIDATION } from '../constants';
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
-    .typeError('This must be a number')
+    .typeError(VALIDATION.notANumber)
     .nullable()
-    .required('An amount is required!')
+    .required(VALIDATION.amountRequired)
     .default(0),
   recipientAddress: Yup.string()
-    .typeError('This must be a principal or account number')
-    .required('Recipient address is required!')
+    .typeError(VALIDATION.invalidRecipientAddress)
+    .required(VALIDATION.recipientAddressRequired)
     .default(''),
   memo: Yup.string().default(''),
   token: Yup.string().default('OGY'),
 });
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
+  const debug = useDebug();
   const { tokens, activeTokens } = useTokensContext();
   const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { activeWalletProvider } = useContext(AuthContext);
@@ -92,7 +95,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         address = getAccountId(Principal.fromText(address));
       }
 
-      console.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
+      debug.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
 
       const result = await sendTransaction(
         isLocal(),
@@ -167,91 +170,91 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   }));
 
   return (
-    <div>
-      <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
-        {success ? (
-          <Container size="full" padding="48px">
-            <h2>Success!</h2>
+    <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
+      {success ? (
+        <Container size="full" padding="48px">
+          <h2>Success!</h2>
+          <br />
+          <span>
+            Your transfer of {amountDisplay} {values.token} is complete. Click done to return to the
+            dashboard.
+          </span>
+          <br />
+          <br />
+          <Button btnType="filled" onClick={handleSuccess}>
+            Done
+          </Button>
+        </Container>
+      ) : inProcess ? (
+        <Container size="full" padding="48px">
+          <h2>Transfer in Progress</h2>
+          <br />
+          <LinearProgress color="secondary" />
+        </Container>
+      ) : (
+        <Container as="form" onSubmit={handleSubmit} size="full" padding="48px">
+          <h2>Transfer Tokens</h2>
+          <br />
+          <Flex flexFlow="column" gap={8}>
             <br />
-            <span>
-              Your transfer of {amountDisplay} {values.token} is complete. Click done to return to
-              the dashboard.
-            </span>
+            <span>Select token</span>
+            <Select
+              placeholder="OGY"
+              handleChange={(option) => onChange('token', option.value)}
+              options={tokenOptions}
+              selectedOption={tokenOptions.find((opt) => opt.label === values.token)}
+            />
             <br />
+            <Flex flexFlow="row" justify="space-between">
+              <span>Amount</span>
+              <span id="balance" className="secondary_color">
+                Balance: {tokens[values.token]?.balance} {values.token}
+              </span>
+            </Flex>
+            <TextInput
+              name="amount"
+              onChange={(e) => onChange('amount', e.target.value)}
+              value={values?.amount}
+              error={errors?.amount}
+            />
             <br />
-            <Button btnType="filled" onClick={handleSuccess}>
-              Done
+            <span>Recipient Address</span>
+            <TextInput
+              name="recipientAddress"
+              onChange={(e) => onChange('recipientAddress', e.target.value)}
+              value={values.recipientAddress}
+              error={errors.recipientAddress}
+            />
+            <br />
+            <span>Memo</span>
+            <TextInput
+              name="memo"
+              value={values.memo}
+              onChange={(e) => onChange('memo', e.target.value)}
+            />
+            <br />
+            <span>Transaction Fee</span>
+            <span style={{ color: 'grey' }}>{`${feeDisplay}${' '}${values.token}`}</span>
+            <br />
+          </Flex>
+          <br />
+          <HR />
+          <br />
+          <Flex flexFlow="row" align="center" justify="space-between">
+            <h6>Total Amount</h6>
+            <span>{totalDisplay}</span>
+          </Flex>
+          <br />
+          <HR />
+          <br />
+          <Flex justify="flex-end">
+            <Button btnType="filled" type="submit">
+              Transfer {values.token}
             </Button>
-          </Container>
-        ) : inProcess ? (
-          <Container size="full" padding="48px">
-            <h2>Transfer in Progress</h2>
-            <br />
-            <LinearProgress color="secondary" />
-          </Container>
-        ) : (
-          <Container as="form" onSubmit={handleSubmit} size="full" padding="48px">
-            <h2>Transfer Tokens</h2>
-            <br />
-            <Flex flexFlow="column" gap={8}>
-              <br />
-              <span>Select token</span>
-              <Select
-                placeholder="OGY"
-                handleChange={(option) => onChange('token', option.value)}
-                options={tokenOptions}
-                selectedOption={tokenOptions.find((opt) => opt.label === values.token)}
-              />
-              <br />
-              <Flex flexFlow="row" justify="space-between">
-                <span>Amount</span>
-                <span id="balance">{tokens[values.token]?.balance}</span>
-              </Flex>
-              <TextInput
-                name="amount"
-                onChange={(e) => onChange('amount', e.target.value)}
-                value={values?.amount}
-                error={errors?.amount}
-              />
-              <br />
-              <span>Recipient Address</span>
-              <TextInput
-                name="recipientAddress"
-                onChange={(e) => onChange('recipientAddress', e.target.value)}
-                value={values.recipientAddress}
-                error={errors.recipientAddress}
-              />
-              <br />
-              <span>Memo</span>
-              <TextInput
-                name="memo"
-                value={values.memo}
-                onChange={(e) => onChange('memo', e.target.value)}
-              />
-              <br />
-              <span>Transaction Fee</span>
-              <span style={{ color: 'grey' }}>{`${feeDisplay}${' '}${values.token}`}</span>
-              <br />
-            </Flex>
-            <br />
-            <HR />
-            <br />
-            <Flex flexFlow="row" align="center" justify="space-between">
-              <h6>Total Amount</h6>
-              <span>{totalDisplay}</span>
-            </Flex>
-            <br />
-            <HR />
-            <br />
-            <Flex justify="flex-end">
-              <Button btnType="filled" type="submit">
-                Transfer {values.token}
-              </Button>
-            </Flex>
-          </Container>
-        )}
-      </Modal>
-    </div>
+          </Flex>
+        </Container>
+      )}
+    </Modal>
   );
 };
 

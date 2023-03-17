@@ -129,7 +129,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
                       <TokenIcon symbol={parseTokenSymbol(bid.escrow_record)} />
-                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals))}
+                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals)).toFixed()}
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>

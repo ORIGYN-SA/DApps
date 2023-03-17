@@ -57,7 +57,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
           return {
             ...odc,
             token_id: bid.token_id,
-            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toString(),
+            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toFixed(),
             isNftOwner: odc.ownerPrincipalId == principal?.toText(),
           };
         })
@@ -136,7 +136,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
                       <TokenIcon symbol={bid.tokenSymbol} />
-                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals))}
+                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals)).toFixed()}
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>

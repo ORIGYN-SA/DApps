@@ -4,7 +4,16 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
-import { Modal, Container, TextInput, Flex, Select, Button, HR } from '@origyn/origyn-art-ui';
+import {
+  Modal,
+  Container,
+  TextInput,
+  Flex,
+  Select,
+  Button,
+  HR,
+  theme,
+} from '@origyn/origyn-art-ui';
 import { useEffect } from 'react';
 import {
   toBigNumber,
@@ -15,6 +24,7 @@ import {
 } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
+import { ERROR, STATUS, SUCCESS, VALIDATION } from '../constants';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -103,13 +113,18 @@ export function StartEscrowModal({
 
   const onAmountChanged = (enteredAmount: string) => {
     setEnteredAmount(enteredAmount);
-
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       setFormErrors({ ...formErrors, amount: validationMsg });
+      return false;
+    }
+    const fee = toLargerUnit(token.fee, token.decimals);
+    const amount = toBigNumber(enteredAmount);
+    const balance = toBigNumber(tokens[token.symbol].balance);
+    if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
+      setFormErrors({ ...formErrors, amount: VALIDATION.insufficientFunds });
     } else {
-      let newAmount = toBigNumber(enteredAmount.trim() || 0);
-      const newTotal = getDisplayTotal(newAmount, token);
+      const newTotal = getDisplayTotal(amount, token);
       setTotal(newTotal);
       setFormErrors({ ...formErrors, amount: undefined });
     }
@@ -127,20 +142,22 @@ export function StartEscrowModal({
   const validateForm = () => {
     let errors = { amount: '', token: undefined };
     const fee = toLargerUnit(token.fee, token.decimals);
+    const balance = toBigNumber(tokens[token.symbol].balance);
 
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       errors = { ...errors, amount: validationMsg };
       return false;
     }
-
     const amount = toBigNumber(enteredAmount);
     if (amount.isLessThanOrEqualTo(0)) {
-      errors = { ...errors, amount: `${escrowType} must be greater than 0` };
+      errors = { ...errors, amount: `${escrowType} ${VALIDATION.mustBeGreaterThan} 0` };
+    } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
+      errors = { ...errors, amount: VALIDATION.insufficientFunds };
     } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
       errors = {
         ...errors,
-        amount: `Offer must be greater than the transaction fee of ${fee.toFixed(token.decimals)} ${
+        amount: `${VALIDATION.offerMustBeGreaterThanTxFee} ${fee.toFixed(token.decimals)} ${
           token.symbol
         }`,
       };
@@ -148,13 +165,20 @@ export function StartEscrowModal({
       if (amount.isLessThan(minBid)) {
         errors = {
           ...errors,
-          amount: `The minimum bid is ${minBid.toFixed()} ${odc.tokenSymbol}`,
+          amount: `${VALIDATION.minimumBid} ${minBid.toFixed()} ${odc.tokenSymbol}`,
+        };
+      } else if (amount.isGreaterThan(toLargerUnit(odc.buyNow, token.decimals))) {
+        errors = {
+          ...errors,
+          amount: `${VALIDATION.bidHigherThanBuyNow} (${toLargerUnit(odc.buyNow, token.decimals)} ${
+            odc.tokenSymbol
+          })`,
         };
       }
     }
 
     if (!token) {
-      errors = { ...errors, token: 'No token selected' };
+      errors = { ...errors, token: ERROR.tokenNotSelected };
     }
 
     // if there are any form errors, notify the user
@@ -174,12 +198,12 @@ export function StartEscrowModal({
     }
 
     if (!activeWalletProvider) {
-      showErrorMessage('Wallet not connected');
+      showErrorMessage(ERROR.walletNotConnected);
       return;
     }
 
     if (!validateForm() || hasErrors()) {
-      showErrorMessage('Please correct all form errors');
+      showErrorMessage(ERROR.formHasErrors);
       return;
     }
 
@@ -201,7 +225,6 @@ export function StartEscrowModal({
         return;
       }
       debug.log('deposit account', depositAccountId);
-
       // Transfer tokens from buyer's wallet to the deposit account.
       // If this fails, the tokens should still be in the buyer's wallet.
       setStatus('Sending tokens to deposit account...');
@@ -216,7 +239,7 @@ export function StartEscrowModal({
       }
       const transactionHeight = sendTokensResult.result;
 
-      setStatus('Sending tokens to escrow account...');
+      setStatus(STATUS.sendingTokens);
       // Transfer tokens from the deposit account to the escrow account.
       // If this fails, the buyer can withdraw the tokens from Manage Deposits in Vault.
       const sendEscrowResponse = await sendEscrow(
@@ -236,7 +259,7 @@ export function StartEscrowModal({
       // If there's an open auction, this is a bid, not an offer
       // so create a bid from the escrow receipt and sale id.
       if (odc.auctionOpen) {
-        setStatus('Creating bid...');
+        setStatus(STATUS.creatingBid);
         const createBidResponse = await createBid(escrowReceipt, odc.saleId);
         if (!createBidResponse.result) {
           showErrorMessage(createBidResponse.errorMessage);
@@ -245,15 +268,15 @@ export function StartEscrowModal({
 
         const purchased = !!createBidResponse.result?.['bid']?.txn_type?.sale_ended;
         if (purchased) {
-          showSuccessMessage('Purchase successful!');
+          showSuccessMessage(SUCCESS.purchase);
         } else {
-          showSuccessMessage('Bid placed');
+          showSuccessMessage(SUCCESS.placeBid);
         }
       } else {
-        showSuccessMessage('Offer placed');
+        showSuccessMessage(SUCCESS.placeOffer);
       }
 
-      onCustomClose(true);
+      onModalClose(true);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -272,7 +295,7 @@ export function StartEscrowModal({
     return `${toLargerUnit(doubleFee, token.decimals).toFixed()} ${token.symbol}`;
   };
 
-  const onCustomClose = (isSuccess: boolean) => {
+  const onModalClose = (isSuccess: boolean) => {
     setIsLoading(false);
     setIsTransacting(false);
     onProcessing(false);
@@ -285,14 +308,14 @@ export function StartEscrowModal({
   };
 
   return (
-    <Modal isOpened={open} closeModal={() => onCustomClose(false)} size="md">
+    <Modal isOpened={open} closeModal={() => onModalClose(false)} size="md">
       <Container as="form" onSubmit={onFormSubmitted} size="full" padding="48px" smPadding="8px">
         {success ? (
           <>
             <h2>Success!</h2>
             <p className="secondary_color">All the transactions were made successfully.</p>
             <Flex justify="flex-end">
-              <Button onClick={onCustomClose}>Done</Button>
+              <Button onClick={onModalClose}>Done</Button>
             </Flex>
           </>
         ) : (
@@ -336,23 +359,28 @@ export function StartEscrowModal({
                     ) : (
                       <>
                         <span>Token</span>
-                        <span style={{ color: 'grey' }}>{token.symbol}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>{token.symbol}</span>
                       </>
                     )}
                     {escrowType == 'BuyNow' ? (
                       <>
                         <br />
                         <span>Buy Now Price (in {token.symbol})</span>
-                        <span style={{ color: 'grey' }}>{getBuyNowPrice(odc)}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          {getBuyNowPrice(odc)}
+                        </span>
                       </>
                     ) : (
                       <>
                         <br />
-                        <span>
-                          {escrowType == 'Bid' ? 'Your bid' : `Your offer (in ${token.symbol})`}
-                        </span>
+                        <Flex flexFlow="row" align="center" justify="space-between">
+                          <b>{escrowType == 'Bid' ? 'Your bid' : 'Price'}</b>
+                          <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                            Balance: {tokens[token.symbol].balance.toString()} {token.symbol}
+                          </span>
+                        </Flex>
                         {escrowType == 'Bid' && (
-                          <span style={{ color: 'grey' }}>
+                          <span style={{ color: theme.colors.SECONDARY_TEXT }}>
                             {`Minimum bid: ${minBid.toFixed()} ${token.symbol}`}
                           </span>
                         )}
@@ -369,8 +397,12 @@ export function StartEscrowModal({
                     <br />
                     {token && (
                       <>
-                        <span>Transaction Fee</span>
-                        <span style={{ color: 'grey' }}>{getTransactionFee()}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          Network Fee (deducted from bid amount for the transaction cost)
+                        </span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          {getTransactionFee()}
+                        </span>
                         <br />
                         <HR />
                         <br />
@@ -383,10 +415,7 @@ export function StartEscrowModal({
                         <br />
                       </>
                     )}
-                    <Flex align="center" justify="flex-end" gap={16}>
-                      <Button btnType="outlined" onClick={() => onCustomClose(false)}>
-                        Cancel
-                      </Button>
+                    <Flex align="center" justify="flex-end">
                       <Button btnType="accent" type="submit" disabled={hasErrors()}>
                         Send Escrow
                       </Button>

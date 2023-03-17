@@ -10,6 +10,7 @@ import M, {
   acceptEscrow as _acceptEscrow,
   rejectEscrow as _rejectEscrow,
   withdrawEscrow as _withdrawEscrow,
+  Account,
 } from '@origyn/mintjs';
 
 export interface ActorResult<T> {
@@ -17,6 +18,7 @@ export interface ActorResult<T> {
   errorMessage?: string;
 }
 
+/** UTILITY FUNCTIONS */
 const getErrorText = (error: any, defaultMessage?: string) => {
   return error?.text || defaultMessage || 'Unexpected error';
 };
@@ -70,6 +72,7 @@ const convertEscrow = (escrow: M.EscrowRecord): M.EscrowActionArgs => {
   };
 };
 
+/** HOOK WITH WRAPPER FUNCTIONS FOR MINTJS */
 export const useApi = () => {
   const debug = useDebug();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
@@ -99,11 +102,14 @@ export const useApi = () => {
   };
 
   const getNftBalances = async (principal: Principal): Promise<M.BalanceResponse> => {
-    const response = await actor.balance_of_nft_origyn({ principal });
+    const account: Account = { principal };
+    const response = await actor.balance_of_nft_origyn(account);
     debug.log('balance_of_nft_origyn response', response);
 
     if ('err' in response) {
       debug.log(response.err);
+      // TODO: Implement this pattern in all mintjs/actor calls to shows canister
+      // error first, then default error message, but use ERROR constants instead.
       throw new Error(response.err.text || 'Unable to get NFT balances.');
     } else {
       return response.ok;

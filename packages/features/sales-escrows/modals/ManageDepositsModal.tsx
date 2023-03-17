@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-import { Container, Flex, Modal, Button } from '@origyn/origyn-art-ui';
+import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
 import { getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
 import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { toLargerUnit } from '@dapp/utils';
+import { ERROR, SUCCESS } from '../constants';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
@@ -40,9 +41,9 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         },
       });
       if ('err' in withdrawResp) {
-        showErrorMessage('Failed to withdraw', withdrawResp.err);
+        showErrorMessage(ERROR.depositWithdraw, withdrawResp.err);
       } else {
-        showSuccessMessage('Withdrawal successful');
+        showSuccessMessage(SUCCESS.depositWithdraw);
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -59,7 +60,8 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       debug.log('sale_info_nft_origyn result', result);
 
       if ('err' in result) {
-        throw new Error(result.err.text);
+        showErrorMessage(ERROR.tokenSaleInfoRetrieval, result.err);
+        return;
       } else {
         const accountId = 'deposit_info' in result.ok ? result.ok.deposit_info.account_id_text : '';
         const balances = Object.keys(activeTokens).map(async (tokenSymbol) => {
@@ -91,7 +93,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
         <Container size="full" padding="48px">
           <h3>Manage Token Deposits</h3>
-          <br />
+          <HR marginTop={16} marginBottom={16} />
           {isLoading ? (
             <>
               <LoadingContainer />
@@ -100,7 +102,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
             <>
               {Object.keys(activeTokens).map((tokenSymbol) => {
                 return (
-                  <div key={tokenSymbol}>
+                  <div key={tokenSymbol} style={{ marginBottom: '16px' }}>
                     <Flex flexFlow="row" justify="space-around">
                       <Flex flexFlow="column">
                         <span>Token</span>
@@ -124,8 +126,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                         Withdraw
                       </Button>
                     </Flex>
-                    <br />
-                    <br />
                   </div>
                 );
               })}

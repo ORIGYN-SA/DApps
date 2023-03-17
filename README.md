@@ -53,3 +53,16 @@ http://localhost:8080/-/sp3hj-caaaa-aaaaa-aaajq-cai/-/bm-1/-/vault
 ```
 
 This will make [Connect2IC](https://github.com/Connect2IC/connect2ic) create an actor for the canister `sp3hj-caaaa-aaaaa-aaajq-cai`.
+
+## ⚠️ Version Update
+
+```
+📁 package > features > components > src > layout > index.tsx
+<Navbar
+    navItems={menuItems}
+    onChangeTheme={() => setDarkTheme(!darkTheme)}
+    dAppsVersion="0.1.0"
+/>
+```
+
+Update only the dAppsVersion prop.

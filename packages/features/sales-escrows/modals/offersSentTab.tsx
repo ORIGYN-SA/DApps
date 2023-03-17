@@ -5,8 +5,7 @@ import { Button, HR, theme, Modal, Container, Flex } from '@origyn/origyn-art-ui
 import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord } from '@origyn/mintjs';
+import { BalanceResponse, EscrowRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
@@ -39,9 +38,8 @@ interface SentOffersProps extends OdcDataWithSale {
 }
 
 export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) => {
-  const debug = useDebug();
   const { getNftBatch, getNftBalances, withdrawEscrow } = useApi();
-  const { showUnexpectedErrorMessage, showSuccessMessage } = useUserMessages();
+  const { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { refreshAllBalances } = useTokensContext();
   const { principal } = useContext(AuthContext);
   const [offerSentWithSaleData, setOffersSentWithSaleData] = useState<SentOffersProps[]>([]);
@@ -62,7 +60,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   const fetchOffers = async () => {
     try {
       setIsLoading(true);
-      debug.log('offersSent', offersSent);
+
       const tokenIds = offersSent.map((offer) => offer.token_id);
       const odcs = await getNftBatch(tokenIds);
       const parsedOdcs = parseOdcs(odcs);
@@ -71,7 +69,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
         return {
           ...odc,
           token_id: offer.token_id,
-          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
+          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toFixed(),
           lock_to_date: offer.lock_to_date,
           escrow_record: offer,
         };
@@ -103,9 +101,19 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   };
 
   const getOffersSentBalance = async () => {
+    // TODO: Implement this pattern in all other components and functions
+    // fetch, catch, parse, update state, catch
     try {
       setIsLoading(true);
-      const balances = await getNftBalances(principal);
+
+      let balances: BalanceResponse;
+      try {
+        balances = await getNftBalances(principal);
+      } catch (e: any) {
+        showErrorMessage(e.message);
+        return;
+      }
+
       const offersSent = balances.escrow?.filter((element) => element.sale_id.length === 0);
       setOffersSent(offersSent);
     } catch (e) {
