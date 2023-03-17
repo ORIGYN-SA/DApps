@@ -45,8 +45,6 @@ const Marketplace = () => {
   };
 
   const fetchData = async () => {
-    console.log('actor', actor);
-
     if (!actor) {
       return;
     }

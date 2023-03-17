@@ -27,9 +27,7 @@ export const useAuth = (): AuthContextType => {
   } = useConnect();
 
   const [actor] = useCanister('nft');
-  console.log('actor before casting', actor);
   const origynNftActor: OrigynNftActor = actor as any;
-  console.log('actor after casting', origynNftActor);
 
   let principal = Principal.anonymous();
   if (principalId) {
