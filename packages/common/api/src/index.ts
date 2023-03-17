@@ -152,7 +152,7 @@ export const useApi = () => {
     };
   };
 
-  const getActiveAttendedAuctions = async (principal: Principal, activeAuctions: M.AuctionStateStable[]): Promise<M.AuctionStateStable[]> => {
+  const getActiveAttendedAuctions = (principal: Principal, activeAuctions: M.AuctionStateStable[]): M.AuctionStateStable[] => {
     if (activeAuctions.length > 0) {
       const activeAttendedAuctions = activeAuctions.filter((auctionState) => {
         return auctionState.participants.some(
