@@ -78,7 +78,11 @@ export const Layout = ({ children }: LayoutProps) => {
         <GlobalStyle />
         <Disclaimer />
         <Flex fullWidth mdFlexFlow="column">
-          <Navbar navItems={menuItems} onChangeTheme={() => setDarkTheme(!darkTheme)} />
+          <Navbar
+            navItems={menuItems}
+            onChangeTheme={() => setDarkTheme(!darkTheme)}
+            dAppsVersion="1.0.0"
+          />
           <Flex fullWidth>{children}</Flex>
         </Flex>
       </ThemeProvider>
