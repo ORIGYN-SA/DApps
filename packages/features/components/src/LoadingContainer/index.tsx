@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Flex, LoadingBar } from '@origyn/origyn-art-ui';
+import { Flex, LoadingBar } from '@origyn/origyn-art-ui';
 
 interface LoadingContainerProps {
   margin?: string;
