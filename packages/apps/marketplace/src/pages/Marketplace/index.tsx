@@ -117,7 +117,7 @@ const Marketplace = () => {
         clearInterval(intervalId);
       }
     };
-  }, []);
+  }, [actor]);
 
   /* Apply filter and sort to list */
   useEffect(() => {
