@@ -15,7 +15,7 @@ import {
   timeInNanos,
   toLargerUnit,
 } from '@dapp/utils';
-import { Property } from '@dapp/common-types';
+import { Property } from '@origyn/mintjs';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -101,7 +101,7 @@ export const NFTPage = () => {
       debug.error(collMetaResp.err);
     } else {
       const collMeta = collMetaResp.ok;
-      const metadataClass = collMeta?.metadata?.[0]?.Class as Property[];
+      const metadataClass = collMeta?.metadata?.[0]?.['Class'] as Property[];
       const parsedCollData = parseMetadata(metadataClass);
       setCollectionData(parsedCollData);
     }

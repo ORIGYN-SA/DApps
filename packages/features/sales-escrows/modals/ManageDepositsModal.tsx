@@ -26,8 +26,8 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
           deposit: {
             token: {
               ic: {
-                fee: activeTokens[token]?.fee,
-                decimals: activeTokens[token]?.decimals,
+                fee: BigInt(activeTokens[token]?.fee),
+                decimals: BigInt(activeTokens[token]?.decimals),
                 canister: Principal.fromText(activeTokens[token]?.canisterId),
                 standard: { Ledger: null },
                 symbol: activeTokens[token]?.symbol,
@@ -61,12 +61,9 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       if ('err' in result) {
         throw new Error(result.err.text);
       } else {
+        const accountId = 'deposit_info' in result.ok ? result.ok.deposit_info.account_id_text : '';
         const balances = Object.keys(activeTokens).map(async (tokenSymbol) => {
-          const val = await getBalanceByAccount(
-            false,
-            result.ok?.deposit_info?.account_id_text || '',
-            activeTokens[tokenSymbol],
-          );
+          const val = await getBalanceByAccount(false, accountId, activeTokens[tokenSymbol]);
           return { [tokenSymbol]: val };
         });
 

@@ -14,7 +14,7 @@ export const checkOwner = async (principal: Principal, currCanisterId: string) =
 
   const userPrincipal = principal.toText();
   const metadataCollectionLevelResponse = await getNftCollectionMeta();
-  const metadataCollectionLevel = metadataCollectionLevelResponse.ok?.metadata?.[0]?.Class;
+  const metadataCollectionLevel = metadataCollectionLevelResponse.ok?.metadata?.[0]?.['Class'];
 
   // Collection Owner
   const collectionData = metadataCollectionLevel.filter((res) => {

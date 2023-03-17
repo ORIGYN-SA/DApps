@@ -1,4 +1,4 @@
-import { AuctionStateStable, ICTokenSpec } from '@dapp/common-types';
+import { AuctionStateStable, ICTokenSpec } from '@origyn/mintjs';
 
 export enum RoyaltyType {
   primary,

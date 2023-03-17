@@ -5,22 +5,110 @@ import { Principal } from '@dfinity/principal';
 import { AuthContext } from '@dapp/features-authentication';
 import { sendTransaction, Token } from '@dapp/features-tokens-provider';
 import { useDebug } from '@dapp/features-debug-provider';
-import {
-  ManageSaleResponse,
-  EscrowReceipt,
-  SaleInfoResponse,
-  BidRequest,
-  BidResponse,
-} from '@dapp/common-types';
+import M, {
+  getNftCollectionMeta as _getNftCollectionMeta,
+  acceptEscrow as _acceptEscrow,
+  rejectEscrow as _rejectEscrow,
+  withdrawEscrow as _withdrawEscrow,
+} from '@origyn/mintjs';
 
 export interface ActorResult<T> {
   result?: T;
   errorMessage?: string;
 }
 
-export function useApi() {
+const getErrorText = (error: any, defaultMessage?: string) => {
+  return error?.text || defaultMessage || 'Unexpected error';
+};
+
+const convertToken = (token: M.TokenSpec): M.IcTokenType => {
+  if (!('ic' in token)) {
+    throw new Error('Extensible tokens are not currently supported');
+  }
+
+  const getStandard = () => {
+    if ('Ledger' in token.ic.standard) {
+      return { Ledger: null };
+    } else if ('ICRC1' in token.ic.standard) {
+      return { ICRC1: null };
+    } else if ('EXTFungible' in token.ic.standard) {
+      return { EXTFungible: null };
+    } else if ('DIP20' in token.ic.standard) {
+      return { DIP20: null };
+    }
+  };
+
+  if (token)
+    return {
+      fee: token.ic.fee,
+      decimals: token.ic.decimals,
+      canister: token.ic.canister,
+      standard: getStandard(),
+      symbol: token.ic.symbol,
+    };
+};
+
+const convertAccount = (account: M.Account): M.AccountType => {
+  return {
+    account_id: 'account_id' in account && account.account_id,
+    principal: 'principal' in account && account.principal,
+    extensible: 'extensible' in account && account.extensible,
+    account: 'account' in account && {
+      of: account.account.owner,
+      sub_account: account.account.sub_account?.[0] || [],
+    },
+  };
+};
+
+const convertEscrow = (escrow: M.EscrowRecord): M.EscrowActionArgs => {
+  return {
+    token_id: escrow.token_id,
+    amount: escrow.amount,
+    buyer: convertAccount(escrow.buyer),
+    seller: convertAccount(escrow.seller),
+    ic_token: convertToken(escrow.token),
+  };
+};
+
+export const useApi = () => {
   const debug = useDebug();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
+
+  const getNftCollectionMeta = async (): Promise<M.CollectionInfo> => {
+    const r = await _getNftCollectionMeta();
+    debug.log('getNftCollectionMeta result', r);
+
+    if ('err' in r) {
+      console.error(r.err);
+      throw new Error('Unable to retrieve collection metadata.');
+    }
+
+    return r.ok;
+  };
+
+  const getNftBatch = async (tokenIds: string[]): Promise<M.NFTInfoStable[]> => {
+    const r = await actor?.nft_batch_origyn(tokenIds);
+
+    const error = r.find((m) => 'err' in m);
+    if (error) {
+      console.error(error);
+      throw new Error('Unable to retrieve metadata of tokens.');
+    }
+
+    return r.map((m) => 'ok' in m && m.ok).filter((m) => !!m);
+  };
+
+  const getNftBalances = async (principal: Principal): Promise<M.BalanceResponse> => {
+    const response = await actor.balance_of_nft_origyn({ principal });
+    debug.log('balance_of_nft_origyn response', response);
+
+    if ('err' in response) {
+      debug.log(response.err);
+      throw new Error(response.err.text || 'Unable to get NFT balances.');
+    } else {
+      return response.ok;
+    }
+  };
 
   const getDepositAccountNumber = async (): Promise<ActorResult<string>> => {
     const genericErrorMessage = 'Failed to get deposit account';
@@ -40,7 +128,7 @@ export function useApi() {
         return { errorMessage: 'Deposit info not found in sale info' };
       }
 
-      const result: SaleInfoResponse = response.ok;
+      const result: M.SaleInfoResponse = response.ok;
 
       let accountId = '';
       if ('deposit_info' in result) {
@@ -63,7 +151,7 @@ export function useApi() {
     accountId: string,
     totalAmount: BigNumber,
     token: Token,
-  ): Promise<ActorResult<BigInt>> => {
+  ): Promise<ActorResult<bigint>> => {
     // Transfer money from buyer's wallet to the deposit account
     // This will charge a tx fee to the buyer's wallet (first tx fee)
     // separate from the second tx fee included in the total escrow amount.
@@ -97,16 +185,16 @@ export function useApi() {
   const sendEscrow = async (
     token: Token,
     totalAmount: BigNumber,
-    transactionHeight: BigInt,
+    transactionHeight: bigint,
     tokenId: string,
     ownerPrincipalId: string,
     saleId?: string,
-  ): Promise<ActorResult<EscrowReceipt>> => {
+  ): Promise<ActorResult<M.EscrowReceipt>> => {
     const genericErrorMessage =
       'Failed to send escrow. Withdraw your tokens from Manage Deposits in your Vault.';
 
     try {
-      const escrowData = {
+      const escrowData: M.EscrowRequest = {
         token_id: tokenId,
         deposit: {
           token: {
@@ -118,7 +206,7 @@ export function useApi() {
               symbol: token.symbol,
             },
           },
-          trx_id: [{ nat: transactionHeight }],
+          trx_id: [{ nat: BigInt(transactionHeight) }],
           seller: { principal: Principal.fromText(ownerPrincipalId) },
           buyer: { principal },
           amount: BigInt(totalAmount.toString()),
@@ -136,7 +224,7 @@ export function useApi() {
         return { errorMessage: genericErrorMessage };
       }
 
-      const result: ManageSaleResponse = response.ok;
+      const result: M.ManageSaleResponse = response.ok;
       if ('escrow_deposit' in result && result.escrow_deposit.receipt) {
         return { result: result.escrow_deposit.receipt };
       } else {
@@ -148,15 +236,39 @@ export function useApi() {
     }
   };
 
+  const acceptEscrow = async (escrow: M.EscrowRecord): Promise<M.MarketTransferRequestReponse> => {
+    const r = await _acceptEscrow(convertEscrow(escrow));
+    if (r.err) {
+      throw new Error(getErrorText(r.err, 'Accept escrow failed'));
+    }
+    return r.ok;
+  };
+
+  const withdrawEscrow = async (escrow: M.EscrowRecord): Promise<M.ManageSaleResponse> => {
+    const r = await _withdrawEscrow(convertEscrow(escrow));
+    if (r.err) {
+      throw new Error(getErrorText(r.err, 'Withdraw escrow failed'));
+    }
+    return r.ok;
+  };
+
+  const rejectEscrow = async (escrow: M.EscrowRecord): Promise<M.ManageSaleResponse> => {
+    const r = await _rejectEscrow(convertEscrow(escrow));
+    if (r.err) {
+      throw new Error(getErrorText(r.err, 'Reject escrow failed'));
+    }
+    return r.ok;
+  };
+
   const createBid = async (
-    escrowReceipt: EscrowReceipt,
+    escrowReceipt: M.EscrowReceipt,
     saleId: string,
-  ): Promise<ActorResult<BidResponse>> => {
+  ): Promise<ActorResult<M.ManageSaleResponse>> => {
     const genericErrorMessage = 'Failed to create bid after tokens were sent to escrow';
 
     try {
       // if the ODC is on auction, then this is a bid in the auction
-      const bidRequest: BidRequest = {
+      const bidRequest: M.BidRequest = {
         broker_id: [],
         escrow_receipt: escrowReceipt,
         sale_id: saleId,
@@ -171,12 +283,23 @@ export function useApi() {
         return { errorMessage: genericErrorMessage };
       }
 
-      return { result: response.ok as BidResponse };
+      return { result: response.ok };
     } catch (e) {
       console.error(e);
       return { errorMessage: genericErrorMessage };
     }
   };
 
-  return { getDepositAccountNumber, sendTokensToDepositAccount, sendEscrow, createBid };
-}
+  return {
+    getNftCollectionMeta: getNftCollectionMeta,
+    getNftBatch,
+    getNftBalances,
+    getDepositAccountNumber,
+    sendTokensToDepositAccount,
+    sendEscrow,
+    acceptEscrow,
+    rejectEscrow,
+    withdrawEscrow,
+    createBid,
+  };
+};

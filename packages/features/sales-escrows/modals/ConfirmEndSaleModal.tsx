@@ -51,7 +51,7 @@ export const ConfirmEndSaleModal = ({
       const endSaleResponse = await actor.sale_nft_origyn({
         end_sale: currentToken,
       });
-      if (endSaleResponse.ok) {
+      if ('ok' in endSaleResponse) {
         showSuccessMessage(`You have successfully ended the sale for ${currentToken}.`);
         onSaleCancelled();
       } else {

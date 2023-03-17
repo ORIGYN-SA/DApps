@@ -6,9 +6,11 @@ import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dap
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { EscrowRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { useApi } from '@dapp/common-api';
+
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -38,9 +40,10 @@ interface SentOffersProps extends OdcDataWithSale {
 
 export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) => {
   const debug = useDebug();
-  const { showUnexpectedErrorMessage, showErrorMessage, showSuccessMessage } = useUserMessages();
+  const { getNftBatch, getNftBalances, withdrawEscrow } = useApi();
+  const { showUnexpectedErrorMessage, showSuccessMessage } = useUserMessages();
   const { refreshAllBalances } = useTokensContext();
-  const { actor, principal } = useContext(AuthContext);
+  const { principal } = useContext(AuthContext);
   const [offerSentWithSaleData, setOffersSentWithSaleData] = useState<SentOffersProps[]>([]);
   const [offersSent, setOffersSent] = useState<EscrowRecord[]>([]);
   const [openModal, setOpenModal] = React.useState(false);
@@ -56,19 +59,13 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     setOpenModal(true);
   };
 
-  const parseOffers = async () => {
+  const fetchOffers = async () => {
     try {
       setIsLoading(true);
       debug.log('offersSent', offersSent);
       const tokenIds = offersSent.map((offer) => offer.token_id);
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      debug.log('odcDataRaw', odcDataRaw);
-      if (odcDataRaw.err) {
-        debug.error(odcDataRaw.err);
-        throw new Error('Unable to retrieve metadata of tokens.');
-      }
-
-      const parsedOdcs = parseOdcs(odcDataRaw);
+      const odcs = await getNftBatch(tokenIds);
+      const parsedOdcs = parseOdcs(odcs);
       const offersSentWithSaleData = parsedOdcs.map((odc: OdcDataWithSale, index) => {
         const offer = offersSent[index];
         return {
@@ -87,29 +84,14 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     }
   };
 
-  const confirmOfferWithdraw = async (escrow: EscrowRecord) => {
+  const onConfirmOfferWithdraw = async (escrow: EscrowRecord) => {
     try {
       setIsLoading(true);
       if (!escrow) {
         return onModalClose();
       }
-      const withdrawResponse = await actor?.sale_nft_origyn({
-        withdraw: {
-          escrow: {
-            ...escrow,
-            withdraw_to: { principal },
-          },
-        },
-      });
-
-      if ('err' in withdrawResponse) {
-        showErrorMessage(
-          `Error: ${withdrawResponse.err.flag_point}.`,
-          withdrawResponse.err.flag_point,
-        );
-      } else {
-        showSuccessMessage('Offer withdrawn successfully.');
-      }
+      await withdrawEscrow(escrow);
+      showSuccessMessage('Offer withdrawn successfully.');
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -123,19 +105,9 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   const getOffersSentBalance = async () => {
     try {
       setIsLoading(true);
-      const response = await actor.balance_of_nft_origyn({ principal });
-      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
-      debug.log(JSON.stringify(response, null, 2));
-      if ('err' in response) {
-        const error: OrigynError = response.err;
-        debug.log('error', error);
-        return;
-      } else {
-        const balanceResponse: BalanceResponse = response.ok;
-        const sentEscrows = balanceResponse.escrow;
-        const offersSent = sentEscrows?.filter((element) => element.sale_id.length === 0);
-        setOffersSent(offersSent);
-      }
+      const balances = await getNftBalances(principal);
+      const offersSent = balances.escrow?.filter((element) => element.sale_id.length === 0);
+      setOffersSent(offersSent);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -149,7 +121,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
 
   useEffect(() => {
     if (offersSent?.length) {
-      parseOffers();
+      fetchOffers();
     }
   }, [offersSent]);
 
@@ -253,7 +225,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
             </Flex>
             <Flex>
               <Button
-                onClick={() => confirmOfferWithdraw(selectedOffer)}
+                onClick={() => onConfirmOfferWithdraw(selectedOffer)}
                 variant="contained"
                 disabled={isLoading}
               >

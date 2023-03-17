@@ -27,7 +27,7 @@ export const CollectionLocation = (props: any) => {
     const { canisterId } = await useRoute();
     await OrigynClient.getInstance().init(true, canisterId, { actor });
     const response = await getNftCollectionMeta();
-    const library = await response.ok.metadata[0].Class.filter((res) => {
+    const library = await response.ok.metadata[0]['Class'].filter((res) => {
       return res.name === 'library';
     })[0].value.Array.thawed;
     console.log('responseCollection', library);
@@ -85,7 +85,7 @@ export const CollectionLocation = (props: any) => {
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
         props.updateData(
-          r.ok.metadata[0].Class.filter((res) => {
+          r.ok.metadata[0]['Class'].filter((res) => {
             return res.name === 'library';
           })[0].value.Array.thawed,
         );

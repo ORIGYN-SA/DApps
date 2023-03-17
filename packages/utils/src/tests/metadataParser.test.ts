@@ -1,6 +1,11 @@
 import { Principal } from '@dfinity/principal';
-import { Property } from '@dapp/common-types';
-import { getProperty, getTextValue, isCandyClassOrArray, candyValueToString } from '../metadataParser';
+import { Property } from '@origyn/mintjs';
+import {
+  getProperty,
+  getTextValue,
+  isCandyClassOrArray,
+  candyValueToString,
+} from '../metadataParser';
 
 describe('getProperty function', () => {
   const properties = [
