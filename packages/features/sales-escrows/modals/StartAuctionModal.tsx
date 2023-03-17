@@ -17,7 +17,7 @@ import {
 } from '@origyn/origyn-art-ui';
 import { LinearProgress } from '@mui/material';
 import { toSmallerUnit, validateTokenAmount } from '@dapp/utils';
-import { MarketTransferRequest } from '@dapp/common-types';
+import { MarketTransferRequest } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { ERROR, SUCCESS, VALIDATION } from '../constants';

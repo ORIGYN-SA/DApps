@@ -1,9 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useDebug } from '@dapp/features-debug-provider';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { useDialog } from '@connect2ic/react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { OrigynClient } from '@origyn/mintjs';
+import { useDebug } from '@dapp/features-debug-provider';
+import { useApi } from '@dapp/common-api';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { PlaceholderIcon } from '@dapp/common-assets';
+import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
+import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
+import Filter from '../../../../vault/src/pages/Vault/Filter';
 import {
   Card,
   Container,
@@ -14,14 +22,6 @@ import {
   SecondaryNav,
   ShowMoreBlock,
 } from '@origyn/origyn-art-ui';
-import Filter from '../../../../vault/src/pages/Vault/Filter';
-import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
-import { Link } from 'react-router-dom';
-import { useDialog } from '@connect2ic/react';
-import styled from 'styled-components';
-import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
-import { Principal } from '@dfinity/principal';
-import { useUserMessages } from '@dapp/features-user-messages';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
@@ -29,9 +29,9 @@ const StyledSectionTitle = styled.h2`
 
 const Marketplace = () => {
   const debug = useDebug();
-  const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
-  const { principal, actor, handleLogOut } = useContext(AuthContext);
-  const [principalId, setPrincipalId] = useState<string>();
+  const { principalId, actor, handleLogOut } = useContext(AuthContext);
+  const { getNftBatch, getNftCollectionMeta } = useApi();
+  const { showUnexpectedErrorMessage } = useUserMessages();
   const [canisterId, setCanisterId] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -50,41 +50,29 @@ const Marketplace = () => {
     }
 
     try {
+      const { canisterId } = await useRoute();
+      setCanisterId(canisterId);
+
       OrigynClient.getInstance().init(true, canisterId, { actor });
 
       // get the canister's collection metadata
-      const collMetaResp = await getNftCollectionMeta([]);
-      debug.log('getNftCollectionMeta result', collMetaResp);
-
-      if ('err' in collMetaResp) {
-        console.error(collMetaResp.err);
-        showErrorMessage('Get collection data failed');
-        return;
-      }
-
-      const collMeta = collMetaResp.ok;
-      const metadataClass = collMeta?.metadata?.[0]?.Class;
-      const collData = parseMetadata(metadataClass);
-      dispatch({ type: 'collectionData', payload: collData });
+      const meta = await getNftCollectionMeta();
+      const metadata = meta.metadata[0];
+      const metadataClass = 'Class' in metadata ? metadata.Class : [];
+      const collectionData = parseMetadata(metadataClass);
+      dispatch({ type: 'collectionData', payload: collectionData });
 
       // set number of tokens
-      const tokenIds = collMeta?.token_ids?.[0] || [];
+      const tokenIds = meta?.token_ids?.[0] || [];
+      debug.log('tokenIds', meta?.token_ids?.[0]);
+
       dispatch({ type: 'totalItems', payload: tokenIds.length });
 
       // get a list of all digital certificates in the collection
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      debug.log('nft_batch_origyn result', odcDataRaw);
-
-      if ('err' in odcDataRaw) {
-        console.error(odcDataRaw.err);
-        showErrorMessage('Get batch tokens failed');
-        return;
-      }
-
-      // parse the digital certificate data (metadata and sale info)
-      const parsedOdcs = parseOdcs(odcDataRaw);
+      const odcs = await getNftBatch(tokenIds);
+      debug.log('odcs', odcs);
+      const parsedOdcs = parseOdcs(odcs);
       debug.log('parsed odcs', parsedOdcs);
-
       dispatch({ type: 'odcs', payload: parsedOdcs });
     } catch (err) {
       showUnexpectedErrorMessage(err);
@@ -111,24 +99,17 @@ const Marketplace = () => {
     run();
   }, []);
 
-  useEffect(() => {
-    setPrincipalId(
-      !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
-    );
-  }, [principal]);
-
   /* Fetch data from canister when the actor reference
    * is ready, then every 5 seconds */
   useEffect(() => {
+    fetchData();
     let intervalId: any;
-    if (actor) {
-      fetchData();
-      if (!intervalId) {
-        intervalId = setInterval(() => {
-          fetchData();
-        }, 5000);
-      }
+    if (!intervalId) {
+      intervalId = setInterval(() => {
+        fetchData();
+      }, 5000);
     }
+
     return () => {
       if (intervalId) {
         clearInterval(intervalId);

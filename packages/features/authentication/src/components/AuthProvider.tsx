@@ -6,33 +6,43 @@ import { createContext, useContext } from 'react';
 import { AuthContextType } from '../types';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import { OrigynNftActor } from '@origyn/mintjs';
 
 export const AuthContext = createContext<AuthContextType>({
   loggedIn: false,
   isLoading: false,
+  principalId: '',
 });
 
 export const useAuthContext = () => useContext(AuthContext);
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const {
     activeProvider: activeWalletProvider,
-    principal,
+    principal: principalId,
     disconnect: handleLogOut,
     isInitializing,
     isConnected,
     ...other
   } = useConnect();
+
   const [actor] = useCanister('nft');
+  const origynNftActor: OrigynNftActor = actor as any;
+
+  let principal = Principal.anonymous();
+  if (principalId) {
+    principal = Principal.fromText(principalId);
+  }
 
   return {
+    ...other,
     activeWalletProvider,
-    actor,
+    actor: origynNftActor,
     handleLogOut,
-    other,
     isLoading: isInitializing,
     loggedIn: isConnected,
-    principal: principal?.length > 0 ? Principal.fromText(principal) : Principal.anonymous(),
+    principal,
+    principalId: principal.isAnonymous() ? '' : principalId,
   };
 };
 
@@ -89,5 +99,5 @@ export const AuthProvider = ({ children }) => {
 };
 
 AuthProvider.propTypes = {
-  children: PropTypes.object
+  children: PropTypes.object,
 };

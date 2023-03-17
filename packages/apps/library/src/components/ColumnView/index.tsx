@@ -169,7 +169,7 @@ const ColumnView = () => {
       OrigynClient.getInstance().init(true, canisterId, { actor });
       getNftCollectionMeta().then((r) => {
         setCollectionLevelLibraryData(
-          r.ok.metadata[0].Class.filter((res) => {
+          r.ok.metadata[0]['Class'].filter((res) => {
             return res.name === 'library';
           })[0].value.Array.thawed,
         );

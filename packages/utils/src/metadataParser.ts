@@ -1,5 +1,5 @@
 import { Principal } from '@dfinity/principal';
-import { EscrowRecord, NFTInfoStable, Property } from '@dapp/common-types';
+import { EscrowRecord, NFTInfoStable, Property } from '@origyn/mintjs';
 import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
 import { toSentenceCase } from './string';
 import { timeInNanos } from './dateTime';
@@ -296,7 +296,8 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
 
 export function parseOdcs(data: NFTInfoStable[]): OdcDataWithSale[] {
   return data.map((odc): OdcDataWithSale => {
-    return parseOdc(odc['ok']);
+    console.log('odc', odc);
+    return parseOdc(odc);
   });
 }
 

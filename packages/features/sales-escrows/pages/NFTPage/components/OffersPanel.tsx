@@ -3,7 +3,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { OdcDataWithSale, toLargerUnit } from '@dapp/utils';
 import React, { useContext, useEffect, useState } from 'react';
 import { Flex, Button, Container, theme } from '@origyn/origyn-art-ui';
-import { BalanceResponse, OrigynError } from '@dapp/common-types';
+import { BalanceResponse, OrigynError } from '@origyn/mintjs';
 import { EscrowType } from '../../../modals/StartEscrowModal';
 
 export interface OffersPanelProps {

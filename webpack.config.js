@@ -86,7 +86,7 @@ module.exports = (env, argv, dAppConfig) => ({
       process: 'process/browser',
     }),
     new Dotenv({
-      path: process.env.DOTENV_PATH || './.env',
+      path: path.resolve(monorepoRoot, '.env'),
     }),
     new HtmlWebpackPlugin(
       argv?.mode === 'development'
@@ -105,7 +105,7 @@ module.exports = (env, argv, dAppConfig) => ({
     new ForkTsCheckerWebpackPlugin({
       async: false,
       typescript: {
-        configFile: '../../../tsconfig.json',
+        configFile: path.resolve(monorepoRoot, 'tsconfig.json'),
       },
     }),
   ],

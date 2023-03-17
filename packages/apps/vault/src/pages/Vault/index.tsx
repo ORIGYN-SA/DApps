@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { useApi } from '@dapp/common-api';
 import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
@@ -14,7 +15,7 @@ import {
   parseOdcs,
   copyToClipboard,
 } from '@dapp/utils';
-import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
+import { OrigynClient } from '@origyn/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
 import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
 import ManageDepositsModal from '@dapp/features-sales-escrows/modals/ManageDepositsModal';
@@ -31,7 +32,6 @@ import {
   Container,
   ShowMoreBlock,
 } from '@origyn/origyn-art-ui';
-import { Principal } from '@dfinity/principal';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useUserMessages } from '@dapp/features-user-messages';
 
@@ -215,10 +215,10 @@ const DscvrSVG = () => {
 
 const VaultPage = () => {
   const debug = useDebug();
-  const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
-  const { loggedIn, principal, actor, activeWalletProvider, handleLogOut } =
+  const { getNftBatch, getNftCollectionMeta, getNftBalances } = useApi();
+  const { showUnexpectedErrorMessage } = useUserMessages();
+  const { loggedIn, principal, principalId, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
-  const [principalId, setPrincipalId] = useState<string>();
   const [canisterId, setCanisterId] = React.useState('');
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
   const [inputText, setInputText] = useState('');
@@ -257,49 +257,26 @@ const VaultPage = () => {
       OrigynClient.getInstance().init(true, canisterId, { actor });
 
       // get the canister's collection metadata
-      const collMetaResp = await getNftCollectionMeta([]);
-      debug.log('getNftCollectionMeta result', collMetaResp);
-
-      if ('err' in collMetaResp) {
-        console.error(collMetaResp.err);
-        showErrorMessage('Get collection data failed');
-        return;
-      }
-
-      const collMeta = collMetaResp.ok;
-      const metadataClass = collMeta?.metadata?.[0]?.Class;
+      const meta = await getNftCollectionMeta();
+      const metadataClass = meta?.[0]?.Class;
       const collectionData = parseMetadata(metadataClass);
       dispatch({ type: 'collectionData', payload: collectionData });
 
       if (principal) {
-        const vaultBalanceInfo = await actor?.balance_of_nft_origyn({ principal });
+        const vaultBalanceInfo = await getNftBalances(principal);
         debug.log('balance_of_nft_origyn result', vaultBalanceInfo);
 
-        if (vaultBalanceInfo.err) {
-          throw new Error(Object.keys(vaultBalanceInfo.err)[0]);
-        }
-
         // get list of digital certificates owned by the current user
-        const ownedTokenIds = vaultBalanceInfo?.ok?.nfts || [];
-        const odcDataRaw = await actor?.nft_batch_origyn(ownedTokenIds);
+        const ownedTokenIds = vaultBalanceInfo.nfts || [];
         debug.log('ownedTokenIds', ownedTokenIds);
-        debug.log('nft_batch_origyn result', odcDataRaw);
-
-        if ('err' in odcDataRaw) {
-          console.error(odcDataRaw.err);
-          showErrorMessage('Get batch tokens failed');
-          return;
-        }
-
-        // parse the digital certificate data (metadata and sale info)
-        const parsedOdcs = parseOdcs(odcDataRaw);
+        const odcs = await getNftBatch(ownedTokenIds);
+        const parsedOdcs = parseOdcs(odcs);
         debug.log('parsed odcs', parsedOdcs);
-
-        dispatch({ type: 'odcs', payload: parsedOdcs });
         dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
+        dispatch({ type: 'odcs', payload: parsedOdcs });
 
         setShowManageEscrowsButton(
-          vaultBalanceInfo?.ok?.escrow?.length > 0 || vaultBalanceInfo?.ok?.offers?.length > 0,
+          vaultBalanceInfo.escrow?.length > 0 || vaultBalanceInfo.offers?.length > 0,
         );
       } else {
         dispatch({ type: 'odcs', payload: [] });
@@ -315,16 +292,14 @@ const VaultPage = () => {
 
   useEffect(() => {
     document.title = 'Origyn Vault';
-    useRoute().then(({ canisterId }) => {
-      setCanisterId(canisterId);
-    });
-  }, []);
 
-  useEffect(() => {
-    setPrincipalId(
-      !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
-    );
-  }, [principal]);
+    const run = async () => {
+      const route = await useRoute();
+      setCanisterId(route.canisterId);
+    };
+
+    run();
+  }, []);
 
   /* Fetch data from canister when the actor reference
    * is ready, then every 5 seconds */

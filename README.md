@@ -5,12 +5,12 @@ This repository is a monorepo containing standard ORIGYN dApps.
 ## 🏁 Quickstart
 
 - Requires `node 16` in order to install all dependencies.
-- The @origyn/origyn-art-ui library is published in the GitHub Package Registry, which requires that you first authenticate before installing the package.
 
 ```
-npm login --registry=https://npm.pkg.github.com --scope=@origyn-sa --always-auth
-npm install
+npm ci
 npm run bootstrap
+npm run build:all
+npm run start:marketplace
 ```
 
 ### Running
@@ -20,6 +20,8 @@ Each dApp can be started using webpack as a local development server by running 
 ```
 npm run start:vault
 ```
+
+See package.json scripts for all options.
 
 ### Building
 

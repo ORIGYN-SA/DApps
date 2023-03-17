@@ -5,11 +5,11 @@ import { Button, HR, theme, Modal, Container, Flex } from '@origyn/origyn-art-ui
 import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord, BalanceResponse } from '@dapp/common-types';
+import { BalanceResponse, EscrowRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
-import { ERROR, SUCCESS } from '../constants';
+import { useApi } from '@dapp/common-api';
+
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -38,10 +38,10 @@ interface SentOffersProps extends OdcDataWithSale {
 }
 
 export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) => {
-  const debug = useDebug();
-  const { showUnexpectedErrorMessage, showErrorMessage, showSuccessMessage } = useUserMessages();
+  const { getNftBatch, getNftBalances, withdrawEscrow } = useApi();
+  const { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { refreshAllBalances } = useTokensContext();
-  const { actor, principal } = useContext(AuthContext);
+  const { principal } = useContext(AuthContext);
   const [offerSentWithSaleData, setOffersSentWithSaleData] = useState<SentOffersProps[]>([]);
   const [offersSent, setOffersSent] = useState<EscrowRecord[]>([]);
   const [openModal, setOpenModal] = React.useState(false);
@@ -57,19 +57,13 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     setOpenModal(true);
   };
 
-  const parseOffers = async () => {
+  const fetchOffers = async () => {
     try {
       setIsLoading(true);
 
       const tokenIds = offersSent.map((offer) => offer.token_id);
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-
-      if ('err' in odcDataRaw) {
-        showErrorMessage(ERROR.tokenMetadataRetrieval, odcDataRaw.err);
-        return;
-      }
-
-      const parsedOdcs = parseOdcs(odcDataRaw);
+      const odcs = await getNftBatch(tokenIds);
+      const parsedOdcs = parseOdcs(odcs);
       const offersSentWithSaleData = parsedOdcs.map((odc: OdcDataWithSale, index) => {
         const offer = offersSent[index];
         return {
@@ -88,26 +82,14 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     }
   };
 
-  const confirmOfferWithdraw = async (escrow: EscrowRecord) => {
+  const onConfirmOfferWithdraw = async (escrow: EscrowRecord) => {
     try {
       setIsLoading(true);
       if (!escrow) {
         return onModalClose();
       }
-      const withdrawResponse = await actor?.sale_nft_origyn({
-        withdraw: {
-          escrow: {
-            ...escrow,
-            withdraw_to: { principal },
-          },
-        },
-      });
-
-      if ('err' in withdrawResponse) {
-        showErrorMessage(ERROR.offerWithdraw, withdrawResponse.err);
-      } else {
-        showSuccessMessage(SUCCESS.offerWithdraw);
-      }
+      await withdrawEscrow(escrow);
+      showSuccessMessage('Offer withdrawn successfully.');
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -119,20 +101,21 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   };
 
   const getOffersSentBalance = async () => {
+    // TODO: Implement this pattern in all other components and functions
+    // fetch, catch, parse, update state, catch
     try {
       setIsLoading(true);
-      const response = await actor.balance_of_nft_origyn({ principal });
-      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
-      debug.log(JSON.stringify(response, null, 2));
-      if ('err' in response) {
-        showErrorMessage(ERROR.tokenBalanceRetrieval, response.err);
+
+      let balances: BalanceResponse;
+      try {
+        balances = await getNftBalances(principal);
+      } catch (e: any) {
+        showErrorMessage(e.message);
         return;
-      } else {
-        const balanceResponse: BalanceResponse = response.ok;
-        const sentEscrows = balanceResponse.escrow;
-        const offersSent = sentEscrows?.filter((element) => element.sale_id.length === 0);
-        setOffersSent(offersSent);
       }
+
+      const offersSent = balances.escrow?.filter((element) => element.sale_id.length === 0);
+      setOffersSent(offersSent);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -146,7 +129,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
 
   useEffect(() => {
     if (offersSent?.length) {
-      parseOffers();
+      fetchOffers();
     }
   }, [offersSent]);
 
@@ -250,7 +233,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
             </Flex>
             <Flex>
               <Button
-                onClick={() => confirmOfferWithdraw(selectedOffer)}
+                onClick={() => onConfirmOfferWithdraw(selectedOffer)}
                 variant="contained"
                 disabled={isLoading}
               >

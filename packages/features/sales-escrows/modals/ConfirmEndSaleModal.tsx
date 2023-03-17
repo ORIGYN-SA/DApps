@@ -3,7 +3,7 @@ import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer } from '@dapp/features-components';
 import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
 import { useUserMessages } from '@dapp/features-user-messages';
-import { SUCCESS, ERROR } from '../constants';
+import { ERROR } from '../constants';
 
 interface ConfirmEndSaleModalProps {
   onModalOpen: boolean;
@@ -40,8 +40,8 @@ export const ConfirmEndSaleModal = ({
       const endSaleResponse = await actor.sale_nft_origyn({
         end_sale: currentToken,
       });
-      if (endSaleResponse.ok) {
-        showSuccessMessage(`${SUCCESS.endSale} ${currentToken}`);
+      if ('ok' in endSaleResponse) {
+        showSuccessMessage(`You have successfully ended the sale for ${currentToken}.`);
         onSaleCancelled();
       } else {
         showErrorMessage(`${ERROR.endSale} ${currentToken}`, endSaleResponse.err.flag_point);

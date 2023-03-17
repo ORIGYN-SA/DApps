@@ -124,7 +124,7 @@ export const UpdateLibraryWeb = ({
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
         updateLibraryData(
-          r.ok.metadata[0].Class.filter((res) => {
+          r.ok.metadata[0]['Class'].filter((res) => {
             return res.name === 'library';
           })[0].value.Array.thawed,
         );

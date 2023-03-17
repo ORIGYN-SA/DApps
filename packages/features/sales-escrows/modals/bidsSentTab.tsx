@@ -6,10 +6,10 @@ import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord, BalanceResponse } from '@dapp/common-types';
+import { EscrowRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
-import { ERROR } from '../constants';
+import { useApi } from '@dapp/common-api';
 
 const styles = {
   gridContainer: {
@@ -38,23 +38,19 @@ interface SentActiveBidsProps extends OdcDataWithSale {
 
 export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const debug = useDebug();
-  const { showUnexpectedErrorMessage, showErrorMessage } = useUserMessages();
-  const { actor, principal } = useContext(AuthContext);
+  const { principal } = useContext(AuthContext);
+  const { getNftBatch, getNftBalances } = useApi();
+  const { showUnexpectedErrorMessage } = useUserMessages();
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
   const [bidsSent, setBidsSent] = useState<EscrowRecord[]>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const parseBids = async () => {
+  const fetchBids = async () => {
     try {
       setIsLoading(true);
       const tokenIds = bidsSent.map((offer) => offer.token_id);
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-
-      if ('err' in odcDataRaw) {
-        showErrorMessage(ERROR.tokenMetadataRetrieval, odcDataRaw.err);
-        return;
-      }
-      const parsedOdcs = parseOdcs(odcDataRaw);
+      const odcs = await getNftBatch(tokenIds);
+      const parsedOdcs = parseOdcs(odcs);
       const parsedActiveBids = parsedOdcs
         .map((odc: OdcDataWithSale, index) => {
           const bid = bidsSent[index];
@@ -78,19 +74,11 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const getSentBidBalance = async () => {
     try {
       setIsLoading(true);
-      const response = await actor.balance_of_nft_origyn({ principal });
-      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
-      debug.log(JSON.stringify(response, null, 2));
-      if ('err' in response) {
-        showErrorMessage(ERROR.tokenBalanceRetrieval, response.err);
-        return;
-      } else {
-        const balanceResponse: BalanceResponse = response.ok;
-        const sentEscrows = balanceResponse.escrow;
-        const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
-        debug.log('bidsSent', bidsSent);
-        setBidsSent(bidsSent);
-      }
+      const balances = await getNftBalances(principal);
+      const sentEscrows = balances.escrow;
+      const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
+      debug.log('bidsSent', bidsSent);
+      setBidsSent(bidsSent);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -104,7 +92,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
 
   useEffect(() => {
     if (bidsSent?.length) {
-      parseBids();
+      fetchBids();
     }
   }, [bidsSent]);
 
