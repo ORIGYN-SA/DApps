@@ -100,8 +100,8 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
     <>
       {isLoading ? (
         <>
-          <HR marginTop={24} marginBottom={24} />
-          <LoadingContainer />
+          <HR marginTop={24} />
+          <LoadingContainer margin="24px" />
         </>
       ) : (
         <>

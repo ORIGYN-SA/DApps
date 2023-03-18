@@ -327,12 +327,10 @@ export function StartEscrowModal({
                 {status && (
                   <>
                     <p>{status}</p>
-                    <br />
-                    <br />
                   </>
                 )}
 
-                <LoadingContainer data-testid="loading-container" />
+                <LoadingContainer data-testid="loading-container" margin="24px" />
               </>
             ) : (
               <>

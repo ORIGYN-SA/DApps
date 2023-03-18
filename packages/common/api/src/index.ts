@@ -11,6 +11,7 @@ import M, {
   rejectEscrow as _rejectEscrow,
   withdrawEscrow as _withdrawEscrow,
   Account,
+  SaleInfoRequest,
 } from '@origyn/mintjs';
 
 export interface ActorResult<T> {
@@ -114,6 +115,100 @@ export const useApi = () => {
     } else {
       return response.ok;
     }
+  };
+
+  const getNftSaleInfo = async (): Promise<M.SaleInfoResponse> => {
+    const active: SaleInfoRequest = {
+      active: [],
+    };
+    const response = await actor.sale_info_nft_origyn(active);
+    debug.log('sale_info_nft_origyn response', response);
+
+    if ('err' in response) {
+      debug.log(response.err);
+      throw new Error(response.err.text || 'Unable to get NFT sale info.');
+    } else {
+      return response.ok;
+    }
+  };
+
+  const getActiveAuctions = async (saleInfo: M.SaleInfoResponse): Promise<M.AuctionStateStable[]> => {
+
+    if ('active' in saleInfo) {
+      const activeSalesRecords = saleInfo.active.records
+        .map((record) => {
+          return record[1];
+        }).filter((record) => record.length > 0);
+
+      if (activeSalesRecords.length > 0) {
+        const activeAuctions = activeSalesRecords
+          .map((record) => {
+            if ('auction' in record[0].sale_type) {
+              return record[0].sale_type.auction;
+            }
+          }).filter((auction) => auction !== undefined);
+        return activeAuctions;
+      }
+    };
+  };
+
+  const getActiveAttendedAuctions = (principal: Principal, activeAuctions: M.AuctionStateStable[]): M.AuctionStateStable[] => {
+    if (activeAuctions.length > 0) {
+      const activeAttendedAuctions = activeAuctions.filter((auctionState) => {
+        return auctionState.participants.some(
+          (participant) => participant[0].toText() === principal.toText(),
+        );
+      });
+      return activeAttendedAuctions;
+    }
+  };
+
+  const getActiveNftHistory = async (activeAttendedAuctions: M.AuctionStateStable[]): Promise<M.TransactionRecord[]> => {
+
+    const activeTokens: [string, [] | [bigint], [] | [bigint]][] = activeAttendedAuctions.map(
+      (auction): [string, [] | [bigint], [] | [bigint]] => {
+        const tokenId: [string, [] | [bigint], [] | [bigint]] = [auction.current_escrow[0].token_id, [], []];
+        return tokenId;
+      }
+    );
+
+    const response = await actor.history_batch_nft_origyn(activeTokens);
+    if ("err" in response[0]) {
+      debug.log(response[0].err);
+      throw new Error(response[0].err.text || 'Unable to get NFT history info.');
+    } else {
+      const activeNftHistory = response[0].ok;
+      return activeNftHistory;
+    }
+
+  };
+
+  const getActiveAttendedAuctionsTx = (activeAttendedAuctions: M.TransactionRecord[],): M.TransactionRecord[] => {
+    if (activeAttendedAuctions.length > 0) {
+      return activeAttendedAuctions
+        .flat()
+        .filter(
+          (record) =>
+            'auction_bid' in record.txn_type &&
+            'buyer' in record.txn_type.auction_bid &&
+            'principal' in record.txn_type.auction_bid.buyer &&
+            record.txn_type.auction_bid.buyer.principal.toText() === principal.toText(),
+        );
+    };
+  };
+
+  const getHighestSentBids = (attendedAuctionsTx: M.TransactionRecord[]): M.TransactionRecord[] => {
+    const bidsTokenIds = new Map<string, M.TransactionRecord>();
+    for (const transactionRecord of attendedAuctionsTx) {
+      const auctionBid = ('auction_bid' in transactionRecord.txn_type) ? transactionRecord.txn_type.auction_bid : null;
+      if (auctionBid) {
+        const token = transactionRecord.token_id;
+        if (!bidsTokenIds.has(token) || transactionRecord.timestamp > bidsTokenIds.get(token)!.timestamp) {
+          bidsTokenIds.set(token, transactionRecord);
+        }
+      }
+    }
+    return Array.from(bidsTokenIds.values());
   };
 
   const getDepositAccountNumber = async (): Promise<ActorResult<string>> => {
@@ -307,5 +402,11 @@ export const useApi = () => {
     rejectEscrow,
     withdrawEscrow,
     createBid,
+    getNftSaleInfo,
+    getActiveAuctions,
+    getActiveAttendedAuctions,
+    getActiveNftHistory,
+    getActiveAttendedAuctionsTx,
+    getHighestSentBids,
   };
 };

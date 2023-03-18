@@ -177,7 +177,7 @@ export const NFTPage = () => {
             content={[
               <Flex fullWidth flexFlow="column">
                 {isLoading ? (
-                  <LoadingContainer />
+                  <LoadingContainer margin="24px" />
                 ) : (
                   <Flex flexFlow="column">
                     <Container size="md" padding="80px" mdPadding="16px">

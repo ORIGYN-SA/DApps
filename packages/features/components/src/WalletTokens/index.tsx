@@ -141,11 +141,7 @@ export const WalletTokens = ({ children }: any) => {
               </Flex>,
             ]}
           />
-          {isLoading && (
-            <div style={{ marginTop: 5 }}>
-              <LoadingContainer />
-            </div>
-          )}
+          {isLoading && <LoadingContainer margin="16px" />}
         </Container>
       </Modal>
       <Button btnType="filled" onClick={handleModalOpen}>
