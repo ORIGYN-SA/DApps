@@ -167,8 +167,7 @@ export const useApi = () => {
 
     const activeTokens: [string, [] | [bigint], [] | [bigint]][] = activeAttendedAuctions.map(
       (auction): [string, [] | [bigint], [] | [bigint]] => {
-        const tokenId: [string, [] | [bigint], [] | [bigint]] = [auction.current_escrow[0].token_id, [], []];
-        return tokenId;
+        return [auction.current_escrow[0].token_id, [], []];
       }
     );
 

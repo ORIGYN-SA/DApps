@@ -6,7 +6,7 @@ import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { AuctionStateStable, EscrowRecord } from '@origyn/mintjs';
+import { AuctionStateStable } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
@@ -47,7 +47,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
     getActiveAttendedAuctionsTx,
     getHighestSentBids,
   } = useApi();
-  const { showUnexpectedErrorMessage } = useUserMessages();
+  const { showUnexpectedErrorMessage, showErrorMessage } = useUserMessages();
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeAuctions, setActiveAuctions] = useState<AuctionStateStable[]>([]);
@@ -56,33 +56,38 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
     try {
       setIsLoading(true);
       const activeAttendedAuctions = getActiveAttendedAuctions(principal, activeAuctions);
-      debug.log('attendedAuctions', activeAttendedAuctions);
-      const activeNftHistory = await getActiveNftHistory(activeAttendedAuctions);
-      debug.log('activeNftHistory', activeNftHistory);
-      const activeAttendedAuctionsTx = getActiveAttendedAuctionsTx(activeNftHistory);
-      debug.log('activeAttendedAuctionsTx', activeAttendedAuctionsTx);
-      const highestBidsSent = getHighestSentBids(activeAttendedAuctionsTx);
-      debug.log('highestBidsSent', highestBidsSent);
+      if (!activeAttendedAuctions) {
+        showErrorMessage('No active attended auctions');
+        return;
+      } else {
+        debug.log('activeAttendedAuctions', activeAttendedAuctions);
+        const activeNftHistory = await getActiveNftHistory(activeAttendedAuctions);
+        debug.log('activeNftHistory', activeNftHistory);
+        const activeAttendedAuctionsTx = getActiveAttendedAuctionsTx(activeNftHistory);
+        debug.log('activeAttendedAuctionsTx', activeAttendedAuctionsTx);
+        const highestBidsSent = getHighestSentBids(activeAttendedAuctionsTx);
+        debug.log('highestBidsSent', highestBidsSent);
 
-      const activeTokensIds = activeAttendedAuctions.map(
-        (auction) => auction.current_escrow[0]?.token_id,
-      );
+        const activeTokensIds = activeAttendedAuctions.map(
+          (auction) => auction.current_escrow[0]?.token_id,
+        );
 
-      const odcDataRaw = await getNftBatch(activeTokensIds);
+        const odcDataRaw = await getNftBatch(activeTokensIds);
 
-      const parsedOdcs = parseOdcs(odcDataRaw);
-      const parsedActiveBids = parsedOdcs.map((odc: OdcDataWithSale, index) => {
-        const bid = highestBidsSent[index];
-        const bidAmount = 'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.amount;
-        const bidDecimals =
-          'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.token['ic'].decimals;
-        return {
-          ...odc,
-          token_id: bid.token_id,
-          latest_bid: toLargerUnit(Number(bidAmount), Number(bidDecimals)).toString(),
-        };
-      });
-      setSentActiveBids(parsedActiveBids);
+        const parsedOdcs = parseOdcs(odcDataRaw);
+        const parsedActiveBids = parsedOdcs.map((odc: OdcDataWithSale, index) => {
+          const bid = highestBidsSent[index];
+          const bidAmount = 'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.amount;
+          const bidDecimals =
+            'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.token['ic'].decimals;
+          return {
+            ...odc,
+            token_id: bid.token_id,
+            latest_bid: toLargerUnit(Number(bidAmount), Number(bidDecimals)).toString(),
+          };
+        });
+        setSentActiveBids(parsedActiveBids);
+      }
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
