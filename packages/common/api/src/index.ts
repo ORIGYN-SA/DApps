@@ -199,12 +199,12 @@ export const useApi = () => {
 
   const getHighestSentBids = (attendedAuctionsTx: M.TransactionRecord[]): M.TransactionRecord[] => {
     const bidsTokenIds = new Map<string, M.TransactionRecord>();
-    for (const transactionRecord of attendedAuctionsTx) {
-      const auctionBid = ('auction_bid' in transactionRecord.txn_type) ? transactionRecord.txn_type.auction_bid : null;
+    for (const txRecord of attendedAuctionsTx) {
+      const auctionBid = ('auction_bid' in txRecord.txn_type) ? txRecord.txn_type.auction_bid : null;
       if (auctionBid) {
-        const token = transactionRecord.token_id;
-        if (!bidsTokenIds.has(token) || transactionRecord.timestamp > bidsTokenIds.get(token)!.timestamp) {
-          bidsTokenIds.set(token, transactionRecord);
+        const token = txRecord.token_id;
+        if (!bidsTokenIds.has(token) || txRecord.timestamp > bidsTokenIds.get(token)!.timestamp) {
+          bidsTokenIds.set(token, txRecord);
         }
       }
     }
