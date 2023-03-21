@@ -62,12 +62,19 @@ const Filter = ({
   return (
     <StyledFilter>
       <div className="desktopFilters">
-        <Flex justify="space-between" fullWidth smFlexFlow="row" mdFlexFlow="row" gap={8}>
-          <Flex align="center" gap={12} smFlexFlow="column">
-            <Button iconButton size="small">
+        <Flex fullWidth smFlexFlow="row" mdFlexFlow="row" gap={8}>
+          <div style={{ minWidth: '30%' }}>
+            <TextInput
+              name="search"
+              placeholder="Search"
+              inputSize="small"
+              onChange={(e) => onInput(e.target.value.toLowerCase())}
+            />
+          </div>
+            {/* <Button iconButton size="small">
               <Icons.FilterIcon />
-            </Button>
-            <div style={{ minWidth: 170 }}>
+            </Button> */}
+            <div style={{ minWidth: '20%' }}>
               <Select
                 inputSize="small"
                 placeholder="Filter"
@@ -79,16 +86,15 @@ const Filter = ({
                 options={filterOptions}
               />
             </div>
-          </Flex>
-          <Flex align="center" gap={12} smFlexFlow="row">
-            <TextInput
+
+            {/* <TextInput
               name="search"
               placeholder="Search"
               inputSize="small"
               onChange={(e) => onInput(e.target.value.toLowerCase())}
-            />
+            /> */}
 
-            <div style={{ minWidth: 170 }}>
+            {/* <div style={{ minWidth: 170 }}>
               <Select
                 inputSize="small"
                 placeholder="Sort"
@@ -99,8 +105,7 @@ const Filter = ({
                 }}
                 options={sortOptions}
               />
-            </div>
-          </Flex>
+            </div> */}
         </Flex>
       </div>
       <div className="mobileFilters">
