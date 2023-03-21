@@ -25,6 +25,7 @@ import {
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
 import { ERROR, STATUS, SUCCESS, VALIDATION } from '../constants';
+import { TokenIcon } from '@dapp/features-components';
 
 export type EscrowType = 'BuyNow' | 'Bid' | 'Offer';
 
@@ -344,20 +345,21 @@ export function StartEscrowModal({
                       <Select
                         name="token"
                         selectedOption={{
-                          label: token.symbol,
-                          value: token.symbol,
+                          /*@ts-ignore*/
+                          label: <><TokenIcon symbol={token.symbol} /> {token.symbol}</>,
+                          value: token.symbol
                         }}
                         handleChange={(opt) => onTokenChanged(opt.value)}
                         label="Token"
                         options={Object.keys(tokens).map((t) => ({
-                          label: tokens[t].symbol,
+                          label: <><TokenIcon symbol={tokens[t].symbol} /> {tokens[t].symbol}</> ,
                           value: t,
                         }))}
                       />
                     ) : (
                       <>
                         <span>Token</span>
-                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>{token.symbol}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}> <TokenIcon symbol={token.symbol} /> {token.symbol}</span>
                       </>
                     )}
                     {escrowType == 'BuyNow' ? (
