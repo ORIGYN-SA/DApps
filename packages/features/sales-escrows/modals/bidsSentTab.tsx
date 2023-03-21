@@ -2,11 +2,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  getActiveAttendedAuctions,
+  getTxOfActiveAttendedAuctions,
+  getHighestSentBids,
+} from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { AuctionStateStable } from '@origyn/mintjs';
+import { AuctionStateStable, TransactionRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
@@ -37,57 +44,48 @@ interface SentActiveBidsProps extends OdcDataWithSale {
 
 export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const debug = useDebug();
-  const { principal, actor } = useContext(AuthContext);
-  const {
-    getNftBatch,
-    getNftSaleInfo,
-    getActiveAuctions,
-    getActiveAttendedAuctions,
-    getActiveNftHistory,
-    getActiveAttendedAuctionsTx,
-    getHighestSentBids,
-  } = useApi();
+  const { principal } = useContext(AuthContext);
+  const { getNftBatch, getNftSaleInfo, getNftsHistory } = useApi();
   const { showUnexpectedErrorMessage, showErrorMessage } = useUserMessages();
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeAuctions, setActiveAuctions] = useState<AuctionStateStable[]>([]);
+  const [activeAttendedAuctions, setActiveAttendedAuctions] = useState<AuctionStateStable[]>([]);
 
   const fetchSentBids = async () => {
     try {
       setIsLoading(true);
-      const activeAttendedAuctions = getActiveAttendedAuctions(principal, activeAuctions);
-      if (!activeAttendedAuctions) {
-        showErrorMessage('No active attended auctions');
-        return;
-      } else {
-        debug.log('activeAttendedAuctions', activeAttendedAuctions);
-        const activeNftHistory = await getActiveNftHistory(activeAttendedAuctions);
-        debug.log('activeNftHistory', activeNftHistory);
-        const activeAttendedAuctionsTx = getActiveAttendedAuctionsTx(activeNftHistory);
-        debug.log('activeAttendedAuctionsTx', activeAttendedAuctionsTx);
-        const highestBidsSent = getHighestSentBids(activeAttendedAuctionsTx);
-        debug.log('highestBidsSent', highestBidsSent);
+      debug.log('activeAttendedAuctions', activeAttendedAuctions);
 
-        const activeTokensIds = activeAttendedAuctions.map(
-          (auction) => auction.current_escrow[0]?.token_id,
-        );
+      const activeNftHistory = await getNftsHistory(activeAttendedAuctions);
+      debug.log('activeNftHistory', activeNftHistory);
 
-        const odcDataRaw = await getNftBatch(activeTokensIds);
+      const activeAttendedAuctionsTx = getTxOfActiveAttendedAuctions(activeNftHistory, principal);
+      debug.log('activeAttendedAuctionsTx', activeAttendedAuctionsTx);
 
-        const parsedOdcs = parseOdcs(odcDataRaw);
-        const parsedActiveBids = parsedOdcs.map((odc: OdcDataWithSale, index) => {
-          const bid = highestBidsSent[index];
-          const bidAmount = 'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.amount;
-          const bidDecimals =
-            'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.token['ic'].decimals;
-          return {
-            ...odc,
-            token_id: bid.token_id,
-            latest_bid: toLargerUnit(Number(bidAmount), Number(bidDecimals)).toString(),
-          };
-        });
-        setSentActiveBids(parsedActiveBids);
-      }
+      const highestBidsSent = getHighestSentBids(activeAttendedAuctionsTx);
+      debug.log('highestBidsSent', highestBidsSent);
+
+      const activeTokensIds = activeAttendedAuctionsTx.map((tx: TransactionRecord) => tx.token_id);
+      debug.log('activeTokensIds', activeTokensIds);
+
+      const odcDataRaw = await getNftBatch(activeTokensIds);
+      debug.log('odcDataRaw', odcDataRaw);
+
+      const parsedOdcs = parseOdcs(odcDataRaw);
+      debug.log('parsedOdcsBidSent', parsedOdcs);
+      const parsedActiveBids = parsedOdcs.map((odc: OdcDataWithSale, index) => {
+        const bid: TransactionRecord = highestBidsSent[index];
+        debug.log('bid' + index, bid);
+        const bidAmount = 'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.amount;
+        const bidDecimals =
+          'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.token['ic'].decimals;
+        return {
+          ...odc,
+          token_id: bid.token_id,
+          latest_bid: toLargerUnit(Number(bidAmount), Number(bidDecimals)).toString(),
+        };
+      });
+      setSentActiveBids(parsedActiveBids);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -100,11 +98,10 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
       setIsLoading(true);
       const salesInfo = await getNftSaleInfo();
       debug.log('salesInfo', salesInfo);
-      debug.log('actor', actor);
       if (salesInfo) {
-        const activeAuctions = await getActiveAuctions(salesInfo);
-        debug.log('activeAuctions', activeAuctions);
-        setActiveAuctions(activeAuctions);
+        const activeAttendedAuctions = await getActiveAttendedAuctions(salesInfo, principal);
+        debug.log('activeAttendedAuctions', activeAttendedAuctions);
+        setActiveAttendedAuctions(activeAttendedAuctions);
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -118,8 +115,10 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   }, []);
 
   useEffect(() => {
-    fetchSentBids();
-  }, [activeAuctions]);
+    if (activeAttendedAuctions.length > 0) {
+      fetchSentBids();
+    }
+  }, [activeAttendedAuctions]);
 
   return (
     <>
@@ -134,7 +133,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {sentActivedBids.map((bid: any, index: number) => (
+                {sentActivedBids.map((bid: SentActiveBidsProps, index: number) => (
                   <>
                     <div key={index} style={styles.gridItem}>
                       {bid.hasPreviewAsset ? (
@@ -159,14 +158,14 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
+                      <TokenIcon symbol={bid.tokenSymbol} />
+                      {bid.latest_bid}
+                    </div>
+                    <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
                       <TokenIcon symbol={bid.tokenSymbol} />
                       {toLargerUnit(bid.currentBid, Number(bid.token.decimals)).toFixed()}
-                    </div>
-                    <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
-                      <TokenIcon symbol={bid.tokenSymbol} />
-                      {bid.amount}
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
