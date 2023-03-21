@@ -140,6 +140,15 @@ export const NFTPage = () => {
     return toLargerUnit(odc.reserve, odc.token.decimals).toFixed();
   };
 
+  const endSaleNft = async () => {
+    // const route = await useRoute();
+    // setCanisterId(route.canisterId);
+
+    // OrigynClient.getInstance().init(true, canisterId, { actor });
+
+    const r: any = await actor.end_sale_nft_origyn(state ,params.nft_id, principalId)
+  }
+
   useEffect(() => {
     setPrincipalId(
       !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
@@ -152,6 +161,11 @@ export const NFTPage = () => {
 
   useEffect(() => {
     let intervalId: any;
+
+    if (nftEndSale < timeInNanos()) {
+      endSaleNft()
+    }
+
     if (actor) {
       fetchData();
       if (!intervalId) {
@@ -160,6 +174,7 @@ export const NFTPage = () => {
         }, 5000);
       }
     }
+    
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
