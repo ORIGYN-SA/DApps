@@ -46,7 +46,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const debug = useDebug();
   const { principal } = useContext(AuthContext);
   const { getNftBatch, getNftSaleInfo, getNftsHistory } = useApi();
-  const { showUnexpectedErrorMessage, showErrorMessage } = useUserMessages();
+  const { showUnexpectedErrorMessage } = useUserMessages();
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeAttendedAuctions, setActiveAttendedAuctions] = useState<AuctionStateStable[]>([]);

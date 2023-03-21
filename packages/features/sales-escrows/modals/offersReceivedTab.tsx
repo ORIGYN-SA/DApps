@@ -145,7 +145,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {parsedOffersReceived.map((offer: ReceivedOffersProps, index: number) => (
+                {parsedOffersReceived.map((offer: ReceivedOffersProps) => (
                   <>
                     <div style={styles.gridItem}>
                       {offer.hasPreviewAsset ? (
