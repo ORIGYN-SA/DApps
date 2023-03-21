@@ -141,13 +141,8 @@ export const NFTPage = () => {
   };
 
   const endSaleNft = async () => {
-    // const route = await useRoute();
-    // setCanisterId(route.canisterId);
-
-    // OrigynClient.getInstance().init(true, canisterId, { actor });
-
-    const r: any = await actor.end_sale_nft_origyn(state ,params.nft_id, principalId)
-  }
+    await actor.sale_nft_origyn({end_sale: params.nft_id});
+  };
 
   useEffect(() => {
     setPrincipalId(
@@ -163,7 +158,7 @@ export const NFTPage = () => {
     let intervalId: any;
 
     if (nftEndSale < timeInNanos()) {
-      endSaleNft()
+      endSaleNft();
     }
 
     if (actor) {
@@ -174,7 +169,7 @@ export const NFTPage = () => {
         }, 5000);
       }
     }
-    
+
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
