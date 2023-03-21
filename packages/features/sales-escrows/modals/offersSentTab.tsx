@@ -146,9 +146,9 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {offerSentWithSaleData.map((offer: SentOffersProps) => (
-                  <>
-                    <div key={`Image${offer.token_id}`} style={styles.gridItem}>
+                {offerSentWithSaleData.map((offer: SentOffersProps, index: number) => (
+                  <React.Fragment key={`${index}Row`}>
+                    <div style={styles.gridItem}>
                       {offer.hasPreviewAsset ? (
                         <img
                           style={{ height: '42px', width: 'auto', borderRadius: '12px' }}
@@ -164,17 +164,17 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                         />
                       )}
                     </div>
-                    <div key={`TokenId${offer.token_id}`} style={styles.gridItem}>
+                    <div style={styles.gridItem}>
                       <p>{offer.token_id}</p>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
-                    <div key={`Amount${offer.token_id}`} style={styles.gridItem}>
+                    <div style={styles.gridItem}>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
                       <br />
                       <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
                       {offer.amount}
                     </div>
-                    <div key={`LockToDate${offer.token_id}`} style={styles.gridItem}>
+                    <div style={styles.gridItem}>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>Status</span>
                       <br />
                       <span>
@@ -185,7 +185,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                           : 'Lock date not present'}
                       </span>
                     </div>
-                    <div key={`Actions${offer.token_id}`} style={styles.gridItem}>
+                    <div style={styles.gridItem}>
                       {Date.now() * 1e6 > parseInt(offer.lock_to_date) ? (
                         <Button btnType="filled" size="small" disabled>
                           Withdraw
@@ -200,7 +200,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                         </Button>
                       )}
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}{' '}
               </div>
             </div>
