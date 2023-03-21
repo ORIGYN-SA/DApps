@@ -108,8 +108,8 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {receivedActivedBids.map((bid: ReceivedActiveBidsProps) => (
-                  <>
+                {receivedActivedBids.map((bid: ReceivedActiveBidsProps, index: number) => (
+                  <React.Fragment key={`${index}Row`}>
                     <div style={styles.gridItem}>
                       {bid.hasPreviewAsset ? (
                         <img
@@ -135,7 +135,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
                       <span>{formatDistanceToNow(Number(bid.auction.end_date / BigInt(1e6)))}</span>
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </div>
