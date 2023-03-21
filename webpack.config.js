@@ -18,7 +18,7 @@ module.exports = (env, argv, dAppConfig) => ({
   entry: {
     index: asset_entry,
   },
-  devtool: argv.mode ? 'source-map' : false,
+  devtool: argv.mode ? 'inline-source-map' : false,
   optimization: {
     minimize: !argv.mode,
     minimizer: [new TerserPlugin()],
