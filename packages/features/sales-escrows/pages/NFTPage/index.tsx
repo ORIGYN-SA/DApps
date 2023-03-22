@@ -84,6 +84,8 @@ export const NFTPage = () => {
     }
   };
 
+  console.log('odc', odc)
+
   const nftEndSale = odc?.auction?.end_date;
 
   const fetchCollection = async () => {
@@ -140,6 +142,10 @@ export const NFTPage = () => {
     return toLargerUnit(odc.reserve, odc.token.decimals).toFixed();
   };
 
+  const endSaleNft = async () => {
+    await actor.sale_nft_origyn({end_sale: params.nft_id});
+  };
+
   useEffect(() => {
     setPrincipalId(
       !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
@@ -152,6 +158,13 @@ export const NFTPage = () => {
 
   useEffect(() => {
     let intervalId: any;
+
+    // if the auction ended, this function will trigger the end_sale on the current NFT
+    // this will be used as a checker
+    if (odc.auctionOpen == true && nftEndSale < timeInNanos()) {
+      endSaleNft();
+    }
+
     if (actor) {
       fetchData();
       if (!intervalId) {
@@ -160,6 +173,7 @@ export const NFTPage = () => {
         }, 5000);
       }
     }
+
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
