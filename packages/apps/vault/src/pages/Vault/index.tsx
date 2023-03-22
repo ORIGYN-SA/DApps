@@ -306,7 +306,7 @@ const VaultPage = () => {
    * is ready, then every 5 seconds */
   useEffect(() => {
     fetchData();
-    console.log('collectionData', collectionData);
+    debug.log('collectionData', collectionData);
     let intervalId: any;
     if (!intervalId) {
       intervalId = setInterval(() => {
