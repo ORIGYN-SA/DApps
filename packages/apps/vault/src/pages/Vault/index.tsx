@@ -374,6 +374,8 @@ const VaultPage = () => {
     return price.toFixed();
   };
 
+  console.log('collection', collectionData)
+
   return (
     <>
       {loggedIn ? (
