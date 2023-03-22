@@ -11,20 +11,34 @@ import { PlaceholderIcon } from '@dapp/common-assets';
 import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
-import Filter from '../../../../vault/src/pages/Vault/Filter';
 import {
   Card,
   Container,
   Flex,
+  Button,
   HR,
   Grid,
   Image,
   SecondaryNav,
   ShowMoreBlock,
+  theme,
 } from '@origyn/origyn-art-ui';
+import {
+  WebsiteSVG,
+  DiscordSVG,
+  DistriktSVG,
+  DscvrSVG,
+  TwitterSVG,
+  MediumSVG,
+} from '../../../../../features/components/src/SocialMediaSVG';
+import Filter from './Filters';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
+`;
+
+const SocialMediaButton = styled(Button)`
+  background: ${theme.colors.BACKGROUND};
 `;
 
 const Marketplace = () => {
@@ -152,6 +166,8 @@ const Marketplace = () => {
     dispatch({ type: 'filteredOdcs', payload: filtered });
   }, [filter, sort, inputText, odcs]);
 
+  console.log('hello4', collectionData);
+
   return (
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
@@ -173,17 +189,63 @@ const Marketplace = () => {
                           <Image
                             src={`https://prptl.io/-/${canisterId}/collection/preview`}
                             alt="text"
-                            style={{ width: 200 }}
+                            style={{ width: 110, height: 96 }}
                           />
                         ) : (
                           <Flex align="center" justify="center">
-                            <PlaceholderIcon width={200} height={200} />
+                            <PlaceholderIcon width={110} height={96} />
                           </Flex>
                         )}
-                        <Flex flexFlow="column" justify="space-between" gap={8}>
-                          <h2>
-                            <b>{collectionData?.displayName}</b>
-                          </h2>
+                        <Flex flexFlow="column" justify="space-between" fullWidth gap={8}>
+                          <Flex
+                            flexFlow="row"
+                            align="center"
+                            fullWidth
+                            justify="space-between"
+                            smFlexFlow="column"
+                          >
+                            <h2>
+                              <b>{collectionData?.displayName}</b>
+                            </h2>
+                            <Flex
+                              style={{
+                                flexWrap: 'wrap',
+                                marginTop: '8px',
+                                alignContent: 'flex-end',
+                              }}
+                              gap={8}
+                            >
+                              {collectionData.socialLinks?.map((link, index) => (
+                                <SocialMediaButton
+                                  as="a"
+                                  iconButton
+                                  target="_blank"
+                                  href={link.url}
+                                  key={index}
+                                >
+                                  {
+                                    {
+                                      twitter: <TwitterSVG />,
+                                      discord: <DiscordSVG />,
+                                      medium: <MediumSVG />,
+                                      dscvr: <DscvrSVG />,
+                                      distrikt: <DistriktSVG />,
+                                      website: <WebsiteSVG />,
+                                    }[link.type]
+                                  }
+                                </SocialMediaButton>
+                              ))}
+                              <SocialMediaButton
+                                as="a"
+                                iconButton
+                                target="_blank"
+                                href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
+                              >
+                                <p style={{ color: theme.colors.TEXT }}>Ledger</p>
+                              </SocialMediaButton>
+                            </Flex>
+                          </Flex>
+
                           <p>
                             <span className="secondary_color">Created by </span>
                             <span className="secondary_color">
@@ -199,7 +261,7 @@ const Marketplace = () => {
                           </Flex>
                           <br />
                           <ShowMoreBlock btnText="Read More">
-                            <p className="secondary_color">{collectionData?.description}</p>
+                            <p>{collectionData?.description}</p>
                           </ShowMoreBlock>
                           <br />
                           <br />

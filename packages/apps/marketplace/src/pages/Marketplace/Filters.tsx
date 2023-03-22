@@ -105,6 +105,19 @@ const Filter = ({
             />
           </div>
 
+          <div style={{ minWidth: '20%' }}>
+            <Select
+              inputSize="small"
+              placeholder="Sort"
+              selectedOption={sort}
+              handleChange={(opt) => {
+                onChangeSort(opt.value);
+                setSort(opt);
+              }}
+              options={sortOptions}
+            />
+          </div>
+
           {/* <TextInput
               name="search"
               placeholder="Search"
