@@ -335,9 +335,14 @@ export function StartEscrowModal({
               </>
             ) : (
               <>
-                <h2>
-                  Send escrow for <strong>{odc.id}</strong>?
-                </h2>
+                {escrowType === 'Offer' ? (
+                  <h2>Make an Offer</h2>
+                ) : (
+                  <h2>
+                    Send escrow for <strong>{odc.id}</strong>?
+                  </h2>
+                )}
+
                 <br />
                 {!isLoading && (
                   <Flex flexFlow="column" gap={8}>
@@ -346,20 +351,31 @@ export function StartEscrowModal({
                         name="token"
                         selectedOption={{
                           /*@ts-ignore*/
-                          label: <><TokenIcon symbol={token.symbol} /> {token.symbol}</>,
-                          value: token.symbol
+                          label: (
+                            <>
+                              <TokenIcon symbol={token.symbol} /> {token.symbol}
+                            </>
+                          ),
+                          value: token.symbol,
                         }}
                         handleChange={(opt) => onTokenChanged(opt.value)}
                         label="Token"
                         options={Object.keys(tokens).map((t) => ({
-                          label: <><TokenIcon symbol={tokens[t].symbol} /> {tokens[t].symbol}</> ,
+                          label: (
+                            <>
+                              <TokenIcon symbol={tokens[t].symbol} /> {tokens[t].symbol}
+                            </>
+                          ),
                           value: t,
                         }))}
                       />
                     ) : (
                       <>
                         <span>Token</span>
-                        <span style={{ color: theme.colors.SECONDARY_TEXT }}> <TokenIcon symbol={token.symbol} /> {token.symbol}</span>
+                        <span style={{ color: theme.colors.SECONDARY_TEXT }}>
+                          {' '}
+                          <TokenIcon symbol={token.symbol} /> {token.symbol}
+                        </span>
                       </>
                     )}
                     {escrowType == 'BuyNow' ? (
@@ -416,8 +432,8 @@ export function StartEscrowModal({
                       </>
                     )}
                     <Flex align="center" justify="flex-end">
-                      <Button btnType="accent" type="submit" disabled={hasErrors()}>
-                        Send Escrow
+                      <Button btnType="filled" type="submit" disabled={hasErrors()}>
+                        Submit
                       </Button>
                     </Flex>
                   </Flex>
