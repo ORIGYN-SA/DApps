@@ -421,23 +421,24 @@ const VaultPage = () => {
                           </StyledBlackItemCard>
                         ))}
                         <p className="small_text secondary_color">Last Updated: {time}</p>
-                        <h6>Token Actions</h6>
+                        {/* <h6>Token Actions</h6> */}
                         <Button btnType="filled" onClick={() => setOpenTrx(true)}>
                           Transfer Tokens
                         </Button>
                         <WalletTokens>Manage Tokens</WalletTokens>
 
-                        <h6>Active Transactions</h6>
+                        <h6>Manage Transactions</h6>
+                        <Button btnType="outlined" onClick={() => setOpenManageDeposit(true)}>
+                          Manage Deposits
+                        </Button>
                         {showManageEscrowsButton ? (
-                          <Button btnType="filled" onClick={() => setEscrowsModalOpen(true)}>
+                          <Button btnType="outlined" onClick={() => setEscrowsModalOpen(true)}>
                             Manage Escrows
                           </Button>
                         ) : (
                           <Button disabled>No assets in Escrow</Button>
                         )}
-                        <Button btnType="filled" onClick={() => setOpenManageDeposit(true)}>
-                          Manage Deposits
-                        </Button>
+
                         {activeWalletProvider && (
                           <StyledBlackCard align="center" padding="12px" justify="space-between">
                             <Flex align="center" gap={12}>
