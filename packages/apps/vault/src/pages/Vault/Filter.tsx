@@ -70,8 +70,6 @@ const Filter = ({
   const [filter, setFilter] = useState(initialFilter);
   const [sort, setSort] = useState(initialSort);
 
-  const SearchText = <><SearchIcon/> Search </>
-
   return (
     <StyledFilter>
       <div className="desktopFilters">
