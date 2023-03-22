@@ -145,8 +145,8 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {parsedOffersReceived.map((offer: ReceivedOffersProps) => (
-                  <>
+                {parsedOffersReceived.map((offer: ReceivedOffersProps, index: number) => (
+                  <React.Fragment key={`${index}Row`}>
                     <div style={styles.gridItem}>
                       {offer.hasPreviewAsset ? (
                         <img
@@ -192,7 +192,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                         Reject
                       </Button>
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </div>
