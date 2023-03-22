@@ -199,7 +199,7 @@ const Marketplace = () => {
                           </Flex>
                           <br />
                           <ShowMoreBlock btnText="Read More">
-                            <p className="secondary_color">{collectionData?.description}</p>
+                            <p>{collectionData?.description}</p>
                           </ShowMoreBlock>
                           <br />
                           <br />

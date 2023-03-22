@@ -375,6 +375,8 @@ const VaultPage = () => {
     return price.toFixed();
   };
 
+  console.log('collection', collectionData)
+
   return (
     <>
       {loggedIn ? (
@@ -553,7 +555,7 @@ const VaultPage = () => {
                             </Flex>
                             <br />
                             <ShowMoreBlock btnText="Read More">
-                              <p className="secondary_color">{collectionData.description}</p>
+                              <p>{collectionData.description}</p>
                             </ShowMoreBlock>
                             <br />
                             <br />
