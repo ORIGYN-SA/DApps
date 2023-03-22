@@ -31,6 +31,7 @@ import {
   SecondaryNav,
   Container,
   ShowMoreBlock,
+  theme,
 } from '@origyn/origyn-art-ui';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useUserMessages } from '@dapp/features-user-messages';
@@ -67,7 +68,7 @@ const GuestContainer = () => {
 };
 
 const SocialMediaButton = styled(Button)`
-  background: #242424;
+  background: ${theme.colors.BACKGROUND};
 `;
 
 const StyledSectionTitle = styled.h2`
@@ -532,7 +533,7 @@ const VaultPage = () => {
                                   target="_blank"
                                   href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
                                 >
-                                  Ledger
+                                  <p style={{ color: theme.colors.TEXT }}>Ledger</p>
                                 </SocialMediaButton>
                               </Flex>
                             </Flex>

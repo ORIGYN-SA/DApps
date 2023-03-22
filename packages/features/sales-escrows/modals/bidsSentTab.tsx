@@ -2,11 +2,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  getActiveAttendedAuctions,
+  getTxOfActiveAttendedAuctions,
+  getHighestSentBids,
+} from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord } from '@origyn/mintjs';
+import { AuctionStateStable, TransactionRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
@@ -32,37 +39,52 @@ interface BidsSentTabProps {
 }
 interface SentActiveBidsProps extends OdcDataWithSale {
   token_id: string;
-  amount: string;
-  isNftOwner: boolean;
+  latest_bid: string;
 }
 
 export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const debug = useDebug();
   const { principal } = useContext(AuthContext);
-  const { getNftBatch, getNftBalances } = useApi();
+  const { getNftBatch, getNftSaleInfo, getNftsHistory } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
-  const [bidsSent, setBidsSent] = useState<EscrowRecord[]>();
   const [isLoading, setIsLoading] = useState(false);
+  const [activeAttendedAuctions, setActiveAttendedAuctions] = useState<AuctionStateStable[]>([]);
 
-  const fetchBids = async () => {
+  const fetchSentBids = async () => {
     try {
       setIsLoading(true);
-      const tokenIds = bidsSent.map((offer) => offer.token_id);
-      const odcs = await getNftBatch(tokenIds);
-      const parsedOdcs = parseOdcs(odcs);
-      const parsedActiveBids = parsedOdcs
-        .map((odc: OdcDataWithSale, index) => {
-          const bid = bidsSent[index];
-          return {
-            ...odc,
-            token_id: bid.token_id,
-            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toFixed(),
-            isNftOwner: odc.ownerPrincipalId == principal?.toText(),
-          };
-        })
-        .filter((sentBid) => sentBid.auctionOpen && !sentBid.isNftOwner);
-      debug.log('parsedActiveBids', parsedActiveBids);
+      debug.log('activeAttendedAuctions', activeAttendedAuctions);
+
+      const activeNftHistory = await getNftsHistory(activeAttendedAuctions);
+      debug.log('activeNftHistory', activeNftHistory);
+
+      const activeAttendedAuctionsTx = getTxOfActiveAttendedAuctions(activeNftHistory, principal);
+      debug.log('activeAttendedAuctionsTx', activeAttendedAuctionsTx);
+
+      const highestBidsSent = getHighestSentBids(activeAttendedAuctionsTx);
+      debug.log('highestBidsSent', highestBidsSent);
+
+      const activeTokensIds = activeAttendedAuctionsTx.map((tx: TransactionRecord) => tx.token_id);
+      debug.log('activeTokensIds', activeTokensIds);
+
+      const odcDataRaw = await getNftBatch(activeTokensIds);
+      debug.log('odcDataRaw', odcDataRaw);
+
+      const parsedOdcs = parseOdcs(odcDataRaw);
+      debug.log('parsedOdcsBidSent', parsedOdcs);
+      const parsedActiveBids = parsedOdcs.map((odc: OdcDataWithSale, index) => {
+        const bid: TransactionRecord = highestBidsSent[index];
+        debug.log('bid' + index, bid);
+        const bidAmount = 'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.amount;
+        const bidDecimals =
+          'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.token['ic'].decimals;
+        return {
+          ...odc,
+          token_id: bid.token_id,
+          latest_bid: toLargerUnit(Number(bidAmount), Number(bidDecimals)).toString(),
+        };
+      });
       setSentActiveBids(parsedActiveBids);
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -74,11 +96,13 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const getSentBidBalance = async () => {
     try {
       setIsLoading(true);
-      const balances = await getNftBalances(principal);
-      const sentEscrows = balances.escrow;
-      const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
-      debug.log('bidsSent', bidsSent);
-      setBidsSent(bidsSent);
+      const salesInfo = await getNftSaleInfo();
+      debug.log('salesInfo', salesInfo);
+      if (salesInfo) {
+        const activeAttendedAuctions = await getActiveAttendedAuctions(salesInfo, principal);
+        debug.log('activeAttendedAuctions', activeAttendedAuctions);
+        setActiveAttendedAuctions(activeAttendedAuctions);
+      }
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -91,10 +115,10 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   }, []);
 
   useEffect(() => {
-    if (bidsSent?.length) {
-      fetchBids();
+    if (activeAttendedAuctions.length > 0) {
+      fetchSentBids();
     }
-  }, [bidsSent]);
+  }, [activeAttendedAuctions]);
 
   return (
     <>
@@ -109,9 +133,9 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {sentActivedBids.map((bid: any, index: number) => (
-                  <>
-                    <div key={index} style={styles.gridItem}>
+                {sentActivedBids.map((bid: SentActiveBidsProps, index: number) => (
+                  <React.Fragment key={`${index}Row`}>
+                    <div style={styles.gridItem}>
                       {bid.hasPreviewAsset ? (
                         <img
                           style={{
@@ -134,20 +158,20 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
+                      <TokenIcon symbol={bid.tokenSymbol} />
+                      {bid.latest_bid}
+                    </div>
+                    <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
                       <TokenIcon symbol={bid.tokenSymbol} />
                       {toLargerUnit(bid.currentBid, Number(bid.token.decimals)).toFixed()}
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
-                      <TokenIcon symbol={bid.tokenSymbol} />
-                      {bid.amount}
-                    </div>
-                    <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
                       {formatDistanceToNow(Number(bid.auction.end_date / BigInt(1e6)))}
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </div>

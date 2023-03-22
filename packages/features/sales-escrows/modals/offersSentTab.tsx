@@ -147,8 +147,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
                 {offerSentWithSaleData.map((offer: SentOffersProps, index: number) => (
-                  <>
-                    <div key={index} style={styles.gridItem}>
+                  <React.Fragment key={`${index}Row`}>
+                    <div style={styles.gridItem}>
                       {offer.hasPreviewAsset ? (
                         <img
                           style={{ height: '42px', width: 'auto', borderRadius: '12px' }}
@@ -165,18 +165,14 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                       )}
                     </div>
                     <div style={styles.gridItem}>
-                      <div>
-                        <p>{offer.token_id}</p>
-                      </div>
+                      <p>{offer.token_id}</p>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
                       <br />
-                      <div>
-                        <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
-                        {offer.amount}
-                      </div>
+                      <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
+                      {offer.amount}
                     </div>
                     <div style={styles.gridItem}>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>Status</span>
@@ -204,7 +200,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                         </Button>
                       )}
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}{' '}
               </div>
             </div>
