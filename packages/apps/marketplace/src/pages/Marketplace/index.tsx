@@ -11,7 +11,6 @@ import { PlaceholderIcon } from '@dapp/common-assets';
 import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
-import Filter from '../../../../vault/src/pages/Vault/Filter';
 import {
   Card,
   Container,
@@ -32,6 +31,7 @@ import {
   TwitterSVG,
   MediumSVG,
 } from '../../../../../features/components/src/SocialMediaSVG';
+import Filter from './Filters';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
