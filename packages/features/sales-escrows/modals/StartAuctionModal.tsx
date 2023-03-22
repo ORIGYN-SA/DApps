@@ -21,6 +21,8 @@ import { MarketTransferRequest } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { ERROR, SUCCESS, VALIDATION } from '../constants';
+import { TokenIcon } from '@dapp/features-components';
+
 
 const dateNow = new Date();
 const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
@@ -212,26 +214,33 @@ export function StartAuctionModal({
                 <br />
                 <Flex as="form" onSubmit={onSubmit} action="" flexFlow="column" gap={8}>
                   <Select
-                    label="Token"
+                    label="Token*"
                     name="token"
                     /*@ts-ignore*/
-                    selectedOption={{ label: values.token, value: values.token }}
+                    selectedOption={{ label: <><TokenIcon symbol={values.token} /> {values.token}</>, value: values.token }}
                     handleChange={(v) => onChange(null, 'token', v.value)}
                     options={Object.keys(activeTokens).map((t) => ({
-                      label: activeTokens[t].symbol,
+                      label: <><TokenIcon symbol={activeTokens[t].symbol} /> {activeTokens[t].symbol}</>,
                       value: t,
                     }))}
                   />
                   <TextInput
                     required
-                    label="Starting Price"
+                    label="Starting Price*"
                     name="startPrice"
                     value={values.startPrice}
                     onChange={(e) => onCurrencyChanged('startPrice', e.target.value)}
                     error={errors?.startPrice}
                   />
+                   <TextInput
+                    label="Reserve Price (Optional)"
+                    name="reservePrice"
+                    value={values.reservePrice}
+                    onChange={(e) => onCurrencyChanged('reservePrice', e.target.value)}
+                    error={errors?.reservePrice}
+                  />
                   <TextInput
-                    label="Buy Now Price"
+                    label="Buy Now Price (Optional)"
                     name="buyNowPrice"
                     value={values.buyNowPrice}
                     onChange={(e) => onCurrencyChanged('buyNowPrice', e.target.value)}
@@ -239,34 +248,28 @@ export function StartAuctionModal({
                   />
                   <TextInput
                     required
-                    label="Minimum Increase"
+                    label="Minimum Increase*"
                     name="minIncrease"
                     value={values.minIncrease}
                     onChange={(e) => onCurrencyChanged('minIncrease', e.target.value)}
                     error={errors?.minIncrease}
                   />
-                  <TextInput
-                    label="Reserve Price"
-                    name="reservePrice"
-                    value={values.reservePrice}
-                    onChange={(e) => onCurrencyChanged('reservePrice', e.target.value)}
-                    error={errors?.reservePrice}
-                  />
                   <LocalizationProvider fullWidth dateAdapter={AdapterMoment}>
                     <DatePicker
-                      label="Set Auction Length"
+                      label="Set Auction Length*"
                       name="endDate"
                       selected={values.endDate}
                       onChange={(d) => onChange(null, 'endDate', d)}
                       error={errors?.endDate}
                     />
                   </LocalizationProvider>
+                  
                   <br />
                   <HR />
                   <Flex align="center" justify="flex-end" gap={16}>
-                    <Button onClick={() => onClose()}>Cancel</Button>
-                    <Button type="submit" disabled={hasErrors()}>
-                      Start
+                    {/* <Button onClick={() => onClose()}>Cancel</Button> */}
+                    <Button btnType='filled' type="submit" disabled={hasErrors()}>
+                      Submit
                     </Button>
                   </Flex>
                 </Flex>
