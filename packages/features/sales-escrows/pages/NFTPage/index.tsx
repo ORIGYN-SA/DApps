@@ -84,6 +84,8 @@ export const NFTPage = () => {
     }
   };
 
+  console.log('odc', odc)
+
   const nftEndSale = odc?.auction?.end_date;
 
   const fetchCollection = async () => {
@@ -157,7 +159,9 @@ export const NFTPage = () => {
   useEffect(() => {
     let intervalId: any;
 
-    if (nftEndSale < timeInNanos()) {
+    // if the auction ended, this function will trigger the end_sale on the current NFT
+    // this will be used as a checker
+    if (odc.auctionOpen == true && nftEndSale < timeInNanos()) {
       endSaleNft();
     }
 
