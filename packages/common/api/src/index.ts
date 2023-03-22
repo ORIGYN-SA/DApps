@@ -135,7 +135,6 @@ export const useApi = () => {
   const getNftsHistory = async (
     activeAttendedAuctions: M.AuctionStateStable[],
   ): Promise<M.TransactionRecord[]> => {
-
     const activeTokens: [string, [] | [bigint], [] | [bigint]][] = activeAttendedAuctions.map(
       (auction): [string, [] | [bigint], [] | [bigint]] => {
         return [auction.current_escrow[0].token_id, [], []];
@@ -144,7 +143,11 @@ export const useApi = () => {
     try {
       const response = await actor.history_batch_nft_origyn(activeTokens);
 
-      if (Array.isArray(response) && response.length > 0 && ('err' in response[0] || 'ok' in response[0])) {
+      if (
+        Array.isArray(response) &&
+        response.length > 0 &&
+        ('err' in response[0] || 'ok' in response[0])
+      ) {
         if ('err' in response[0]) {
           debug.log(response[0].err);
           throw new Error(response[0].err.text || 'Unable to get NFT history info.');
@@ -174,7 +177,7 @@ export const useApi = () => {
       }
 
       if (!('deposit_info' in response.ok)) {
-        console.log(response.ok);
+        debug.log(response.ok);
         return { errorMessage: 'Deposit info not found in sale info' };
       }
 
@@ -352,6 +355,6 @@ export const useApi = () => {
     withdrawEscrow,
     createBid,
     getNftSaleInfo,
-    getNftsHistory
+    getNftsHistory,
   };
 };

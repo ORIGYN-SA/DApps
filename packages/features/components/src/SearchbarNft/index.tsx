@@ -99,13 +99,11 @@ export const SearchbarNft = (props: any) => {
       useRoute().then(({ tokenId }) => {
         props.setSearchBarTokenId(tokenId);
       });
-      console.log('here');
     } else {
       if (window.location.href.includes('collection')) {
         props.setSearchBarTokenId(obj_token_ids[0][0]);
       } else {
         // setSearchBarTokenId state
-        console.log('here2');
         props.setInvalidToken(true);
       }
     }

@@ -84,8 +84,6 @@ export const NFTPage = () => {
     }
   };
 
-  console.log('odc', odc)
-
   const nftEndSale = odc?.auction?.end_date;
 
   const fetchCollection = async () => {
@@ -143,7 +141,7 @@ export const NFTPage = () => {
   };
 
   const endSaleNft = async () => {
-    await actor.sale_nft_origyn({end_sale: params.nft_id});
+    await actor.sale_nft_origyn({ end_sale: params.nft_id });
   };
 
   useEffect(() => {
