@@ -302,7 +302,6 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
 
 export function parseOdcs(data: NFTInfoStable[]): OdcDataWithSale[] {
   return data.map((odc): OdcDataWithSale => {
-    console.log('odc', odc);
     return parseOdc(odc);
   });
 }
@@ -317,7 +316,6 @@ export const getActiveAttendedAuctions = (
   saleInfo: M.SaleInfoResponse,
   principal: Principal,
 ): M.AuctionStateStable[] => {
-
   if ('active' in saleInfo && saleInfo.active.records) {
     const activeSalesRecords = saleInfo.active.records.flatMap((record) => {
       return record[1];
