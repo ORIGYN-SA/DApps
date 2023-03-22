@@ -256,10 +256,10 @@ const VaultPage = () => {
       setCanisterId(canisterId);
 
       OrigynClient.getInstance().init(true, canisterId, { actor });
-
       // get the canister's collection metadata
       const meta = await getNftCollectionMeta();
-      const metadataClass = meta?.[0]?.Class;
+      const metadata = meta.metadata[0];
+      const metadataClass = 'Class' in metadata ? metadata.Class : [];
       const collectionData = parseMetadata(metadataClass);
       dispatch({ type: 'collectionData', payload: collectionData });
 
@@ -305,15 +305,15 @@ const VaultPage = () => {
   /* Fetch data from canister when the actor reference
    * is ready, then every 5 seconds */
   useEffect(() => {
+    fetchData();
+    console.log('collectionData', collectionData);
     let intervalId: any;
-    if (actor) {
-      fetchData();
-      if (!intervalId) {
-        intervalId = setInterval(() => {
-          fetchData();
-        }, 5000);
-      }
+    if (!intervalId) {
+      intervalId = setInterval(() => {
+        fetchData();
+      }, 5000);
     }
+
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
