@@ -148,18 +148,18 @@ const Marketplace = () => {
 
     switch (sort) {
       case 'saleASC':
-        const onSaleAsc = [...filtered].filter(odc => odc.currentBid != 0 && odc.auctionOpen);
-        const notOnSaleAsc = [...filtered].filter(odc => !odc.buyNow || odc.currentBid === 0 || !odc.auctionOpen);
+        const onSaleAsc = [...filtered].filter(odc =>  odc.auctionOpen);
+        const notOnSaleAsc = [...filtered].filter(odc => !odc.auctionOpen);
         const sortedOnSaleAsc = onSaleAsc.sort((odc1, odc2) => {
-          return Math.max(odc1.buyNow, odc1.currentBid) - Math.max(odc2.buyNow, odc2.currentBid);
+          return Math.max(odc1.currentBid) - Math.max(odc2.currentBid);
         });
         filtered = [...sortedOnSaleAsc, ...notOnSaleAsc];
         break;
       case 'saleDESC':
-        const onSaleDesc = [...filtered].filter(odc => odc.currentBid != 0 && odc.auctionOpen);
-        const notOnSaleDesc = [...filtered].filter(odc => !odc.buyNow || odc.currentBid === 0 || !odc.auctionOpen);
+        const onSaleDesc = [...filtered].filter(odc =>  odc.auctionOpen);
+        const notOnSaleDesc = [...filtered].filter(odc => !odc.auctionOpen);
         const sortedOnSaleDesc = onSaleDesc.sort((odc1, odc2) => {
-          return Math.max(odc2.buyNow, odc2.currentBid) - Math.max(odc1.buyNow, odc1.currentBid);
+          return Math.max(odc2.currentBid) - Math.max(odc1.currentBid);
           
         });
         filtered = [...sortedOnSaleDesc, ...notOnSaleDesc];
