@@ -424,7 +424,6 @@ export const NFTPage = () => {
             onConnect={open}
             principal={principalId}
           />
-
           {onConfirmationModalOpen && (
             <ConfirmEndSaleModal
               onModalOpen={onConfirmationModalOpen}
