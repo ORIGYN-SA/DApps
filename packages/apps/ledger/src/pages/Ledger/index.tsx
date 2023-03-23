@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import { TransactionFilter, TransactionsTable, SearchbarNft } from '@dapp/features-components';
 import { SecondaryNav, Container, Flex, HR } from '@origyn/origyn-art-ui';
+import { getRootUrl } from '@dapp/utils';
 import styled from 'styled-components';
 
 const StyledSectionTitle = styled.h2`
@@ -42,6 +43,7 @@ const Ledger = () => {
     <Container fullWidth padding="0" flexFlow="column">
       <SecondaryNav
         title="Ledger"
+        titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/ledger'}
         tabs={[{ title: 'Dashboard', id: 'Transactions' }]}
         content={[
           <>
