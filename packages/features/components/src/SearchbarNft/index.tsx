@@ -65,6 +65,7 @@ export const SearchbarNft = (props: any) => {
     setSelectTokenIds(['Loading...']);
     OrigynClient.getInstance().init(true, canisterId, { actor });
     const response = await getNftCollectionMeta();
+    console.log(response);
     const collectionNFT = response.ok;
     const obj_token_ids = collectionNFT.token_ids;
 
@@ -108,12 +109,11 @@ export const SearchbarNft = (props: any) => {
       }
     }
   };
-  // if the actor changes getNftCollection is called
   useEffect(() => {
-    if (actor) {
+    if (canisterId) {
       NFTCollection();
     }
-  }, []);
+  }, [canisterId, actor]);
   return (
     <>
       <>
