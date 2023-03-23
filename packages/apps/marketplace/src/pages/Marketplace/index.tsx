@@ -146,32 +146,27 @@ const Marketplace = () => {
         break;
     }
 
-    let onSale,
-      notOnSale,
-      sortedOnSale = [];
-
-    switch (sort) {
-      case 'saleASC':
-        onSale = [...filtered].filter((odc) => odc.auctionOpen);
-        notOnSale = [...filtered].filter((odc) => !odc.auctionOpen);
-        sortedOnSale = onSale.sort((odc1, odc2) => {
-          const price1 = odc1.currentBid || odc1.buyNow; // Use buyNow price if currentBid is not defined
-          const price2 = odc2.currentBid || odc2.buyNow; // Use buyNow price if currentBid is not defined
+    filtered.sort((odc1, odc2) => {
+      const price1 = odc1.currentBid || odc1.buyNow;
+      const price2 = odc2.currentBid || odc2.buyNow;
+      if (sort === 'saleASC') {
+        if (odc1.auctionOpen && odc2.auctionOpen) {
           return price1 - price2;
-        });
-        filtered = [...sortedOnSale, ...notOnSale];
-        break;
-      case 'saleDESC':
-        onSale = [...filtered].filter((odc) => odc.auctionOpen);
-        notOnSale = [...filtered].filter((odc) => !odc.auctionOpen);
-        sortedOnSale = onSale.sort((odc1, odc2) => {
-          const price1 = odc1.currentBid || odc1.buyNow; // Use buyNow price if currentBid is not defined
-          const price2 = odc2.currentBid || odc2.buyNow; // Use buyNow price if currentBid is not defined
+        } else if (odc1.auctionOpen) {
+          return -1;
+        } else if (odc2.auctionOpen) {
+          return 1;
+        }
+      } else if (sort === 'saleDESC') {
+        if (odc1.auctionOpen && odc2.auctionOpen) {
           return price2 - price1;
-        });
-        filtered = [...sortedOnSale, ...notOnSale];
-        break;
-    }
+        } else if (odc1.auctionOpen) {
+          return -1;
+        } else if (odc2.auctionOpen) {
+          return 1;
+        }
+      }
+    });
 
     if (inputText?.length) {
       filtered = filtered.filter((odc) =>
