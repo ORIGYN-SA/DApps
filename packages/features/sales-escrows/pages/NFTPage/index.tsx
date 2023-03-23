@@ -57,11 +57,11 @@ export const NFTPage = () => {
   const [titleLink, setTitleLink] = useState<string>('');
 
   const getTitleAndTitleLink = () => {
-    if (window.location.pathname.includes('vault')) {
+    if (window.location.pathname.includes('/-/vault')) {
       setTitle('Vault');
       setTitleLink(getRootUrl(new URL(window.location.href)) + '/collection/-/vault');
       return;
-    } else if (window.location.pathname.includes('marketplace')) {
+    } else if (window.location.pathname.includes('/-/marketplace')) {
       setTitle('Marketplace');
       setTitleLink(getRootUrl(new URL(window.location.href)) + '/collection/-/marketplace');
       return;
