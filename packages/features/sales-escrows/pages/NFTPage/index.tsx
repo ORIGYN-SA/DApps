@@ -35,6 +35,7 @@ import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { OffersPanel } from './components/OffersPanel';
+import { getRootUrl } from '@dapp/utils';
 
 export const NFTPage = () => {
   const debug = useDebug();
@@ -52,6 +53,20 @@ export const NFTPage = () => {
   const [escrowType, setEscrowType] = React.useState<EscrowType>();
   const [inProcess, setInProcess] = useState<boolean>(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>('');
+  const [titleLink, setTitleLink] = useState<string>('');
+
+  const getTitleAndTitleLink = () => {
+    if (window.location.pathname.includes('/-/vault')) {
+      setTitle('Vault');
+      setTitleLink(getRootUrl(new URL(window.location.href)) + '/collection/-/vault');
+      return;
+    } else if (window.location.pathname.includes('/-/marketplace')) {
+      setTitle('Marketplace');
+      setTitleLink(getRootUrl(new URL(window.location.href)) + '/collection/-/marketplace');
+      return;
+    }
+  };
 
   const nftEndSale = odc?.auction?.end_date;
 
@@ -179,12 +194,18 @@ export const NFTPage = () => {
     };
   }, [actor]);
 
+  useEffect(() => {
+    console.log(getRootUrl(new URL(window.location.href)));
+    getTitleAndTitleLink();
+  }, []);
+
   return (
     <>
       {odc && (
         <Flex fullWidth padding="0" flexFlow="column">
           <SecondaryNav
-            title="Vault"
+            title={title}
+            titleLink={titleLink}
             tabs={[{ title: 'NFT Details', id: 'nft' }]}
             content={[
               <Flex fullWidth flexFlow="column">
@@ -424,7 +445,6 @@ export const NFTPage = () => {
             onConnect={open}
             principal={principalId}
           />
-
           {onConfirmationModalOpen && (
             <ConfirmEndSaleModal
               onModalOpen={onConfirmationModalOpen}

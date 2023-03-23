@@ -73,18 +73,20 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
 
       const parsedOdcs = parseOdcs(odcDataRaw);
       debug.log('parsedOdcsBidSent', parsedOdcs);
-      const parsedActiveBids = parsedOdcs.map((odc: OdcDataWithSale, index) => {
-        const bid: TransactionRecord = highestBidsSent[index];
-        debug.log('bid' + index, bid);
-        const bidAmount = 'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.amount;
-        const bidDecimals =
-          'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.token['ic'].decimals;
-        return {
-          ...odc,
-          token_id: bid.token_id,
-          latest_bid: toLargerUnit(Number(bidAmount), Number(bidDecimals)).toString(),
-        };
-      });
+      const parsedActiveBids = parsedOdcs
+        .filter((odc: OdcDataWithSale) => odc.auctionOpen)
+        .map((odc: OdcDataWithSale, index) => {
+          const bid: TransactionRecord = highestBidsSent[index];
+          debug.log('bid' + index, bid);
+          const bidAmount = 'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.amount;
+          const bidDecimals =
+            'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.token['ic'].decimals;
+          return {
+            ...odc,
+            token_id: bid.token_id,
+            latest_bid: toLargerUnit(Number(bidAmount), Number(bidDecimals)).toString(),
+          };
+        });
       setSentActiveBids(parsedActiveBids);
     } catch (e) {
       showUnexpectedErrorMessage(e);

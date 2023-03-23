@@ -3,6 +3,7 @@ import ColumnView from '../../components/ColumnView';
 import { SecondaryNav, Container } from '@origyn/origyn-art-ui';
 import { AuthContext } from '@dapp/features-authentication';
 import { useDialog } from '@connect2ic/react';
+import { getRootUrl } from '@dapp/utils';
 
 const Library = () => {
   const { principal, handleLogOut } = useContext(AuthContext);
@@ -17,6 +18,7 @@ const Library = () => {
       <SecondaryNav
         title="Library"
         tabs={[{ title: 'Explore', id: 'Explore' }]}
+        titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/library'}
         content={[
           <Container padding="16px" key="secondaryNavContent">
             <ColumnView />

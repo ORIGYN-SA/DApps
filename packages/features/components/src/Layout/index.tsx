@@ -7,7 +7,6 @@ import { ThemeProvider } from 'styled-components';
 import './connect2ic.css';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
-import { Disclaimer } from '../Disclaimer';
 
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
@@ -76,7 +75,6 @@ export const Layout = ({ children }: LayoutProps) => {
     <>
       <ThemeProvider theme={darkTheme ? theme : themeLight}>
         <GlobalStyle />
-        <Disclaimer />
         <Flex fullWidth mdFlexFlow="column">
           <Navbar
             navItems={menuItems}
