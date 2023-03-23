@@ -166,8 +166,6 @@ const Marketplace = () => {
     dispatch({ type: 'filteredOdcs', payload: filtered });
   }, [filter, sort, inputText, odcs]);
 
-  console.log('hello4', collectionData);
-
   return (
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
