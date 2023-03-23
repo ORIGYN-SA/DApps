@@ -158,7 +158,7 @@ export const NFTPage = () => {
 
     // if the auction ended, this function will trigger the end_sale on the current NFT
     // this will be used as a checker
-    if (odc?.auctionOpen && nftEndSale < timeInNanos()) {
+    if (odc?.auctionOpen && nftEndSale <= timeInNanos()) {
       console.log('Ending sale');
       endSaleNft();
     }
