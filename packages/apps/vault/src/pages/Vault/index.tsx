@@ -35,7 +35,14 @@ import {
 } from '@origyn/origyn-art-ui';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useUserMessages } from '@dapp/features-user-messages';
-import { WebsiteSVG, DiscordSVG, DistriktSVG, DscvrSVG, TwitterSVG, MediumSVG } from '../../../../../features/components/src/SocialMediaSVG';
+import {
+  WebsiteSVG,
+  DiscordSVG,
+  DistriktSVG,
+  DscvrSVG,
+  TwitterSVG,
+  MediumSVG,
+} from '../../../../../features/components/src/SocialMediaSVG';
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -296,8 +303,6 @@ const VaultPage = () => {
       : toLargerUnit(odc.buyNow, odc.token.decimals);
     return price.toFixed();
   };
-
-  console.log('collection', collectionData)
 
   return (
     <>
