@@ -144,18 +144,27 @@ const Marketplace = () => {
         break;
     }
 
-    switch (sort) {
-      case 'saleASC':
-        filtered = [...filtered].sort((odc1, odc2) => {
-          return Math.max(odc2.buyNow, odc2.currentBid) - Math.max(odc1.buyNow, odc1.currentBid);
-        });
-        break;
-      case 'saleDESC':
-        filtered = [...filtered].sort((odc1, odc2) => {
-          return Math.max(odc1.buyNow, odc1.currentBid) - Math.max(odc2.buyNow, odc2.currentBid);
-        });
-        break;
-    }
+    filtered.sort((odc1, odc2) => {
+      const price1 = odc1.currentBid || odc1.buyNow;
+      const price2 = odc2.currentBid || odc2.buyNow;
+      if (sort === 'saleASC') {
+        if (odc1.auctionOpen && odc2.auctionOpen) {
+          return price1 - price2;
+        } else if (odc1.auctionOpen) {
+          return -1;
+        } else if (odc2.auctionOpen) {
+          return 1;
+        }
+      } else if (sort === 'saleDESC') {
+        if (odc1.auctionOpen && odc2.auctionOpen) {
+          return price2 - price1;
+        } else if (odc1.auctionOpen) {
+          return -1;
+        } else if (odc2.auctionOpen) {
+          return 1;
+        }
+      }
+    });
 
     if (inputText?.length) {
       filtered = filtered.filter((odc) =>
