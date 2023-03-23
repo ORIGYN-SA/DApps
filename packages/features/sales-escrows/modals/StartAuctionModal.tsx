@@ -219,6 +219,7 @@ export function StartAuctionModal({
                     name="token"
                     /*@ts-ignore*/
                     selectedOption={{
+                      /*@ts-ignore*/
                       label: (
                         <>
                           <TokenIcon symbol={values.token} /> {values.token}
