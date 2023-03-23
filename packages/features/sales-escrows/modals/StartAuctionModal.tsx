@@ -14,15 +14,14 @@ import {
   DatePicker,
   Select,
   Button,
+  LoadingBar,
 } from '@origyn/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
 import { toSmallerUnit, validateTokenAmount } from '@dapp/utils';
 import { MarketTransferRequest } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { ERROR, SUCCESS, VALIDATION } from '../constants';
 import { TokenIcon } from '@dapp/features-components';
-
 
 const dateNow = new Date();
 const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
@@ -206,7 +205,9 @@ export function StartAuctionModal({
               <>
                 <h2>Start an Auction in Progress</h2>
                 <br />
-                <LinearProgress color="secondary" />
+                <Flex justify="center" align="center">
+                  <LoadingBar />
+                </Flex>
               </>
             ) : (
               <>
@@ -217,10 +218,21 @@ export function StartAuctionModal({
                     label="Token*"
                     name="token"
                     /*@ts-ignore*/
-                    selectedOption={{ label: <><TokenIcon symbol={values.token} /> {values.token}</>, value: values.token }}
+                    selectedOption={{
+                      label: (
+                        <>
+                          <TokenIcon symbol={values.token} /> {values.token}
+                        </>
+                      ),
+                      value: values.token,
+                    }}
                     handleChange={(v) => onChange(null, 'token', v.value)}
                     options={Object.keys(activeTokens).map((t) => ({
-                      label: <><TokenIcon symbol={activeTokens[t].symbol} /> {activeTokens[t].symbol}</>,
+                      label: (
+                        <>
+                          <TokenIcon symbol={activeTokens[t].symbol} /> {activeTokens[t].symbol}
+                        </>
+                      ),
                       value: t,
                     }))}
                   />
@@ -232,7 +244,7 @@ export function StartAuctionModal({
                     onChange={(e) => onCurrencyChanged('startPrice', e.target.value)}
                     error={errors?.startPrice}
                   />
-                   <TextInput
+                  <TextInput
                     label="Reserve Price (Optional)"
                     name="reservePrice"
                     value={values.reservePrice}
@@ -263,12 +275,12 @@ export function StartAuctionModal({
                       error={errors?.endDate}
                     />
                   </LocalizationProvider>
-                  
+
                   <br />
                   <HR />
                   <Flex align="center" justify="flex-end" gap={16}>
                     {/* <Button onClick={() => onClose()}>Cancel</Button> */}
-                    <Button btnType='filled' type="submit" disabled={hasErrors()}>
+                    <Button btnType="filled" type="submit" disabled={hasErrors()}>
                       Submit
                     </Button>
                   </Flex>
