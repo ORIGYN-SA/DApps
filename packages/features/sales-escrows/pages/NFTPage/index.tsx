@@ -38,6 +38,8 @@ import { OffersPanel } from './components/OffersPanel';
 
 export const NFTPage = () => {
   const debug = useDebug();
+  const params = useParams();
+  const { open } = useDialog();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [odc, setOdc] = useState<OdcDataWithSale>();
@@ -50,7 +52,8 @@ export const NFTPage = () => {
   const [escrowType, setEscrowType] = React.useState<EscrowType>();
   const [inProcess, setInProcess] = useState<boolean>(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
-  const { open } = useDialog();
+
+  const nftEndSale = odc?.auction?.end_date;
 
   const logout = () => {
     handleLogOut();
@@ -70,8 +73,6 @@ export const NFTPage = () => {
     setConfirmationModalOpen(false);
   };
 
-  const params = useParams();
-
   const onOpenEscrowModal = (escrowType: EscrowType) => {
     setEscrowType(escrowType);
     setOpenEscrowModal(true);
@@ -83,8 +84,6 @@ export const NFTPage = () => {
       fetchOdc();
     }
   };
-
-  const nftEndSale = odc?.auction?.end_date;
 
   const fetchCollection = async () => {
     const route = await useRoute();
@@ -159,7 +158,8 @@ export const NFTPage = () => {
 
     // if the auction ended, this function will trigger the end_sale on the current NFT
     // this will be used as a checker
-    if (odc.auctionOpen == true && nftEndSale < timeInNanos()) {
+    if (odc?.auctionOpen && nftEndSale < timeInNanos()) {
+      console.log('Ending sale');
       endSaleNft();
     }
 
