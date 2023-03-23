@@ -151,7 +151,9 @@ const Marketplace = () => {
         const onSaleAsc = [...filtered].filter(odc =>  odc.auctionOpen);
         const notOnSaleAsc = [...filtered].filter(odc => !odc.auctionOpen);
         const sortedOnSaleAsc = onSaleAsc.sort((odc1, odc2) => {
-          return Math.max(odc1.currentBid) - Math.max(odc2.currentBid);
+          const price1 = odc1.currentBid || odc1.buyNow; // Use buyNow price if currentBid is not defined
+          const price2 = odc2.currentBid || odc2.buyNow; // Use buyNow price if currentBid is not defined
+          return price1 - price2;
         });
         filtered = [...sortedOnSaleAsc, ...notOnSaleAsc];
         break;
@@ -159,8 +161,9 @@ const Marketplace = () => {
         const onSaleDesc = [...filtered].filter(odc =>  odc.auctionOpen);
         const notOnSaleDesc = [...filtered].filter(odc => !odc.auctionOpen);
         const sortedOnSaleDesc = onSaleDesc.sort((odc1, odc2) => {
-          return Math.max(odc2.currentBid) - Math.max(odc1.currentBid);
-          
+          const price1 = odc1.currentBid || odc1.buyNow; // Use buyNow price if currentBid is not defined
+          const price2 = odc2.currentBid || odc2.buyNow; // Use buyNow price if currentBid is not defined
+          return price2 - price1;
         });
         filtered = [...sortedOnSaleDesc, ...notOnSaleDesc];
         break;
