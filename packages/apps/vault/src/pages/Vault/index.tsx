@@ -450,7 +450,9 @@ const VaultPage = () => {
                                   as="a"
                                   iconButton
                                   target="_blank"
-                                  href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
+                                  href={`${getRootUrl(
+                                    new URL(window.location.href),
+                                  )}/collection/-/ledger`}
                                 >
                                   <p style={{ color: theme.colors.TEXT }}>Ledger</p>
                                 </SocialMediaButton>
