@@ -14,6 +14,7 @@ import {
   parseMetadata,
   parseOdcs,
   copyToClipboard,
+  getRootUrl,
 } from '@dapp/utils';
 import { OrigynClient } from '@origyn/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
@@ -298,6 +299,7 @@ const VaultPage = () => {
         <Flex fullWidth padding="0" flexFlow="column">
           <SecondaryNav
             title="Vault"
+            titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/vault'}
             tabs={[{ title: 'Balance', id: 'Balance' }]}
             content={[
               <Flex fullWidth flexFlow="column" key="secondaryNavContent">

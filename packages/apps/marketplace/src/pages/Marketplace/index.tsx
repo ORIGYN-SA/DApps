@@ -8,7 +8,7 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { useApi } from '@dapp/common-api';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
+import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit, getRootUrl } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
 import {
@@ -170,6 +170,7 @@ const Marketplace = () => {
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
         title="Marketplace"
+        titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/marketplace'}
         tabs={[{ title: 'Marketplace', id: 'Marketplace' }]}
         content={[
           <Flex fullWidth flexFlow="column" key="marketplace-nav">

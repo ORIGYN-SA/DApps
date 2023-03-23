@@ -61,6 +61,22 @@ export const parseDate = (ts) => {
   return d;
 };
 
+export const getRootUrl = (url: URL): string => {
+  if (
+    ['prptl.io', 'exos.origyn.network', 'localhost:3000', 'localhost:8080'].includes(url.host)
+  ) {
+    // https://prptl.io/-/{canister_id}
+    // https://prptl.io/-/{collection_id}
+    // http://localhost:3000/-/{canister_id}
+    // http://localhost:3000/-/{collection_id}
+    return url.origin + url.pathname.split('/').slice(0, 3).join('/');
+  } else {
+    // https://{canister_id}.raw.ic0.app
+    // http://{canister_id}.localhost:8000
+    return url.origin;
+  }
+}
+
 export * from './interfaces';
 export * from './binary';
 export * from './dateTime';
