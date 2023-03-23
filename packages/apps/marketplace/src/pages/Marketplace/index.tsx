@@ -131,7 +131,7 @@ const Marketplace = () => {
     };
   }, [actor]);
 
-  console.log('odc', odcs)
+  console.log('odc', odcs);
 
   /* Apply filter and sort to list */
   useEffect(() => {
@@ -146,29 +146,32 @@ const Marketplace = () => {
         break;
     }
 
+    let onSale,
+      notOnSale,
+      sortedOnSale = [];
+
     switch (sort) {
       case 'saleASC':
-        const onSaleAsc = [...filtered].filter(odc =>  odc.auctionOpen);
-        const notOnSaleAsc = [...filtered].filter(odc => !odc.auctionOpen);
-        const sortedOnSaleAsc = onSaleAsc.sort((odc1, odc2) => {
+        onSale = [...filtered].filter((odc) => odc.auctionOpen);
+        notOnSale = [...filtered].filter((odc) => !odc.auctionOpen);
+        sortedOnSale = onSale.sort((odc1, odc2) => {
           const price1 = odc1.currentBid || odc1.buyNow; // Use buyNow price if currentBid is not defined
           const price2 = odc2.currentBid || odc2.buyNow; // Use buyNow price if currentBid is not defined
           return price1 - price2;
         });
-        filtered = [...sortedOnSaleAsc, ...notOnSaleAsc];
+        filtered = [...sortedOnSale, ...notOnSale];
         break;
       case 'saleDESC':
-        const onSaleDesc = [...filtered].filter(odc =>  odc.auctionOpen);
-        const notOnSaleDesc = [...filtered].filter(odc => !odc.auctionOpen);
-        const sortedOnSaleDesc = onSaleDesc.sort((odc1, odc2) => {
+        onSale = [...filtered].filter((odc) => odc.auctionOpen);
+        notOnSale = [...filtered].filter((odc) => !odc.auctionOpen);
+        sortedOnSale = onSale.sort((odc1, odc2) => {
           const price1 = odc1.currentBid || odc1.buyNow; // Use buyNow price if currentBid is not defined
           const price2 = odc2.currentBid || odc2.buyNow; // Use buyNow price if currentBid is not defined
           return price2 - price1;
         });
-        filtered = [...sortedOnSaleDesc, ...notOnSaleDesc];
+        filtered = [...sortedOnSale, ...notOnSale];
         break;
     }
-    
 
     if (inputText?.length) {
       filtered = filtered.filter((odc) =>
