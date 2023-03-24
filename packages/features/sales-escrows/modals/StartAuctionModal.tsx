@@ -144,9 +144,13 @@ export function StartAuctionModal({
     }
   };
 
-  const hasErrors = (): boolean => {
-    return !!Object.keys(errors).find((key) => errors[key]);
-  };
+  // disabled this as it's scope was to disable the Submit button when user tried to send a wrong auction config
+  // user is unable anyway to start an auction if the submit form doesnt meet the validation
+  // so this function has no further use
+
+  // const hasErrors = (): boolean => {
+  //   return !!Object.keys(errors).find((key) => errors[key]);
+  // };
 
   const getValidationErrors = (err) => {
     const validationErrors = {};
