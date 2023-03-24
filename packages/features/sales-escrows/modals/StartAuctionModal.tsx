@@ -233,14 +233,16 @@ export function StartAuctionModal({
                     error={errors?.startPrice}
                   />
                    <TextInput
-                    label="Reserve Price (Optional)"
+                    label="Reserve Price"
+                    optional='(Optional)'
                     name="reservePrice"
                     value={values.reservePrice}
                     onChange={(e) => onCurrencyChanged('reservePrice', e.target.value)}
                     error={errors?.reservePrice}
                   />
                   <TextInput
-                    label="Buy Now Price (Optional)"
+                    label="Buy Now Price"
+                    optional='(Optional)'
                     name="buyNowPrice"
                     value={values.buyNowPrice}
                     onChange={(e) => onCurrencyChanged('buyNowPrice', e.target.value)}

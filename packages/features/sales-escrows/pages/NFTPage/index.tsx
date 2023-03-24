@@ -315,15 +315,7 @@ export const NFTPage = () => {
                                       >
                                         Cancel Sale
                                       </Button>
-                                    ) : BigInt(Number(nftEndSale || 9 * 1e30)) < timeInNanos() ? (
-                                      <Button
-                                        btnType="accent"
-                                        onClick={handleClickOpenEsc}
-                                        disabled={inProcess}
-                                      >
-                                        Finish Sale
-                                      </Button>
-                                    ) : (
+                                    ) : BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() && (
                                       <Button disabled btnType="outlined">
                                         Finish Sale
                                       </Button>
@@ -365,7 +357,6 @@ export const NFTPage = () => {
                     <Banner bgColor="PRIMARY_1000" style={{ display: 'block' }} padding="0">
                       <TabContent
                         fullWidth
-                        borderBottom
                         tabs={[
                           { title: 'Properties', id: 'properties' },
                           { title: 'Royalties', id: 'royalties' },
