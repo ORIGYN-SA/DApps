@@ -2,7 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  parseTokenSymbol,
+  sortBidsReceived,
+  ReceivedActiveBidsProps,
+} from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { EscrowRecord } from '@origyn/mintjs';
@@ -31,13 +38,6 @@ interface OffersTabProps {
   canisterId: string;
 }
 
-interface ReceivedActiveBidsProps extends OdcDataWithSale {
-  token_id: string;
-  isNftOwner: boolean;
-  escrow_record: EscrowRecord;
-  amount: string;
-}
-
 export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
   const { principal } = useContext(AuthContext);
   const { getNftBatch, getNftBalances } = useApi();
@@ -62,12 +62,12 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
             token_id: bid.token_id,
             isNftOwner: odc.ownerPrincipalId == principal?.toText(),
             escrow_record: bid,
-            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toFixed(),
+            amount: toLargerUnit(bid.amount, BigInt(bid.token['ic'].decimals)).toFixed(),
           };
         })
         .filter((receivedBid) => receivedBid.auctionOpen && receivedBid.isNftOwner);
 
-      setReceivedActiveBids(receivedActiveBids.reverse());
+      setReceivedActiveBids(sortBidsReceived(receivedActiveBids));
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -132,7 +132,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</p>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Bid</p>
                       <TokenIcon symbol={parseTokenSymbol(bid.escrow_record)} />
                       {bid.amount}
                     </div>

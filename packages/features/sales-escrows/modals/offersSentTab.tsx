@@ -2,7 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { Button, HR, theme, Modal, Container, Flex } from '@origyn/origyn-art-ui';
-import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  parseTokenSymbol,
+  SentOffersProps,
+} from '@dapp/utils';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { BalanceResponse, EscrowRecord } from '@origyn/mintjs';
@@ -28,13 +34,6 @@ const styles = {
 interface OffersSentTabProps {
   collection: any;
   canisterId: string;
-}
-
-interface SentOffersProps extends OdcDataWithSale {
-  token_id: string;
-  amount: string;
-  lock_to_date: any;
-  escrow_record: EscrowRecord;
 }
 
 export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) => {
@@ -169,7 +168,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
+                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>Offer</span>
                       <br />
                       <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
                       {offer.amount}
