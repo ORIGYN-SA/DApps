@@ -62,7 +62,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
             token_id: bid.token_id,
             isNftOwner: odc.ownerPrincipalId == principal?.toText(),
             escrow_record: bid,
-            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toString(),
+            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toFixed(),
           };
         })
         .filter((receivedBid) => receivedBid.auctionOpen && receivedBid.isNftOwner);
