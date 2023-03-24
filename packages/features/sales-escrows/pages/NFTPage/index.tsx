@@ -259,23 +259,26 @@ export const NFTPage = () => {
                                     {getCurrentBidPrice(odc)}
                                   </strong>
                                 </Flex>
-
-                                <Flex flexFlow="column">
-                                  <span>Reserve Price</span>
-                                  <strong>
-                                    <TokenIcon symbol={odc.tokenSymbol} />
-                                    {getReservePrice(odc)}
-                                  </strong>
-                                </Flex>
-                                {odc?.buyNow && (
-                                  <Flex flexFlow="column">
-                                    <span>Buy Now</span>
-                                    <strong>
-                                      <TokenIcon symbol={odc.tokenSymbol} />
-                                      {getBuyNowPrice(odc)}
-                                    </strong>
-                                  </Flex>
-                                )}
+                                {odc?.reserve ||
+                                  (odc?.reserve != 0 && (
+                                    <Flex flexFlow="column">
+                                      <span>Reserve Price</span>
+                                      <strong>
+                                        <TokenIcon symbol={odc.tokenSymbol} />
+                                        {getReservePrice(odc)}
+                                      </strong>
+                                    </Flex>
+                                  ))}
+                                {odc?.buyNow ||
+                                  (odc?.buyNow != 0 && (
+                                    <Flex flexFlow="column">
+                                      <span>Buy Now</span>
+                                      <strong>
+                                        <TokenIcon symbol={odc.tokenSymbol} />
+                                        {getBuyNowPrice(odc)}
+                                      </strong>
+                                    </Flex>
+                                  ))}
                               </>
                             ) : (
                               'Not on sale'
@@ -296,7 +299,7 @@ export const NFTPage = () => {
                             <Flex gap={8} flexFlow="column">
                               {odc?.auctionOpen ? (
                                 <>
-                                  {odc?.buyNow && !isOwner && (
+                                  {odc?.buyNow != 0 && !isOwner && (
                                     <Button
                                       btnType="accent"
                                       onClick={() => onOpenEscrowModal('BuyNow')}
@@ -315,10 +318,12 @@ export const NFTPage = () => {
                                       >
                                         Cancel Sale
                                       </Button>
-                                    ) : BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() && (
-                                      <Button disabled btnType="outlined">
-                                        Finish Sale
-                                      </Button>
+                                    ) : (
+                                      BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() && (
+                                        <Button disabled btnType="outlined">
+                                          Finish Sale
+                                        </Button>
+                                      )
                                     )
                                   ) : BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() ? (
                                     <Button
