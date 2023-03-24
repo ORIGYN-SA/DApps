@@ -259,26 +259,26 @@ export const NFTPage = () => {
                                     {getCurrentBidPrice(odc)}
                                   </strong>
                                 </Flex>
-                                {odc?.reserve ||
-                                  (odc?.reserve != 0 && (
-                                    <Flex flexFlow="column">
-                                      <span>Reserve Price</span>
-                                      <strong>
-                                        <TokenIcon symbol={odc.tokenSymbol} />
-                                        {getReservePrice(odc)}
-                                      </strong>
-                                    </Flex>
-                                  ))}
-                                {odc?.buyNow ||
-                                  (odc?.buyNow != 0 && (
-                                    <Flex flexFlow="column">
-                                      <span>Buy Now</span>
-                                      <strong>
-                                        <TokenIcon symbol={odc.tokenSymbol} />
-                                        {getBuyNowPrice(odc)}
-                                      </strong>
-                                    </Flex>
-                                  ))}
+
+                                {odc?.reserve != 0 && (
+                                  <Flex flexFlow="column">
+                                    <span>Reserve Price</span>
+                                    <strong>
+                                      <TokenIcon symbol={odc.tokenSymbol} />
+                                      {getReservePrice(odc)}
+                                    </strong>
+                                  </Flex>
+                                )}
+
+                                {odc?.buyNow != 0 && (
+                                  <Flex flexFlow="column">
+                                    <span>Buy Now</span>
+                                    <strong>
+                                      <TokenIcon symbol={odc.tokenSymbol} />
+                                      {getBuyNowPrice(odc)}
+                                    </strong>
+                                  </Flex>
+                                )}
                               </>
                             ) : (
                               'Not on sale'
