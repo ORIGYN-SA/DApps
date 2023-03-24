@@ -514,6 +514,7 @@ const VaultPage = () => {
                                     <Card
                                       flexFlow="column"
                                       style={{ overflow: 'hidden', height: '100%' }}
+                                      bgColor='NAVIGATION_BACKGROUND'
                                     >
                                       {odc.hasPreviewAsset ? (
                                         <StyledNFTImg
