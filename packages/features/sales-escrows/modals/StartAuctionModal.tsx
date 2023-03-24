@@ -283,7 +283,7 @@ export function StartAuctionModal({
                   <HR />
                   <Flex align="center" justify="flex-end" gap={16}>
                     {/* <Button onClick={() => onClose()}>Cancel</Button> */}
-                    <Button btnType="filled" type="submit" disabled={hasErrors()}>
+                    <Button btnType="filled" type="submit">
                       Submit
                     </Button>
                   </Flex>
