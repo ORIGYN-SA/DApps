@@ -1,8 +1,9 @@
 import { Principal } from '@dfinity/principal';
 import { EscrowRecord, NFTInfoStable, Property } from '@origyn/mintjs';
-import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
+import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType, ReceivedActiveBidsProps } from './interfaces';
 import { toSentenceCase } from './string';
 import { timeInNanos } from './dateTime';
+import { toBigNumber } from './number';
 import M, {
   getNftCollectionMeta as _getNftCollectionMeta,
   acceptEscrow as _acceptEscrow,
@@ -375,4 +376,22 @@ export const getHighestSentBids = (
     }
   }
   return Array.from(bidsTokenIds.values());
+};
+
+export const sortBidsReceived = (bids: ReceivedActiveBidsProps[]): ReceivedActiveBidsProps[] => {
+  bids.sort((a, b) => {
+    if (a.auction.end_date < b.auction.end_date) {
+      return -1;
+    }
+    if (a.auction.end_date > b.auction.end_date) {
+      return 1;
+    }
+    if (toBigNumber(a.amount).gt(toBigNumber(b.amount))) {
+      return -1;
+    }
+    if (toBigNumber(a.amount).lt(toBigNumber(b.amount))) {
+      return 1;
+    }
+  });
+  return bids;
 };

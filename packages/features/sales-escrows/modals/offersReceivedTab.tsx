@@ -2,7 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { Button, HR, theme, Modal, Flex, Container } from '@origyn/origyn-art-ui';
-import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  parseTokenSymbol,
+  ReceivedOffersProps,
+} from '@dapp/utils';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { EscrowRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
@@ -28,13 +34,6 @@ const styles = {
 interface OffersTabProps {
   collection: any;
   canisterId: string;
-}
-
-interface ReceivedOffersProps extends OdcDataWithSale {
-  token_id: string;
-  amount: string;
-  escrow_record: EscrowRecord;
-  isNftOwner: boolean;
 }
 
 type ActionType = 'accept' | 'reject';
@@ -164,7 +163,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</p>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Offer</p>
                       <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
                       {offer.amount}
                     </div>

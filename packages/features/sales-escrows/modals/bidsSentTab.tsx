@@ -9,6 +9,7 @@ import {
   getActiveAttendedAuctions,
   getTxOfActiveAttendedAuctions,
   getHighestSentBids,
+  SentActiveBidsProps,
 } from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
@@ -36,10 +37,6 @@ const styles = {
 interface BidsSentTabProps {
   collection: any;
   canisterId: string;
-}
-interface SentActiveBidsProps extends OdcDataWithSale {
-  token_id: string;
-  latest_bid: string;
 }
 
 export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
@@ -160,7 +157,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your Bid</p>
                       <TokenIcon symbol={bid.tokenSymbol} />
                       {bid.latest_bid}
                     </div>

@@ -1,4 +1,4 @@
-import { AuctionStateStable, ICTokenSpec } from '@origyn/mintjs';
+import { AuctionStateStable, ICTokenSpec, EscrowRecord } from '@origyn/mintjs';
 
 export enum RoyaltyType {
   primary,
@@ -138,4 +138,30 @@ export interface Filter {
   categoryToFilter: string;
   transactionType: string;
   update: number;
+}
+
+export interface ReceivedActiveBidsProps extends OdcDataWithSale {
+  token_id: string;
+  isNftOwner: boolean;
+  escrow_record: EscrowRecord;
+  amount: string;
+}
+
+export interface SentActiveBidsProps extends OdcDataWithSale {
+  token_id: string;
+  latest_bid: string;
+}
+
+export interface ReceivedOffersProps extends OdcDataWithSale {
+  token_id: string;
+  amount: string;
+  escrow_record: EscrowRecord;
+  isNftOwner: boolean;
+}
+
+export interface SentOffersProps extends OdcDataWithSale {
+  token_id: string;
+  amount: string;
+  lock_to_date: any;
+  escrow_record: EscrowRecord;
 }
