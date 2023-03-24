@@ -299,7 +299,7 @@ export const NFTPage = () => {
                             <Flex gap={8} flexFlow="column">
                               {odc?.auctionOpen ? (
                                 <>
-                                  {odc?.buyNow != 0 && !isOwner && (
+                                  {!isOwner && (
                                     <Button
                                       btnType="accent"
                                       onClick={() => onOpenEscrowModal('BuyNow')}
