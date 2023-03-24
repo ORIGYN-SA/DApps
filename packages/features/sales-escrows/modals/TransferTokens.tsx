@@ -3,8 +3,16 @@ import BigNumber from 'bignumber.js';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
 import { sendTransaction, Token, useTokensContext } from '@dapp/features-tokens-provider';
-import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
+import {
+  Container,
+  Flex,
+  HR,
+  Modal,
+  TextInput,
+  Select,
+  Button,
+  LoadingBar,
+} from '@origyn/origyn-art-ui';
 import * as Yup from 'yup';
 import { AuthContext } from '@dapp/features-authentication';
 import {
@@ -189,7 +197,9 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         <Container size="full" padding="48px">
           <h2>Transfer in Progress</h2>
           <br />
-          <LinearProgress color="secondary" />
+          <Flex justify="center" align="center">
+            <LoadingBar />
+          </Flex>
         </Container>
       ) : (
         <Container as="form" onSubmit={handleSubmit} size="full" padding="48px">
