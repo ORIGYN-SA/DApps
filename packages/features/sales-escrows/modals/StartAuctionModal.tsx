@@ -42,13 +42,25 @@ const validationSchema = Yup.object({
   reservePrice: Yup.number()
     .typeError(VALIDATION.notANumber)
     .nullable()
-    .lessThan(Yup.ref('buyNowPrice'), VALIDATION.reserveBuyPriceGreaterThanBuyNowPrice)
+    .test('moreThanBuyPrice', VALIDATION.reserveBuyPriceGreaterThanBuyNowPrice, function(value, { parent }) {
+      const buyNowPrice = parent.buyNowPrice;
+      if (!value || !buyNowPrice) {
+        return true;
+      }
+      return value < buyNowPrice;
+    })
     .default(0),
   buyNowPrice: Yup.number()
-    .typeError(VALIDATION.notANumber)
-    .nullable()
-    .moreThan(Yup.ref('startPrice'), VALIDATION.instantBuyPriceSmallerThanStartPrice)
-    .default(0),
+  .typeError(VALIDATION.notANumber)
+  .nullable()
+  .test('moreThanStartPrice', VALIDATION.instantBuyPriceSmallerThanStartPrice, function(value, { parent }) {
+    const startPrice = parent.startPrice;
+    if (!value || !startPrice) {
+      return true;
+    }
+    return value > startPrice;
+  })
+  .default(0), 
   endDate: Yup.date().min(dateTomorrow, VALIDATION.endDateSmallerThanStartDate).default(dateNow),
 });
 
@@ -267,7 +279,8 @@ export function StartAuctionModal({
                   />
                   <TextInput
                     required
-                    label="Minimum Increase*"
+                    label="Minimum Increase"
+                    optional='(Optional)'
                     name="minIncrease"
                     value={values.minIncrease}
                     onChange={(e) => onCurrencyChanged('minIncrease', e.target.value)}
