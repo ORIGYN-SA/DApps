@@ -42,12 +42,32 @@ const validationSchema = Yup.object({
   reservePrice: Yup.number()
     .typeError(VALIDATION.notANumber)
     .nullable()
-    .lessThan(Yup.ref('buyNowPrice'), VALIDATION.reserveBuyPriceGreaterThanBuyNowPrice)
+    .test(
+      'moreThanBuyPrice',
+      VALIDATION.reserveBuyPriceGreaterThanBuyNowPrice,
+      function (value, { parent }) {
+        const buyNowPrice = parent.buyNowPrice;
+        if (!value || !buyNowPrice) {
+          return true;
+        }
+        return value < buyNowPrice;
+      },
+    )
     .default(0),
   buyNowPrice: Yup.number()
     .typeError(VALIDATION.notANumber)
     .nullable()
-    .moreThan(Yup.ref('startPrice'), VALIDATION.instantBuyPriceSmallerThanStartPrice)
+    .test(
+      'moreThanStartPrice',
+      VALIDATION.instantBuyPriceSmallerThanStartPrice,
+      function (value, { parent }) {
+        const startPrice = parent.startPrice;
+        if (!value || !startPrice) {
+          return true;
+        }
+        return value > startPrice;
+      },
+    )
     .default(0),
   endDate: Yup.date().min(dateTomorrow, VALIDATION.endDateSmallerThanStartDate).default(dateNow),
 });
@@ -142,10 +162,6 @@ export function StartAuctionModal({
       setInProgress(false);
       onProcessing(false);
     }
-  };
-
-  const hasErrors = (): boolean => {
-    return !!Object.keys(errors).find((key) => errors[key]);
   };
 
   const getValidationErrors = (err) => {
@@ -245,9 +261,9 @@ export function StartAuctionModal({
                     onChange={(e) => onCurrencyChanged('startPrice', e.target.value)}
                     error={errors?.startPrice}
                   />
-                   <TextInput
+                  <TextInput
                     label="Reserve Price"
-                    optional='(Optional)'
+                    optional="(Optional)"
                     name="reservePrice"
                     value={values.reservePrice}
                     onChange={(e) => onCurrencyChanged('reservePrice', e.target.value)}
@@ -255,7 +271,7 @@ export function StartAuctionModal({
                   />
                   <TextInput
                     label="Buy Now Price"
-                    optional='(Optional)'
+                    optional="(Optional)"
                     name="buyNowPrice"
                     value={values.buyNowPrice}
                     onChange={(e) => onCurrencyChanged('buyNowPrice', e.target.value)}
@@ -263,7 +279,8 @@ export function StartAuctionModal({
                   />
                   <TextInput
                     required
-                    label="Minimum Increase*"
+                    label="Minimum Increase"
+                    optional="(Optional)"
                     name="minIncrease"
                     value={values.minIncrease}
                     onChange={(e) => onCurrencyChanged('minIncrease', e.target.value)}
@@ -282,8 +299,7 @@ export function StartAuctionModal({
                   <br />
                   <HR />
                   <Flex align="center" justify="flex-end" gap={16}>
-                    {/* <Button onClick={() => onClose()}>Cancel</Button> */}
-                    <Button btnType="filled" type="submit" disabled={hasErrors()}>
+                    <Button btnType="filled" type="submit">
                       Submit
                     </Button>
                   </Flex>

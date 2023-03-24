@@ -260,14 +260,17 @@ export const NFTPage = () => {
                                   </strong>
                                 </Flex>
 
-                                <Flex flexFlow="column">
-                                  <span>Reserve Price</span>
-                                  <strong>
-                                    <TokenIcon symbol={odc.tokenSymbol} />
-                                    {getReservePrice(odc)}
-                                  </strong>
-                                </Flex>
-                                {odc?.buyNow && (
+                                {odc?.reserve != 0 && (
+                                  <Flex flexFlow="column">
+                                    <span>Reserve Price</span>
+                                    <strong>
+                                      <TokenIcon symbol={odc.tokenSymbol} />
+                                      {getReservePrice(odc)}
+                                    </strong>
+                                  </Flex>
+                                )}
+
+                                {odc?.buyNow != 0 && (
                                   <Flex flexFlow="column">
                                     <span>Buy Now</span>
                                     <strong>
@@ -296,7 +299,7 @@ export const NFTPage = () => {
                             <Flex gap={8} flexFlow="column">
                               {odc?.auctionOpen ? (
                                 <>
-                                  {odc?.buyNow && !isOwner && (
+                                  {!isOwner && (
                                     <Button
                                       btnType="accent"
                                       onClick={() => onOpenEscrowModal('BuyNow')}
@@ -315,10 +318,12 @@ export const NFTPage = () => {
                                       >
                                         Cancel Sale
                                       </Button>
-                                    ) : BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() && (
-                                      <Button disabled btnType="outlined">
-                                        Finish Sale
-                                      </Button>
+                                    ) : (
+                                      BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() && (
+                                        <Button disabled btnType="outlined">
+                                          Finish Sale
+                                        </Button>
+                                      )
                                     )
                                   ) : BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() ? (
                                     <Button
