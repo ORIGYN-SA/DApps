@@ -45,7 +45,7 @@ const initialMenuItems: MenuItem[] = [
 export const Layout = ({ children }: LayoutProps) => {
   const { refreshAllBalances } = useTokensContext();
   const { principal, loggedIn, actor } = useContext(AuthContext);
-  const [darkTheme, setDarkTheme] = useState(true);
+  const [darkTheme, setDarkTheme] = useState(null);
   const [menuItems, setMenuItems] = useState(initialMenuItems);
 
   useEffect(() => {
@@ -71,6 +71,19 @@ export const Layout = ({ children }: LayoutProps) => {
     });
   }, []);
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme !== null) {
+      setDarkTheme(savedTheme === 'true');
+    }
+  }, []);
+
+  const handleThemeChange = () => {
+    const newTheme: any = !darkTheme;
+    setDarkTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+
   return (
     <>
       <ThemeProvider theme={darkTheme ? theme : themeLight}>
@@ -78,7 +91,7 @@ export const Layout = ({ children }: LayoutProps) => {
         <Flex fullWidth mdFlexFlow="column">
           <Navbar
             navItems={menuItems}
-            onChangeTheme={() => setDarkTheme(!darkTheme)}
+            onChangeTheme={() => handleThemeChange()}
             dAppsVersion="0.1.0"
           />
           <Flex fullWidth>{children}</Flex>
