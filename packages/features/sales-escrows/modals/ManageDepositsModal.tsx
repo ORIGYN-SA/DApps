@@ -8,6 +8,7 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { toLargerUnit } from '@dapp/utils';
 import { ERROR, SUCCESS } from '../constants';
+import { useSnackbar } from 'notistack';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
@@ -15,6 +16,8 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
   const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
   //const [depositPrincipal, setDepositPrincipal] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+
 
   const [tokenBalances, setTokenBalances] = useState<any>({});
   const { activeTokens, refreshAllBalances } = useTokensContext();
@@ -42,8 +45,22 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       });
       if ('err' in withdrawResp) {
         showErrorMessage(ERROR.depositWithdraw, withdrawResp.err);
+        enqueueSnackbar('Withdraw of ' + BigInt(tokenBalances[token].value + " " + activeTokens[token]?.symbol + ' was unsuccessfull'), {
+          variant: 'error',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
       } else {
         showSuccessMessage(SUCCESS.depositWithdraw);
+        enqueueSnackbar('Withdraw of ' + BigInt(tokenBalances[token].value + " " + activeTokens[token]?.symbol + ' was successfull'), {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
