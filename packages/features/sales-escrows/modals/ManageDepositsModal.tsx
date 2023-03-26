@@ -44,7 +44,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         },
       });
       if ('err' in withdrawResp) {
-        showErrorMessage(ERROR.depositWithdraw, withdrawResp.err);
         enqueueSnackbar('Withdraw of ' + BigInt(tokenBalances[token].value + " " + activeTokens[token]?.symbol + ' was unsuccessfull'), {
           variant: 'error',
           anchorOrigin: {
@@ -53,7 +52,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
           },
         });
       } else {
-        showSuccessMessage(SUCCESS.depositWithdraw);
         enqueueSnackbar('Withdraw of ' + BigInt(tokenBalances[token].value + " " + activeTokens[token]?.symbol + ' was successfull'), {
           variant: 'success',
           anchorOrigin: {
