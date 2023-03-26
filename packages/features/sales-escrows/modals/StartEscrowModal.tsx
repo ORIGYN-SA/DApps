@@ -169,12 +169,15 @@ export function StartEscrowModal({
           amount: `${VALIDATION.minimumBid} ${minBid.toFixed()} ${odc.tokenSymbol}`,
         };
       } else if (amount.isGreaterThan(toLargerUnit(odc.buyNow, token.decimals))) {
-        errors = {
-          ...errors,
-          amount: `${VALIDATION.bidHigherThanBuyNow} (${toLargerUnit(odc.buyNow, token.decimals)} ${
-            odc.tokenSymbol
-          })`,
-        };
+        if (odc.buyNow !== 0) {
+          errors = {
+            ...errors,
+            amount: `${VALIDATION.bidHigherThanBuyNow} (${toLargerUnit(
+              odc.buyNow,
+              token.decimals,
+            )} ${odc.tokenSymbol})`,
+          };
+        }
       }
     }
 
