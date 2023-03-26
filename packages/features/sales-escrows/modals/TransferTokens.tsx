@@ -36,7 +36,7 @@ const validationSchema = Yup.object().shape({
     .typeError(VALIDATION.invalidRecipientAddress)
     .required(VALIDATION.recipientAddressRequired)
     .default(''),
-  memo: Yup.string().default(''),
+  memo: Yup.number().default(0).typeError(VALIDATION.notANumber),
   token: Yup.string().default('OGY'),
 });
 
@@ -111,7 +111,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         token,
         address,
         total,
-        data.memo,
+        Number(data.memo),
       );
 
       setInProcess(false);
@@ -241,6 +241,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
               name="memo"
               value={values.memo}
               onChange={(e) => onChange('memo', e.target.value)}
+              error={errors.memo}
             />
             <br />
             <span>Transaction Fee</span>
