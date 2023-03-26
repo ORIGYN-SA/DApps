@@ -44,9 +44,9 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         },
       });
       if ('err' in withdrawResp) {
-        showErrorMessage(`${'Withdraw of '}${BigInt(tokenBalances[token].value)}${' '}${activeTokens[token]?.symbol}${' was unsuccessfull'}`, withdrawResp.err);
+        showErrorMessage(`${'Withdraw of '}${toLargerUnit(BigInt(tokenBalances[token].value),BigInt(activeTokens[token]?.decimals))}${' '}${activeTokens[token]?.symbol}${' was unsuccessfull'}`, withdrawResp.err);
       } else {
-        showSuccessMessage(`${'Withdraw of '}${BigInt(tokenBalances[token].value)}${' '}${activeTokens[token]?.symbol}${' was successfull'}`);
+        showSuccessMessage(`${'Withdraw of '}${toLargerUnit(BigInt(tokenBalances[token].value),BigInt(activeTokens[token]?.decimals))}${' '}${activeTokens[token]?.symbol}${' was successfull'}`);
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
