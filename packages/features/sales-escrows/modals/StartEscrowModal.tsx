@@ -53,7 +53,7 @@ export function StartEscrowModal({
 }: StartEscrowModalProps) {
   const debug = useDebug();
   const { getDepositAccountNumber, sendTokensToDepositAccount, sendEscrow, createBid } = useApi();
-  const { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
+  const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { principal, activeWalletProvider } = React.useContext(AuthContext);
   const { tokens, refreshAllBalances } = useTokensContext();
 
