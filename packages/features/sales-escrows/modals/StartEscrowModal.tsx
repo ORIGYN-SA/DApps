@@ -2,7 +2,7 @@ import * as React from 'react';
 import BigNumber from 'bignumber.js';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
-import { LoadingContainer } from '@dapp/features-components';
+import { LoadingContainer, ProgressBar } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
 import {
   Modal,
@@ -61,6 +61,9 @@ export function StartEscrowModal({
   const [isTransacting, setIsTransacting] = React.useState(false);
   const [status, setStatus] = React.useState('');
   const [success, setSuccess] = React.useState(false);
+
+  const [currentProgressIndex, setCurrentProgressIndex] = React.useState(0);
+  const [successMessage, setSuccessMessage] = React.useState('');
 
   const [token, setToken] = React.useState<Token>();
   const [enteredAmount, setEnteredAmount] = React.useState('');
@@ -195,6 +198,8 @@ export function StartEscrowModal({
   };
 
   const onFormSubmitted = async (e: any) => {
+    setCurrentProgressIndex(0);
+
     e.preventDefault();
 
     if (isLoading || isTransacting) {
@@ -214,7 +219,7 @@ export function StartEscrowModal({
     try {
       setIsTransacting(true);
       onProcessing(true);
-
+      setCurrentProgressIndex(0);
       // Add a tx fee to the total escrow amount (second tx fee).
       // This is needed to move the money from the deposit account to the escrow account.
       const amount = toSmallerUnit(Number(enteredAmount), token.decimals);
@@ -231,7 +236,8 @@ export function StartEscrowModal({
       debug.log('deposit account', depositAccountId);
       // Transfer tokens from buyer's wallet to the deposit account.
       // If this fails, the tokens should still be in the buyer's wallet.
-      setStatus('Sending tokens to deposit account...');
+      setStatus(STATUS.sendingTokensDepositAccount);
+      setCurrentProgressIndex(1);
       const sendTokensResult = await sendTokensToDepositAccount(
         depositAccountId,
         totalAmount,
@@ -242,8 +248,8 @@ export function StartEscrowModal({
         return;
       }
       const transactionHeight = sendTokensResult.result;
-
-      setStatus(STATUS.sendingTokens);
+      setStatus(STATUS.sendingTokensEscrowAccount);
+      setCurrentProgressIndex(2);
       // Transfer tokens from the deposit account to the escrow account.
       // If this fails, the buyer can withdraw the tokens from Manage Deposits in Vault.
       const sendEscrowResponse = await sendEscrow(
@@ -264,6 +270,7 @@ export function StartEscrowModal({
       // so create a bid from the escrow receipt and sale id.
       if (odc.auctionOpen) {
         setStatus(STATUS.creatingBid);
+        setCurrentProgressIndex(3);
         const createBidResponse = await createBid(escrowReceipt, odc.saleId);
         if (!createBidResponse.result) {
           showErrorMessage(createBidResponse.errorMessage);
@@ -272,20 +279,20 @@ export function StartEscrowModal({
 
         const purchased = !!createBidResponse.result?.['bid']?.txn_type?.sale_ended;
         if (purchased) {
-          showSuccessMessage(SUCCESS.purchase);
+          setCurrentProgressIndex(4);
+          setSuccessMessage(SUCCESS.purchase);
         } else {
-          showSuccessMessage(SUCCESS.placeBid);
+          setCurrentProgressIndex(4);
+          setSuccessMessage(SUCCESS.placeBid);
         }
       } else {
-        showSuccessMessage(SUCCESS.placeOffer);
+        setCurrentProgressIndex(3);
+        setSuccessMessage(SUCCESS.placeOffer);
       }
-
-      onModalClose(true);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
       setStatus('');
-      setIsTransacting(false);
       onProcessing(false);
     }
   };
@@ -325,17 +332,18 @@ export function StartEscrowModal({
         ) : (
           <>
             {isTransacting ? (
-              <>
-                <h2>Transactions in Progress</h2>
-                <br />
-                {status && (
-                  <>
-                    <p>{status}</p>
-                  </>
-                )}
-
-                <LoadingContainer data-testid="loading-container" margin="24px" />
-              </>
+              <Container>
+                <Flex align="center" justify="center">
+                  <ProgressBar
+                    title="Transaction in progress"
+                    progressMessage={status && status}
+                    successMessage={successMessage}
+                    currentProgressIndex={currentProgressIndex}
+                    progressLength={odc.auctionOpen ? 4 : 3}
+                    successAction={() => onModalClose(true)}
+                  />
+                </Flex>
+              </Container>
             ) : (
               <>
                 {escrowType === 'Offer' ? (
