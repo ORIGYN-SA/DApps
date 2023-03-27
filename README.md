@@ -15,11 +15,11 @@ This repository is a monorepo containing standard ORIGYN dApps for the perpetual
 ./packages/common/assets
 ./packages/common/candid
 ./packages/common/types
-./packages/features/authentiction
+./packages/features/authentication
 ./packages/features/components
 ./packages/features/debug-provider
 ./packages/features/sales-escrows
-./pakcages/featrues/theme
+./packages/features/theme
 ./packages/features/token-provider
 ./packages/features/user-messages
 ./packages/utils
