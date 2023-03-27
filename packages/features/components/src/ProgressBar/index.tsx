@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useRef, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { Flex, Button } from '@origyn/origyn-art-ui';
 
