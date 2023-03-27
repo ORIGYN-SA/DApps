@@ -2,7 +2,7 @@ import * as React from 'react';
 import BigNumber from 'bignumber.js';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
-import { LoadingContainer, ProgressBar } from '@dapp/features-components';
+import { ProgressBar } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
 import {
   Modal,

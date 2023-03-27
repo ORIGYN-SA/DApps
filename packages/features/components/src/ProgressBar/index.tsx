@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Flex, Container, Button } from '@origyn/origyn-art-ui';
+import { Flex, Button } from '@origyn/origyn-art-ui';
 
 export type ProgressProps = {
   title: string;
