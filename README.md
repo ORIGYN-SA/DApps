@@ -1,6 +1,30 @@
 # ORIGYN dApps Monorepo
 
-This repository is a monorepo containing standard ORIGYN dApps.
+This repository is a monorepo containing standard ORIGYN dApps for the perpetualOS
+
+### Modules
+
+./packages/apps/ledger
+./packages/apps/library
+./packages/apps/luxury
+./packages/apps/marketplace
+./packages/apps/nft-data
+./packages/apps/vault
+./packages/candy_editor
+./packages/common/api
+./packages/common/assets
+./packages/common/candid
+./packages/common/types
+./packages/features/authentiction
+./packages/features/components
+./packages/features/debug-provider
+./packages/features/sales-escrows
+./pakcages/featrues/theme
+./packages/features/token-provider
+./packages/features/user-messages
+./packages/utils
+
+Please document what each package is above.
 
 ## 🏁 Quickstart
 
