@@ -93,6 +93,7 @@ export const Layout = ({ children }: LayoutProps) => {
             navItems={menuItems}
             onChangeTheme={() => handleThemeChange()}
             dAppsVersion="0.1.0"
+            darkMode={darkTheme}
           />
           <Flex fullWidth>{children}</Flex>
         </Flex>
