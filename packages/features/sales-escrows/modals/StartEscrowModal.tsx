@@ -2,7 +2,7 @@ import * as React from 'react';
 import BigNumber from 'bignumber.js';
 import { useDebug } from '@dapp/features-debug-provider';
 import { AuthContext } from '@dapp/features-authentication';
-import { ProgressBar } from '@dapp/features-components';
+import { ProgressBar, ProgressError } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
 import {
   Modal,
@@ -64,6 +64,7 @@ export function StartEscrowModal({
 
   const [currentProgressIndex, setCurrentProgressIndex] = React.useState(0);
   const [successMessage, setSuccessMessage] = React.useState('');
+  const [error, setError] = React.useState<ProgressError | null>(null);
 
   const [token, setToken] = React.useState<Token>();
   const [enteredAmount, setEnteredAmount] = React.useState('');
@@ -231,7 +232,16 @@ export function StartEscrowModal({
       const depositAccountId = getDepositAccountResult.result;
       if (!depositAccountId) {
         showErrorMessage(getDepositAccountResult.errorMessage);
-        return;
+        setError({
+          title: 'There was an error with your action.',
+          message: getDepositAccountResult.errorMessage,
+          tryAgainAction: () => {
+            alert('Try again');
+          },
+          doneAction: () => {
+            alert('Done');
+          },
+        });
       }
       debug.log('deposit account', depositAccountId);
       // Transfer tokens from buyer's wallet to the deposit account.
@@ -245,7 +255,16 @@ export function StartEscrowModal({
       );
       if (!sendTokensResult.result) {
         showErrorMessage(sendTokensResult.errorMessage);
-        return;
+        setError({
+          title: 'There was an error with your action.',
+          message: sendTokensResult.errorMessage,
+          tryAgainAction: () => {
+            alert('Try again');
+          },
+          doneAction: () => {
+            alert('Done');
+          },
+        });
       }
       const transactionHeight = sendTokensResult.result;
       setStatus(STATUS.sendingTokensEscrowAccount);
@@ -274,7 +293,16 @@ export function StartEscrowModal({
         const createBidResponse = await createBid(escrowReceipt, odc.saleId);
         if (!createBidResponse.result) {
           showErrorMessage(createBidResponse.errorMessage);
-          return;
+          setError({
+            title: 'There was an error with your action.',
+            message: getDepositAccountResult.errorMessage,
+            tryAgainAction: () => {
+              alert('Try again');
+            },
+            doneAction: () => {
+              alert('Done');
+            },
+          });
         }
 
         const purchased = !!createBidResponse.result?.['bid']?.txn_type?.sale_ended;
@@ -291,6 +319,16 @@ export function StartEscrowModal({
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
+      setError({
+        title: 'There was an error with your action.',
+        message: e,
+        tryAgainAction: () => {
+          alert('Try again');
+        },
+        doneAction: () => {
+          alert('Done');
+        },
+      });
     } finally {
       setStatus('');
       onProcessing(false);
@@ -336,11 +374,12 @@ export function StartEscrowModal({
                 <Flex align="center" justify="center">
                   <ProgressBar
                     title="Transaction in progress"
-                    progressMessage={status && status}
+                    message={status && status}
                     successMessage={successMessage}
-                    currentProgressIndex={currentProgressIndex}
-                    progressLength={odc.auctionOpen ? 4 : 3}
+                    currentValue={currentProgressIndex}
+                    maxValue={odc.auctionOpen ? 4 : 3}
                     successAction={() => onModalClose(true)}
+                    error={error}
                   />
                 </Flex>
               </Container>
