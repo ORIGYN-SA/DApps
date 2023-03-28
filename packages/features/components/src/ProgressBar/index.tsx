@@ -1,23 +1,18 @@
-import React, { PropsWithChildren, useRef, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Flex, Button } from '@origyn/origyn-art-ui';
 import { ErrorIcon } from '@dapp/common-assets';
 
-export type ProgressError = {
-  title: string;
-  message: string;
-  tryAgainAction: () => void;
-  doneAction: () => void;
-};
-
 export type ProgressProps = {
   title: string;
-  currentValue?: number;
+  currentValue: number;
   maxValue: number;
-  message: string;
+  statusMessage: string;
   successMessage: string;
-  successAction: () => void;
-  error?: ProgressError | null;
+  errorMessage?: string;
+  doneAction: Function;
+  error?: boolean;
+  tryAgainAction?: Function;
 };
 
 const StyledProgressContainer = styled.div`
@@ -80,46 +75,37 @@ const StyleContainerError = styled.div`
 const BtnContainer = styled.div`
   margin-top: 32px;
 `;
+
 export const ProgressBar = ({
   title,
   currentValue,
   maxValue,
-  message,
+  statusMessage,
   successMessage,
-  successAction,
+  errorMessage,
+  doneAction,
+  tryAgainAction,
   error,
 }: PropsWithChildren<ProgressProps>) => {
-  const progressLineContainer = useRef<HTMLDivElement>(null);
-  const progressLine = useRef<HTMLDivElement>(null);
-  const successMsg = useRef<HTMLDivElement>(null);
-  const msg = useRef<HTMLDivElement>(null);
-  const btnDone = useRef<HTMLButtonElement>(null);
+  const [showSuccessMsg, setShowSuccessMsg] = useState(false);
+  const [showProgressLine, setShowProgressLine] = useState(true);
+  const [showBtnDone, setShowBtnDone] = useState(false);
 
-  const [progressError, setProgressError] = useState<ProgressError | null>(null);
+  const [progressWidth, setProgressWidth] = useState(0);
+
+  const [progressError, setProgressError] = useState<boolean>(false);
 
   const setLineProgress = () => {
-    if (successMsg.current) {
-      if (currentValue == maxValue) {
-        msg.current.style.display = 'none';
-        progressLine.current.style.display = 'none';
-        progressLineContainer.current.style.display = 'none';
-
-        successMsg.current.style.display = 'block';
-        btnDone.current.style.display = 'block';
-      } else {
-        successMsg.current.style.display = 'none';
-        btnDone.current.style.display = 'none';
-
-        msg.current.style.display = 'block';
-        progressLine.current.style.display = 'block';
-        progressLineContainer.current.style.display = 'block';
-      }
+    if (currentValue == maxValue) {
+      setShowSuccessMsg(true);
+      setShowProgressLine(false);
+      setShowBtnDone(true);
+    } else {
+      setShowSuccessMsg(false);
+      setShowProgressLine(true);
+      setShowBtnDone(false);
     }
-
-    const width = (currentValue / maxValue) * 100;
-    if (progressLine.current) {
-      progressLine.current.style.width = `${width}%`;
-    }
+    setProgressWidth((currentValue / maxValue) * 100);
   };
 
   useEffect(() => {
@@ -129,7 +115,7 @@ export const ProgressBar = ({
   }, [currentValue]);
 
   useEffect(() => {
-    if (error && error.title) {
+    if (error === true) {
       setProgressError(error);
     }
   }, [error]);
@@ -137,61 +123,55 @@ export const ProgressBar = ({
   return (
     <StyledProgressContainer>
       <>
+        <StyledProgressTitle>{title}</StyledProgressTitle>
         {progressError ? (
-          <>
-            <StyledProgressTitle>Error</StyledProgressTitle>
-            <StyleError>{progressError.title}</StyleError>
-            <StyleContainerError>
-              <Flex align="flext-start" gap={12}>
-                <Flex>
-                  <ErrorIcon />
-                </Flex>
-                <Flex>
-                  <div>{progressError.message}</div>
-                </Flex>
+          <StyleContainerError>
+            <Flex align="flext-start" gap={12}>
+              <Flex>
+                <ErrorIcon />
               </Flex>
-            </StyleContainerError>
-
-            <BtnContainer>
-              <Flex align="flex-end" justify="flex-end" gap={16}>
-                <Button
-                  size="large"
-                  btnType="outlined"
-                  ref={btnDone}
-                  onClick={error.tryAgainAction}
-                >
-                  Try Again
-                </Button>
-                <Button size="large" btnType="filled" ref={btnDone} onClick={error.doneAction}>
-                  Done
-                </Button>
+              <Flex>
+                <div>{errorMessage}</div>
               </Flex>
-            </BtnContainer>
-          </>
+            </Flex>
+          </StyleContainerError>
         ) : (
           <>
-            <StyledProgressTitle>{title}</StyledProgressTitle>
-            <StyleSuccess ref={successMsg}>{successMessage}</StyleSuccess>
+            {showSuccessMsg && <StyleSuccess>{successMessage}</StyleSuccess>}
             <Flex align="center" justify="center">
-              <StyledProgressMessage ref={msg}>
-                {message ? message : `${currentValue} of ${maxValue}`}
-              </StyledProgressMessage>
+              {!showSuccessMsg && <StyledProgressMessage>{statusMessage}</StyledProgressMessage>}
             </Flex>
-            <Flex align="flex-end" justify="flex-end">
+            {showProgressLine && (
+              <StyleProgressLineContainer>
+                <StyleProgressLine
+                  style={{ width: `${progressWidth}%` }}
+                  onClick={setLineProgress}
+                />
+              </StyleProgressLineContainer>
+            )}
+          </>
+        )}
+        {(showBtnDone || progressError) && (
+          <Flex align="flex-end" justify="flex-end" gap={16}>
+            <Flex>
+              {tryAgainAction && progressError && (
+                <BtnContainer>
+                  <Button size="large" btnType="outlined" onClick={tryAgainAction}>
+                    Try Again
+                  </Button>
+                </BtnContainer>
+              )}
+            </Flex>
+            <Flex>
               <BtnContainer>
-                <Button size="large" btnType="filled" ref={btnDone} onClick={successAction}>
+                <Button size="large" btnType="filled" onClick={doneAction}>
                   Done
                 </Button>
               </BtnContainer>
             </Flex>
-            <StyleProgressLineContainer ref={progressLineContainer}>
-              <StyleProgressLine onClick={setLineProgress} ref={progressLine} />
-            </StyleProgressLineContainer>
-          </>
+          </Flex>
         )}
       </>
     </StyledProgressContainer>
   );
 };
-
-export default ProgressBar;
