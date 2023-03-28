@@ -63,9 +63,7 @@ export function StartEscrowModal({
   const [success, setSuccess] = React.useState(false);
 
   const [currentProgressIndex, setCurrentProgressIndex] = React.useState<number>(0);
-  const [successMessage, setSuccessMessage] = React.useState<string>('');
   const [progressTitle, setProgressTitle] = React.useState<string>('');
-  const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [error, setError] = React.useState<boolean>(false);
 
   const [token, setToken] = React.useState<Token>();
@@ -226,7 +224,7 @@ export function StartEscrowModal({
       setProgressTitle('Transaction in progress');
       // Add a tx fee to the total escrow amount (second tx fee).
       // This is needed to move the money from the deposit account to the escrow account.
-      const amount = toSmallerUnit(Number(enteredAmount), token.decimals);
+      const amount = toSmallerUnit(toBigNumber(enteredAmount), token.decimals);
       const totalAmount = amount.plus(toBigNumber(token.fee)).decimalPlaces(token.decimals);
       debug.log('escrow amount with fee', totalAmount.toString());
 
@@ -235,7 +233,7 @@ export function StartEscrowModal({
       const depositAccountId = getDepositAccountResult.result;
       if (!depositAccountId) {
         setError(true);
-        setErrorMessage(getDepositAccountResult.errorMessage);
+        setStatus(getDepositAccountResult.errorMessage);
         setProgressTitle('Error');
         return;
       }
@@ -251,7 +249,7 @@ export function StartEscrowModal({
       );
       if (!sendTokensResult.result) {
         setError(true);
-        setErrorMessage(sendTokensResult.errorMessage);
+        setStatus(sendTokensResult.errorMessage);
         setProgressTitle('Error');
         return;
       }
@@ -270,7 +268,7 @@ export function StartEscrowModal({
       );
       if (!sendEscrowResponse.result) {
         setError(true);
-        setErrorMessage(sendEscrowResponse.errorMessage);
+        setStatus(sendEscrowResponse.errorMessage);
         setProgressTitle('Error');
         return;
       }
@@ -284,7 +282,7 @@ export function StartEscrowModal({
         const createBidResponse = await createBid(escrowReceipt, odc.saleId);
         if (!createBidResponse.result) {
           setError(true);
-          setErrorMessage(createBidResponse.errorMessage);
+          setStatus(createBidResponse.errorMessage);
           setProgressTitle('Error');
           return;
         }
@@ -292,21 +290,21 @@ export function StartEscrowModal({
         const purchased = !!createBidResponse.result?.['bid']?.txn_type?.sale_ended;
         if (purchased) {
           setCurrentProgressIndex(4);
-          setSuccessMessage(SUCCESS.purchase);
+          setStatus(SUCCESS.purchase);
         } else {
           setCurrentProgressIndex(4);
-          setSuccessMessage(SUCCESS.placeBid);
+          setStatus(SUCCESS.placeBid);
         }
       } else {
         setCurrentProgressIndex(3);
-        setSuccessMessage(SUCCESS.placeOffer);
+        setStatus(SUCCESS.placeOffer);
       }
     } catch (e) {
       setError(true);
-      setErrorMessage(e.message);
+      setStatus(e.message);
       setProgressTitle('Error');
     } finally {
-      setStatus('');
+      setStatus('Escrow successfully sent.');
       onProcessing(false);
     }
   };
@@ -350,14 +348,12 @@ export function StartEscrowModal({
                 <Flex align="center" justify="center">
                   <ProgressBar
                     title={progressTitle}
-                    statusMessage={status && status}
-                    successMessage={successMessage}
-                    errorMessage={errorMessage}
+                    message={status}
+                    isError={error}
                     currentValue={currentProgressIndex}
                     maxValue={odc.auctionOpen ? 4 : 3}
                     doneAction={() => onModalClose(true)}
                     tryAgainAction={onFormSubmitted}
-                    error={error}
                   />
                 </Flex>
               </Container>

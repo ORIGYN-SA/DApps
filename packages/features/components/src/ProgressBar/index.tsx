@@ -5,13 +5,11 @@ import { ErrorIcon } from '@dapp/common-assets';
 
 export type ProgressProps = {
   title: string;
+  message: string;
+  isError?: boolean;
   currentValue: number;
   maxValue: number;
-  statusMessage: string;
-  successMessage: string;
-  errorMessage?: string;
   doneAction: Function;
-  error?: boolean;
   tryAgainAction?: Function;
 };
 
@@ -72,22 +70,20 @@ const BtnContainer = styled.div`
 export const ProgressBar = ({
   title,
   currentValue,
+  isError,
+  message,
   maxValue,
-  statusMessage,
-  successMessage,
-  errorMessage,
   doneAction,
   tryAgainAction,
-  error,
 }: PropsWithChildren<ProgressProps>) => {
   const [showSuccessMsg, setShowSuccessMsg] = useState(false);
   const [showProgressLine, setShowProgressLine] = useState(true);
   const [showBtnDone, setShowBtnDone] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const [progressWidth, setProgressWidth] = useState(0);
 
   const [progressError, setProgressError] = useState<boolean>(false);
-
   const setLineProgress = () => {
     if (currentValue == maxValue) {
       setShowSuccessMsg(true);
@@ -108,10 +104,16 @@ export const ProgressBar = ({
   }, [currentValue]);
 
   useEffect(() => {
-    if (error === true) {
-      setProgressError(error);
+    if (isError === true) {
+      setProgressError(true);
     }
-  }, [error]);
+  }, [isError]);
+
+  useEffect(() => {
+    if (message) {
+      setStatusMessage(message);
+    }
+  }, [message]);
 
   return (
     <StyledProgressContainer>
@@ -123,14 +125,12 @@ export const ProgressBar = ({
               <Flex>
                 <ErrorIcon />
               </Flex>
-              <Flex>
-                <div>{errorMessage}</div>
-              </Flex>
+              <Flex>{statusMessage}</Flex>
             </Flex>
           </StyleContainerError>
         ) : (
           <>
-            {showSuccessMsg && <StyleSuccess>{successMessage}</StyleSuccess>}
+            {showSuccessMsg && <StyleSuccess>{statusMessage}</StyleSuccess>}
             <Flex align="center" justify="center">
               {!showSuccessMsg && <StyledProgressMessage>{statusMessage}</StyledProgressMessage>}
             </Flex>
