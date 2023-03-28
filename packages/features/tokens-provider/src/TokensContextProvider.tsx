@@ -51,7 +51,7 @@ export type TokensContext = {
   };
   walletTokens: {
     [key: string]: Token;
-  }
+  };
   time?: string | number | void;
   activeTokens: {
     [key: string]: Token;
@@ -90,9 +90,7 @@ const localStorageTokens = () => {
 };
 const initialTokens = defaultTokensMapped();
 
-const walletTokens = localStorageTokens()
-
-
+const walletTokens = localStorageTokens();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
