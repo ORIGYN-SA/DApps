@@ -21,7 +21,8 @@ export const VALIDATION: ConstantsMap = {
 };
 
 export const STATUS: ConstantsMap = {
-    sendingTokens: 'Sending tokens to escrow account',
+    sendingTokensDepositAccount: 'Sending tokens to deposit account',
+    sendingTokensEscrowAccount: 'Sending tokens to escrow account',
     creatingBid: 'Creating bid',
 }
 
