@@ -24,7 +24,7 @@ export const WalletTokens = ({ children }: any) => {
   const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
   const [inputCanisterId, setInputCanisterId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { tokens, addToken, toggleToken } = useTokensContext();
+  const { addToken, toggleToken, walletTokens } = useTokensContext();
   const { enqueueSnackbar } = useSnackbar();
   const handleAddButton = async () => {
     if (isLoading) return;
@@ -88,8 +88,8 @@ export const WalletTokens = ({ children }: any) => {
             content={[
               <Flex flexFlow="column" gap={18} fullWidth key="tabContentCol1">
                 <br />
-                {Object.keys(tokens).map((key: string) => {
-                  const token = tokens[key];
+                {Object.keys(walletTokens).map((key: string) => {
+                  const token = walletTokens[key];
                   // const labelId = `checkbox-list-secondary-label-${token.symbol}`;
                   return (
                     <Card
