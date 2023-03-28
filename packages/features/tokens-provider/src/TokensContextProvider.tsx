@@ -1,6 +1,7 @@
 import { IdlStandard } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
-import React, { createContext, useContext, useState } from 'react';
+import JSONBig from 'json-bigint';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
 import { timeConverter } from '@dapp/utils';
@@ -48,8 +49,14 @@ export type TokensContext = {
   tokens: {
     [key: string]: Token;
   };
+  walletTokens: {
+    [key: string]: Token;
+  };
   time?: string | number | void;
   activeTokens: {
+    [key: string]: Token;
+  };
+  activeWalletTokens: {
     [key: string]: Token;
   };
   addToken?: (
@@ -60,6 +67,7 @@ export type TokensContext = {
   ) => Promise<Token | string>;
   getBalance?: (isLocal: boolean, principal: Principal, token: Token) => Promise<number>;
   toggleToken?: (symbol: string) => void;
+  toggleWalletToken?: (symbol: string) => void;
   refreshBalance?: (isLocal: boolean, principal: Principal, symbol: string) => void;
   refreshAllBalances?: (isLocal: boolean, principal: Principal) => void;
   setLocalCanisterId?: (symbol: string, cansterId: string) => void;
@@ -78,19 +86,25 @@ const defaultTokensMapped = () => {
   return defaultTokensMapped;
 };
 
-// const localStorageTokens = () => {
-//   const localStorageTokens = localStorage.getItem('tokensContext');
-//   if (!localStorageTokens) return undefined;
+const localStorageTokens = () => {
+  const localStorageTokens = localStorage.getItem('tokensContext');
+  if (!localStorageTokens) return undefined;
 
-//   return JSONBig.parse(localStorageTokens ?? '');
-// };
+  return JSONBig.parse(localStorageTokens ?? '');
+};
 const initialTokens = defaultTokensMapped();
+
+const walletTokens = localStorageTokens() ?? defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
+  walletTokens: walletTokens,
   activeTokens: Object.keys(initialTokens)
     .filter((t) => initialTokens[t].enabled)
     .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {}),
+  activeWalletTokens: Object.keys(walletTokens)
+    .filter((t) => walletTokens[t].enabled)
+    .reduce((ats, key) => ({ ...ats, [key]: walletTokens[key] }), {}),
   time: timeConverter(BigInt(new Date().getTime() * 1000000)),
 });
 
@@ -127,7 +141,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     const _tokens = tokens;
     _tokens[token.symbol] = token;
     setTokens(_tokens);
-    // localStorage.setItem('tokensContext', JSONBig.stringify(_tokens));
+    localStorage.setItem('tokensContext', JSONBig.stringify(_tokens));
     return token;
   };
 
@@ -139,6 +153,16 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       return { ...pTokens };
     });
   };
+
+  const toggleWalletToken = (symbol: string) => {
+    setTokens((pTokens) => {
+      /* eslint-disable no-param-reassign */
+      pTokens[symbol].enabled = !pTokens[symbol].enabled;
+
+      return { ...pTokens };
+    });
+  };
+
 
   const getBalance = async (isLocal: boolean, principal: Principal, token: Token) => {
     try {
@@ -185,9 +209,9 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
   };
 
-  // useEffect(() => {
-  //   localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
-  // }, [tokens]);
+  useEffect(() => {
+    localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
+  }, [tokens]);
 
   return (
     <TokensContext.Provider
@@ -198,11 +222,16 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         refreshBalance,
         setLocalCanisterId,
         toggleToken,
+        toggleWalletToken,
         tokens,
+        walletTokens,
         time,
         activeTokens: Object.keys(tokens)
           .filter((t) => tokens[t].enabled)
           .reduce((ats, key) => ({ ...ats, [key]: tokens[key] }), {}),
+        activeWalletTokens: Object.keys(walletTokens)
+          .filter((t) => walletTokens[t].enabled)
+          .reduce((ats, key) => ({ ...ats, [key]: walletTokens[key] }), {}),
       }}
     >
       {children}

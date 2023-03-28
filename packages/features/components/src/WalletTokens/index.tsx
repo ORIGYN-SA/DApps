@@ -20,11 +20,11 @@ import {
 export const WalletTokens = ({ children }: any) => {
   const { principal } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  //const [selectedTab, setSelectedTab] = useState<number>(0)
+  // const [selectedTab, setSelectedTab] = useState<number>(0)
   const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
   const [inputCanisterId, setInputCanisterId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { tokens, addToken, toggleToken } = useTokensContext();
+  const { addToken, toggleToken, walletTokens, refreshAllBalances } = useTokensContext();
   const { enqueueSnackbar } = useSnackbar();
   const handleAddButton = async () => {
     if (isLoading) return;
@@ -60,7 +60,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    // refreshAllBalances(isLocal(), principal)
+    refreshAllBalances(isLocal(), principal)
   };
   // const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
   //   setSelectedTab(tab)
@@ -72,6 +72,8 @@ export const WalletTokens = ({ children }: any) => {
   //   id: `simple-tab-${index}`,
   //   'aria-controls': `simple-tabpanel-${index}`,
   // });
+
+  console.log('tokens', walletTokens)
   return (
     <>
       <Modal isOpened={isModalOpen} closeModal={() => handleModalClose()} size="md">
@@ -88,8 +90,8 @@ export const WalletTokens = ({ children }: any) => {
             content={[
               <Flex flexFlow="column" gap={18} fullWidth key="tabContentCol1">
                 <br />
-                {Object.keys(tokens).map((key: string) => {
-                  const token = tokens[key];
+                {Object.keys(walletTokens).map((key: string) => {
+                  const token = walletTokens[key];
                   // const labelId = `checkbox-list-secondary-label-${token.symbol}`;
                   return (
                     <Card
