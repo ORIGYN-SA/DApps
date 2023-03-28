@@ -53,7 +53,7 @@ export function StartEscrowModal({
 }: StartEscrowModalProps) {
   const debug = useDebug();
   const { getDepositAccountNumber, sendTokensToDepositAccount, sendEscrow, createBid } = useApi();
-  const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
+  const { showErrorMessage } = useUserMessages();
   const { principal, activeWalletProvider } = React.useContext(AuthContext);
   const { tokens, refreshAllBalances } = useTokensContext();
 
@@ -234,7 +234,6 @@ export function StartEscrowModal({
       const getDepositAccountResult = await getDepositAccountNumber();
       const depositAccountId = getDepositAccountResult.result;
       if (!depositAccountId) {
-        showErrorMessage(getDepositAccountResult.errorMessage);
         setError(true);
         setErrorMessage(getDepositAccountResult.errorMessage);
         setProgressTitle('Error');
@@ -251,7 +250,6 @@ export function StartEscrowModal({
         token,
       );
       if (!sendTokensResult.result) {
-        showErrorMessage(sendTokensResult.errorMessage);
         setError(true);
         setErrorMessage(sendTokensResult.errorMessage);
         setProgressTitle('Error');
@@ -271,7 +269,9 @@ export function StartEscrowModal({
         odc.saleId,
       );
       if (!sendEscrowResponse.result) {
-        showErrorMessage(sendEscrowResponse.errorMessage);
+        setError(true);
+        setErrorMessage(sendEscrowResponse.errorMessage);
+        setProgressTitle('Error');
         return;
       }
       const escrowReceipt = sendEscrowResponse.result;
@@ -283,7 +283,6 @@ export function StartEscrowModal({
         setCurrentProgressIndex(3);
         const createBidResponse = await createBid(escrowReceipt, odc.saleId);
         if (!createBidResponse.result) {
-          showErrorMessage(createBidResponse.errorMessage);
           setError(true);
           setErrorMessage(createBidResponse.errorMessage);
           setProgressTitle('Error');
@@ -303,7 +302,6 @@ export function StartEscrowModal({
         setSuccessMessage(SUCCESS.placeOffer);
       }
     } catch (e) {
-      showUnexpectedErrorMessage(e);
       setError(true);
       setErrorMessage(e.message);
       setProgressTitle('Error');

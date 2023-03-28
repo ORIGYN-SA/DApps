@@ -49,13 +49,6 @@ const StyleSuccess = styled.div`
   margin-top: 16px;
 `;
 
-const StyleError = styled.div`
-  margin-top: 16px;
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.SECONDARY_TEXT};
-  margin-top: 16px;
-`;
-
 const StyleContainerError = styled.div`
   width: 538px;
   left: 0px;
