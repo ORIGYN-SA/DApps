@@ -24,7 +24,7 @@ export const WalletTokens = ({ children }: any) => {
   const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
   const [inputCanisterId, setInputCanisterId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { addToken, toggleToken, walletTokens, refreshAllBalances } = useTokensContext();
+  const { addToken, toggleToken, tokens, refreshAllBalances } = useTokensContext();
   const { enqueueSnackbar } = useSnackbar();
   const handleAddButton = async () => {
     if (isLoading) return;
@@ -73,7 +73,7 @@ export const WalletTokens = ({ children }: any) => {
   //   'aria-controls': `simple-tabpanel-${index}`,
   // });
 
-  console.log('tokens', walletTokens)
+  console.log('tokens', tokens)
   return (
     <>
       <Modal isOpened={isModalOpen} closeModal={() => handleModalClose()} size="md">
@@ -90,8 +90,8 @@ export const WalletTokens = ({ children }: any) => {
             content={[
               <Flex flexFlow="column" gap={18} fullWidth key="tabContentCol1">
                 <br />
-                {Object.keys(walletTokens).map((key: string) => {
-                  const token = walletTokens[key];
+                {Object.keys(tokens).map((key: string) => {
+                  const token = tokens[key];
                   // const labelId = `checkbox-list-secondary-label-${token.symbol}`;
                   return (
                     <Card
