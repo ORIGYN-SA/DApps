@@ -262,7 +262,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   odc.currentBid = 0;
 
   if (odc.auction) {
-    odc.auctionOpen = 'open' in odc.auction.status && odc.auction.end_date > timeInNanos();
+    odc.auctionOpen = 'open' in odc.auction.status || odc.auction.end_date > timeInNanos();
     odc.auctionClosed = 'closed' in odc.auction.status;
     odc.auctionNotStarted = 'not_started' in odc.auction.status;
 
