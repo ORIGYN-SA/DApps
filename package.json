@@ -100,7 +100,7 @@
     "@mui/material": "^5.10.15",
     "@mui/x-date-pickers": "^5.0.9",
     "@origyn/mintjs": "^1.0.0-alpha.10",
-    "@origyn/origyn-art-ui": "^1.2.33",
+    "@origyn/origyn-art-ui": "^1.2.34",
     "@origyn/perpetualos-context": "^0.1.2",
     "@svgr/webpack": "^6.2.1",
     "@testing-library/jest-dom": "^5.16.5",
