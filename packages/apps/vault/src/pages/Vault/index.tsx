@@ -145,7 +145,7 @@ const VaultPage = () => {
   const [openTrx, setOpenTrx] = useState(false);
   const [showManageEscrowsButton, setShowManageEscrowsButton] = useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
-  const {time, tokens, activeTokens } = useTokensContext();
+  const {time, activeTokens } = useTokensContext();
   const { open } = useDialog();
   const { state, dispatch } = useVault();
   const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } = state;

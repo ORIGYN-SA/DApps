@@ -90,7 +90,7 @@ const localStorageTokens = () => {
 };
 const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
-const walletTokens =  defaultTokensMapped();
+const walletTokens = defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
@@ -146,16 +146,6 @@ export const TokensContextProvider: React.FC = ({ children }) => {
       return { ...pTokens };
     });
   };
-
-  const toggleWalletToken = (symbol: string) => {
-    setTokens((pTokens) => {
-      /* eslint-disable no-param-reassign */
-      pTokens[symbol].enabled = !pTokens[symbol].enabled;
-
-      return { ...pTokens };
-    });
-  };
-
 
   const getBalance = async (isLocal: boolean, principal: Principal, token: Token) => {
     try {
