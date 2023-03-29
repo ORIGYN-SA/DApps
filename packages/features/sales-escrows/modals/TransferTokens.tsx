@@ -42,7 +42,7 @@ const validationSchema = Yup.object().shape({
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
-  const { tokens, activeTokens } = useTokensContext();
+  const { walletTokens, activeTokens } = useTokensContext();
   const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { activeWalletProvider } = useContext(AuthContext);
   const [inProcess, setInProcess] = useState(false);
@@ -66,7 +66,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   };
 
   const onAmountChanged = (value: string) => {
-    const token = tokens[values.token];
+    const token = walletTokens[values.token];
     let validationMsg = validateTokenAmount(value, token.decimals);
     if (validationMsg) {
       setErrors({ ...errors, amount: validationMsg });
@@ -77,7 +77,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   };
 
   const onTokenChanged = (value: string) => {
-    const token = tokens[value];
+    const token = walletTokens[value];
     const amount = toBigNumber(values.amount || 0);
     updateTotals(token, amount);
   };
@@ -94,7 +94,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
     try {
       setInProcess(true);
 
-      const token = tokens[data.token];
+      const token = walletTokens[data.token];
       const total = toSmallerUnit(data.amount, token.decimals);
       let address: string = data.recipientAddress;
 
@@ -218,7 +218,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
             <Flex flexFlow="row" justify="space-between">
               <span>Amount</span>
               <span id="balance" className="secondary_color">
-                Balance: {tokens[values.token]?.balance} {values.token}
+                Balance: {walletTokens[values.token]?.balance} {values.token}
               </span>
             </Flex>
             <TextInput

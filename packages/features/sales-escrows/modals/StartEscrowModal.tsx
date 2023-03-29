@@ -55,7 +55,7 @@ export function StartEscrowModal({
   const { getDepositAccountNumber, sendTokensToDepositAccount, sendEscrow, createBid } = useApi();
   const { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { principal, activeWalletProvider } = React.useContext(AuthContext);
-  const { tokens, refreshAllBalances } = useTokensContext();
+  const { walletTokens, refreshAllBalances } = useTokensContext();
 
   const [isLoading, setIsLoading] = React.useState(true);
   const [isTransacting, setIsTransacting] = React.useState(false);
@@ -74,7 +74,7 @@ export function StartEscrowModal({
 
   useEffect(() => {
     // initialize form values
-    if (open && odc && tokens) {
+    if (open && odc && walletTokens) {
       let minAmount = 0;
       if (escrowType === 'BuyNow') {
         minAmount = odc.buyNow;
@@ -87,7 +87,7 @@ export function StartEscrowModal({
 
       const decimals = Number(odc.token.decimals);
       const initialAmount = toLargerUnit(minAmount, Number(decimals));
-      const initialToken = tokens[odc.token.symbol];
+      const initialToken = walletTokens[odc.token.symbol];
       const initialTotal = getDisplayTotal(initialAmount, initialToken);
       const initialMinBid = toLargerUnit(
         Math.max(odc.startPrice, odc.currentBid + Number(odc.minIncreaseAmount)),
@@ -104,7 +104,7 @@ export function StartEscrowModal({
   }, [open]);
 
   const onTokenChanged = (tokenSymbol?: any) => {
-    const newToken = tokens[tokenSymbol];
+    const newToken = walletTokens[tokenSymbol];
     const newTotal = getDisplayTotal(toBigNumber(enteredAmount), newToken);
 
     setToken(newToken);
@@ -121,7 +121,7 @@ export function StartEscrowModal({
     }
     const fee = toLargerUnit(token.fee, token.decimals);
     const amount = toBigNumber(enteredAmount);
-    const balance = toBigNumber(tokens[token.symbol].balance);
+    const balance = toBigNumber(walletTokens[token.symbol].balance);
     if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       setFormErrors({ ...formErrors, amount: VALIDATION.insufficientFunds });
     } else {
@@ -143,7 +143,7 @@ export function StartEscrowModal({
   const validateForm = () => {
     let errors = { amount: '', token: undefined };
     const fee = toLargerUnit(token.fee, token.decimals);
-    const balance = toBigNumber(tokens[token.symbol].balance);
+    const balance = toBigNumber(walletTokens[token.symbol].balance);
 
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
@@ -363,10 +363,10 @@ export function StartEscrowModal({
                         }}
                         handleChange={(opt) => onTokenChanged(opt.value)}
                         label="Token"
-                        options={Object.keys(tokens).map((t) => ({
+                        options={Object.keys(walletTokens).map((t) => ({
                           label: (
                             <>
-                              <TokenIcon symbol={tokens[t].symbol} /> {tokens[t].symbol}
+                              <TokenIcon symbol={walletTokens[t].symbol} /> {walletTokens[t].symbol}
                             </>
                           ),
                           value: t,
@@ -395,7 +395,7 @@ export function StartEscrowModal({
                         <Flex flexFlow="row" align="center" justify="space-between">
                           <b>{escrowType == 'Bid' ? 'Your bid' : 'Price'}</b>
                           <span style={{ color: theme.colors.SECONDARY_TEXT }}>
-                            Balance: {tokens[token.symbol].balance.toString()} {token.symbol}
+                            Balance: {walletTokens[token.symbol].balance.toString()} {token.symbol}
                           </span>
                         </Flex>
                         {escrowType == 'Bid' && (

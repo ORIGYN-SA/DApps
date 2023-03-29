@@ -95,7 +95,7 @@ export function StartAuctionModal({
   const [values, setValues] = React.useState<any>(validationSchema.default());
   const [inProgress, setInProgress] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
-  const { tokens, activeTokens } = useTokensContext();
+  const { walletTokens, activeTokens } = useTokensContext();
 
   const onStartAuction = async ({
     startPrice,
@@ -109,7 +109,7 @@ export function StartAuctionModal({
       setInProgress(true);
       onProcessing(true);
 
-      const token = tokens[saleToken];
+      const token = walletTokens[saleToken];
 
       const marketTransferRequest: MarketTransferRequest = {
         token_id: currentToken,
@@ -121,9 +121,9 @@ export function StartAuctionModal({
                 ic: {
                   fee: BigInt(token.fee),
                   decimals: BigInt(token.decimals),
-                  canister: Principal.fromText(tokens[saleToken]?.canisterId),
+                  canister: Principal.fromText(walletTokens[saleToken]?.canisterId),
                   standard: { Ledger: null },
-                  symbol: tokens[saleToken]?.symbol,
+                  symbol: walletTokens[saleToken]?.symbol,
                 },
               },
               reserve: [BigInt(toSmallerUnit(reservePrice, token.decimals).toFixed())],
@@ -195,7 +195,7 @@ export function StartAuctionModal({
   };
 
   const onCurrencyChanged = (name: string, value: string) => {
-    let validationMsg = validateTokenAmount(value, tokens[values.token].decimals);
+    let validationMsg = validateTokenAmount(value, walletTokens[values.token].decimals);
     setErrors({ ...errors, [name]: validationMsg });
     setValues({ ...values, [name]: value });
   };

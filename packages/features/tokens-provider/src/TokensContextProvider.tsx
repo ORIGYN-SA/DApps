@@ -56,9 +56,6 @@ export type TokensContext = {
   activeTokens: {
     [key: string]: Token;
   };
-  activeWalletTokens: {
-    [key: string]: Token;
-  };
   addToken?: (
     isLocal: boolean,
     canisterId: string,
@@ -67,7 +64,6 @@ export type TokensContext = {
   ) => Promise<Token | string>;
   getBalance?: (isLocal: boolean, principal: Principal, token: Token) => Promise<number>;
   toggleToken?: (symbol: string) => void;
-  toggleWalletToken?: (symbol: string) => void;
   refreshBalance?: (isLocal: boolean, principal: Principal, symbol: string) => void;
   refreshAllBalances?: (isLocal: boolean, principal: Principal) => void;
   setLocalCanisterId?: (symbol: string, cansterId: string) => void;
@@ -92,9 +88,9 @@ const localStorageTokens = () => {
 
   return JSONBig.parse(localStorageTokens ?? '');
 };
-const initialTokens = defaultTokensMapped();
+const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
-const walletTokens = localStorageTokens() ?? defaultTokensMapped();
+const walletTokens =  defaultTokensMapped();
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
@@ -102,9 +98,6 @@ export const TokensContext = createContext<TokensContext>({
   activeTokens: Object.keys(initialTokens)
     .filter((t) => initialTokens[t].enabled)
     .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {}),
-  activeWalletTokens: Object.keys(walletTokens)
-    .filter((t) => walletTokens[t].enabled)
-    .reduce((ats, key) => ({ ...ats, [key]: walletTokens[key] }), {}),
   time: timeConverter(BigInt(new Date().getTime() * 1000000)),
 });
 
@@ -222,16 +215,12 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         refreshBalance,
         setLocalCanisterId,
         toggleToken,
-        toggleWalletToken,
         tokens,
         walletTokens,
         time,
         activeTokens: Object.keys(tokens)
           .filter((t) => tokens[t].enabled)
           .reduce((ats, key) => ({ ...ats, [key]: tokens[key] }), {}),
-        activeWalletTokens: Object.keys(walletTokens)
-          .filter((t) => walletTokens[t].enabled)
-          .reduce((ats, key) => ({ ...ats, [key]: walletTokens[key] }), {}),
       }}
     >
       {children}
