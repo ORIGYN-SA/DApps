@@ -44,6 +44,7 @@ export const NFTPage = () => {
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [odc, setOdc] = useState<OdcDataWithSale>();
+  const [initialized, setInitialized] = useState(false);
   const [collectionData, setCollectionData] = useState<OdcData>();
   const [openAuctionModal, setOpenAuctionModal] = React.useState(false);
   const [canisterId, setCanisterId] = React.useState('');
@@ -67,8 +68,6 @@ export const NFTPage = () => {
       return;
     }
   };
-
-  const nftEndSale = odc?.auction?.end_date;
 
   const logout = () => {
     handleLogOut();
@@ -139,7 +138,7 @@ export const NFTPage = () => {
   };
 
   const fetchData = async () => {
-    Promise.all([fetchCollection(), fetchOdc()]);
+    await Promise.all([fetchCollection(), fetchOdc()]);
   };
 
   const getBuyNowPrice = (odc: OdcDataWithSale): string => {
@@ -169,14 +168,25 @@ export const NFTPage = () => {
   }, [principal, odc]);
 
   useEffect(() => {
-    let intervalId: any;
+    const checkForEndSale = async () => {
+      // if the auction ended, this function will trigger the end_sale on the current NFT
+      // this will be used as a checker
+      if (odc?.auction?.end_date) {
+        if (odc.auctionOpen && odc.auction.end_date <= timeInNanos()) {
+          console.log('Ending sale');
+          await endSaleNft();
+          await fetchOdc();
+        }
 
-    // if the auction ended, this function will trigger the end_sale on the current NFT
-    // this will be used as a checker
-    if (odc?.auctionOpen && nftEndSale <= timeInNanos()) {
-      console.log('Ending sale');
-      endSaleNft();
-    }
+        setInitialized(true);
+      }
+    };
+
+    checkForEndSale();
+  }, [odc]);
+
+  useEffect(() => {
+    let intervalId: any;
 
     if (actor) {
       fetchData();
@@ -248,113 +258,109 @@ export const NFTPage = () => {
                             <b>{collectionData?.displayName}</b>
                           </Flex>
                           <br />
-                          <HR />
-                          <Flex fullWidth justify="space-between" align="center">
-                            {odc?.auctionOpen ? (
-                              <>
-                                <Flex flexFlow="column">
-                                  <span>Current bid</span>
-                                  <strong>
-                                    <TokenIcon symbol={odc.tokenSymbol} />
-                                    {getCurrentBidPrice(odc)}
-                                  </strong>
-                                </Flex>
+                          {initialized && (
+                            <>
+                              <HR />
+                              <Flex fullWidth justify="space-between" align="center">
+                                {odc?.auctionOpen ? (
+                                  <>
+                                    <Flex flexFlow="column">
+                                      <span>Current bid</span>
+                                      <strong>
+                                        <TokenIcon symbol={odc.tokenSymbol} />
+                                        {getCurrentBidPrice(odc)}
+                                      </strong>
+                                    </Flex>
 
-                                {odc?.reserve != 0 && (
-                                  <Flex flexFlow="column">
-                                    <span>Reserve Price</span>
-                                    <strong>
-                                      <TokenIcon symbol={odc.tokenSymbol} />
-                                      {getReservePrice(odc)}
-                                    </strong>
-                                  </Flex>
-                                )}
+                                    {odc?.reserve != 0 && (
+                                      <Flex flexFlow="column">
+                                        <span>Reserve Price</span>
+                                        <strong>
+                                          <TokenIcon symbol={odc.tokenSymbol} />
+                                          {getReservePrice(odc)}
+                                        </strong>
+                                      </Flex>
+                                    )}
 
-                                {odc?.buyNow != 0 && (
-                                  <Flex flexFlow="column">
-                                    <span>Buy Now</span>
-                                    <strong>
-                                      <TokenIcon symbol={odc.tokenSymbol} />
-                                      {getBuyNowPrice(odc)}
-                                    </strong>
-                                  </Flex>
+                                    {odc?.buyNow != 0 && (
+                                      <Flex flexFlow="column">
+                                        <span>Buy Now</span>
+                                        <strong>
+                                          <TokenIcon symbol={odc.tokenSymbol} />
+                                          {getBuyNowPrice(odc)}
+                                        </strong>
+                                      </Flex>
+                                    )}
+                                  </>
+                                ) : (
+                                  'Not on sale'
                                 )}
-                              </>
-                            ) : (
-                              'Not on sale'
-                            )}
-                          </Flex>
-                          <HR />
-                          {odc?.auctionOpen && (
-                            <p className="secondary_color">
-                              {!nftEndSale || nftEndSale < timeInNanos() ? (
-                                <span>The sale has ended {getDiffInDays(nftEndSale)}</span>
-                              ) : (
-                                <span>{getDiffInDays(nftEndSale)}</span>
-                              )}
-                            </p>
-                          )}
-                          <br />
-                          {principalId && (
-                            <Flex gap={8} flexFlow="column">
-                              {odc?.auctionOpen ? (
-                                <>
-                                  {!isOwner && (
+                              </Flex>
+                              <HR />
+                              {principalId && (
+                                <Flex gap={8} flexFlow="column">
+                                  {odc?.auctionOpen ? (
+                                    <>
+                                      {!isOwner && (
+                                        <Button
+                                          btnType="accent"
+                                          onClick={() => onOpenEscrowModal('BuyNow')}
+                                          disabled={inProcess}
+                                        >
+                                          Buy Now
+                                        </Button>
+                                      )}
+
+                                      {isOwner ? (
+                                        odc.currentBid == 0 || odc.auctionNotStarted ? (
+                                          <Button
+                                            btnType="accent"
+                                            onClick={handleClickOpenEsc}
+                                            disabled={inProcess}
+                                          >
+                                            Cancel Sale
+                                          </Button>
+                                        ) : (
+                                          BigInt(Number(odc?.auction?.end_date || 9 * 1e30)) >
+                                            timeInNanos() && (
+                                            <Button disabled btnType="outlined">
+                                              Finish Sale
+                                            </Button>
+                                          )
+                                        )
+                                      ) : BigInt(Number(odc?.auction?.end_date || 9 * 1e30)) >
+                                        timeInNanos() ? (
+                                        <Button
+                                          btnType="outlined"
+                                          onClick={() => onOpenEscrowModal('Bid')}
+                                          disabled={inProcess}
+                                        >
+                                          Place Bid
+                                        </Button>
+                                      ) : (
+                                        <Button disabled btnType="outlined">
+                                          Place Bid
+                                        </Button>
+                                      )}
+                                    </>
+                                  ) : isOwner ? (
                                     <Button
                                       btnType="accent"
-                                      onClick={() => onOpenEscrowModal('BuyNow')}
+                                      onClick={onAuctionModalOpen}
                                       disabled={inProcess}
                                     >
-                                      Buy Now
-                                    </Button>
-                                  )}
-
-                                  {isOwner ? (
-                                    odc.currentBid == 0 || odc.auctionNotStarted ? (
-                                      <Button
-                                        btnType="accent"
-                                        onClick={handleClickOpenEsc}
-                                        disabled={inProcess}
-                                      >
-                                        Cancel Sale
-                                      </Button>
-                                    ) : (
-                                      BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() && (
-                                        <Button disabled btnType="outlined">
-                                          Finish Sale
-                                        </Button>
-                                      )
-                                    )
-                                  ) : BigInt(Number(nftEndSale || 9 * 1e30)) > timeInNanos() ? (
-                                    <Button
-                                      btnType="outlined"
-                                      onClick={() => onOpenEscrowModal('Bid')}
-                                      disabled={inProcess}
-                                    >
-                                      Place Bid
+                                      Start an Auction
                                     </Button>
                                   ) : (
-                                    <Button disabled btnType="outlined">
-                                      Place Bid
-                                    </Button>
+                                    <OffersPanel
+                                      odc={odc}
+                                      onOpenEscrowModal={onOpenEscrowModal}
+                                      inProcess={inProcess}
+                                    />
                                   )}
-                                </>
-                              ) : isOwner ? (
-                                <Button
-                                  btnType="accent"
-                                  onClick={onAuctionModalOpen}
-                                  disabled={inProcess}
-                                >
-                                  Start an Auction
-                                </Button>
-                              ) : (
-                                <OffersPanel
-                                  odc={odc}
-                                  onOpenEscrowModal={onOpenEscrowModal}
-                                  inProcess={inProcess}
-                                />
+                                </Flex>
                               )}
-                            </Flex>
+                            </>
                           )}
                         </Flex>
                       </Grid>
