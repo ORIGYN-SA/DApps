@@ -7,7 +7,6 @@ import { ConfirmEndSaleModal } from '../../modals/ConfirmEndSaleModal';
 import { StartAuctionModal } from '../../modals/StartAuctionModal';
 import { StartEscrowModal } from '../../modals/StartEscrowModal';
 import {
-  getDiffInDays,
   OdcData,
   OdcDataWithSale,
   parseMetadata,
