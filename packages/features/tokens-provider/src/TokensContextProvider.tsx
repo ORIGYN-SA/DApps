@@ -90,14 +90,18 @@ const localStorageTokens = () => {
 };
 const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
-const walletTokens = defaultTokensMapped();
+const walletTokens = Object.keys(initialTokens)
+  .filter((t) => initialTokens[t].enabled && ['OGY', 'ICP'].includes(t.toUpperCase()))
+  .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {});
+
+const activeTokens = Object.keys(initialTokens)
+  .filter((t) => initialTokens[t].enabled)
+  .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {});
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
-  walletTokens: walletTokens,
-  activeTokens: Object.keys(initialTokens)
-    .filter((t) => initialTokens[t].enabled)
-    .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {}),
+  walletTokens,
+  activeTokens,
   time: timeConverter(BigInt(new Date().getTime() * 1000000)),
 });
 
@@ -109,6 +113,7 @@ export const useTokensContext = () => {
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
   const [time, setTime] = useState<any>();
+
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -131,6 +136,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     };
 
     token.balance = await getBalance(isLocal, principal, token);
+
     const _tokens = tokens;
     _tokens[token.symbol] = token;
     setTokens(_tokens);

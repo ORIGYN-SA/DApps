@@ -1,6 +1,13 @@
 import { Principal } from '@dfinity/principal';
 import { EscrowRecord, NFTInfoStable, Property } from '@origyn/mintjs';
-import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType, ReceivedActiveBidsProps } from './interfaces';
+import {
+  DisplayProperty,
+  OdcData,
+  OdcDataWithSale,
+  Royalty,
+  RoyaltyType,
+  ReceivedActiveBidsProps,
+} from './interfaces';
 import { toSentenceCase } from './string';
 import { timeInNanos } from './dateTime';
 import { toBigNumber } from './number';
@@ -262,7 +269,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   odc.currentBid = 0;
 
   if (odc.auction) {
-    odc.auctionOpen = 'open' in odc.auction.status || odc.auction.end_date > timeInNanos();
+    odc.auctionOpen = 'open' in odc.auction.status;
     odc.auctionClosed = 'closed' in odc.auction.status;
     odc.auctionNotStarted = 'not_started' in odc.auction.status;
 

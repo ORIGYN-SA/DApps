@@ -198,12 +198,16 @@ export function StartEscrowModal({
     return true;
   };
 
-  const onFormSubmitted = async (e: any) => {
+  const tryAgain = () => {
+    onFormSubmitted(null, true);
+  };
+
+  const onFormSubmitted = async (e?: any, retry: boolean = false) => {
+    e?.preventDefault();
+
     setCurrentProgressIndex(0);
 
-    e.preventDefault();
-
-    if (isLoading || isTransacting) {
+    if (!retry && (isLoading || isTransacting)) {
       return;
     }
 
@@ -266,12 +270,14 @@ export function StartEscrowModal({
         odc.ownerPrincipalId,
         odc.saleId,
       );
+
       if (!sendEscrowResponse.result) {
         setError(true);
         setStatus(sendEscrowResponse.errorMessage);
         setProgressTitle('Error');
         return;
       }
+
       const escrowReceipt = sendEscrowResponse.result;
 
       // If there's an open auction, this is a bid, not an offer
@@ -299,12 +305,12 @@ export function StartEscrowModal({
         setCurrentProgressIndex(3);
         setStatus(SUCCESS.placeOffer);
       }
+      setStatus('Escrow successfully sent.');
     } catch (e) {
       setError(true);
       setStatus(e.message);
       setProgressTitle('Error');
     } finally {
-      setStatus('Escrow successfully sent.');
       onProcessing(false);
     }
   };
@@ -353,7 +359,7 @@ export function StartEscrowModal({
                     currentValue={currentProgressIndex}
                     maxValue={odc.auctionOpen ? 4 : 3}
                     doneAction={() => onModalClose(true)}
-                    tryAgainAction={onFormSubmitted}
+                    tryAgainAction={tryAgain}
                   />
                 </Flex>
               </Container>

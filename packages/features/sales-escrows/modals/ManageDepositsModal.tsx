@@ -9,14 +9,12 @@ import { useUserMessages } from '@dapp/features-user-messages';
 import { toLargerUnit } from '@dapp/utils';
 import { ERROR } from '../constants';
 
-
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
   const { principal, actor } = useContext(AuthContext);
   const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
   //const [depositPrincipal, setDepositPrincipal] = useState();
   const [isLoading, setIsLoading] = useState(false);
-
 
   const [tokenBalances, setTokenBalances] = useState<any>({});
   const { activeTokens, refreshAllBalances } = useTokensContext();
@@ -43,9 +41,20 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         },
       });
       if ('err' in withdrawResp) {
-        showErrorMessage(`${'Withdraw of '}${toLargerUnit(BigInt(tokenBalances[token].value),BigInt(activeTokens[token]?.decimals))}${' '}${activeTokens[token]?.symbol}${' was unsuccessfull'}`, withdrawResp.err);
+        showErrorMessage(
+          `${'Withdraw of '}${toLargerUnit(
+            BigInt(tokenBalances[token].value),
+            BigInt(activeTokens[token]?.decimals),
+          )}${' '}${activeTokens[token]?.symbol}${' was unsuccessfull'}`,
+          withdrawResp.err,
+        );
       } else {
-        showSuccessMessage(`${'Withdraw of '}${toLargerUnit(BigInt(tokenBalances[token].value),BigInt(activeTokens[token]?.decimals))}${' '}${activeTokens[token]?.symbol}${' was successfull'}`);
+        showSuccessMessage(
+          `${'Withdraw of '}${toLargerUnit(
+            BigInt(tokenBalances[token].value),
+            BigInt(activeTokens[token]?.decimals),
+          )}${' '}${activeTokens[token]?.symbol}${' was successfull'}`,
+        );
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -102,35 +111,40 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
             </>
           ) : (
             <>
-              {Object.keys(activeTokens).map((tokenSymbol) => {
-                return (
-                  <div key={tokenSymbol} style={{ marginBottom: '16px' }}>
-                    <Flex flexFlow="row" justify="space-around">
-                      <Flex flexFlow="column">
-                        <span>Token</span>
-                        <span style={{ color: 'grey' }}>{tokenSymbol}</span>
+              {Object.keys(activeTokens)
+                .filter(
+                  (tokenSymbol) =>
+                    tokenBalances[tokenSymbol]?.value && tokenBalances[tokenSymbol]?.decimals,
+                )
+                .map((tokenSymbol) => {
+                  return (
+                    <div key={tokenSymbol} style={{ marginBottom: '16px' }}>
+                      <Flex flexFlow="row" justify="space-around">
+                        <Flex flexFlow="column">
+                          <span>Token</span>
+                          <span style={{ color: 'grey' }}>{tokenSymbol}</span>
+                        </Flex>
+                        <Flex flexFlow="column">
+                          <span style={{ color: 'grey' }}>Amount</span>
+                          <span>
+                            {toLargerUnit(
+                              tokenBalances[tokenSymbol].value,
+                              activeTokens[tokenSymbol].decimals,
+                            ).toFixed()}
+                          </span>
+                        </Flex>
+                        <Button
+                          btnType="filled"
+                          size="small"
+                          onClick={() => withdraw(tokenSymbol)}
+                          disabled={(tokenBalances[tokenSymbol]?.value || 0) == 0}
+                        >
+                          Withdraw
+                        </Button>
                       </Flex>
-                      <Flex flexFlow="column">
-                        <span style={{ color: 'grey' }}>Amount</span>
-                        <span>
-                          {toLargerUnit(
-                            tokenBalances[tokenSymbol]?.value || 0,
-                            activeTokens[tokenSymbol].decimals,
-                          ).toFixed()}
-                        </span>
-                      </Flex>
-                      <Button
-                        btnType="filled"
-                        size="small"
-                        onClick={() => withdraw(tokenSymbol)}
-                        disabled={(tokenBalances[tokenSymbol]?.value || 0) == 0}
-                      >
-                        Withdraw
-                      </Button>
-                    </Flex>
-                  </div>
-                );
-              })}
+                    </div>
+                  );
+                })}
             </>
           )}
         </Container>

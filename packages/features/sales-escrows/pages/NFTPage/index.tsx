@@ -43,7 +43,7 @@ export const NFTPage = () => {
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [principalId, setPrincipalId] = useState<string>();
   const [odc, setOdc] = useState<OdcDataWithSale>();
-  const [initialized, setInitialized] = useState(false);
+  const [initialized, setInitialized] = useState<boolean>(false);
   const [collectionData, setCollectionData] = useState<OdcData>();
   const [openAuctionModal, setOpenAuctionModal] = React.useState(false);
   const [canisterId, setCanisterId] = React.useState('');
@@ -170,7 +170,7 @@ export const NFTPage = () => {
     const checkForEndSale = async () => {
       // if the auction ended, this function will trigger the end_sale on the current NFT
       // this will be used as a checker
-      if (odc?.auction?.end_date) {
+      if (odc) {
         if (odc.auctionOpen && odc.auction.end_date <= timeInNanos()) {
           console.log('Ending sale');
           await endSaleNft();
@@ -311,7 +311,8 @@ export const NFTPage = () => {
                                       )}
 
                                       {isOwner ? (
-                                        odc.currentBid == 0 || odc.auctionNotStarted ? (
+                                        (odc.auctionOpen && odc.currentBid == 0) ||
+                                        odc.auctionNotStarted ? (
                                           <Button
                                             btnType="accent"
                                             onClick={handleClickOpenEsc}
