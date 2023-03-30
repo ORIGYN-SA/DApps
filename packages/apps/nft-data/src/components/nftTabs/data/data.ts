@@ -34,7 +34,7 @@ const getMetadata = async () => {
     console.log('no token id - getNftCollectionMeta');
     const response = await getNftCollectionMeta();
     console.log('responseCollection', response);
-    const metadata = await response.ok.metadata[0].Class;
+    const metadata = await response.ok.metadata[0]['Class'];
     console.log('collectionMeta', metadata);
     return metadata;
   }

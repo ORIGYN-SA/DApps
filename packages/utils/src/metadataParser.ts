@@ -1,8 +1,22 @@
 import { Principal } from '@dfinity/principal';
-import { EscrowRecord, NFTInfoStable, Property } from '@dapp/common-types';
-import { DisplayProperty, OdcData, OdcDataWithSale, Royalty, RoyaltyType } from './interfaces';
+import { EscrowRecord, NFTInfoStable, Property } from '@origyn/mintjs';
+import {
+  DisplayProperty,
+  OdcData,
+  OdcDataWithSale,
+  Royalty,
+  RoyaltyType,
+  ReceivedActiveBidsProps,
+} from './interfaces';
 import { toSentenceCase } from './string';
 import { timeInNanos } from './dateTime';
+import { toBigNumber } from './number';
+import M, {
+  getNftCollectionMeta as _getNftCollectionMeta,
+  acceptEscrow as _acceptEscrow,
+  rejectEscrow as _rejectEscrow,
+  withdrawEscrow as _withdrawEscrow,
+} from '@origyn/mintjs';
 
 const OGY_LEDGER_CANISTER_ID = 'jwcfb-hyaaa-aaaaj-aac4q-cai';
 
@@ -255,7 +269,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   odc.currentBid = 0;
 
   if (odc.auction) {
-    odc.auctionOpen = 'open' in odc.auction.status && odc.auction.end_date > timeInNanos();
+    odc.auctionOpen = 'open' in odc.auction.status;
     odc.auctionClosed = 'closed' in odc.auction.status;
     odc.auctionNotStarted = 'not_started' in odc.auction.status;
 
@@ -296,7 +310,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
 
 export function parseOdcs(data: NFTInfoStable[]): OdcDataWithSale[] {
   return data.map((odc): OdcDataWithSale => {
-    return parseOdc(odc['ok']);
+    return parseOdc(odc);
   });
 }
 
@@ -305,3 +319,86 @@ export function parseTokenSymbol(escrow: EscrowRecord): string {
     return escrow.token.ic.symbol;
   }
 }
+
+export const getActiveAttendedAuctions = (
+  saleInfo: M.SaleInfoResponse,
+  principal: Principal,
+): M.AuctionStateStable[] => {
+  if ('active' in saleInfo && saleInfo.active.records) {
+    const activeSalesRecords = saleInfo.active.records.flatMap((record) => {
+      return record[1];
+    });
+
+    const activeAuctions = activeSalesRecords
+      .map((record) => {
+        if ('auction' in record.sale_type) {
+          return record.sale_type.auction;
+        }
+      })
+      .filter((auction) => auction);
+
+    if (activeAuctions.length > 0) {
+      const activeAttendedAuctions = activeAuctions.filter((a) => {
+        return (
+          a.current_escrow.length &&
+          a.participants.some((participant) => participant[0].toText() === principal.toText())
+        );
+      });
+
+      return activeAttendedAuctions;
+    }
+  }
+
+  return [];
+};
+
+export const getTxOfActiveAttendedAuctions = (
+  activeAttendedAuctions: M.TransactionRecord[],
+  principal: Principal,
+): M.TransactionRecord[] => {
+  if (activeAttendedAuctions.length > 0) {
+    return activeAttendedAuctions
+      .flat()
+      .filter(
+        (record) =>
+          'auction_bid' in record.txn_type &&
+          'buyer' in record.txn_type.auction_bid &&
+          'principal' in record.txn_type.auction_bid.buyer &&
+          record.txn_type.auction_bid.buyer.principal.toText() === principal.toText(),
+      );
+  }
+};
+
+export const getHighestSentBids = (
+  attendedAuctionsTx: M.TransactionRecord[],
+): M.TransactionRecord[] => {
+  const bidsTokenIds = new Map<string, M.TransactionRecord>();
+  for (const txRecord of attendedAuctionsTx) {
+    const auctionBid = 'auction_bid' in txRecord.txn_type && txRecord.txn_type.auction_bid;
+    if (auctionBid) {
+      const token = txRecord.token_id;
+      if (!bidsTokenIds.has(token) || txRecord.timestamp > bidsTokenIds.get(token)!.timestamp) {
+        bidsTokenIds.set(token, txRecord);
+      }
+    }
+  }
+  return Array.from(bidsTokenIds.values());
+};
+
+export const sortBidsReceived = (bids: ReceivedActiveBidsProps[]): ReceivedActiveBidsProps[] => {
+  bids.sort((a, b) => {
+    if (a.auction.end_date < b.auction.end_date) {
+      return -1;
+    }
+    if (a.auction.end_date > b.auction.end_date) {
+      return 1;
+    }
+    if (toBigNumber(a.amount).gt(toBigNumber(b.amount))) {
+      return -1;
+    }
+    if (toBigNumber(a.amount).lt(toBigNumber(b.amount))) {
+      return 1;
+    }
+  });
+  return bids;
+};

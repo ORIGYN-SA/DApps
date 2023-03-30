@@ -1,37 +1,51 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useDebug } from '@dapp/features-debug-provider';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { useDialog } from '@connect2ic/react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { OrigynClient } from '@origyn/mintjs';
+import { useDebug } from '@dapp/features-debug-provider';
+import { useApi } from '@dapp/common-api';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { PlaceholderIcon } from '@dapp/common-assets';
+import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit, getRootUrl } from '@dapp/utils';
+import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
 import {
   Card,
   Container,
   Flex,
+  Button,
   HR,
   Grid,
   Image,
   SecondaryNav,
   ShowMoreBlock,
+  theme,
 } from '@origyn/origyn-art-ui';
-import Filter from '../../../../vault/src/pages/Vault/Filter';
-import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
-import { Link } from 'react-router-dom';
-import { useDialog } from '@connect2ic/react';
-import styled from 'styled-components';
-import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit } from '@dapp/utils';
-import { Principal } from '@dfinity/principal';
-import { useUserMessages } from '@dapp/features-user-messages';
+import {
+  WebsiteSVG,
+  DiscordSVG,
+  DistriktSVG,
+  DscvrSVG,
+  TwitterSVG,
+  MediumSVG,
+} from '../../../../../features/components/src/SocialMediaSVG';
+import Filter from './Filters';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
 `;
 
+const SocialMediaButton = styled(Button)`
+  background: ${theme.colors.BACKGROUND};
+`;
+
 const Marketplace = () => {
   const debug = useDebug();
-  const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
-  const { principal, actor, handleLogOut } = useContext(AuthContext);
-  const [principalId, setPrincipalId] = useState<string>();
+  const { principalId, actor, handleLogOut } = useContext(AuthContext);
+  const { getNftBatch, getNftCollectionMeta } = useApi();
+  const { showUnexpectedErrorMessage } = useUserMessages();
   const [canisterId, setCanisterId] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -50,41 +64,29 @@ const Marketplace = () => {
     }
 
     try {
+      const { canisterId } = await useRoute();
+      setCanisterId(canisterId);
+
       OrigynClient.getInstance().init(true, canisterId, { actor });
 
       // get the canister's collection metadata
-      const collMetaResp = await getNftCollectionMeta([]);
-      debug.log('getNftCollectionMeta result', collMetaResp);
-
-      if ('err' in collMetaResp) {
-        console.error(collMetaResp.err);
-        showErrorMessage('Get collection data failed');
-        return;
-      }
-
-      const collMeta = collMetaResp.ok;
-      const metadataClass = collMeta?.metadata?.[0]?.Class;
-      const collData = parseMetadata(metadataClass);
-      dispatch({ type: 'collectionData', payload: collData });
+      const meta = await getNftCollectionMeta();
+      const metadata = meta.metadata[0];
+      const metadataClass = 'Class' in metadata ? metadata.Class : [];
+      const collectionData = parseMetadata(metadataClass);
+      dispatch({ type: 'collectionData', payload: collectionData });
 
       // set number of tokens
-      const tokenIds = collMeta?.token_ids?.[0] || [];
+      const tokenIds = meta?.token_ids?.[0] || [];
+      debug.log('tokenIds', meta?.token_ids?.[0]);
+
       dispatch({ type: 'totalItems', payload: tokenIds.length });
 
       // get a list of all digital certificates in the collection
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      debug.log('nft_batch_origyn result', odcDataRaw);
-
-      if ('err' in odcDataRaw) {
-        console.error(odcDataRaw.err);
-        showErrorMessage('Get batch tokens failed');
-        return;
-      }
-
-      // parse the digital certificate data (metadata and sale info)
-      const parsedOdcs = parseOdcs(odcDataRaw);
+      const odcs = await getNftBatch(tokenIds);
+      debug.log('odcs', odcs);
+      const parsedOdcs = parseOdcs(odcs);
       debug.log('parsed odcs', parsedOdcs);
-
       dispatch({ type: 'odcs', payload: parsedOdcs });
     } catch (err) {
       showUnexpectedErrorMessage(err);
@@ -111,24 +113,17 @@ const Marketplace = () => {
     run();
   }, []);
 
-  useEffect(() => {
-    setPrincipalId(
-      !principal || principal.toText() === Principal.anonymous().toText() ? '' : principal.toText(),
-    );
-  }, [principal]);
-
   /* Fetch data from canister when the actor reference
    * is ready, then every 5 seconds */
   useEffect(() => {
+    fetchData();
     let intervalId: any;
-    if (actor) {
-      fetchData();
-      if (!intervalId) {
-        intervalId = setInterval(() => {
-          fetchData();
-        }, 5000);
-      }
+    if (!intervalId) {
+      intervalId = setInterval(() => {
+        fetchData();
+      }, 5000);
     }
+
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
@@ -149,18 +144,27 @@ const Marketplace = () => {
         break;
     }
 
-    switch (sort) {
-      case 'saleASC':
-        filtered = [...filtered].sort((odc1, odc2) => {
-          return Math.max(odc2.buyNow, odc2.currentBid) - Math.max(odc1.buyNow, odc1.currentBid);
-        });
-        break;
-      case 'saleDESC':
-        filtered = [...filtered].sort((odc1, odc2) => {
-          return Math.max(odc1.buyNow, odc1.currentBid) - Math.max(odc2.buyNow, odc2.currentBid);
-        });
-        break;
-    }
+    filtered.sort((odc1, odc2) => {
+      const price1 = odc1.currentBid || odc1.buyNow;
+      const price2 = odc2.currentBid || odc2.buyNow;
+      if (sort === 'saleASC') {
+        if (odc1.auctionOpen && odc2.auctionOpen) {
+          return price1 - price2;
+        } else if (odc1.auctionOpen) {
+          return -1;
+        } else if (odc2.auctionOpen) {
+          return 1;
+        }
+      } else if (sort === 'saleDESC') {
+        if (odc1.auctionOpen && odc2.auctionOpen) {
+          return price2 - price1;
+        } else if (odc1.auctionOpen) {
+          return -1;
+        } else if (odc2.auctionOpen) {
+          return 1;
+        }
+      }
+    });
 
     if (inputText?.length) {
       filtered = filtered.filter((odc) =>
@@ -175,13 +179,14 @@ const Marketplace = () => {
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
         title="Marketplace"
+        titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/marketplace'}
         tabs={[{ title: 'Marketplace', id: 'Marketplace' }]}
         content={[
           <Flex fullWidth flexFlow="column" key="marketplace-nav">
             <StyledSectionTitle>Marketplace Dashboard</StyledSectionTitle>
             <HR />
             {!isLoaded ? (
-              <LoadingContainer />
+              <LoadingContainer margin="48px" />
             ) : (
               <>
                 {collectionData && (
@@ -192,17 +197,63 @@ const Marketplace = () => {
                           <Image
                             src={`https://prptl.io/-/${canisterId}/collection/preview`}
                             alt="text"
-                            style={{ width: 200 }}
+                            style={{ width: 110, height: 96 }}
                           />
                         ) : (
                           <Flex align="center" justify="center">
-                            <PlaceholderIcon width={200} height={200} />
+                            <PlaceholderIcon width={110} height={96} />
                           </Flex>
                         )}
-                        <Flex flexFlow="column" justify="space-between" gap={8}>
-                          <h2>
-                            <b>{collectionData?.displayName}</b>
-                          </h2>
+                        <Flex flexFlow="column" justify="space-between" fullWidth gap={8}>
+                          <Flex
+                            flexFlow="row"
+                            align="center"
+                            fullWidth
+                            justify="space-between"
+                            smFlexFlow="column"
+                          >
+                            <h2>
+                              <b>{collectionData?.displayName}</b>
+                            </h2>
+                            <Flex
+                              style={{
+                                flexWrap: 'wrap',
+                                marginTop: '8px',
+                                alignContent: 'flex-end',
+                              }}
+                              gap={8}
+                            >
+                              {collectionData.socialLinks?.map((link, index) => (
+                                <SocialMediaButton
+                                  as="a"
+                                  iconButton
+                                  target="_blank"
+                                  href={link.url}
+                                  key={index}
+                                >
+                                  {
+                                    {
+                                      twitter: <TwitterSVG />,
+                                      discord: <DiscordSVG />,
+                                      medium: <MediumSVG />,
+                                      dscvr: <DscvrSVG />,
+                                      distrikt: <DistriktSVG />,
+                                      website: <WebsiteSVG />,
+                                    }[link.type]
+                                  }
+                                </SocialMediaButton>
+                              ))}
+                              <SocialMediaButton
+                                as="a"
+                                iconButton
+                                target="_blank"
+                                href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
+                              >
+                                <p style={{ color: theme.colors.TEXT }}>Ledger</p>
+                              </SocialMediaButton>
+                            </Flex>
+                          </Flex>
+
                           <p>
                             <span className="secondary_color">Created by </span>
                             <span className="secondary_color">
@@ -218,7 +269,7 @@ const Marketplace = () => {
                           </Flex>
                           <br />
                           <ShowMoreBlock btnText="Read More">
-                            <p className="secondary_color">{collectionData?.description}</p>
+                            <p>{collectionData?.description}</p>
                           </ShowMoreBlock>
                           <br />
                           <br />
@@ -256,6 +307,7 @@ const Marketplace = () => {
                                   <Card
                                     flexFlow="column"
                                     style={{ overflow: 'hidden', height: '100%' }}
+                                    bgColor='NAVIGATION_BACKGROUND'
                                   >
                                     {odc.hasPreviewAsset ? (
                                       <Image
@@ -265,7 +317,7 @@ const Marketplace = () => {
                                       />
                                     ) : (
                                       <Flex align="center" justify="center">
-                                        <PlaceholderIcon width={200} height={200} />
+                                        <PlaceholderIcon width={'100%'} />
                                       </Flex>
                                     )}
                                     <Container

@@ -45,14 +45,11 @@ export const SearchbarNft = (props: any) => {
     if (URL.includes('collection')) {
       useRoute().then(({ canisterId }) => {
         setCanisterId(canisterId);
-        console.log('canisterId', canisterId);
       });
     } else {
       useRoute().then(({ tokenId, canisterId }) => {
         setTokenId(tokenId);
         setCanisterId(canisterId);
-        console.log('tokenId', tokenId);
-        console.log('canisterId', canisterId);
       });
     }
   };
@@ -99,23 +96,20 @@ export const SearchbarNft = (props: any) => {
       useRoute().then(({ tokenId }) => {
         props.setSearchBarTokenId(tokenId);
       });
-      console.log('here');
     } else {
       if (window.location.href.includes('collection')) {
         props.setSearchBarTokenId(obj_token_ids[0][0]);
       } else {
         // setSearchBarTokenId state
-        console.log('here2');
         props.setInvalidToken(true);
       }
     }
   };
-  // if the actor changes getNftCollection is called
   useEffect(() => {
-    if (actor) {
+    if (canisterId) {
       NFTCollection();
     }
-  }, []);
+  }, [canisterId, actor]);
   return (
     <>
       <>

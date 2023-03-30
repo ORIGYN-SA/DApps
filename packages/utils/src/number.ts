@@ -24,12 +24,12 @@ export const toBigNumber = (
     return num;
   }
 
-  let result = new BigNumber(num.toString());
+  let result = new BigNumber(num?.toString());
   if (result.isNaN()) {
     if (fallbackValue) {
       return new BigNumber(fallbackValue);
     } else {
-      throw new Error('Invalid number');
+      return new BigNumber(0);
     }
   }
 

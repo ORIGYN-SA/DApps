@@ -198,7 +198,7 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
           // Update the library data for the collection
           const collMeta = await getNftCollectionMeta();
           if (collMeta.ok) {
-            const collLibrary = collMeta.ok.metadata[0].Class.filter(
+            const collLibrary = collMeta.ok.metadata[0]['Class'].filter(
               (res) => res.name === 'library',
             )[0].value.Array.thawed;
             updateLibraryData(collLibrary);

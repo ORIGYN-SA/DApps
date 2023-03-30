@@ -1,7 +1,7 @@
 import { createClient } from '@connect2ic/core';
 import { defaultProviders } from '@connect2ic/core/providers';
 import { Connect2ICProvider } from '@connect2ic/react';
-import { origynNftIdl } from '@dapp/common-candid';
+import { origynNftIdl } from '@origyn/mintjs';
 import { isLocal } from '@dapp/utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRoute } from '../hooks/useRoute';
@@ -41,7 +41,7 @@ export const SessionProvider: React.FC = ({ children }) => {
     localStorage.setItem('localDevelopment', localDevelopment.toString());
   }, [localDevelopment]);
 
-const dev = isLocal() && localDevelopment;
+  const dev = isLocal() && localDevelopment;
 
   if (canisterId === 'loading') return <></>;
   return (

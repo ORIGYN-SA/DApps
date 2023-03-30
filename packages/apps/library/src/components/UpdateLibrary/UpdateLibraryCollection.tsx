@@ -37,7 +37,7 @@ export const UpdateLibraryCollection = ({
     const { canisterId } = await useRoute();
     await OrigynClient.getInstance().init(true, canisterId, { actor });
     const response = await getNftCollectionMeta();
-    const library = await response.ok.metadata[0].Class.filter((res) => {
+    const library = await response.ok.metadata[0]['Class'].filter((res) => {
       return res.name === 'library';
     })[0].value.Array.thawed;
     console.log('responseCollection', library);

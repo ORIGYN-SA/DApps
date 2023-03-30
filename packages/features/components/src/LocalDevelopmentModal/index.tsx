@@ -17,8 +17,8 @@ import { TokenIcon } from '../TokenIcon';
 import { useSessionContext } from '@dapp/features-authentication';
 
 export const LocalDevelopmentModal = ({ children }: any) => {
-  const { tokens, setLocalCanisterId } = useTokensContext();
-  const initialCanisterIds = { ...tokens } as any;
+  const { tokens: walletTokens, setLocalCanisterId } = useTokensContext();
+  const initialCanisterIds = { ...walletTokens } as any;
   Object.keys(initialCanisterIds).forEach(
     (symbol) => (initialCanisterIds[symbol] = initialCanisterIds[symbol].localCanisterId ?? ''),
   );
@@ -56,8 +56,8 @@ export const LocalDevelopmentModal = ({ children }: any) => {
         <DialogTitle id="alert-dialog-title">Local Development Settings</DialogTitle>
         <DialogContent style={{ width: '500px' }}>
           <List disablePadding>
-            {Object.keys(tokens).map((key: string) => {
-              const token = tokens[key];
+            {Object.keys(walletTokens).map((key: string) => {
+              const token = walletTokens[key];
               const labelId = `checkbox-list-secondary-label-${token.symbol}`;
               return (
                 <ListItem key={`${token.symbol}-${token.enabled}`} disablePadding>

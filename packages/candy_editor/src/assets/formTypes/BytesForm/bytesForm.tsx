@@ -87,7 +87,7 @@ export const BytesForm = (editor: CandyClassEditor) => {
     const blob = new Blob([buffer]);
     const fileType = lookup(name) || 'application/octet-stream';
     const file = new File([blob], name, { type: fileType });
-    console.log(file);
+    // console.log(file);
     const url = URL.createObjectURL(file);
     const filename = name;
     const a = document.createElement('a');

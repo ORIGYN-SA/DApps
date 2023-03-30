@@ -1,20 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-import {
-  VersionLabel,
-  TransactionFilter,
-  TransactionsTable,
-  SearchbarNft,
-} from '@dapp/features-components';
+import { TransactionFilter, TransactionsTable, SearchbarNft } from '@dapp/features-components';
 import { SecondaryNav, Container, Flex, HR } from '@origyn/origyn-art-ui';
-import styled from 'styled-components';
-
-const StyledSectionTitle = styled.h2`
-  margin: 48px 24px;
-`;
+import { getRootUrl } from '@dapp/utils';
 
 const Ledger = () => {
-  const ledgerVersion: string = '0.1.0';
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
@@ -48,11 +38,12 @@ const Ledger = () => {
     <Container fullWidth padding="0" flexFlow="column">
       <SecondaryNav
         title="Ledger"
+        titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/ledger'}
         tabs={[{ title: 'Dashboard', id: 'Transactions' }]}
         content={[
           <>
             <Flex fullWidth flexFlow="column">
-              <StyledSectionTitle>Ledger Dashboard</StyledSectionTitle>
+              <h2 style={{ margin: '48px 24px' }}>Ledger Dashboard</h2>
               <HR />
             </Flex>
             <Container>
@@ -100,7 +91,6 @@ const Ledger = () => {
                   </>
                 )}
               </>
-              <VersionLabel ledgerVersion={ledgerVersion} />
             </Container>
           </>,
         ]}

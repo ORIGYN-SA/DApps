@@ -1,15 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { useTokensContext } from '@dapp/features-tokens-provider';
 import { Button, HR, theme, Modal, Flex, Container } from '@origyn/origyn-art-ui';
-import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  parseTokenSymbol,
+  ReceivedOffersProps,
+} from '@dapp/utils';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { EscrowRecord, EscrowReceipt, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { EscrowRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
-import { Principal } from '@dfinity/principal';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { useApi } from '@dapp/common-api';
+
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -30,20 +36,13 @@ interface OffersTabProps {
   canisterId: string;
 }
 
-interface ReceivedOffersProps extends OdcDataWithSale {
-  token_id: string;
-  amount: string;
-  escrow_record: EscrowRecord;
-  isNftOwner: boolean;
-}
-
 type ActionType = 'accept' | 'reject';
 
 export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
   const debug = useDebug();
-  const { actor, principal } = useContext(AuthContext);
-  const { tokens } = useTokensContext();
-  const { showUnexpectedErrorMessage, showErrorMessage, showSuccessMessage } = useUserMessages();
+  const { getNftBatch, getNftBalances, acceptEscrow, rejectEscrow } = useApi();
+  const { principal } = useContext(AuthContext);
+  const { showUnexpectedErrorMessage, showSuccessMessage } = useUserMessages();
   const [offersReceived, setOffersReceived] = useState<EscrowRecord[]>([]);
   const [parsedOffersReceived, setParsedOffersReceived] = useState<ReceivedOffersProps[]>([]);
   const [selectedOffer, setSelectedOffer] = React.useState<EscrowRecord>();
@@ -64,21 +63,10 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
   const getOffersReceivedBalance = async () => {
     try {
       setIsLoading(true);
-      const response = await actor.balance_of_nft_origyn({ principal });
-      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
-      debug.log(JSON.stringify(response, null, 2));
-      if ('err' in response) {
-        const error: OrigynError = response.err;
-        debug.log('error', error);
-        return;
-      } else {
-        const balanceResponse: BalanceResponse = response.ok;
-        const offersAndBidsReceived = balanceResponse.offers;
-        const offersReceived = offersAndBidsReceived?.filter(
-          (element) => element.sale_id.length === 0,
-        );
-        setOffersReceived(offersReceived);
-      }
+      const balances = await getNftBalances(principal);
+      const offersAndBidsReceived = balances.offers;
+      const offersReceived = offersAndBidsReceived?.filter((o) => o.sale_id.length === 0);
+      setOffersReceived(offersReceived);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -86,17 +74,12 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
     }
   };
 
-  const parseOffers = async () => {
+  const fetchOffers = async () => {
     try {
       setIsLoading(true);
       const tokenIds = offersReceived.map((offer) => offer.token_id);
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      debug.log('odcDataRaw', odcDataRaw);
-      if (odcDataRaw.err) {
-        throw new Error('Unable to retrieve metadata of tokens.');
-      }
-
-      const parsedOdcs = parseOdcs(odcDataRaw);
+      const odcs = await getNftBatch(tokenIds);
+      const parsedOdcs = parseOdcs(odcs);
       const parsedOffersReceived = parsedOdcs.map((odc: OdcDataWithSale, index) => {
         const offer = offersReceived[index];
         return {
@@ -123,52 +106,11 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
         return onModalClose();
       }
       if (action == 'reject') {
-        const rejectResponse = await actor?.sale_nft_origyn({
-          withdraw: {
-            reject: {
-              ...offer,
-            },
-          },
-        });
-
-        if ('err' in rejectResponse) {
-          showErrorMessage(`Error: ${rejectResponse.err.text}.`, rejectResponse.err.text);
-        } else {
-          showSuccessMessage('Offer rejected successfully.');
-        }
-      }
-      if (action == 'accept') {
-        const escrowReceipt: EscrowReceipt = {
-          seller: { principal: offer.seller['principal'] },
-          buyer: { principal: offer.buyer['principal'] },
-          token_id: offer.token_id,
-          token: {
-            ic: {
-              fee: BigInt(tokens[offer.token['ic'].symbol]?.fee ?? 200000),
-              decimals: BigInt(tokens[offer.token['ic'].symbol]?.decimals ?? 8),
-              canister: Principal.fromText(tokens[offer.token['ic'].symbol]?.canisterId),
-              standard: { Ledger: null },
-              symbol: offer.token['ic'].symbol,
-            },
-          },
-          amount: BigInt(offer.amount),
-        };
-
-        const saleReceipt = {
-          broker_id: [],
-          pricing: { instant: null },
-          escrow_receipt: [escrowReceipt],
-        };
-        const acceptOffer = await actor.market_transfer_nft_origyn({
-          token_id: offer.token_id,
-          sales_config: saleReceipt,
-        });
-        debug.log(acceptOffer.err);
-        if ('err' in acceptOffer) {
-          showErrorMessage('There has been an error in accepting the offer', acceptOffer.err.text);
-        } else {
-          showSuccessMessage('Offer accepted successfully.');
-        }
+        await rejectEscrow(offer);
+        showSuccessMessage('Offer rejected.');
+      } else if (action == 'accept') {
+        await acceptEscrow(offer);
+        showSuccessMessage('Offer accepted.');
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -185,7 +127,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
 
   useEffect(() => {
     if (offersReceived?.length > 0) {
-      parseOffers();
+      fetchOffers();
     }
   }, [offersReceived]);
 
@@ -193,8 +135,8 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
     <>
       {isLoading ? (
         <>
-          <HR marginTop={24} marginBottom={24} />
-          <LoadingContainer />
+          <HR marginTop={24} />
+          <LoadingContainer margin="24px" />
         </>
       ) : (
         <>
@@ -202,8 +144,8 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {parsedOffersReceived.map((offer: ReceivedOffersProps) => (
-                  <>
+                {parsedOffersReceived.map((offer: ReceivedOffersProps, index: number) => (
+                  <React.Fragment key={`${index}Row`}>
                     <div style={styles.gridItem}>
                       {offer.hasPreviewAsset ? (
                         <img
@@ -221,7 +163,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</p>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Offer</p>
                       <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
                       {offer.amount}
                     </div>
@@ -249,7 +191,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                         Reject
                       </Button>
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </div>
@@ -295,8 +237,8 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
           </Flex>
           {isLoading && (
             <>
-              <HR marginTop={24} marginBottom={24} />
-              <LoadingContainer />
+              <HR marginTop={24} />
+              <LoadingContainer margin="24px" />
             </>
           )}
         </Container>

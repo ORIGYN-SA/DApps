@@ -2,13 +2,22 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { OdcDataWithSale, parseOdcs, toLargerUnit } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  getActiveAttendedAuctions,
+  getTxOfActiveAttendedAuctions,
+  getHighestSentBids,
+  SentActiveBidsProps,
+} from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { AuctionStateStable, TransactionRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { useApi } from '@dapp/common-api';
 
 const styles = {
   gridContainer: {
@@ -29,43 +38,52 @@ interface BidsSentTabProps {
   collection: any;
   canisterId: string;
 }
-interface SentActiveBidsProps extends OdcDataWithSale {
-  token_id: string;
-  amount: string;
-  isNftOwner: boolean;
-}
 
 export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const debug = useDebug();
+  const { principal } = useContext(AuthContext);
+  const { getNftBatch, getNftSaleInfo, getNftsHistory } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
-  const { actor, principal } = useContext(AuthContext);
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
-  const [bidsSent, setBidsSent] = useState<EscrowRecord[]>();
   const [isLoading, setIsLoading] = useState(false);
+  const [activeAttendedAuctions, setActiveAttendedAuctions] = useState<AuctionStateStable[]>([]);
 
-  const parseBids = async () => {
+  const fetchSentBids = async () => {
     try {
       setIsLoading(true);
-      const tokenIds = bidsSent.map((offer) => offer.token_id);
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+      debug.log('activeAttendedAuctions', activeAttendedAuctions);
 
-      if (odcDataRaw.err) {
-        throw new Error('Unable to retrieve metadata of tokens.');
-      }
+      const activeNftHistory = await getNftsHistory(activeAttendedAuctions);
+      debug.log('activeNftHistory', activeNftHistory);
+
+      const activeAttendedAuctionsTx = getTxOfActiveAttendedAuctions(activeNftHistory, principal);
+      debug.log('activeAttendedAuctionsTx', activeAttendedAuctionsTx);
+
+      const highestBidsSent = getHighestSentBids(activeAttendedAuctionsTx);
+      debug.log('highestBidsSent', highestBidsSent);
+
+      const activeTokensIds = activeAttendedAuctionsTx.map((tx: TransactionRecord) => tx.token_id);
+      debug.log('activeTokensIds', activeTokensIds);
+
+      const odcDataRaw = await getNftBatch(activeTokensIds);
+      debug.log('odcDataRaw', odcDataRaw);
 
       const parsedOdcs = parseOdcs(odcDataRaw);
+      debug.log('parsedOdcsBidSent', parsedOdcs);
       const parsedActiveBids = parsedOdcs
+        .filter((odc: OdcDataWithSale) => odc.auctionOpen)
         .map((odc: OdcDataWithSale, index) => {
-          const bid = bidsSent[index];
+          const bid: TransactionRecord = highestBidsSent[index];
+          debug.log('bid' + index, bid);
+          const bidAmount = 'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.amount;
+          const bidDecimals =
+            'auction_bid' in bid.txn_type && bid.txn_type.auction_bid.token['ic'].decimals;
           return {
             ...odc,
             token_id: bid.token_id,
-            amount: toLargerUnit(Number(bid.amount), Number(bid.token['ic'].decimals)).toString(),
-            isNftOwner: odc.ownerPrincipalId == principal?.toText(),
+            latest_bid: toLargerUnit(Number(bidAmount), Number(bidDecimals)).toString(),
           };
-        })
-        .filter((sentBid) => sentBid.auctionOpen && !sentBid.isNftOwner);
-      debug.log('parsedActiveBids', parsedActiveBids);
+        });
       setSentActiveBids(parsedActiveBids);
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -77,20 +95,12 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const getSentBidBalance = async () => {
     try {
       setIsLoading(true);
-      const response = await actor.balance_of_nft_origyn({ principal });
-      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
-      debug.log(JSON.stringify(response, null, 2));
-      if ('err' in response) {
-        const error: OrigynError = response.err;
-        debug.log('error', error);
-        return;
-      } else {
-        const balanceResponse: BalanceResponse = response.ok;
-        const sentEscrows = balanceResponse.escrow;
-        const bidsSent = sentEscrows?.filter((element) => element.sale_id.length > 0);
-        debug.log('bidsSent', bidsSent);
-        debug.log('response', response);
-        setBidsSent(bidsSent);
+      const salesInfo = await getNftSaleInfo();
+      debug.log('salesInfo', salesInfo);
+      if (salesInfo) {
+        const activeAttendedAuctions = await getActiveAttendedAuctions(salesInfo, principal);
+        debug.log('activeAttendedAuctions', activeAttendedAuctions);
+        setActiveAttendedAuctions(activeAttendedAuctions);
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -104,17 +114,17 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   }, []);
 
   useEffect(() => {
-    if (bidsSent?.length) {
-      parseBids();
+    if (activeAttendedAuctions.length > 0) {
+      fetchSentBids();
     }
-  }, [bidsSent]);
+  }, [activeAttendedAuctions]);
 
   return (
     <>
       {isLoading ? (
         <>
-          <HR marginTop={24} marginBottom={24} />
-          <LoadingContainer />
+          <HR marginTop={24} />
+          <LoadingContainer margin="24px" />
         </>
       ) : (
         <>
@@ -122,9 +132,9 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {sentActivedBids.map((bid: any, index: number) => (
-                  <>
-                    <div key={index} style={styles.gridItem}>
+                {sentActivedBids.map((bid: SentActiveBidsProps, index: number) => (
+                  <React.Fragment key={`${index}Row`}>
+                    <div style={styles.gridItem}>
                       {bid.hasPreviewAsset ? (
                         <img
                           style={{
@@ -147,20 +157,20 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your Bid</p>
                       <TokenIcon symbol={bid.tokenSymbol} />
-                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals))}
+                      {bid.latest_bid}
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Your bid</p>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
                       <TokenIcon symbol={bid.tokenSymbol} />
-                      {bid.amount}
+                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals)).toFixed()}
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
                       {formatDistanceToNow(Number(bid.auction.end_date / BigInt(1e6)))}
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </div>

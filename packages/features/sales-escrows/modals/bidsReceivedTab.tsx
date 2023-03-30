@@ -2,13 +2,21 @@ import React, { useState, useEffect, useContext } from 'react';
 import { HR, theme } from '@origyn/origyn-art-ui';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
-import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  parseTokenSymbol,
+  sortBidsReceived,
+  ReceivedActiveBidsProps,
+} from '@dapp/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
-import { useDebug } from '@dapp/features-debug-provider';
+import { EscrowRecord } from '@origyn/mintjs';
+import { useApi } from '@dapp/common-api';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { useDebug } from '@dapp/features-debug-provider';
 
 const styles = {
   gridContainer: {
@@ -30,31 +38,22 @@ interface OffersTabProps {
   canisterId: string;
 }
 
-interface ReceivedActiveBidsProps extends OdcDataWithSale {
-  token_id: string;
-  isNftOwner: boolean;
-  escrow_record: EscrowRecord;
-}
-
 export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
-  const { actor, principal } = useContext(AuthContext);
-  const debug = useDebug();
+  const { principal } = useContext(AuthContext);
+  const { getNftBatch, getNftBalances } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
   const [receivedActivedBids, setReceivedActiveBids] = useState<ReceivedActiveBidsProps[]>([]);
   const [bidsReceived, setBidsReceived] = useState<EscrowRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const debug = useDebug();
 
-  const parseBids = async () => {
+  const fetchBids = async () => {
     try {
       setIsLoading(true);
       const tokenIds = bidsReceived.map((offer) => offer.token_id);
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
+      const odcs = await getNftBatch(tokenIds);
+      const parsedOdcs = parseOdcs(odcs);
 
-      if (odcDataRaw.err) {
-        throw new Error('Unable to retrieve metadata of tokens.');
-      }
-
-      const parsedOdcs = parseOdcs(odcDataRaw);
       const receivedActiveBids = parsedOdcs
         .map((odc: OdcDataWithSale, index) => {
           const bid = bidsReceived[index];
@@ -63,11 +62,12 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
             token_id: bid.token_id,
             isNftOwner: odc.ownerPrincipalId == principal?.toText(),
             escrow_record: bid,
+            amount: toLargerUnit(bid.amount, BigInt(bid.token['ic'].decimals)).toFixed(),
           };
         })
         .filter((receivedBid) => receivedBid.auctionOpen && receivedBid.isNftOwner);
 
-      setReceivedActiveBids(receivedActiveBids);
+      setReceivedActiveBids(sortBidsReceived(receivedActiveBids));
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -78,20 +78,11 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
   const getBidsReceivedBalance = async () => {
     try {
       setIsLoading(true);
-      const response = await actor.balance_of_nft_origyn({ principal });
-      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
-      debug.log(JSON.stringify(response, null, 2));
-      if ('err' in response) {
-        const error: OrigynError = response.err;
-        debug.log('error', error);
-        return;
-      } else {
-        const balanceResponse: BalanceResponse = response.ok;
-        const offersAndBidsReceived = balanceResponse.offers;
-        const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
-        debug.log('bidsReceived', bidsReceived);
-        setBidsReceived(bidsReceived);
-      }
+      const balances = await getNftBalances(principal);
+      const offersAndBidsReceived = balances.offers;
+      debug.log('offersAndBidsReceived', offersAndBidsReceived);
+      const bidsReceived = offersAndBidsReceived?.filter((element) => element.sale_id.length > 0);
+      setBidsReceived(bidsReceived);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -105,7 +96,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
 
   useEffect(() => {
     if (bidsReceived?.length) {
-      parseBids();
+      fetchBids();
     }
   }, [bidsReceived]);
 
@@ -113,8 +104,8 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
     <>
       {isLoading ? (
         <>
-          <HR marginTop={24} marginBottom={24} />
-          <LoadingContainer />
+          <HR marginTop={24} />
+          <LoadingContainer margin="24px" />
         </>
       ) : (
         <>
@@ -122,8 +113,8 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
             <div>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
-                {receivedActivedBids.map((bid: ReceivedActiveBidsProps) => (
-                  <>
+                {receivedActivedBids.map((bid: ReceivedActiveBidsProps, index: number) => (
+                  <React.Fragment key={`${index}Row`}>
                     <div style={styles.gridItem}>
                       {bid.hasPreviewAsset ? (
                         <img
@@ -141,15 +132,15 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Current Bid</p>
+                      <p style={{ color: theme.colors.SECONDARY_TEXT }}>Bid</p>
                       <TokenIcon symbol={parseTokenSymbol(bid.escrow_record)} />
-                      {toLargerUnit(bid.currentBid, Number(bid.token.decimals))}
+                      {bid.amount}
                     </div>
                     <div style={styles.gridItem}>
                       <p style={{ color: theme.colors.SECONDARY_TEXT }}>Ends In</p>
                       <span>{formatDistanceToNow(Number(bid.auction.end_date / BigInt(1e6)))}</span>
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </div>

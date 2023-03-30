@@ -2,13 +2,20 @@ import React, { useState, useEffect, useContext } from 'react';
 import { TokenIcon } from '@dapp/features-components';
 import { AuthContext } from '@dapp/features-authentication';
 import { Button, HR, theme, Modal, Container, Flex } from '@origyn/origyn-art-ui';
-import { OdcDataWithSale, parseOdcs, toLargerUnit, parseTokenSymbol } from '@dapp/utils';
+import {
+  OdcDataWithSale,
+  parseOdcs,
+  toLargerUnit,
+  parseTokenSymbol,
+  SentOffersProps,
+} from '@dapp/utils';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { useDebug } from '@dapp/features-debug-provider';
-import { EscrowRecord, OrigynError, BalanceResponse } from '@dapp/common-types';
+import { BalanceResponse, EscrowRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { useApi } from '@dapp/common-api';
+
 const styles = {
   gridContainer: {
     display: 'grid',
@@ -29,18 +36,11 @@ interface OffersSentTabProps {
   canisterId: string;
 }
 
-interface SentOffersProps extends OdcDataWithSale {
-  token_id: string;
-  amount: string;
-  lock_to_date: any;
-  escrow_record: EscrowRecord;
-}
-
 export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) => {
-  const debug = useDebug();
-  const { showUnexpectedErrorMessage, showErrorMessage, showSuccessMessage } = useUserMessages();
+  const { getNftBatch, getNftBalances, withdrawEscrow } = useApi();
+  const { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { refreshAllBalances } = useTokensContext();
-  const { actor, principal } = useContext(AuthContext);
+  const { principal } = useContext(AuthContext);
   const [offerSentWithSaleData, setOffersSentWithSaleData] = useState<SentOffersProps[]>([]);
   const [offersSent, setOffersSent] = useState<EscrowRecord[]>([]);
   const [openModal, setOpenModal] = React.useState(false);
@@ -56,25 +56,19 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     setOpenModal(true);
   };
 
-  const parseOffers = async () => {
+  const fetchOffers = async () => {
     try {
       setIsLoading(true);
-      debug.log('offersSent', offersSent);
-      const tokenIds = offersSent.map((offer) => offer.token_id);
-      const odcDataRaw = await actor?.nft_batch_origyn(tokenIds);
-      debug.log('odcDataRaw', odcDataRaw);
-      if (odcDataRaw.err) {
-        debug.error(odcDataRaw.err);
-        throw new Error('Unable to retrieve metadata of tokens.');
-      }
 
-      const parsedOdcs = parseOdcs(odcDataRaw);
+      const tokenIds = offersSent.map((offer) => offer.token_id);
+      const odcs = await getNftBatch(tokenIds);
+      const parsedOdcs = parseOdcs(odcs);
       const offersSentWithSaleData = parsedOdcs.map((odc: OdcDataWithSale, index) => {
         const offer = offersSent[index];
         return {
           ...odc,
           token_id: offer.token_id,
-          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toString(),
+          amount: toLargerUnit(Number(offer.amount), Number(offer.token['ic'].decimals)).toFixed(),
           lock_to_date: offer.lock_to_date,
           escrow_record: offer,
         };
@@ -87,29 +81,14 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     }
   };
 
-  const confirmOfferWithdraw = async (escrow: EscrowRecord) => {
+  const onConfirmOfferWithdraw = async (escrow: EscrowRecord) => {
     try {
       setIsLoading(true);
       if (!escrow) {
         return onModalClose();
       }
-      const withdrawResponse = await actor?.sale_nft_origyn({
-        withdraw: {
-          escrow: {
-            ...escrow,
-            withdraw_to: { principal },
-          },
-        },
-      });
-
-      if ('err' in withdrawResponse) {
-        showErrorMessage(
-          `Error: ${withdrawResponse.err.flag_point}.`,
-          withdrawResponse.err.flag_point,
-        );
-      } else {
-        showSuccessMessage('Offer withdrawn successfully.');
-      }
+      await withdrawEscrow(escrow);
+      showSuccessMessage('Offer withdrawn successfully.');
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -121,21 +100,21 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   };
 
   const getOffersSentBalance = async () => {
+    // TODO: Implement this pattern in all other components and functions
+    // fetch, catch, parse, update state, catch
     try {
       setIsLoading(true);
-      const response = await actor.balance_of_nft_origyn({ principal });
-      debug.log('response from actor?.balance_of_nft_origyn({ principal })');
-      debug.log(JSON.stringify(response, null, 2));
-      if ('err' in response) {
-        const error: OrigynError = response.err;
-        debug.log('error', error);
+
+      let balances: BalanceResponse;
+      try {
+        balances = await getNftBalances(principal);
+      } catch (e: any) {
+        showErrorMessage(e.message);
         return;
-      } else {
-        const balanceResponse: BalanceResponse = response.ok;
-        const sentEscrows = balanceResponse.escrow;
-        const offersSent = sentEscrows?.filter((element) => element.sale_id.length === 0);
-        setOffersSent(offersSent);
       }
+
+      const offersSent = balances.escrow?.filter((element) => element.sale_id.length === 0);
+      setOffersSent(offersSent);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -149,7 +128,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
 
   useEffect(() => {
     if (offersSent?.length) {
-      parseOffers();
+      fetchOffers();
     }
   }, [offersSent]);
 
@@ -157,8 +136,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
     <>
       {isLoading ? (
         <>
-          <HR marginTop={24} marginBottom={24} />
-          <LoadingContainer />
+          <HR marginTop={24} />
+          <LoadingContainer margin="24px" />
         </>
       ) : (
         <>
@@ -167,8 +146,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
               <HR marginTop={16} marginBottom={16} />
               <div style={styles.gridContainer}>
                 {offerSentWithSaleData.map((offer: SentOffersProps, index: number) => (
-                  <>
-                    <div key={index} style={styles.gridItem}>
+                  <React.Fragment key={`${index}Row`}>
+                    <div style={styles.gridItem}>
                       {offer.hasPreviewAsset ? (
                         <img
                           style={{ height: '42px', width: 'auto', borderRadius: '12px' }}
@@ -185,18 +164,14 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                       )}
                     </div>
                     <div style={styles.gridItem}>
-                      <div>
-                        <p>{offer.token_id}</p>
-                      </div>
+                      <p>{offer.token_id}</p>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>{collection.name}</span>
                     </div>
                     <div style={styles.gridItem}>
-                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>Amount</span>
+                      <span style={{ color: theme.colors.SECONDARY_TEXT }}>Offer</span>
                       <br />
-                      <div>
-                        <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
-                        {offer.amount}
-                      </div>
+                      <TokenIcon symbol={parseTokenSymbol(offer.escrow_record)} />
+                      {offer.amount}
                     </div>
                     <div style={styles.gridItem}>
                       <span style={{ color: theme.colors.SECONDARY_TEXT }}>Status</span>
@@ -224,7 +199,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                         </Button>
                       )}
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}{' '}
               </div>
             </div>
@@ -253,7 +228,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
             </Flex>
             <Flex>
               <Button
-                onClick={() => confirmOfferWithdraw(selectedOffer)}
+                onClick={() => onConfirmOfferWithdraw(selectedOffer)}
                 variant="contained"
                 disabled={isLoading}
               >
@@ -263,8 +238,8 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
           </Flex>
           {isLoading && (
             <>
-              <HR marginTop={24} marginBottom={24} />
-              <LoadingContainer />
+              <HR marginTop={24} />
+              <LoadingContainer margin="24px" />
             </>
           )}
         </Container>

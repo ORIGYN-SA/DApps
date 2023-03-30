@@ -7,7 +7,6 @@ import { ThemeProvider } from 'styled-components';
 import './connect2ic.css';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
-import { Disclaimer } from '../Disclaimer';
 
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
@@ -46,7 +45,7 @@ const initialMenuItems: MenuItem[] = [
 export const Layout = ({ children }: LayoutProps) => {
   const { refreshAllBalances } = useTokensContext();
   const { principal, loggedIn, actor } = useContext(AuthContext);
-  const [darkTheme, setDarkTheme] = useState(true);
+  const [darkTheme, setDarkTheme] = useState(null);
   const [menuItems, setMenuItems] = useState(initialMenuItems);
 
   useEffect(() => {
@@ -72,13 +71,30 @@ export const Layout = ({ children }: LayoutProps) => {
     });
   }, []);
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme !== null) {
+      setDarkTheme(savedTheme === 'true');
+    }
+  }, []);
+
+  const handleThemeChange = () => {
+    const newTheme: any = !darkTheme;
+    setDarkTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+
   return (
     <>
       <ThemeProvider theme={darkTheme ? theme : themeLight}>
         <GlobalStyle />
-        <Disclaimer />
         <Flex fullWidth mdFlexFlow="column">
-          <Navbar navItems={menuItems} onChangeTheme={() => setDarkTheme(!darkTheme)} />
+          <Navbar
+            navItems={menuItems}
+            onChangeTheme={() => handleThemeChange()}
+            dAppsVersion="0.1.0"
+            darkMode={darkTheme}
+          />
           <Flex fullWidth>{children}</Flex>
         </Flex>
       </ThemeProvider>

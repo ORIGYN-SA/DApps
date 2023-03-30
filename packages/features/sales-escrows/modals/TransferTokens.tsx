@@ -1,9 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
+import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
 import { sendTransaction, Token, useTokensContext } from '@dapp/features-tokens-provider';
-import { Container, Flex, HR, Modal, TextInput, Select, Button } from '@origyn/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
+import {
+  Container,
+  Flex,
+  HR,
+  Modal,
+  TextInput,
+  Select,
+  Button,
+  LoadingBar,
+} from '@origyn/origyn-art-ui';
 import * as Yup from 'yup';
 import { AuthContext } from '@dapp/features-authentication';
 import {
@@ -15,23 +24,52 @@ import {
   getAccountId,
 } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
+import { VALIDATION } from '../constants';
 
+const DownArrow = () => {
+  return (
+    <svg width="12" height="7" viewBox="0 0 12 7" fill="242424" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M6.00018 6.95022C5.86685 6.95022 5.74185 6.92922 5.62518 6.88722C5.50852 6.84589 5.40018 6.77522 5.30018 6.67522L0.675185 2.05022C0.491851 1.86689 0.404518 1.63755 0.413184 1.36222C0.421184 1.08755 0.516851 0.858554 0.700184 0.675221C0.883518 0.491887 1.11685 0.40022 1.40018 0.40022C1.68352 0.40022 1.91685 0.491887 2.10018 0.675221L6.00018 4.57522L9.92518 0.65022C10.1085 0.466887 10.3379 0.37922 10.6132 0.38722C10.8879 0.395887 11.1168 0.491887 11.3002 0.675221C11.4835 0.858554 11.5752 1.09189 11.5752 1.37522C11.5752 1.65855 11.4835 1.89189 11.3002 2.07522L6.70018 6.67522C6.60018 6.77522 6.49185 6.84589 6.37518 6.88722C6.25852 6.92922 6.13352 6.95022 6.00018 6.95022Z"
+        fill="#242424"
+      />
+    </svg>
+  );
+};
+
+const UpArrow = () => {
+  return (
+    <svg width="12" height="7" viewBox="0 0 12 7" fill="242424" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M0.699316 6.6749C0.515983 6.49157 0.424316 6.25824 0.424316 5.9749C0.424316 5.69157 0.515983 5.45824 0.699316 5.2749L5.29932 0.674903C5.39932 0.574903 5.50765 0.503903 5.62432 0.461903C5.74098 0.420569 5.86598 0.399902 5.99932 0.399902C6.13265 0.399902 6.25765 0.420569 6.37432 0.461903C6.49098 0.503903 6.59932 0.574903 6.69932 0.674903L11.3243 5.2999C11.5077 5.48324 11.5993 5.70824 11.5993 5.9749C11.5993 6.24157 11.4993 6.4749 11.2993 6.6749C11.116 6.85824 10.8827 6.9499 10.5993 6.9499C10.316 6.9499 10.0826 6.85824 9.89932 6.6749L5.99932 2.7749L2.07432 6.6999C1.89098 6.88324 1.66598 6.9749 1.39932 6.9749C1.13265 6.9749 0.899316 6.8749 0.699316 6.6749Z"
+        fill="#242424"
+      />
+    </svg>
+  );
+};
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
-    .typeError('This must be a number')
+    .typeError(VALIDATION.notANumber)
     .nullable()
-    .required('An amount is required!')
+    .required(VALIDATION.amountRequired)
     .default(0),
   recipientAddress: Yup.string()
-    .typeError('This must be a principal or account number')
-    .required('Recipient address is required!')
+    .typeError(VALIDATION.invalidRecipientAddress)
+    .required(VALIDATION.recipientAddressRequired)
     .default(''),
-  memo: Yup.string().default(''),
+  memo: Yup.number()
+    .nullable()
+    .transform((value, originalValue) => {
+      return originalValue.trim() === '' ? null : value;
+    })
+    .notRequired()
+    .typeError(VALIDATION.notANumber),
   token: Yup.string().default('OGY'),
 });
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
-  const { tokens, activeTokens } = useTokensContext();
+  const debug = useDebug();
+  const { walletTokens, activeTokens } = useTokensContext();
   const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { activeWalletProvider } = useContext(AuthContext);
   const [inProcess, setInProcess] = useState(false);
@@ -42,6 +80,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   const [totalDisplay, setTotalDisplay] = useState('0');
   const [feeDisplay, setFeeDisplay] = useState('');
   const [success, setSuccess] = useState(false);
+  const [advancedTab, setAdvancedTab] = useState(false);
 
   const onChange = (name: string, value: any) => {
     setErrors({ ...errors, [name]: undefined });
@@ -55,7 +94,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   };
 
   const onAmountChanged = (value: string) => {
-    const token = tokens[values.token];
+    const token = walletTokens[values.token];
     let validationMsg = validateTokenAmount(value, token.decimals);
     if (validationMsg) {
       setErrors({ ...errors, amount: validationMsg });
@@ -66,7 +105,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   };
 
   const onTokenChanged = (value: string) => {
-    const token = tokens[value];
+    const token = walletTokens[value];
     const amount = toBigNumber(values.amount || 0);
     updateTotals(token, amount);
   };
@@ -83,7 +122,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
     try {
       setInProcess(true);
 
-      const token = tokens[data.token];
+      const token = walletTokens[data.token];
       const total = toSmallerUnit(data.amount, token.decimals);
       let address: string = data.recipientAddress;
 
@@ -92,7 +131,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         address = getAccountId(Principal.fromText(address));
       }
 
-      console.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
+      debug.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
 
       const result = await sendTransaction(
         isLocal(),
@@ -100,7 +139,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         token,
         address,
         total,
-        data.memo,
+        Number(data.memo),
       );
 
       setInProcess(false);
@@ -167,91 +206,114 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   }));
 
   return (
-    <div>
-      <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
-        {success ? (
-          <Container size="full" padding="48px">
-            <h2>Success!</h2>
+    <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
+      {success ? (
+        <Container size="full" padding="48px">
+          <h2>Success!</h2>
+          <br />
+          <span>
+            Your transfer of {amountDisplay} {values.token} is complete. Click done to return to the
+            dashboard.
+          </span>
+          <br />
+          <br />
+          <Button btnType="filled" onClick={handleSuccess}>
+            Done
+          </Button>
+        </Container>
+      ) : inProcess ? (
+        <Container size="full" padding="48px">
+          <h2>Transfer in Progress</h2>
+          <br />
+          <Flex justify="center" align="center">
+            <LoadingBar />
+          </Flex>
+        </Container>
+      ) : (
+        <Container as="form" onSubmit={handleSubmit} size="full" padding="48px">
+          <h2>Transfer Tokens</h2>
+          <br />
+          <Flex flexFlow="column" gap={8}>
             <br />
-            <span>
-              Your transfer of {amountDisplay} {values.token} is complete. Click done to return to
-              the dashboard.
-            </span>
+            <span>Select token</span>
+            <Select
+              placeholder="OGY"
+              handleChange={(option) => onChange('token', option.value)}
+              options={tokenOptions}
+              selectedOption={tokenOptions.find((opt) => opt.label === values.token)}
+            />
             <br />
+            <Flex flexFlow="row" justify="space-between">
+              <span>Amount</span>
+              <span id="balance" className="secondary_color">
+                Balance: {walletTokens[values.token]?.balance} {values.token}
+              </span>
+            </Flex>
+            <TextInput
+              name="amount"
+              onChange={(e) => onChange('amount', e.target.value)}
+              value={values?.amount}
+              error={errors?.amount}
+            />
             <br />
-            <Button btnType="filled" onClick={handleSuccess}>
-              Done
-            </Button>
-          </Container>
-        ) : inProcess ? (
-          <Container size="full" padding="48px">
-            <h2>Transfer in Progress</h2>
+            <span>Recipient Address</span>
+            <TextInput
+              name="recipientAddress"
+              onChange={(e) => onChange('recipientAddress', e.target.value)}
+              value={values.recipientAddress}
+              error={errors.recipientAddress}
+            />
             <br />
-            <LinearProgress color="secondary" />
-          </Container>
-        ) : (
-          <Container as="form" onSubmit={handleSubmit} size="full" padding="48px">
-            <h2>Transfer Tokens</h2>
+            <span>Transaction Fee</span>
+            <span style={{ color: 'grey' }}>{`${feeDisplay}${' '}${values.token}`}</span>
             <br />
-            <Flex flexFlow="column" gap={8}>
+          </Flex>
+          <br />
+          <HR />
+          <br />
+          <Flex flexFlow="row" align="center" justify="space-between">
+            <h6>Total Amount</h6>
+            <span>{totalDisplay}</span>
+          </Flex>
+          <br />
+          <HR />
+
+          <br />
+          <Flex onClick={() => setAdvancedTab(!advancedTab)} fullWidth justify="space-between">
+            <span>Advanced Options</span>
+            {advancedTab ? <DownArrow /> : <UpArrow />}
+          </Flex>
+          {advancedTab && (
+            <>
               <br />
-              <span>Select token</span>
-              <Select
-                placeholder="OGY"
-                handleChange={(option) => onChange('token', option.value)}
-                options={tokenOptions}
-                selectedOption={tokenOptions.find((opt) => opt.label === values.token)}
-              />
+              <span style={{ marginBottom: '8px' }}>
+                Memo <span className="secondary_color">{`${'(Optional)'}`}</span>
+              </span>
               <br />
-              <Flex flexFlow="row" justify="space-between">
-                <span>Amount</span>
-                <span id="balance">{tokens[values.token]?.balance}</span>
-              </Flex>
-              <TextInput
-                name="amount"
-                onChange={(e) => onChange('amount', e.target.value)}
-                value={values?.amount}
-                error={errors?.amount}
-              />
+              <span className="secondary_color" style={{ marginBottom: '8px' }}>
+                This is a 64-bit number chosen by the sender; it can be used in various ways, e.g.
+                to identify specific transfers.{' '}
+              </span>
               <br />
-              <span>Recipient Address</span>
-              <TextInput
-                name="recipientAddress"
-                onChange={(e) => onChange('recipientAddress', e.target.value)}
-                value={values.recipientAddress}
-                error={errors.recipientAddress}
-              />
               <br />
-              <span>Memo</span>
               <TextInput
                 name="memo"
                 value={values.memo}
                 onChange={(e) => onChange('memo', e.target.value)}
+                error={errors.memo}
+                placeholder="Add Memo"
               />
-              <br />
-              <span>Transaction Fee</span>
-              <span style={{ color: 'grey' }}>{`${feeDisplay}${' '}${values.token}`}</span>
-              <br />
-            </Flex>
-            <br />
-            <HR />
-            <br />
-            <Flex flexFlow="row" align="center" justify="space-between">
-              <h6>Total Amount</h6>
-              <span>{totalDisplay}</span>
-            </Flex>
-            <br />
-            <HR />
-            <br />
-            <Flex justify="flex-end">
-              <Button btnType="filled" type="submit">
-                Transfer {values.token}
-              </Button>
-            </Flex>
-          </Container>
-        )}
-      </Modal>
-    </div>
+            </>
+          )}
+          <br />
+          <Flex justify="flex-end">
+            <Button btnType="filled" type="submit">
+              Transfer {values.token}
+            </Button>
+          </Flex>
+        </Container>
+      )}
+    </Modal>
   );
 };
 

@@ -1,6 +1,7 @@
 import { IdlStandard } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
-import React, { createContext, useContext, useState } from 'react';
+import JSONBig from 'json-bigint';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
 import { timeConverter } from '@dapp/utils';
@@ -48,6 +49,9 @@ export type TokensContext = {
   tokens: {
     [key: string]: Token;
   };
+  walletTokens: {
+    [key: string]: Token;
+  };
   time?: string | number | void;
   activeTokens: {
     [key: string]: Token;
@@ -78,19 +82,26 @@ const defaultTokensMapped = () => {
   return defaultTokensMapped;
 };
 
-// const localStorageTokens = () => {
-//   const localStorageTokens = localStorage.getItem('tokensContext');
-//   if (!localStorageTokens) return undefined;
+const localStorageTokens = () => {
+  const localStorageTokens = localStorage.getItem('tokensContext');
+  if (!localStorageTokens) return undefined;
 
-//   return JSONBig.parse(localStorageTokens ?? '');
-// };
-const initialTokens = defaultTokensMapped();
+  return JSONBig.parse(localStorageTokens ?? '');
+};
+const initialTokens = localStorageTokens() ?? defaultTokensMapped();
+
+const walletTokens = Object.keys(initialTokens)
+  .filter((t) => initialTokens[t].enabled && ['OGY', 'ICP'].includes(t.toUpperCase()))
+  .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {});
+
+const activeTokens = Object.keys(initialTokens)
+  .filter((t) => initialTokens[t].enabled)
+  .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {});
 
 export const TokensContext = createContext<TokensContext>({
   tokens: initialTokens,
-  activeTokens: Object.keys(initialTokens)
-    .filter((t) => initialTokens[t].enabled)
-    .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {}),
+  walletTokens,
+  activeTokens,
   time: timeConverter(BigInt(new Date().getTime() * 1000000)),
 });
 
@@ -102,6 +113,7 @@ export const useTokensContext = () => {
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
   const [time, setTime] = useState<any>();
+
   const addToken = async (
     isLocal: boolean,
     canisterId: string,
@@ -124,10 +136,11 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     };
 
     token.balance = await getBalance(isLocal, principal, token);
+
     const _tokens = tokens;
     _tokens[token.symbol] = token;
     setTokens(_tokens);
-    // localStorage.setItem('tokensContext', JSONBig.stringify(_tokens));
+    localStorage.setItem('tokensContext', JSONBig.stringify(_tokens));
     return token;
   };
 
@@ -185,9 +198,9 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
   };
 
-  // useEffect(() => {
-  //   localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
-  // }, [tokens]);
+  useEffect(() => {
+    localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
+  }, [tokens]);
 
   return (
     <TokensContext.Provider
@@ -199,6 +212,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         setLocalCanisterId,
         toggleToken,
         tokens,
+        walletTokens,
         time,
         activeTokens: Object.keys(tokens)
           .filter((t) => tokens[t].enabled)

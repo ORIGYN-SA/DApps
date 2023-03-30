@@ -20,11 +20,11 @@ import {
 export const WalletTokens = ({ children }: any) => {
   const { principal } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  //const [selectedTab, setSelectedTab] = useState<number>(0)
+  // const [selectedTab, setSelectedTab] = useState<number>(0)
   const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
   const [inputCanisterId, setInputCanisterId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { tokens, addToken, toggleToken } = useTokensContext();
+  const { addToken, toggleToken, tokens, refreshAllBalances } = useTokensContext();
   const { enqueueSnackbar } = useSnackbar();
   const handleAddButton = async () => {
     if (isLoading) return;
@@ -60,7 +60,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    // refreshAllBalances(isLocal(), principal)
+    refreshAllBalances(isLocal(), principal);
   };
   // const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
   //   setSelectedTab(tab)
@@ -72,6 +72,7 @@ export const WalletTokens = ({ children }: any) => {
   //   id: `simple-tab-${index}`,
   //   'aria-controls': `simple-tabpanel-${index}`,
   // });
+
   return (
     <>
       <Modal isOpened={isModalOpen} closeModal={() => handleModalClose()} size="md">
@@ -134,21 +135,18 @@ export const WalletTokens = ({ children }: any) => {
                     }))}
                 />
                 <Flex justify="flex-end">
-                  <Button btnType="outlined" onClick={handleAddButton}>
+                  {/* Disable until cusstom tokens are implemented */}
+                  <Button btnType="outlined" disabled onClick={handleAddButton}>
                     Add token
                   </Button>
                 </Flex>
               </Flex>,
             ]}
           />
-          {isLoading && (
-            <div style={{ marginTop: 5 }}>
-              <LoadingContainer />
-            </div>
-          )}
+          {isLoading && <LoadingContainer margin="16px" />}
         </Container>
       </Modal>
-      <Button btnType="filled" onClick={handleModalOpen}>
+      <Button btnType="outlined" onClick={handleModalOpen}>
         {children}
       </Button>
     </>

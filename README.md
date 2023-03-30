@@ -1,16 +1,40 @@
 # ORIGYN dApps Monorepo
 
-This repository is a monorepo containing standard ORIGYN dApps.
+This repository is a monorepo containing standard ORIGYN dApps for the perpetualOS
+
+### Modules
+
+./packages/apps/ledger
+./packages/apps/library
+./packages/apps/luxury
+./packages/apps/marketplace
+./packages/apps/nft-data
+./packages/apps/vault
+./packages/candy_editor
+./packages/common/api
+./packages/common/assets
+./packages/common/candid
+./packages/common/types
+./packages/features/authentication
+./packages/features/components
+./packages/features/debug-provider
+./packages/features/sales-escrows
+./packages/features/theme
+./packages/features/token-provider
+./packages/features/user-messages
+./packages/utils
+
+Please document what each package is above.
 
 ## 🏁 Quickstart
 
 - Requires `node 16` in order to install all dependencies.
-- The @origyn/origyn-art-ui library is published in the GitHub Package Registry, which requires that you first authenticate before installing the package.
 
 ```
-npm login --registry=https://npm.pkg.github.com --scope=@origyn-sa --always-auth
-npm install
+npm ci
 npm run bootstrap
+npm run build:all
+npm run start:marketplace
 ```
 
 ### Running
@@ -20,6 +44,8 @@ Each dApp can be started using webpack as a local development server by running 
 ```
 npm run start:vault
 ```
+
+See package.json scripts for all options.
 
 ### Building
 
@@ -51,3 +77,16 @@ http://localhost:8080/-/sp3hj-caaaa-aaaaa-aaajq-cai/-/bm-1/-/vault
 ```
 
 This will make [Connect2IC](https://github.com/Connect2IC/connect2ic) create an actor for the canister `sp3hj-caaaa-aaaaa-aaajq-cai`.
+
+## ⚠️ Version Update
+
+```
+📁 package > features > components > src > layout > index.tsx
+<Navbar
+    navItems={menuItems}
+    onChangeTheme={() => setDarkTheme(!darkTheme)}
+    dAppsVersion="0.1.0"
+/>
+```
+
+Update only the dAppsVersion prop.
