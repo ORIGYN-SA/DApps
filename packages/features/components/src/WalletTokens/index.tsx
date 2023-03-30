@@ -60,7 +60,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    refreshAllBalances(isLocal(), principal)
+    refreshAllBalances(isLocal(), principal);
   };
   // const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
   //   setSelectedTab(tab)
@@ -73,7 +73,6 @@ export const WalletTokens = ({ children }: any) => {
   //   'aria-controls': `simple-tabpanel-${index}`,
   // });
 
-  console.log('tokens', tokens)
   return (
     <>
       <Modal isOpened={isModalOpen} closeModal={() => handleModalClose()} size="md">
@@ -136,7 +135,8 @@ export const WalletTokens = ({ children }: any) => {
                     }))}
                 />
                 <Flex justify="flex-end">
-                  <Button btnType="outlined" onClick={handleAddButton}>
+                  {/* Disable until cusstom tokens are implemented */}
+                  <Button btnType="outlined" disabled onClick={handleAddButton}>
                     Add token
                   </Button>
                 </Flex>

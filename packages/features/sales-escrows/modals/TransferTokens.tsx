@@ -57,7 +57,13 @@ const validationSchema = Yup.object().shape({
     .typeError(VALIDATION.invalidRecipientAddress)
     .required(VALIDATION.recipientAddressRequired)
     .default(''),
-  memo: Yup.number().default(0).typeError(VALIDATION.notANumber),
+  memo: Yup.number()
+    .nullable()
+    .transform((value, originalValue) => {
+      return originalValue.trim() === '' ? null : value;
+    })
+    .notRequired()
+    .typeError(VALIDATION.notANumber),
   token: Yup.string().default('OGY'),
 });
 
@@ -275,27 +281,27 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
           <br />
           <Flex onClick={() => setAdvancedTab(!advancedTab)} fullWidth justify="space-between">
             <span>Advanced Options</span>
-            {advancedTab ? <DownArrow/> : <UpArrow/> }
+            {advancedTab ? <DownArrow /> : <UpArrow />}
           </Flex>
           {advancedTab && (
             <>
               <br />
-              <span style={{marginBottom: '8px'}}>
+              <span style={{ marginBottom: '8px' }}>
                 Memo <span className="secondary_color">{`${'(Optional)'}`}</span>
               </span>
-              <br/>
-              <span className="secondary_color" style={{marginBottom: '8px'}}>
+              <br />
+              <span className="secondary_color" style={{ marginBottom: '8px' }}>
                 This is a 64-bit number chosen by the sender; it can be used in various ways, e.g.
                 to identify specific transfers.{' '}
               </span>
-              <br/>
-              <br/>
+              <br />
+              <br />
               <TextInput
                 name="memo"
                 value={values.memo}
                 onChange={(e) => onChange('memo', e.target.value)}
                 error={errors.memo}
-                placeholder='Add Memo'
+                placeholder="Add Memo"
               />
             </>
           )}
