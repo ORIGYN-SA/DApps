@@ -15,7 +15,6 @@ import {
   parseOdcs,
   copyToClipboard,
   getRootUrl,
-  timeInNanos,
 } from '@dapp/utils';
 import { OrigynClient } from '@origyn/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
