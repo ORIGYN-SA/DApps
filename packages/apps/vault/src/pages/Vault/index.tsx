@@ -15,6 +15,7 @@ import {
   parseOdcs,
   copyToClipboard,
   getRootUrl,
+  timeInNanos,
 } from '@dapp/utils';
 import { OrigynClient } from '@origyn/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
@@ -145,7 +146,7 @@ const VaultPage = () => {
   const [openTrx, setOpenTrx] = useState(false);
   const [showManageEscrowsButton, setShowManageEscrowsButton] = useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
-  const {time, activeTokens } = useTokensContext();
+  const { time, activeTokens } = useTokensContext();
   const { open } = useDialog();
   const { state, dispatch } = useVault();
   const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
@@ -197,6 +198,21 @@ const VaultPage = () => {
         setShowManageEscrowsButton(
           vaultBalanceInfo.escrow?.length > 0 || vaultBalanceInfo.offers?.length > 0,
         );
+
+        //'balance_of_nft_origyn result' = vaultBalanceInfo
+
+        if (vaultBalanceInfo?.escrow) {
+          await Promise.all(vaultBalanceInfo.escrow.map(async (item) => {
+            await actor.sale_nft_origyn({ end_sale: item.token_id });
+          }));
+        }
+        
+        if (vaultBalanceInfo?.offers) {
+          await Promise.all(vaultBalanceInfo.offers.map(async (item) => {
+            await actor.sale_nft_origyn({ end_sale: item.token_id });
+          }));
+        }
+        
       } else {
         dispatch({ type: 'odcs', payload: [] });
         dispatch({ type: 'ownedItems', payload: 0 });
@@ -514,7 +530,7 @@ const VaultPage = () => {
                                     <Card
                                       flexFlow="column"
                                       style={{ overflow: 'hidden', height: '100%' }}
-                                      bgColor='NAVIGATION_BACKGROUND'
+                                      bgColor="NAVIGATION_BACKGROUND"
                                     >
                                       {odc.hasPreviewAsset ? (
                                         <StyledNFTImg
