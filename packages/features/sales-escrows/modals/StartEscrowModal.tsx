@@ -159,12 +159,10 @@ export function StartEscrowModal({
       errors = { ...errors, amount: `${escrowType} ${VALIDATION.mustBeGreaterThan} 0` };
     } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       errors = { ...errors, amount: VALIDATION.insufficientFunds };
-    } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
+    } else if (amount.isLessThanOrEqualTo(fee.times(2))) {
       errors = {
         ...errors,
-        amount: `${VALIDATION.offerMustBeGreaterThanTxFee} ${fee.toFixed(token.decimals)} ${
-          token.symbol
-        }`,
+        amount: `${VALIDATION.offerMustBeGreaterThanTxFee} ${getTransactionFee()}`,
       };
     } else if (escrowType == 'Bid') {
       if (amount.isLessThan(minBid)) {
@@ -172,6 +170,8 @@ export function StartEscrowModal({
           ...errors,
           amount: `${VALIDATION.minimumBid} ${minBid.toFixed()} ${odc.tokenSymbol}`,
         };
+      } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
+        errors = { ...errors, amount: VALIDATION.insufficientFunds };
       } else if (amount.isGreaterThan(toLargerUnit(odc.buyNow, token.decimals))) {
         if (odc.buyNow !== 0) {
           errors = {
