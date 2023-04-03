@@ -15,6 +15,7 @@ import {
   parseOdcs,
   copyToClipboard,
   getRootUrl,
+  timeInNanos,
 } from '@dapp/utils';
 import { OrigynClient } from '@origyn/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
@@ -201,17 +202,20 @@ const VaultPage = () => {
         //'balance_of_nft_origyn result' = vaultBalanceInfo
 
         if (vaultBalanceInfo?.escrow) {
-          await Promise.all(vaultBalanceInfo.escrow.map(async (item) => {
-            await actor.sale_nft_origyn({ end_sale: item.token_id });
-          }));
+          await Promise.all(
+            vaultBalanceInfo.escrow.map(async (item) => {
+              await actor.sale_nft_origyn({ end_sale: item.token_id });
+            }),
+          );
         }
-        
+
         if (vaultBalanceInfo?.offers) {
-          await Promise.all(vaultBalanceInfo.offers.map(async (item) => {
-            await actor.sale_nft_origyn({ end_sale: item.token_id });
-          }));
+          await Promise.all(
+            vaultBalanceInfo.offers.map(async (item) => {
+              await actor.sale_nft_origyn({ end_sale: item.token_id });
+            }),
+          );
         }
-        
       } else {
         dispatch({ type: 'odcs', payload: [] });
         dispatch({ type: 'ownedItems', payload: 0 });
@@ -224,6 +228,86 @@ const VaultPage = () => {
     }
   };
 
+  const endSaleForNFTS = async () => {
+    const { canisterId } = await useRoute();
+    setCanisterId(canisterId);
+
+    OrigynClient.getInstance().init(true, canisterId, { actor });
+
+    const vaultBalanceInfo = await getNftBalances(principal);
+
+    if (vaultBalanceInfo?.escrow) {
+      await Promise.all(
+        vaultBalanceInfo.escrow.map(async (item) => {
+          const r: any = await actor.nft_origyn(item.token_id);
+
+          const endDate = r.ok.current_sale[0]?.sale_type?.auction.config.auction.end_date;
+
+          if (endDate < timeInNanos()) {
+            await actor.sale_nft_origyn({ end_sale: item.token_id });
+          }
+        }),
+      );
+    }
+
+    if (vaultBalanceInfo?.offers) {
+      await Promise.all(
+        vaultBalanceInfo.offers.map(async (item) => {
+          const r: any = await actor.nft_origyn(item.token_id);
+
+          const endDate = r.ok.current_sale[0]?.sale_type?.auction.config.auction.end_date;
+
+          if (endDate < timeInNanos()) {
+            await actor.sale_nft_origyn({ end_sale: item.token_id });
+          }
+        }),
+      );
+    }
+  };
+
+  const endSaleForNFTS2 = async () => {
+    const { canisterId } = await useRoute();
+    setCanisterId(canisterId);
+
+    OrigynClient.getInstance().init(true, canisterId, { actor });
+
+    const vaultBalanceInfo = await getNftBalances(principal);
+
+    const endedNFTS = [];
+
+    const NFTonSale = [];
+
+
+
+    if (vaultBalanceInfo?.escrow) {
+          /*@ts-ignore*/
+      NFTonSale.push(vaultBalanceInfo?.escrow?.token_id)
+    }
+
+    if (vaultBalanceInfo?.offers) {
+          /*@ts-ignore*/
+      NFTonSale.push(vaultBalanceInfo?.escrow?.token_id)
+    }
+    if (NFTonSale.length > 0) {
+
+      NFTonSale.map(async (nft) => {
+      const r: any = await actor.nft_origyn(nft);
+
+      const endDate = r.ok.current_sale[0]?.sale_type?.auction.config.auction.end_date;
+
+      if (endDate < timeInNanos()) {
+        endedNFTS.push(nft);
+      }
+    });
+
+    endedNFTS.map(async (nft) => {
+      if (endedNFTS.length > 0) {
+        await actor.sale_nft_origyn({ end_sale: nft });
+      }
+    });
+  }
+  };
+
   useEffect(() => {
     document.title = 'Origyn Vault';
 
@@ -233,6 +317,8 @@ const VaultPage = () => {
     };
 
     run();
+    endSaleForNFTS();
+    endSaleForNFTS2();
   }, []);
 
   /* Fetch data from canister when the actor reference
