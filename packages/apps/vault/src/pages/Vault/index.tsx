@@ -277,35 +277,35 @@ const VaultPage = () => {
 
     const NFTonSale = [];
 
-
-
     if (vaultBalanceInfo?.escrow) {
-          /*@ts-ignore*/
-      NFTonSale.push(vaultBalanceInfo?.escrow?.token_id)
+      vaultBalanceInfo?.escrow?.map((nft) => {
+        NFTonSale.push(nft.token_id);
+      });
     }
 
     if (vaultBalanceInfo?.offers) {
-          /*@ts-ignore*/
-      NFTonSale.push(vaultBalanceInfo?.escrow?.token_id)
+      vaultBalanceInfo?.offers?.map((nft) => {
+        NFTonSale.push(nft.token_id);
+      });
     }
+
     if (NFTonSale.length > 0) {
-
       NFTonSale.map(async (nft) => {
-      const r: any = await actor.nft_origyn(nft);
+        const r: any = await actor.nft_origyn(nft);
 
-      const endDate = r.ok.current_sale[0]?.sale_type?.auction.config.auction.end_date;
+        const endDate = r.ok.current_sale[0]?.sale_type?.auction.config.auction.end_date;
 
-      if (endDate < timeInNanos()) {
-        endedNFTS.push(nft);
-      }
-    });
+        if (endDate < timeInNanos()) {
+          endedNFTS.push(nft);
+        }
+      });
 
-    endedNFTS.map(async (nft) => {
-      if (endedNFTS.length > 0) {
-        await actor.sale_nft_origyn({ end_sale: nft });
-      }
-    });
-  }
+      endedNFTS.map(async (nft) => {
+        if (endedNFTS.length > 0) {
+          await actor.sale_nft_origyn({ end_sale: nft });
+        }
+      });
+    }
   };
 
   useEffect(() => {
