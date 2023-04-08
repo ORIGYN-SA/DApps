@@ -236,56 +236,19 @@ const VaultPage = () => {
 
     const vaultBalanceInfo = await getNftBalances(principal);
 
-    if (vaultBalanceInfo?.escrow) {
-      await Promise.all(
-        vaultBalanceInfo.escrow.map(async (item) => {
-          const r: any = await actor.nft_origyn(item.token_id);
-
-          const endDate = r.ok.current_sale[0]?.sale_type?.auction.config.auction.end_date;
-
-          if (endDate < timeInNanos()) {
-            await actor.sale_nft_origyn({ end_sale: item.token_id });
-          }
-        }),
-      );
-    }
-
-    if (vaultBalanceInfo?.offers) {
-      await Promise.all(
-        vaultBalanceInfo.offers.map(async (item) => {
-          const r: any = await actor.nft_origyn(item.token_id);
-
-          const endDate = r.ok.current_sale[0]?.sale_type?.auction.config.auction.end_date;
-
-          if (endDate < timeInNanos()) {
-            await actor.sale_nft_origyn({ end_sale: item.token_id });
-          }
-        }),
-      );
-    }
-  };
-
-  const endSaleForNFTS2 = async () => {
-    const { canisterId } = await useRoute();
-    setCanisterId(canisterId);
-
-    OrigynClient.getInstance().init(true, canisterId, { actor });
-
-    const vaultBalanceInfo = await getNftBalances(principal);
-
     const endedNFTS = [];
 
     const NFTonSale = [];
 
     if (vaultBalanceInfo?.escrow) {
-      vaultBalanceInfo?.escrow?.map((nft) => {
-        NFTonSale.push(nft.token_id);
+      vaultBalanceInfo?.escrow?.forEach((nft) => {
+        NFTonSale.push(nft?.token_id);
       });
     }
 
     if (vaultBalanceInfo?.offers) {
-      vaultBalanceInfo?.offers?.map((nft) => {
-        NFTonSale.push(nft.token_id);
+      vaultBalanceInfo?.offers?.forEach((nft) => {
+        NFTonSale.push(nft?.token_id);
       });
     }
 
@@ -293,14 +256,14 @@ const VaultPage = () => {
       NFTonSale.map(async (nft) => {
         const r: any = await actor.nft_origyn(nft);
 
-        const endDate = r.ok.current_sale[0]?.sale_type?.auction.config.auction.end_date;
+        const endDate = r.ok.current_sale[0]?.sale_type?.auction?.config?.auction?.end_date;
 
         if (endDate < timeInNanos()) {
           endedNFTS.push(nft);
         }
       });
 
-      endedNFTS.map(async (nft) => {
+      endedNFTS.forEach(async (nft) => {
         if (endedNFTS.length > 0) {
           await actor.sale_nft_origyn({ end_sale: nft });
         }
@@ -318,7 +281,6 @@ const VaultPage = () => {
 
     run();
     endSaleForNFTS();
-    endSaleForNFTS2();
   }, []);
 
   /* Fetch data from canister when the actor reference
