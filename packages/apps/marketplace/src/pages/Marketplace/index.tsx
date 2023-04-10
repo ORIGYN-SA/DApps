@@ -1,23 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { useDialog } from '@connect2ic/react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { OrigynClient } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useApi } from '@dapp/common-api';
-import { LoadingContainer, TokenIcon } from '@dapp/features-components';
+import { LoadingContainer } from '@dapp/features-components';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit, getRootUrl } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
 import {
-  Card,
   Container,
   Flex,
   Button,
   HR,
-  Grid,
   Image,
   SecondaryNav,
   ShowMoreBlock,
@@ -192,6 +189,8 @@ const Marketplace = () => {
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
   const currentData = filteredOdcs.slice(start, end);
+
+  console.log('coll', collectionData)
 
   //---------------end----------
 

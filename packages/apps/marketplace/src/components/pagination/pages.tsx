@@ -1,22 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
-  Card,
-  Container,
-  Flex,
   Button,
-  HR,
-  Grid,
-  Image,
-  SecondaryNav,
-  ShowMoreBlock,
-  theme,
 } from '@origyn/origyn-art-ui';
-import { useMarketplace } from '../../components/context';
-import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit, getRootUrl } from '@dapp/utils';
-import { Link } from 'react-router-dom';
-import { PlaceholderIcon } from '@dapp/common-assets';
-import { LoadingContainer, TokenIcon } from '@dapp/features-components';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
 
 const Pagination = ({ total, current, onClick }) => {
 
