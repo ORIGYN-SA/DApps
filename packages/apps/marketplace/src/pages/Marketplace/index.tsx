@@ -135,12 +135,12 @@ const Marketplace = () => {
       }
     };
   }, [actor]);
-
+  console.log('to be filtered', odcs)
   /* Apply filter and sort to list */
   useEffect(() => {
     let filtered = odcs;
 
-    if (filter != 'all') {
+    if (filter == 'onSale' ) {
       filtered = filtered.filter((odc) => odc.auctionOpen);
     }
 
