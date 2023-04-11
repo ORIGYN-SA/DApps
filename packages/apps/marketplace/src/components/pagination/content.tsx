@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  Container,
-  Flex,
-  Grid,
-  Image,
-} from '@origyn/origyn-art-ui';
+import { Card, Container, Flex, Grid, Image } from '@origyn/origyn-art-ui';
 import { useMarketplace } from '../../components/context';
 import { OdcDataWithSale, toLargerUnit } from '@dapp/utils';
 import { Link } from 'react-router-dom';
@@ -13,10 +7,15 @@ import { PlaceholderIcon } from '@dapp/common-assets';
 import { TokenIcon } from '@dapp/features-components';
 import { useRoute } from '@dapp/features-authentication';
 
-const NFTCards = ({ nftData, odcs }) => {
+interface NFTCardsProps {
+  nftData: Array<any>;
+  odcs: Array<any>;
+}
+
+const NFTCards = ({ nftData, odcs }: NFTCardsProps) => {
   const [canisterId, setCanisterId] = useState('');
   const { state } = useMarketplace();
-  const { collectionData} = state;
+  const { collectionData } = state;
 
   const getPrice = (odc: OdcDataWithSale): string => {
     const price = odc.currentBid
@@ -33,7 +32,7 @@ const NFTCards = ({ nftData, odcs }) => {
     run();
   }, []);
 
-  console.log('odcs', odcs)
+  console.log('odcs', odcs);
 
   return (
     <div>

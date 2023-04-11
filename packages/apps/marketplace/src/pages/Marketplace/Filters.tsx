@@ -49,7 +49,7 @@ const Filter = ({
   onChangeSort,
   onInput,
   initialFilterValue = '',
-  initialSortValue = '',
+  initialSortValue = 'onSale',
 }: FilterPropTypes) => {
   const filterOptions: Option[] = [
     { label: 'On Sale', value: 'onSale' },

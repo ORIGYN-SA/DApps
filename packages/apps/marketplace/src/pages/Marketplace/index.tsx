@@ -7,7 +7,7 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { useApi } from '@dapp/common-api';
 import { LoadingContainer } from '@dapp/features-components';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit, getRootUrl } from '@dapp/utils';
+import { parseOdcs, parseMetadata, getRootUrl } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
 import {
@@ -29,9 +29,8 @@ import {
   MediumSVG,
 } from '../../../../../features/components/src/SocialMediaSVG';
 import Filter from './Filters';
-import NFTCards from '../../components/pagination/content'
-import Pagination from '../../components/pagination/pages'
-
+import NFTCards from '../../components/pagination/content';
+import Pagination from '../../components/pagination/pages';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
@@ -52,11 +51,24 @@ const Marketplace = () => {
   const { open } = useDialog();
   const { state, dispatch } = useMarketplace();
   const { totalItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const logout = async () => {
     handleLogOut();
     fetchData();
   };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  const itemsPerPage = 50;
+
+  const totalPages: any = Math.ceil(filteredOdcs.length / itemsPerPage);
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const currentData = filteredOdcs.slice(start, end);
 
   const fetchData = async () => {
     if (!actor) {
@@ -95,13 +107,6 @@ const Marketplace = () => {
     }
   };
 
-  const getPrice = (odc: OdcDataWithSale): string => {
-    const price = odc.currentBid
-      ? toLargerUnit(odc.currentBid, odc.token.decimals)
-      : toLargerUnit(odc.buyNow, odc.token.decimals);
-    return price.toFixed();
-  };
-
   useEffect(() => {
     document.title = 'Origyn Marketplace';
 
@@ -134,6 +139,10 @@ const Marketplace = () => {
   /* Apply filter and sort to list */
   useEffect(() => {
     let filtered = odcs;
+
+    if (filter != 'all') {
+      filtered = filtered.filter((odc) => odc.auctionOpen);
+    }
 
     switch (filter) {
       case 'onSale':
@@ -174,25 +183,6 @@ const Marketplace = () => {
 
     dispatch({ type: 'filteredOdcs', payload: filtered });
   }, [filter, sort, inputText, odcs]);
-
-  //----------pagination-------
-
-  const [currentPage, setCurrentPage] = useState<any>(1);
-  const itemsPerPage = 50;
-
-  const totalPages: any = Math.ceil(odcs.length / itemsPerPage);
-
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-  };
-
-  const start = (currentPage - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  const currentData = filteredOdcs.slice(start, end);
-
-  console.log('coll', collectionData)
-
-  //---------------end----------
 
   return (
     <Flex fullWidth padding="0" flexFlow="column">
@@ -310,13 +300,17 @@ const Marketplace = () => {
                       />
                       <br />
                       <br />
-                      <Flex flexFlow='column' fullWidth justify='center' align='center'>
-                     {/* @ts-ignore */}
-                      <NFTCards nftData={currentData} currentPage={currentPage} odcs={odcs}/>
-                      {/* @ts-ignore */}
-                      <Pagination total={totalPages} current={currentPage} onClick={handlePageClick} />
+                      <Flex flexFlow="column" fullWidth justify="center" align="center">
+                        {/* @ts-ignore */}
+                        <NFTCards nftData={currentData} currentPage={currentPage} odcs={odcs} />
+                        {/* @ts-ignore */}
+                        <Pagination
+                          total={totalPages}
+                          current={currentPage}
+                          onClick={handlePageClick}
+                        />
                       </Flex>
-                       </Container>
+                    </Container>
                   </div>
                 )}
               </>
