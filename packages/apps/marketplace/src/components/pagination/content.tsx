@@ -32,8 +32,6 @@ const NFTCards = ({ nftData, odcs }: NFTCardsProps) => {
     run();
   }, []);
 
-  console.log('odcs', odcs);
-
   return (
     <div>
       {nftData?.length > 0 ? (

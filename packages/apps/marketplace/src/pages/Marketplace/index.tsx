@@ -301,9 +301,7 @@ const Marketplace = () => {
                       <br />
                       <br />
                       <Flex flexFlow="column" fullWidth justify="center" align="center">
-                        {/* @ts-ignore */}
-                        <NFTCards nftData={currentData} currentPage={currentPage} odcs={odcs} />
-                        {/* @ts-ignore */}
+                        <NFTCards nftData={currentData} odcs={odcs} />
                         <Pagination
                           total={totalPages}
                           current={currentPage}
