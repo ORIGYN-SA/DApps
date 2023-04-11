@@ -52,9 +52,9 @@ const Filter = ({
   initialSortValue = '',
 }: FilterPropTypes) => {
   const filterOptions: Option[] = [
-    { label: 'All', value: 'all' },
     { label: 'On Sale', value: 'onSale' },
     { label: 'Not On Sale', value: 'notOnSale' },
+    { label: 'All', value: 'all' },
   ];
 
   const sortOptions: Option[] = [

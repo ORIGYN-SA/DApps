@@ -1,23 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { useDialog } from '@connect2ic/react';
 import { AuthContext, useRoute } from '@dapp/features-authentication';
 import { OrigynClient } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useApi } from '@dapp/common-api';
-import { LoadingContainer, TokenIcon } from '@dapp/features-components';
+import { LoadingContainer } from '@dapp/features-components';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { OdcDataWithSale, parseOdcs, parseMetadata, toLargerUnit, getRootUrl } from '@dapp/utils';
+import { parseOdcs, parseMetadata, getRootUrl } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
 import {
-  Card,
   Container,
   Flex,
   Button,
   HR,
-  Grid,
   Image,
   SecondaryNav,
   ShowMoreBlock,
@@ -32,6 +29,8 @@ import {
   MediumSVG,
 } from '../../../../../features/components/src/SocialMediaSVG';
 import Filter from './Filters';
+import NFTCards from '../../components/pagination/content';
+import Pagination from '../../components/pagination/pages';
 
 const StyledSectionTitle = styled.h2`
   margin: 48px 24px;
@@ -52,11 +51,24 @@ const Marketplace = () => {
   const { open } = useDialog();
   const { state, dispatch } = useMarketplace();
   const { totalItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const logout = async () => {
     handleLogOut();
     fetchData();
   };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+  const itemsPerPage = 50;
+
+  const totalPages: any = Math.ceil(filteredOdcs.length / itemsPerPage);
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const currentData = filteredOdcs.slice(start, end);
 
   const fetchData = async () => {
     if (!actor) {
@@ -95,13 +107,6 @@ const Marketplace = () => {
     }
   };
 
-  const getPrice = (odc: OdcDataWithSale): string => {
-    const price = odc.currentBid
-      ? toLargerUnit(odc.currentBid, odc.token.decimals)
-      : toLargerUnit(odc.buyNow, odc.token.decimals);
-    return price.toFixed();
-  };
-
   useEffect(() => {
     document.title = 'Origyn Marketplace';
 
@@ -130,10 +135,14 @@ const Marketplace = () => {
       }
     };
   }, [actor]);
-
+  console.log('to be filtered', odcs)
   /* Apply filter and sort to list */
   useEffect(() => {
     let filtered = odcs;
+
+    if (filter == 'onSale' ) {
+      filtered = filtered.filter((odc) => odc.auctionOpen);
+    }
 
     switch (filter) {
       case 'onSale':
@@ -291,85 +300,14 @@ const Marketplace = () => {
                       />
                       <br />
                       <br />
-                      {filteredOdcs?.length > 0 ? (
-                        <>
-                          <Grid
-                            smColumns={1}
-                            mdColumns={2}
-                            lgColumns={3}
-                            xlColumns={4}
-                            columns={6}
-                            gap={20}
-                          >
-                            {filteredOdcs.map((odc: OdcDataWithSale) => {
-                              return (
-                                <Link to={`/${odc?.id}`} key={odc?.id}>
-                                  <Card
-                                    flexFlow="column"
-                                    style={{ overflow: 'hidden', height: '100%' }}
-                                    bgColor='NAVIGATION_BACKGROUND'
-                                  >
-                                    {odc.hasPreviewAsset ? (
-                                      <Image
-                                        style={{ width: '100%' }}
-                                        src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
-                                        alt=""
-                                      />
-                                    ) : (
-                                      <Flex align="center" justify="center">
-                                        <PlaceholderIcon width={'100%'} />
-                                      </Flex>
-                                    )}
-                                    <Container
-                                      style={{ height: '100%' }}
-                                      size="full"
-                                      padding="16px"
-                                    >
-                                      <Flex
-                                        style={{ height: '100%' }}
-                                        justify="space-between"
-                                        flexFlow="column"
-                                        gap={32}
-                                      >
-                                        <div>
-                                          <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                            {collectionData?.displayName}
-                                          </p>
-                                          <p>
-                                            <b>{odc?.displayName || odc?.id}</b>
-                                          </p>
-                                        </div>
-                                        <div>
-                                          <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
-                                            Status
-                                          </p>
-                                          <p>
-                                            {odc.auctionOpen ? (
-                                              <>
-                                                {getPrice(odc)}{' '}
-                                                <TokenIcon symbol={odc.tokenSymbol} />
-                                              </>
-                                            ) : (
-                                              'No auction started'
-                                            )}
-                                          </p>
-                                        </div>
-                                      </Flex>
-                                    </Container>
-                                  </Card>
-                                </Link>
-                              );
-                            })}
-                          </Grid>
-                          <br />
-                        </>
-                      ) : (
-                        <h5>
-                          {odcs?.length === 0
-                            ? 'There are no digital certificates in this collection'
-                            : 'Your filter returned 0 digital certificates'}
-                        </h5>
-                      )}
+                      <Flex flexFlow="column" fullWidth justify="center" align="center">
+                        <NFTCards nftData={currentData} odcs={odcs} />
+                        <Pagination
+                          total={totalPages}
+                          current={currentPage}
+                          onClick={handlePageClick}
+                        />
+                      </Flex>
                     </Container>
                   </div>
                 )}
