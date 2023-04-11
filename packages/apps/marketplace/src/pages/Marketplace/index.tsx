@@ -140,18 +140,21 @@ const Marketplace = () => {
   useEffect(() => {
     let filtered = odcs;
 
-    if (filter == 'onSale' ) {
-      filtered = filtered.filter((odc) => odc.auctionOpen);
-    }
-
     switch (filter) {
+      case 'all':
+        filtered = odcs;
+        break;
       case 'onSale':
-        filtered = filtered.filter((odc) => odc.auctionOpen);
+        filtered = odcs.filter((odc) => odc.auctionOpen);
         break;
       case 'notOnSale':
-        filtered = filtered.filter((odc) => !odc.auctionOpen);
+        filtered = odcs.filter((odc) => !odc.auctionOpen);
+        break;
+      default:
+        filtered = odcs.filter((odc) => odc.auctionOpen);
         break;
     }
+    
 
     filtered.sort((odc1, odc2) => {
       const price1 = odc1.currentBid || odc1.buyNow;
