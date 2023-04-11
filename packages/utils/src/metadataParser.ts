@@ -146,8 +146,22 @@ function toKeysValues(
     const candyArray = property.value.Array?.['thawed'] || property.value.Array?.['frozen'] || [];
 
     candyArray.forEach((item: any) => {
-      if ('Class' in item.value) {
+      if (item.value && 'Class' in item.value) {
         const candyClass = item.value.Class as Property[];
+        let key: string = '';
+        let value: string = '';
+        candyClass.forEach((p: Property) => {
+          if (p.name === keyName) {
+            key = candyValueToString(p);
+          } else if (p.name === valueName) {
+            value = candyValueToString(p);
+          }
+        });
+        if (key) {
+          keysValues.push({ key, value });
+        }
+      } else {
+        const candyClass = item.Class as Property[];
         let key: string = '';
         let value: string = '';
         candyClass.forEach((p: Property) => {
