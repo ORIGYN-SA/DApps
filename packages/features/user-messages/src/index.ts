@@ -11,8 +11,6 @@ export function useUserMessages() {
         horizontal: 'right',
       },
     });
-
-    console.log('Showed user success message: ' + message);
   }
 
   function showErrorMessage(message: string, error: any = null): void {
@@ -24,7 +22,6 @@ export function useUserMessages() {
       },
     });
 
-    console.log('Showed error message: ' + message);
     if (error) {
       console.error(error);
     }
@@ -39,7 +36,6 @@ export function useUserMessages() {
       },
     });
 
-    console.log('Showed unexpected error');
     console.error(error);
   }
 

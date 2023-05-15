@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { sendTransaction, Token, useTokensContext } from '@dapp/features-tokens-provider';
 import {
   Container,
@@ -16,7 +17,6 @@ import {
 import * as Yup from 'yup';
 import { AuthContext } from '@dapp/features-authentication';
 import {
-  isLocal,
   validateTokenAmount,
   toSmallerUnit,
   toLargerUnit,
@@ -69,6 +69,7 @@ const validationSchema = Yup.object().shape({
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
+  const context = useContext(PerpetualOSContext);
   const { walletTokens, activeTokens } = useTokensContext();
   const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { activeWalletProvider } = useContext(AuthContext);
@@ -134,7 +135,7 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
       debug.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
 
       const result = await sendTransaction(
-        isLocal(),
+        context.isLocal,
         activeWalletProvider,
         token,
         address,

@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-// LocationTypes
 import { WebLocation } from './web_location';
 import { CollectionLocation } from './collection_location';
 import { CanisterLocation } from './canister_location';
-import { LinearProgress } from '@mui/material';
+import { LoadingContainer } from '@dapp/features-components';
 import { Container, Flex, HR, Select } from '@origyn/origyn-art-ui';
 
 interface PropsLayout {
@@ -83,7 +82,7 @@ export const LibraryForm = (props: any) => {
         <>
           <h4>Staging in Progress</h4>
           <br />
-          <LinearProgress color="secondary" />
+          <LoadingContainer margin="24px" />
         </>
       ) : (
         <>

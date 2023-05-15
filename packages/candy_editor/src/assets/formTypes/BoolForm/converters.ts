@@ -1,4 +1,4 @@
-import { CandyBool } from '../../../types';
+import { CandyBool } from '@dapp/common-types';
 
 export function convertToCandyBool(selectedValue: string): CandyBool | undefined {
     let booleanValue: boolean;

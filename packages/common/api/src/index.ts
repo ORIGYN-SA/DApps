@@ -1,5 +1,6 @@
 // TODO: The actor calls in these functions should be replaced with mintjs
 import * as React from 'react';
+import { useContext } from 'react';
 import BigNumber from 'bignumber.js';
 import { Principal } from '@dfinity/principal';
 import { AuthContext } from '@dapp/features-authentication';
@@ -13,7 +14,9 @@ import M, {
   Account,
   SaleInfoRequest,
 } from '@origyn/mintjs';
-
+import { OrigynClient } from '@origyn/mintjs';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
+import { Actor } from '@dfinity/agent';
 export interface ActorResult<T> {
   result?: T;
   errorMessage?: string;
@@ -24,59 +27,35 @@ const getErrorText = (error: any, defaultMessage?: string) => {
   return error?.text || defaultMessage || 'Unexpected error';
 };
 
-const convertToken = (token: M.TokenSpec): M.IcTokenType => {
-  if (!('ic' in token)) {
-    throw new Error('Extensible tokens are not currently supported');
-  }
-
-  const getStandard = () => {
-    if ('Ledger' in token.ic.standard) {
-      return { Ledger: null };
-    } else if ('ICRC1' in token.ic.standard) {
-      return { ICRC1: null };
-    } else if ('EXTFungible' in token.ic.standard) {
-      return { EXTFungible: null };
-    } else if ('DIP20' in token.ic.standard) {
-      return { DIP20: null };
-    }
-  };
-
-  if (token)
-    return {
-      fee: token.ic.fee,
-      decimals: token.ic.decimals,
-      canister: token.ic.canister,
-      standard: getStandard(),
-      symbol: token.ic.symbol,
-    };
-};
-
-const convertAccount = (account: M.Account): M.AccountType => {
-  return {
-    account_id: 'account_id' in account && account.account_id,
-    principal: 'principal' in account && account.principal,
-    extensible: 'extensible' in account && account.extensible,
-    account: 'account' in account && {
-      of: account.account.owner,
-      sub_account: account.account.sub_account?.[0] || [],
-    },
-  };
-};
-
 const convertEscrow = (escrow: M.EscrowRecord): M.EscrowActionArgs => {
   return {
     token_id: escrow.token_id,
     amount: escrow.amount,
-    buyer: convertAccount(escrow.buyer),
-    seller: convertAccount(escrow.seller),
-    ic_token: convertToken(escrow.token),
+    buyer: escrow.buyer,
+    seller: escrow.seller,
+    /*@ts-ignore*/
+    ic_token: escrow.token.ic,
   };
+};
+
+const logAgentInfo = (actor: Actor) => {
+  if (actor) {
+    let actorCanisterId = Actor.canisterIdOf(actor).toText();
+    let agent = Actor.agentOf(actor);
+    console.log('actor canister id', actorCanisterId);
+    console.log('agent', agent);
+  } else {
+    console.log('actor is null');
+  }
 };
 
 /** HOOK WITH WRAPPER FUNCTIONS FOR MINTJS */
 export const useApi = () => {
   const debug = useDebug();
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
+  const context = useContext(PerpetualOSContext);
+
+  OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
   const getNftCollectionMeta = async (): Promise<M.CollectionInfo> => {
     const r = await _getNftCollectionMeta();
@@ -84,6 +63,7 @@ export const useApi = () => {
 
     if ('err' in r) {
       console.error(r.err);
+      logAgentInfo(actor);
       throw new Error('Unable to retrieve collection metadata.');
     }
 
@@ -96,6 +76,7 @@ export const useApi = () => {
     const error = r.find((m) => 'err' in m);
     if (error) {
       console.error(error);
+      logAgentInfo(actor);
       throw new Error('Unable to retrieve metadata of tokens.');
     }
 
@@ -108,9 +89,8 @@ export const useApi = () => {
     debug.log('balance_of_nft_origyn response', response);
 
     if ('err' in response) {
-      debug.log(response.err);
-      // TODO: Implement this pattern in all mintjs/actor calls to shows canister
-      // error first, then default error message, but use ERROR constants instead.
+      console.log(response.err);
+      logAgentInfo(actor);
       throw new Error(response.err.text || 'Unable to get NFT balances.');
     } else {
       return response.ok;
@@ -126,6 +106,7 @@ export const useApi = () => {
 
     if ('err' in response) {
       debug.log(response.err);
+      logAgentInfo(actor);
       throw new Error(response.err.text || 'Unable to get NFT sale info.');
     } else {
       return response.ok;
@@ -252,7 +233,8 @@ export const useApi = () => {
         deposit: {
           token: {
             ic: {
-              fee: BigInt(token.fee),
+              id: [],
+              fee: [BigInt(token.fee)],
               decimals: BigInt(token.decimals),
               canister: Principal.fromText(token.canisterId),
               standard: { Ledger: null },

@@ -5,8 +5,8 @@ import { Layout } from '@dapp/features-components';
 import { SiteProvider } from '@dapp/features-theme';
 import 'react-toastify/dist/ReactToastify.css';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
+import { PerpetualOSContextProvider } from '@dapp/features-context-provider';
 import { SnackbarProvider } from 'notistack';
-import { MetaProvider } from './components/nftTabs/context';
 import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
 import { GlobalStyle } from '@origyn/origyn-art-ui';
 
@@ -15,21 +15,21 @@ const App = () => {
     <HashRouter>
       <GlobalStyle />
       <SiteProvider>
-        <SessionProvider>
-          <TokensContextProvider>
-            <AuthProvider>
-              <SnackbarProvider maxSnack={3}>
-                <Layout>
-                  <MetaProvider>
+        <PerpetualOSContextProvider>
+          <SessionProvider>
+            <TokensContextProvider>
+              <AuthProvider>
+                <SnackbarProvider maxSnack={3}>
+                  <Layout>
                     <Routes>
                       <Route path="*" element={<Home />} />
                     </Routes>
-                  </MetaProvider>
-                </Layout>
-              </SnackbarProvider>
-            </AuthProvider>
-          </TokensContextProvider>
-        </SessionProvider>
+                  </Layout>
+                </SnackbarProvider>
+              </AuthProvider>
+            </TokensContextProvider>
+          </SessionProvider>
+        </PerpetualOSContextProvider>
       </SiteProvider>
     </HashRouter>
   );

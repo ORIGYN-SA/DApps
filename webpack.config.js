@@ -109,7 +109,7 @@ module.exports = (env, argv, dAppConfig) => ({
       },
     }),
   ],
-  // proxy /api to port 8000 during development
+  // proxy /api to port 8080 during development
   devServer: {
     static: {
       directory: path.resolve(__dirname, './'),
@@ -119,6 +119,7 @@ module.exports = (env, argv, dAppConfig) => ({
     hot: 'only',
     compress: true,
     allowedHosts: ['localhost'],
-    open: dAppConfig?.open || '-/brain-matters-dev/collection/-/',
+    port: 9000,
+    open: dAppConfig?.open || '-/dytv5-jaaaa-aaaal-qbgtq-cai/collection/-/',
   },
 });

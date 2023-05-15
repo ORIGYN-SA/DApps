@@ -52,8 +52,7 @@ const validationSchema = Yup.object({
         }
         return value < buyNowPrice;
       },
-    )
-    .default(0),
+    ),
   buyNowPrice: Yup.number()
     .typeError(VALIDATION.notANumber)
     .nullable()
@@ -67,8 +66,7 @@ const validationSchema = Yup.object({
         }
         return value > startPrice;
       },
-    )
-    .default(0),
+    ),
   endDate: Yup.date().min(dateTomorrow, VALIDATION.endDateSmallerThanStartDate).default(dateNow),
 });
 
@@ -111,28 +109,41 @@ export function StartAuctionModal({
 
       const token = walletTokens[saleToken];
 
+      /*@ts-ignore*/
+      let buyNowArray: [bigint] = [];
+      if (buyNowPrice > 0) {
+        buyNowArray = [BigInt(toSmallerUnit(buyNowPrice, token.decimals).toString())];
+      }
+
+      /*@ts-ignore*/
+      let reservePriceArray: [bigint] = [];
+      if (reservePrice > 0) {
+        reservePriceArray = [BigInt(toSmallerUnit(reservePrice, token.decimals).toString())];
+      }
+
       const marketTransferRequest: MarketTransferRequest = {
         token_id: currentToken,
         sales_config: {
           pricing: {
             auction: {
-              start_price: BigInt(toSmallerUnit(startPrice, token.decimals).toFixed()),
+              start_price: BigInt(toSmallerUnit(startPrice, token.decimals).toString()),
               token: {
                 ic: {
-                  fee: BigInt(token.fee),
+                  id: [],
+                  fee: [BigInt(token.fee)],
                   decimals: BigInt(token.decimals),
                   canister: Principal.fromText(walletTokens[saleToken]?.canisterId),
                   standard: { Ledger: null },
                   symbol: walletTokens[saleToken]?.symbol,
                 },
               },
-              reserve: [BigInt(toSmallerUnit(reservePrice, token.decimals).toFixed())],
+              reserve: reservePriceArray,
               start_date: BigInt(Math.floor(new Date().getTime() * 1e6)),
               min_increase: {
-                amount: BigInt(toSmallerUnit(priceStep, token.decimals).toFixed()),
+                amount: BigInt(toSmallerUnit(priceStep, token.decimals).toString()),
               },
               allow_list: [],
-              buy_now: [BigInt(toSmallerUnit(buyNowPrice, token.decimals).toFixed())],
+              buy_now: buyNowArray,
               ending: {
                 date: BigInt(endDate.getTime() * 1e6),
               },
@@ -265,6 +276,7 @@ export function StartAuctionModal({
                     label="Reserve Price"
                     optional="(Optional)"
                     name="reservePrice"
+                    placeholder="0"
                     value={values.reservePrice}
                     onChange={(e) => onCurrencyChanged('reservePrice', e.target.value)}
                     error={errors?.reservePrice}
@@ -273,6 +285,7 @@ export function StartAuctionModal({
                     label="Buy Now Price"
                     optional="(Optional)"
                     name="buyNowPrice"
+                    placeholder="0"
                     value={values.buyNowPrice}
                     onChange={(e) => onCurrencyChanged('buyNowPrice', e.target.value)}
                     error={errors?.buyNowPrice}
@@ -282,6 +295,7 @@ export function StartAuctionModal({
                     label="Minimum Increase"
                     optional="(Optional)"
                     name="minIncrease"
+                    placeholder="0"
                     value={values.minIncrease}
                     onChange={(e) => onCurrencyChanged('minIncrease', e.target.value)}
                     error={errors?.minIncrease}

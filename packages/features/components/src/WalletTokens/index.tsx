@@ -2,9 +2,9 @@ import React, { useContext, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import { useSnackbar } from 'notistack';
 import { useTokensContext } from '@dapp/features-tokens-provider';
-import { IdlStandard, isLocal } from '@dapp/utils';
+import { IdlStandard } from '@dapp/utils';
 import { TokenIcon } from '../TokenIcon';
-import { LoadingContainer } from '../LoadingContainer';
+import { LoadingContainer } from '@dapp/features-components';
 import {
   Button,
   Card,
@@ -16,21 +16,23 @@ import {
   TabContent,
   TextInput,
 } from '@origyn/origyn-art-ui';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 export const WalletTokens = ({ children }: any) => {
+  const context = useContext(PerpetualOSContext);
   const { principal } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  // const [selectedTab, setSelectedTab] = useState<number>(0)
   const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
   const [inputCanisterId, setInputCanisterId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { addToken, toggleToken, tokens, refreshAllBalances } = useTokensContext();
+  const { addToken, toggleToken, tokens, refreshAllBalances, isFetchingBalance } =
+    useTokensContext();
   const { enqueueSnackbar } = useSnackbar();
   const handleAddButton = async () => {
     if (isLoading) return;
     setIsLoading(true);
     const tokenResponse = await addToken(
-      isLocal(),
+      context.isLocal,
       inputCanisterId,
       IdlStandard[selectedStandard],
       principal,
@@ -60,7 +62,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    refreshAllBalances(isLocal(), principal);
+    refreshAllBalances(context.isLocal, principal);
   };
   // const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
   //   setSelectedTab(tab)
@@ -89,29 +91,34 @@ export const WalletTokens = ({ children }: any) => {
             content={[
               <Flex flexFlow="column" gap={18} fullWidth key="tabContentCol1">
                 <br />
-                {Object.keys(tokens).map((key: string) => {
-                  const token = tokens[key];
-                  // const labelId = `checkbox-list-secondary-label-${token.symbol}`;
-                  return (
-                    <Card
-                      key={`${token.symbol}-${token.enabled}`}
-                      justify="space-between"
-                      align="center"
-                      padding="16px"
-                    >
-                      <Flex gap={8} align="center">
-                        <CheckboxInput
-                          name={token.symbol}
-                          onChange={() => onTokenCheck(token.symbol)}
-                          checked={token.enabled}
-                        />
-                        <TokenIcon symbol={token.icon} />
-                        <b>{token.symbol}</b>
-                      </Flex>
-                      <div>{token.balance}</div>
-                    </Card>
-                  );
-                })}
+                {tokens ? (
+                  <>
+                    {Object.keys(tokens).map((key: string) => {
+                      const token = tokens[key];
+                      return (
+                        <Card
+                          key={`${token.symbol}-${token.enabled}`}
+                          justify="space-between"
+                          align="center"
+                          padding="16px"
+                        >
+                          <Flex gap={8} align="center">
+                            <CheckboxInput
+                              name={token.symbol}
+                              onChange={() => onTokenCheck(token.symbol)}
+                              checked={token.enabled}
+                            />
+                            <TokenIcon symbol={token.icon} />
+                            <b>{token.symbol}</b>
+                          </Flex>
+                          <div>{isFetchingBalance ? 'Loading' : token.balance}</div>
+                        </Card>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <LoadingContainer margin="24px" />
+                )}
               </Flex>,
               <Flex flexFlow="column" gap={18} fullWidth key="tabContentCol2">
                 <br />

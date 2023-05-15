@@ -159,12 +159,10 @@ export function StartEscrowModal({
       errors = { ...errors, amount: `${escrowType} ${VALIDATION.mustBeGreaterThan} 0` };
     } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       errors = { ...errors, amount: VALIDATION.insufficientFunds };
-    } else if (escrowType === 'Offer' && amount.isLessThanOrEqualTo(fee)) {
+    } else if (amount.isLessThanOrEqualTo(fee.times(2))) {
       errors = {
         ...errors,
-        amount: `${VALIDATION.offerMustBeGreaterThanTxFee} ${fee.toFixed(token.decimals)} ${
-          token.symbol
-        }`,
+        amount: `${VALIDATION.offerMustBeGreaterThanTxFee} ${getTransactionFee()}`,
       };
     } else if (escrowType == 'Bid') {
       if (amount.isLessThan(minBid)) {
@@ -172,6 +170,8 @@ export function StartEscrowModal({
           ...errors,
           amount: `${VALIDATION.minimumBid} ${minBid.toFixed()} ${odc.tokenSymbol}`,
         };
+      } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
+        errors = { ...errors, amount: VALIDATION.insufficientFunds };
       } else if (amount.isGreaterThan(toLargerUnit(odc.buyNow, token.decimals))) {
         if (odc.buyNow !== 0) {
           errors = {
@@ -229,7 +229,12 @@ export function StartEscrowModal({
       // Add a tx fee to the total escrow amount (second tx fee).
       // This is needed to move the money from the deposit account to the escrow account.
       const amount = toSmallerUnit(toBigNumber(enteredAmount), token.decimals);
-      const totalAmount = amount.plus(toBigNumber(token.fee)).decimalPlaces(token.decimals);
+
+      const totalAmount = amount
+      .plus(toBigNumber(token.fee))
+      .plus(toBigNumber(token.fee))
+      .decimalPlaces(token.decimals);
+
       debug.log('escrow amount with fee', totalAmount.toString());
 
       // Get deposit account number

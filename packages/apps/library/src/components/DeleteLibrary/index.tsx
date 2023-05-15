@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useSnackbar } from 'notistack';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
-// mint.js
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { OrigynClient, deleteLibraryAsset, getNftCollectionMeta, getNft } from '@origyn/mintjs';
 import { Button, Modal, Flex, Container, HR } from '@origyn/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
+import { LoadingContainer } from '@dapp/features-components';
 
 export const DeleteLibrary = (props: any) => {
+  const context = useContext(PerpetualOSContext);
   const { actor } = useContext(AuthContext);
   // Snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -25,9 +26,7 @@ export const DeleteLibrary = (props: any) => {
   const [tokensThatUseSelectedLibrary, setTokensThatUseSelectedLibrary] = useState<string[]>([]);
 
   const CheckLibraries = async () => {
-    const { canisterId } = await useRoute();
-
-    await OrigynClient.getInstance().init(true, canisterId, { actor });
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     setMessageLoadingStatus(false);
 
     if (props.currentTokenId == '') {
@@ -41,7 +40,8 @@ export const DeleteLibrary = (props: any) => {
 
       for (i in TokenArray) {
         const TokenLibraries = await getNft(TokenArray[i]).then((r) => {
-          return r.ok.metadata.Class.filter((x: any) => x.name === 'library')[0].value.Array.thawed;
+          if ('Class' in r.ok.metadata)
+            return r.ok.metadata.Class.filter((x: any) => x.name === 'library')[0].value['Array'];
         });
         for (j in TokenLibraries) {
           const LibraryId = TokenLibraries[j].Class.filter((item) => item.name === 'library_id')[0]
@@ -65,9 +65,7 @@ export const DeleteLibrary = (props: any) => {
   }, [props.libraryId]);
 
   const DeleteMutableLibrary = async () => {
-    const { canisterId } = await useRoute();
-
-    await OrigynClient.getInstance().init(true, canisterId, { actor });
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     setInProgress(true);
     if (props.currentTokenId == '' && tokensThatUseSelectedLibrary.length > 0) {
       for (let i in tokensThatUseSelectedLibrary) {
@@ -76,7 +74,7 @@ export const DeleteLibrary = (props: any) => {
             tokensThatUseSelectedLibrary[i],
             props.libraryId,
           );
-          console.log('resp', responseFromNftLib);
+
           if (responseFromNftLib.ok) {
             // Display a success message - SNACKBAR
             enqueueSnackbar('Library Deleted from ' + tokensThatUseSelectedLibrary[i], {
@@ -96,7 +94,7 @@ export const DeleteLibrary = (props: any) => {
               horizontal: 'right',
             },
           });
-          console.log('error', e);
+
           handleClose();
         }
       }
@@ -125,7 +123,7 @@ export const DeleteLibrary = (props: any) => {
         handleClose();
       }
     } catch (e) {
-      console.log('error', e);
+      console.error('error', e);
       handleClose();
     }
 
@@ -137,7 +135,7 @@ export const DeleteLibrary = (props: any) => {
         props.updateCollectionLevelLibraryData(
           r.ok.metadata[0]['Class'].filter((res) => {
             return res.name === 'library';
-          })[0].value.Array.thawed,
+          })[0].value.Array,
         );
       });
       props.setCollectionLevelLibraryMetadata('');
@@ -145,11 +143,13 @@ export const DeleteLibrary = (props: any) => {
     } else {
       //Update the library data for the token
       getNft(props.currentTokenId).then((r) => {
-        props.updateTokenLibraryData(
-          r.ok.metadata.Class.filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array.thawed,
-        );
+        if ('Class' in r.ok.metadata) {
+          props.updateTokenLibraryData(
+            r.ok.metadata.Class.filter((res) => {
+              return res.name === 'library';
+            })[0].value['Array'],
+          );
+        }
       });
       props.setOpenLibrarySelectedToken(false);
       // clean library data
@@ -167,13 +167,8 @@ export const DeleteLibrary = (props: any) => {
           <Flex flexFlow="column" gap={16}>
             {inProgress ? (
               <>
-                <Flex>
-                  <h4>Deleting...</h4>
-                </Flex>
-                <HR marginTop={16} marginBottom={16} />
-                <Flex>
-                  <LinearProgress color="secondary" />
-                </Flex>
+                <h4>Delete library in progress</h4>
+                <LoadingContainer margin="24px" />
               </>
             ) : (
               <>

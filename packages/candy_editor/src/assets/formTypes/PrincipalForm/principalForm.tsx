@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Flex, TextInput, CheckboxInput, Button, Grid } from '@origyn/origyn-art-ui';
-import type { CandyClassEditor, CandyPrincipal } from '../../../types';
+import type { CandyClassEditor, CandyPrincipal } from '@dapp/common-types';
 import { VALIDATION_ERRORS, CREATE_MODE, EDIT_MODE } from '../../../constants';
 import { convertToCandyPrincipal } from './converters';
 

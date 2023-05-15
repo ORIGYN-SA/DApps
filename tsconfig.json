@@ -25,6 +25,7 @@
       "@dapp/features-authentication": ["./packages/features/authentication/src/index.tsx"],
       "@dapp/features-tokens-provider": ["./packages/features/tokens-provider/src/index.ts"],
       "@dapp/features-components": ["./packages/features/components/src/index.ts"],
+      "@dapp/features-context-provider": ["./packages/features/context-provider/src/index.tsx"],
       "@dapp/features-sales-escrows": ["./packages/features/sales-escrows/src/index.ts"],
       "@dapp/features-user-messages": ["./packages/features/user-messages/src/index.ts"],
       "@dapp/features-theme": ["./packages/features/theme/src/index.tsx"],

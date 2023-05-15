@@ -1,26 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useRoute } from '@dapp/features-authentication';
-import { GetFormattedLink } from '@dapp/utils';
+import React, { useEffect, useContext } from 'react';
 import { Flex, HR } from '@origyn/origyn-art-ui';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const LibraryVideo = (props: any) => {
-  const [canisterId, setCanisterId] = useState('');
+  const context = useContext(PerpetualOSContext);
   const [link, setLink] = React.useState('');
   const formattedLink = async () => {
-    const link = await GetFormattedLink(canisterId, props.source);
-    setLink(link);
+    setLink(context.directCanisterUrl + '/' + props.source);
   };
   useEffect(() => {
-    if (canisterId) {
+    if (context.canisterId) {
       formattedLink();
     }
-  }, [canisterId, props.source]);
-
-  useEffect(() => {
-    useRoute().then(({ canisterId }) => {
-      setCanisterId(canisterId);
-    });
-  }, []);
+  }, [context, props.source]);
 
   return (
     <>

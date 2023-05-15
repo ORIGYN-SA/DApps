@@ -12,15 +12,12 @@ import {
 } from '@origyn/origyn-art-ui';
 import { FormTypes } from './formTypes';
 import type {
-  Property,
   CandyClassEditor,
-  CandyClass,
-  CandyType,
   EditorMode,
-  PropertyWithId,
   EditableCandyClass,
   CandyDataEditorProps,
 } from '../types';
+import { CandyProperty, CandyClass, CandyType, PropertyWithId } from '@dapp/common-types';
 import { getValueType } from '../utils/functions';
 import { NOT_SELECTED, SELECT_OPTIONS, CREATE_MODE, EDIT_MODE, MESSAGES } from '../constants';
 
@@ -59,8 +56,8 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
     });
   };
 
-  const editExistingProperty = (updatedProperty: Property, propertyIndex: number) => {
-    console.log('🚀 UPDATED PROPERTY #' + propertyIndex, updatedProperty);
+  const editExistingProperty = (updatedProperty: CandyProperty, propertyIndex: number) => {
+    // console.log('🚀 UPDATED PROPERTY #' + propertyIndex, updatedProperty);
     const updated = editableCandyClass.Class.map((property, index) => {
       if (index === propertyIndex) {
         return { ...property, ...updatedProperty };
@@ -72,13 +69,13 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
 
   const createEditCandyClassEditor = (
     candyType: string,
-    property: Property,
+    property: CandyProperty,
     propertyIndex: number,
   ): CandyClassEditor => {
     return {
       candyType,
       editorMode,
-      editExistingProperty: (updatedProperty: Property) =>
+      editExistingProperty: (updatedProperty: CandyProperty) =>
         editExistingProperty(updatedProperty, propertyIndex),
       property,
     };
@@ -104,7 +101,7 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
   };
 
   const saveCandyClass = (): void => {
-    let properties: Property[] = editableCandyClass.Class.map((property) => {
+    let properties: CandyProperty[] = editableCandyClass.Class.map((property) => {
       return {
         name: property.name,
         immutable: property.immutable,
@@ -119,9 +116,9 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
     closeModal();
   }, [editableCandyClass]);
 
-  useEffect(() => {
-    console.log('🍬 CANDYCLASS', candyClass);
-  }, [candyClass]);
+  // useEffect(() => {
+  //   console.log('🍬 CANDYCLASS', candyClass);
+  // }, [candyClass]);
 
   useEffect(() => {
     setCandyClass(candyDataEditor.existingCandyClass);

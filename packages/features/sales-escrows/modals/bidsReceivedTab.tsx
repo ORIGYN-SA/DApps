@@ -17,6 +17,7 @@ import { useApi } from '@dapp/common-api';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useDebug } from '@dapp/features-debug-provider';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const styles = {
   gridContainer: {
@@ -35,10 +36,9 @@ const styles = {
 
 interface OffersTabProps {
   collection: any;
-  canisterId: string;
 }
 
-export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
+export const BidsReceivedTab = ({ collection }: OffersTabProps) => {
   const { principal } = useContext(AuthContext);
   const { getNftBatch, getNftBalances } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
@@ -46,6 +46,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
   const [bidsReceived, setBidsReceived] = useState<EscrowRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const debug = useDebug();
+  const context = useContext(PerpetualOSContext);
 
   const fetchBids = async () => {
     try {
@@ -119,7 +120,7 @@ export const BidsReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
                       {bid.hasPreviewAsset ? (
                         <img
                           style={{ width: '42px', height: '42px', borderRadius: '12px' }}
-                          src={`https://${canisterId}.raw.ic0.app/-/${bid.token_id}/preview`}
+                          src={`${context.canisterUrl}/-/${bid.token_id}/preview`}
                           alt=""
                         />
                       ) : (

@@ -1,5 +1,5 @@
 import { Principal } from '@dfinity/principal';
-import { EscrowRecord, NFTInfoStable, Property } from '@origyn/mintjs';
+import { EscrowRecord, NFTInfoStable, PropertyShared } from '@origyn/mintjs';
 import {
   DisplayProperty,
   OdcData,
@@ -9,14 +9,8 @@ import {
   ReceivedActiveBidsProps,
 } from './interfaces';
 import { toSentenceCase } from './string';
-import { timeInNanos } from './dateTime';
 import { toBigNumber } from './number';
-import M, {
-  getNftCollectionMeta as _getNftCollectionMeta,
-  acceptEscrow as _acceptEscrow,
-  rejectEscrow as _rejectEscrow,
-  withdrawEscrow as _withdrawEscrow,
-} from '@origyn/mintjs';
+import * as T from '@origyn/mintjs';
 
 const OGY_LEDGER_CANISTER_ID = 'jwcfb-hyaaa-aaaaj-aac4q-cai';
 
@@ -24,7 +18,7 @@ export function getProperty(properties: any, propertyName: string) {
   return properties?.find(({ name }) => name === propertyName);
 }
 
-export function getTextValue(properties: Property[], propertyName: string): string {
+export function getTextValue(properties: PropertyShared[], propertyName: string): string {
   const p = getProperty(properties, propertyName);
   return p?.value?.Text || '';
 }
@@ -34,11 +28,11 @@ const getPrincipalValue = (properties: any, propertyName: string): string => {
   return p?.value?.Principal?.toText() || '';
 };
 
-export function isCandyClassOrArray(candy: Property): boolean {
+export function isCandyClassOrArray(candy: PropertyShared): boolean {
   return !!(candy.value?.['Class'] || candy.value?.['Array']);
 }
 
-export function candyValueToString(candy: Property) {
+export function candyValueToString(candy: PropertyShared) {
   if (candy.value) {
     const v = candy.value;
     return (
@@ -107,7 +101,7 @@ function initOdcSaleData(odc: OdcData): OdcDataWithSale {
   };
 }
 
-function parseRoyalties(metadataClass: Property[], royaltyType: RoyaltyType): Royalty[] {
+function parseRoyalties(metadataClass: PropertyShared[], royaltyType: RoyaltyType): Royalty[] {
   let royalties: Royalty[] = [];
 
   const name =
@@ -117,12 +111,12 @@ function parseRoyalties(metadataClass: Property[], royaltyType: RoyaltyType): Ro
 
   const systemProperties = metadataClass?.find((p) => p.name === '__system')?.value?.[
     'Class'
-  ] as Property[];
+  ] as PropertyShared[];
 
   if (systemProperties) {
-    const royalties = systemProperties.find((p) => p.name === name)?.value?.['Array']?.[
-      'frozen'
-    ] as { Class: Property[] }[];
+    const royalties = systemProperties.find((p) => p.name === name)?.value?.['Array'] as {
+      Class: PropertyShared[];
+    }[];
     if (royalties) {
       return royalties.map((c) => {
         const tag = (c.Class.find((p) => p.name === 'tag')?.value?.['Text'] as string) || '';
@@ -136,21 +130,35 @@ function parseRoyalties(metadataClass: Property[], royaltyType: RoyaltyType): Ro
 }
 
 function toKeysValues(
-  property: Property,
+  property: PropertyShared,
   keyName: string,
   valueName: string,
 ): { key: string; value: string }[] {
   const keysValues: { key: string; value: string }[] = [];
 
   if ('Array' in property.value) {
-    const candyArray = property.value.Array?.['thawed'] || property.value.Array?.['frozen'] || [];
+    const candyArray = property.value.Array || [];
 
     candyArray.forEach((item: any) => {
-      if ('Class' in item.value) {
-        const candyClass = item.value.Class as Property[];
+      if (item.value && 'Class' in item.value) {
+        const candyClass = item.value.Class as PropertyShared[];
         let key: string = '';
         let value: string = '';
-        candyClass.forEach((p: Property) => {
+        candyClass.forEach((p: PropertyShared) => {
+          if (p.name === keyName) {
+            key = candyValueToString(p);
+          } else if (p.name === valueName) {
+            value = candyValueToString(p);
+          }
+        });
+        if (key) {
+          keysValues.push({ key, value });
+        }
+      } else {
+        const candyClass = item.Class as PropertyShared[];
+        let key: string = '';
+        let value: string = '';
+        candyClass.forEach((p: PropertyShared) => {
           if (p.name === keyName) {
             key = candyValueToString(p);
           } else if (p.name === valueName) {
@@ -167,45 +175,51 @@ function toKeysValues(
   return keysValues;
 }
 
-function parseAppData(metadataClass: Property[], odc: OdcData): void {
+function parseAppData(metadataClass: PropertyShared[], odc: OdcData): void {
   const apps = getProperty(metadataClass, '__apps');
-  const app = apps?.value?.Array?.thawed?.find((c: any) =>
+  const app = apps?.value?.Array?.find((c: any) =>
     c.Class?.find(
-      (p: Property) => p.name === 'app_id' && p.value?.['Text'] === 'com.origyn.metadata.general',
+      (p: PropertyShared) =>
+        p.name === 'app_id' && p.value?.['Text'] === 'com.origyn.metadata.general',
     ),
   );
 
-  const appDataProperties = (app?.Class?.find((p: Property) => p.name === 'data')?.value?.Class ||
-    []) as Property[];
+  const appDataProperties = (app?.Class?.find((p: PropertyShared) => p.name === 'data')?.value
+    ?.Class || []) as PropertyShared[];
 
   let displayProperties: DisplayProperty[] = [{ name: 'Token ID', value: odc.id }];
 
-  appDataProperties.forEach((p: Property) => {
+  appDataProperties.forEach((p: PropertyShared) => {
     if (!isCandyClassOrArray(p)) {
       const value = candyValueToString(p);
-      displayProperties.push({ name: toSentenceCase(p.name), value });
 
-      switch (p.name) {
-        case 'collection_id':
-          odc.collectionId = value;
-          break;
-        case 'display_name':
-          odc.displayName = value;
-          break;
-        case 'description':
-          odc.description = value;
-          break;
+      if (p.name) {
+        displayProperties.push({ name: toSentenceCase(p.name), value });
+
+        switch (p.name) {
+          case 'collection_id':
+            odc.collectionId = value;
+            break;
+          case 'display_name':
+            odc.displayName = value;
+            break;
+          case 'description':
+            odc.description = value;
+            break;
+        }
       }
     }
 
-    if (p.name === 'custom_properties' && 'Array' in p.value) {
-      const customProperties = p.value.Array?.['thawed'] || p.value.Array?.['frozen'] || [];
-      customProperties.forEach((customProperty: Property) => {
+    if (p.name === 'custom_properties') {
+      const customProperties = p.value['Array'] || [];
+      customProperties.forEach((customProperty: PropertyShared) => {
         if (!isCandyClassOrArray(customProperty)) {
-          displayProperties.push({
-            name: toSentenceCase(customProperty.name),
-            value: candyValueToString(customProperty),
-          });
+          if (customProperty.name) {
+            displayProperties.push({
+              name: toSentenceCase(customProperty.name),
+              value: candyValueToString(customProperty),
+            });
+          }
         }
       });
     }
@@ -224,7 +238,7 @@ function parseAppData(metadataClass: Property[], odc: OdcData): void {
   odc.displayProperties = displayProperties;
 }
 
-export function parseMetadata(metadataClass: Property[]): OdcData {
+export function parseMetadata(metadataClass: PropertyShared[]): OdcData {
   const odc = initOdcData();
   odc.id = getTextValue(metadataClass, 'id');
 
@@ -248,12 +262,12 @@ export function parseMetadata(metadataClass: Property[]): OdcData {
 }
 
 export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
-  const metadataClass = odcInfo?.metadata['Class'] as Property[];
+  const metadataClass = odcInfo?.metadata['Class'] as PropertyShared[];
   if (!metadataClass) {
     throw new Error('Metadata class not found when parsing');
   }
 
-  let odc = initOdcSaleData(parseMetadata(metadataClass));
+  let odc: any = initOdcSaleData(parseMetadata(metadataClass));
   // default to OGY token if no auction
   odc.token = {
     canister: Principal.fromText(OGY_LEDGER_CANISTER_ID),
@@ -264,6 +278,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   };
   odc.tokenSymbol = odc.token.symbol;
 
+  /*@ts-ignore*/
   odc.auction = odcInfo?.current_sale[0]?.sale_type?.auction;
   odc.saleId = '';
   odc.currentBid = 0;
@@ -321,9 +336,9 @@ export function parseTokenSymbol(escrow: EscrowRecord): string {
 }
 
 export const getActiveAttendedAuctions = (
-  saleInfo: M.SaleInfoResponse,
+  saleInfo: T.SaleInfoResponse,
   principal: Principal,
-): M.AuctionStateStable[] => {
+): T.AuctionStateStable[] => {
   if ('active' in saleInfo && saleInfo.active.records) {
     const activeSalesRecords = saleInfo.active.records.flatMap((record) => {
       return record[1];
@@ -353,9 +368,9 @@ export const getActiveAttendedAuctions = (
 };
 
 export const getTxOfActiveAttendedAuctions = (
-  activeAttendedAuctions: M.TransactionRecord[],
+  activeAttendedAuctions: T.TransactionRecord[],
   principal: Principal,
-): M.TransactionRecord[] => {
+): T.TransactionRecord[] => {
   if (activeAttendedAuctions.length > 0) {
     return activeAttendedAuctions
       .flat()
@@ -370,9 +385,9 @@ export const getTxOfActiveAttendedAuctions = (
 };
 
 export const getHighestSentBids = (
-  attendedAuctionsTx: M.TransactionRecord[],
-): M.TransactionRecord[] => {
-  const bidsTokenIds = new Map<string, M.TransactionRecord>();
+  attendedAuctionsTx: T.TransactionRecord[],
+): T.TransactionRecord[] => {
+  const bidsTokenIds = new Map<string, T.TransactionRecord>();
   for (const txRecord of attendedAuctionsTx) {
     const auctionBid = 'auction_bid' in txRecord.txn_type && txRecord.txn_type.auction_bid;
     if (auctionBid) {

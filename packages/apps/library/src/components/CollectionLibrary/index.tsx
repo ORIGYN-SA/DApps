@@ -63,7 +63,6 @@ export const CollectionLibrary = (props: any) => {
         size: Number(size),
         immutable: immutable,
       });
-      console.log(simplifiedLibraryMeta);
     } else {
       return;
     }

@@ -1,20 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useRoute } from '@dapp/features-authentication';
+import React, { useEffect, useState, useContext } from 'react';
 import NFTInfo from '../NFTInfo';
 import { OrigynClient, getNftCollectionMeta } from '@origyn/mintjs';
 import { Container } from '@origyn/origyn-art-ui';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const Home = () => {
-  // const { actor } = useContext(AuthContext);
-  const [tokenId, setTokenId] = useState();
+  const context = useContext(PerpetualOSContext);
   const [NFTData, setNFTData] = useState();
-  const [canisterId, setCanisterId] = useState('');
 
   const nftCollection = async () => {
-    const route = await useRoute();
-
-    OrigynClient.getInstance().init(true, route.canisterId);
-    const response = await getNftCollectionMeta([]);
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId);
+    const response = await getNftCollectionMeta();
     const collectionNFT = response.ok;
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
@@ -30,39 +26,43 @@ const Home = () => {
   };
 
   const getData = async () => {
-    if (tokenId) {
+    if (context.tokenId) {
       try {
-        const response = await fetch(`https://${canisterId}.raw.ic0.app/-/${tokenId}/info`);
+        const response = await fetch(
+          `${context.isLocalToMainnet ? context.directCanisterUrl : context.canisterUrl}/-/${
+            context.tokenId
+          }/info`,
+        );
         const result = await response.text();
         setNFTData(JSON.parse(result.replace(':,', ':"",')));
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     } else {
       try {
-        const response = await fetch(`https://${canisterId}.raw.ic0.app/collection/info`);
+        const response = await fetch(
+          `${
+            context.isLocalToMainnet ? context.directCanisterUrl : context.canisterUrl
+          }/collection/info`,
+        );
         const result = await response.text();
         setNFTData(JSON.parse(result.replace(':,', ':"",')));
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     }
   };
 
   useEffect(() => {
     document.title = 'Origyn NFT data browser';
-    useRoute().then(({ canisterId, tokenId }) => {
-      setCanisterId(canisterId);
-      setTokenId(tokenId);
-    });
   }, []);
 
   useEffect(() => {
-    if (canisterId) {
+    if (context.canisterId) {
       nftCollection();
       getData();
     }
-  }, [canisterId]);
+  }, [context]);
 
   return <Container>{NFTData ? <NFTInfo metadata={NFTData} /> : null}</Container>;
 };

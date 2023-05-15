@@ -1,21 +1,12 @@
 import React, { useState } from 'react';
-import {
-  Flex,
-  TextInput,
-  CheckboxInput,
-  Button,
-  Select,
-  HR,
-  Container,
-} from '@origyn/origyn-art-ui';
+import { Flex, TextInput, CheckboxInput, Button, HR, Container } from '@origyn/origyn-art-ui';
 import { convertBase64ToCandyBytes } from '@dapp/utils';
 import { VALIDATION_ERRORS } from '../../../../constants';
-import { BytesFormInput, CandyBytes, ArrayType } from '@dapp/common-types';
+import { BytesFormInput, CandyBytes } from '@dapp/common-types';
 
 export const Base64Input = (input: BytesFormInput) => {
   const [name, setName] = useState<string>('');
   const [value, setValue] = useState<CandyBytes>();
-  const [arrayType, setArrayType] = useState<ArrayType>('thawed');
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
 
@@ -23,12 +14,8 @@ export const Base64Input = (input: BytesFormInput) => {
     setName(typedName.target.value);
   };
 
-  const onTypeChanged = (selectedType: ArrayType) => {
-    setArrayType(selectedType);
-  };
-
   const onValueChanged = (typedValue: React.ChangeEvent<HTMLInputElement>) => {
-    let base64Value = convertBase64ToCandyBytes(typedValue.target.value, arrayType);
+    let base64Value = convertBase64ToCandyBytes(typedValue.target.value);
     if (base64Value) {
       setIsInvalid(false);
       setValue(base64Value);
@@ -57,20 +44,6 @@ export const Base64Input = (input: BytesFormInput) => {
         <Flex flexFlow="column" gap={16}>
           <Flex>
             <TextInput label="Name" onChange={onNameChanged} />
-          </Flex>
-          <Flex>
-            <Select
-              inputSize="medium"
-              label="Array Type"
-              handleChange={(opt) => {
-                onTypeChanged(opt.value);
-              }}
-              selectedOption={{ value: arrayType, label: arrayType }}
-              options={[
-                { value: 'thawed', label: 'thawed' },
-                { value: 'frozen', label: 'frozen' },
-              ]}
-            />
           </Flex>
           <Flex>
             {isInvalid ? (

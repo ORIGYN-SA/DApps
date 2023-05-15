@@ -2,14 +2,6 @@ BigInt.prototype['toJSON'] = function () {
   return this.toString();
 };
 
-export const isLocal = () => {
-  return (
-    process.env.isLocal &&
-    (window.location.hostname.indexOf('localhost') !== -1 ||
-      window.location.hostname.indexOf('127.0.0.1') !== -1)
-  );
-};
-
 export function numberWithCommas(number: number, separator = ',') {
   // Split float on "."
   const numbers = number.toString().split('.');
@@ -30,7 +22,6 @@ export const formatE8S = (e8s: BigInt) => {
 export const copyToClipboard = (text: string, onSuccess?: () => void) => {
   navigator.clipboard.writeText(text).then(function () {
     onSuccess();
-    console.log('Async: Copying to clipboard was successful!');
   });
 };
 
@@ -61,22 +52,6 @@ export const parseDate = (ts) => {
   return d;
 };
 
-export const getRootUrl = (url: URL): string => {
-  if (
-    ['prptl.io', 'exos.origyn.network', 'localhost:3000', 'localhost:8080'].includes(url.host)
-  ) {
-    // https://prptl.io/-/{canister_id}
-    // https://prptl.io/-/{collection_id}
-    // http://localhost:3000/-/{canister_id}
-    // http://localhost:3000/-/{collection_id}
-    return url.origin + url.pathname.split('/').slice(0, 3).join('/');
-  } else {
-    // https://{canister_id}.raw.ic0.app
-    // http://{canister_id}.localhost:8000
-    return url.origin;
-  }
-}
-
 export * from './interfaces';
 export * from './binary';
 export * from './dateTime';
@@ -91,4 +66,3 @@ export * from './getFormattedLink';
 export * from './checkOwner';
 export * from './metadataParser';
 export * from './binaryConverters';
-

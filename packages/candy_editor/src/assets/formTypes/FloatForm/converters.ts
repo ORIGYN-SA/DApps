@@ -1,4 +1,4 @@
-import { CandyFloat } from '../../../types';
+import { CandyFloat } from '@dapp/common-types';
 import { isInRange } from '../../../utils/functions';
 
 export function convertToCandyFloat(typedValue: string): CandyFloat | undefined {

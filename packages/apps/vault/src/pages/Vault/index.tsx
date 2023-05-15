@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useDebug } from '@dapp/features-debug-provider';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
 import { useApi } from '@dapp/common-api';
 import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
 import {
@@ -14,7 +15,7 @@ import {
   parseMetadata,
   parseOdcs,
   copyToClipboard,
-  getRootUrl,
+  timeInNanos,
 } from '@dapp/utils';
 import { OrigynClient } from '@origyn/mintjs';
 import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
@@ -134,18 +135,18 @@ const StyledNFTImg = styled.img`
 
 const VaultPage = () => {
   const debug = useDebug();
+  const context = useContext(PerpetualOSContext);
   const { getNftBatch, getNftCollectionMeta, getNftBalances } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
   const { loggedIn, principal, principalId, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
-  const [canisterId, setCanisterId] = React.useState('');
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
   const [inputText, setInputText] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [openTrx, setOpenTrx] = useState(false);
   const [showManageEscrowsButton, setShowManageEscrowsButton] = useState(false);
   const { enqueueSnackbar } = useSnackbar() || {};
-  const {time, activeTokens } = useTokensContext();
+  const { time, activeTokens } = useTokensContext();
   const { open } = useDialog();
   const { state, dispatch } = useVault();
   const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
@@ -170,10 +171,7 @@ const VaultPage = () => {
     }
 
     try {
-      const { canisterId } = await useRoute();
-      setCanisterId(canisterId);
-
-      OrigynClient.getInstance().init(true, canisterId, { actor });
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
       // get the canister's collection metadata
       const meta = await getNftCollectionMeta();
       const metadata = meta.metadata[0];
@@ -197,6 +195,24 @@ const VaultPage = () => {
         setShowManageEscrowsButton(
           vaultBalanceInfo.escrow?.length > 0 || vaultBalanceInfo.offers?.length > 0,
         );
+
+        //'balance_of_nft_origyn result' = vaultBalanceInfo
+
+        if (vaultBalanceInfo?.escrow) {
+          await Promise.all(
+            vaultBalanceInfo.escrow.map(async (item) => {
+              await actor.sale_nft_origyn({ end_sale: item.token_id });
+            }),
+          );
+        }
+
+        if (vaultBalanceInfo?.offers) {
+          await Promise.all(
+            vaultBalanceInfo.offers.map(async (item) => {
+              await actor.sale_nft_origyn({ end_sale: item.token_id });
+            }),
+          );
+        }
       } else {
         dispatch({ type: 'odcs', payload: [] });
         dispatch({ type: 'ownedItems', payload: 0 });
@@ -209,15 +225,46 @@ const VaultPage = () => {
     }
   };
 
+  const endSaleForNFTS = async () => {
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
+
+    const vaultBalanceInfo = await getNftBalances(principal);
+    const endedNFTS = [];
+    const NFTonSale = [];
+
+    if (vaultBalanceInfo?.escrow) {
+      vaultBalanceInfo?.escrow?.forEach((nft) => {
+        NFTonSale.push(nft?.token_id);
+      });
+    }
+
+    if (vaultBalanceInfo?.offers) {
+      vaultBalanceInfo?.offers?.forEach((nft) => {
+        NFTonSale.push(nft?.token_id);
+      });
+    }
+
+    if (NFTonSale.length > 0) {
+      NFTonSale.map(async (nft) => {
+        const r: any = await actor.nft_origyn(nft);
+
+        const endDate = r.ok.current_sale[0]?.sale_type?.auction?.config?.auction?.end_date;
+
+        if (endDate < timeInNanos()) {
+          endedNFTS.push(nft);
+        }
+      });
+      if (endedNFTS.length > 0) {
+        endedNFTS.forEach(async (nft) => {
+          await actor.sale_nft_origyn({ end_sale: nft });
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     document.title = 'Origyn Vault';
-
-    const run = async () => {
-      const route = await useRoute();
-      setCanisterId(route.canisterId);
-    };
-
-    run();
+    endSaleForNFTS();
   }, []);
 
   /* Fetch data from canister when the actor reference
@@ -299,7 +346,7 @@ const VaultPage = () => {
         <Flex fullWidth padding="0" flexFlow="column">
           <SecondaryNav
             title="Vault"
-            titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/vault'}
+            titleLink={`${context.canisterUrl}/collection/-/vault`}
             tabs={[{ title: 'Balance', id: 'Balance' }]}
             content={[
               <Flex fullWidth flexFlow="column" key="secondaryNavContent">
@@ -400,7 +447,11 @@ const VaultPage = () => {
                         <Flex align="flex-start" gap={24}>
                           {collectionData.hasPreviewAsset ? (
                             <StyledCollectionImg
-                              src={`https://prptl.io/-/${canisterId}/collection/preview`}
+                              src={`${
+                                context.isLocalToMainnet
+                                  ? context.directCanisterUrl
+                                  : context.canisterUrl
+                              }/collection/preview`}
                               alt=""
                             />
                           ) : (
@@ -450,9 +501,7 @@ const VaultPage = () => {
                                   as="a"
                                   iconButton
                                   target="_blank"
-                                  href={`${getRootUrl(
-                                    new URL(window.location.href),
-                                  )}/collection/-/ledger`}
+                                  href={`${context.canisterUrl}/collection/-/ledger`}
                                 >
                                   <p style={{ color: theme.colors.TEXT }}>Ledger</p>
                                 </SocialMediaButton>
@@ -514,11 +563,15 @@ const VaultPage = () => {
                                     <Card
                                       flexFlow="column"
                                       style={{ overflow: 'hidden', height: '100%' }}
-                                      bgColor='NAVIGATION_BACKGROUND'
+                                      bgColor="NAVIGATION_BACKGROUND"
                                     >
                                       {odc.hasPreviewAsset ? (
                                         <StyledNFTImg
-                                          src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
+                                          src={`${
+                                            context.isLocalToMainnet
+                                              ? context.directCanisterUrl
+                                              : context.canisterUrl
+                                          }/-/${odc?.id}/preview`}
                                           alt=""
                                         />
                                       ) : (

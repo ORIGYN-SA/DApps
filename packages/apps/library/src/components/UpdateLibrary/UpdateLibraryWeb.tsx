@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
-// mint.js
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import {
   OrigynClient,
   updateLibraryMetadata,
@@ -19,8 +19,7 @@ import {
   Select,
   CheckboxInput,
 } from '@origyn/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
-
+import { LoadingContainer } from '@dapp/features-components';
 type Props = {
   tokenId: string;
   updateLibraryData: any;
@@ -33,6 +32,7 @@ export const UpdateLibraryWeb = ({
   setOpenLibrary,
   metadata,
 }: Props) => {
+  const context = useContext(PerpetualOSContext);
   const { actor } = useContext(AuthContext);
 
   const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
@@ -75,15 +75,14 @@ export const UpdateLibraryWeb = ({
   const handleClose = () => {
     setOpen(false);
   };
-  console.log(metadata);
+
   const handleSubmit = async () => {
-    const { canisterId } = await useRoute();
     setInProgress(true);
 
     try {
       let successMsg = 'Web Library Updated';
 
-      await OrigynClient.getInstance().init(true, canisterId, { actor });
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
       const updateResponse = await updateLibraryMetadata(tokenId, libraryId, {
         title: typedTitle,
@@ -91,7 +90,7 @@ export const UpdateLibraryWeb = ({
         read: selectedRead,
       });
 
-      if (updateResponse.ok) {
+      if ('ok' in updateResponse) {
         if (immutable) {
           setLibraryImmutable(tokenId, libraryId);
           successMsg = 'Library Updated and made immutable';
@@ -116,7 +115,7 @@ export const UpdateLibraryWeb = ({
         handleClose();
       }
     } catch (e) {
-      console.log('error', e);
+      console.error('error', e);
       handleClose();
     }
     setInProgress(false);
@@ -126,18 +125,20 @@ export const UpdateLibraryWeb = ({
         updateLibraryData(
           r.ok.metadata[0]['Class'].filter((res) => {
             return res.name === 'library';
-          })[0].value.Array.thawed,
+          })[0].value.Array,
         );
       });
       setOpenLibrary(false);
     } else {
       //Update the library data for the Token
       getNft(tokenId).then((r) => {
-        updateLibraryData(
-          r.ok.metadata.Class.filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array.thawed,
-        );
+        if ('Class' in r.ok.metadata) {
+          updateLibraryData(
+            r.ok.metadata.Class.filter((res) => {
+              return res.name === 'library';
+            })[0].value['Array'],
+          );
+        }
       });
       setOpenLibrary(false);
     }
@@ -154,8 +155,7 @@ export const UpdateLibraryWeb = ({
           {inProgress ? (
             <>
               <h4>Update in Progress</h4>
-              <br />
-              <LinearProgress color="secondary" />
+              <LoadingContainer margin="24px" />
             </>
           ) : (
             <>
