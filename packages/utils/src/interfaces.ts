@@ -73,6 +73,7 @@ export interface Transactions {
   principals: string[];
   //Specs
   buyer?: {};
+  receiver?: {};
   amount?: string;
   token?: {};
   sale_id?: string;

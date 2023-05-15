@@ -27,7 +27,8 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
           deposit: {
             token: {
               ic: {
-                fee: BigInt(activeTokens[token]?.fee),
+                id: [],
+                fee: [BigInt(activeTokens[token]?.fee)],
                 decimals: BigInt(activeTokens[token]?.decimals),
                 canister: Principal.fromText(activeTokens[token]?.canisterId),
                 standard: { Ledger: null },

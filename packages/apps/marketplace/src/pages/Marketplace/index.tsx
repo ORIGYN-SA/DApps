@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDialog } from '@connect2ic/react';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
 import { OrigynClient } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { useApi } from '@dapp/common-api';
 import { LoadingContainer } from '@dapp/features-components';
 import { PlaceholderIcon } from '@dapp/common-assets';
-import { parseOdcs, parseMetadata, getRootUrl } from '@dapp/utils';
+import { parseOdcs, parseMetadata } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
 import {
@@ -42,10 +43,10 @@ const SocialMediaButton = styled(Button)`
 
 const Marketplace = () => {
   const debug = useDebug();
+  const context = useContext(PerpetualOSContext);
   const { principalId, actor, handleLogOut } = useContext(AuthContext);
   const { getNftBatch, getNftCollectionMeta } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
-  const [canisterId, setCanisterId] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputText, setInputText] = useState('');
   const { open } = useDialog();
@@ -76,10 +77,7 @@ const Marketplace = () => {
     }
 
     try {
-      const { canisterId } = await useRoute();
-      setCanisterId(canisterId);
-
-      OrigynClient.getInstance().init(true, canisterId, { actor });
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
       // get the canister's collection metadata
       const meta = await getNftCollectionMeta();
@@ -109,13 +107,6 @@ const Marketplace = () => {
 
   useEffect(() => {
     document.title = 'Origyn Marketplace';
-
-    const run = async () => {
-      const route = await useRoute();
-      setCanisterId(route.canisterId);
-    };
-
-    run();
   }, []);
 
   /* Fetch data from canister when the actor reference
@@ -135,7 +126,7 @@ const Marketplace = () => {
       }
     };
   }, [actor]);
-  console.log('to be filtered', odcs)
+
   /* Apply filter and sort to list */
   useEffect(() => {
     let filtered = odcs;
@@ -154,7 +145,6 @@ const Marketplace = () => {
         filtered = odcs.filter((odc) => odc.auctionOpen);
         break;
     }
-    
 
     filtered.sort((odc1, odc2) => {
       const price1 = odc1.currentBid || odc1.buyNow;
@@ -191,7 +181,7 @@ const Marketplace = () => {
     <Flex fullWidth padding="0" flexFlow="column">
       <SecondaryNav
         title="Marketplace"
-        titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/marketplace'}
+        titleLink={`${context.canisterUrl}/collection/-/marketplace`}
         tabs={[{ title: 'Marketplace', id: 'Marketplace' }]}
         content={[
           <Flex fullWidth flexFlow="column" key="marketplace-nav">
@@ -207,7 +197,11 @@ const Marketplace = () => {
                       <Flex align="flex-start" gap={24}>
                         {collectionData.hasPreviewAsset ? (
                           <Image
-                            src={`https://prptl.io/-/${canisterId}/collection/preview`}
+                            src={`${
+                              context.isLocalToMainnet
+                                ? context.directCanisterUrl
+                                : context.canisterUrl
+                            }/collection/preview`}
                             alt="text"
                             style={{ width: 110, height: 96 }}
                           />
@@ -259,7 +253,7 @@ const Marketplace = () => {
                                 as="a"
                                 iconButton
                                 target="_blank"
-                                href={`https://prptl.io/-/${canisterId}/collection/-/ledger`}
+                                href={`${context.canisterUrl}/collection/-/ledger`}
                               >
                                 <p style={{ color: theme.colors.TEXT }}>Ledger</p>
                               </SocialMediaButton>

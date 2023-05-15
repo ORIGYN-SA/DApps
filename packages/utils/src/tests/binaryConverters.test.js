@@ -50,79 +50,51 @@ describe('BytesForms > utils.ts', () => {
 
   it('convertNat8ArrayToCandyBytes > should return undefined if input array contains non-8-bit numbers', () => {
     const inputArray = [0, 255, 300]; // contains non-8-bit number 300
-    const result = convertNat8ArrayToCandyBytes(inputArray, 'thawed');
+    const result = convertNat8ArrayToCandyBytes(inputArray);
     expect(result).toBeUndefined();
   });
 
-  it('convertNat8ArrayToCandyBytes > should return a CandyBytes object with "thawed" property if input candyBytesType is "thawed"', () => {
+  it('convertNat8ArrayToCandyBytes > should return a CandyBytes object with "Bytes" property if input candyBytesType is "Bytes"', () => {
     const inputArray = [0, 255, 127];
-    const result = convertNat8ArrayToCandyBytes(inputArray, 'thawed');
+    const result = convertNat8ArrayToCandyBytes(inputArray);
     expect(result).toEqual({
-      Bytes: {
-        thawed: [0, 255, 127],
-      },
+      Bytes: [0, 255, 127],
     });
   });
 
-  it('convertNat8ArrayToCandyBytes > should return a CandyBytes object with "frozen" property if input candyBytesType is "frozen"', () => {
+  it('convertNat8ArrayToCandyBytes > should return a CandyBytes object with "Bytes" property if input candyBytesType is "Bytes"', () => {
     const inputArray = [127, 255, 0];
-    const result = convertNat8ArrayToCandyBytes(inputArray, 'frozen');
+    const result = convertNat8ArrayToCandyBytes(inputArray);
     expect(result).toEqual({
-      Bytes: {
-        frozen: [127, 255, 0],
-      },
+      Bytes: [127, 255, 0],
     });
-  });
-
-  it('convertNat8ArrayToCandyBytes > should return undefined if input candyBytesType is not "thawed" or "frozen"', () => {
-    const inputArray = [0, 127, 255];
-    const result = convertNat8ArrayToCandyBytes(inputArray, 'invalid-type');
-    expect(result).toBeUndefined();
   });
 
   it('convertBase64ToCandyBytes > should return undefined if input base64 is invalid', () => {
     const invalidBase64 = 'invalid-base64-+';
-    const result = convertBase64ToCandyBytes(invalidBase64, 'thawed');
+    const result = convertBase64ToCandyBytes(invalidBase64);
     expect(result).toBeUndefined();
   });
 
   it('convertBase64ToCandyBytes > should return undefined if the byte array size exceeds the limit', () => {
     // create a base64 string that will result in a byte array exceeding the limit of 16384 bytes
     const largeBase64 = Buffer.alloc(16385).toString('base64');
-    const result = convertBase64ToCandyBytes(largeBase64, 'thawed');
+    const result = convertBase64ToCandyBytes(largeBase64);
     expect(result).toBeUndefined();
-  });
-
-  it('convertBase64ToCandyBytes > should return a CandyBytes object with "thawed" property if input candyBytesType is "thawed"', () => {
-    const inputBase64 = 'AQIDBA=='; // base64 representation of [1, 2, 3, 4]
-    const result = convertBase64ToCandyBytes(inputBase64, 'thawed');
-    expect(result).toEqual({
-      Bytes: {
-        thawed: [1, 2, 3, 4],
-      },
-    });
   });
 
   it('convertBase64ToCandyBytes > should return undefined if an error occurs during base64 decoding', () => {
     const inputBase64 = 'invalid=base64'; // invalid base64 with "=" at a non-padding position
-    const result = convertBase64ToCandyBytes(inputBase64, 'thawed');
+    const result = convertBase64ToCandyBytes(inputBase64);
     expect(result).toBeUndefined();
   });
 
-  test('convertHexadecimalToCandyBytes > returns CandyBytes object for valid input with thawed type', () => {
+  test('convertHexadecimalToCandyBytes > returns CandyBytes object for valid input with Bytes type', () => {
     const input = '0a2b3c';
     const expectedOutput = {
-      Bytes: {
-        thawed: [10, 43, 60],
-      },
+      Bytes: [10, 43, 60],
     };
-    const result = convertHexadecimalToCandyBytes(input, 'thawed');
+    const result = convertHexadecimalToCandyBytes(input);
     expect(result).toEqual(expectedOutput);
-  });
-
-  test('convertHexadecimalToCandyBytes > returns undefined for input with odd number of characters', () => {
-    const input = '0a2b3';
-    const result = convertHexadecimalToCandyBytes(input, 'frozen');
-    expect(result).toBeUndefined();
   });
 });

@@ -1,7 +1,8 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/dot-notation */
 import { useDebug } from '@dapp/features-debug-provider';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
+import { AuthContext } from '@dapp/features-authentication';
 import { LoadingContainer, TokenIcon } from '@dapp/features-components';
 import { ConfirmEndSaleModal } from '../../modals/ConfirmEndSaleModal';
 import { StartAuctionModal } from '../../modals/StartAuctionModal';
@@ -14,7 +15,7 @@ import {
   timeInNanos,
   toLargerUnit,
 } from '@dapp/utils';
-import { Property } from '@origyn/mintjs';
+import { PropertyShared } from '@origyn/mintjs';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -34,10 +35,10 @@ import { EscrowType } from '../../modals/StartEscrowModal';
 import { Principal } from '@dfinity/principal';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { OffersPanel } from './components/OffersPanel';
-import { getRootUrl } from '@dapp/utils';
 
 export const NFTPage = () => {
   const debug = useDebug();
+  const context = useContext(PerpetualOSContext);
   const params = useParams();
   const { open } = useDialog();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
@@ -46,7 +47,6 @@ export const NFTPage = () => {
   const [initialized, setInitialized] = useState<boolean>(false);
   const [collectionData, setCollectionData] = useState<OdcData>();
   const [openAuctionModal, setOpenAuctionModal] = React.useState(false);
-  const [canisterId, setCanisterId] = React.useState('');
   const [onConfirmationModalOpen, setConfirmationModalOpen] = React.useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [openEscrowModal, setOpenEscrowModal] = React.useState(false);
@@ -59,11 +59,11 @@ export const NFTPage = () => {
   const getTitleAndTitleLink = () => {
     if (window.location.pathname.includes('/-/vault')) {
       setTitle('Vault');
-      setTitleLink(getRootUrl(new URL(window.location.href)) + '/collection/-/vault');
+      setTitleLink(`${context.canisterUrl}/collection/-/vault`);
       return;
     } else if (window.location.pathname.includes('/-/marketplace')) {
       setTitle('Marketplace');
-      setTitleLink(getRootUrl(new URL(window.location.href)) + '/collection/-/marketplace');
+      setTitleLink(`${context.canisterUrl}/collection/-/marketplace`);
       return;
     }
   };
@@ -99,13 +99,10 @@ export const NFTPage = () => {
   };
 
   const fetchCollection = async () => {
-    const route = await useRoute();
-    setCanisterId(route.canisterId);
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
-    OrigynClient.getInstance().init(true, canisterId, { actor });
-
-    const collMetaResp = await getNftCollectionMeta([]);
-    debug.log('return value from getNftCollectionMeta([])');
+    const collMetaResp = await getNftCollectionMeta();
+    debug.log('return value from getNftCollectionMeta()');
     debug.log(JSON.stringify(collMetaResp, null, 2));
 
     if (collMetaResp.err) {
@@ -113,7 +110,7 @@ export const NFTPage = () => {
       debug.error(collMetaResp.err);
     } else {
       const collMeta = collMetaResp.ok;
-      const metadataClass = collMeta?.metadata?.[0]?.['Class'] as Property[];
+      const metadataClass = collMeta?.metadata?.[0]?.['Class'] as PropertyShared[];
       const parsedCollData = parseMetadata(metadataClass);
       setCollectionData(parsedCollData);
     }
@@ -172,7 +169,6 @@ export const NFTPage = () => {
       // this will be used as a checker
       if (odc) {
         if (odc.auctionOpen && odc.auction.end_date <= timeInNanos()) {
-          console.log('Ending sale');
           await endSaleNft();
           await fetchOdc();
         }
@@ -204,7 +200,6 @@ export const NFTPage = () => {
   }, [actor]);
 
   useEffect(() => {
-    console.log(getRootUrl(new URL(window.location.href)));
     getTitleAndTitleLink();
   }, []);
 
@@ -227,7 +222,11 @@ export const NFTPage = () => {
                         {odc?.hasPreviewAsset ? (
                           <img
                             style={{ borderRadius: '18px', width: '100%' }}
-                            src={`https://${canisterId}.raw.ic0.app/-/${params.nft_id}/preview`}
+                            src={`${
+                              context.isLocalToMainnet
+                                ? context.directCanisterUrl
+                                : context.canisterUrl
+                            }/-/${params.nft_id}/preview`}
                           />
                         ) : (
                           <Flex align="center" justify="center">
@@ -247,7 +246,11 @@ export const NFTPage = () => {
                           <Flex gap={8} align="center">
                             {collectionData?.hasPreviewAsset ? (
                               <img
-                                src={`https://prptl.io/-/${canisterId}/collection/preview`}
+                                src={`${
+                                  context.isLocalToMainnet
+                                    ? context.directCanisterUrl
+                                    : context.canisterUrl
+                                }/collection/preview`}
                                 alt=""
                                 style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
                               />

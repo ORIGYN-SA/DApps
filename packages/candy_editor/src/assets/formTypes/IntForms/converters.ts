@@ -1,4 +1,4 @@
-import { CandyInt, CandyInt8, CandyInt16, CandyInt32, CandyInt64, CandyIntegers, CandyType } from '../../../types';
+import { CandyInt, CandyInt8, CandyInt16, CandyInt32, CandyInt64, CandyIntegers, CandyType } from '@dapp/common-types';
 import { isInRange } from '../../../utils/functions';
 
 export function convertToCandyInt(typedValue: string): CandyInt | undefined {

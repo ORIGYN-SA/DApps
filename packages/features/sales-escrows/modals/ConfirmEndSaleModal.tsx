@@ -64,23 +64,30 @@ export const ConfirmEndSaleModal = ({
       <Container size="full" padding="48px">
         <h2>Confirm End Sale</h2>
         <br />
-        <Flex flexFlow="column">
-          <div>
-            Are you sure you want to end the sale for token <b>{currentToken}</b> ?
-          </div>
-        </Flex>
-        <HR marginTop={24} marginBottom={24} />
-        <Flex flow="row" justify="flex-end" gap={16}>
-          <Flex>
-            <Button onClick={() => onEndSaleConfirm(true)} variant="contained" disabled={confirmed}>
-              Confirm
-            </Button>
-          </Flex>
-        </Flex>
-        {isLoading && (
+        {isLoading ? (
           <>
             <HR marginTop={24} />
             <LoadingContainer margin="24px" />
+          </>
+        ) : (
+          <>
+            <Flex flexFlow="column">
+              <div>
+                Are you sure you want to end the sale for token <b>{currentToken}</b> ?
+              </div>
+            </Flex>
+            <HR marginTop={24} marginBottom={24} />
+            <Flex flow="row" justify="flex-end" gap={16}>
+              <Flex>
+                <Button
+                  onClick={() => onEndSaleConfirm(true)}
+                  variant="contained"
+                  disabled={confirmed}
+                >
+                  Confirm
+                </Button>
+              </Flex>
+            </Flex>
           </>
         )}
       </Container>

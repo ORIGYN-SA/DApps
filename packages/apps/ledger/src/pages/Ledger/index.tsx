@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
-import { TransactionFilter, TransactionsTable, SearchbarNft } from '@dapp/features-components';
+import { TransactionFilter, TransactionsTable, SearchbarNft } from '../../components';
 import { SecondaryNav, Container, Flex, HR } from '@origyn/origyn-art-ui';
-import { getRootUrl } from '@dapp/utils';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const Ledger = () => {
+  const context = useContext(PerpetualOSContext);
   const { principal, actor, handleLogOut } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [searchBarTokenId, setSearchBarTokenId] = React.useState('');
@@ -38,7 +39,7 @@ const Ledger = () => {
     <Container fullWidth padding="0" flexFlow="column">
       <SecondaryNav
         title="Ledger"
-        titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/ledger'}
+        titleLink={`${context.canisterUrl}/collection/-/ledger`}
         tabs={[{ title: 'Dashboard', id: 'Transactions' }]}
         content={[
           <>

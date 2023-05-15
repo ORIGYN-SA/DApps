@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 //import HeaderPart from './components/Header';
 import { SnackbarProvider } from 'notistack';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
+import { PerpetualOSContextProvider } from '@dapp/features-context-provider';
 import { Layout } from '@dapp/features-components';
 import { GlobalStyle } from '@origyn/origyn-art-ui';
 
@@ -16,19 +17,21 @@ const App = () => {
     <BrowserRouter>
       <GlobalStyle />
       <SiteProvider>
-        <SessionProvider>
-          <AuthProvider>
-            <TokensContextProvider>
-              <SnackbarProvider maxSnack={3}>
-                <Layout>
-                  <Routes>
-                    <Route path="*" element={<Login />} />
-                  </Routes>
-                </Layout>
-              </SnackbarProvider>
-            </TokensContextProvider>
-          </AuthProvider>
-        </SessionProvider>
+        <PerpetualOSContextProvider>
+          <SessionProvider>
+            <AuthProvider>
+              <TokensContextProvider>
+                <SnackbarProvider maxSnack={3}>
+                  <Layout>
+                    <Routes>
+                      <Route path="*" element={<Login />} />
+                    </Routes>
+                  </Layout>
+                </SnackbarProvider>
+              </TokensContextProvider>
+            </AuthProvider>
+          </SessionProvider>
+        </PerpetualOSContextProvider>
       </SiteProvider>
     </BrowserRouter>
   );

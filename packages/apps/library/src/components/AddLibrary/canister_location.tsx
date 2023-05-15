@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { OrigynClient, stageLibraryAsset, getNft, getNftCollectionMeta } from '@origyn/mintjs';
 import { Layouts } from '../LayoutsType';
 import LibraryDefault from '../LayoutsType/LibraryDefault';
@@ -8,6 +9,7 @@ import { Container, TextInput, Button, HR, Flex, CheckboxInput } from '@origyn/o
 import { Buffer } from 'buffer';
 
 export const CanisterLocation = (props: any) => {
+  const context = useContext(PerpetualOSContext);
   const { actor } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
   const [libraryAssets, setLibraryAssets] = useState<any>([]);
@@ -27,10 +29,8 @@ export const CanisterLocation = (props: any) => {
     setTypedId(event.target.value);
   };
   const handleInputChange = (e) => {
-    console.log(e.target.files);
     setLibraryAssets(e.target.files);
     setFile(URL.createObjectURL(e.target.files[0]));
-    console.log(e.target.files[0].type);
     setType(e.target.files[0].type);
   };
 
@@ -54,10 +54,9 @@ export const CanisterLocation = (props: any) => {
       reader.readAsArrayBuffer(file);
     });
   };
-  console.log(props);
+
   const stageLibrary = async () => {
-    const { canisterId } = await useRoute();
-    await OrigynClient.getInstance().init(true, canisterId, { actor });
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     try {
       let i = 0;
       const payload = {
@@ -81,11 +80,11 @@ export const CanisterLocation = (props: any) => {
           )),
         ],
       };
-      console.log('payload is ', payload);
+
       props.setInProgress(true);
       try {
         const response = await stageLibraryAsset([payload.files[0]], props.tokenId);
-        console.log('response', response);
+
         if (response.ok) {
           // Display a success message - SNACKBAR
           enqueueSnackbar('Library staged!', {
@@ -104,12 +103,11 @@ export const CanisterLocation = (props: any) => {
             },
           });
         }
-        console.log(response);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
     props.setInProgress(false);
     props.isOpen(false);
@@ -120,7 +118,7 @@ export const CanisterLocation = (props: any) => {
         props.updateData(
           r.ok?.metadata?.[0]?.['Class']?.filter((res) => {
             return res.name === 'library';
-          })?.[0]?.value?.Array?.thawed || [],
+          })?.[0]?.value?.Array || [],
         );
       });
     } else {
@@ -129,7 +127,7 @@ export const CanisterLocation = (props: any) => {
         props.updateData(
           r.ok?.metadata?.[0]?.['Class']?.filter((res) => {
             return res.name === 'library';
-          })?.[0]?.value?.Array?.thawed || [],
+          })?.[0]?.value?.Array || [],
         );
       });
     }

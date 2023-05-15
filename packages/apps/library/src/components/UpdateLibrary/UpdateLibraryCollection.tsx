@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 // mint.js
 import { OrigynClient, updateLibraryMetadata, getNftCollectionMeta, getNft } from '@origyn/mintjs';
 import { Button, Modal, Container, Flex, HR, TextInput, Select } from '@origyn/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
-
+import { LoadingContainer } from '@dapp/features-components';
 type Props = {
   tokenId: string;
   updateLibraryData: any;
@@ -18,6 +18,7 @@ export const UpdateLibraryCollection = ({
   setOpenLibrary,
   metadata,
 }: Props) => {
+  const context = useContext(PerpetualOSContext);
   const { actor } = useContext(AuthContext);
 
   const title = metadata.Class?.filter((res) => res.name === 'title')[0].value.Text;
@@ -34,13 +35,11 @@ export const UpdateLibraryCollection = ({
   const [selectedRead, setSelectedRead] = useState<string>(read);
 
   const getLibraries = async () => {
-    const { canisterId } = await useRoute();
-    await OrigynClient.getInstance().init(true, canisterId, { actor });
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     const response = await getNftCollectionMeta();
     const library = await response.ok.metadata[0]['Class'].filter((res) => {
       return res.name === 'library';
-    })[0].value.Array.thawed;
-    console.log('responseCollection', library);
+    })[0].value.Array;
     let libraries = [];
     let i: any;
     for (i in library) {
@@ -73,19 +72,18 @@ export const UpdateLibraryCollection = ({
   const handleClose = () => {
     setOpen(false);
   };
-  console.log('meta', metadata);
+
   const handleSubmit = async () => {
-    const { canisterId } = await useRoute();
     setInProgress(true);
 
     try {
-      await OrigynClient.getInstance().init(true, canisterId, { actor });
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
       const updateResponse = await updateLibraryMetadata(tokenId, libraryId, {
         title: typedTitle,
         read: selectedRead,
       });
-      console.log(updateResponse);
-      if (updateResponse.ok) {
+
+      if ('ok' in updateResponse) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library Updated', {
           variant: 'success',
@@ -106,17 +104,19 @@ export const UpdateLibraryCollection = ({
         handleClose();
       }
     } catch (e) {
-      console.log('error', e);
+      console.error('error', e);
       handleClose();
     }
     setInProgress(false);
     //Update the library data for the Token
     getNft(tokenId).then((r) => {
-      updateLibraryData(
-        r.ok.metadata.Class.filter((res) => {
-          return res.name === 'library';
-        })[0].value.Array.thawed,
-      );
+      if ('Class' in r.ok.metadata) {
+        updateLibraryData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value['Array'],
+        );
+      }
     });
     setOpenLibrary(false);
   };
@@ -130,7 +130,7 @@ export const UpdateLibraryCollection = ({
       <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">
         {inProgress ? (
           <Container padding="16px" size="full">
-            <LinearProgress color="secondary" />
+            <LoadingContainer margin="24px" />
           </Container>
         ) : (
           <>

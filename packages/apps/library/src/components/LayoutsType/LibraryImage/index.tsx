@@ -1,33 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useRoute } from '@dapp/features-authentication';
-import { GetFormattedLink } from '@dapp/utils';
+import React, { useEffect, useState, useContext } from 'react';
 import { Modal, Flex, Container, HR, Image, Grid } from '@origyn/origyn-art-ui';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const LibraryImage = (props: any) => {
+  const context = useContext(PerpetualOSContext);
   // MODAL
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [canisterId, setCanisterId] = useState('');
   const [link, setLink] = useState('');
 
   const formattedLink = async () => {
-    const link = await GetFormattedLink(canisterId, props.source);
-    setLink(link);
+    setLink(context.directCanisterUrl + '/' + props.source);
   };
 
   useEffect(() => {
-    if (canisterId) {
+    if (context.canisterId) {
       formattedLink();
     }
-  }, [canisterId, props.source]);
-
-  useEffect(() => {
-    useRoute().then(({ canisterId }) => {
-      setCanisterId(canisterId);
-    });
-  }, [props.source]);
+  }, [context, props.source]);
 
   return (
     <>

@@ -11,7 +11,7 @@ module.exports = class CustomTestEnvironment extends Environment {
       this.global.TextDecoder = TextDecoder;
     }
     if (typeof this.global.fetch === 'undefined') {
-      const fetch = require('node-fetch');
+      const fetch = require('isomorphic-fetch');
       this.global.fetch = fetch;
     }
   }

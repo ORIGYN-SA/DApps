@@ -1,5 +1,4 @@
-import { CandyBytes } from '../../../types';
-type CandyBytesType = 'thawed' | 'frozen';
+import { CandyBytes } from '@dapp/common-types';
 
 export function isNat8(number: number): boolean {
     return number >= 0 && number <= 255 && Number.isInteger(number);
@@ -7,7 +6,6 @@ export function isNat8(number: number): boolean {
 
 export function convertNat8ArrayToCandyBytes(
     nat8Array: number[],
-    candyBytesType: CandyBytesType,
 ): CandyBytes | undefined {
     let candyBytes: CandyBytes;
 
@@ -15,27 +13,14 @@ export function convertNat8ArrayToCandyBytes(
         return undefined;
     }
 
-    if (candyBytesType === 'thawed') {
-        candyBytes = {
-            Bytes: {
-                thawed: nat8Array.map((number) => number),
-            },
-        };
-        return candyBytes;
-    } else if (candyBytesType === 'frozen') {
-        candyBytes = {
-            Bytes: {
-                frozen: nat8Array.map((number) => number),
-            },
-        };
-        return candyBytes;
-    }
-    return undefined;
+    candyBytes = {
+        Bytes: nat8Array
+    };
+
 }
 
 export function convertBase64ToCandyBytes(
     base64: string,
-    candyBytesType: CandyBytesType,
 ): CandyBytes | undefined {
     let candyBytes: CandyBytes;
     const regex = /^[A-Za-z0-9+/]*={0,2}$/;
@@ -47,19 +32,8 @@ export function convertBase64ToCandyBytes(
                 for (let i = 0; i < binary.length; i++) {
                     bytes[i] = binary.charCodeAt(i);
                 }
-                if (candyBytesType === 'thawed') {
-                    candyBytes = {
-                        Bytes: {
-                            thawed: Array.from(bytes)
-                        },
-                    };
-                    return candyBytes;
-                } else if (candyBytesType === 'frozen') {
-                    candyBytes = {
-                        Bytes: {
-                            frozen: Array.from(bytes)
-                        },
-                    };
+                return candyBytes = {
+                    Bytes: bytes
                 }
             } else {
                 return undefined;
@@ -73,41 +47,25 @@ export function convertBase64ToCandyBytes(
 
 export function convertHexadecimalToCandyBytes(
     hexadecimal: string,
-    candyBytesType: CandyBytesType,
 ): CandyBytes | undefined {
     let candyBytes: CandyBytes;
     const regex = /^[0-9a-fA-F]+$/;
     if (regex.test(hexadecimal)) {
         const byteString = hexadecimal.match(/.{1,2}/g)?.join(' ');
         const bytes = new Uint8Array(byteString?.split(' ').map((byte) => parseInt(byte, 16)));
-        if (limitByteArraySize(bytes, 16384)) {
-            if (candyBytesType === 'thawed') {
-                candyBytes = {
-                    Bytes: {
-                        thawed: Array.from(bytes)
-                    },
-                };
-                return candyBytes;
-            } else if (candyBytesType === 'frozen') {
-                candyBytes = {
-                    Bytes: {
-                        frozen: Array.from(bytes)
-                    },
-                };
-            }
-        } else {
-            return undefined;
+        return candyBytes = {
+            Bytes: bytes
         }
     }
     return undefined;
 }
 
-export function convertUint8ArrayToBase64(bytearray: Uint8Array): string {
+export function convertUint8ArrayToBase64(bytearray: Uint8Array | number[]): string {
     const base64 = btoa(String.fromCharCode(...bytearray));
     return base64;
 }
 
-export function convertUint8ArrayToHex(bytearray: Uint8Array): string {
+export function convertUint8ArrayToHex(bytearray: Uint8Array | number[]): string {
     let hexString: string = "";
     bytearray.forEach((byte) => {
         const hex = byte.toString(16);

@@ -2,7 +2,7 @@ const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'vault',
-  open: '-/brain-matters-dev/collection/-/vault',
+  open: '-/dytv5-jaaaa-aaaal-qbgtq-cai/collection/-/vault',
 };
 
 module.exports = (env, argv) => {

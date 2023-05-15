@@ -86,389 +86,381 @@ module.exports = {
         },
         {
           value: {
-            Array: {
-              thawed: [
-                {
-                  Class: [
-                    {
-                      value: { Text: 'com.bayc.ape.1.primary' },
-                      name: 'library_id',
-                      immutable: true,
+            Array: [
+              {
+                Class: [
+                  {
+                    value: { Text: 'com.bayc.ape.1.primary' },
+                    name: 'library_id',
+                    immutable: true,
+                  },
+                  { value: { Text: 'BAYC - Ape 1' }, name: 'title', immutable: true },
+                  { value: { Text: 'canister' }, name: 'location_type', immutable: true },
+                  {
+                    value: {
+                      Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.icp0.io/-/bayc-01/-/com.bayc.ape.1.primary',
                     },
-                    { value: { Text: 'BAYC - Ape 1' }, name: 'title', immutable: true },
-                    { value: { Text: 'canister' }, name: 'location_type', immutable: true },
-                    {
-                      value: {
-                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/com.bayc.ape.1.primary',
-                      },
-                      name: 'location',
-                      immutable: true,
+                    name: 'location',
+                    immutable: true,
+                  },
+                  { value: { Text: 'image/png' }, name: 'content_type', immutable: true },
+                  { value: { Text: '1' }, name: 'content_hash', immutable: true },
+                  { value: { Nat: 500000 }, name: 'size', immutable: true },
+                  { value: { Text: '1' }, name: 'sort', immutable: true },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                ],
+              },
+              {
+                Class: [
+                  {
+                    value: { Text: 'com.bayc.ape.hidden' },
+                    name: 'library_id',
+                    immutable: true,
+                  },
+                  { value: { Text: 'Random-Ape' }, name: 'title', immutable: true },
+                  { value: { Text: 'web' }, name: 'location_type', immutable: true },
+                  {
+                    value: { Text: 'https://ik.imagekit.io/bayc/assets/mystery-ape.gif' },
+                    name: 'location',
+                    immutable: true,
+                  },
+                  { value: { Text: 'image/gif' }, name: 'content_type', immutable: true },
+                  { value: { Text: '1' }, name: 'content_hash', immutable: true },
+                  { value: { Nat: 500000 }, name: 'size', immutable: true },
+                  { value: { Text: '1' }, name: 'sort', immutable: true },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                ],
+              },
+              {
+                Class: [
+                  {
+                    value: { Text: 'com.bayc.ape.hidden2' },
+                    name: 'library_id',
+                    immutable: true,
+                  },
+                  { value: { Text: 'Random-Ape' }, name: 'title', immutable: true },
+                  {
+                    value: { Text: 'collection' },
+                    name: 'location_type',
+                    immutable: true,
+                  },
+                  {
+                    value: {
+                      Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.icp0.io/-/bayc-01/-/com.bayc.ape.1.hidden2',
                     },
-                    { value: { Text: 'image/png' }, name: 'content_type', immutable: true },
-                    { value: { Text: '1' }, name: 'content_hash', immutable: true },
-                    { value: { Nat: 500000 }, name: 'size', immutable: true },
-                    { value: { Text: '1' }, name: 'sort', immutable: true },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                  ],
-                },
-                {
-                  Class: [
-                    {
-                      value: { Text: 'com.bayc.ape.hidden' },
-                      name: 'library_id',
-                      immutable: true,
+                    name: 'location',
+                    immutable: true,
+                  },
+                  { value: { Text: 'image/gif' }, name: 'content_type', immutable: true },
+                  { value: { Text: '1' }, name: 'content_hash', immutable: true },
+                  { value: { Nat: 500000 }, name: 'size', immutable: true },
+                  { value: { Text: '1' }, name: 'sort', immutable: true },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                ],
+              },
+              {
+                Class: [
+                  {
+                    value: { Text: 'com.bayc.ape.1.html' },
+                    name: 'library_id',
+                    immutable: true,
+                  },
+                  { value: { Text: 'BAYC Sample' }, name: 'title', immutable: true },
+                  { value: { Text: 'canister' }, name: 'location_type', immutable: true },
+                  {
+                    value: {
+                      Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.icp0.io/-/bayc-01/-/com.bayc.ape.1.html',
                     },
-                    { value: { Text: 'Random-Ape' }, name: 'title', immutable: true },
-                    { value: { Text: 'web' }, name: 'location_type', immutable: true },
-                    {
-                      value: { Text: 'https://ik.imagekit.io/bayc/assets/mystery-ape.gif' },
-                      name: 'location',
-                      immutable: true,
+                    name: 'location',
+                    immutable: true,
+                  },
+                  { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
+                  { value: { Text: '1' }, name: 'content_hash', immutable: true },
+                  { value: { Nat: 500000 }, name: 'size', immutable: true },
+                  { value: { Text: '1' }, name: 'sort', immutable: true },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                ],
+              },
+              {
+                Class: [
+                  { value: { Text: 'vault' }, name: 'library_id', immutable: true },
+                  { value: { Text: 'vault dApp' }, name: 'title', immutable: true },
+                  {
+                    value: { Text: 'collection' },
+                    name: 'location_type',
+                    immutable: true,
+                  },
+                  {
+                    value: {
+                      Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.icp0.io/-/bayc-01/-/vault',
                     },
-                    { value: { Text: 'image/gif' }, name: 'content_type', immutable: true },
-                    { value: { Text: '1' }, name: 'content_hash', immutable: true },
-                    { value: { Nat: 500000 }, name: 'size', immutable: true },
-                    { value: { Text: '1' }, name: 'sort', immutable: true },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                  ],
-                },
-                {
-                  Class: [
-                    {
-                      value: { Text: 'com.bayc.ape.hidden2' },
-                      name: 'library_id',
-                      immutable: true,
+                    name: 'location',
+                    immutable: true,
+                  },
+                  { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
+                  { value: { Text: '1' }, name: 'content_hash', immutable: true },
+                  { value: { Nat: 1503756 }, name: 'size', immutable: true },
+                  { value: { Text: '1' }, name: 'sort', immutable: true },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                ],
+              },
+              {
+                Class: [
+                  { value: { Text: 'ledger' }, name: 'library_id', immutable: true },
+                  { value: { Text: 'Ledger dApp' }, name: 'title', immutable: true },
+                  {
+                    value: { Text: 'collection' },
+                    name: 'location_type',
+                    immutable: true,
+                  },
+                  {
+                    value: {
+                      Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.icp0.io/-/bayc-01/-/ledger',
                     },
-                    { value: { Text: 'Random-Ape' }, name: 'title', immutable: true },
-                    {
-                      value: { Text: 'collection' },
-                      name: 'location_type',
-                      immutable: true,
+                    name: 'location',
+                    immutable: true,
+                  },
+                  { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
+                  { value: { Text: '1' }, name: 'content_hash', immutable: true },
+                  { value: { Nat: 974320 }, name: 'size', immutable: true },
+                  { value: { Text: '1' }, name: 'sort', immutable: true },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                ],
+              },
+              {
+                Class: [
+                  { value: { Text: 'data' }, name: 'library_id', immutable: true },
+                  { value: { Text: 'Data dApp' }, name: 'title', immutable: true },
+                  {
+                    value: { Text: 'collection' },
+                    name: 'location_type',
+                    immutable: true,
+                  },
+                  {
+                    value: {
+                      Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.icp0.io/-/bayc-01/-/data',
                     },
-                    {
-                      value: {
-                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/com.bayc.ape.1.hidden2',
-                      },
-                      name: 'location',
-                      immutable: true,
+                    name: 'location',
+                    immutable: true,
+                  },
+                  { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
+                  { value: { Text: '1' }, name: 'content_hash', immutable: true },
+                  { value: { Nat: 936231 }, name: 'size', immutable: true },
+                  { value: { Text: '1' }, name: 'sort', immutable: true },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                ],
+              },
+              {
+                Class: [
+                  { value: { Text: 'marketplace' }, name: 'library_id', immutable: true },
+                  { value: { Text: 'Marketplace DApp' }, name: 'title', immutable: true },
+                  {
+                    value: { Text: 'collection' },
+                    name: 'location_type',
+                    immutable: true,
+                  },
+                  {
+                    value: {
+                      Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.icp0.io/-/bayc-01/-/marketplace',
                     },
-                    { value: { Text: 'image/gif' }, name: 'content_type', immutable: true },
-                    { value: { Text: '1' }, name: 'content_hash', immutable: true },
-                    { value: { Nat: 500000 }, name: 'size', immutable: true },
-                    { value: { Text: '1' }, name: 'sort', immutable: true },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                  ],
-                },
-                {
-                  Class: [
-                    {
-                      value: { Text: 'com.bayc.ape.1.html' },
-                      name: 'library_id',
-                      immutable: true,
-                    },
-                    { value: { Text: 'BAYC Sample' }, name: 'title', immutable: true },
-                    { value: { Text: 'canister' }, name: 'location_type', immutable: true },
-                    {
-                      value: {
-                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/com.bayc.ape.1.html',
-                      },
-                      name: 'location',
-                      immutable: true,
-                    },
-                    { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
-                    { value: { Text: '1' }, name: 'content_hash', immutable: true },
-                    { value: { Nat: 500000 }, name: 'size', immutable: true },
-                    { value: { Text: '1' }, name: 'sort', immutable: true },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                  ],
-                },
-                {
-                  Class: [
-                    { value: { Text: 'vault' }, name: 'library_id', immutable: true },
-                    { value: { Text: 'vault dApp' }, name: 'title', immutable: true },
-                    {
-                      value: { Text: 'collection' },
-                      name: 'location_type',
-                      immutable: true,
-                    },
-                    {
-                      value: {
-                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/vault',
-                      },
-                      name: 'location',
-                      immutable: true,
-                    },
-                    { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
-                    { value: { Text: '1' }, name: 'content_hash', immutable: true },
-                    { value: { Nat: 1503756 }, name: 'size', immutable: true },
-                    { value: { Text: '1' }, name: 'sort', immutable: true },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                  ],
-                },
-                {
-                  Class: [
-                    { value: { Text: 'ledger' }, name: 'library_id', immutable: true },
-                    { value: { Text: 'Ledger dApp' }, name: 'title', immutable: true },
-                    {
-                      value: { Text: 'collection' },
-                      name: 'location_type',
-                      immutable: true,
-                    },
-                    {
-                      value: {
-                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/ledger',
-                      },
-                      name: 'location',
-                      immutable: true,
-                    },
-                    { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
-                    { value: { Text: '1' }, name: 'content_hash', immutable: true },
-                    { value: { Nat: 974320 }, name: 'size', immutable: true },
-                    { value: { Text: '1' }, name: 'sort', immutable: true },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                  ],
-                },
-                {
-                  Class: [
-                    { value: { Text: 'data' }, name: 'library_id', immutable: true },
-                    { value: { Text: 'Data dApp' }, name: 'title', immutable: true },
-                    {
-                      value: { Text: 'collection' },
-                      name: 'location_type',
-                      immutable: true,
-                    },
-                    {
-                      value: {
-                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/data',
-                      },
-                      name: 'location',
-                      immutable: true,
-                    },
-                    { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
-                    { value: { Text: '1' }, name: 'content_hash', immutable: true },
-                    { value: { Nat: 936231 }, name: 'size', immutable: true },
-                    { value: { Text: '1' }, name: 'sort', immutable: true },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                  ],
-                },
-                {
-                  Class: [
-                    { value: { Text: 'marketplace' }, name: 'library_id', immutable: true },
-                    { value: { Text: 'Marketplace DApp' }, name: 'title', immutable: true },
-                    {
-                      value: { Text: 'collection' },
-                      name: 'location_type',
-                      immutable: true,
-                    },
-                    {
-                      value: {
-                        Text: 'https://frfol-iqaaa-aaaaj-acogq-cai.raw.ic0.app/-/bayc-01/-/marketplace',
-                      },
-                      name: 'location',
-                      immutable: true,
-                    },
-                    { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
-                    { value: { Text: '1' }, name: 'content_hash', immutable: true },
-                    { value: { Nat: 1492130 }, name: 'size', immutable: true },
-                    { value: { Text: '1' }, name: 'sort', immutable: true },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                  ],
-                },
-              ],
-            },
+                    name: 'location',
+                    immutable: true,
+                  },
+                  { value: { Text: 'text/html' }, name: 'content_type', immutable: true },
+                  { value: { Text: '1' }, name: 'content_hash', immutable: true },
+                  { value: { Nat: 1492130 }, name: 'size', immutable: true },
+                  { value: { Text: '1' }, name: 'sort', immutable: true },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                ],
+              },
+            ],
           },
           name: 'library',
           immutable: false,
         },
         {
           value: {
-            Array: {
-              thawed: [
-                {
-                  Class: [
-                    {
-                      value: { Text: 'com.bayc.sample.app' },
-                      name: 'app_id',
-                      immutable: true,
-                    },
-                    { value: { Text: 'public' }, name: 'read', immutable: false },
-                    {
-                      value: {
-                        Class: [
-                          { value: { Text: 'allow' }, name: 'type', immutable: false },
-                          {
-                            value: {
-                              Array: {
-                                thawed: [
-                                  {
-                                    Principal: {
-                                      _arr: {
-                                        0: 99,
-                                        1: 45,
-                                        2: 107,
-                                        3: 50,
-                                        4: 96,
-                                        5: 213,
-                                        6: 232,
-                                        7: 12,
-                                        8: 185,
-                                        9: 188,
-                                        10: 209,
-                                        11: 103,
-                                        12: 182,
-                                        13: 254,
-                                        14: 98,
-                                        15: 125,
-                                        16: 107,
-                                        17: 24,
-                                        18: 100,
-                                        19: 125,
-                                        20: 171,
-                                        21: 119,
-                                        22: 245,
-                                        23: 154,
-                                        24: 36,
-                                        25: 123,
-                                        26: 144,
-                                        27: 191,
-                                        28: 2,
-                                      },
-                                      _isPrincipal: true,
+            Array: [
+              {
+                Class: [
+                  {
+                    value: { Text: 'com.bayc.sample.app' },
+                    name: 'app_id',
+                    immutable: true,
+                  },
+                  { value: { Text: 'public' }, name: 'read', immutable: false },
+                  {
+                    value: {
+                      Class: [
+                        { value: { Text: 'allow' }, name: 'type', immutable: false },
+                        {
+                          value: {
+                            Array: [
+                                {
+                                  Principal: {
+                                    _arr: {
+                                      0: 99,
+                                      1: 45,
+                                      2: 107,
+                                      3: 50,
+                                      4: 96,
+                                      5: 213,
+                                      6: 232,
+                                      7: 12,
+                                      8: 185,
+                                      9: 188,
+                                      10: 209,
+                                      11: 103,
+                                      12: 182,
+                                      13: 254,
+                                      14: 98,
+                                      15: 125,
+                                      16: 107,
+                                      17: 24,
+                                      18: 100,
+                                      19: 125,
+                                      20: 171,
+                                      21: 119,
+                                      22: 245,
+                                      23: 154,
+                                      24: 36,
+                                      25: 123,
+                                      26: 144,
+                                      27: 191,
+                                      28: 2,
                                     },
+                                    _isPrincipal: true,
                                   },
-                                ],
-                              },
-                            },
-                            name: 'list',
-                            immutable: false,
-                          },
-                        ],
-                      },
-                      name: 'write',
-                      immutable: false,
-                    },
-                    {
-                      value: {
-                        Class: [
-                          { value: { Text: 'allow' }, name: 'type', immutable: false },
-                          {
-                            value: {
-                              Array: {
-                                thawed: [
-                                  {
-                                    Principal: {
-                                      _arr: {
-                                        0: 99,
-                                        1: 45,
-                                        2: 107,
-                                        3: 50,
-                                        4: 96,
-                                        5: 213,
-                                        6: 232,
-                                        7: 12,
-                                        8: 185,
-                                        9: 188,
-                                        10: 209,
-                                        11: 103,
-                                        12: 182,
-                                        13: 254,
-                                        14: 98,
-                                        15: 125,
-                                        16: 107,
-                                        17: 24,
-                                        18: 100,
-                                        19: 125,
-                                        20: 171,
-                                        21: 119,
-                                        22: 245,
-                                        23: 154,
-                                        24: 36,
-                                        25: 123,
-                                        26: 144,
-                                        27: 191,
-                                        28: 2,
-                                      },
-                                      _isPrincipal: true,
-                                    },
-                                  },
-                                ],
-                              },
-                            },
-                            name: 'list',
-                            immutable: false,
-                          },
-                        ],
-                      },
-                      name: 'permissions',
-                      immutable: false,
-                    },
-                    {
-                      value: {
-                        Class: [
-                          {
-                            value: { Text: 'Ape 1' },
-                            name: 'com.bayc.sample.app.name',
-                            immutable: false,
-                          },
-                          {
-                            value: { Nat: 16 },
-                            name: 'com.bayc.sample.app.total_in_collection',
-                            immutable: false,
-                          },
-                          {
-                            value: { Text: 'BAYC' },
-                            name: 'com.bayc.sample.app.creator_name',
-                            immutable: false,
-                          },
-                          {
-                            value: {
-                              Principal: {
-                                _arr: {
-                                  0: 99,
-                                  1: 45,
-                                  2: 107,
-                                  3: 50,
-                                  4: 96,
-                                  5: 213,
-                                  6: 232,
-                                  7: 12,
-                                  8: 185,
-                                  9: 188,
-                                  10: 209,
-                                  11: 103,
-                                  12: 182,
-                                  13: 254,
-                                  14: 98,
-                                  15: 125,
-                                  16: 107,
-                                  17: 24,
-                                  18: 100,
-                                  19: 125,
-                                  20: 171,
-                                  21: 119,
-                                  22: 245,
-                                  23: 154,
-                                  24: 36,
-                                  25: 123,
-                                  26: 144,
-                                  27: 191,
-                                  28: 2,
                                 },
-                                _isPrincipal: true,
-                              },
-                            },
-                            name: 'com.bayc.sample.app.creator_principal',
-                            immutable: false,
+                              ],
                           },
-                        ],
-                      },
-                      name: 'data',
-                      immutable: false,
+                          name: 'list',
+                          immutable: false,
+                        },
+                      ],
                     },
-                  ],
-                },
-              ],
-            },
+                    name: 'write',
+                    immutable: false,
+                  },
+                  {
+                    value: {
+                      Class: [
+                        { value: { Text: 'allow' }, name: 'type', immutable: false },
+                        {
+                          value: {
+                            Array: [
+                                {
+                                  Principal: {
+                                    _arr: {
+                                      0: 99,
+                                      1: 45,
+                                      2: 107,
+                                      3: 50,
+                                      4: 96,
+                                      5: 213,
+                                      6: 232,
+                                      7: 12,
+                                      8: 185,
+                                      9: 188,
+                                      10: 209,
+                                      11: 103,
+                                      12: 182,
+                                      13: 254,
+                                      14: 98,
+                                      15: 125,
+                                      16: 107,
+                                      17: 24,
+                                      18: 100,
+                                      19: 125,
+                                      20: 171,
+                                      21: 119,
+                                      22: 245,
+                                      23: 154,
+                                      24: 36,
+                                      25: 123,
+                                      26: 144,
+                                      27: 191,
+                                      28: 2,
+                                    },
+                                    _isPrincipal: true,
+                                  },
+                                },
+                              ],
+                          },
+                          name: 'list',
+                          immutable: false,
+                        },
+                      ],
+                    },
+                    name: 'permissions',
+                    immutable: false,
+                  },
+                  {
+                    value: {
+                      Class: [
+                        {
+                          value: { Text: 'Ape 1' },
+                          name: 'com.bayc.sample.app.name',
+                          immutable: false,
+                        },
+                        {
+                          value: { Nat: 16 },
+                          name: 'com.bayc.sample.app.total_in_collection',
+                          immutable: false,
+                        },
+                        {
+                          value: { Text: 'BAYC' },
+                          name: 'com.bayc.sample.app.creator_name',
+                          immutable: false,
+                        },
+                        {
+                          value: {
+                            Principal: {
+                              _arr: {
+                                0: 99,
+                                1: 45,
+                                2: 107,
+                                3: 50,
+                                4: 96,
+                                5: 213,
+                                6: 232,
+                                7: 12,
+                                8: 185,
+                                9: 188,
+                                10: 209,
+                                11: 103,
+                                12: 182,
+                                13: 254,
+                                14: 98,
+                                15: 125,
+                                16: 107,
+                                17: 24,
+                                18: 100,
+                                19: 125,
+                                20: 171,
+                                21: 119,
+                                22: 245,
+                                23: 154,
+                                24: 36,
+                                25: 123,
+                                26: 144,
+                                27: 191,
+                                28: 2,
+                              },
+                              _isPrincipal: true,
+                            },
+                          },
+                          name: 'com.bayc.sample.app.creator_principal',
+                          immutable: false,
+                        },
+                      ],
+                    },
+                    name: 'data',
+                    immutable: false,
+                  },
+                ],
+              },
+            ],
           },
           name: '__apps',
           immutable: false,

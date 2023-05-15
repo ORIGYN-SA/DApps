@@ -15,6 +15,7 @@ import { BalanceResponse, EscrowRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const styles = {
   gridContainer: {
@@ -33,10 +34,9 @@ const styles = {
 
 interface OffersSentTabProps {
   collection: any;
-  canisterId: string;
 }
 
-export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) => {
+export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
   const { getNftBatch, getNftBalances, withdrawEscrow } = useApi();
   const { showSuccessMessage, showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { refreshAllBalances } = useTokensContext();
@@ -46,6 +46,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
   const [openModal, setOpenModal] = React.useState(false);
   const [selectedOffer, setSelectedOffer] = React.useState<EscrowRecord>();
   const [isLoading, setIsLoading] = React.useState(false);
+  const context = useContext(PerpetualOSContext);
 
   const onModalClose = () => {
     setOpenModal(false);
@@ -151,7 +152,7 @@ export const OffersSentTab = ({ collection, canisterId }: OffersSentTabProps) =>
                       {offer.hasPreviewAsset ? (
                         <img
                           style={{ height: '42px', width: 'auto', borderRadius: '12px' }}
-                          src={`https://${canisterId}.raw.ic0.app/-/${offer.token_id}/preview`}
+                          src={`${context.canisterUrl}/-/${offer.token_id}/preview`}
                           alt=""
                         />
                       ) : (

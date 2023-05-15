@@ -1,6 +1,7 @@
 import { CssBaseline, Grid } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import ArrowIcon from '../../components/ArrowIcon';
@@ -97,10 +98,9 @@ const History = styled.div`
 `;
 
 const NFTPage = () => {
+  const context = useContext(PerpetualOSContext);
   const { actor } = useContext(AuthContext);
   const [specifications, setSpecifications] = useState(true);
-  const [tokenId, setTokenId] = useState("");
-  const [canisterId, setCanisterId] = useState("");
   const [history, setHistory] = useState(true);
   const [documents, setDocuments] = useState(true);
   const [description, setDescription] = useState(true);
@@ -111,16 +111,15 @@ const NFTPage = () => {
   const [images, setImages] = useState<any>([]);
 
   useEffect(() => {
-    console.log(actor);
     // TODO: fix any data
-    actor?.nft_origyn(tokenId).then((data: any) => {
-
-      if ('err' in data)
+    actor?.nft_origyn(context.tokenId).then((data: any) => {
+      if ('err' in data) {
         throw new Error(Object.keys(data.err)[0]);
+      }
 
       const meta = data?.ok?.metadata.Class;
       const apps = meta?.find((data) => data.name === '__apps');
-      const publicApp = apps.value.Array.thawed.find(
+      const publicApp = apps.value.Array.find(
         (item) => item.Class.find(({ name }) => name === 'app_id').value.Text === 'public.metadata',
       );
       const publicData = publicApp.Class.find((data) => data.name === 'data');
@@ -133,34 +132,22 @@ const NFTPage = () => {
       }, {});
       const attachments = meta
         ?.find((data) => data.name === 'library')
-        .value.Array.thawed.filter((item) =>
+        .value.Array.filter((item) =>
           item.Class.find(({ name }) => name === 'library_id').value.Text.includes('document'),
         );
 
       const mintedMedia = meta
         ?.find((data) => data.name === 'library')
-        .value.Array.thawed.filter((item) =>
+        .value.Array.filter((item) =>
           item.Class.find(({ name }) => name === 'library_id').value.Text.includes('minted'),
         );
-
-      console.log(publicData, d, mintedMedia, attachments, meta);
 
       setMetadata(d);
       setOwner(meta?.find((data) => data.name === 'owner').value.Principal.toString());
       setImages(mintedMedia);
       setDocumentsList(attachments);
-
-      const history = actor.history_nft_origyn(tokenId, [100n], [0n]).then(console.log);
-      console.log(history);
     });
-  }, [actor, tokenId]);
-
-  useEffect(() => {
-    useRoute().then(({ canisterId, tokenId }) => {
-      setCanisterId(canisterId);
-      setTokenId(tokenId);
-    });
-  }, []);
+  }, [actor, context]);
 
   return (
     <ContentContainer imageURL="123">
@@ -506,7 +493,7 @@ const NFTPage = () => {
               model={metadata.Model}
               refNumber={metadata.refNumber}
               serialNumber={metadata['Serial Number']}
-              canister={canisterId}
+              canister={context.canisterId}
             />
           </AccordionSection>
         </Grid>

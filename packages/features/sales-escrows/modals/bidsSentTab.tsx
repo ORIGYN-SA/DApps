@@ -18,6 +18,7 @@ import { AuctionStateStable, TransactionRecord } from '@origyn/mintjs';
 import { LoadingContainer } from '@dapp/features-components';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const styles = {
   gridContainer: {
@@ -36,10 +37,9 @@ const styles = {
 
 interface BidsSentTabProps {
   collection: any;
-  canisterId: string;
 }
 
-export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
+export const BidsSentTab = ({ collection }: BidsSentTabProps) => {
   const debug = useDebug();
   const { principal } = useContext(AuthContext);
   const { getNftBatch, getNftSaleInfo, getNftsHistory } = useApi();
@@ -47,7 +47,8 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
   const [sentActivedBids, setSentActiveBids] = useState<SentActiveBidsProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeAttendedAuctions, setActiveAttendedAuctions] = useState<AuctionStateStable[]>([]);
-
+  const context = useContext(PerpetualOSContext);
+  
   const fetchSentBids = async () => {
     try {
       setIsLoading(true);
@@ -143,7 +144,7 @@ export const BidsSentTab = ({ collection, canisterId }: BidsSentTabProps) => {
                             marginTop: 'auto',
                             marginBottom: 'auto',
                           }}
-                          src={`https://${canisterId}.raw.ic0.app/-/${bid.token_id}/preview`}
+                          src={`${context.canisterUrl}/-/${bid.token_id}/preview`}
                           alt=""
                         />
                       ) : (

@@ -24,7 +24,6 @@ const FormTab = ({ metadata }: any) => {
       setLibrary(pick(metadata, ['library']).library);
       setSystem(pick(metadata, ['__system']).__system);
     }
-    console.log(metadata);
   }, [metadata]);
 
   return (
