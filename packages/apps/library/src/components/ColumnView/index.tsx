@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { getNft, OrigynClient, getNftCollectionMeta } from '@origyn/mintjs';
 import { checkOwner } from '@dapp/utils';
 // Library components
@@ -8,28 +9,10 @@ import { NFTLibrary } from '../NFTLibrary';
 import { LibraryForm } from '../AddLibrary';
 import { Container, Grid, Flex, Modal, theme } from '@origyn/origyn-art-ui';
 
-function replaceSelectedTokenInTheUrl(selectedToken: string) {
-  const URL = window.location.href;
-  if (URL.includes('collection')) {
-    return;
-  } else {
-    useRoute().then(({ tokenId }) => {
-      try {
-        if (URL.includes(tokenId)) {
-          console.log(tokenId);
-          const newUrl = URL.replace(tokenId, selectedToken);
-          window.history.pushState(
-            {
-              path: newUrl,
-            },
-            '',
-            newUrl,
-          );
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    });
+function replaceSelectedTokenInTheUrl(selectedToken: string, tokenId: string) {
+  if (tokenId) {
+    const newUrl = window.location.href.replace(tokenId, selectedToken);
+    window.history.pushState({ path: newUrl }, '', newUrl);
   }
 }
 
@@ -62,7 +45,7 @@ const ListItem = (props: ListType) => {
       <div
         style={
           props.selectedIndex == props.index
-            ? { ...listStyle, fontWeight: 'bold', color: theme.colors.TEXT }
+            ? { ...listStyle, fontWeight: 'bold', color: theme.colors.TEXT, cursor: 'pointer' }
             : listStyle
         }
         onClick={props.onClick}
@@ -74,9 +57,8 @@ const ListItem = (props: ListType) => {
 };
 
 const ColumnView = () => {
+  const context = useContext(PerpetualOSContext);
   const { actor, loggedIn, principal } = useContext(AuthContext);
-
-  const [canisterId, setCanisterId] = useState('');
 
   // Modal add library
   const [open, setOpen] = React.useState(false);
@@ -90,11 +72,10 @@ const ColumnView = () => {
 
   const [collectionNft, setCollectionNft] = useState([]);
   const [owner, setOwner] = React.useState<boolean>(false);
-  const [currentTokenId, setCurrentTokenId] = useState('');
   const [selectedIndex, setSelectedIndex] = React.useState(null);
-  const [selectedNft, setSelectedNft] = React.useState(0);
-  const [selectedMeta, setSelectedMeta] = React.useState(0);
-  const [selectedLibrary, setSelectedLibrary] = React.useState(0);
+  const [selectedNft, setSelectedNft] = React.useState(null);
+  const [selectedMeta, setSelectedMeta] = React.useState(null);
+  const [selectedLibrary, setSelectedLibrary] = React.useState(null);
   const [openCollectionLevel, setOpenCollectionLevel] = React.useState(false);
   const [openLib, setOpenLib] = React.useState(false);
   // Collection level Libraries -- tokenId empty
@@ -130,23 +111,22 @@ const ColumnView = () => {
     index: number,
   ) => {
     setTokenLevelLibraryMetadata('');
-    const { canisterId } = await useRoute();
     setOpenLib(false);
     setOpenLibrarySelectedToken(false);
     setOpenAddLibrary(false);
     handleDetails();
     setSelectedNft(index);
     setSelectedMeta(null);
-    setCurrentTokenId(nft);
-    replaceSelectedTokenInTheUrl(nft);
-    OrigynClient.getInstance().init(true, canisterId, { actor });
+    replaceSelectedTokenInTheUrl(nft, context.tokenId);
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     getNft(nft).then((r) => {
-      console.log('nft_origyn', r);
-      setTokenLibraryData(
-        r.ok.metadata.Class.filter((res) => {
-          return res.name === 'library';
-        })[0].value.Array.thawed,
-      );
+      if ('Class' in r.ok.metadata) {
+        setTokenLibraryData(
+          r.ok.metadata.Class.filter((res) => {
+            return res.name === 'library';
+          })[0].value['Array'],
+        );
+      }
     });
   };
 
@@ -156,7 +136,6 @@ const ColumnView = () => {
   ) => {
     //Set coll. nft to empty
     setCollectionNft([]);
-    setCurrentTokenId('');
     setOpenLib(!openLib);
     setOpenCollectionLevel(false);
     setOpenLibrarySelectedToken(false);
@@ -166,12 +145,12 @@ const ColumnView = () => {
     setSelectedIndex(index);
     // Collection level libraries the tokenId is empty
     if (actor) {
-      OrigynClient.getInstance().init(true, canisterId, { actor });
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
       getNftCollectionMeta().then((r) => {
         setCollectionLevelLibraryData(
           r.ok.metadata[0]['Class'].filter((res) => {
             return res.name === 'library';
-          })[0].value.Array.thawed,
+          })[0].value.Array,
         );
       });
     }
@@ -206,7 +185,6 @@ const ColumnView = () => {
   };
 
   const handleAddLibraryAtCollection = async () => {
-    // setCurrentTokenId;
     setOpenAddLibraryCollectionLevel(!openAddLibraryCollectionLevel);
     setOpenLib(false);
     setOpenLibraryCollectionLevel(false);
@@ -215,8 +193,7 @@ const ColumnView = () => {
   };
 
   const openSpecificNft = async () => {
-    const { tokenId, canisterId } = await useRoute();
-    if (tokenId !== '') {
+    if (context.tokenId) {
       setOpenCollectionLevel(!openCollectionLevel);
       setOpenLib(false);
       setOpenLibraryCollectionLevel(false);
@@ -224,17 +201,18 @@ const ColumnView = () => {
       setOpenAddLibrary(false);
       await nftCollection();
       handleDetails();
-      OrigynClient.getInstance().init(true, canisterId, { actor });
-      setCurrentTokenId(tokenId);
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
       setSelectedIndex(0);
       setSelectedMeta(null);
-      setSelectedNft((await nftCollection()).indexOf(tokenId));
-      getNft(tokenId).then((r) => {
-        setTokenLibraryData(
-          r.ok.metadata.Class.filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array.thawed,
-        );
+      setSelectedNft((await nftCollection()).indexOf(context.tokenId));
+      getNft(context.tokenId).then((r) => {
+        if ('Class' in r.ok.metadata) {
+          setTokenLibraryData(
+            r.ok.metadata.Class.filter((res) => {
+              return res.name === 'library';
+            })[0].value['Array'],
+          );
+        }
       });
     }
   };
@@ -249,39 +227,30 @@ const ColumnView = () => {
   }, [collectionLevelLibraryData]);
 
   const nftCollection = async () => {
-    const { tokenId, canisterId } = await useRoute();
     setCollectionNft([]);
-    OrigynClient.getInstance().init(true, canisterId, { actor });
-    const response = await getNftCollectionMeta([]);
-    console.log('responseCollectionMeta', response);
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
+    const response = await getNftCollectionMeta();
     const collectionNFT = response.ok;
-    const obj_token_ids: any = collectionNFT.token_ids[0];
-    setCollectionNft(obj_token_ids);
+    const tokenIds: any = collectionNFT.token_ids[0];
+    setCollectionNft(tokenIds);
     // In case we have URL with tokenID and we change canister,
     // We need to check if the tokenID is in the new canister
     // If not, we need to clear the URL and show the first tokenID in the new Canister
-    if (!obj_token_ids.includes(tokenId) && tokenId !== '') {
+    if (!tokenIds.includes(context.tokenId) && context.tokenId !== '') {
       let Url = window.location.href;
-      Url = Url.replace(tokenId, obj_token_ids[0]);
+      Url = Url.replace(context.tokenId, tokenIds[0]);
       window.location.href = Url;
-      setCurrentTokenId(obj_token_ids[0]);
     }
-    return obj_token_ids;
+    return tokenIds;
   };
 
   // If tokenID is in the URL, open the library of the specific tokenID
   useEffect(() => {
     openSpecificNft();
-
-    useRoute().then(({ canisterId }) => {
-      setCanisterId(canisterId);
-    });
-    console.log('actor', actor);
   }, []);
 
   const checkAndSetOwner = async () => {
-    const { canisterId } = await useRoute();
-    const checked = await checkOwner(principal, canisterId);
+    const checked = await checkOwner(principal, context.canisterId, !context.isLocal);
     setOwner(checked);
   };
 
@@ -289,11 +258,12 @@ const ColumnView = () => {
     if (loggedIn) {
       checkAndSetOwner();
     }
-  }, [canisterId]);
+  }, [context]);
 
   useEffect(() => {
-    console.log('openLibrarySelectedToken', openLibrarySelectedToken);
-    console.log('openLibraryCollectionLevel', openLibraryCollectionLevel);
+    // TODO: Handle Event
+    // console.log('openLibrarySelectedToken', openLibrarySelectedToken);
+    // console.log('openLibraryCollectionLevel', openLibraryCollectionLevel);
   }, [openLibrarySelectedToken, openLibraryCollectionLevel]);
 
   return (
@@ -316,7 +286,7 @@ const ColumnView = () => {
               />
             </Flex>
           </Grid>
-          {collectionNft.length > 0 ? (
+          {collectionNft?.length > 0 ? (
             <>
               <Grid column={2} style={{ borderRight: '1px solid grey' }}>
                 <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
@@ -332,20 +302,18 @@ const ColumnView = () => {
                 </Flex>
               </Grid>
               <Grid column={3} style={{ borderRight: '1px solid grey' }}>
-                {currentTokenId ? (
-                  <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
-                    {owner && loggedIn ? (
-                      <>
-                        <Flex onClick={() => handleAddLibrary()}>
-                          <Container padding="4px">
-                            <b> + Add a library</b>
-                          </Container>
-                        </Flex>
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                    {tokenLibraryData?.map((library, index) => (
+                <Flex flexFlow="column" align="flex-start" justify="flex-start" gap={16}>
+                  {owner && loggedIn && (
+                    <>
+                      <Flex onClick={() => handleAddLibrary()}>
+                        <Container padding="4px" style={{ cursor: 'pointer' }}>
+                          <b> + Add a library</b>
+                        </Container>
+                      </Flex>
+                    </>
+                  )}
+                  {tokenLibraryData.length > 0 ? (
+                    tokenLibraryData.map((library, index) => (
                       <ListItem
                         key={index}
                         itemName={library?.Class[1]?.value?.Text}
@@ -353,19 +321,19 @@ const ColumnView = () => {
                         index={index}
                         selectedIndex={selectedMeta}
                       />
-                    ))}
-                  </Flex>
-                ) : (
-                  <>
-                    <Flex>Select Token</Flex>
-                  </>
-                )}
+                    ))
+                  ) : (
+                    <>
+                      <Flex>Select a token</Flex>
+                    </>
+                  )}
+                </Flex>
               </Grid>
               <Grid column={4} style={{ borderRight: '1px solid grey', gridColumnEnd: 'span 3' }}>
                 {tokenLevelLibraryMetadata ? (
                   <NFTLibrary
                     tokenLevelLibraryMetadata={tokenLevelLibraryMetadata}
-                    currentTokenId={currentTokenId}
+                    currentTokenId={context.tokenId}
                     loggedIn={loggedIn}
                     owner={owner}
                     updateTokenLibraryData={setTokenLibraryData}
@@ -386,7 +354,7 @@ const ColumnView = () => {
                   {owner && loggedIn && collectionLevelLibraryData.length > 0 ? (
                     <>
                       <Flex onClick={() => handleAddLibraryAtCollection()}>
-                        <Container padding="4px">
+                        <Container padding="4px" style={{ cursor: 'pointer' }}>
                           <b>+ Add a library at collection level</b>
                         </Container>
                       </Flex>
@@ -434,7 +402,7 @@ const ColumnView = () => {
           <Container padding="16px">
             <LibraryForm
               updateDataToken={setTokenLibraryData}
-              currentTokenId={currentTokenId}
+              currentTokenId={context.tokenId}
               setOpen={setOpen}
             />
           </Container>
@@ -445,7 +413,7 @@ const ColumnView = () => {
           <Container padding="16px">
             <LibraryForm
               updateDataCollection={setCollectionLevelLibraryData}
-              currentTokenId={currentTokenId}
+              currentTokenId={context.tokenId}
               setOpenCollection={setOpenCollection}
             />
           </Container>

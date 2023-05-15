@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { DropzoneArea } from 'mui-file-dropzone';
 import { useSnackbar } from 'notistack';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
 import { Buffer } from 'buffer';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 // mint.js
 import {
@@ -24,8 +25,7 @@ import {
   Select,
   CheckboxInput,
 } from '@origyn/origyn-art-ui';
-import { LinearProgress } from '@mui/material';
-
+import { LoadingContainer } from '@dapp/features-components';
 type Props = {
   tokenId: string;
   updateLibraryData: any;
@@ -34,8 +34,7 @@ type Props = {
 };
 
 export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Props) => {
-  console.log(metadata);
-
+  const context = useContext(PerpetualOSContext);
   const { actor } = useContext(AuthContext);
   // Snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -98,15 +97,9 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
     fileInfo: StageFile,
     retryCount: number = 1,
   ): Promise<boolean> => {
-    console.log('waiting for updateLibraryFileContent call to complete...');
-    const start = Date.now();
     const result = await updateLibraryFileContent(tokenId, libraryId, fileInfo);
-    const finish = Date.now();
-
-    console.log(`updateLibraryFileContent call completed in ${(finish - start) / 1000} seconds`);
 
     if (result.err) {
-      console.log(result.err);
       if (retryCount <= 5) {
         showSnackbar(`Upload failed. Retry # ${retryCount}.`, false);
         retryCount++;
@@ -125,15 +118,9 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
     data: Record<string, string | number | boolean>,
     retryCount: number = 1,
   ): Promise<boolean> => {
-    console.log('waiting for updateLibraryMetadata call to complete...');
-    const start = Date.now();
     const result = await updateLibraryMetadata(tokenId, libraryId, data);
-    const finish = Date.now();
-
-    console.log(`updateLibraryMetadata call completed in ${(finish - start) / 1000} seconds`);
-
-    if (result.err) {
-      console.log(result.err);
+    if ('err' in result) {
+      console.error(result.err);
       if (retryCount <= 5) {
         showSnackbar(`Update failed. Retry # ${retryCount}.`, false);
         retryCount++;
@@ -147,7 +134,6 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
   };
 
   const handleSubmit = async () => {
-    const { canisterId } = await useRoute();
     let fileInfo: StageFile;
     if (selectedFile) {
       const rawFile = await readFileAsync(selectedFile);
@@ -164,7 +150,7 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
     setInProgress(true);
 
     try {
-      await OrigynClient.getInstance().init(true, canisterId, { actor });
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
       // TODO: Implement a more transactional approach to ensure that file uploads
       // and metadata stay in sync if either operation fails.
@@ -200,21 +186,20 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
           if (collMeta.ok) {
             const collLibrary = collMeta.ok.metadata[0]['Class'].filter(
               (res) => res.name === 'library',
-            )[0].value.Array.thawed;
+            )[0].value.Array;
             updateLibraryData(collLibrary);
           }
         } else {
           // Update the library data for the Token
           const nftMeta = await getNft(tokenId);
-          if (nftMeta.ok) {
+          if (nftMeta.ok && 'Class' in nftMeta.ok.metadata) {
             const nftLibrary = nftMeta.ok.metadata.Class.filter((res) => res.name === 'library')[0]
-              .value.Array.thawed;
+              .value['Array'];
             updateLibraryData(nftLibrary);
           }
         }
       }
     } catch (e) {
-      console.log(e);
       showSnackbar('Something went wrong', false);
     } finally {
       setInProgress(false);
@@ -253,8 +238,7 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
           {inProgress ? (
             <>
               <h4>Update in Progress</h4>
-              <br />
-              <LinearProgress color="secondary" />
+              <LoadingContainer margin="24px" />
             </>
           ) : (
             <>

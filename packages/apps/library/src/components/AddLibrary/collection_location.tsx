@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { useSnackbar } from 'notistack';
-// mint.js
 import {
   OrigynClient,
   stageCollectionLibraryAsset,
@@ -12,6 +12,7 @@ import type { StageFile } from '@origyn/mintjs/lib/methods/nft/types';
 import { Select, TextInput, Button, HR, Flex, Container } from '@origyn/origyn-art-ui';
 
 export const CollectionLocation = (props: any) => {
+  const context = useContext(PerpetualOSContext);
   const { actor } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -24,13 +25,11 @@ export const CollectionLocation = (props: any) => {
   };
 
   const getLibraries = async () => {
-    const { canisterId } = await useRoute();
-    await OrigynClient.getInstance().init(true, canisterId, { actor });
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     const response = await getNftCollectionMeta();
     const library = await response.ok.metadata[0]['Class'].filter((res) => {
       return res.name === 'library';
-    })[0].value.Array.thawed;
-    console.log('responseCollection', library);
+    })[0].value.Array;
     let libraries = [];
     let i: any;
     for (i in library) {
@@ -45,8 +44,7 @@ export const CollectionLocation = (props: any) => {
   };
 
   const StageCollectionLibrary = async () => {
-    const { canisterId } = await useRoute();
-    await OrigynClient.getInstance().init(true, canisterId, { actor });
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     props.setInProgress(true);
     try {
       const CollectionFile: StageFile = {
@@ -56,7 +54,6 @@ export const CollectionLocation = (props: any) => {
         libraryId: selectedLibrary,
       };
       const response = await stageCollectionLibraryAsset(props.tokenId, CollectionFile);
-      console.log('response', response);
       if (response.ok) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library staged!', {
@@ -76,27 +73,30 @@ export const CollectionLocation = (props: any) => {
         });
       }
     } catch (e) {
-      console.log('error', e);
+      console.error('error', e);
     }
+
     props.setInProgress(false);
     props.isOpen(false);
 
     if (props.tokenId == '') {
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
-        props.updateData(
-          r.ok.metadata[0]['Class'].filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array.thawed,
-        );
+        if ('Class' in r.ok.metadata[0]) {
+          props.updateData(
+            r.ok.metadata[0].Class.filter((res) => {
+              return res.name === 'library';
+            })[0].value['Array'],
+          );
+        }
       });
     } else {
       //Update the library data for the Token
       getNft(props.tokenId).then((r) => {
         props.updateData(
-          r.ok.metadata.Class.filter((res) => {
+          r.ok.metadata['Class'].filter((res) => {
             return res.name === 'library';
-          })[0].value.Array.thawed,
+          })[0].value.Array,
         );
       });
     }

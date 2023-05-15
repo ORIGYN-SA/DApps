@@ -1,0 +1,6 @@
+{
+  "name": "@dapp/features-context-provider",
+  "version": "0.1.0",
+  "description": "PerpetualOS context provider for all dApps.",
+  "main": "src/index.tsx"
+}

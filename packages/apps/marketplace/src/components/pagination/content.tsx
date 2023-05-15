@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Card, Container, Flex, Grid, Image } from '@origyn/origyn-art-ui';
 import { useMarketplace } from '../../components/context';
 import { OdcDataWithSale, toLargerUnit } from '@dapp/utils';
 import { Link } from 'react-router-dom';
 import { PlaceholderIcon } from '@dapp/common-assets';
 import { TokenIcon } from '@dapp/features-components';
-import { useRoute } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 interface NFTCardsProps {
   nftData: Array<any>;
@@ -13,7 +13,7 @@ interface NFTCardsProps {
 }
 
 const NFTCards = ({ nftData, odcs }: NFTCardsProps) => {
-  const [canisterId, setCanisterId] = useState('');
+  const context = useContext(PerpetualOSContext);
   const { state } = useMarketplace();
   const { collectionData } = state;
 
@@ -23,14 +23,6 @@ const NFTCards = ({ nftData, odcs }: NFTCardsProps) => {
       : toLargerUnit(odc.buyNow, odc.token.decimals);
     return price.toFixed();
   };
-
-  useEffect(() => {
-    const run = async () => {
-      const route = await useRoute();
-      setCanisterId(route.canisterId);
-    };
-    run();
-  }, []);
 
   return (
     <div>
@@ -48,7 +40,9 @@ const NFTCards = ({ nftData, odcs }: NFTCardsProps) => {
                     {odc.hasPreviewAsset ? (
                       <Image
                         style={{ width: '100%' }}
-                        src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
+                        src={`${
+                          context.isLocalToMainnet ? context.directCanisterUrl : context.canisterUrl
+                        }/-/${odc?.id}/preview`}
                         alt=""
                       />
                     ) : (

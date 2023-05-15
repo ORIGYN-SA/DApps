@@ -1,6 +1,17 @@
 # ORIGYN dApps Monorepo
 
+### Overview
+
 This repository is a monorepo containing standard ORIGYN dApps for the perpetualOS
+
+### Compatibility
+
+Each release of Origyn dApps is compatible with a specific version of the Origyn NFT standard. The table below shows the compatibility between the two.
+
+| Origyn dApps Version | Origyn NFT Version |
+| -------------------- | ------------------ |
+| 0.2.0                | 0.1.4              |
+| 0.1.0                | 0.1.3              |
 
 ### Modules
 
@@ -67,7 +78,7 @@ The local development settings will be visible on the left menu if the web origi
 In order to make your dApp connect to local canisters, you will need to:
 
 - Click `Local Development Settings` on the side bar
-- Check `Use Local Network (http://localhost:8000)`
+- Check `Use Local Network (http://localhost:8080)`
 - (optional) Fill the canister id of the local ledger replica for each token you have in your dApp. You will need this to get balance and send transactions.
 
 Example:
@@ -78,6 +89,8 @@ http://localhost:8080/-/sp3hj-caaaa-aaaaa-aaajq-cai/-/bm-1/-/vault
 
 This will make [Connect2IC](https://github.com/Connect2IC/connect2ic) create an actor for the canister `sp3hj-caaaa-aaaaa-aaajq-cai`.
 
+for 0.1.4 integration, use canister, dytv5-jaaaa-aaaal-qbgtq-cai
+
 ## ⚠️ Version Update
 
 ```
@@ -85,7 +98,7 @@ This will make [Connect2IC](https://github.com/Connect2IC/connect2ic) create an 
 <Navbar
     navItems={menuItems}
     onChangeTheme={() => setDarkTheme(!darkTheme)}
-    dAppsVersion="0.1.0"
+    dAppsVersion="0.2.0"
 />
 ```
 

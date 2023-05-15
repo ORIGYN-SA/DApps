@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useDebug } from '@dapp/features-debug-provider';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
 import { useApi } from '@dapp/common-api';
 import { useVault } from '../../components/context';
 import { useDialog } from '@connect2ic/react';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
 import { useTokensContext, Token } from '@dapp/features-tokens-provider';
 import {
@@ -14,7 +15,6 @@ import {
   parseMetadata,
   parseOdcs,
   copyToClipboard,
-  getRootUrl,
   timeInNanos,
 } from '@dapp/utils';
 import { OrigynClient } from '@origyn/mintjs';
@@ -135,11 +135,11 @@ const StyledNFTImg = styled.img`
 
 const VaultPage = () => {
   const debug = useDebug();
+  const context = useContext(PerpetualOSContext);
   const { getNftBatch, getNftCollectionMeta, getNftBalances } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
   const { loggedIn, principal, principalId, actor, activeWalletProvider, handleLogOut } =
     useContext(AuthContext);
-  const [canisterId, setCanisterId] = React.useState('');
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
   const [inputText, setInputText] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
@@ -171,10 +171,7 @@ const VaultPage = () => {
     }
 
     try {
-      const { canisterId } = await useRoute();
-      setCanisterId(canisterId);
-
-      OrigynClient.getInstance().init(true, canisterId, { actor });
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
       // get the canister's collection metadata
       const meta = await getNftCollectionMeta();
       const metadata = meta.metadata[0];
@@ -229,15 +226,10 @@ const VaultPage = () => {
   };
 
   const endSaleForNFTS = async () => {
-    const { canisterId } = await useRoute();
-    setCanisterId(canisterId);
-
-    OrigynClient.getInstance().init(true, canisterId, { actor });
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
     const vaultBalanceInfo = await getNftBalances(principal);
-
     const endedNFTS = [];
-
     const NFTonSale = [];
 
     if (vaultBalanceInfo?.escrow) {
@@ -262,24 +254,16 @@ const VaultPage = () => {
           endedNFTS.push(nft);
         }
       });
-
-      endedNFTS.forEach(async (nft) => {
-        if (endedNFTS.length > 0) {
+      if (endedNFTS.length > 0) {
+        endedNFTS.forEach(async (nft) => {
           await actor.sale_nft_origyn({ end_sale: nft });
-        }
-      });
+        });
+      }
     }
   };
 
   useEffect(() => {
     document.title = 'Origyn Vault';
-
-    const run = async () => {
-      const route = await useRoute();
-      setCanisterId(route.canisterId);
-    };
-
-    run();
     endSaleForNFTS();
   }, []);
 
@@ -362,7 +346,7 @@ const VaultPage = () => {
         <Flex fullWidth padding="0" flexFlow="column">
           <SecondaryNav
             title="Vault"
-            titleLink={getRootUrl(new URL(window.location.href)) + '/collection/-/vault'}
+            titleLink={`${context.canisterUrl}/collection/-/vault`}
             tabs={[{ title: 'Balance', id: 'Balance' }]}
             content={[
               <Flex fullWidth flexFlow="column" key="secondaryNavContent">
@@ -463,7 +447,11 @@ const VaultPage = () => {
                         <Flex align="flex-start" gap={24}>
                           {collectionData.hasPreviewAsset ? (
                             <StyledCollectionImg
-                              src={`https://prptl.io/-/${canisterId}/collection/preview`}
+                              src={`${
+                                context.isLocalToMainnet
+                                  ? context.directCanisterUrl
+                                  : context.canisterUrl
+                              }/collection/preview`}
                               alt=""
                             />
                           ) : (
@@ -513,9 +501,7 @@ const VaultPage = () => {
                                   as="a"
                                   iconButton
                                   target="_blank"
-                                  href={`${getRootUrl(
-                                    new URL(window.location.href),
-                                  )}/collection/-/ledger`}
+                                  href={`${context.canisterUrl}/collection/-/ledger`}
                                 >
                                   <p style={{ color: theme.colors.TEXT }}>Ledger</p>
                                 </SocialMediaButton>
@@ -581,7 +567,11 @@ const VaultPage = () => {
                                     >
                                       {odc.hasPreviewAsset ? (
                                         <StyledNFTImg
-                                          src={`https://${canisterId}.raw.ic0.app/-/${odc?.id}/preview`}
+                                          src={`${
+                                            context.isLocalToMainnet
+                                              ? context.directCanisterUrl
+                                              : context.canisterUrl
+                                          }/-/${odc?.id}/preview`}
                                           alt=""
                                         />
                                       ) : (

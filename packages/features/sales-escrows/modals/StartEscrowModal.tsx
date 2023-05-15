@@ -229,7 +229,12 @@ export function StartEscrowModal({
       // Add a tx fee to the total escrow amount (second tx fee).
       // This is needed to move the money from the deposit account to the escrow account.
       const amount = toSmallerUnit(toBigNumber(enteredAmount), token.decimals);
-      const totalAmount = amount.plus(toBigNumber(token.fee)).decimalPlaces(token.decimals);
+
+      const totalAmount = amount
+      .plus(toBigNumber(token.fee))
+      .plus(toBigNumber(token.fee))
+      .decimalPlaces(token.decimals);
+
       debug.log('escrow amount with fee', totalAmount.toString());
 
       // Get deposit account number

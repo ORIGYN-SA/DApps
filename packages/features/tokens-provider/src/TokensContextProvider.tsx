@@ -6,6 +6,7 @@ import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
 import { timeConverter } from '@dapp/utils';
 
+// default to mainnet token canisters
 const defaultTokens = {
   ICP: {
     symbol: 'ICP',
@@ -14,7 +15,7 @@ const defaultTokens = {
     standard: IdlStandard.ICP,
     decimals: 8,
     enabled: true,
-    balance: -1,
+    balance: 0,
   },
   OGY: {
     symbol: 'OGY',
@@ -23,7 +24,7 @@ const defaultTokens = {
     standard: IdlStandard.ICP,
     decimals: 8,
     enabled: true,
-    balance: -1,
+    balance: 0,
   },
 };
 
@@ -56,6 +57,7 @@ export type TokensContext = {
   activeTokens: {
     [key: string]: Token;
   };
+  isFetchingBalance: boolean;
   addToken?: (
     isLocal: boolean,
     canisterId: string,
@@ -103,6 +105,7 @@ export const TokensContext = createContext<TokensContext>({
   walletTokens,
   activeTokens,
   time: timeConverter(BigInt(new Date().getTime() * 1000000)),
+  isFetchingBalance: false,
 });
 
 export const useTokensContext = () => {
@@ -113,6 +116,7 @@ export const useTokensContext = () => {
 export const TokensContextProvider: React.FC = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
   const [time, setTime] = useState<any>();
+  const [isFetchingBalance, setIsFetchingBalance] = useState(false);
 
   const addToken = async (
     isLocal: boolean,
@@ -122,7 +126,6 @@ export const TokensContextProvider: React.FC = ({ children }) => {
   ) => {
     const metadata: any = await getMetadata(isLocal, canisterId, standard);
     const { symbol, fee, decimals, icon } = metadata || {};
-
     if (tokens[symbol]) return AddTokenError.ALREADY_EXIST;
 
     const token: Token = {
@@ -155,27 +158,34 @@ export const TokensContextProvider: React.FC = ({ children }) => {
 
   const getBalance = async (isLocal: boolean, principal: Principal, token: Token) => {
     try {
+      setIsFetchingBalance(true);
       const balance = await getBalanceFromCanister(isLocal, principal, token);
       return balance.value / 10 ** balance.decimals;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return 0;
+    } finally {
+      setIsFetchingBalance(false);
     }
   };
 
   const refreshBalance = async (isLocal: boolean, principal: Principal, symbol: string) => {
-    const balance = await getBalance(isLocal, principal, tokens[symbol]);
-    setTokens((pTokens) => {
-      pTokens[symbol].balance = balance;
-      return { ...pTokens };
-    });
+    try {
+      const balance = await getBalance(isLocal, principal, tokens[symbol]);
+      setTokens((pTokens) => {
+        pTokens[symbol].balance = balance;
+        return { ...pTokens };
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const refreshAllBalances = async (isLocal: boolean, principal: Principal) => {
     // Refresh icon
     const _tokens = tokens;
     Object.keys(_tokens).map((symbol) => {
-      _tokens[symbol].balance = -2;
+      _tokens[symbol].balance = 0;
     });
     setTokens(() => ({ ..._tokens }));
 
@@ -217,6 +227,7 @@ export const TokensContextProvider: React.FC = ({ children }) => {
         activeTokens: Object.keys(tokens)
           .filter((t) => tokens[t].enabled)
           .reduce((ats, key) => ({ ...ats, [key]: tokens[key] }), {}),
+        isFetchingBalance,
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { useSnackbar } from 'notistack';
 import type { StageFile } from '@origyn/mintjs/lib/methods/nft/types';
 // mint.js
@@ -7,10 +8,9 @@ import { OrigynClient, stageWebLibraryAsset, getNft, getNftCollectionMeta } from
 import { TextInput, Button, HR, Flex, CheckboxInput, Container } from '@origyn/origyn-art-ui';
 
 export const WebLocation = (props: any) => {
+  const context = useContext(PerpetualOSContext);
   const { actor } = useContext(AuthContext);
-
   const { enqueueSnackbar } = useSnackbar();
-
   const [typedUrl, setTypedUrl] = useState('');
   const [typedTitle, setTypedTitle] = useState('');
   const [typedId, setTypedId] = useState('');
@@ -31,9 +31,7 @@ export const WebLocation = (props: any) => {
   };
 
   const StageWebLibrary = async () => {
-    const { canisterId } = await useRoute();
-
-    await OrigynClient.getInstance().init(true, canisterId, { actor });
+    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     props.setInProgress(true);
     try {
       const WebFile: StageFile = {
@@ -64,7 +62,7 @@ export const WebLocation = (props: any) => {
         });
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
     props.setInProgress(false);
     props.isOpen(false);
@@ -75,17 +73,19 @@ export const WebLocation = (props: any) => {
         props.updateData(
           r.ok.metadata[0]['Class'].filter((res) => {
             return res.name === 'library';
-          })[0].value.Array.thawed,
+          })[0].value.Array || [],
         );
       });
     } else {
       //Update the library data for the Token
       getNft(props.tokenId).then((r) => {
-        props.updateData(
-          r.ok.metadata.Class.filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array.thawed,
-        );
+        if ('Class' in r.ok.metadata) {
+          props.updateData(
+            r.ok.metadata.Class.filter((res) => {
+              return res.name === 'library';
+            })[0].value['Array'],
+          );
+        }
       });
     }
   };

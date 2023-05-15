@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useRoute } from '@dapp/features-authentication';
+import React from 'react';
 import { Container, Modal, HR, TabContent } from '@origyn/origyn-art-ui';
 import { OffersReceivedTab } from './offersReceivedTab';
 import { BidsReceivedTab } from './bidsReceivedTab';
@@ -7,13 +6,6 @@ import { OffersSentTab } from './offersSentTab';
 import { BidsSentTab } from './bidsSentTab';
 
 const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
-  const [canisterId, setCanisterId] = React.useState('');
-
-  useEffect(() => {
-    useRoute().then(({ canisterId }) => {
-      setCanisterId(canisterId);
-    });
-  }, []);
 
   return (
     <>
@@ -43,17 +35,21 @@ const ManageEscrowsModal = ({ open, handleClose, collection }: any) => {
             fullWidth={true}
             justify="flex-start"
             content={[
-              <OffersSentTab key="offers-sent" collection={collection} canisterId={canisterId} />,
+              <OffersSentTab
+                key="offers-sent"
+                collection={collection}
+              />,
               <OffersReceivedTab
                 key="offers-received"
                 collection={collection}
-                canisterId={canisterId}
               />,
-              <BidsSentTab key="bids-sent" collection={collection} canisterId={canisterId} />,
+              <BidsSentTab
+                key="bids-sent"
+                collection={collection}
+              />,
               <BidsReceivedTab
                 key="bids-received"
                 collection={collection}
-                canisterId={canisterId}
               />,
             ]}
           />

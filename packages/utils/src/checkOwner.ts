@@ -9,8 +9,8 @@
 import { Principal } from '@dfinity/principal';
 import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 
-export const checkOwner = async (principal: Principal, currCanisterId: string) => {
-  OrigynClient.getInstance().init(true, currCanisterId);
+export const checkOwner = async (principal: Principal, currCanisterId: string, isProd: boolean) => {
+  await OrigynClient.getInstance().init(isProd, currCanisterId);
 
   const userPrincipal = principal.toText();
   const metadataCollectionLevelResponse = await getNftCollectionMeta();
@@ -28,18 +28,18 @@ export const checkOwner = async (principal: Principal, currCanisterId: string) =
   } else {
     collectionOwner = collectionData.Text;
   }
-  console.log('🚀 - COLLECTION OWNER', collectionOwner);
+  // console.log('🚀 - COLLECTION OWNER', collectionOwner);
 
   // Write Permission List
   const arrayAllowed = metadataCollectionLevel.filter((res) => {
     return res.name === '__apps';
-  })[0].value.Array.thawed[0].Class[3].value.Class[1].value.Array.thawed;
+  })[0].value.Array[0].Class[3].value.Class[1].value.Array;
 
   const isAllowed = () => {
     let i: any;
     for (i in arrayAllowed) {
       let AllowedPrincipals = arrayAllowed[i].Principal.toText();
-      console.log(' 🔏 - PERMISSION LIST - WRITE', AllowedPrincipals);
+      // console.log(' 🔏 - PERMISSION LIST - WRITE', AllowedPrincipals);
       if (AllowedPrincipals === userPrincipal) {
         return true;
       }
@@ -47,12 +47,11 @@ export const checkOwner = async (principal: Principal, currCanisterId: string) =
   };
 
   const managers = metadataCollectionLevelResponse.ok?.managers[0] || [];
-  console.log('Managers list: ', managers);
   const isManager = () => {
     let i: any;
     for (i in managers) {
       let managersPrincipals = managers[i];
-      console.log(' 🔏 - MANAGER' + ' #' + i + ' ' + managersPrincipals.toString());
+      // console.log(' 🔏 - MANAGER' + ' #' + i + ' ' + managersPrincipals.toString());
       if (managersPrincipals.toString() === userPrincipal) {
         return true;
       }
