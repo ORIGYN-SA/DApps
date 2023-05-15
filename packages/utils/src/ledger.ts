@@ -7,7 +7,7 @@ export const OGY_LEDGER_CANISTER_ID = process.env.LEDGER_CANISTER_ID || '';
 export const getLedgerActor = (identity) => {
   const agent = new HttpAgent({
     identity,
-    host: 'https://boundary.ic0.app/',
+    host: 'https://icp-api.io/',
   });
   return Actor.createActor(origynLedgerIdl, {
     agent,

@@ -1,7 +1,6 @@
 import type { Principal } from '@dfinity/principal';
 import { ReactNode } from 'react';
-
-export interface CandyType {}
+export interface CandyType { }
 
 export interface CandyProperty {
   value: CandyType;
@@ -17,9 +16,9 @@ export interface PropertyWithId extends CandyProperty {
   id: string;
 }
 
-export interface CandyIntegers extends CandyType {}
+export interface CandyIntegers extends CandyType { }
 
-export interface CandyNaturals extends CandyType {}
+export interface CandyNaturals extends CandyType { }
 
 export interface CandyEmpty extends CandyType {
   Empty: null;
@@ -54,8 +53,8 @@ export interface CandyNat64 extends CandyNaturals {
   Nat64: bigint;
 }
 export interface CandyNats extends CandyType {
-  Nats: { thawed: Array<bigint> } | { frozen: Array<bigint> };
-}
+  Nats: Array<bigint>
+};
 export interface CandyInt extends CandyIntegers {
   Int: bigint;
 }
@@ -72,7 +71,7 @@ export interface CandyInt64 extends CandyIntegers {
   Int64: bigint;
 }
 export interface CandyFloats extends CandyType {
-  Floats: { thawed: Array<number> } | { frozen: Array<number> };
+  Floats: Array<number>
 }
 export interface CandyFloat extends CandyType {
   Float: number;
@@ -81,7 +80,7 @@ export interface CandyBlob extends CandyType {
   Blob: Array<number>;
 }
 export interface CandyBytes extends CandyType {
-  Bytes: { thawed: Array<number> } | { frozen: Array<number> };
+  Bytes: Uint8Array | number[]
 }
 export interface CandyOption extends CandyType {
   Option: [] | [CandyType];
@@ -90,7 +89,7 @@ export interface CandyPrincipal extends CandyType {
   Principal: Principal;
 }
 export interface CandyArray extends CandyType {
-  Array: { thawed: Array<CandyType> } | { frozen: Array<CandyType> };
+  Array: Array<CandyType>;
 }
 
 export type EditorMode = 'create' | 'edit' | null;
@@ -108,23 +107,6 @@ export interface BytesFormInput {
   addPropertyToCandyClass?: (property: PropertyWithId) => void;
 }
 
-export type ArrayType = 'thawed' | 'frozen';
-
-export interface CopyToClipBoard {
-  stringToCopy: string;
-  buttonText: string;
-}
-
-export interface MenuListElements {
-  content: ListItem[];
-  children: ReactNode;
-}
-
-export interface ListItem {
-  listItemText: string;
-  listItemFunction: () => void;
-  listItemIcon?: JSX.Element;
-}
 export interface CandyDataEditorProps {
   existingCandyClass?: CandyClass;
   readOnly?: boolean;

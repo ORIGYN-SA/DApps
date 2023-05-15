@@ -1,6 +1,6 @@
 import { padNum } from './number';
 
-export const timeInNanos = (): BigInt => {
+export const timeInNanos = (): bigint => {
   return BigInt(new Date().getTime() * 1e6);
 };
 

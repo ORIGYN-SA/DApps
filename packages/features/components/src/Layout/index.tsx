@@ -1,11 +1,12 @@
+import React, { useContext, useEffect, useState } from 'react';
 import { Flex, GlobalStyle, Navbar } from '@origyn/origyn-art-ui';
 import { Icons, theme, themeLight } from '@origyn/origyn-art-ui';
-import React, { useContext, useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTokensContext } from '@dapp/features-tokens-provider';
 import { ThemeProvider } from 'styled-components';
 import './connect2ic.css';
-import { AuthContext, useRoute } from '@dapp/features-authentication';
+import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 
 // TODO: get APPS from NFT data
@@ -43,6 +44,8 @@ const initialMenuItems: MenuItem[] = [
 ];
 
 export const Layout = ({ children }: LayoutProps) => {
+  const context = useContext(PerpetualOSContext);
+
   const { refreshAllBalances } = useTokensContext();
   const { principal, loggedIn, actor } = useContext(AuthContext);
   const [darkTheme, setDarkTheme] = useState(null);
@@ -55,20 +58,21 @@ export const Layout = ({ children }: LayoutProps) => {
   }, [loggedIn]);
 
   useEffect(() => {
-    useRoute().then(({ canisterId }) => {
-      OrigynClient.getInstance().init(true, canisterId, { actor });
-      getNftCollectionMeta([]).then((r: any) => {
+    const run = async () => {
+      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
+      getNftCollectionMeta().then((r: any) => {
         if (!('err' in r)) {
           const data = r.ok.metadata[0].Class.find(
             ({ name }) => name === 'library',
-          ).value.Array.thawed.reduce(
+          ).value.Array.reduce(
             (arr, val) => [...arr, val.Class.find(({ name }) => name === 'library_id').value.Text],
             [],
           );
           setMenuItems(initialMenuItems.filter((item) => data.includes(item.href)));
         }
       });
-    });
+    };
+    run();
   }, []);
 
   useEffect(() => {
@@ -92,7 +96,7 @@ export const Layout = ({ children }: LayoutProps) => {
           <Navbar
             navItems={menuItems}
             onChangeTheme={() => handleThemeChange()}
-            dAppsVersion="0.1.0"
+            dAppsVersion="0.2.0"
             darkMode={darkTheme}
           />
           <Flex fullWidth>{children}</Flex>

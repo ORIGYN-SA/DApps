@@ -1,84 +1,57 @@
 // This function checks if the canister (passed as argument) is valid.
-// If it is not, it returns false.
+// If it is not, it returns an empty string.
 // ----------------------------------------------------------------------------
 // Arguments: canister (string)
-// Returns: boolean || string
+// Returns: string
 // Author: Alessandro
 // Date: 2022-08-28
 // ----------------------------------------------------------------------------
 
 import { Principal } from '@dfinity/principal';
-import { Actor, HttpAgent } from '@dfinity/agent';
-import { phonebookIdl } from '@dapp/common-candid';
-// mintjs
+import { lookupCanisterId, PATTERNS } from '@origyn/perpetualos-context';
 import { OrigynClient, getNftCollectionMeta } from '@origyn/mintjs';
 
-const ISPROD = true;
+/**
+ * Validates a canister ID or collection ID
+ * @param id A canister ID or collection ID (name for canister ID in phone book)
+ * @returns A valid canister ID or an empty string
+ */
+export const validateCanisterOrCollectionId = async (
+  id: string,
+  isProd: boolean,
+): Promise<string> => {
+  let lowerId = id.trim().toLowerCase();
+  let canisterId: string = '';
 
-export const checkCanister = async (newCanister) => {
-  let canisterId: string | boolean;
-  try {
-    const subdomain = window.location.hostname.split('.')[0];
-    Principal.fromText(subdomain);
-    return subdomain;
-  } catch (e) {
+  // Check if the canister ID is in the correct format
+  const isCanisterId = PATTERNS.CanisterId.test(lowerId);
+  if (isCanisterId) {
+    canisterId = lowerId;
+    // Ensure the canister ID is valid
     try {
-      Principal.fromText(newCanister);
-      canisterId = newCanister;
-      return canisterId;
+      Principal.fromText(canisterId);
     } catch (e) {
-      const agent = new HttpAgent({
-        host: 'https://boundary.ic0.app/',
-      });
-      const phonebook_actor = Actor.createActor(phonebookIdl, {
-        agent: agent,
-        canisterId: 'ngrpb-5qaaa-aaaaj-adz7a-cai',
-      });
-      // First check:
-      // Check if the Canister is registered in the phone_book.
-      // @ts-ignore
-      canisterId = (await phonebook_actor.lookup(newCanister)).toString();
-      if (canisterId) {
-        // Second check:
-        // Check if the registered Canister is an NFT canister
-        OrigynClient.getInstance().init(ISPROD, canisterId);
-        try {
-          const hasNFT = await getNftCollectionMeta();
-          if (hasNFT.ok) {
-            return canisterId;
-          } else {
-            //console.log('Canister in the phone_book - Not an NFT canister');
-            canisterId = false;
-            return canisterId;
-          }
-        } catch (e) {
-          canisterId = false;
-          return canisterId;
-        }
-      } else {
-        // Third-Fourth check:
-        // Check if the unregistered Canister has a valid format and is an NFT canister
-        try {
-          Principal.fromText(newCanister);
-          canisterId = newCanister;
-          OrigynClient.getInstance().init(ISPROD, canisterId.toString());
-          const hasNFT = await getNftCollectionMeta();
-          if (hasNFT.ok) {
-            canisterId = newCanister;
-            return canisterId;
-          } else {
-            // If the canister is not an NFT canister, return false
-            //console.log('Not in the phone_book - Not an NFT canister');
-            canisterId = false;
-            return canisterId;
-          }
-        } catch (e) {
-          // If the canister is not in the phone_book and not in the correct format, return false
-          //console.log('Not a valid canister');
-          canisterId = false;
-          return canisterId;
-        }
-      }
+      return '';
     }
+  } else {
+    // could be a collection id (canister name)
+    // lookup canister ID in phone book
+    canisterId = await lookupCanisterId(id);
+    if (!canisterId) {
+      return '';
+    }
+  }
+
+  // check if the canister is an Origyn NFT canister
+  try {
+    await OrigynClient.getInstance().init(isProd, canisterId);
+    const hasNFT = await getNftCollectionMeta();
+    if ('ok' in hasNFT) {
+      return canisterId;
+    } else {
+      return '';
+    }
+  } catch (e) {
+    return '';
   }
 };

@@ -14,7 +14,7 @@ const sendICP = async (actor: any, token: Token, to: string, amount: BigNumber, 
     const response = await actor.send_dfx({
       to,
       fee: { e8s: token?.fee || defaultArgs.fee },
-      amount: { e8s: BigInt(amount.toFixed()) },
+      amount: { e8s: BigInt(amount.toString()) },
       memo: memo || defaultArgs.memo,
       from_subaccount: [],
       created_at_time: [],

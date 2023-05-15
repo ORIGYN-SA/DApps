@@ -15,6 +15,7 @@ import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useApi } from '@dapp/common-api';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const styles = {
   gridContainer: {
@@ -33,12 +34,11 @@ const styles = {
 
 interface OffersTabProps {
   collection: any;
-  canisterId: string;
 }
 
 type ActionType = 'accept' | 'reject';
 
-export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) => {
+export const OffersReceivedTab = ({ collection }: OffersTabProps) => {
   const debug = useDebug();
   const { getNftBatch, getNftBalances, acceptEscrow, rejectEscrow } = useApi();
   const { principal } = useContext(AuthContext);
@@ -49,6 +49,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
   const [actionType, setActionType] = React.useState<ActionType>();
   const [openModal, setOpenModal] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const context = useContext(PerpetualOSContext);
 
   const onOfferSelected = (offer: EscrowRecord, action: ActionType) => {
     setActionType(action);
@@ -150,7 +151,7 @@ export const OffersReceivedTab = ({ collection, canisterId }: OffersTabProps) =>
                       {offer.hasPreviewAsset ? (
                         <img
                           style={{ width: 'auto', height: '42px', borderRadius: '12px' }}
-                          src={`https://${canisterId}.raw.ic0.app/-/${offer.token_id}/preview`}
+                          src={`${context.canisterUrl}/-/${offer.token_id}/preview`}
                           alt=""
                         />
                       ) : (

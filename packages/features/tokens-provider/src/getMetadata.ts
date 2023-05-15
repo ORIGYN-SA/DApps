@@ -1,4 +1,4 @@
-import { Actor, HttpAgent } from '@dfinity/agent';
+import { getActor } from '@origyn/actor-reference';
 import { IdlStandard, getIdl } from '@dapp/utils';
 import { Token } from './TokensContextProvider';
 
@@ -9,17 +9,21 @@ type MetadataReponse = {
   symbol: string;
 };
 
-const createAgent = (isLocal: boolean) =>
-  new HttpAgent({
-    host: isLocal ? 'http://localhost:8000' : 'https://boundary.ic0.app/',
+const getTokenActor = async (isLocal: boolean, token: Token, idlStandard: IdlStandard) => {
+  const actor = await getActor<any>({
+    canisterId: isLocal ? token.localCanisterId : token.canisterId,
+    idlFactory: getIdl(idlStandard),
+    isLocal,
   });
 
+  return actor;
+};
+
 const dip20Method = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
-  const actor = Actor.createActor(getIdl(IdlStandard.DIP20), {
-    canisterId: isLocal ? token.localCanisterId : token.canisterId,
-    agent: createAgent(isLocal),
-  });
+  const actor = await getTokenActor(isLocal, token, IdlStandard.DIP20);
+
   const metadataResult: any = await actor.getMetadata();
+
   return {
     decimals: metadataResult.decimals,
     fee: metadataResult.fee,
@@ -29,13 +33,14 @@ const dip20Method = async (isLocal: boolean, token: Token): Promise<MetadataRepo
 };
 
 const extMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
-  const actor = Actor.createActor(getIdl(IdlStandard.EXT), {
-    canisterId: isLocal ? token.localCanisterId : token.canisterId,
-    agent: createAgent(isLocal),
-  });
+  const actor = await getTokenActor(isLocal, token, IdlStandard.EXT);
+
   const extensions: any = await actor.extensions();
-  if (!extensions.includes('@ext/common'))
+
+  if (!extensions.includes('@ext/common')) {
     throw new Error('The provided canister does not implement commont extension');
+  }
+
   const metadataResult: any = await actor.metadata(token.symbol);
 
   if ('ok' in metadataResult) {
@@ -46,11 +51,10 @@ const extMethod = async (isLocal: boolean, token: Token): Promise<MetadataRepons
 };
 
 const xtcMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
-  const actor = Actor.createActor(getIdl(IdlStandard.XTC), {
-    canisterId: isLocal ? token.localCanisterId : token.canisterId,
-    agent: createAgent(isLocal),
-  });
+  const actor = await getTokenActor(isLocal, token, IdlStandard.XTC);
+
   const metadataResult: any = await actor.getMetadata();
+
   return {
     decimals: metadataResult.decimals,
     fee: metadataResult.fee,
@@ -60,11 +64,10 @@ const xtcMethod = async (isLocal: boolean, token: Token): Promise<MetadataRepons
 };
 
 const wicpMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
-  const actor = Actor.createActor(getIdl(IdlStandard.WICP), {
-    canisterId: isLocal ? token.localCanisterId : token.canisterId,
-    agent: createAgent(isLocal),
-  });
+  const actor = await getTokenActor(isLocal, token, IdlStandard.WICP);
+
   const metadataResult: any = await actor.getMetadata();
+
   return {
     decimals: metadataResult.decimals,
     fee: metadataResult.fee,

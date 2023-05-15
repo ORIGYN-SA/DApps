@@ -7,7 +7,7 @@ describe('utils > CollectionName', () => {
   it('should return the collectionName in the URL', () => {
     // Mock window.location
     global.window.location = {
-      href: 'http://localhost:8080/-/baycdev/collection/-/ledger',
+      href: 'http://localhost:8080/-/dytv5-jaaaa-aaaal-qbgtq-cai/collection/-/ledger',
       pathname: '/-/baycdev/collection/-/ledger/',
     };
 
@@ -17,7 +17,7 @@ describe('utils > CollectionName', () => {
   it('should return undefined, token id = #mytoken as argument', () => {
     // Mock window.location
     global.window.location = {
-      href: 'http://localhost:8080/-/baycdev/-/ledger',
+      href: 'http://localhost:8080/-/dytv5-jaaaa-aaaal-qbgtq-cai/-/ledger',
       pathname: '/-/baycdev/-/ledger/',
     };
 

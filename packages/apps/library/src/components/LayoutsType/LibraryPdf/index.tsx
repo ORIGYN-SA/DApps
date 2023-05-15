@@ -1,26 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useRoute } from '@dapp/features-authentication';
-import { GetFormattedLink } from '@dapp/utils';
+import React, { useEffect, useState, useContext } from 'react';
 import { Flex, HR } from '@origyn/origyn-art-ui';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const LibraryPdf = (props: any) => {
-  const [canisterId, setCanisterId] = useState('');
+  const context = useContext(PerpetualOSContext);
   const [link, setLink] = useState('');
+
   const formattedLink = async () => {
-    const link = await GetFormattedLink(canisterId, props.source);
-    setLink(link);
+    setLink(context.directCanisterUrl + '/' + props.source);
   };
-  useEffect(() => {
-    if (canisterId) {
-      formattedLink();
-    }
-  }, [canisterId, props.source]);
 
   useEffect(() => {
-    useRoute().then(({ canisterId }) => {
-      setCanisterId(canisterId);
-    });
-  }, []);
+    if (context.canisterId) {
+      formattedLink();
+    }
+  }, [context, props.source]);
 
   return (
     <>

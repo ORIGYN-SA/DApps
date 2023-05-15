@@ -1,4 +1,4 @@
-import { CandyPrincipal } from '../../../types';
+import { CandyPrincipal } from '@dapp/common-types';
 import { Principal } from '@dfinity/principal';
 
 export function convertToCandyPrincipal(typedValue: string): CandyPrincipal | undefined {

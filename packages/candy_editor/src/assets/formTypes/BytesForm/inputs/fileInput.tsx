@@ -1,29 +1,16 @@
 import React, { useState } from 'react';
-import {
-  Flex,
-  TextInput,
-  CheckboxInput,
-  Button,
-  Select,
-  HR,
-  Container,
-} from '@origyn/origyn-art-ui';
+import { Flex, TextInput, CheckboxInput, Button, HR, Container } from '@origyn/origyn-art-ui';
 import { DropzoneArea } from 'mui-file-dropzone';
-import { convertNat8ArrayToCandyBytes } from '../binaryConverters';
-import { BytesFormInput, ArrayType } from '../../../../types';
+import { convertNat8ArrayToCandyBytes } from '@dapp/utils';
+import { BytesFormInput } from '@dapp/common-types';
 
 export const FileInput = (input: BytesFormInput) => {
   const [name, setName] = useState<string>('');
-  const [arrayType, setArrayType] = useState<ArrayType>('thawed');
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [immutable, setImmutable] = useState<boolean>(false);
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
-  };
-
-  const onTypeChanged = (selectedType: ArrayType) => {
-    setArrayType(selectedType);
   };
 
   const onImmutableChanged = () => {
@@ -41,7 +28,7 @@ export const FileInput = (input: BytesFormInput) => {
       reader.onloadend = function () {
         const byteArray = new Uint8Array(reader.result as ArrayBuffer);
         const nat8Array = Array.from(byteArray);
-        const candyBytes = convertNat8ArrayToCandyBytes(nat8Array, arrayType);
+        const candyBytes = convertNat8ArrayToCandyBytes(nat8Array);
 
         input.addPropertyToCandyClass({
           name: name,
@@ -60,20 +47,6 @@ export const FileInput = (input: BytesFormInput) => {
         <Flex flexFlow="column" gap={16}>
           <Flex>
             <TextInput label="Name" onChange={onNameChanged} />
-          </Flex>
-          <Flex>
-            <Select
-              inputSize="medium"
-              label="Array Type"
-              handleChange={(opt) => {
-                onTypeChanged(opt.value);
-              }}
-              selectedOption={{ value: arrayType, label: arrayType }}
-              options={[
-                { value: 'thawed', label: 'thawed' },
-                { value: 'frozen', label: 'frozen' },
-              ]}
-            />
           </Flex>
           <Flex>
             <DropzoneArea filesLimit={1} maxFileSize={16384} onChange={handleFileSelected} />

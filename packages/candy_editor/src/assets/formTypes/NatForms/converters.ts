@@ -6,7 +6,7 @@ import {
   CandyNat64,
   CandyNaturals,
   CandyType,
-} from '../../../types';
+} from '@dapp/common-types';
 import { isInRange } from '../../../utils/functions';
 
 export function convertToCandyNat(typedValue: string): CandyNat | undefined {

@@ -4,6 +4,7 @@ import { SnackbarProvider } from 'notistack';
 import { DebugProvider } from '@dapp/features-debug-provider';
 import { AuthProvider, SessionProvider } from '@dapp/features-authentication';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
+import { PerpetualOSContextProvider } from '@dapp/features-context-provider';
 import { NFTPage } from '@dapp/features-sales-escrows';
 import { SiteProvider } from '@dapp/features-theme';
 import Marketplace from './pages/Marketplace';
@@ -14,22 +15,24 @@ const App = () => (
   <HashRouter>
     <DebugProvider>
       <SiteProvider>
-        <SessionProvider>
-          <TokensContextProvider>
-            <AuthProvider>
-              <SnackbarProvider maxSnack={3}>
-                <MarketplaceProvider>
-                  <Layout>
-                    <Routes>
-                      <Route path="/" element={<Marketplace />} />
-                      <Route path="/:nft_id" element={<NFTPage />} />
-                    </Routes>
-                  </Layout>
-                </MarketplaceProvider>
-              </SnackbarProvider>
-            </AuthProvider>
-          </TokensContextProvider>
-        </SessionProvider>
+        <PerpetualOSContextProvider>
+          <SessionProvider>
+            <TokensContextProvider>
+              <AuthProvider>
+                <SnackbarProvider maxSnack={3}>
+                  <MarketplaceProvider>
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Marketplace />} />
+                        <Route path="/:nft_id" element={<NFTPage />} />
+                      </Routes>
+                    </Layout>
+                  </MarketplaceProvider>
+                </SnackbarProvider>
+              </AuthProvider>
+            </TokensContextProvider>
+          </SessionProvider>
+        </PerpetualOSContextProvider>
       </SiteProvider>
     </DebugProvider>
   </HashRouter>

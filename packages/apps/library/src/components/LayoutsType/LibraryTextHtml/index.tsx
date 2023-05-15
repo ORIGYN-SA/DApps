@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useRoute } from '@dapp/features-authentication';
+import React, { useEffect, useState, useContext } from 'react';
 import { GetFormattedLink } from '@dapp/utils';
 import { WebContentsType } from './HtmlContents';
 import LibraryDefault from '../LibraryDefault';
 import { Flex, Container, HR } from '@origyn/origyn-art-ui';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 const LibraryTextHtml = (props: any) => {
-  const [canisterId, setCanisterId] = useState('');
+  const context = useContext(PerpetualOSContext);
   const [link, setLink] = useState('');
   const [content, setContent] = useState('default');
 
   const getContent = async () => {
     const arrayFromContentsType = Object.getOwnPropertyNames(WebContentsType);
-    console.log('arrayFromContentsType', arrayFromContentsType);
-    let formattedLink = await GetFormattedLink(canisterId, props.source);
+    let formattedLink = await GetFormattedLink(context.canisterId, props.source);
     let i: any;
     for (i in arrayFromContentsType) {
       if (formattedLink.includes(arrayFromContentsType[i])) {
@@ -27,16 +26,10 @@ const LibraryTextHtml = (props: any) => {
   };
 
   useEffect(() => {
-    if (canisterId) {
+    if (context.canisterId) {
       getContent();
     }
-  }, [canisterId, props.source, content]);
-
-  useEffect(() => {
-    useRoute().then(({ canisterId }) => {
-      setCanisterId(canisterId);
-    });
-  }, []);
+  }, [context, props.source, content]);
 
   return (
     <>
