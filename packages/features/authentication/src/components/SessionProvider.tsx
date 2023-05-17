@@ -14,8 +14,15 @@ export const SessionProvider: React.FC = ({ children }) => {
   const globalProviderConfig = {
     host: getHttpAgentHost(context.isLocal),
     dev: context.isLocal,
+    autoConnect: true,
+    // eslint-disable-next-line
+    ledgerCanisterId: process.env.ICP_LEDGER_CANISTER_ID,
+    ledgerHost: getHttpAgentHost(context.isLocal),
     whitelist: [context.canisterId],
   };
+
+  // console.log('globalProviderConfig', globalProviderConfig);
+
   return (
     <Connect2ICProvider
       client={createClient({

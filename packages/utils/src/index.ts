@@ -62,7 +62,6 @@ export * from './principalToAccountID';
 export * from './useLocalStorage';
 export * from './collectionName';
 export * from './checkCanister';
-export * from './getFormattedLink';
 export * from './checkOwner';
 export * from './metadataParser';
 export * from './binaryConverters';

@@ -10,7 +10,8 @@ import { timeConverter } from '@dapp/utils';
 const defaultTokens = {
   ICP: {
     symbol: 'ICP',
-    canisterId: 'ryjl3-tyaaa-aaaaa-aaaba-cai',
+    // eslint-disable-next-line
+    canisterId: process.env.ICP_LEDGER_CANISTER_ID,
     fee: 10000,
     standard: IdlStandard.ICP,
     decimals: 8,
@@ -19,7 +20,8 @@ const defaultTokens = {
   },
   OGY: {
     symbol: 'OGY',
-    canisterId: 'jwcfb-hyaaa-aaaaj-aac4q-cai',
+    // eslint-disable-next-line
+    canisterId: process.env.OGY_LEDGER_CANISTER_ID,
     fee: 200000,
     standard: IdlStandard.ICP,
     decimals: 8,
