@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { GetFormattedLink } from '@dapp/utils';
 import { WebContentsType } from './HtmlContents';
 import LibraryDefault from '../LibraryDefault';
 import { Flex, Container, HR } from '@origyn/origyn-art-ui';
@@ -12,7 +11,7 @@ const LibraryTextHtml = (props: any) => {
 
   const getContent = async () => {
     const arrayFromContentsType = Object.getOwnPropertyNames(WebContentsType);
-    let formattedLink = await GetFormattedLink(context.canisterId, props.source);
+    let formattedLink = `${context.canisterUrl}/${props.source}`;
     let i: any;
     for (i in arrayFromContentsType) {
       if (formattedLink.includes(arrayFromContentsType[i])) {
