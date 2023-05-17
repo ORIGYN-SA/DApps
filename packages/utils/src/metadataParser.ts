@@ -12,8 +12,6 @@ import { toSentenceCase } from './string';
 import { toBigNumber } from './number';
 import * as T from '@origyn/mintjs';
 
-const OGY_LEDGER_CANISTER_ID = 'jwcfb-hyaaa-aaaaj-aac4q-cai';
-
 export function getProperty(properties: any, propertyName: string) {
   return properties?.find(({ name }) => name === propertyName);
 }
@@ -270,7 +268,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   let odc: any = initOdcSaleData(parseMetadata(metadataClass));
   // default to OGY token if no auction
   odc.token = {
-    canister: Principal.fromText(OGY_LEDGER_CANISTER_ID),
+    canister: Principal.fromText(process.env.OGY_LEDGER_CANISTER_ID),
     decimals: 8n,
     fee: 200000n,
     standard: { Ledger: null },
