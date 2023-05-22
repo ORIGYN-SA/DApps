@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
-import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { sendTransaction, Token, useTokensContext } from '@dapp/features-tokens-provider';
 import {
   Container,
@@ -69,7 +68,6 @@ const validationSchema = Yup.object().shape({
 
 const TransferTokensModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
-  const context = useContext(PerpetualOSContext);
   const { walletTokens, activeTokens } = useTokensContext();
   const { showErrorMessage, showUnexpectedErrorMessage } = useUserMessages();
   const { activeWalletProvider } = useContext(AuthContext);

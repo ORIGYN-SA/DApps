@@ -16,10 +16,8 @@ import {
   TabContent,
   TextInput,
 } from '@origyn/origyn-art-ui';
-import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 export const WalletTokens = ({ children }: any) => {
-  const context = useContext(PerpetualOSContext);
   const { principal } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
