@@ -16,10 +16,8 @@ import {
   TabContent,
   TextInput,
 } from '@origyn/origyn-art-ui';
-import { PerpetualOSContext } from '@dapp/features-context-provider';
 
 export const WalletTokens = ({ children }: any) => {
-  const context = useContext(PerpetualOSContext);
   const { principal } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
@@ -31,12 +29,7 @@ export const WalletTokens = ({ children }: any) => {
   const handleAddButton = async () => {
     if (isLoading) return;
     setIsLoading(true);
-    const tokenResponse = await addToken(
-      context.isLocal,
-      inputCanisterId,
-      IdlStandard[selectedStandard],
-      principal,
-    );
+    const tokenResponse = await addToken(inputCanisterId, IdlStandard[selectedStandard], principal);
     if (typeof tokenResponse !== 'string') {
       enqueueSnackbar(`You have successfully added token ${tokenResponse.symbol}.`, {
         variant: 'success',
@@ -62,7 +55,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    refreshAllBalances(context.isLocal, principal);
+    refreshAllBalances(principal);
   };
   // const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
   //   setSelectedTab(tab)

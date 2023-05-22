@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@dapp/features-authentication';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
 import { getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-provider';
 import { Principal } from '@dfinity/principal';
@@ -18,6 +19,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
 
   const [tokenBalances, setTokenBalances] = useState<any>({});
   const { activeTokens, refreshAllBalances } = useTokensContext();
+  const context = useContext(PerpetualOSContext);
 
   const withdraw = async (token) => {
     try {
@@ -62,7 +64,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
     } finally {
       setIsLoading(false);
       await getDepositInfo();
-      refreshAllBalances(false, principal);
+      refreshAllBalances(principal);
     }
   };
 
@@ -77,7 +79,11 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       } else {
         const accountId = 'deposit_info' in result.ok ? result.ok.deposit_info.account_id_text : '';
         const balances = Object.keys(activeTokens).map(async (tokenSymbol) => {
-          const val = await getBalanceByAccount(false, accountId, activeTokens[tokenSymbol]);
+          const val = await getBalanceByAccount(
+            context.isLocal,
+            accountId,
+            activeTokens[tokenSymbol],
+          );
           return { [tokenSymbol]: val };
         });
 

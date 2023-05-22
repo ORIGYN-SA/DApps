@@ -93,7 +93,7 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
-      refreshAllBalances(false, principal);
+      refreshAllBalances(principal);
       setIsLoading(false);
       getOffersSentBalance();
       onModalClose();
