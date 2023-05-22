@@ -231,9 +231,9 @@ export function StartEscrowModal({
       const amount = toSmallerUnit(toBigNumber(enteredAmount), token.decimals);
 
       const totalAmount = amount
-      .plus(toBigNumber(token.fee))
-      .plus(toBigNumber(token.fee))
-      .decimalPlaces(token.decimals);
+        .plus(toBigNumber(token.fee))
+        .plus(toBigNumber(token.fee))
+        .decimalPlaces(token.decimals);
 
       debug.log('escrow amount with fee', totalAmount.toString());
 
@@ -338,7 +338,7 @@ export function StartEscrowModal({
     if (isSuccess) {
       onSuccess();
     }
-    refreshAllBalances(false, principal);
+    refreshAllBalances(principal);
   };
 
   return (

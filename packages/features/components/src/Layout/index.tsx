@@ -53,7 +53,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
   useEffect(() => {
     if (loggedIn) {
-      refreshAllBalances(false, principal);
+      refreshAllBalances(principal);
     }
   }, [loggedIn]);
 
