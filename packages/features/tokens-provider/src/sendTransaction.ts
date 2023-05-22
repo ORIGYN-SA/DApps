@@ -73,7 +73,6 @@ export const sendEXT = async (
 };
 
 export const sendTransaction = async (
-  isLocal: boolean,
   activeWalletProvider: any,
   token: Token,
   to: string,
@@ -81,7 +80,7 @@ export const sendTransaction = async (
   memo?: number,
   from?: string,
 ) => {
-  const ledgerCanisterId = isLocal ? token.localCanisterId : token.canisterId;
+  const ledgerCanisterId = token.canisterId;
   const ledgerIdl = getIdl(token.standard);
   const { value: actor } = await activeWalletProvider.createActor(ledgerCanisterId, ledgerIdl);
   try {

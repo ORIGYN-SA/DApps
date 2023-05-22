@@ -135,7 +135,6 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
       debug.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
 
       const result = await sendTransaction(
-        context.isLocal,
         activeWalletProvider,
         token,
         address,

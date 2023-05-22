@@ -31,12 +31,7 @@ export const WalletTokens = ({ children }: any) => {
   const handleAddButton = async () => {
     if (isLoading) return;
     setIsLoading(true);
-    const tokenResponse = await addToken(
-      context.isLocal,
-      inputCanisterId,
-      IdlStandard[selectedStandard],
-      principal,
-    );
+    const tokenResponse = await addToken(inputCanisterId, IdlStandard[selectedStandard], principal);
     if (typeof tokenResponse !== 'string') {
       enqueueSnackbar(`You have successfully added token ${tokenResponse.symbol}.`, {
         variant: 'success',
@@ -62,7 +57,7 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    refreshAllBalances(context.isLocal, principal);
+    refreshAllBalances(principal);
   };
   // const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
   //   setSelectedTab(tab)

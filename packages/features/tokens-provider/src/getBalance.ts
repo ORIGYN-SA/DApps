@@ -10,7 +10,7 @@ type BalanceResponse = {
 
 const getTokenActor = async (isLocal: boolean, token: Token, idlStandard: IdlStandard) => {
   const actor = await getActor<any>({
-    canisterId: isLocal ? token.localCanisterId : token.canisterId,
+    canisterId: token.canisterId,
     idlFactory: getIdl(idlStandard),
     isLocal,
   });
@@ -52,10 +52,13 @@ const extMethod = async (
 ): Promise<BalanceResponse> => {
   const actor = await getTokenActor(isLocal, token, IdlStandard.EXT);
   const balanceResult: any = await actor.balance({
-    token: isLocal ? token.localCanisterId : token.canisterId,
+    token: token.symbol,
     user: { address },
   });
-  if ('ok' in balanceResult) return { value: balanceResult.ok.toString(), decimals: 8 };
+
+  if ('ok' in balanceResult) {
+    return { value: balanceResult.ok.toString(), decimals: 8 };
+  }
 
   throw new Error(Object.keys(balanceResult.err)[0]);
 };
@@ -109,6 +112,7 @@ export const getBalance = async (isLocal: boolean, principal: Principal, token: 
       return xtcMethod(isLocal, principal, token);
   }
 };
+
 export const getBalanceByAccount = async (isLocal: boolean, account: string, token: Token) => {
   switch (token.standard) {
     case IdlStandard.ICP:

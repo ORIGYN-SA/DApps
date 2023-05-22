@@ -192,7 +192,6 @@ export const useApi = () => {
     const genericErrorMessage = 'Failed to send tokens to deposit account';
     try {
       const sendTransactionResult = await sendTransaction(
-        false,
         activeWalletProvider,
         token,
         accountId,

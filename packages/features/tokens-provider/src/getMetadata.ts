@@ -11,7 +11,7 @@ type MetadataReponse = {
 
 const getTokenActor = async (isLocal: boolean, token: Token, idlStandard: IdlStandard) => {
   const actor = await getActor<any>({
-    canisterId: isLocal ? token.localCanisterId : token.canisterId,
+    canisterId: token.canisterId,
     idlFactory: getIdl(idlStandard),
     isLocal,
   });
