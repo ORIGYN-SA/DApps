@@ -56,7 +56,6 @@ export * from './interfaces';
 export * from './binary';
 export * from './dateTime';
 export * from './idl';
-export * from './ledger';
 export * from './number';
 export * from './principalToAccountID';
 export * from './useLocalStorage';

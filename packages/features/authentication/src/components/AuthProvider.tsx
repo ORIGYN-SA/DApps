@@ -1,9 +1,7 @@
-import React, { createContext, useContext } from 'react';
-import { Actor } from '@dfinity/agent';
+import React, { createContext } from 'react';
 import { Principal } from '@dfinity/principal';
 import { ConnectDialog, useCanister, useConnect } from '@connect2ic/react';
 import { OrigynNftActor } from '@origyn/mintjs';
-import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { Preloader } from '@dapp/features-components';
 import { AuthContextType } from '../types';
 import styled from 'styled-components';
@@ -15,11 +13,7 @@ export const AuthContext = createContext<AuthContextType>({
   principalId: '',
 });
 
-export const useAuthContext = () => useContext(AuthContext);
-
 export const useAuth = (): AuthContextType => {
-  const context = useContext(PerpetualOSContext);
-
   const {
     activeProvider: activeWalletProvider,
     principal: principalId,
@@ -30,15 +24,6 @@ export const useAuth = (): AuthContextType => {
   } = useConnect();
 
   const [actor] = useCanister('nft');
-
-  if (context.isLocal) {
-    Actor.agentOf(actor)
-      .fetchRootKey()
-      .catch((e) => {
-        console.error('actor.fetchRootKey error in AuthProvider', e);
-        console.log('context', context);
-      });
-  }
 
   const origynNftActor: OrigynNftActor = actor as any;
 
