@@ -37,6 +37,7 @@ export const SessionProvider: React.FC = ({ children }) => {
         },
         providers: [
           // authentication with local deployment only supported by II and Plug
+          // eslint-disable-next-line
           new InternetIdentity({ ...globalProviderConfig, providerUrl: process.env.II_PROVIDER }),
           new PlugWallet(globalProviderConfig),
           // local auth requires local deployment of NFID canister and updated providerUrl
