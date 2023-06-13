@@ -16,7 +16,7 @@ import {
   Button,
   LoadingBar,
 } from '@origyn/origyn-art-ui';
-import { toBigNumber, toSmallerUnit, validateTokenAmount, toLargerUnit } from '@dapp/utils';
+import { toSmallerUnit, validateTokenAmount } from '@dapp/utils';
 import { MarketTransferRequest } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
