@@ -13,6 +13,7 @@ export const VALIDATION: ConstantsMap = {
     notANullableNumber: 'This cannot be a nullable number',
     startPriceRequired: 'Start price is required',
     startPriceDoubleOrMoreThanFee: 'Start price must be greater than the doubled fee',
+    startPriceNotZero: 'Start price must be greater than 0',
     reserveBuyPriceGreaterThanBuyNowPrice: 'Reserve buy price must be smaller than the buy now price',
     instantBuyPriceSmallerThanStartPrice: 'Instant buy price must be greater than the start price',
     endDateSmallerThanStartDate: 'The end date needs to be at least one day after start date',
