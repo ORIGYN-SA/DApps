@@ -22,8 +22,7 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { ERROR, SUCCESS, VALIDATION } from '../constants';
 import { TokenIcon } from '@dapp/features-components';
-import { walletTokens, activeTokens } from '@dapp/features-tokens-provider';
-import { Token } from '@mui/icons-material';
+import { walletTokens } from '@dapp/features-tokens-provider';
 
 const dateNow = new Date();
 const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
