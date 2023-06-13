@@ -34,7 +34,7 @@ const validationSchema = Yup.object({
     .typeError(VALIDATION.notANullableNumber)
     .required(VALIDATION.startPriceRequired)
     .test(
-      'moreThanDoubleFee',
+      'startPriceGreaterThanZero',
       VALIDATION.startPriceNotZero,
       function (value) {
           return value > 0
