@@ -28,11 +28,7 @@ const Home = () => {
   const getData = async () => {
     if (context.tokenId) {
       try {
-        const response = await fetch(
-          `${context.isLocalToMainnet ? context.directCanisterUrl : context.canisterUrl}/-/${
-            context.tokenId
-          }/info`,
-        );
+        const response = await fetch(`${context.assetCanisterUrl}/-/${context.tokenId}/info`);
         const result = await response.text();
         setNFTData(JSON.parse(result.replace(':,', ':"",')));
       } catch (err) {
@@ -40,11 +36,7 @@ const Home = () => {
       }
     } else {
       try {
-        const response = await fetch(
-          `${
-            context.isLocalToMainnet ? context.directCanisterUrl : context.canisterUrl
-          }/collection/info`,
-        );
+        const response = await fetch(`${context.assetCanisterUrl}/collection/info`);
         const result = await response.text();
         setNFTData(JSON.parse(result.replace(':,', ':"",')));
       } catch (err) {

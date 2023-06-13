@@ -10,4 +10,5 @@ export type AuthContextType = {
   loggedIn: boolean;
   principal?: Principal;
   principalId: string;
+  setLocalDevelopment?: (value: boolean) => void;
 };

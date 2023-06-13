@@ -222,11 +222,7 @@ export const NFTPage = () => {
                         {odc?.hasPreviewAsset ? (
                           <img
                             style={{ borderRadius: '18px', width: '100%' }}
-                            src={`${
-                              context.isLocalToMainnet
-                                ? context.directCanisterUrl
-                                : context.canisterUrl
-                            }/-/${params.nft_id}/preview`}
+                            src={`${context.assetCanisterUrl}/-/${params.nft_id}/preview`}
                           />
                         ) : (
                           <Flex align="center" justify="center">
@@ -246,11 +242,7 @@ export const NFTPage = () => {
                           <Flex gap={8} align="center">
                             {collectionData?.hasPreviewAsset ? (
                               <img
-                                src={`${
-                                  context.isLocalToMainnet
-                                    ? context.directCanisterUrl
-                                    : context.canisterUrl
-                                }/collection/preview`}
+                                src={`${context.assetCanisterUrl}/collection/preview`}
                                 alt=""
                                 style={{ width: '32px', height: '32px', borderRadius: '7.5px' }}
                               />

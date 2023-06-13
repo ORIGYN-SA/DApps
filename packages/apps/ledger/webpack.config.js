@@ -2,7 +2,6 @@ const webpack = require('../../../webpack.config');
 
 const appConfig = {
   name: 'ledger',
-  open: '-/dytv5-jaaaa-aaaal-qbgtq-cai/collection/-/ledger',
 };
 
 module.exports = (env, argv) => {

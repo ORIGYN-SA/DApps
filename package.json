@@ -1,6 +1,6 @@
 {
   "name": "origyn-dapps",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap --force-local",
@@ -104,7 +104,7 @@
     "@origyn/actor-reference": "^0.1.9",
     "@origyn/mintjs": "^0.1.6",
     "@origyn/origyn-art-ui": "^1.2.35",
-    "@origyn/perpetualos-context": "^0.1.13",
+    "@origyn/perpetualos-context": "^0.2.0",
     "@svgr/webpack": "^6.2.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^17.0.19",

@@ -160,7 +160,12 @@ const NFTPage = () => {
             <h1>{metadata.Brand}</h1>
           </FlexBlock>
           <FlexBlock style={{ justifyContent: 'center' }}>
-            <img src={images[0]?.Class.find(({ name }) => name === 'location').value.Text} alt="" />
+            <img
+              src={`${context.assetCanisterUrl}/${
+                images[0]?.Class.find(({ name }) => name === 'location').value.Text
+              }`}
+              alt=""
+            />
           </FlexBlock>
           <FlexBlock style={{ textAlign: 'center', justifyContent: 'center' }}>
             <h2>

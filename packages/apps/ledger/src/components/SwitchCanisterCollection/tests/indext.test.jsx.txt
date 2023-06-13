@@ -12,8 +12,8 @@ global.window = Object.create(window);
 global.window.location = {};
 // Mock window.location
 global.window.location = {
-  href: 'http://localhost:8080/-/dytv5-jaaaa-aaaal-qbgtq-cai/-/ledger',
-  pathname: '/-/dytv5-jaaaa-aaaal-qbgtq-cai/-/ledger/',
+  href: 'http://localhost:8080/-/mludz-biaaa-aaaal-qbhwa-cai/-/ledger',
+  pathname: '/-/mludz-biaaa-aaaal-qbhwa-cai/-/ledger/',
 };
 
 const NEWCANISTER = 'frfol-iqaaa-aaaaj-acogq-cai';
@@ -46,14 +46,14 @@ describe('Features > Component > SwitchCanisterCollection', () => {
   // test2
   test('The Url is mocked', async () => {
     return getUrl().then((data) => {
-      expect(data).toBe('http://localhost:8080/-/dytv5-jaaaa-aaaal-qbgtq-cai/-/ledger');
+      expect(data).toBe('http://localhost:8080/-/mludz-biaaa-aaaal-qbhwa-cai/-/ledger');
     });
   })
   // test3
   test('The Url is not changed if canister is invalid', async () => {
     button.click();
     return getUrl().then(async (data) => {
-      expect(data).toBe('http://localhost:8080/-/dytv5-jaaaa-aaaal-qbgtq-cai/-/ledger');
+      expect(data).toBe('http://localhost:8080/-/mludz-biaaa-aaaal-qbhwa-cai/-/ledger');
     }
     );
   });  
@@ -65,7 +65,7 @@ describe('Features > Component > SwitchCanisterCollection', () => {
     waitFor(async () => {
       expect(textField.value).toBe(NEWCANISTER);
       expect(button).toBeEnabled();
-      expect(CUR_URL).toBe('http://localhost:8080/-/dytv5-jaaaa-aaaal-qbgtq-cai/-/ledger');
+      expect(CUR_URL).toBe('http://localhost:8080/-/mludz-biaaa-aaaal-qbhwa-cai/-/ledger');
     }
     );
   }); 

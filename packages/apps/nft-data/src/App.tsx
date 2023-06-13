@@ -17,8 +17,8 @@ const App = () => {
       <SiteProvider>
         <PerpetualOSContextProvider>
           <SessionProvider>
-            <AuthProvider>
-              <TokensContextProvider>
+            <TokensContextProvider>
+              <AuthProvider>
                 <SnackbarProvider maxSnack={3}>
                   <Layout>
                     <Routes>
@@ -26,8 +26,8 @@ const App = () => {
                     </Routes>
                   </Layout>
                 </SnackbarProvider>
-              </TokensContextProvider>
-            </AuthProvider>
+              </AuthProvider>
+            </TokensContextProvider>
           </SessionProvider>
         </PerpetualOSContextProvider>
       </SiteProvider>

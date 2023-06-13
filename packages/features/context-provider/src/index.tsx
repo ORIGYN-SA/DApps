@@ -13,8 +13,9 @@ export const PerpetualOSContextProvider = ({ children }) => {
     const updateContext = async () => {
       try {
         const urlContext = await getPerpetualOSContext(window.location.href);
-        // console.log('PerpetualOS Context:', JSON.stringify(urlContext, null, 2));
         setContext(urlContext);
+
+        console.log('ContextProvider -> context', urlContext);
       } catch (err) {
         throw new Error('Could not get Perpetual OS context: ' + err?.message ?? err.toString());
       }

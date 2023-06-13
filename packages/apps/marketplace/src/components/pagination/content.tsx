@@ -40,9 +40,7 @@ const NFTCards = ({ nftData, odcs }: NFTCardsProps) => {
                     {odc.hasPreviewAsset ? (
                       <Image
                         style={{ width: '100%' }}
-                        src={`${
-                          context.isLocalToMainnet ? context.directCanisterUrl : context.canisterUrl
-                        }/-/${odc?.id}/preview`}
+                        src={`${context.assetCanisterUrl}/-/${odc?.id}/preview`}
                         alt=""
                       />
                     ) : (

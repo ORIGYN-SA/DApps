@@ -197,11 +197,7 @@ const Marketplace = () => {
                       <Flex align="flex-start" gap={24}>
                         {collectionData.hasPreviewAsset ? (
                           <Image
-                            src={`${
-                              context.isLocalToMainnet
-                                ? context.directCanisterUrl
-                                : context.canisterUrl
-                            }/collection/preview`}
+                            src={`${context.assetCanisterUrl}/collection/preview`}
                             alt="text"
                             style={{ width: 110, height: 96 }}
                           />

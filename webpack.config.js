@@ -5,10 +5,13 @@ const TerserPlugin = require('terser-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
-require('dotenv').config();
-
 const repoRoot = path.join(process.cwd());
 const monorepoRoot = '../../../';
+const envResult = require('dotenv').config({ path: path.resolve(monorepoRoot, '.env') });
+
+if (envResult.error) {
+  throw envResult.error;
+}
 
 const asset_entry = repoRoot + '/src/index.tsx';
 const publicPath = monorepoRoot + 'public';
@@ -124,8 +127,10 @@ module.exports = (env, argv, dAppConfig) => {
       hot: 'only',
       compress: true,
       allowedHosts: ['localhost'],
-      port: 9000,
-      open: dAppConfig?.open || '-/dytv5-jaaaa-aaaal-qbgtq-cai/collection/-/',
+      open: `-/${process.env.NFT_CANISTER_ID || 'mludz-biaaa-aaaal-qbhwa-cai'}/collection/-/${
+        dAppConfig?.name
+      }`,
+      port: process.env.DEV_SERVER_PORT,
     },
   };
 };

@@ -447,11 +447,7 @@ const VaultPage = () => {
                         <Flex align="flex-start" gap={24}>
                           {collectionData.hasPreviewAsset ? (
                             <StyledCollectionImg
-                              src={`${
-                                context.isLocalToMainnet
-                                  ? context.directCanisterUrl
-                                  : context.canisterUrl
-                              }/collection/preview`}
+                              src={`${context.assetCanisterUrl}/collection/preview`}
                               alt=""
                             />
                           ) : (
@@ -567,11 +563,7 @@ const VaultPage = () => {
                                     >
                                       {odc.hasPreviewAsset ? (
                                         <StyledNFTImg
-                                          src={`${
-                                            context.isLocalToMainnet
-                                              ? context.directCanisterUrl
-                                              : context.canisterUrl
-                                          }/-/${odc?.id}/preview`}
+                                          src={`${context.assetCanisterUrl}/-/${odc?.id}/preview`}
                                           alt=""
                                         />
                                       ) : (

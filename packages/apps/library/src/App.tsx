@@ -18,8 +18,8 @@ const App = () => {
       <GlobalStyle />
       <SiteProvider>
         <PerpetualOSContextProvider>
-          <AuthProvider>
-            <SessionProvider>
+          <SessionProvider>
+            <AuthProvider>
               <TokensContextProvider>
                 <SnackbarProvider maxSnack={3}>
                   <Layout>
@@ -29,8 +29,8 @@ const App = () => {
                   </Layout>
                 </SnackbarProvider>
               </TokensContextProvider>
-            </SessionProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </SessionProvider>
         </PerpetualOSContextProvider>
       </SiteProvider>
     </BrowserRouter>
