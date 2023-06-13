@@ -96,11 +96,11 @@ const localStorageTokens = () => {
 
 const initialTokens = localStorageTokens() ?? defaultTokensMapped();
 
-const walletTokens = Object.keys(initialTokens)
+export const walletTokens = Object.keys(initialTokens)
   .filter((t) => initialTokens[t].enabled && ['OGY', 'ICP'].includes(t.toUpperCase()))
   .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {});
 
-const activeTokens = Object.keys(initialTokens)
+export const activeTokens = Object.keys(initialTokens)
   .filter((t) => initialTokens[t].enabled)
   .reduce((ats, key) => ({ ...ats, [key]: initialTokens[key] }), {});
 

@@ -16,12 +16,14 @@ import {
   Button,
   LoadingBar,
 } from '@origyn/origyn-art-ui';
-import { toSmallerUnit, validateTokenAmount } from '@dapp/utils';
+import { toBigNumber, toSmallerUnit, validateTokenAmount, toLargerUnit } from '@dapp/utils';
 import { MarketTransferRequest } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { ERROR, SUCCESS, VALIDATION } from '../constants';
 import { TokenIcon } from '@dapp/features-components';
+import { walletTokens, activeTokens } from '@dapp/features-tokens-provider';
+import { Token } from '@mui/icons-material';
 
 const dateNow = new Date();
 const dateTomorrow = new Date(new Date().valueOf() + 1000 * 3600 * 23);
@@ -33,7 +35,21 @@ const validationSchema = Yup.object({
     .nullable()
     .typeError(VALIDATION.notANullableNumber)
     .required(VALIDATION.startPriceRequired)
-    .default(0),
+    .test(
+      'moreThanDoubleFee',
+      VALIDATION.startPriceDoubleOrMoreThanFee,
+      function (value, { parent }) {
+        const fee = Number(
+          toLargerUnit(walletTokens[parent.token].fee, Number(walletTokens[parent.token].decimals)),
+        );
+
+        return value > fee * 2;
+      },
+    )
+    .default(function () {
+      const token = this.resolve(this.parent, 'token');
+      return token ? walletTokens[token]?.fee : 0;
+    }),
   minIncrease: Yup.number()
     .typeError(VALIDATION.notANumber)
     .nullable()
@@ -268,6 +284,15 @@ export function StartAuctionModal({
                     required
                     label="Starting Price*"
                     name="startPrice"
+                    /*@ts-ignore*/
+                    placeholder={`Must be greater than ${
+                      Number(
+                        toLargerUnit(
+                          activeTokens[values.token].fee,
+                          Number(activeTokens[values.token].decimals),
+                        ),
+                      ) * 2
+                    }`}
                     value={values.startPrice}
                     onChange={(e) => onCurrencyChanged('startPrice', e.target.value)}
                     error={errors?.startPrice}
