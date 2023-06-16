@@ -33,13 +33,9 @@ const validationSchema = Yup.object({
     .nullable()
     .typeError(VALIDATION.notANullableNumber)
     .required(VALIDATION.startPriceRequired)
-    .test(
-      'startPriceGreaterThanZero',
-      VALIDATION.startPriceNotZero,
-      function (value) {
-          return value > 0
-      },
-    ),
+    .test('startPriceGreaterThanZero', VALIDATION.startPriceGreaterThanZero, function (value) {
+      return value > 0;
+    }),
   minIncrease: Yup.number()
     .typeError(VALIDATION.notANumber)
     .nullable()

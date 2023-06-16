@@ -1,10 +1,16 @@
 import React, { useContext } from 'react';
+import { getHttpAgentHost } from '@origyn/actor-reference';
+import { PerpetualOSContext } from '@dapp/features-context-provider';
+import { idlFactory as origynNftIdl } from '@origyn/mintjs';
+
 import { Connect2ICProvider } from '@connect2ic/react';
 import { createClient } from '@connect2ic/core';
-import { defaultProviders } from '@connect2ic/core/providers';
-import { idlFactory as origynNftIdl } from '@origyn/mintjs';
-import { PerpetualOSContext } from '@dapp/features-context-provider';
-import { getHttpAgentHost } from '@origyn/actor-reference';
+
+import { InternetIdentity } from '@connect2ic/core/providers/internet-identity';
+import { PlugWallet } from '@connect2ic/core/providers/plug-wallet';
+import { NFID } from '@connect2ic/core/providers/nfid';
+import { InfinityWallet } from '@connect2ic/core/providers/infinity-wallet';
+import { StoicWallet } from '@connect2ic/core/providers/stoic-wallet';
 
 export const SessionProvider: React.FC = ({ children }) => {
   const context = useContext(PerpetualOSContext);
@@ -23,8 +29,6 @@ export const SessionProvider: React.FC = ({ children }) => {
     whitelist: [context.canisterId],
   };
 
-  console.log('SessionProvider -> globalProviderConfig', globalProviderConfig);
-
   const client = createClient({
     canisters: {
       nft: {
@@ -32,8 +36,16 @@ export const SessionProvider: React.FC = ({ children }) => {
         idlFactory: origynNftIdl,
       },
     },
-    providers: defaultProviders,
-    globalProviderConfig,
+    providers: [
+      // authentication with local deployment only supported by II and Plug
+      // eslint-disable-next-line
+      new InternetIdentity({ ...globalProviderConfig, providerUrl: process.env.II_PROVIDER }),
+      new PlugWallet(globalProviderConfig),
+      // local auth requires local deployment of NFID canister and updated providerUrl
+      new NFID(globalProviderConfig),
+      new InfinityWallet(globalProviderConfig),
+      new StoicWallet(globalProviderConfig),
+    ],
   });
 
   return <Connect2ICProvider client={client}>{children}</Connect2ICProvider>;
