@@ -46,6 +46,7 @@ export const SessionProvider: React.FC = ({ children }) => {
       new InfinityWallet(globalProviderConfig),
       new StoicWallet(globalProviderConfig),
     ],
+    globalProviderConfig,
   });
 
   return <Connect2ICProvider client={client}>{children}</Connect2ICProvider>;
