@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
     "module": "esnext",
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "noImplicitAny": false,
     "outDir": "dist",
     "preserveConstEnums": true,
@@ -13,30 +14,90 @@
     "allowJs": true,
     "skipLibCheck": true,
     "rootDir": ".",
-    "lib": ["es5", "es6", "esnext", "dom", "dom.iterable"],
-    "typeRoots": ["./node_modules/@types", "./types"],
+    "lib": [
+      "es5",
+      "es6",
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ],
     "paths": {
-      "@dapp/app-vault": ["./packages/apps/vault/src/index.tsx"],
-      "@dapp/app-nft-data": ["./packages/apps/nft-data/src/index.tsx"],
-      "@dapp/app-marketplace": ["./packages/apps/marketplace/src/index.tsx"],
-      "@dapp/app-library": ["./packages/apps/library/src/index.tsx"],
-      "@dapp/app-ledger": ["./packages/apps/ledger/src/index.tsx"],
-      "@dapp/features-debug-provider": ["./packages/features/debug-provider/src/index.tsx"],
-      "@dapp/features-authentication": ["./packages/features/authentication/src/index.tsx"],
-      "@dapp/features-tokens-provider": ["./packages/features/tokens-provider/src/index.ts"],
-      "@dapp/features-components": ["./packages/features/components/src/index.ts"],
-      "@dapp/features-context-provider": ["./packages/features/context-provider/src/index.tsx"],
-      "@dapp/features-sales-escrows": ["./packages/features/sales-escrows/src/index.ts"],
-      "@dapp/features-user-messages": ["./packages/features/user-messages/src/index.ts"],
-      "@dapp/features-theme": ["./packages/features/theme/src/index.tsx"],
-      "@dapp/utils": ["./packages/utils/src/index.ts"],
-      "@dapp/common-api": ["./packages/common/api/src/index.ts"],
-      "@dapp/common-candid": ["./packages/common/candid/src/index.ts"],
-      "@dapp/common-types": ["./packages/common/types/src/index.ts"],
-      "@dapp/common-assets": ["./packages/common/assets/src/index.ts"],
-      "@dapp/candy-editor": ["./packages/candy_editor/src/index.ts"]
-    }
+      "@dapp/app-vault": [
+        "./packages/apps/vault/src/index.tsx"
+      ],
+      "@dapp/app-nft-data": [
+        "./packages/apps/nft-data/src/index.tsx"
+      ],
+      "@dapp/app-marketplace": [
+        "./packages/apps/marketplace/src/index.tsx"
+      ],
+      "@dapp/app-library": [
+        "./packages/apps/library/src/index.tsx"
+      ],
+      "@dapp/app-ledger": [
+        "./packages/apps/ledger/src/index.tsx"
+      ],
+      "@dapp/features-debug-provider": [
+        "./packages/features/debug-provider/src/index.tsx"
+      ],
+      "@dapp/features-authentication": [
+        "../../../packages/features/authentication/src/index.ts"
+      ],
+      "@dapp/features-tokens-provider": [
+        "./packages/features/tokens-provider/src/index.ts"
+      ],
+      "@dapp/features-components": [
+        "./packages/features/components/src/index.ts"
+      ],
+      "@dapp/features-context-provider": [
+        "./packages/features/context-provider/src/index.tsx"
+      ],
+      "@dapp/features-sales-escrows": [
+        "./packages/features/sales-escrows/src/index.ts"
+      ],
+      "@dapp/features-user-messages": [
+        "./packages/features/user-messages/src/index.ts"
+      ],
+      "@dapp/features-theme": [
+        "./packages/features/theme/src/index.tsx"
+      ],
+      "@dapp/utils": [
+        "./packages/utils/src/index.ts"
+      ],
+      "@dapp/common-api": [
+        "./packages/common/api/src/index.ts"
+      ],
+      "@dapp/common-candid": [
+        "./packages/common/candid/src/index.ts"
+      ],
+      "@dapp/common-types": [
+        "./packages/common/types/src/index.ts"
+      ],
+      "@dapp/common-assets": [
+        "./packages/common/assets/src/index.ts"
+      ],
+      "@dapp/candy-editor": [
+        "./packages/candy_editor/src/index.ts"
+      ]
+    },
+    "jsxImportSource": "react"
   },
-  "include": ["packages/**/*", "index.d.ts", "webpack.config.js"],
-  "exclude": ["./node_modules", ".git", "**/node_modules", "**/dist/**/*.js"]
+  "include": [
+    "packages/**/*",
+    "index.d.ts",
+    "webpack.config.js",
+    "/src/**/*",
+ 
+  ],
+  "exclude": [
+    "./node_modules",
+    ".git",
+    "**/node_modules",
+    "**/dist/**/*.js"
+  ],
+  "extends": "astro/tsconfigs/strict"
 }
