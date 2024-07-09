@@ -21,7 +21,8 @@
     "describe": true,
     "expect": true,
     "it": true,
-    "jsx": true
+    "jsx": true,
+    "astro": true
   },
   "plugins": ["prettier", "react", "@typescript-eslint", "import"],
   "rules": {
@@ -55,7 +56,8 @@
       "ignorePackages",
       {
         "ts": "never",
-        "tsx": "never"
+        "tsx": "never",
+        "astro": "never"
       }
     ]
   },

@@ -1,0 +1,9 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Marketplace from '../components/apps/marketplace/src/App';
+---
+
+<Layout title="About page">
+	<Marketplace client:only="react"  />
+</Layout>
+

@@ -1,11 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Ledger  from '../components/ledger/src/App.tsx'
+import Ledger  from '../components/apps/ledger/src/AppLedger';
 ---
 
 <Layout title="Welcome to Astro.">
 	<main>	
-		<Ledger client:load/>
+		<Ledger client:only="react"/>
 	</main>
 </Layout>
 
