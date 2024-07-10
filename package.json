@@ -2,7 +2,7 @@
   "name": "origyn-dapps",
   "version": "0.2.1",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "frontend:dev": "lerna exec --scope @dapp/app-ledger -- npm run dev",
     "dev": "astro dev",

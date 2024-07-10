@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import { VaultState, VaultAction } from './types';
+import type { VaultState, VaultAction } from './types';
 
 type Dispatch = (action: VaultAction) => void;
 

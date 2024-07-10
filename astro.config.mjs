@@ -15,6 +15,7 @@ export default defineConfig({
       'process.env': process.env,
     },
     resolve: {
+      dedupe: ['@emotion/react'],
       alias: {
         '@dapp/features-authentication': resolve(
           __dirname,
@@ -44,7 +45,7 @@ export default defineConfig({
         ),
         '@dapp/features-sales-escrows': resolve(
           __dirname,
-          './src/packages/features/sales-escrows/src/index.ts',
+          './src/packages/features/sales-escrows/index.ts',
         ),
         '@dapp/features-user-messages': resolve(
           __dirname,
@@ -52,6 +53,9 @@ export default defineConfig({
         ),
         '@dapp/common-api': resolve(__dirname, './src/packages/common/api/src/index.ts'),
         process: 'process/browser',
+        buffer: "buffer/",
+        stream: "stream-browserify/",
+        util: "util/",
       },
     },
     optimizeDeps: {

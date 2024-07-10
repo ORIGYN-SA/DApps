@@ -24,11 +24,11 @@ import {
 import {
   WebsiteSVG,
   DiscordSVG,
-  DistriktSVG,
+  DistriktSVG, 
   DscvrSVG,
   TwitterSVG,
   MediumSVG,
-} from '../../../../../features/components/src/SocialMediaSVG';
+} from '../../../../../../packages/features/components/src/SocialMediaSVG';
 import Filter from './Filters';
 import NFTCards from '../../components/pagination/content';
 import Pagination from '../../components/pagination/pages';

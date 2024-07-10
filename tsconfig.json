@@ -27,6 +27,9 @@
       "./types"
     ],
     "paths": {
+      "@dapp/app-ledger": [
+        "./src/pages/ledger.astro"
+      ],
       "@dapp/features-debug-provider": [
         "./src/packages/features/debug-provider/src/index.tsx"
       ],
@@ -43,7 +46,7 @@
         "./src/packages/features/context-provider/src/index.tsx"
       ],
       "@dapp/features-sales-escrows": [
-        "./src/packages/features/sales-escrows/src/index.ts"
+        "./src/packages/features/sales-escrows/index.ts"
       ],
       "@dapp/features-user-messages": [
         "./src/packages/features/user-messages/src/index.ts"

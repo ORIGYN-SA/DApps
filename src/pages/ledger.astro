@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import AppLedger from '../components/apps/ledger/src/AppLedger';
 ---
 
-<Layout title="About page">
-	<AppLedger  />
+<Layout title="Ledger App">
+	<AppLedger  client:only="react"/>
 </Layout>
 

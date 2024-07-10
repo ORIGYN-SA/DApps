@@ -6,6 +6,7 @@ import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
 import { timeConverter } from '@dapp/utils';
+import { TokenRounded } from '@mui/icons-material';
 
 // default to mainnet token canisters
 const defaultTokens = {
@@ -75,11 +76,14 @@ const defaultTokensMapped = () => {
   const defaultTokensMapped = {};
   Object.keys(defaultTokens).forEach((key: string) => {
     const token: Token = defaultTokens[key];
-    defaultTokensMapped[token.symbol] = {
-      canisterId: Principal.fromText(token.canisterId),
-      icon: token.icon ?? token.symbol,
-      ...token,
-    };
+
+    if (token.canisterId) {
+      defaultTokensMapped[token.symbol] = {
+        canisterId: Principal.fromText(token.canisterId),
+        icon: token.icon ?? token.symbol,
+        ...token,
+      };
+    }
   });
   return defaultTokensMapped;
 };

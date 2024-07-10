@@ -16,6 +16,7 @@ export const env = {
     plugins: [
       [
         'transform-react-remove-prop-types',
+        '@emotion/babel-plugin',
         {
           removeImport: true,
         },
