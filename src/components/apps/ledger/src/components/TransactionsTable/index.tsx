@@ -96,11 +96,13 @@ export const TransactionsTable = (props: any) => {
 
   //* TABLE ROWS*/
 
-  const [rowsArray, setRowsArray] = useState([]);
+  const [rowsArray, setRowsArray] = useState<
+    Array<{ index: string; date: string; id_token: string; type_txn: string }>
+  >([]);
 
   //* *VALUES FOR SELECT */
   // Array with all types
-  const [allTypes, setAllTypes] = React.useState([]);
+  const [allTypes, setAllTypes] = React.useState<string[]>([]);
 
   //* *MODAL BOX */
   // Modal Box Features
@@ -168,233 +170,201 @@ export const TransactionsTable = (props: any) => {
     let trxType: string;
 
     // single transaction obj declaration
-    let transactionObj: Transactions;
+    let transactionObj: Transactions | undefined;
     function setTransData(i: any) {
       'use strict';
       return (y) => [...y, { ...i }];
     }
     // loop through all the obj
     for (x in nftHistory) {
-      let _transaction_type_formatted: string = '';
+      if (nftHistory && transactionObj) {
+        let _transaction_type_formatted: string = '';
 
-      const date = timeConverter(BigInt(nftHistory[x].timestamp));
+        const date = timeConverter(BigInt(nftHistory[x].timestamp));
 
-      const trx = nftHistory[x].txn_type;
+        const trx = nftHistory[x].txn_type;
 
-      const trxIndex = nftHistory[x].index.toString();
+        const trxIndex = nftHistory[x].index.toString();
 
-      const tokenId = nftHistory[x].token_id;
+        const tokenId = nftHistory[x].token_id;
 
-      for (trxType in trx) {
-        if (trx.hasOwnProperty(trxType)) {
-          // capitalize transaction
-          const capitalized = trxType.charAt(0).toUpperCase() + trxType.slice(1);
-          // replace _ with " "
-          const replaced = capitalized.replace('_', ' ');
-          _transaction_type_formatted += replaced;
+        for (trxType in trx) {
+          if (trx.hasOwnProperty(trxType)) {
+            // capitalize transaction
+            const capitalized = trxType.charAt(0).toUpperCase() + trxType.slice(1);
+            // replace _ with " "
+            const replaced = capitalized.replace('_', ' ');
+            _transaction_type_formatted += replaced;
 
-          switch (trxType) {
-            case 'auction_bid':
-              transactionObj = AuctionBid(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+            switch (trxType) {
+              case 'auction_bid':
+                transactionObj = AuctionBid(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
+                props.setTransactionData(setTransData(transactionObj));
 
-              break;
-            case 'mint':
-              transactionObj = Mint(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
+                break;
+              case 'mint':
+                transactionObj = Mint(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
 
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
-              break;
-            case 'royalty_paid':
-              transactionObj = RoyaltyPaid(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+                props.setTransactionData(setTransData(transactionObj));
+                break;
+              case 'royalty_paid':
+                transactionObj = RoyaltyPaid(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
-              break;
-            case 'sale_ended':
-              transactionObj = SaleEnded(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+                props.setTransactionData(setTransData(transactionObj));
+                break;
+              case 'sale_ended':
+                transactionObj = SaleEnded(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
-              break;
-            case 'sale_opened':
-              transactionObj = SaleOpened(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+                props.setTransactionData(setTransData(transactionObj));
+                break;
+              case 'sale_opened':
+                transactionObj = SaleOpened(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
+                props.setTransactionData(setTransData(transactionObj));
 
-              break;
-            case 'owner_transfer':
-              transactionObj = OwnerTransfer(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+                break;
+              case 'owner_transfer':
+                transactionObj = OwnerTransfer(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
+                props.setTransactionData(setTransData(transactionObj));
 
-              break;
-            case 'escrow_deposit':
-              transactionObj = EscrowDeposit(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+                break;
+              case 'escrow_deposit':
+                transactionObj = EscrowDeposit(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
-              break;
-            case 'escrow_withdraw':
-              transactionObj = EscrowWithdraw(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+                props.setTransactionData(setTransData(transactionObj));
+                break;
+              case 'escrow_withdraw':
+                transactionObj = EscrowWithdraw(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
-              break;
-            case 'sale_withdraw':
-              transactionObj = SaleWithdraw(
-                trx,
-                trxType,
-                transactionObj,
-                nftHistory[x],
-                _transaction_type_formatted,
-              );
-              if (props.indexID) {
-                if (nftHistory[x].index.toString() == props.indexID) {
-                  setModalData('Loading...');
-                  setModalData(transactionObj);
-                  handleOpen();
+                props.setTransactionData(setTransData(transactionObj));
+                break;
+              case 'sale_withdraw':
+                transactionObj = SaleWithdraw(
+                  trx,
+                  trxType,
+                  transactionObj,
+                  nftHistory[x],
+                  _transaction_type_formatted,
+                );
+                if (props.indexID) {
+                  if (nftHistory[x].index.toString() == props.indexID) {
+                    setModalData('Loading...');
+                    setModalData(transactionObj);
+                    handleOpen();
+                  }
                 }
-              }
-              props.setTransactionData(setTransData(transactionObj));
-              break;
+                props.setTransactionData(setTransData(transactionObj));
+                break;
+            }
           }
         }
-      }
-      array_with_all_types.push(transactionObj.type_txn);
-      let return_all_rows = false;
-      let found: number;
-      let newRow: Row;
+        array_with_all_types.push(transactionObj.type_txn);
+        let return_all_rows = false;
+        let found: number;
+        let newRow: Row;
 
-      if (props.filter.transactionType == '' || props.filter.transactionType == 'All types') {
-        switch (props.filter.categoryToFilter) {
-          case 'All':
-            newRow = {
-              index: trxIndex,
-              date: date,
-              id_token: tokenId,
-              type_txn: _transaction_type_formatted,
-            };
-            setRowsArray((x) => [...x, { ...newRow }]);
-            select_vals.push(transactionObj.type_txn);
-            // setIsEmpty(false);
-            break;
-          case 'Transaction Id':
-            // If input is '' show all the rows
-            if (props.filter.searchInputValue.toString().trim() == '') {
-              return_all_rows = true;
-            }
-            if (transactionObj.trans_index == props.filter.searchInputValue.toString().trim()) {
-              newRow = {
-                index: trxIndex,
-                date: date,
-                id_token: tokenId,
-                type_txn: _transaction_type_formatted,
-              };
-              setRowsArray((x) => [...x, { ...newRow }]);
-
-              // setIsEmpty(false);
-            }
-            break;
-          case 'Token Id':
-            // If input is '' show all the rows
-            if (props.filter.searchInputValue.toString().trim() == '') {
-              return_all_rows = true;
-            }
-            if (transactionObj.token_id == props.filter.searchInputValue.toString().trim()) {
+        if (props.filter.transactionType == '' || props.filter.transactionType == 'All types') {
+          switch (props.filter.categoryToFilter) {
+            case 'All':
               newRow = {
                 index: trxIndex,
                 date: date,
@@ -404,76 +374,87 @@ export const TransactionsTable = (props: any) => {
               setRowsArray((x) => [...x, { ...newRow }]);
               select_vals.push(transactionObj.type_txn);
               // setIsEmpty(false);
-            }
-            break;
-          case 'Principal':
-            // If input is '' show all the rows
-            if (props.filter.searchInputValue.toString().trim() == '') {
-              return_all_rows = true;
-            }
-            found = transactionObj.principals.indexOf(
-              props.filter.searchInputValue.toString().trim(),
-            );
-            if (found != -1) {
-              newRow = {
-                index: trxIndex,
-                date: date,
-                id_token: tokenId,
-                type_txn: _transaction_type_formatted,
-              };
-              setRowsArray((x) => [...x, { ...newRow }]);
-              select_vals.push(transactionObj.type_txn);
-              //setIsEmpty(false);
-            }
-            break;
-          case 'Account':
-            // If input is '' show all the rows
-            if (props.filter.searchInputValue.toString().trim() == '') {
-              return_all_rows = true;
-            }
-            found = transactionObj.accounts.indexOf(
-              props.filter.searchInputValue.toString().trim(),
-            );
-            if (found != -1) {
-              newRow = {
-                index: trxIndex,
-                date: date,
-                id_token: tokenId,
-                type_txn: _transaction_type_formatted,
-              };
-              setRowsArray((x) => [...x, { ...newRow }]);
-              select_vals.push(transactionObj.type_txn);
-
-              // setIsEmpty(false);
-            }
-
-            break;
-        }
-      } else {
-        switch (props.filter.categoryToFilter) {
-          case 'All':
-            if (transactionObj.type_txn == props.filter.transactionType) {
-              newRow = {
-                index: trxIndex,
-                date: date,
-                id_token: tokenId,
-                type_txn: _transaction_type_formatted,
-              };
-              setRowsArray((x) => [...x, { ...newRow }]);
-              if (props.filter.update == 0) {
-                var i;
-                for (i in allTypes) {
-                  const type = allTypes[i];
-                  select_vals.push(type);
-                }
-              } else {
-                select_vals.push(transactionObj.type_txn);
+              break;
+            case 'Transaction Id':
+              // If input is '' show all the rows
+              if (props.filter.searchInputValue.toString().trim() == '') {
+                return_all_rows = true;
               }
-              // setIsEmpty(false);
-            }
-            break;
-          case 'Transaction Id':
-            if (props.filter.searchInputValue == '') {
+              if (transactionObj.trans_index == props.filter.searchInputValue.toString().trim()) {
+                newRow = {
+                  index: trxIndex,
+                  date: date,
+                  id_token: tokenId,
+                  type_txn: _transaction_type_formatted,
+                };
+                setRowsArray((x) => [...x, { ...newRow }]);
+
+                // setIsEmpty(false);
+              }
+              break;
+            case 'Token Id':
+              // If input is '' show all the rows
+              if (props.filter.searchInputValue.toString().trim() == '') {
+                return_all_rows = true;
+              }
+              if (transactionObj.token_id == props.filter.searchInputValue.toString().trim()) {
+                newRow = {
+                  index: trxIndex,
+                  date: date,
+                  id_token: tokenId,
+                  type_txn: _transaction_type_formatted,
+                };
+                setRowsArray((x) => [...x, { ...newRow }]);
+                select_vals.push(transactionObj.type_txn);
+                // setIsEmpty(false);
+              }
+              break;
+            case 'Principal':
+              // If input is '' show all the rows
+              if (props.filter.searchInputValue.toString().trim() == '') {
+                return_all_rows = true;
+              }
+              found = transactionObj.principals.indexOf(
+                props.filter.searchInputValue.toString().trim(),
+              );
+              if (found != -1) {
+                newRow = {
+                  index: trxIndex,
+                  date: date,
+                  id_token: tokenId,
+                  type_txn: _transaction_type_formatted,
+                };
+                setRowsArray((x) => [...x, { ...newRow }]);
+                select_vals.push(transactionObj.type_txn);
+                //setIsEmpty(false);
+              }
+              break;
+            case 'Account':
+              // If input is '' show all the rows
+              if (props.filter.searchInputValue.toString().trim() == '') {
+                return_all_rows = true;
+              }
+              found = transactionObj.accounts.indexOf(
+                props.filter.searchInputValue.toString().trim(),
+              );
+              if (found != -1) {
+                newRow = {
+                  index: trxIndex,
+                  date: date,
+                  id_token: tokenId,
+                  type_txn: _transaction_type_formatted,
+                };
+                setRowsArray((x) => [...x, { ...newRow }]);
+                select_vals.push(transactionObj.type_txn);
+
+                // setIsEmpty(false);
+              }
+
+              break;
+          }
+        } else {
+          switch (props.filter.categoryToFilter) {
+            case 'All':
               if (transactionObj.type_txn == props.filter.transactionType) {
                 newRow = {
                   index: trxIndex,
@@ -482,31 +463,33 @@ export const TransactionsTable = (props: any) => {
                   type_txn: _transaction_type_formatted,
                 };
                 setRowsArray((x) => [...x, { ...newRow }]);
-                select_vals.push(transactionObj.type_txn);
+                if (props.filter.update == 0) {
+                  var i;
+                  for (i in allTypes) {
+                    const type = allTypes[i];
+                    select_vals.push(type);
+                  }
+                } else {
+                  select_vals.push(transactionObj.type_txn);
+                }
                 // setIsEmpty(false);
               }
-            } else if (
-              transactionObj.trans_index == props.filter.searchInputValue.toString().trim() &&
-              transactionObj.type_txn == props.filter.transactionType
-            ) {
-              newRow = {
-                index: trxIndex,
-                date: date,
-                id_token: tokenId,
-                type_txn: _transaction_type_formatted,
-              };
-              setRowsArray((x) => [...x, { ...newRow }]);
-              select_vals.push(transactionObj.type_txn);
-              // setIsEmpty(false);
-            } else {
-              select_vals.push('');
-            }
-
-            break;
-          case 'Principal':
-            if (props.filter.searchInputValue == '') {
-              if (
-                transactionObj.principals.length > 0 &&
+              break;
+            case 'Transaction Id':
+              if (props.filter.searchInputValue == '') {
+                if (transactionObj.type_txn == props.filter.transactionType) {
+                  newRow = {
+                    index: trxIndex,
+                    date: date,
+                    id_token: tokenId,
+                    type_txn: _transaction_type_formatted,
+                  };
+                  setRowsArray((x) => [...x, { ...newRow }]);
+                  select_vals.push(transactionObj.type_txn);
+                  // setIsEmpty(false);
+                }
+              } else if (
+                transactionObj.trans_index == props.filter.searchInputValue.toString().trim() &&
                 transactionObj.type_txn == props.filter.transactionType
               ) {
                 newRow = {
@@ -518,77 +501,98 @@ export const TransactionsTable = (props: any) => {
                 setRowsArray((x) => [...x, { ...newRow }]);
                 select_vals.push(transactionObj.type_txn);
                 // setIsEmpty(false);
+              } else {
+                select_vals.push('');
               }
-            } else {
-              found = transactionObj.principals.indexOf(
-                props.filter.searchInputValue.toString().trim(),
-              );
-              if (transactionObj.type_txn == props.filter.transactionType && found != -1) {
-                newRow = {
-                  index: trxIndex,
-                  date: date,
-                  id_token: tokenId,
-                  type_txn: _transaction_type_formatted,
-                };
-                setRowsArray((x) => [...x, { ...newRow }]);
-                select_vals.push(transactionObj.type_txn);
-                // setIsEmpty(false);
-              }
-            }
 
-            break;
-          case 'Account':
-            if (props.filter.searchInputValue == '') {
-              if (
-                transactionObj.accounts.length > 0 &&
-                transactionObj.type_txn == props.filter.transactionType
-              ) {
-                newRow = {
-                  index: trxIndex,
-                  date: date,
-                  id_token: tokenId,
-                  type_txn: _transaction_type_formatted,
-                };
-                setRowsArray((x) => [...x, { ...newRow }]);
-                select_vals.push(transactionObj.type_txn);
-                // setIsEmpty(false);
+              break;
+            case 'Principal':
+              if (props.filter.searchInputValue == '') {
+                if (
+                  transactionObj.principals.length > 0 &&
+                  transactionObj.type_txn == props.filter.transactionType
+                ) {
+                  newRow = {
+                    index: trxIndex,
+                    date: date,
+                    id_token: tokenId,
+                    type_txn: _transaction_type_formatted,
+                  };
+                  setRowsArray((x) => [...x, { ...newRow }]);
+                  select_vals.push(transactionObj.type_txn);
+                  // setIsEmpty(false);
+                }
+              } else {
+                found = transactionObj.principals.indexOf(
+                  props.filter.searchInputValue.toString().trim(),
+                );
+                if (transactionObj.type_txn == props.filter.transactionType && found != -1) {
+                  newRow = {
+                    index: trxIndex,
+                    date: date,
+                    id_token: tokenId,
+                    type_txn: _transaction_type_formatted,
+                  };
+                  setRowsArray((x) => [...x, { ...newRow }]);
+                  select_vals.push(transactionObj.type_txn);
+                  // setIsEmpty(false);
+                }
               }
-            } else {
-              found = transactionObj.accounts.indexOf(
-                props.filter.searchInputValue.toString().trim(),
-              );
-              if (found != -1 && transactionObj.type_txn == props.filter.transactionType) {
-                newRow = {
-                  index: trxIndex,
-                  date: date,
-                  id_token: tokenId,
-                  type_txn: _transaction_type_formatted,
-                };
-                setRowsArray((x) => [...x, { ...newRow }]);
-                select_vals.push(transactionObj.type_txn);
-                // setIsEmpty(false);
-              }
-            }
 
-            break;
+              break;
+            case 'Account':
+              if (props.filter.searchInputValue == '') {
+                if (
+                  transactionObj.accounts.length > 0 &&
+                  transactionObj.type_txn == props.filter.transactionType
+                ) {
+                  newRow = {
+                    index: trxIndex,
+                    date: date,
+                    id_token: tokenId,
+                    type_txn: _transaction_type_formatted,
+                  };
+                  setRowsArray((x) => [...x, { ...newRow }]);
+                  select_vals.push(transactionObj.type_txn);
+                  // setIsEmpty(false);
+                }
+              } else {
+                found = transactionObj.accounts.indexOf(
+                  props.filter.searchInputValue.toString().trim(),
+                );
+                if (found != -1 && transactionObj.type_txn == props.filter.transactionType) {
+                  newRow = {
+                    index: trxIndex,
+                    date: date,
+                    id_token: tokenId,
+                    type_txn: _transaction_type_formatted,
+                  };
+                  setRowsArray((x) => [...x, { ...newRow }]);
+                  select_vals.push(transactionObj.type_txn);
+                  // setIsEmpty(false);
+                }
+              }
+
+              break;
+          }
+        }
+        if (return_all_rows == true) {
+          newRow = {
+            index: trxIndex,
+            date: date,
+            id_token: tokenId,
+            type_txn: _transaction_type_formatted,
+          };
+          setRowsArray((x) => [...x, { ...newRow }]);
+          select_vals.push(transactionObj.type_txn);
+          // setIsEmpty(false);
         }
       }
-      if (return_all_rows == true) {
-        newRow = {
-          index: trxIndex,
-          date: date,
-          id_token: tokenId,
-          type_txn: _transaction_type_formatted,
-        };
-        setRowsArray((x) => [...x, { ...newRow }]);
-        select_vals.push(transactionObj.type_txn);
-        // setIsEmpty(false);
-      }
-    }
 
-    props.setTrans_types(removeDuplicates(select_vals));
-    setAllTypes(removeDuplicates(array_with_all_types));
-    props.setIsLoading(false);
+      props.setTrans_types(removeDuplicates(select_vals));
+      setAllTypes(removeDuplicates(array_with_all_types));
+      props.setIsLoading(false);
+    }
   };
   useEffect(() => {
     if (props.searchBarTokenId != 'Not selected' && props.searchBarTokenId != '') {

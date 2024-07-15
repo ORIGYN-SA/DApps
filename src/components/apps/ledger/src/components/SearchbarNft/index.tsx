@@ -49,7 +49,7 @@ export const SearchbarNft = (props: any) => {
       // TODO: uncomment when idsNumber is being used
       // const number_ids = collectionNFT.token_ids_count[0].toString();
       // setIdsNumber(number_ids);
-      const arrayTokenIds = [];
+      const arrayTokenIds: string[][] = [];
       for (var x in obj_token_ids) {
         var newID = obj_token_ids[x];
         // This is the array created to be filtered with Intersection
@@ -79,7 +79,7 @@ export const SearchbarNft = (props: any) => {
           props.setSearchBarTokenId(context.tokenId);
         }
       } else {
-        if (window.location.href.includes('collection')) {
+        if (window.location.href.includes('collection') && obj_token_ids[0]) {
           props.setSearchBarTokenId(obj_token_ids[0][0]);
         } else {
           // setSearchBarTokenId state

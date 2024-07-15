@@ -1,5 +1,10 @@
-import type { getAccountId, Transactions } from '@dapp/utils';
-import { getToken, removeDuplicates, getPrincipalAccountFromArray, getAccount } from './TableFunctions';
+import { getAccountId, Transactions } from '@dapp/utils';
+import {
+  getToken,
+  removeDuplicates,
+  getPrincipalAccountFromArray,
+  getAccount,
+} from './TableFunctions';
 
 export const RoyaltyPaid = (
   obj_transaction,
@@ -8,7 +13,6 @@ export const RoyaltyPaid = (
   curr_obj,
   _transaction_type_formatted: string,
 ) => {
-
   const royaltyPaid: string = 'Royalty Paid';
 
   const buyer = obj_transaction[_props].buyer;
@@ -25,11 +29,7 @@ export const RoyaltyPaid = (
     buyerExt = 'Extensible';
   }
   // account BUYER
-  const buyerAccount = getAccount(
-    buyer.principal,
-    buyerId,
-    buyerExt,
-  );
+  const buyerAccount = getAccount(buyer.principal, buyerId, buyerExt);
 
   // enter in seller
   let sellerId = seller.account_id;
@@ -44,17 +44,9 @@ export const RoyaltyPaid = (
   let sellerAccount;
 
   if ('principal' in seller) {
-    sellerAccount = getAccount(
-      seller.principal,
-      sellerId,
-      sellerExt,
-    );
+    sellerAccount = getAccount(seller.principal, sellerId, sellerExt);
   } else {
-    sellerAccount = getAccount(
-      seller.account.owner,
-      sellerId,
-      sellerExt,
-    );
+    sellerAccount = getAccount(seller.account.owner, sellerId, sellerExt);
   }
 
   // enter in receiver
@@ -70,21 +62,15 @@ export const RoyaltyPaid = (
   let receiverAccount;
 
   if ('principal' in receiver) {
-    receiverAccount = getAccount(
-      receiver.principal,
-      receiverId,
-      receiverExt,
-    );
+    receiverAccount = getAccount(receiver.principal, receiverId, receiverExt);
   } else {
-    receiverAccount = getAccount(
-      receiver.account.owner,
-      receiverId,
-      receiverExt,
-    );
+    receiverAccount = getAccount(receiver.account.owner, receiverId, receiverExt);
   }
 
   // token obj
   const token = obj_transaction[_props].token;
+  let token_standard: string | undefined;
+  let obj_token: any;
 
   let tokenProps: string;
   for (tokenProps in token) {
@@ -95,18 +81,12 @@ export const RoyaltyPaid = (
     const _standard = token[tokenProps].standard;
 
     for (const prop of Object.keys(_standard)) {
-      var token_standard = prop;
+      token_standard = prop;
     }
   }
-
-  const obj_token = getToken(
-    _canister,
-    _fee,
-    _symbol,
-    _decimals,
-    token_standard,
-  );
-
+  if (token_standard) {
+    const obj_token = getToken(_canister, _fee, _symbol, _decimals, token_standard);
+  }
   let sellerAccountId;
   if ('principal' in seller) {
     sellerAccountId = getPrincipalAccountFromArray(seller.principal);
@@ -148,7 +128,5 @@ export const RoyaltyPaid = (
     amount: obj_transaction[_props].amount,
   };
 
-  return (
-    transactionObj
-  );
+  return transactionObj;
 };

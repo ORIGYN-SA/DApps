@@ -12,7 +12,11 @@ import { NFID } from '@connect2ic/core/providers/nfid';
 import { InfinityWallet } from '@connect2ic/core/providers/infinity-wallet';
 import { StoicWallet } from '@connect2ic/core/providers/stoic-wallet';
 
-export const SessionProvider: React.FC = ({ children }) => {
+interface SessionProviderProps {
+  children: any;
+}
+
+export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
   const context = useContext(PerpetualOSContext);
 
   if (!context.canisterId) return <></>;

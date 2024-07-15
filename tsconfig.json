@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
     "strict": true,
     "skipLibCheck": true,
     "module": "esnext",
@@ -73,7 +74,12 @@
         "./src/packages/candy_editor/src/index.ts"
       ]
     },
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    "plugins": [
+      {
+        "name": "@astrojs/ts-plugin"
+      },
+    ],
   },
   "include": [
       "./index.d.ts",

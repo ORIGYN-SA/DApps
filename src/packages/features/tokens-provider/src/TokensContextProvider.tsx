@@ -79,9 +79,9 @@ const defaultTokensMapped = () => {
 
     if (token.canisterId) {
       defaultTokensMapped[token.symbol] = {
+        ...token,
         canisterId: Principal.fromText(token.canisterId),
         icon: token.icon ?? token.symbol,
-        ...token,
       };
     }
   });
@@ -121,7 +121,11 @@ export const useTokensContext = () => {
   return context;
 };
 
-export const TokensContextProvider: React.FC = ({ children }) => {
+interface SessionProviderProps {
+  children: any;
+}
+
+export const TokensContextProvider: React.FC<SessionProviderProps> = ({ children }) => {
   const [tokens, setTokens] = useState<TokensContext['tokens']>(initialTokens);
   const [time, setTime] = useState<any>();
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
@@ -160,12 +164,16 @@ export const TokensContextProvider: React.FC = ({ children }) => {
     });
   };
 
-  const getBalance = async (principal: Principal, token: Token) => {
+  const getBalance = async (principal: Principal, token: Token): Promise<number> => {
     try {
       setIsFetchingBalance(true);
 
       const balance = await getBalanceFromCanister(context.isLocal, principal, token);
-      return balance.value / 10 ** balance.decimals;
+      if (balance.decimals !== undefined) {
+        return balance.value / 10 ** balance.decimals;
+      } else {
+        throw new Error('Cannot fetch balance value.');
+      }
     } catch (e) {
       console.error(e);
       return 0;

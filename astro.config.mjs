@@ -3,14 +3,24 @@ import react from '@astrojs/react';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { loadEnv } from 'vite';
+import path from 'path';
+import EnvironmentPlugin from 'vite-plugin-environment';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+process.env = {
+  ...process.env,
+  ...loadEnv(process.env.NODE_ENV, path.resolve(process.cwd(), "./"), ""),
+};
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [react()],
   vite: {
+    plugins: [EnvironmentPlugin(['DEV_SERVER_PORT'])],
+    envPrefix: '',
     define: {
       'process.env': process.env,
     },
@@ -52,10 +62,11 @@ export default defineConfig({
           './src/packages/features/user-messages/src/index.ts',
         ),
         '@dapp/common-api': resolve(__dirname, './src/packages/common/api/src/index.ts'),
+        '@dapp/app-ledger': resolve(__dirname, './src/pages/ledger.astro'),
         process: 'process/browser',
-        buffer: "buffer/",
-        stream: "stream-browserify/",
-        util: "util/",
+        buffer: 'buffer/',
+        stream: 'stream-browserify/',
+        util: 'util/',
       },
     },
     optimizeDeps: {
@@ -72,5 +83,18 @@ export default defineConfig({
         ],
       },
     },
+    server: {
+      port: process.env.DEV_SERVER_PORT || 3000,
+      proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:4321',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/api': '/api',
+          },
+        },
+      },
+    },
   },
 });
+

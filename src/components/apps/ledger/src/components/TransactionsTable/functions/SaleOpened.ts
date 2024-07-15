@@ -1,4 +1,4 @@
-import type { Transactions, PricingConfiguration, WaitForQuiet, formatTime } from '@dapp/utils';
+import { Transactions, PricingConfiguration, WaitForQuiet, formatTime } from '@dapp/utils';
 import { getToken, removeDuplicates } from './TableFunctions';
 
 export const SaleOpened = (
@@ -52,6 +52,9 @@ export const SaleOpened = (
         case 'flat':
           var flat_token = obj_pricing[typeOfPricing].token;
           var tokenProps: string;
+          let token_standard: string | undefined;
+          let obj_token: any;
+
           for (tokenProps in flat_token) {
             var _canister = _token[tokenProps].canister;
             var _fee = flat_token[tokenProps].fee;
@@ -60,12 +63,14 @@ export const SaleOpened = (
             var _standard = flat_token[tokenProps].standard;
 
             for (const prop of Object.keys(_standard)) {
-              var token_standard = prop;
+              token_standard = prop;
             }
           }
 
-          var obj_token = getToken(_canister, _fee, _symbol, _decimals, token_standard);
-          FlatData.token = obj_token;
+          if (token_standard) {
+            var local_obj_token = getToken(_canister, _fee, _symbol, _decimals, token_standard);
+            obj_token = local_obj_token;
+          }
 
           FlatData = {
             txn_id: curr_obj.index.toString(),
@@ -75,6 +80,8 @@ export const SaleOpened = (
             amount: obj_pricing[typeOfPricing].amount,
             token: obj_token,
           };
+
+          FlatData.token = obj_token;
           // Down here the accounts or principals of the transaction.
           // Need them for filter transaction using principal or account
           var array_accounts: string[] = [];
@@ -148,16 +155,19 @@ export const SaleOpened = (
           } else {
             const { wait_for_quiet } = _ending;
             var wait_props: string;
+            let wfq_date: string | undefined;
 
             for (wait_props in wait_for_quiet) {
-              var wfq_date = formatTime(BigInt(wait_for_quiet[wait_props].date));
-              var wfq_extention = wait_for_quiet[wait_props].extention;
-              var wfq_fade = wait_for_quiet[wait_props].fade;
-              var wfq_max = wait_for_quiet[wait_props].max;
+              if (wait_for_quiet[wait_props].hasOwnProperty('date')) {
+                wfq_date = formatTime(BigInt(wait_for_quiet[wait_props].date));
+                var wfq_extention = wait_for_quiet[wait_props].extention;
+                var wfq_fade = wait_for_quiet[wait_props].fade;
+                var wfq_max = wait_for_quiet[wait_props].max;
+              }
             }
 
             const obj_wfq: WaitForQuiet = {
-              date: wfq_date,
+              date: wfq_date !== undefined ? wfq_date : '',
               extention: wfq_extention,
               fade: wfq_fade,
               max: wfq_max,
@@ -168,6 +178,8 @@ export const SaleOpened = (
 
           var _token = obj_pricing[typeOfPricing].token;
           var tokenProps: string;
+          let obj_token_auction: any;
+
           for (tokenProps in _token) {
             var _canister = _token[tokenProps].canister;
             var _fee = _token[tokenProps].fee;
@@ -176,18 +188,19 @@ export const SaleOpened = (
             var _standard = _token[tokenProps].standard;
 
             for (const prop of Object.keys(_standard)) {
-              var token_standard = prop;
+              token_standard = prop;
             }
           }
 
-          var obj_token = getToken(_canister, _fee, _symbol, _decimals, token_standard);
-
+          if (token_standard) {
+            obj_token_auction = getToken(_canister, _fee, _symbol, _decimals, token_standard);
+          }
           AuctionData = {
             txn_id: curr_obj.index.toString(),
             token_id: curr_obj.token_id,
             type_txn: _transaction_type_formatted,
             type_of_pricing_config: typeOfPricing,
-            token: obj_token,
+            token: obj_token_auction,
             ending_date,
             min_increase: minimum_increase,
             start_date: _startDate,

@@ -1,5 +1,10 @@
-import type { getAccountId, Transactions, TypeTransactionId } from '@dapp/utils';
-import { getAccount, getToken, removeDuplicates, getPrincipalAccountFromArray } from './TableFunctions';
+import { getAccountId, Transactions, TypeTransactionId } from '@dapp/utils';
+import {
+  getAccount,
+  getToken,
+  removeDuplicates,
+  getPrincipalAccountFromArray,
+} from './TableFunctions';
 
 export const EscrowDeposit = (
   obj_transaction,
@@ -23,11 +28,7 @@ export const EscrowDeposit = (
     buyer_ext = 'Extensible';
   }
   // account BUYER
-  const buyer_account = getAccount(
-    dep_buyer.principal,
-    buyer_id,
-    buyer_ext,
-  );
+  const buyer_account = getAccount(dep_buyer.principal, buyer_id, buyer_ext);
 
   // enter in seller
   let seller_id = dep_seller.account_id;
@@ -39,16 +40,15 @@ export const EscrowDeposit = (
     seller_ext = 'Extensible';
   }
   // account SELLER
-  const seller_account = getAccount(
-    dep_seller.principal,
-    seller_id,
-    seller_ext,
-  );
+  const seller_account = getAccount(dep_seller.principal, seller_id, seller_ext);
 
   // token obj
   const dep_token = obj_transaction[_props].token;
 
   let tokenProps: string;
+  let token_standard: string | undefined;
+  let obj_token: any;
+
   for (tokenProps in dep_token) {
     var _canister = dep_token[tokenProps].canister;
     var _fee = dep_token[tokenProps].fee;
@@ -57,18 +57,14 @@ export const EscrowDeposit = (
     const _standard = dep_token[tokenProps].standard;
 
     for (const prop of Object.keys(_standard)) {
-      var token_standard = prop;
+      token_standard = prop;
     }
   }
 
-  const obj_token = getToken(
-    _canister,
-    _fee,
-    _symbol,
-    _decimals,
-    token_standard,
-  );
-
+  if (token_standard) {
+    const obj_token = getToken(_canister, _fee, _symbol, _decimals, token_standard);
+  }
+  
   // trans type
   const dep_trans = obj_transaction[_props].trx_id;
   const trans_nat = dep_trans.nat;
@@ -83,10 +79,7 @@ export const EscrowDeposit = (
 
   const array_accounts: string[] = [];
 
-  array_accounts.push(
-    getAccountId(buyerPrincipal),
-    getAccountId(sellerPrincipal)
-  );
+  array_accounts.push(getAccountId(buyerPrincipal), getAccountId(sellerPrincipal));
   const array_principals: string[] = [];
   array_principals.push(obj_token.canister_string);
 
@@ -104,8 +97,5 @@ export const EscrowDeposit = (
     fee: obj_transaction[_props].fee,
     trx_id: dep_trx,
   };
-  return (
-    transactionObj
-  );
+  return transactionObj;
 };
-

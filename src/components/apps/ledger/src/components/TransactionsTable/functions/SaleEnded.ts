@@ -1,4 +1,4 @@
-import type { getAccountId, Transactions } from '@dapp/utils';
+import { getAccountId, Transactions } from '@dapp/utils';
 import { getAccount, getToken, removeDuplicates, getPrincipalAccountFromArray } from './TableFunctions';
 
 export const SaleEnded = (
@@ -44,6 +44,9 @@ export const SaleEnded = (
   );
   // specs token
   let tokenProps: string;
+  let token_standard: string | undefined;
+  let obj_token_end: any;
+
   for (tokenProps in end_token) {
     var _canister = end_token[tokenProps].canister;
     var _fee = end_token[tokenProps].fee;
@@ -52,10 +55,11 @@ export const SaleEnded = (
     const _standard = end_token[tokenProps].standard;
 
     for (const prop of Object.keys(_standard)) {
-      var token_standard = prop;
+      token_standard = prop;
     }
   }
   // Object token
+  if(token_standard){
   const obj_token_end = getToken(
     _canister,
     _fee,
@@ -63,7 +67,7 @@ export const SaleEnded = (
     _decimals,
     token_standard,
   );
-
+  }
   let end_sale_id = obj_transaction[_props].sale_id[0];
   if (!end_sale_id) {
     end_sale_id = 'Sale ID not defined';

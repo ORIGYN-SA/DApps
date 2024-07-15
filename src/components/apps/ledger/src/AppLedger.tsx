@@ -11,26 +11,28 @@ import { SnackbarProvider } from 'notistack';
 import { GlobalStyle } from '@origyn/origyn-art-ui';
 
 const App = () => (
-  <HashRouter>
-    <GlobalStyle />
-    <SiteProvider>
-      <PerpetualOSContextProvider>
-        <SessionProvider>
-          <AuthProvider>
-            <TokensContextProvider>
-              <SnackbarProvider maxSnack={3}>
-                <Layout>
-                  <Routes>
-                    <Route path="*" element={<Ledger />} />
-                  </Routes>
-                </Layout>
-              </SnackbarProvider>
-            </TokensContextProvider>
-          </AuthProvider>
-        </SessionProvider>
-      </PerpetualOSContextProvider>
-    </SiteProvider>
-  </HashRouter>
+  <>
+    <HashRouter>
+      <GlobalStyle />
+      <SiteProvider>
+        <PerpetualOSContextProvider>
+          <SessionProvider>
+            <AuthProvider>
+              <TokensContextProvider>
+                <SnackbarProvider maxSnack={3}>
+                  <Layout>
+                    <Routes>
+                      <Route path="*" element={<Ledger />} />
+                    </Routes>
+                  </Layout>
+                </SnackbarProvider>
+              </TokensContextProvider>
+            </AuthProvider>
+          </SessionProvider>
+        </PerpetualOSContextProvider>
+      </SiteProvider>
+    </HashRouter>
+  </>
 );
 
 export default App;

@@ -1,4 +1,4 @@
-import type { getAccountId, Transactions, Sale } from '@dapp/utils';
+import { getAccountId, Transactions, Sale } from '@dapp/utils';
 import { getToken, removeDuplicates, getPrincipalAccountFromArray } from './TableFunctions';
 
 export const Mint = (
@@ -19,6 +19,8 @@ export const Mint = (
   const token_obj = mint_sale.token;
 
   let sale_obj: Sale;
+  let token_standard: string | undefined;
+  let obj_token: any;
 
   if (!token_obj) {
     sale_obj = {
@@ -35,16 +37,12 @@ export const Mint = (
       const _standard = token_obj[tokenProps].standard;
 
       for (const prop of Object.keys(_standard)) {
-        var token_standard = prop;
+        token_standard = prop;
       }
     }
-    const obj_token = getToken(
-      _canister,
-      _fee,
-      _symbol,
-      _decimals,
-      token_standard,
-    );
+    if (token_standard) {
+      const obj_token = getToken(_canister, _fee, _symbol, _decimals, token_standard);
+    }
     sale_obj = {
       token: obj_token,
       amount: mint_sale.amount,
@@ -55,7 +53,7 @@ export const Mint = (
   const array_accounts: string[] = [];
   array_accounts.push(
     getAccountId(getPrincipalAccountFromArray(from.principal)),
-    getAccountId(getPrincipalAccountFromArray(to.principal))
+    getAccountId(getPrincipalAccountFromArray(to.principal)),
   );
   const array_principals: string[] = [];
   array_principals.push();
@@ -71,7 +69,5 @@ export const Mint = (
     sale: sale_obj,
   };
 
-  return (
-    transactionObj
-  );
+  return transactionObj;
 };

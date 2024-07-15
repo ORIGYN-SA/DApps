@@ -17,7 +17,9 @@ export const PerpetualOSContextProvider = ({ children }) => {
 
         console.log('ContextProvider -> context', urlContext);
       } catch (err) {
-        throw new Error('Could not get Perpetual OS context: ' + err?.message ?? err.toString());
+        if (err instanceof Error) {
+          throw new Error('Could not get Perpetual OS context: ' + err?.message ?? err.toString());
+        }
       }
     };
 

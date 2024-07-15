@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import type { Filter } from '@dapp/utils';
+import { Filter } from '@dapp/utils';
 import { Container, Select, Grid, Icons, Flex, Button } from '@origyn/origyn-art-ui';
 
 // Search into categories

@@ -21,7 +21,9 @@ export const formatE8S = (e8s: BigInt) => {
 
 export const copyToClipboard = (text: string, onSuccess?: () => void) => {
   navigator.clipboard.writeText(text).then(function () {
-    onSuccess();
+    if (onSuccess) {
+      onSuccess();
+    }
   });
 };
 

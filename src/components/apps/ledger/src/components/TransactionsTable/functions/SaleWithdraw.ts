@@ -1,6 +1,10 @@
-
-import type { Transactions, TypeTransactionId, getAccountId, } from '@dapp/utils';
-import { getAccount, getToken, removeDuplicates, getPrincipalAccountFromArray } from './TableFunctions';
+import { Transactions, TypeTransactionId, getAccountId } from '@dapp/utils';
+import {
+  getAccount,
+  getToken,
+  removeDuplicates,
+  getPrincipalAccountFromArray,
+} from './TableFunctions';
 
 export const SaleWithdraw = (
   obj_transaction,
@@ -23,11 +27,7 @@ export const SaleWithdraw = (
     buyer_ext = 'Extensible';
   }
   // account BUYER
-  const buyer_account = getAccount(
-    sale_wit_buyer.principal,
-    buyer_id,
-    buyer_ext,
-  );
+  const buyer_account = getAccount(sale_wit_buyer.principal, buyer_id, buyer_ext);
 
   // enter in seller
   let seller_id = sale_wit_seller.account_id;
@@ -42,21 +42,15 @@ export const SaleWithdraw = (
   let sellerAccount; // seller account
 
   if ('principal' in sale_wit_seller) {
-    sellerAccount = getAccount(
-      sale_wit_seller.principal,
-      seller_id,
-      seller_ext,
-    );
+    sellerAccount = getAccount(sale_wit_seller.principal, seller_id, seller_ext);
   } else {
-    sellerAccount = getAccount(
-      sale_wit_seller.account.owner,
-      seller_id,
-      seller_ext,
-    );
+    sellerAccount = getAccount(sale_wit_seller.account.owner, seller_id, seller_ext);
   }
 
   // token obj
   const sale_wit_token = obj_transaction[_props].token;
+  let token_standard: string | undefined;
+  let obj_token: any;
 
   let tokenProps: string;
   for (tokenProps in sale_wit_token) {
@@ -67,18 +61,13 @@ export const SaleWithdraw = (
     const _standard = sale_wit_token[tokenProps].standard;
 
     for (const prop of Object.keys(_standard)) {
-      var token_standard = prop;
+      token_standard = prop;
     }
   }
 
-  const obj_token = getToken(
-    _canister,
-    _fee,
-    _symbol,
-    _decimals,
-    token_standard,
-  );
-
+  if (token_standard) {
+    const obj_token = getToken(_canister, _fee, _symbol, _decimals, token_standard);
+  }
   // trans type
   const sale_wit_trans = obj_transaction[_props].trx_id;
   const trans_nat = sale_wit_trans.nat;
@@ -103,7 +92,7 @@ export const SaleWithdraw = (
   const array_accounts: string[] = [];
   array_accounts.push(
     getAccountId(saleWithdrawBuyerAccountId),
-    getAccountId(saleWithdrawSellerAccountId)
+    getAccountId(saleWithdrawSellerAccountId),
   );
   const array_principals: string[] = [];
   array_principals.push(obj_token.canister_string);
@@ -121,7 +110,5 @@ export const SaleWithdraw = (
     fee: obj_transaction[_props].fee,
     trx_id: sale_wit_trx,
   };
-  return (
-    transactionObj
-  );
+  return transactionObj;
 };

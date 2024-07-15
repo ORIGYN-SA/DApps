@@ -1,9 +1,9 @@
 import React, { createContext } from 'react';
 import { Principal } from '@dfinity/principal';
 import { ConnectDialog, useCanister, useConnect } from '@connect2ic/react';
-import type { OrigynNftActor } from '@origyn/mintjs';
+import { OrigynNftActor } from '@origyn/mintjs';
 import { Preloader } from '@dapp/features-components';
-import type { AuthContextType } from '../types';
+import { AuthContextType } from '../types';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
@@ -40,7 +40,7 @@ export const useAuth = (): AuthContextType => {
     isLoading: isInitializing,
     loggedIn: isConnected,
     principal,
-    principalId: principal.isAnonymous() ? '' : principalId,
+    principalId: principal.isAnonymous() ? '' : principalId ?? '',
   };
 };
 
