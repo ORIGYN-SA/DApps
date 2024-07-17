@@ -18,14 +18,15 @@ process.env = {
 // https://astro.build/config
 export default defineConfig({
   integrations: [react()],
+  server: {
+    port: parseInt(process.env.DEV_SERVER_PORT),
+  },
   vite: {
     plugins: [EnvironmentPlugin(['DEV_SERVER_PORT'])],
-    envPrefix: '',
     define: {
       'process.env': process.env,
     },
     resolve: {
-      dedupe: ['@emotion/react'],
       alias: {
         '@dapp/features-authentication': resolve(
           __dirname,
@@ -81,18 +82,6 @@ export default defineConfig({
             buffer: true,
           }),
         ],
-      },
-    },
-    server: {
-      port: process.env.DEV_SERVER_PORT || 3000,
-      proxy: {
-        '/api': {
-          target: 'http://127.0.0.1:4321',
-          changeOrigin: true,
-          pathRewrite: {
-            '^/api': '/api',
-          },
-        },
       },
     },
   },

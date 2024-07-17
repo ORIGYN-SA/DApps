@@ -13,6 +13,7 @@
     "removeComments": true,
     "sourceMap": true,
     "target": "ESNext",
+    "types": ["vite/client"],
     "moduleResolution": "Node",
     "allowJs": true,
     "rootDir": ".",
@@ -25,7 +26,7 @@
     ],
     "typeRoots": [
       "./node_modules/@types",
-      "./types"
+      "./types",
     ],
     "paths": {
       "@dapp/app-ledger": [
@@ -93,5 +94,5 @@
       "./packages/**/node_modules",
       "./dist/**/*.js"
     ],
-  "extends": "astro/tsconfigs/strict"
+  "extends": "astro/tsconfigs/strict",
 }

@@ -1,0 +1,11 @@
+---
+import Layout from '../../../../../layouts/Layout.astro';
+import AppMarketplace from '../../../../../components/apps/marketplace/src/AppMarketplace';
+import { getStaticPaths } from './index'; 
+
+export { getStaticPaths };
+---
+
+<Layout title="Marketplace App">
+  <AppMarketplace client:only="react" />
+</Layout>
