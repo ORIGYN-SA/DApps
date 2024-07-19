@@ -6,21 +6,37 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import { loadEnv } from 'vite';
 import path from 'path';
 import EnvironmentPlugin from 'vite-plugin-environment';
+import process from 'process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 process.env = {
   ...process.env,
-  ...loadEnv(process.env.NODE_ENV, path.resolve(process.cwd(), "./"), ""),
+  ...loadEnv(process.env.NODE_ENV, path.resolve(process.cwd(), './'), ''),
 };
+
+const url = '/-/' + process.env.NFT_CANISTER_ID + '/collection/-/marketplace.astro';
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [react()],
   server: {
+    host: 'localhost',
     port: parseInt(process.env.DEV_SERVER_PORT),
   },
+  redirects: {
+    '/': url,
+  },
+  build: {
+    format: 'file',
+    out: 'dist',
+  },
+  fallback: {
+    fs: false,
+    path: false,
+  },
+  tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
   vite: {
     plugins: [EnvironmentPlugin(['DEV_SERVER_PORT'])],
     define: {
@@ -67,6 +83,7 @@ export default defineConfig({
         process: 'process/browser',
         buffer: 'buffer/',
         stream: 'stream-browserify/',
+        crypto: 'crypto-browserify/',
         util: 'util/',
       },
     },
@@ -86,4 +103,3 @@ export default defineConfig({
     },
   },
 });
-

@@ -13,7 +13,6 @@
     "removeComments": true,
     "sourceMap": true,
     "target": "ESNext",
-    "types": ["vite/client"],
     "moduleResolution": "Node",
     "allowJs": true,
     "rootDir": ".",

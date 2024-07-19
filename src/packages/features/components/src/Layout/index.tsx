@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useContext, useEffect, useState } from 'react';
 import { Flex, GlobalStyle, Navbar } from '@origyn/origyn-art-ui';
 import { Icons, theme, themeLight } from '@origyn/origyn-art-ui';
@@ -43,16 +44,22 @@ const initialMenuItems: MenuItem[] = [
   },
 ];
 
+
+const navItems = {
+  start: initialMenuItems,
+};
+
+
 export const Layout = ({ children }: LayoutProps) => {
   const context = useContext(PerpetualOSContext);
 
   const { refreshAllBalances } = useTokensContext();
   const { principal, loggedIn, actor } = useContext(AuthContext);
-  const [darkTheme, setDarkTheme] = useState(null);
-  const [menuItems, setMenuItems] = useState(initialMenuItems);
+  const [darkTheme, setDarkTheme] = useState(false);
+  const [setMenuItems] = useState(initialMenuItems);
 
   useEffect(() => {
-    if (loggedIn) {
+    if (loggedIn && refreshAllBalances && principal) {
       refreshAllBalances(principal);
     }
   }, [loggedIn]);
@@ -75,6 +82,7 @@ export const Layout = ({ children }: LayoutProps) => {
     run();
   }, []);
 
+
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme !== null) {
@@ -87,17 +95,17 @@ export const Layout = ({ children }: LayoutProps) => {
     setDarkTheme(newTheme);
     localStorage.setItem('theme', newTheme);
   };
-
   return (
     <>
       <ThemeProvider theme={darkTheme ? theme : themeLight}>
         <GlobalStyle />
         <Flex fullWidth mdFlexFlow="column">
           <Navbar
-            navItems={menuItems}
+            navItems={navItems}
             onChangeTheme={() => handleThemeChange()}
             dAppsVersion="0.2.1"
             darkMode={darkTheme}
+            showThemeButton={true}
           />
           <Flex fullWidth>{children}</Flex>
         </Flex>

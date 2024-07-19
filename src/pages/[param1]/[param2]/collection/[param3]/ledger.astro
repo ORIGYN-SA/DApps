@@ -1,11 +1,13 @@
 ---
 import Layout from '../../../../../layouts/Layout.astro';
 import AppLedger from '../../../../../components/apps/ledger/src/AppLedger';
-import { getStaticPaths } from './index'; 
+import { getStaticPaths } from './index';
 
 export { getStaticPaths };
 ---
 
 <Layout title="Ledger App">
-  <AppLedger client:only="react" />
+  <div id="root">
+    <AppLedger client:only="react" />
+  </div>
 </Layout>

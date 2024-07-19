@@ -1,12 +1,13 @@
 ---
 import Layout from '../../../../../layouts/Layout.astro';
 import AppLibrary from '../../../../../components/apps/library/src/AppLibrary';
-import { getStaticPaths } from './index'; 
+import { getStaticPaths } from './index';
 
 export { getStaticPaths };
 ---
 
 <Layout title="Library App">
-	<AppLibrary  client:only="react"/>
+  <div id="root">
+    <AppLibrary client:only="react" />
+  </div>
 </Layout>
-
