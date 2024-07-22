@@ -18,9 +18,9 @@ import {
   timeInNanos,
 } from '@dapp/utils';
 import { OrigynClient } from '@origyn/mintjs';
-import TransferTokensModal from '@dapp/features-sales-escrows/modals/TransferTokens';
-import ManageEscrowsModal from '@dapp/features-sales-escrows/modals/ManageEscrows';
-import ManageDepositsModal from '@dapp/features-sales-escrows/modals/ManageDepositsModal';
+import TransferTokensModal from '@dapp/features-sales-escrows';
+import ManageEscrowsModal from '@dapp/features-sales-escrows';
+import ManageDepositsModal from '@dapp/features-sales-escrows';
 import Filter from './Filter';
 import styled from 'styled-components';
 import {
@@ -44,7 +44,7 @@ import {
   DscvrSVG,
   TwitterSVG,
   MediumSVG,
-} from '../../../../../features/components/src/SocialMediaSVG';
+} from '../../../../../../packages/features/components/src/SocialMediaSVG';
 
 const GuestContainer = () => {
   const { open } = useDialog();

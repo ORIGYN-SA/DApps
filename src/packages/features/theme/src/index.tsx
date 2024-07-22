@@ -3,11 +3,12 @@ import { CssBaseline } from '@mui/material';
 import {
   createTheme,
   responsiveFontSizes,
-  ThemeProvider,
   StyledEngineProvider,
 } from '@mui/material/styles';
 import { useLocalStorage } from '@dapp/utils';
 import palette from './palette';
+import { ThemeProvider } from 'styled-components';
+
 
 const initialState = {
   themeMode: 'dark',

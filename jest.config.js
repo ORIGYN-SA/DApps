@@ -1,4 +1,5 @@
-const { TextDecoder, TextEncoder } = require('util')
+import { TextDecoder, TextEncoder } from 'util';
+import module from 'module';
 
 module.exports = {
   globals: {

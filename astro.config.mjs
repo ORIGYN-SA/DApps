@@ -16,7 +16,6 @@ process.env = {
   ...loadEnv(process.env.NODE_ENV, path.resolve(process.cwd(), './'), ''),
 };
 
-const url = '/-/' + process.env.NFT_CANISTER_ID + '/collection/-/marketplace.astro';
 
 // https://astro.build/config
 export default defineConfig({
@@ -24,9 +23,6 @@ export default defineConfig({
   server: {
     host: 'localhost',
     port: parseInt(process.env.DEV_SERVER_PORT),
-  },
-  redirects: {
-    '/': url,
   },
   build: {
     format: 'file',
@@ -80,6 +76,8 @@ export default defineConfig({
         ),
         '@dapp/common-api': resolve(__dirname, './src/packages/common/api/src/index.ts'),
         '@dapp/app-ledger': resolve(__dirname, './src/pages/ledger.astro'),
+        '@daap/app-vault': resolve(__dirname, './src/pages/vault.astro'),
+        '@dapp/features-sales-escrows/components/modals/TransferTokens': resolve( __dirname, './src/packages/features/sales-escrows/components/modals/TransferTokens.tsx'),
         process: 'process/browser',
         buffer: 'buffer/',
         stream: 'stream-browserify/',

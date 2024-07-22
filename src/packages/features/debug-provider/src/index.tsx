@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 
 // enables JSON.stringify for objects with bigints
 BigInt.prototype['toJSON'] = function () {
@@ -19,7 +19,8 @@ function isDebug(): boolean {
 
 const DebugContext = createContext<DebugContextType | undefined>(undefined);
 
-export const DebugProvider: React.FC = ({ children }) => {
+
+export const DebugProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const debug = isDebug();
   const contextValue = {
     log: (...args: any[]) => {

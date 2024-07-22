@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import React, { useContext, useEffect, useState } from 'react';
 import { Flex, GlobalStyle, Navbar } from '@origyn/origyn-art-ui';
 import { Icons, theme, themeLight } from '@origyn/origyn-art-ui';
@@ -13,7 +12,7 @@ import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
   {
-    href: '',
+    href: 'vault',
     title: 'Home',
     icon: Icons.Home,
   },
@@ -23,7 +22,7 @@ const initialMenuItems: MenuItem[] = [
     icon: Icons.Wallet,
   },
   {
-    href: 'data',
+    href: 'nft-data',
     title: 'Certificates Data',
     icon: Icons.DataBrowse,
   },
@@ -44,11 +43,7 @@ const initialMenuItems: MenuItem[] = [
   },
 ];
 
-
-const navItems = {
-  start: initialMenuItems,
-};
-
+const dAppsVersion = '0.2.1';
 
 export const Layout = ({ children }: LayoutProps) => {
   const context = useContext(PerpetualOSContext);
@@ -56,7 +51,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const { refreshAllBalances } = useTokensContext();
   const { principal, loggedIn, actor } = useContext(AuthContext);
   const [darkTheme, setDarkTheme] = useState(false);
-  const [setMenuItems] = useState(initialMenuItems);
+  const [menuItems, setMenuItems] = useState(initialMenuItems);
 
   useEffect(() => {
     if (loggedIn && refreshAllBalances && principal) {
@@ -80,8 +75,19 @@ export const Layout = ({ children }: LayoutProps) => {
       });
     };
     run();
-  }, []);
+  }, [context.isLocal, context.canisterId, actor]);
 
+  useEffect(() => {
+    console.log("Menu Items: ", menuItems);
+  }, [menuItems]);
+  
+  useEffect(() => {
+    console.log("Theme: ", darkTheme);
+  }, [darkTheme]);
+
+  useEffect(() => {
+    console.log("dApps Version: ", dAppsVersion);
+  }, [dAppsVersion]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -101,9 +107,9 @@ export const Layout = ({ children }: LayoutProps) => {
         <GlobalStyle />
         <Flex fullWidth mdFlexFlow="column">
           <Navbar
-            navItems={navItems}
-            onChangeTheme={() => handleThemeChange()}
-            dAppsVersion="0.2.1"
+            navItems={menuItems}
+            onChangeTheme={handleThemeChange}
+            dAppsVersion={dAppsVersion}
             darkMode={darkTheme}
             showThemeButton={true}
           />
@@ -113,6 +119,7 @@ export const Layout = ({ children }: LayoutProps) => {
     </>
   );
 };
+export default Layout;
 
 export type MenuItem = {
   href: string;

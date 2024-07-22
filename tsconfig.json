@@ -28,9 +28,11 @@
       "./types",
     ],
     "paths": {
-      "@dapp/app-ledger": [
-        "./src/pages/ledger.astro"
-      ],
+      "@dapp/app-ledger": ["./src/pages/ledger.astro"],
+      "@dapp/app-vault": ["./src/pages/vault.astro"],
+      "@dapp/app-nft-data": ["./src/pages/nft-data.astro"],
+      "@dapp/app-marketplace": ["./src/pages/marketplace.astro"],
+      "@dapp/app-library": ["./src/pages/library.astro"],
       "@dapp/features-debug-provider": [
         "./src/packages/features/debug-provider/src/index.tsx"
       ],
@@ -72,7 +74,7 @@
       ],
       "@dapp/candy-editor": [
         "./src/packages/candy_editor/src/index.ts"
-      ]
+      ],
     },
     "jsxImportSource": "react",
     "plugins": [
@@ -82,10 +84,16 @@
     ],
   },
   "include": [
-      "./index.d.ts",
-      "./src/components/**/*.tsx",
+      "index.d.ts",
+      "./src/components/**/*",
+      "./src/packages/**/*",
       "./astro.config.mjs",
       "./types/**/*.d.ts",
+      "jest.config.js",
+      "./babel.config.js",
+      "./testUtils",
+      "./src/",
+      "*.d.ts",
     ],
     "exclude": [
       "./node_modules",
