@@ -38,7 +38,7 @@ export default defineConfig({
   },
   tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
   vite: {
-    plugins: [EnvironmentPlugin(['DEV_SERVER_PORT'])],
+    plugins: [EnvironmentPlugin(['DEV_SERVER_PORT', 'NFT_CANISTER_ID', 'OGY_LEDGER_CANISTER_ID'])],
     define: {
       'process.env': process.env,
     },
@@ -65,7 +65,7 @@ export default defineConfig({
         '@dapp/common-types': resolve(__dirname, './src/packages/common/types/src/index.ts'),
         '@dapp/common-candid': resolve(__dirname, './src/packages/common/candid/src/index.ts'),
         '@dapp/common-assets': resolve(__dirname, './src/packages/common/assets/src/index.ts'),
-        '@dapp/candy-editor': resolve(__dirname, './src/packages/candy_editor/src/index.tsx'),
+        '@dapp/candy-editor': resolve(__dirname, './src/packages/candy_editor/src/index.ts'),
         '@dapp/features-debug-provider': resolve(
           __dirname,
           './src/packages/features/debug-provider/src/index.tsx',
@@ -82,6 +82,7 @@ export default defineConfig({
         '@dapp/app-ledger': resolve(__dirname, './src/pages/ledger.astro'),
         '@daap/app-vault': resolve(__dirname, './src/pages/vault.astro'),
         '@dapp/features-sales-escrows/components/modals/TransferTokens': resolve( __dirname, './src/packages/features/sales-escrows/components/modals/TransferTokens.tsx'),
+        '@testUtils': resolve(__dirname, './src/testUtils/index.ts'),
         process: 'process/browser',
         buffer: 'buffer/',
         stream: 'stream-browserify/',

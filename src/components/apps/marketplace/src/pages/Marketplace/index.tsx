@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDialog } from '@connect2ic/react';
 import { AuthContext } from '@dapp/features-authentication';
-import { OrigynClient } from '@origyn/mintjs';
+import { OrigynClient, PropertyShared } from '@origyn/mintjs';
 import { useDebug } from '@dapp/features-debug-provider';
 import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { useApi } from '@dapp/common-api';
@@ -24,7 +24,7 @@ import {
 import {
   WebsiteSVG,
   DiscordSVG,
-  DistriktSVG, 
+  DistriktSVG,
   DscvrSVG,
   TwitterSVG,
   MediumSVG,
@@ -55,7 +55,9 @@ const Marketplace = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const logout = async () => {
-    handleLogOut();
+    if (handleLogOut) {
+      handleLogOut();
+    }
     fetchData();
   };
 
@@ -65,11 +67,11 @@ const Marketplace = () => {
 
   const itemsPerPage = 50;
 
-  const totalPages: any = Math.ceil(filteredOdcs.length / itemsPerPage);
+  const totalPages: any = Math.ceil((filteredOdcs ?? []).length / itemsPerPage);
 
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  const currentData = filteredOdcs.slice(start, end);
+  const currentData = (filteredOdcs ?? []).slice(start, end);
 
   const fetchData = async () => {
     if (!actor) {
@@ -81,8 +83,8 @@ const Marketplace = () => {
 
       // get the canister's collection metadata
       const meta = await getNftCollectionMeta();
-      const metadata = meta.metadata[0];
-      const metadataClass = 'Class' in metadata ? metadata.Class : [];
+      const metadata = meta?.metadata[0] || {};
+      const metadataClass: PropertyShared[] = 'Class' in metadata ? metadata.Class : [];
       const collectionData = parseMetadata(metadataClass);
       dispatch({ type: 'collectionData', payload: collectionData });
 
@@ -129,26 +131,26 @@ const Marketplace = () => {
 
   /* Apply filter and sort to list */
   useEffect(() => {
-    let filtered = odcs;
+    let filtered = odcs ?? [];
 
     switch (filter) {
       case 'all':
-        filtered = odcs;
+        filtered = odcs ?? [];
         break;
       case 'onSale':
-        filtered = odcs.filter((odc) => odc.auctionOpen);
+        filtered = (odcs ?? []).filter((odc) => odc.auctionOpen);
         break;
       case 'notOnSale':
-        filtered = odcs.filter((odc) => !odc.auctionOpen);
+        filtered = (odcs ?? []).filter((odc) => !odc.auctionOpen);
         break;
       default:
-        filtered = odcs.filter((odc) => odc.auctionOpen);
+        filtered = (odcs ?? []).filter((odc) => odc.auctionOpen);
         break;
     }
 
     filtered.sort((odc1, odc2) => {
-      const price1 = odc1.currentBid || odc1.buyNow;
-      const price2 = odc2.currentBid || odc2.buyNow;
+      const price1 = odc1.currentBid || odc1.buyNow || 0;
+      const price2 = odc2.currentBid || odc2.buyNow || 0;
       if (sort === 'saleASC') {
         if (odc1.auctionOpen && odc2.auctionOpen) {
           return price1 - price2;
@@ -166,6 +168,7 @@ const Marketplace = () => {
           return 1;
         }
       }
+      return 0; // Default value when the prices are undefined
     });
 
     if (inputText?.length) {
@@ -294,7 +297,7 @@ const Marketplace = () => {
                       <br />
                       <br />
                       <Flex flexFlow="column" fullWidth justify="center" align="center">
-                        <NFTCards nftData={currentData} odcs={odcs} />
+                        <NFTCards nftData={currentData as any[]} odcs={odcs} />
                         <Pagination
                           total={totalPages}
                           current={currentPage}

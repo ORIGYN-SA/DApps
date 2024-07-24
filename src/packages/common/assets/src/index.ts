@@ -13,4 +13,9 @@ import PlaceholderIcon from './placeholder.svg';
 // @ts-ignore
 import ErrorIcon from './error.svg';
 
+
 export { ICPIcon, OrigynLogo, OGYIcon, QuestionIcon, PlaceholderImage, PlaceholderIcon, ErrorIcon };
+
+
+
+

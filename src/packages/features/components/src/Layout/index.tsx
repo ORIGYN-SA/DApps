@@ -43,7 +43,6 @@ const initialMenuItems: MenuItem[] = [
   },
 ];
 
-const dAppsVersion = '0.2.1';
 
 export const Layout = ({ children }: LayoutProps) => {
   const context = useContext(PerpetualOSContext);
@@ -78,18 +77,6 @@ export const Layout = ({ children }: LayoutProps) => {
   }, [context.isLocal, context.canisterId, actor]);
 
   useEffect(() => {
-    console.log("Menu Items: ", menuItems);
-  }, [menuItems]);
-  
-  useEffect(() => {
-    console.log("Theme: ", darkTheme);
-  }, [darkTheme]);
-
-  useEffect(() => {
-    console.log("dApps Version: ", dAppsVersion);
-  }, [dAppsVersion]);
-
-  useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme !== null) {
       setDarkTheme(savedTheme === 'true');
@@ -109,7 +96,7 @@ export const Layout = ({ children }: LayoutProps) => {
           <Navbar
             navItems={menuItems}
             onChangeTheme={handleThemeChange}
-            dAppsVersion={dAppsVersion}
+            dAppsVersion="0.2.1"
             darkMode={darkTheme}
             showThemeButton={true}
           />

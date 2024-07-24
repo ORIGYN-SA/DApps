@@ -1,6 +1,6 @@
 import { Principal } from '@dfinity/principal';
 import type { EscrowRecord, NFTInfoStable, PropertyShared } from '@origyn/mintjs';
-import type {
+import  {
   DisplayProperty,
   OdcData,
   OdcDataWithSale,
@@ -11,6 +11,7 @@ import type {
 import { toSentenceCase } from './string';
 import { toBigNumber } from './number';
 import * as T from '@origyn/mintjs';
+
 
 export function getProperty(properties: any, propertyName: string) {
   return properties?.find(({ name }) => name === propertyName);
@@ -91,7 +92,6 @@ function initOdcSaleData(odc: OdcData): OdcDataWithSale {
     currentBid: 0,
     token: undefined,
     tokenSymbol: 'OGY',
-
     saleId: '',
     startPrice: 0,
     reserve: 0,
@@ -290,11 +290,11 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
     // this ensures that sale ids from closed auctions are not
     // used to create escrows for offers or bids
     if (odc.auctionOpen) {
-      odc.saleId = odcInfo.current_sale[0].sale_id;
+      odc.saleId = odcInfo.current_sale?.[0]?.sale_id ?? '';
       odc.currentBid = Number(odc.auction.current_bid_amount || 0);
     }
 
-    if ('auction' in odc.auction?.config) {
+    if ('auction' in (odc.auction?.config ?? {})) {
       const auctionConfig = odc.auction.config.auction;
       odc.buyNow = Number(auctionConfig.buy_now?.[0] || 0);
       if ('ic' in auctionConfig.token) {
