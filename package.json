@@ -4,25 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "frontend:dev": "lerna exec --scope @dapp/app-ledger -- npm run start",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "bootstrap": "lerna bootstrap --force-local",
-    "start:vault": "lerna exec --scope @dapp/app-vault -- npm run start",
-    "start:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run start",
-    "start:ledger": "lerna exec --scope @dapp/app-ledger -- npm run start",
-    "start:library": "lerna exec --scope @dapp/app-library -- npm run start",
-    "start:nft-data": "lerna exec --scope @dapp/app-nft-data -- npm run start",
-    "start:luxury": "lerna exec --scope @dapp/app-luxury -- npm run start",
-    "build:all": "npm run build:vault && npm run build:marketplace && npm run build:ledger && npm run build:library && npm run build:nft-data",
-    "build:vault": "lerna exec --scope @dapp/app-vault -- npm run build",
-    "build:marketplace": "lerna exec --scope @dapp/app-marketplace -- npm run build",
-    "build:ledger": "lerna exec --scope @dapp/app-ledger -- npm run build",
-    "build:library": "lerna exec --scope @dapp/app-library -- npm run build",
-    "build:nft-data": "lerna exec --scope @dapp/app-nft-data -- npm run build",
     "test": "jest --env=./testUtils/testEnv.js",
     "lint": "eslint ./src/**/*.tsx",
     "clear_jest": "jest --clearCache"
@@ -85,10 +72,7 @@
     "ts-jest": "^28.0.7",
     "typescript": "^5.5.3",
     "url-loader": "^4.1.1",
-    "util": "0.12.3",
-    "webpack": "^5.76.1",
-    "webpack-cli": "^5.0.1",
-    "webpack-dev-server": "^4.11.1"
+    "util": "0.12.3"
   },
   "dependencies": {
     "@astrojs/check": "^0.7.0",

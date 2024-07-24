@@ -16,90 +16,27 @@
     "moduleResolution": "Node",
     "allowJs": true,
     "rootDir": ".",
-    "lib": [
-      "es5",
-      "es6",
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types",
-    ],
-    "paths": {
-      "@dapp/app-ledger": ["./src/pages/ledger.astro"],
-      "@dapp/app-vault": ["./src/pages/vault.astro"],
-      "@dapp/app-nft-data": ["./src/pages/nft-data.astro"],
-      "@dapp/app-marketplace": ["./src/pages/marketplace.astro"],
-      "@dapp/app-library": ["./src/pages/library.astro"],
-      "@dapp/features-debug-provider": [
-        "./src/packages/features/debug-provider/src/index.tsx"
-      ],
-      "@dapp/features-authentication": [
-        "./src/packages/features/authentication/src/index.tsx"
-      ],
-      "@dapp/features-tokens-provider": [
-        "./src/packages/features/tokens-provider/src/index.ts"
-      ],
-      "@dapp/features-components": [
-        "./src/packages/features/components/src/index.ts"
-      ],
-      "@dapp/features-context-provider": [
-        "./src/packages/features/context-provider/src/index.tsx"
-      ],
-      "@dapp/features-sales-escrows": [
-        "./src/packages/features/sales-escrows/index.ts"
-      ],
-      "@dapp/features-user-messages": [
-        "./src/packages/features/user-messages/src/index.ts"
-      ],
-      "@dapp/features-theme": [
-        "./src/packages/features/theme/src/index.tsx"
-      ],
-      "@dapp/utils": [
-        "./src/packages/utils/src/index.ts"
-      ],
-      "@dapp/common-api": [
-        "./src/packages/common/api/src/index.ts"
-      ],
-      "@dapp/common-candid": [
-        "./src/packages/common/candid/src/index.ts"
-      ],
-      "@dapp/common-types": [
-        "./src/packages/common/types/src/index.ts"
-      ],
-      "@dapp/common-assets": [
-        "./src/packages/common/assets/src/index.ts"
-      ],
-      "@dapp/candy-editor": [
-        "./src/packages/candy_editor/src/index.ts"
-      ],
-    },
+    "lib": ["es5", "es6", "esnext", "dom", "dom.iterable"],
+    "typeRoots": ["./node_modules/@types", "./types"],
     "jsxImportSource": "react",
     "plugins": [
       {
         "name": "@astrojs/ts-plugin"
-      },
-    ],
+      }
+    ]
   },
   "include": [
-      "index.d.ts",
-      "./src/components/**/*",
-      "./src/packages/**/*",
-      "./astro.config.mjs",
-      "./types/**/*.d.ts",
-      "jest.config.js",
-      "./babel.config.js",
-      "./testUtils",
-      "./src/",
-      "*.d.ts",
-    ],
-    "exclude": [
-      "./node_modules",
-      ".git",
-      "./packages/**/node_modules",
-      "./dist/**/*.js"
-    ],
-  "extends": "astro/tsconfigs/strict",
+    "index.d.ts",
+    "./src/components/**/*",
+    "./src/packages/**/*",
+    "./astro.config.mjs",
+    "./types/**/*.d.ts",
+    "jest.config.js",
+    "babel.config.cjs",
+    "./testUtils",
+    "./src/",
+    "*.d.ts"
+  ],
+  "exclude": ["./node_modules", ".git", "./packages/**/node_modules", "./dist/**/*.js"],
+  "extends": "astro/tsconfigs/strict"
 }

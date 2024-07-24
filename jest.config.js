@@ -10,7 +10,7 @@ module.exports = {
     '\\.(scss|svg|css)$': '<rootDir>/testUtils/fileMock.js',
     '@testUtils': '<rootDir>/testUtils/index.js',
   },
-  moduleDirectories: ['node_modules', 'packages', 'src'],
+  moduleDirectories: ['node_modules', 'packages', 'src', 'components'],
   testEnvironment: '<rootDir>/testUtils/testEnv.js',
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!@connect2ic|@connect2ic/core|@connect2ic/react|@dfinity|event-e3|@astrox)',
@@ -21,3 +21,5 @@ module.exports = {
       'jest-transform-stub',
   },
 };
+
+export default module.exports;
