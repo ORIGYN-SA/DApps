@@ -49,16 +49,18 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
   };
 
   const saveProperty = () => {
-    editor.addPropertyToCandyClass({
-      name: name,
-      value: value,
-      immutable: immutable,
-      id: Math.random().toString(),
-    });
+    if (editor.addPropertyToCandyClass) {
+      editor.addPropertyToCandyClass({
+        name: name,
+        value: value,
+        immutable: immutable,
+        id: Math.random().toString(),
+      });
+    }
   };
 
   useEffect(() => {
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.property) {
       const candyValue = editor.property.value as CandyPrincipal;
       setName(editor.property.name);
       setValue(candyValue);
@@ -94,22 +96,22 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
         </>
       ) : (
         <>
-          <Grid column={1}>
+          <Grid columns={1}>
             <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <b>{editor.candyType}</b>
             </span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
           </Grid>
-          <Grid column={3}>
+          <Grid columns={3}>
             {isInvalid ? (
               <TextInput onChange={onValueChanged} error={validationError} value={formValue} />
             ) : (
               <TextInput onChange={onValueChanged} value={formValue} disabled={immutable} />
             )}
           </Grid>
-          <Grid column={4}>
+          <Grid columns={4}>
             {editor.property.immutable ? (
               <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
             ) : (
@@ -118,7 +120,7 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
           </Grid>
           {editor.property.immutable && (
             <>
-              <Grid column={5}>
+              <Grid columns={5}>
                 <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                   Property is immutable
                 </span>

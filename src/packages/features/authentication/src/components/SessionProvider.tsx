@@ -20,7 +20,6 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
   const context = useContext(PerpetualOSContext);
 
   if (!context.canisterId) return <></>;
-
   const host = getHttpAgentHost(context.isLocal);
 
   const globalProviderConfig = {
@@ -34,6 +33,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
   };
 
   const client = createClient({
+   
     canisters: {
       nft: {
         canisterId: context.canisterId,

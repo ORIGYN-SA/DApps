@@ -18,8 +18,17 @@ export const OffersPanel = ({ odc, onOpenEscrowModal, inProcess }: OffersPanelPr
   const [existingOffer, setExistingOffer] = useState<any | null | undefined>(undefined);
 
   const compareOfferSentWithSelectedToken = async () => {
+    if (!principal) {
+      debug.log('No principal');
+      return;
+    }
+
     try {
       const balance = await actor?.balance_of_nft_origyn({ principal });
+      if (!balance){
+        debug.log('Balance is undefined');
+        return;
+      }
       if ('err' in balance) {
         const error: OrigynError = balance.err;
         debug.log('error', error);
@@ -54,7 +63,7 @@ export const OffersPanel = ({ odc, onOpenEscrowModal, inProcess }: OffersPanelPr
   return (
     <>
       {existingOffer ? (
-        <Container padding={12}>
+        <Container padding='12'>
           <Flex flexFlow="column" gap={16}>
             <Flex>
               <p

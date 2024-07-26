@@ -6,7 +6,6 @@ import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { getBalance as getBalanceFromCanister } from './getBalance';
 import { getMetadata } from './getMetadata';
 import { timeConverter } from '@dapp/utils';
-import { TokenRounded } from '@mui/icons-material';
 
 // default to mainnet token canisters
 const defaultTokens = {

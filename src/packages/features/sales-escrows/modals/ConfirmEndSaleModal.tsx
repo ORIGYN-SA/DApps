@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
-import { LoadingContainer } from '@dapp/features-components';
-import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
-import { useUserMessages } from '@dapp/features-user-messages';
-import { ERROR } from '../constants';
+import React, { useEffect, useState } from "react";
+import { AuthContext } from "@dapp/features-authentication";
+import { LoadingContainer } from "@dapp/features-components";
+import { Container, Flex, Modal, Button, HR } from "@origyn/origyn-art-ui";
+import { useUserMessages } from "@dapp/features-user-messages";
+import { ERROR } from "../constants";
 
 interface ConfirmEndSaleModalProps {
   onModalOpen: boolean;
@@ -21,7 +21,8 @@ export const ConfirmEndSaleModal = ({
   onProcessing,
 }: ConfirmEndSaleModalProps) => {
   const { actor } = React.useContext(AuthContext);
-  const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
+  const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } =
+    useUserMessages();
   const [isLoading, setIsLoading] = React.useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
@@ -40,11 +41,18 @@ export const ConfirmEndSaleModal = ({
       const endSaleResponse = await actor.sale_nft_origyn({
         end_sale: currentToken,
       });
-      if ('ok' in endSaleResponse) {
-        showSuccessMessage(`You have successfully ended the sale for ${currentToken}.`);
-        onSaleCancelled();
+      if ("ok" in endSaleResponse) {
+        if (onSaleCancelled) {
+          showSuccessMessage(
+            `You have successfully ended the sale for ${currentToken}.`
+          );
+          onSaleCancelled();
+        }
       } else {
-        showErrorMessage(`${ERROR.endSale} ${currentToken}`, endSaleResponse.err.flag_point);
+        showErrorMessage(
+          `${ERROR.endSale} ${currentToken}`,
+          endSaleResponse.err.flag_point
+        );
       }
     } catch (e) {
       showUnexpectedErrorMessage(e);
@@ -60,7 +68,11 @@ export const ConfirmEndSaleModal = ({
   }, [onModalOpen]);
 
   return (
-    <Modal isOpened={onModalOpen} closeModal={() => onEndSaleConfirm(false)} size="md">
+    <Modal
+      isOpened={onModalOpen}
+      closeModal={() => onEndSaleConfirm(false)}
+      size="md"
+    >
       <Container size="full" padding="48px">
         <h2>Confirm End Sale</h2>
         <br />
@@ -73,11 +85,12 @@ export const ConfirmEndSaleModal = ({
           <>
             <Flex flexFlow="column">
               <div>
-                Are you sure you want to end the sale for token <b>{currentToken}</b> ?
+                Are you sure you want to end the sale for token{" "}
+                <b>{currentToken}</b> ?
               </div>
             </Flex>
             <HR marginTop={24} marginBottom={24} />
-            <Flex flow="row" justify="flex-end" gap={16}>
+            <Flex flexFlow="row" justify="flex-end" gap={16}>
               <Flex>
                 <Button
                   onClick={() => onEndSaleConfirm(true)}

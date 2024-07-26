@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react';
-import { AuthContext } from '@dapp/features-authentication';
-import { useSnackbar } from 'notistack';
-import { useTokensContext } from '@dapp/features-tokens-provider';
-import { IdlStandard } from '@dapp/utils';
-import { TokenIcon } from '../TokenIcon';
-import { LoadingContainer } from '@dapp/features-components';
+import React, { useContext, useState } from "react";
+import { AuthContext } from "@dapp/features-authentication";
+import { useSnackbar } from "notistack";
+import { useTokensContext } from "@dapp/features-tokens-provider";
+import { IdlStandard } from "@dapp/utils";
+import { TokenIcon } from "../TokenIcon";
+import { LoadingContainer } from "@dapp/features-components";
 import {
   Button,
   Card,
@@ -15,39 +15,67 @@ import {
   Select,
   TabContent,
   TextInput,
-} from '@origyn/origyn-art-ui';
+} from "@origyn/origyn-art-ui";
 
 export const WalletTokens = ({ children }: any) => {
   const { principal } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedStandard, setSelectedStandard] = useState<string>(IdlStandard.DIP20.toString());
-  const [inputCanisterId, setInputCanisterId] = useState<string>('');
+  const [selectedStandard, setSelectedStandard] = useState<string>(
+    IdlStandard.DIP20.toString()
+  );
+  const [inputCanisterId, setInputCanisterId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { addToken, toggleToken, tokens, refreshAllBalances, isFetchingBalance } =
-    useTokensContext();
+  const {
+    addToken,
+    toggleToken,
+    tokens,
+    refreshAllBalances,
+    isFetchingBalance,
+  } = useTokensContext();
   const { enqueueSnackbar } = useSnackbar();
   const handleAddButton = async () => {
     if (isLoading) return;
     setIsLoading(true);
-    const tokenResponse = await addToken(inputCanisterId, IdlStandard[selectedStandard], principal);
-    if (typeof tokenResponse !== 'string') {
-      enqueueSnackbar(`You have successfully added token ${tokenResponse.symbol}.`, {
-        variant: 'success',
+
+    try {
+      if (addToken && principal) {
+        const tokenResponse = await addToken(
+          inputCanisterId,
+          IdlStandard[selectedStandard],
+          principal
+        );
+        if (typeof tokenResponse !== "string") {
+          enqueueSnackbar(
+            `You have successfully added token ${tokenResponse.symbol}.`,
+            {
+              variant: "success",
+              anchorOrigin: {
+                vertical: "top",
+                horizontal: "right",
+              },
+            }
+          );
+        } else {
+          enqueueSnackbar(tokenResponse, {
+            variant: "error",
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "right",
+            },
+          });
+        }
+      }
+    } catch (error) {
+      enqueueSnackbar("An error occurred while adding the token.", {
+        variant: "error",
         anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: "top",
+          horizontal: "right",
         },
       });
-    } else {
-      enqueueSnackbar(tokenResponse, {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-      });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -55,13 +83,21 @@ export const WalletTokens = ({ children }: any) => {
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
-    refreshAllBalances(principal);
+    if (refreshAllBalances && principal) {
+      refreshAllBalances(principal);
+    } else {
+      console.error("Failed to refresh all balances");
+    }
   };
   // const handleTabChange = (event: React.SyntheticEvent, tab: number) => {
   //   setSelectedTab(tab)
   // }
   const onTokenCheck = (symbol: string) => {
-    toggleToken(symbol);
+    if (toggleToken && principal) {
+      toggleToken(symbol);
+    } else {
+      console.error("Failed to toggle token");
+    }
   };
   // const a11yProps = (index: number) => ({
   //   id: `simple-tab-${index}`,
@@ -70,7 +106,11 @@ export const WalletTokens = ({ children }: any) => {
 
   return (
     <>
-      <Modal isOpened={isModalOpen} closeModal={() => handleModalClose()} size="md">
+      <Modal
+        isOpened={isModalOpen}
+        closeModal={() => handleModalClose()}
+        size="md"
+      >
         <Container size="full" padding="48px">
           <h2>Manage Tokens</h2>
           <br />
@@ -78,8 +118,8 @@ export const WalletTokens = ({ children }: any) => {
             fullWidth
             borderBottom
             tabs={[
-              { title: 'Current Tokens', id: 'Current Tokens' },
-              { title: 'Custom Token', id: 'Custom Token' },
+              { title: "Current Tokens", id: "Current Tokens" },
+              { title: "Custom Token", id: "Custom Token" },
             ]}
             content={[
               <Flex flexFlow="column" gap={18} fullWidth key="tabContentCol1">
@@ -104,7 +144,9 @@ export const WalletTokens = ({ children }: any) => {
                             <TokenIcon symbol={token.icon} />
                             <b>{token.symbol}</b>
                           </Flex>
-                          <div>{isFetchingBalance ? 'Loading' : token.balance}</div>
+                          <div>
+                            {isFetchingBalance ? "Loading" : token.balance}
+                          </div>
                         </Card>
                       );
                     })}

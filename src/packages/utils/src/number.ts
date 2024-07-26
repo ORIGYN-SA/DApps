@@ -42,7 +42,7 @@ export const toLargerUnit = (
 ): BigNumber => {
   // Fixes floating point arithmetic
   // Converts a number like 12300000 to 0.123 (if decimals = 8)
-  if (decimals <= 0) {
+  if ((decimals as number) <= 0) {
     throw new Error('decimals must be greater than 0');
   } else if (typeof amount === 'string' && !isPositiveNumber(amount)) {
     throw new Error('amount must be a valid number');
@@ -53,11 +53,11 @@ export const toLargerUnit = (
 
 export const toSmallerUnit = (
   amount: number | string | BigInt | BigNumber,
-  decimals: number | BigInt,
+  decimals: number | BigInt, 
 ): BigNumber => {
   // Fixes floating point arithmetic
   // Converts a number like 0.123 to 12300000 (if decimals = 8)
-  if (decimals <= 0) {
+  if (decimals as number <= 0) {
     throw new Error('decimals must be greater than 0');
   } else if (typeof amount === 'string' && !isPositiveNumber(amount)) {
     throw new Error('amount must be a valid number');

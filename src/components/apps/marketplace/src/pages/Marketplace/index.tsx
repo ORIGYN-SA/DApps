@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDialog } from '@connect2ic/react';
 import { AuthContext } from '@dapp/features-authentication';
@@ -7,7 +7,6 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { useApi } from '@dapp/common-api';
 import { LoadingContainer } from '@dapp/features-components';
-import { PlaceholderIcon } from '@dapp/common-assets';
 import { parseOdcs, parseMetadata } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
@@ -84,7 +83,8 @@ const Marketplace = () => {
       // get the canister's collection metadata
       const meta = await getNftCollectionMeta();
       const metadata = meta?.metadata[0] || {};
-      const metadataClass: PropertyShared[] = 'Class' in metadata ? metadata.Class : [];
+      const metadataClass: PropertyShared[] =
+        'Class' in metadata ? (metadata.Class as PropertyShared[]) : [];
       const collectionData = parseMetadata(metadataClass);
       dispatch({ type: 'collectionData', payload: collectionData });
 
@@ -181,7 +181,7 @@ const Marketplace = () => {
   }, [filter, sort, inputText, odcs]);
 
   return (
-    <Flex fullWidth padding="0" flexFlow="column">
+    <Flex fullWidth flexFlow="column">
       <SecondaryNav
         title="Marketplace"
         titleLink={`${context.canisterUrl}/collection/-/marketplace`}
@@ -206,7 +206,6 @@ const Marketplace = () => {
                           />
                         ) : (
                           <Flex align="center" justify="center">
-                            <PlaceholderIcon width={110} height={96} />
                           </Flex>
                         )}
                         <Flex flexFlow="column" justify="space-between" fullWidth gap={8}>
@@ -297,7 +296,7 @@ const Marketplace = () => {
                       <br />
                       <br />
                       <Flex flexFlow="column" fullWidth justify="center" align="center">
-                        <NFTCards nftData={currentData as any[]} odcs={odcs} />
+                        <NFTCards nftData={currentData as any[]} odcs={odcs as any} />
                         <Pagination
                           total={totalPages}
                           current={currentPage}

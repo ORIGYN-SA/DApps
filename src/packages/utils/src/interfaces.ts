@@ -55,7 +55,7 @@ export interface OdcDataWithSale extends OdcData {
   minIncreasePercentage: number;
   currentBid: number;
   tokenSymbol: string;
-  token: ICTokenSpec;
+  token: ICTokenSpec | undefined;
   // dutch auction
   startPrice: number;
   reserve: number;

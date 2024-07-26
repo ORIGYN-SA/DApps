@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import { getPerpetualOSContext, URLContext } from '@origyn/perpetualos-context';
 
-export const PerpetualOSContext = createContext(null as URLContext);
+export const PerpetualOSContext = createContext(null as unknown as URLContext);
 
 export const PerpetualOSContextProvider = ({ children }) => {
-  const [context, setContext] = useState<URLContext>(null);
+  const [context, setContext] = useState<URLContext | null>(null);
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -18,7 +18,8 @@ export const PerpetualOSContextProvider = ({ children }) => {
         console.log('ContextProvider -> context', urlContext);
       } catch (err) {
         if (err instanceof Error) {
-          throw new Error('Could not get Perpetual OS context: ' + err?.message ?? err.toString());
+          throw new Error('Could not get Perpetual OS context: ' + (err?.message !== undefined ? err.message : err.toString()));
+
         }
       }
     };

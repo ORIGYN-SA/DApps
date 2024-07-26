@@ -7,7 +7,6 @@ import { loadEnv } from 'vite';
 import path from 'path';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import process from 'process';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -16,7 +15,7 @@ process.env = {
   ...loadEnv(process.env.NODE_ENV, path.resolve(process.cwd(), './'), ''),
 };
 
-const url = '/-/'+process.env.NFT_CANISTER_ID+'/collection/-/marketplace';
+//const url = '/-/'+process.env.NFT_CANISTER_ID+'/collection/-/marketplace';
 
 // https://astro.build/config
 export default defineConfig({
@@ -24,9 +23,6 @@ export default defineConfig({
   server: {
     host: 'localhost',
     port: parseInt(process.env.DEV_SERVER_PORT),
-  },
-    redirects: {
-      '/': url
   },
   build: {
     format: 'file',

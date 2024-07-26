@@ -55,35 +55,50 @@ export const useApi = () => {
   const { actor, principal, activeWalletProvider } = React.useContext(AuthContext);
   const context = useContext(PerpetualOSContext);
 
-  OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
+  OrigynClient.getInstance().init(!context.isLocal, context.canisterId, {
+    actor,
+  });
 
   const getNftCollectionMeta = async (): Promise<M.CollectionInfo> => {
-    const r = await _getNftCollectionMeta();
-    debug.log('getNftCollectionMeta result', r);
+    const response = await _getNftCollectionMeta();
+    debug.log('getNftCollectionMeta result', response);
 
-    if ('err' in r) {
-      console.error(r.err);
-      logAgentInfo(actor);
+    if ('err' in response) {
+      console.error(response.err);
+      if (actor) {
+        logAgentInfo(actor);
+      }
       throw new Error('Unable to retrieve collection metadata.');
     }
 
-    return r.ok;
+    if (response.ok === undefined) {
+      throw new Error('Collection metadata is undefined.');
+    }
+
+    return response.ok;
   };
 
   const getNftBatch = async (tokenIds: string[]): Promise<M.NFTInfoStable[]> => {
-    const r = await actor?.nft_batch_origyn(tokenIds);
-
-    const error = r.find((m) => 'err' in m);
-    if (error) {
+    const response = await actor?.nft_batch_origyn(tokenIds);
+    if (!response) {
+      console.error('Failed to fetch metadata of tokens.');
+      throw new Error('Unable to retrieve metadata of tokens.');
+    }
+    const error = response.find((m) => 'err' in m);
+    if (error && actor) {
       console.error(error);
       logAgentInfo(actor);
       throw new Error('Unable to retrieve metadata of tokens.');
     }
 
-    return r.map((m) => 'ok' in m && m.ok).filter((m) => !!m);
+    return response.map((m) => 'ok' in m && m.ok).filter((m) => !!m);
   };
 
   const getNftBalances = async (principal: Principal): Promise<M.BalanceResponse> => {
+    if (!actor) {
+      throw new Error('Actor is undefined.');
+    }
+
     const account: Account = { principal };
     const response = await actor.balance_of_nft_origyn(account);
     debug.log('balance_of_nft_origyn response', response);
@@ -98,6 +113,10 @@ export const useApi = () => {
   };
 
   const getNftSaleInfo = async (): Promise<M.SaleInfoResponse> => {
+    if (!actor) {
+      throw new Error('Actor is undefined.');
+    }
+
     const active: SaleInfoRequest = {
       active: [],
     };
@@ -116,9 +135,13 @@ export const useApi = () => {
   const getNftsHistory = async (
     activeAttendedAuctions: M.AuctionStateStable[],
   ): Promise<M.TransactionRecord[]> => {
+    if (!actor) {
+      throw new Error('Actor is undefined.');
+    }
+
     const activeTokens: [string, [] | [bigint], [] | [bigint]][] = activeAttendedAuctions.map(
       (auction): [string, [] | [bigint], [] | [bigint]] => {
-        return [auction.current_escrow[0].token_id, [], []];
+        return [auction.current_escrow?.[0]?.token_id ?? '', [], []];
       },
     );
     try {
@@ -140,7 +163,11 @@ export const useApi = () => {
         throw new Error('Invalid response received from history_batch_origyn.');
       }
     } catch (e) {
-      throw new Error(e);
+      if (e instanceof Error) {
+        throw new Error(`Error fetching NFT history: ${e.message}`);
+      } else {
+        throw new Error('Unknown error occurred');
+      }
     }
   };
 
@@ -148,6 +175,9 @@ export const useApi = () => {
     const genericErrorMessage = 'Failed to get deposit account';
 
     try {
+      if (!actor) {
+        throw new Error('Actor is undefined.');
+      }
       // gets the deposit info for the account number of the caller
       const response = await actor.sale_info_nft_origyn({ deposit_info: [] });
       debug.log('sale_info_nft_origyn response', response);
@@ -227,6 +257,17 @@ export const useApi = () => {
       'Failed to send escrow. Withdraw your tokens from Manage Deposits in your Vault.';
 
     try {
+      if (!actor) {
+        throw new Error('Actor is undefined.');
+      }
+      if (!principal) {
+        throw new Error('Principal is undefined');
+      }
+
+      if (!token || !token.fee || !token.decimals) {
+        throw new Error("Token is undefined");
+      }
+
       const escrowData: M.EscrowRequest = {
         token_id: tokenId,
         deposit: {
@@ -250,7 +291,9 @@ export const useApi = () => {
       };
       debug.log('escrowData', escrowData);
 
-      const response = await actor.sale_nft_origyn({ escrow_deposit: escrowData });
+      const response = await actor.sale_nft_origyn({
+        escrow_deposit: escrowData,
+      });
       debug.log('sale_nft_origyn response', response);
 
       if ('err' in response) {
@@ -262,7 +305,9 @@ export const useApi = () => {
       if ('escrow_deposit' in result && result.escrow_deposit.receipt) {
         return { result: result.escrow_deposit.receipt };
       } else {
-        return { errorMessage: 'Escrow sent, but no escrow receipt was returned' };
+        return {
+          errorMessage: 'Escrow sent, but no escrow receipt was returned',
+        };
       }
     } catch (e) {
       console.error(e);
@@ -271,27 +316,37 @@ export const useApi = () => {
   };
 
   const acceptEscrow = async (escrow: M.EscrowRecord): Promise<M.MarketTransferRequestReponse> => {
-    const r = await _acceptEscrow(convertEscrow(escrow));
-    if (r.err) {
-      throw new Error(getErrorText(r.err, 'Accept escrow failed'));
+    const response = await _acceptEscrow(convertEscrow(escrow));
+    if (response.err) {
+      throw new Error(getErrorText(response.err, 'Accept escrow failed'));
     }
-    return r.ok;
+    if (response.ok === undefined) {
+      throw new Error('Market transfer request reponse is undefined.');
+    }
+    return response.ok;
   };
 
   const withdrawEscrow = async (escrow: M.EscrowRecord): Promise<M.ManageSaleResponse> => {
-    const r = await _withdrawEscrow(convertEscrow(escrow));
-    if (r.err) {
-      throw new Error(getErrorText(r.err, 'Withdraw escrow failed'));
+    const response = await _withdrawEscrow(convertEscrow(escrow));
+    if (response.err) {
+      throw new Error(getErrorText(response.err, 'Withdraw escrow failed'));
     }
-    return r.ok;
+    if (response.ok === undefined) {
+      throw new Error('Manage sale response is undefined.');
+    }
+    return response.ok;
   };
 
   const rejectEscrow = async (escrow: M.EscrowRecord): Promise<M.ManageSaleResponse> => {
-    const r = await _rejectEscrow(convertEscrow(escrow));
-    if (r.err) {
-      throw new Error(getErrorText(r.err, 'Reject escrow failed'));
+    const response = await _rejectEscrow(convertEscrow(escrow));
+    if (response.err) {
+      throw new Error(getErrorText(response.err, 'Reject escrow failed'));
     }
-    return r.ok;
+    if (response.ok === undefined) {
+      throw new Error('Manage sale response is undefined.');
+    }
+
+    return response.ok;
   };
 
   const createBid = async (
@@ -301,6 +356,10 @@ export const useApi = () => {
     const genericErrorMessage = 'Failed to create bid after tokens were sent to escrow';
 
     try {
+      if (!actor) {
+        throw new Error('Actor is undefined.');
+      }
+
       // if the ODC is on auction, then this is a bid in the auction
       const bidRequest: M.BidRequest = {
         broker_id: [],

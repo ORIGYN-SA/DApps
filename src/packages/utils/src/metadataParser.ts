@@ -1,6 +1,6 @@
 import { Principal } from '@dfinity/principal';
 import type { EscrowRecord, NFTInfoStable, PropertyShared } from '@origyn/mintjs';
-import  {
+import {
   DisplayProperty,
   OdcData,
   OdcDataWithSale,
@@ -11,7 +11,6 @@ import  {
 import { toSentenceCase } from './string';
 import { toBigNumber } from './number';
 import * as T from '@origyn/mintjs';
-
 
 export function getProperty(properties: any, propertyName: string) {
   return properties?.find(({ name }) => name === propertyName);
@@ -134,8 +133,8 @@ function toKeysValues(
 ): { key: string; value: string }[] {
   const keysValues: { key: string; value: string }[] = [];
 
-  if ('Array' in property.value) {
-    const candyArray = property.value.Array || [];
+  if ('Array' in (property.value ?? {})) {
+    const candyArray = (property.value as { Array?: any[] })?.Array ?? [];
 
     candyArray.forEach((item: any) => {
       if (item.value && 'Class' in item.value) {
@@ -208,7 +207,7 @@ function parseAppData(metadataClass: PropertyShared[], odc: OdcData): void {
       }
     }
 
-    if (p.name === 'custom_properties') {
+    if (p.name === 'custom_properties' && p.value) {
       const customProperties = p.value['Array'] || [];
       customProperties.forEach((customProperty: PropertyShared) => {
         if (!isCandyClassOrArray(customProperty)) {
@@ -268,6 +267,8 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   let odc: any = initOdcSaleData(parseMetadata(metadataClass));
   // default to OGY token if no auction
   odc.token = {
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
     canister: Principal.fromText(process.env.OGY_LEDGER_CANISTER_ID),
     decimals: 8n,
     fee: 200000n,
@@ -309,7 +310,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
       odc.startPrice = Number(auctionConfig.start_price || 0);
     }
 
-    if ('dutch' in odc.auction?.config) {
+    if ('dutch' in (odc.auction?.config ?? {})) {
       let dutchConfig = odc.auction.config.dutch;
       odc.isDutchAuction = true;
       odc.startPrice = Number(dutchConfig.start_price || 0);
@@ -331,6 +332,7 @@ export function parseTokenSymbol(escrow: EscrowRecord): string {
   if ('ic' in escrow.token) {
     return escrow.token.ic.symbol;
   }
+  return ''; // default to empty string
 }
 
 export const getActiveAttendedAuctions = (
@@ -353,12 +355,11 @@ export const getActiveAttendedAuctions = (
     if (activeAuctions.length > 0) {
       const activeAttendedAuctions = activeAuctions.filter((a) => {
         return (
-          a.current_escrow.length &&
+          a?.current_escrow?.length &&
           a.participants.some((participant) => participant[0].toText() === principal.toText())
         );
       });
-
-      return activeAttendedAuctions;
+      return activeAttendedAuctions as T.AuctionStateStable[];
     }
   }
 
@@ -380,6 +381,7 @@ export const getTxOfActiveAttendedAuctions = (
           record.txn_type.auction_bid.buyer.principal.toText() === principal.toText(),
       );
   }
+  return [];
 };
 
 export const getHighestSentBids = (
@@ -400,11 +402,13 @@ export const getHighestSentBids = (
 
 export const sortBidsReceived = (bids: ReceivedActiveBidsProps[]): ReceivedActiveBidsProps[] => {
   bids.sort((a, b) => {
-    if (a.auction.end_date < b.auction.end_date) {
-      return -1;
-    }
-    if (a.auction.end_date > b.auction.end_date) {
-      return 1;
+    if (a.auction?.end_date && b.auction?.end_date) {
+      if (a.auction.end_date < b.auction.end_date) {
+        return -1;
+      }
+      if (a.auction.end_date > b.auction.end_date) {
+        return 1;
+      }
     }
     if (toBigNumber(a.amount).gt(toBigNumber(b.amount))) {
       return -1;
@@ -412,6 +416,7 @@ export const sortBidsReceived = (bids: ReceivedActiveBidsProps[]): ReceivedActiv
     if (toBigNumber(a.amount).lt(toBigNumber(b.amount))) {
       return 1;
     }
+    return 0; // Add this line to handle the case when all comparisons are equal
   });
   return bids;
 };

@@ -121,7 +121,7 @@ export const ProgressBar = ({
         <StyledProgressTitle>{title}</StyledProgressTitle>
         {progressError ? (
           <StyleContainerError>
-            <Flex align="flext-start" gap={12}>
+            <Flex align='flex-start' gap={12}>
               <Flex>
                 <ErrorIcon />
               </Flex>
@@ -149,7 +149,7 @@ export const ProgressBar = ({
             <Flex>
               {tryAgainAction && progressError && (
                 <BtnContainer>
-                  <Button size="large" btnType="outlined" onClick={tryAgainAction}>
+                  <Button size="large" btnType="outlined" onClick={tryAgainAction as any}>
                     Try Again
                   </Button>
                 </BtnContainer>
@@ -157,7 +157,7 @@ export const ProgressBar = ({
             </Flex>
             <Flex>
               <BtnContainer>
-                <Button size="large" btnType="filled" onClick={doneAction}>
+                <Button size="large" btnType="filled" onClick={doneAction as any}>
                   Done
                 </Button>
               </BtnContainer>

@@ -69,8 +69,10 @@ export const NFTPage = () => {
   };
 
   const logout = () => {
-    handleLogOut();
-    fetchData();
+    if (handleLogOut) {
+      handleLogOut();
+      fetchData();
+    }
   };
 
   const onAuctionModalOpen = () => {
@@ -98,6 +100,12 @@ export const NFTPage = () => {
     }
   };
 
+  if (!actor) {
+    debug.error('Actor not initialized');
+    return;
+  }
+
+
   const fetchCollection = async () => {
     await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
@@ -115,9 +123,10 @@ export const NFTPage = () => {
       setCollectionData(parsedCollData);
     }
   };
-
+  
   const fetchOdc = async () => {
-    const r: any = await actor.nft_origyn(params.nft_id);
+    
+    const r: any = await actor.nft_origyn(params.nft_id as string);
     debug.log('return value from actor.nft_origyn(params.nft_id)');
     debug.log(JSON.stringify(r, null, 2));
 
@@ -150,7 +159,7 @@ export const NFTPage = () => {
   };
 
   const endSaleNft = async () => {
-    await actor.sale_nft_origyn({ end_sale: params.nft_id });
+    await actor.sale_nft_origyn({ end_sale: params.nft_id as string });
   };
 
   useEffect(() => {
@@ -167,7 +176,7 @@ export const NFTPage = () => {
     const checkForEndSale = async () => {
       // if the auction ended, this function will trigger the end_sale on the current NFT
       // this will be used as a checker
-      if (odc) {
+      if (odc && odc?.auction) {
         if (odc.auctionOpen && odc.auction.end_date <= timeInNanos()) {
           await endSaleNft();
           await fetchOdc();
@@ -460,7 +469,7 @@ export const NFTPage = () => {
               onProcessing={setInProcess}
             />
           )}
-          {openEscrowModal && (
+          {openEscrowModal && escrowType && (
             <StartEscrowModal
               open={openEscrowModal}
               onClose={handleCloseEscrow}

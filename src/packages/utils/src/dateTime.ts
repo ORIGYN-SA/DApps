@@ -25,7 +25,6 @@ export const timeConverter = (timestamp: bigint) => {
   const date = a.getDate();
   const hour = ('0' + a.getHours()).slice(-2);
   const min = ('0' + a.getMinutes()).slice(-2);
-  const sec = a.getSeconds();
 
   const time = hour + ':' + min;
   return date + '/' + month + '/' + year + ' ' + time;
@@ -63,7 +62,6 @@ export const formatTime = (timestamp: bigint) => {
   const date = padNum(a.getDate());
   const hour = padNum(a.getHours() % 12);
   const min = padNum(a.getMinutes());
-  const sec = padNum(a.getSeconds());
   apm = a.getHours() / 12 >= 1 ? 'pm' : 'am';
   const time = `${hour}:${min}`;
   return `${date}/${month}/${year} ${time}${apm}`;

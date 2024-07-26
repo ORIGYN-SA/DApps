@@ -11,7 +11,7 @@ export enum IdlStandard {
 
 export const getIdl = (
   standard: IdlStandard,
-): IDL.InterfaceFactory | undefined => {
+): IDL.InterfaceFactory => {
   const idl = {
     [IdlStandard.XTC]: xtcIdl,
     [IdlStandard.EXT]: extIdl,
@@ -19,6 +19,5 @@ export const getIdl = (
     [IdlStandard.WICP]: wicpIdl,
     [IdlStandard.ICP]: icpIdl,
   }[standard];
-  if (!idl) undefined;
   return idl;
 };

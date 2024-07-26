@@ -21,9 +21,9 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor && editor.editExistingProperty && editor.propertyIndex) {
       editor.editExistingProperty(
-        { name: typedName.target.value, value, immutable },
+        { name: typedName.target.value, value: value || '', immutable },
         editor.propertyIndex,
       );
     }
@@ -58,6 +58,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat8':
+        
         naturalValue = convertToCandyNat8(typedValue.target.value);
         if (naturalValue) {
           setValue(naturalValue);
@@ -178,22 +179,22 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         </>
       ) : (
         <>
-          <Grid column={1}>
+          <Grid columns={1}>
             <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
               <b>{editor.candyType}</b>
             </span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
           </Grid>
-          <Grid column={3}>
+          <Grid columns={3}>
             {isInvalid ? (
               <TextInput onChange={onValueChanged} error={validationError} value={formValue} />
             ) : (
               <TextInput onChange={onValueChanged} value={formValue} disabled={immutable} />
             )}
           </Grid>
-          <Grid column={4}>
+          <Grid columns={4}>
             {editor.property.immutable ? (
               <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
             ) : (
@@ -202,7 +203,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
           </Grid>
           {editor.property.immutable && (
             <>
-              <Grid column={5}>
+              <Grid columns={5}>
                 <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                   Property is immutable
                 </span>

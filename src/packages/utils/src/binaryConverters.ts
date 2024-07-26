@@ -25,7 +25,6 @@ export function convertNat8ArrayToCandyBytes(
 export function convertBase64ToCandyBytes(
   base64: string,
 ): CandyBytes | undefined {
-  let candyBytes: CandyBytes;
   const regex = /^[A-Za-z0-9+/]*={0,2}$/;
   try {
     if (regex.test(base64)) {
@@ -35,7 +34,7 @@ export function convertBase64ToCandyBytes(
         for (let i = 0; i < binary.length; i++) {
           bytes[i] = binary.charCodeAt(i);
         }
-        return candyBytes = {
+        return {
           Bytes: bytes,
         };
 
@@ -52,13 +51,12 @@ export function convertBase64ToCandyBytes(
 export function convertHexadecimalToCandyBytes(
   hexadecimal: string,
 ): CandyBytes | undefined {
-  let candyBytes: CandyBytes;
   const regex = /^[0-9a-fA-F]+$/;
   if (regex.test(hexadecimal)) {
     const byteString = hexadecimal.match(/.{1,2}/g)?.join(' ');
-    const bytes = new Uint8Array(byteString?.split(' ').map((byte) => parseInt(byte, 16)));
+    const bytes = new Uint8Array(byteString?.split(' ').map((byte) => parseInt(byte, 16)) ?? []);
     if (limitByteArraySize(bytes, 16384)) {
-      return candyBytes = {
+      return {
         Bytes: Array.from(bytes)
       };
     } else {

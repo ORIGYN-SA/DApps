@@ -129,7 +129,10 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   };
 
   const updateTotals = (token: Token, amount: BigNumber) => {
-    
+    if (!token || !token.decimals || !token.fee) {
+      throw new Error("Token is undefined");
+    }
+    const fee = toLargerUnit(token.fee, token.decimals);
     const total = amount.plus(fee);
     setAmountDisplay(amount.toFixed());
     setTotalDisplay(total.toFixed());
@@ -137,10 +140,15 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
   };
 
   const sendTrx = async (data) => {
+    
     try {
       setInProcess(true);
 
       const token = walletTokens[data.token];
+
+      if (!token || !token.decimals) {
+        throw new Error("Token is undefined");
+      }
       const total = toSmallerUnit(data.amount, token.decimals);
       let address: string = data.recipientAddress;
 

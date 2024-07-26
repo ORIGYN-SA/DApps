@@ -39,7 +39,7 @@ export type StartEscrowModalProps = {
 };
 
 type FormErrors = {
-  token: string;
+  token?: string;
   amount: string;
 };
 
@@ -76,7 +76,16 @@ export function StartEscrowModal({
     token: '',
   });
 
+  if (!token || !token.decimals || !token.fee) {
+    throw new Error('Token is undefined');
+  }
+
+
   useEffect(() => {
+    if (!odc.token) {
+      throw new Error('Token is undefined');
+    }
+
     // initialize form values
     if (open && odc && walletTokens) {
       let minAmount = 0;
@@ -113,29 +122,39 @@ export function StartEscrowModal({
 
     setToken(newToken);
     setTotal(newTotal);
-    setFormErrors({ ...formErrors, token: undefined, amount: undefined });
+    setFormErrors({ ...formErrors, token: '', amount: '' });
   };
 
   const onAmountChanged = (enteredAmount: string) => {
+    if (!token || !token.fee || !token.decimals) {
+      throw new Error('Token is undefined');
+    }
+
     setEnteredAmount(enteredAmount);
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       setFormErrors({ ...formErrors, amount: validationMsg });
       return false;
     }
-    const fee = toLargerUnit(token.fee, token.decimals);
+    const fee = toLargerUnit(token.fee, token?.decimals);
     const amount = toBigNumber(enteredAmount.trim() || 0);
-    const balance = toBigNumber(walletTokens[token.symbol].balance);
+
+    const balance = toBigNumber(walletTokens[token.symbol]?.balance || 0);
+
     if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       setFormErrors({ ...formErrors, amount: VALIDATION.insufficientFunds });
     } else {
       const newTotal = getDisplayTotal(amount, token);
       setTotal(newTotal);
-      setFormErrors({ ...formErrors, amount: undefined });
+      setFormErrors({ ...formErrors, amount: '' });
     }
   };
 
   const getDisplayTotal = (amount: BigNumber, token: Token): BigNumber => {
+    if (!token || !token.fee || !token.decimals) {
+      throw new Error('Token is undefined');
+    }
+
     const twoPartTxFees = toLargerUnit(token.fee * 2, token.decimals);
     return amount.plus(twoPartTxFees); //.decimalPlaces(token.decimals);
   };
@@ -145,9 +164,14 @@ export function StartEscrowModal({
   };
 
   const validateForm = () => {
-    let errors = { amount: '', token: undefined };
+    if (!token || !token.decimals || !token.fee) {
+      throw new Error('Token is undefined');
+    }
+
+    let errors = { amount: '', token: undefined || '' };
+
     const fee = toLargerUnit(token.fee, token.decimals);
-    const balance = toBigNumber(walletTokens[token.symbol].balance);
+    const balance = toBigNumber(walletTokens[token.symbol]?.balance || 0);
 
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
@@ -156,7 +180,10 @@ export function StartEscrowModal({
     }
     const amount = toBigNumber(enteredAmount);
     if (amount.isLessThanOrEqualTo(0)) {
-      errors = { ...errors, amount: `${escrowType} ${VALIDATION.mustBeGreaterThan} 0` };
+      errors = {
+        ...errors,
+        amount: `${escrowType} ${VALIDATION.mustBeGreaterThan} 0`,
+      };
     } else if (amount.plus(fee).plus(fee).isGreaterThan(balance)) {
       errors = { ...errors, amount: VALIDATION.insufficientFunds };
     } else if (amount.isLessThanOrEqualTo(fee.times(2))) {
@@ -185,9 +212,7 @@ export function StartEscrowModal({
       }
     }
 
-    if (!token) {
-      errors = { ...errors, token: ERROR.tokenNotSelected };
-    }
+    errors = { ...errors, token: ERROR.tokenNotSelected };
 
     // if there are any form errors, notify the user
     if (errors.amount || errors.token) {
@@ -222,6 +247,9 @@ export function StartEscrowModal({
     }
 
     try {
+      if (!token || !token.decimals || !token.fee) {
+        throw new Error('Token is undefined');
+      }
       setIsTransacting(true);
       onProcessing(true);
       setCurrentProgressIndex(0);
@@ -230,10 +258,9 @@ export function StartEscrowModal({
       // This is needed to move the money from the deposit account to the escrow account.
       const amount = toSmallerUnit(toBigNumber(enteredAmount), token.decimals);
 
-      const totalAmount = amount
-        .plus(toBigNumber(token.fee))
-        .plus(toBigNumber(token.fee))
-        .decimalPlaces(token.decimals);
+      const totalAmount = amount.plus(
+        toBigNumber(token.fee).plus(toBigNumber(token.fee)).decimalPlaces(token.decimals),
+      );
 
       debug.log('escrow amount with fee', totalAmount.toString());
 
@@ -242,7 +269,7 @@ export function StartEscrowModal({
       const depositAccountId = getDepositAccountResult.result;
       if (!depositAccountId) {
         setError(true);
-        setStatus(getDepositAccountResult.errorMessage);
+        setStatus(getDepositAccountResult.errorMessage as string);
         setProgressTitle('Error');
         return;
       }
@@ -258,7 +285,7 @@ export function StartEscrowModal({
       );
       if (!sendTokensResult.result) {
         setError(true);
-        setStatus(sendTokensResult.errorMessage);
+        setStatus(sendTokensResult.errorMessage as string);
         setProgressTitle('Error');
         return;
       }
@@ -278,7 +305,7 @@ export function StartEscrowModal({
 
       if (!sendEscrowResponse.result) {
         setError(true);
-        setStatus(sendEscrowResponse.errorMessage);
+        setStatus(sendEscrowResponse.errorMessage as string);
         setProgressTitle('Error');
         return;
       }
@@ -293,7 +320,7 @@ export function StartEscrowModal({
         const createBidResponse = await createBid(escrowReceipt, odc.saleId);
         if (!createBidResponse.result) {
           setError(true);
-          setStatus(createBidResponse.errorMessage);
+          setStatus(createBidResponse.errorMessage as string);
           setProgressTitle('Error');
           return;
         }
@@ -312,19 +339,31 @@ export function StartEscrowModal({
       }
       setStatus('Escrow successfully sent.');
     } catch (e) {
-      setError(true);
-      setStatus(e.message);
-      setProgressTitle('Error');
+      if (e instanceof Error) {
+        setError(true);
+        setStatus(e.message);
+        setProgressTitle('Error');
+      } else {
+        setError(true);
+        setStatus('An unknown error occurred');
+        setProgressTitle('Error');
+      }
     } finally {
       onProcessing(false);
     }
   };
 
   const getBuyNowPrice = (odc: OdcDataWithSale): string => {
+    if (!odc.token || !odc.token.decimals) {
+      throw new Error('Token is undefined');
+    }
     return toLargerUnit(odc.buyNow, odc.token.decimals).toFixed();
   };
 
   const getTransactionFee = (): string => {
+    if (!token || !token.decimals || !token.fee) {
+      throw new Error('Token is undefined');
+    }
     const doubleFee = toBigNumber(token.fee).times(toBigNumber(2));
     return `${toLargerUnit(doubleFee, token.decimals).toFixed()} ${token.symbol}`;
   };
@@ -338,7 +377,9 @@ export function StartEscrowModal({
     if (isSuccess) {
       onSuccess();
     }
-    refreshAllBalances(principal);
+    if (refreshAllBalances && principal) {
+      refreshAllBalances(principal);
+    }
   };
 
   return (
@@ -349,7 +390,7 @@ export function StartEscrowModal({
             <h2>Success!</h2>
             <p className="secondary_color">All the transactions were made successfully.</p>
             <Flex justify="flex-end">
-              <Button onClick={onModalClose}>Done</Button>
+              <Button onClick={onModalClose as any}>Done</Button>
             </Flex>
           </>
         ) : (
@@ -391,7 +432,7 @@ export function StartEscrowModal({
                               <TokenIcon symbol={token.symbol} /> {token.symbol}
                             </>
                           ),
-                          value: token.symbol,
+                          value: token?.symbol,
                         }}
                         handleChange={(opt) => onTokenChanged(opt.value)}
                         label="Token"
@@ -427,7 +468,7 @@ export function StartEscrowModal({
                         <Flex flexFlow="row" align="center" justify="space-between">
                           <b>{escrowType == 'Bid' ? 'Your bid' : 'Price'}</b>
                           <span style={{ color: theme.colors.SECONDARY_TEXT }}>
-                            Balance: {walletTokens[token.symbol].balance.toString()} {token.symbol}
+                            Balance: {String(walletTokens[token.symbol].balance)} {token.symbol}
                           </span>
                         </Flex>
                         {escrowType == 'Bid' && (

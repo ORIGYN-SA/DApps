@@ -22,7 +22,7 @@ const sendICP = async (actor: any, token: Token, to: string, amount: BigNumber, 
 
     return response.toString();
   } catch (e) {
-    throw Error(e.message);
+    throw Error((e as any).message);
   }
 };
 
@@ -93,9 +93,13 @@ export const sendTransaction = async (
       case IdlStandard.XTC:
         return { ok: await sendXTC(actor, to, amount, memo) };
       case IdlStandard.EXT:
-        return { ok: await sendEXT(actor, token, to, from, amount, memo) };
+        if (from) {
+          return { ok: await sendEXT(actor, token, to, from, amount, memo) };
+        } else {
+          throw new Error("'from' parameter is required for EXT standard.");
+        }
     }
-  } catch (e) {
+  } catch (e: any) {
     return { err: e.message };
   }
 };

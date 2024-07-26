@@ -93,10 +93,12 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
-      refreshAllBalances(principal);
-      setIsLoading(false);
-      getOffersSentBalance();
-      onModalClose();
+      if (refreshAllBalances && principal) {
+        refreshAllBalances(principal);
+        setIsLoading(false);
+        getOffersSentBalance();
+        onModalClose();
+      }
     }
   };
 
@@ -104,18 +106,20 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
     // TODO: Implement this pattern in all other components and functions
     // fetch, catch, parse, update state, catch
     try {
-      setIsLoading(true);
+      if (principal) {
+        setIsLoading(true);
 
-      let balances: BalanceResponse;
-      try {
-        balances = await getNftBalances(principal);
-      } catch (e: any) {
-        showErrorMessage(e.message);
-        return;
+        let balances: BalanceResponse;
+        try {
+          balances = await getNftBalances(principal);
+        } catch (e: any) {
+          showErrorMessage(e.message);
+          return;
+        }
+
+        const offersSent = balances.escrow?.filter((element) => element.sale_id.length === 0);
+        setOffersSent(offersSent);
       }
-
-      const offersSent = balances.escrow?.filter((element) => element.sale_id.length === 0);
-      setOffersSent(offersSent);
     } catch (e) {
       showUnexpectedErrorMessage(e);
     } finally {
@@ -151,7 +155,11 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
                     <div style={styles.gridItem}>
                       {offer.hasPreviewAsset ? (
                         <img
-                          style={{ height: '42px', width: 'auto', borderRadius: '12px' }}
+                          style={{
+                            height: '42px',
+                            width: 'auto',
+                            borderRadius: '12px',
+                          }}
                           src={`${context.canisterUrl}/-/${offer.token_id}/preview`}
                           alt=""
                         />
@@ -159,8 +167,7 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
                         <PlaceholderIcon
                           width={42}
                           height={42}
-                          marginTop={'auto'}
-                          marginBottom={'auto'}
+                          style={{ marginTop: 'auto', marginBottom: 'auto' }}
                         />
                       )}
                     </div>
@@ -221,7 +228,7 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
           <br />
           <Flex flexFlow="column">Are you sure you want to withdraw the offer?</Flex>
           <HR marginTop={24} marginBottom={24} />
-          <Flex flow="row" justify="flex-end" gap={16}>
+          <Flex flexFlow="row" justify="flex-end" gap={16}>
             <Flex>
               <Button onClick={() => onModalClose()} disabled={isLoading}>
                 Cancel
@@ -229,7 +236,7 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
             </Flex>
             <Flex>
               <Button
-                onClick={() => onConfirmOfferWithdraw(selectedOffer)}
+                onClick={() => selectedOffer && onConfirmOfferWithdraw(selectedOffer)}
                 variant="contained"
                 disabled={isLoading}
               >

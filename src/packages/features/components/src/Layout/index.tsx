@@ -1,48 +1,47 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Flex, GlobalStyle, Navbar } from '@origyn/origyn-art-ui';
-import { Icons, theme, themeLight } from '@origyn/origyn-art-ui';
-import 'react-toastify/dist/ReactToastify.css';
-import { useTokensContext } from '@dapp/features-tokens-provider';
-import { ThemeProvider } from 'styled-components';
-import './connect2ic.css';
-import { AuthContext } from '@dapp/features-authentication';
-import { PerpetualOSContext } from '@dapp/features-context-provider';
-import { getNftCollectionMeta, OrigynClient } from '@origyn/mintjs';
+import React, { useContext, useEffect, useState } from "react";
+import { Flex, GlobalStyle, Navbar } from "@origyn/origyn-art-ui";
+import { Icons, theme, themeLight } from "@origyn/origyn-art-ui";
+import "react-toastify/dist/ReactToastify.css";
+import { useTokensContext } from "@dapp/features-tokens-provider";
+import { ThemeProvider } from "styled-components";
+import "./connect2ic.css";
+import { AuthContext } from "@dapp/features-authentication";
+import { PerpetualOSContext } from "@dapp/features-context-provider";
+import { getNftCollectionMeta, OrigynClient } from "@origyn/mintjs";
 
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
   {
-    href: 'vault',
-    title: 'Home',
+    href: "vault",
+    title: "Home",
     icon: Icons.Home,
   },
   {
-    href: 'vault',
-    title: 'Vault',
+    href: "vault",
+    title: "Vault",
     icon: Icons.Wallet,
   },
   {
-    href: 'nft-data',
-    title: 'Certificates Data',
+    href: "nft-data",
+    title: "Certificates Data",
     icon: Icons.DataBrowse,
   },
   {
-    href: 'library',
-    title: 'Certificates library',
+    href: "library",
+    title: "Certificates library",
     icon: Icons.Libraries,
   },
   {
-    href: 'ledger',
-    title: 'Ledger',
+    href: "ledger",
+    title: "Ledger",
     icon: Icons.TransactionIcon,
   },
   {
-    href: 'marketplace',
-    title: 'Marketplace',
+    href: "marketplace",
+    title: "Marketplace",
     icon: Icons.Marketplace,
   },
 ];
-
 
 export const Layout = ({ children }: LayoutProps) => {
   const context = useContext(PerpetualOSContext);
@@ -60,16 +59,25 @@ export const Layout = ({ children }: LayoutProps) => {
 
   useEffect(() => {
     const run = async () => {
-      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
+      await OrigynClient.getInstance().init(
+        !context.isLocal,
+        context.canisterId,
+        { actor }
+      );
       getNftCollectionMeta().then((r: any) => {
-        if (!('err' in r)) {
+        if (!("err" in r)) {
           const data = r.ok.metadata[0].Class.find(
-            ({ name }) => name === 'library',
+            ({ name }) => name === "library"
           ).value.Array.reduce(
-            (arr, val) => [...arr, val.Class.find(({ name }) => name === 'library_id').value.Text],
-            [],
+            (arr, val) => [
+              ...arr,
+              val.Class.find(({ name }) => name === "library_id").value.Text,
+            ],
+            []
           );
-          setMenuItems(initialMenuItems.filter((item) => data.includes(item.href)));
+          setMenuItems(
+            initialMenuItems.filter((item) => data.includes(item.href))
+          );
         }
       });
     };
@@ -77,16 +85,16 @@ export const Layout = ({ children }: LayoutProps) => {
   }, [context.isLocal, context.canisterId, actor]);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem("theme");
     if (savedTheme !== null) {
-      setDarkTheme(savedTheme === 'true');
+      setDarkTheme(savedTheme === "true");
     }
   }, []);
 
   const handleThemeChange = () => {
     const newTheme: any = !darkTheme;
     setDarkTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+    localStorage.setItem("theme", newTheme);
   };
   return (
     <>

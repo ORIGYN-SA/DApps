@@ -13,7 +13,7 @@ stages:
 .publish: &publish
   - npm install
   - npm run bootstrap
-  - npm run build:all
+  - npm run dev
   - export PACKAGE_VERSION=$(cat package.json | jq '.version' | tr -d '"')
   - aws s3 cp dist/ s3://${AWS_BUCKET_NAME}/dApps/${CI_COMMIT_BRANCH}/v${PACKAGE_VERSION} --recursive
 
