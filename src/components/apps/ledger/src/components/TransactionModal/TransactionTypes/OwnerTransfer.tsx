@@ -7,9 +7,9 @@ export const OwnerTransfer = (props: any) => {
   return (
     <Container>
       <Container padding="16px">Transaction type: {type_txn}</Container>
-      <HR marginTop="8px" marginBottom="8px" />
+      <HR marginTop={8} marginBottom={8} />
       <Grid columns={1}>
-        <Grid column={1}>
+        <Grid columns={1}>
           Transfer from:
           <br />
           <span style={{ color: 'grey' }}>{from.acc_principal_string}</span>

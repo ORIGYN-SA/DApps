@@ -33,8 +33,9 @@ export const AuctionBid = (
     var _standard = bid_token[tokenProps].standard;
   }
 
+  let token_standard = '';
   for (const prop of Object.keys(_standard)) {
-    var token_standard = prop;
+    token_standard = prop;
   }
   const bid_obj_token = getToken(
     _canister,

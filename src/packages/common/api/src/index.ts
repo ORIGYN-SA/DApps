@@ -71,7 +71,7 @@ export const useApi = () => {
       throw new Error('Unable to retrieve collection metadata.');
     }
 
-    if (response.ok === undefined) {
+    if (!response.ok) {
       throw new Error('Collection metadata is undefined.');
     }
 
@@ -320,7 +320,7 @@ export const useApi = () => {
     if (response.err) {
       throw new Error(getErrorText(response.err, 'Accept escrow failed'));
     }
-    if (response.ok === undefined) {
+    if (!response.ok) {
       throw new Error('Market transfer request reponse is undefined.');
     }
     return response.ok;
@@ -331,7 +331,7 @@ export const useApi = () => {
     if (response.err) {
       throw new Error(getErrorText(response.err, 'Withdraw escrow failed'));
     }
-    if (response.ok === undefined) {
+    if (!response.ok) {
       throw new Error('Manage sale response is undefined.');
     }
     return response.ok;
@@ -342,7 +342,7 @@ export const useApi = () => {
     if (response.err) {
       throw new Error(getErrorText(response.err, 'Reject escrow failed'));
     }
-    if (response.ok === undefined) {
+    if (!response.ok) {
       throw new Error('Manage sale response is undefined.');
     }
 

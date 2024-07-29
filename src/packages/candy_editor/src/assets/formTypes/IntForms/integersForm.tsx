@@ -17,11 +17,11 @@ export const IntegersForm = (editor: CandyClassEditor) => {
   const [formValue, setFormValue] = useState<string>('');
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  const [validationError, setValidationError] = useState<string>(null);
+  const [validationError, setValidationError] = useState<string>('');
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.editExistingProperty && editor.propertyIndex) {
       editor.editExistingProperty(
         { name: typedName.target.value, value, immutable },
         editor.propertyIndex,
@@ -31,7 +31,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
 
   const onImmutableChanged = () => {
     setImmutable(!immutable);
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.editExistingProperty && editor.propertyIndex) {
       editor.editExistingProperty({ name, value, immutable: !immutable }, editor.propertyIndex);
     }
   };
@@ -40,12 +40,16 @@ export const IntegersForm = (editor: CandyClassEditor) => {
     let integerValue: CandyIntegers;
     switch (editor.candyType) {
       case 'Int':
-        integerValue = convertToCandyInt(typedValue.target.value);
+        integerValue = convertToCandyInt(typedValue.target.value) as CandyIntegers;
         if (integerValue) {
           setValue(integerValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: integerValue, immutable },
               editor.propertyIndex,
@@ -58,12 +62,16 @@ export const IntegersForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Int8':
-        integerValue = convertToCandyInt8(typedValue.target.value);
+        integerValue = convertToCandyInt8(typedValue.target.value) as CandyIntegers;
         if (integerValue) {
           setValue(integerValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: integerValue, immutable },
               editor.propertyIndex,
@@ -76,12 +84,16 @@ export const IntegersForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Int16':
-        integerValue = convertToCandyInt16(typedValue.target.value);
+        integerValue = convertToCandyInt16(typedValue.target.value) as CandyIntegers;
         if (integerValue) {
           setValue(integerValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: integerValue, immutable },
               editor.propertyIndex,
@@ -94,12 +106,16 @@ export const IntegersForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Int32':
-        integerValue = convertToCandyInt32(typedValue.target.value);
+        integerValue = convertToCandyInt32(typedValue.target.value) as CandyIntegers;
         if (integerValue) {
           setValue(integerValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: integerValue, immutable },
               editor.propertyIndex,
@@ -112,12 +128,16 @@ export const IntegersForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Int64':
-        integerValue = convertToCandyInt64(typedValue.target.value);
+        integerValue = convertToCandyInt64(typedValue.target.value) as CandyIntegers;
         if (integerValue) {
           setValue(integerValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: integerValue, immutable },
               editor.propertyIndex,
@@ -133,23 +153,29 @@ export const IntegersForm = (editor: CandyClassEditor) => {
   };
 
   const saveProperty = () => {
-    editor.addPropertyToCandyClass({
-      name: name,
-      value: value,
-      immutable: immutable,
-      id: Math.random().toString(),
-    });
+    if (editor.addPropertyToCandyClass) {
+      editor.addPropertyToCandyClass({
+        name: name,
+        value: value,
+        immutable: immutable,
+        id: Math.random().toString(),
+      });
+    }
   };
 
   useEffect(() => {
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.property) {
       const candyValue = editor.property.value as CandyIntegers;
       setName(editor.property.name);
       setValue(candyValue);
       setImmutable(editor.property.immutable);
-      setFormValue(convertIntegerNumberToString(candyValue, editor.candyType));
+      setFormValue(convertIntegerNumberToString(candyValue, editor.candyType ?? ''));
     }
   }, [editor.editorMode]);
+
+  if (!editor.property) {
+    return null;
+  }
 
   return (
     <>
@@ -178,22 +204,22 @@ export const IntegersForm = (editor: CandyClassEditor) => {
         </>
       ) : (
         <>
-          <Grid column={1}>
+          <Grid columns={1}>
             <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <b>{editor.candyType}</b>
+              <b>{String(editor.candyType)}</b>
             </span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
           </Grid>
-          <Grid column={3}>
+          <Grid columns={3}>
             {isInvalid ? (
               <TextInput onChange={onValueChanged} error={validationError} value={formValue} />
             ) : (
               <TextInput onChange={onValueChanged} value={formValue} disabled={immutable} />
             )}
           </Grid>
-          <Grid column={4}>
+          <Grid columns={4}>
             {editor.property.immutable ? (
               <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
             ) : (
@@ -202,7 +228,7 @@ export const IntegersForm = (editor: CandyClassEditor) => {
           </Grid>
           {editor.property.immutable && (
             <>
-              <Grid column={5}>
+              <Grid columns={5}>
                 <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                   Property is immutable
                 </span>

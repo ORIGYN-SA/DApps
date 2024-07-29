@@ -18,7 +18,7 @@ export const SaleEnded = (props: any) => {
         <br />
         <span style={{ color: 'grey' }}>{props.data.sale}</span>
       </Container>
-      <HR marginTop="8px" marginBottom="8px" />
+      <HR marginTop={8} marginBottom={8} />
       <Container padding="16px">
         <Container>
           Amount:
@@ -28,7 +28,7 @@ export const SaleEnded = (props: any) => {
           </span>
         </Container>
         <Grid columns={1}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Buyer:
             <br /> <span style={{ color: 'grey' }}>{buyer.acc_principal_string}</span>
             <br />
@@ -39,7 +39,7 @@ export const SaleEnded = (props: any) => {
       </Container>
       <Container padding="16px">
         <Grid columns={2}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Canister:
             <br /> <span style={{ color: 'grey' }}>{token.canister_string}</span>
             <br />
@@ -52,7 +52,7 @@ export const SaleEnded = (props: any) => {
             Decimals: <br /> <span style={{ color: 'grey' }}>{token.decimal.toString()}</span>
             <br />
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             Symbol:
             <br />
             {token.symbol === 'OGY' ? (

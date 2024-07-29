@@ -27,7 +27,7 @@ const Library = () => {
         ]}
         onLogOut={handleLogOut}
         onConnect={open}
-        principal={principal.toText() === '2vxsx-fae' ? '' : principal?.toText()}
+        principal={principal?.toText() === '2vxsx-fae' ? '' : principal?.toText()}
       />
     </Container>
   );

@@ -13,8 +13,8 @@ export const DeleteLibrary = (props: any) => {
   const { enqueueSnackbar } = useSnackbar();
   // Dialog
   const [open, setOpen] = React.useState(false);
-  const [numberLibraries, setNumberLibraries] = useState(null);
-  const [messageLoadingStatus, setMessageLoadingStatus] = useState(null);
+  const [numberLibraries, setNumberLibraries] = useState<number | null>(null);
+  const [messageLoadingStatus, setMessageLoadingStatus] = useState(false);
   const [inProgress, setInProgress] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -30,31 +30,39 @@ export const DeleteLibrary = (props: any) => {
     setMessageLoadingStatus(false);
 
     if (props.currentTokenId == '') {
-      let i, j: any;
       let count: number = 0;
       let arrayForTokens: string[] = [];
 
-      let TokenArray: string[] = await getNftCollectionMeta().then((r) => {
-        return r.ok.token_ids[0];
+      let TokenArray: string[] | undefined = await getNftCollectionMeta().then((r) => {
+        if (r.ok) {
+          return r.ok.token_ids[0];
+        }
+        return [];
       });
 
-      for (i in TokenArray) {
+      for (let i in TokenArray) {
         const TokenLibraries = await getNft(TokenArray[i]).then((r) => {
-          if ('Class' in r.ok.metadata)
-            return r.ok.metadata.Class.filter((x: any) => x.name === 'library')[0].value['Array'];
+          if (r.ok && 'Class' in r.ok.metadata && r.ok.metadata.Class.length > 0) {
+            const libraryClass = r.ok.metadata.Class.find((x: any) => x.name === 'library');
+            if (libraryClass && libraryClass.value) {
+              return libraryClass.value['Array'];
+            }
+          }
+          return [];
         });
-        for (j in TokenLibraries) {
-          const LibraryId = TokenLibraries[j].Class.filter((item) => item.name === 'library_id')[0]
-            .value.Text;
+        for (let j in TokenLibraries) {
+          const LibraryId = TokenLibraries[j].Class.filter(
+            (item: any) => item.name === 'library_id',
+          )[0].value.Text;
           if (LibraryId === props.libraryId) {
             count++;
             arrayForTokens.push(TokenArray[i]);
           }
         }
-        setNumberLibraries(count);
-        setMessageLoadingStatus(true);
-        setTokensThatUseSelectedLibrary(arrayForTokens);
       }
+      setNumberLibraries(count);
+      setMessageLoadingStatus(true);
+      setTokensThatUseSelectedLibrary(arrayForTokens);
     } else {
       setMessageLoadingStatus(true);
     }
@@ -132,23 +140,29 @@ export const DeleteLibrary = (props: any) => {
     if (props.currentTokenId == '') {
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
-        props.updateCollectionLevelLibraryData(
-          r.ok.metadata[0]['Class'].filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array,
-        );
+        if (r && r.ok && r.ok.metadata && r.ok.metadata[0] && r.ok.metadata[0]['Class']) {
+          props.updateCollectionLevelLibraryData(
+            r.ok.metadata[0]['Class'].filter((res) => {
+              return res.name === 'library';
+            })[0].value.Array,
+          );
+        }
       });
       props.setCollectionLevelLibraryMetadata('');
       props.setOpenLibraryCollectionLevel(false);
     } else {
       //Update the library data for the token
       getNft(props.currentTokenId).then((r) => {
-        if ('Class' in r.ok.metadata) {
-          props.updateTokenLibraryData(
-            r.ok.metadata.Class.filter((res) => {
-              return res.name === 'library';
-            })[0].value['Array'],
-          );
+        if (r && r.ok && Array.isArray(r.ok.metadata['Class']) && 'Class' in r.ok.metadata) {
+          let libraryArray =
+            r.ok.metadata.Class.find((res) => res.name === 'library')?.value?.['Array'] || [];
+          if (!Array.isArray(libraryArray)) {
+            libraryArray = [];
+          }
+          if (!Array.isArray(libraryArray)) {
+            libraryArray = [];
+          }
+          props.updateTokenLibraryData(libraryArray);
         }
       });
       props.setOpenLibrarySelectedToken(false);
@@ -181,7 +195,7 @@ export const DeleteLibrary = (props: any) => {
                     <>
                       {messageLoadingStatus ? (
                         <>
-                          {numberLibraries > 0 ? (
+                          {numberLibraries !== null && numberLibraries > 0 ? (
                             <>
                               There are {numberLibraries} NFTs that use this library. <br />
                               Are you sure you want to delete it? <br />

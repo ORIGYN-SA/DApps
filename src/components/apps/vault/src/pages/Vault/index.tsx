@@ -1,14 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
-import { useDebug } from '@dapp/features-debug-provider';
-import { AuthContext } from '@dapp/features-authentication';
-import { useApi } from '@dapp/common-api';
-import { useVault } from '../../components/context';
-import { useDialog } from '@connect2ic/react';
-import { PerpetualOSContext } from '@dapp/features-context-provider';
-import { TokenIcon, LoadingContainer, WalletTokens } from '@dapp/features-components';
-import { useTokensContext, Token } from '@dapp/features-tokens-provider';
+import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { useDebug } from "@dapp/features-debug-provider";
+import { AuthContext } from "@dapp/features-authentication";
+import { useApi } from "@dapp/common-api";
+import { useVault } from "../../components/context";
+import { useDialog } from "@connect2ic/react";
+import { PerpetualOSContext } from "@dapp/features-context-provider";
+import {
+  TokenIcon,
+  LoadingContainer,
+  WalletTokens,
+} from "@dapp/features-components";
+import { useTokensContext, Token } from "@dapp/features-tokens-provider";
 import {
   OdcDataWithSale,
   toLargerUnit,
@@ -16,13 +20,13 @@ import {
   parseOdcs,
   copyToClipboard,
   timeInNanos,
-} from '@dapp/utils';
-import { OrigynClient } from '@origyn/mintjs';
-import TransferTokensModal from '@dapp/features-sales-escrows';
-import ManageEscrowsModal from '@dapp/features-sales-escrows';
-import ManageDepositsModal from '@dapp/features-sales-escrows';
-import Filter from './Filter';
-import styled from 'styled-components';
+} from "@dapp/utils";
+import { OrigynClient, PropertyShared } from "@origyn/mintjs";
+import TransferTokensModal from "../../../../../../packages/features/sales-escrows/modals/TransferTokens";
+import ManageEscrowsModal from "../../../../../../packages/features/sales-escrows/modals/ManageEscrows";
+import ManageDepositsModal from "../../../../../../packages/features/sales-escrows/modals/ManageDepositsModal";
+import Filter from "./Filter";
+import styled from "styled-components";
 import {
   Button,
   Card,
@@ -34,9 +38,9 @@ import {
   Container,
   ShowMoreBlock,
   theme,
-} from '@origyn/origyn-art-ui';
-import { PlaceholderIcon } from '@dapp/common-assets';
-import { useUserMessages } from '@dapp/features-user-messages';
+} from "@origyn/origyn-art-ui";
+import { PlaceholderIcon } from "@dapp/common-assets";
+import { useUserMessages } from "@dapp/features-user-messages";
 import {
   WebsiteSVG,
   DiscordSVG,
@@ -44,7 +48,7 @@ import {
   DscvrSVG,
   TwitterSVG,
   MediumSVG,
-} from '../../../../../../packages/features/components/src/SocialMediaSVG';
+} from "../../../../../../packages/features/components/src/SocialMediaSVG";
 
 const GuestContainer = () => {
   const { open } = useDialog();
@@ -52,18 +56,18 @@ const GuestContainer = () => {
   return (
     <div
       style={{
-        alignItems: 'center',
-        display: 'flex',
+        alignItems: "center",
+        display: "flex",
         flexGrow: 1,
-        minHeight: '100%',
+        minHeight: "100%",
       }}
     >
       <Container maxWidth="md">
         <div
           style={{
-            alignItems: 'center',
-            display: 'flex',
-            flexDirection: 'column',
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <h3>Welcome to the Origyn Vault</h3>
@@ -138,10 +142,16 @@ const VaultPage = () => {
   const context = useContext(PerpetualOSContext);
   const { getNftBatch, getNftCollectionMeta, getNftBalances } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
-  const { loggedIn, principal, principalId, actor, activeWalletProvider, handleLogOut } =
-    useContext(AuthContext);
+  const {
+    loggedIn,
+    principal,
+    principalId,
+    actor,
+    activeWalletProvider,
+    handleLogOut,
+  } = useContext(AuthContext);
   const [openManageDeposit, setOpenManageDeposit] = React.useState(false);
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
   const [openTrx, setOpenTrx] = useState(false);
   const [showManageEscrowsButton, setShowManageEscrowsButton] = useState(false);
@@ -149,11 +159,14 @@ const VaultPage = () => {
   const { time, activeTokens } = useTokensContext();
   const { open } = useDialog();
   const { state, dispatch } = useVault();
-  const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } = state;
+  const { ownedItems, collectionData, odcs, filter, sort, filteredOdcs } =
+    state;
   const [escrowsModalOpen, setEscrowsModalOpen] = useState(false);
 
   const logout = async () => {
-    handleLogOut();
+    if (handleLogOut) {
+      handleLogOut();
+    }
     fetchData();
   };
 
@@ -171,29 +184,36 @@ const VaultPage = () => {
     }
 
     try {
-      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
+      await OrigynClient.getInstance().init(
+        !context.isLocal,
+        context.canisterId,
+        { actor }
+      );
       // get the canister's collection metadata
       const meta = await getNftCollectionMeta();
-      const metadata = meta.metadata[0];
-      const metadataClass = 'Class' in metadata ? metadata.Class : [];
+      const metadata = meta.metadata[0] ?? {};
+      const metadataClass: PropertyShared[] = (
+        "Class" in metadata ? metadata.Class : []
+      ) as PropertyShared[];
       const collectionData = parseMetadata(metadataClass);
-      dispatch({ type: 'collectionData', payload: collectionData });
+      dispatch({ type: "collectionData", payload: collectionData });
 
       if (principal) {
         const vaultBalanceInfo = await getNftBalances(principal);
-        debug.log('balance_of_nft_origyn result', vaultBalanceInfo);
+        debug.log("balance_of_nft_origyn result", vaultBalanceInfo);
 
         // get list of digital certificates owned by the current user
         const ownedTokenIds = vaultBalanceInfo.nfts || [];
-        debug.log('ownedTokenIds', ownedTokenIds);
+        debug.log("ownedTokenIds", ownedTokenIds);
         const odcs = await getNftBatch(ownedTokenIds);
         const parsedOdcs = parseOdcs(odcs);
-        debug.log('parsed odcs', parsedOdcs);
-        dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
-        dispatch({ type: 'odcs', payload: parsedOdcs });
+        debug.log("parsed odcs", parsedOdcs);
+        dispatch({ type: "ownedItems", payload: ownedTokenIds.length || 0 });
+        dispatch({ type: "odcs", payload: parsedOdcs });
 
         setShowManageEscrowsButton(
-          vaultBalanceInfo.escrow?.length > 0 || vaultBalanceInfo.offers?.length > 0,
+          vaultBalanceInfo.escrow?.length > 0 ||
+            vaultBalanceInfo.offers?.length > 0
         );
 
         //'balance_of_nft_origyn result' = vaultBalanceInfo
@@ -202,7 +222,7 @@ const VaultPage = () => {
           await Promise.all(
             vaultBalanceInfo.escrow.map(async (item) => {
               await actor.sale_nft_origyn({ end_sale: item.token_id });
-            }),
+            })
           );
         }
 
@@ -210,12 +230,12 @@ const VaultPage = () => {
           await Promise.all(
             vaultBalanceInfo.offers.map(async (item) => {
               await actor.sale_nft_origyn({ end_sale: item.token_id });
-            }),
+            })
           );
         }
       } else {
-        dispatch({ type: 'odcs', payload: [] });
-        dispatch({ type: 'ownedItems', payload: 0 });
+        dispatch({ type: "odcs", payload: [] });
+        dispatch({ type: "ownedItems", payload: 0 });
         setShowManageEscrowsButton(false);
       }
     } catch (err) {
@@ -226,11 +246,15 @@ const VaultPage = () => {
   };
 
   const endSaleForNFTS = async () => {
-    await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
+    await OrigynClient.getInstance().init(
+      !context.isLocal,
+      context.canisterId,
+      { actor }
+    );
 
-    const vaultBalanceInfo = await getNftBalances(principal);
-    const endedNFTS = [];
-    const NFTonSale = [];
+    const vaultBalanceInfo = await getNftBalances(principal as any);
+    const endedNFTS: string[] = [];
+    const NFTonSale: string[] = [];
 
     if (vaultBalanceInfo?.escrow) {
       vaultBalanceInfo?.escrow?.forEach((nft) => {
@@ -244,11 +268,12 @@ const VaultPage = () => {
       });
     }
 
-    if (NFTonSale.length > 0) {
+    if (NFTonSale.length > 0 && actor) {
       NFTonSale.map(async (nft) => {
         const r: any = await actor.nft_origyn(nft);
 
-        const endDate = r.ok.current_sale[0]?.sale_type?.auction?.config?.auction?.end_date;
+        const endDate =
+          r.ok.current_sale[0]?.sale_type?.auction?.config?.auction?.end_date;
 
         if (endDate < timeInNanos()) {
           endedNFTS.push(nft);
@@ -263,7 +288,7 @@ const VaultPage = () => {
   };
 
   useEffect(() => {
-    document.title = 'Origyn Vault';
+    document.title = "Origyn Vault";
     endSaleForNFTS();
   }, []);
 
@@ -271,7 +296,7 @@ const VaultPage = () => {
    * is ready, then every 5 seconds */
   useEffect(() => {
     fetchData();
-    debug.log('collectionData', collectionData);
+    debug.log("collectionData", collectionData);
     let intervalId: any;
     if (!intervalId) {
       intervalId = setInterval(() => {
@@ -296,35 +321,46 @@ const VaultPage = () => {
   useEffect(() => {
     let filtered = odcs;
 
-    switch (filter) {
-      case 'onSale':
-        filtered = filtered.filter((odc) => odc.auctionOpen);
-        break;
-      case 'notOnSale':
-        filtered = filtered.filter((odc) => !odc.auctionOpen);
-        break;
+    if (filtered) {
+      switch (filter) {
+        case "onSale":
+          filtered = filtered.filter((odc) => odc.auctionOpen);
+          break;
+        case "notOnSale":
+          filtered = filtered.filter((odc) => !odc.auctionOpen);
+          break;
+      }
     }
-
     switch (sort) {
-      case 'saleASC':
-        filtered = [...filtered].sort((odc1, odc2) => {
-          return Math.max(odc2.buyNow, odc2.currentBid) - Math.max(odc1.buyNow, odc1.currentBid);
-        });
+      case "saleASC":
+        if (filtered) {
+          filtered = [...filtered].sort((odc1, odc2) => {
+            return (
+              Math.max(odc2.buyNow, odc2.currentBid) -
+              Math.max(odc1.buyNow, odc1.currentBid)
+            );
+          });
+        }
         break;
-      case 'saleDESC':
-        filtered = [...filtered].sort((odc1, odc2) => {
-          return Math.max(odc1.buyNow, odc1.currentBid) - Math.max(odc2.buyNow, odc2.currentBid);
-        });
+      case "saleDESC":
+        if (filtered) {
+          filtered = [...filtered].sort((odc1, odc2) => {
+            return (
+              Math.max(odc1.buyNow, odc1.currentBid) -
+              Math.max(odc2.buyNow, odc2.currentBid)
+            );
+          });
+        }
         break;
     }
 
-    if (inputText?.length) {
+    if (inputText?.length && filtered) {
       filtered = filtered.filter((odc) =>
-        (odc.displayName || odc.id)?.toLowerCase().includes(inputText),
+        (odc.displayName || odc.id)?.toLowerCase().includes(inputText)
       );
     }
 
-    dispatch({ type: 'filteredOdcs', payload: filtered });
+    dispatch({ type: "filteredOdcs", payload: filtered });
   }, [filter, sort, inputText, odcs]);
 
   useEffect(() => {
@@ -334,20 +370,24 @@ const VaultPage = () => {
   }, [loggedIn]);
 
   const getPrice = (odc: OdcDataWithSale): string => {
+    if (!odc.token?.decimals) {
+      throw new Error("Token is undefined");
+    }
+
     const price = odc.currentBid
-      ? toLargerUnit(odc.currentBid, odc.token.decimals)
-      : toLargerUnit(odc.buyNow, odc.token.decimals);
+      ? toLargerUnit(odc.currentBid, odc.token?.decimals)
+      : toLargerUnit(odc.buyNow, odc.token?.decimals);
     return price.toFixed();
   };
 
   return (
     <>
       {loggedIn ? (
-        <Flex fullWidth padding="0" flexFlow="column">
+        <Flex fullWidth padding={0} flexFlow="column">
           <SecondaryNav
             title="Vault"
             titleLink={`${context.canisterUrl}/collection/-/vault`}
-            tabs={[{ title: 'Balance', id: 'Balance' }]}
+            tabs={[{ title: "Balance", id: "Balance" }]}
             content={[
               <Flex fullWidth flexFlow="column" key="secondaryNavContent">
                 <StyledSectionTitle>Vault Dashboard</StyledSectionTitle>
@@ -361,7 +401,7 @@ const VaultPage = () => {
                         bgColor="NAVIGATION_BACKGROUND"
                         type="outlined"
                         flexFlow="column"
-                        padding="24px"
+                        padding={24}
                         gap={16}
                       >
                         <h6>Wallet Balances</h6>
@@ -370,7 +410,7 @@ const VaultPage = () => {
                           <StyledBlackItemCard
                             key={i}
                             align="center"
-                            padding="12px"
+                            padding={12}
                             justify="space-between"
                           >
                             <Flex gap={8}>
@@ -386,19 +426,30 @@ const VaultPage = () => {
                             </Flex>
                           </StyledBlackItemCard>
                         ))}
-                        <p className="small_text secondary_color">Last Updated: {time}</p>
+                        <p className="small_text secondary_color">
+                          Last Updated: {String(time)}
+                        </p>
                         {/* <h6>Token Actions</h6> */}
-                        <Button btnType="filled" onClick={() => setOpenTrx(true)}>
+                        <Button
+                          btnType="filled"
+                          onClick={() => setOpenTrx(true)}
+                        >
                           Transfer Tokens
                         </Button>
                         <WalletTokens>Manage Tokens</WalletTokens>
 
                         <h6>Manage Transactions</h6>
-                        <Button btnType="outlined" onClick={() => setOpenManageDeposit(true)}>
+                        <Button
+                          btnType="outlined"
+                          onClick={() => setOpenManageDeposit(true)}
+                        >
                           Manage Deposits
                         </Button>
                         {showManageEscrowsButton ? (
-                          <Button btnType="outlined" onClick={() => setEscrowsModalOpen(true)}>
+                          <Button
+                            btnType="outlined"
+                            onClick={() => setEscrowsModalOpen(true)}
+                          >
                             Manage Escrows
                           </Button>
                         ) : (
@@ -406,16 +457,32 @@ const VaultPage = () => {
                         )}
 
                         {activeWalletProvider && (
-                          <StyledBlackCard align="center" padding="12px" justify="space-between">
+                          <StyledBlackCard
+                            align="center"
+                            padding={12}
+                            justify="space-between"
+                          >
                             <Flex align="center" gap={12}>
-                              <Icons.Wallet width={24} fill="#ffffff" height="100%" />
+                              <Icons.Wallet
+                                width={24}
+                                fill="#ffffff"
+                                height="100%"
+                              />
                               <Flex flexFlow="column">
-                                <p style={{ fontSize: 12, color: '#9A9A9A' }}>
-                                  {activeWalletProvider.meta.name.charAt(0).toUpperCase() +
+                                <p style={{ fontSize: 12, color: "#9A9A9A" }}>
+                                  {activeWalletProvider.meta.name
+                                    .charAt(0)
+                                    .toUpperCase() +
                                     activeWalletProvider.meta.name.slice(1)}
                                 </p>
                                 <p>
-                                  {principal.toText().slice(0, 2)}...{principal.toText().slice(-4)}
+                                  {principal
+                                    ? `${principal
+                                        .toText()
+                                        .slice(0, 2)}...${principal
+                                        .toText()
+                                        .slice(-4)}`
+                                    : ""}
                                 </p>
                               </Flex>
                             </Flex>
@@ -423,17 +490,19 @@ const VaultPage = () => {
                               <Button
                                 iconButton
                                 size="medium"
-                                onClick={() =>
-                                  copyToClipboard(principal.toText(), () => {
-                                    enqueueSnackbar('Copied to clipboard', {
-                                      variant: 'success',
-                                      anchorOrigin: {
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                      },
+                                onClick={() => {
+                                  if (principal) {
+                                    copyToClipboard(principal.toText(), () => {
+                                      enqueueSnackbar("Copied to clipboard", {
+                                        variant: "success",
+                                        anchorOrigin: {
+                                          vertical: "top",
+                                          horizontal: "right",
+                                        },
+                                      });
                                     });
-                                  })
-                                }
+                                  }
+                                }}
                               >
                                 <Icons.CopyIcon width={12} height="100%" />
                               </Button>
@@ -451,11 +520,20 @@ const VaultPage = () => {
                               alt=""
                             />
                           ) : (
-                            <Flex justify="center" align="center" style={{ height: '100%' }}>
+                            <Flex
+                              justify="center"
+                              align="center"
+                              style={{ height: "100%" }}
+                            >
                               <PlaceholderIcon width={96} height={96} />
                             </Flex>
                           )}
-                          <Flex flexFlow="column" fullWidth justify="space-between" gap={8}>
+                          <Flex
+                            flexFlow="column"
+                            fullWidth
+                            justify="space-between"
+                            gap={8}
+                          >
                             <Flex
                               flexFlow="row"
                               align="center"
@@ -467,47 +545,54 @@ const VaultPage = () => {
 
                               <Flex
                                 style={{
-                                  flexWrap: 'wrap',
-                                  marginTop: '8px',
-                                  alignContent: 'flex-end',
+                                  flexWrap: "wrap",
+                                  marginTop: "8px",
+                                  alignContent: "flex-end",
                                 }}
                                 gap={8}
                               >
-                                {collectionData.socialLinks?.map((link, index) => (
-                                  <SocialMediaButton
-                                    as="a"
-                                    iconButton
-                                    target="_blank"
-                                    href={link.url}
-                                    key={index}
-                                  >
-                                    {
+                                {collectionData.socialLinks?.map(
+                                  (link, index) => (
+                                    <SocialMediaButton
+                                      as="a"
+                                      iconButton
+                                      target="_blank"
+                                      href={link.url}
+                                      key={index}
+                                    >
                                       {
-                                        twitter: <TwitterSVG />,
-                                        discord: <DiscordSVG />,
-                                        medium: <MediumSVG />,
-                                        dscvr: <DscvrSVG />,
-                                        distrikt: <DistriktSVG />,
-                                        website: <WebsiteSVG />,
-                                      }[link.type]
-                                    }
-                                  </SocialMediaButton>
-                                ))}
+                                        {
+                                          twitter: <TwitterSVG />,
+                                          discord: <DiscordSVG />,
+                                          medium: <MediumSVG />,
+                                          dscvr: <DscvrSVG />,
+                                          distrikt: <DistriktSVG />,
+                                          website: <WebsiteSVG />,
+                                        }[link.type]
+                                      }
+                                    </SocialMediaButton>
+                                  )
+                                )}
                                 <SocialMediaButton
                                   as="a"
                                   iconButton
                                   target="_blank"
                                   href={`${context.canisterUrl}/collection/-/ledger`}
                                 >
-                                  <p style={{ color: theme.colors.TEXT }}>Ledger</p>
+                                  <p style={{ color: theme.colors.TEXT }}>
+                                    Ledger
+                                  </p>
                                 </SocialMediaButton>
                               </Flex>
                             </Flex>
 
                             <p>
-                              <span className="secondary_color">Created by </span>
                               <span className="secondary_color">
-                                {collectionData.originatorPrincipalId || 'no creator name'}
+                                Created by{" "}
+                              </span>
+                              <span className="secondary_color">
+                                {collectionData.originatorPrincipalId ||
+                                  "no creator name"}
                               </span>
                             </p>
                             <br />
@@ -529,15 +614,18 @@ const VaultPage = () => {
                         <br />
                         <Filter
                           onChangeFilter={(filterValue: string) =>
-                            dispatch({ type: 'filter', payload: filterValue })
+                            dispatch({ type: "filter", payload: filterValue })
                           }
                           onChangeSort={(sortValue: string) =>
-                            dispatch({ type: 'sort', payload: sortValue })
+                            dispatch({ type: "sort", payload: sortValue })
                           }
                           onInput={setInputText}
                         />
                         <br />
-                        <TransferTokensModal open={openTrx} handleClose={handleClose} />
+                        <TransferTokensModal
+                          open={openTrx}
+                          handleClose={handleClose}
+                        />
                         <ManageEscrowsModal
                           open={escrowsModalOpen}
                           handleClose={handleClose}
@@ -553,12 +641,15 @@ const VaultPage = () => {
                               columns={6}
                               gap={20}
                             >
-                              {filteredOdcs.map((odc: OdcDataWithSale) => {
+                              {filteredOdcs?.map((odc: OdcDataWithSale) => {
                                 return (
                                   <Link to={`/${odc?.id}`} key={odc?.id}>
                                     <Card
                                       flexFlow="column"
-                                      style={{ overflow: 'hidden', height: '100%' }}
+                                      style={{
+                                        overflow: "hidden",
+                                        height: "100%",
+                                      }}
                                       bgColor="NAVIGATION_BACKGROUND"
                                     >
                                       {odc.hasPreviewAsset ? (
@@ -570,27 +661,32 @@ const VaultPage = () => {
                                         <Flex
                                           justify="center"
                                           align="center"
-                                          style={{ height: '100%' }}
+                                          style={{ height: "100%" }}
                                         >
                                           <PlaceholderIcon
-                                            width={'100%'}
+                                            width={"100%"}
                                             height={`calc(15vw - 20px)`}
                                           />
                                         </Flex>
                                       )}
                                       <Container
-                                        style={{ height: '100%' }}
+                                        style={{ height: "100%" }}
                                         size="full"
                                         padding="16px"
                                       >
                                         <Flex
-                                          style={{ height: '100%' }}
+                                          style={{ height: "100%" }}
                                           justify="space-between"
                                           flexFlow="column"
                                           gap={32}
                                         >
                                           <div>
-                                            <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
+                                            <p
+                                              style={{
+                                                fontSize: "12px",
+                                                color: "#9A9A9A",
+                                              }}
+                                            >
                                               {collectionData?.displayName}
                                             </p>
                                             <p>
@@ -598,17 +694,24 @@ const VaultPage = () => {
                                             </p>
                                           </div>
                                           <div>
-                                            <p style={{ fontSize: '12px', color: '#9A9A9A' }}>
+                                            <p
+                                              style={{
+                                                fontSize: "12px",
+                                                color: "#9A9A9A",
+                                              }}
+                                            >
                                               Status
                                             </p>
                                             <p>
                                               {odc.auctionOpen ? (
                                                 <>
-                                                  {getPrice(odc)}{' '}
-                                                  <TokenIcon symbol={odc.tokenSymbol} />
+                                                  {getPrice(odc)}{" "}
+                                                  <TokenIcon
+                                                    symbol={odc.tokenSymbol}
+                                                  />
                                                 </>
                                               ) : (
-                                                'No auction started'
+                                                "No auction started"
                                               )}
                                             </p>
                                           </div>
@@ -622,7 +725,7 @@ const VaultPage = () => {
                             <br />
                           </>
                         ) : (
-                          'There are no digital certificates in your vault'
+                          "There are no digital certificates in your vault"
                         )}
                       </div>
                     )}

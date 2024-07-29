@@ -17,11 +17,16 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
   const [formValue, setFormValue] = useState<string>('');
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  const [validationError, setValidationError] = useState<string>(null);
+  const [validationError, setValidationError] = useState<string>('');
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
-    if (editor.editorMode === EDIT_MODE && editor && editor.editExistingProperty && editor.propertyIndex) {
+    if (
+      editor.editorMode === EDIT_MODE &&
+      editor &&
+      editor.editExistingProperty &&
+      editor.propertyIndex
+    ) {
       editor.editExistingProperty(
         { name: typedName.target.value, value: value || '', immutable },
         editor.propertyIndex,
@@ -31,7 +36,12 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
 
   const onImmutableChanged = () => {
     setImmutable(!immutable);
-    if (editor.editorMode === EDIT_MODE) {
+    if (
+      editor.editorMode === EDIT_MODE &&
+      editor.editExistingProperty &&
+      value &&
+      editor.propertyIndex
+    ) {
       editor.editExistingProperty({ name, value, immutable: !immutable }, editor.propertyIndex);
     }
   };
@@ -40,12 +50,16 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
     let naturalValue: CandyNaturals;
     switch (editor.candyType) {
       case 'Nat':
-        naturalValue = convertToCandyNat(typedValue.target.value);
+        naturalValue = convertToCandyNat(typedValue.target.value) as CandyNaturals;
         if (naturalValue) {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: naturalValue, immutable },
               editor.propertyIndex,
@@ -58,13 +72,16 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat8':
-        
-        naturalValue = convertToCandyNat8(typedValue.target.value);
+        naturalValue = convertToCandyNat8(typedValue.target.value) as CandyNaturals;
         if (naturalValue) {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: naturalValue, immutable },
               editor.propertyIndex,
@@ -77,12 +94,16 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat16':
-        naturalValue = convertToCandyNat16(typedValue.target.value);
+        naturalValue = convertToCandyNat16(typedValue.target.value) as CandyNaturals;
         if (naturalValue) {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: naturalValue, immutable },
               editor.propertyIndex,
@@ -95,12 +116,16 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat32':
-        naturalValue = convertToCandyNat32(typedValue.target.value);
+        naturalValue = convertToCandyNat32(typedValue.target.value) as CandyNaturals;
         if (naturalValue) {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: naturalValue, immutable },
               editor.propertyIndex,
@@ -113,12 +138,16 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         }
         break;
       case 'Nat64':
-        naturalValue = convertToCandyNat64(typedValue.target.value);
+        naturalValue = convertToCandyNat64(typedValue.target.value) as CandyNaturals;
         if (naturalValue) {
           setValue(naturalValue);
           setFormValue(typedValue.target.value);
           setIsInvalid(false);
-          if (editor.editorMode === EDIT_MODE) {
+          if (
+            editor.editorMode === EDIT_MODE &&
+            editor.editExistingProperty &&
+            editor.propertyIndex
+          ) {
             editor.editExistingProperty(
               { name, value: naturalValue, immutable },
               editor.propertyIndex,
@@ -134,16 +163,18 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
   };
 
   const saveProperty = () => {
-    editor.addPropertyToCandyClass({
-      name: name,
-      value: value,
-      immutable: immutable,
-      id: Math.random().toString(),
-    });
+    if (editor.addPropertyToCandyClass) {
+      editor.addPropertyToCandyClass({
+        name: name,
+        value: value,
+        immutable: immutable,
+        id: Math.random().toString(),
+      });
+    }
   };
 
   useEffect(() => {
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.property && editor.candyType) {
       const candyValue = editor.property.value as CandyNaturals;
       setName(editor.property.name);
       setValue(candyValue);
@@ -151,6 +182,10 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
       setFormValue(convertNaturalNumberToString(candyValue, editor.candyType));
     }
   }, [editor.editorMode]);
+
+  if (!editor.property) {
+    return null;
+  }
 
   return (
     <>
@@ -181,7 +216,7 @@ export const NaturalsForm = (editor: CandyClassEditor) => {
         <>
           <Grid columns={1}>
             <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <b>{editor.candyType}</b>
+              <b>{String(editor.candyType)}</b>
             </span>
           </Grid>
           <Grid columns={2}>

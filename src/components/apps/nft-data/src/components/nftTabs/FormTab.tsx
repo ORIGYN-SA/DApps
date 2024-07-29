@@ -9,7 +9,7 @@ const FormTab = ({ metadata }: any) => {
   const [primaryAsset, setPrimaryAsset] = useState('');
   const [experienceAsset, setExperienceAsset] = useState('');
   const [id, setId] = useState('');
-  const [apps, setApps] = useState([]);
+  const [apps, setApps] = useState<any[]>([]);
   const [library, setLibrary] = useState([]);
   const [system, setSystem] = useState([]);
   useEffect(() => {
@@ -29,10 +29,10 @@ const FormTab = ({ metadata }: any) => {
   return (
     <Container padding="16px">
       <Grid columns={3}>
-        <Grid column={1}>
+        <Grid columns={1}>
           <h3>Info</h3>
         </Grid>
-        <Grid column={2}>
+        <Grid columns={2}>
           <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
             <b>
               <span>{'owner'}</span>
@@ -80,10 +80,10 @@ const FormTab = ({ metadata }: any) => {
       <HR marginTop={32} marginBottom={32} />
       {apps?.map((app, appIndex) => (
         <Grid columns={3} key={`app-${appIndex}`}>
-          <Grid column={1}>
+          <Grid columns={1}>
             <h3>{'Data'}</h3>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
               <b>
                 <span>{'app_id'}</span>
@@ -163,10 +163,10 @@ const FormTab = ({ metadata }: any) => {
       <HR marginTop={32} marginBottom={32} />
 
       <Grid columns={3}>
-        <Grid column={1}>
+        <Grid columns={1}>
           <h3>System</h3>
         </Grid>
-        <Grid column={2}>
+        <Grid columns={2}>
           {Object.keys(system).map((item, propIndex) => (
             <React.Fragment key={`system-${propIndex}`}>
               <Flex flexFlow="row" gap={32} padding={16} justify="space-between">
@@ -187,8 +187,8 @@ const FormTab = ({ metadata }: any) => {
         <>
           <HR marginTop={4} marginBottom={4} />
           <Grid key={`library-${libraryIndex}`} columns={3}>
-            <Grid column={1}></Grid>
-            <Grid column={2}>
+            <Grid columns={1}></Grid>
+            <Grid columns={2}>
               {Object.keys(lib).map((item, propIndex) => (
                 <React.Fragment key={`library-${libraryIndex}-${propIndex}`}>
                   <Flex flexFlow="row" gap={32} padding={16} justify="space-between">

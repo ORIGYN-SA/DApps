@@ -195,7 +195,7 @@ export const BidsSentTab = ({ collection }: BidsSentTabProps) => {
                         <TokenIcon symbol={bid.tokenSymbol} />
                         {toLargerUnit(
                           bid.currentBid,
-                          Number(bid.token.decimals)
+                          bid.token?.decimals ?? 0
                         ).toFixed()}
                       </div>
                       <div style={styles.gridItem}>

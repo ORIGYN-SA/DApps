@@ -10,11 +10,16 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
   const [formValue, setFormValue] = useState<string>('');
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  const [validationError, setValidationError] = useState<string>(null);
+  const [validationError, setValidationError] = useState<string>('');
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
-    if (editor.editorMode === EDIT_MODE) {
+    if (
+      editor.editorMode === EDIT_MODE &&
+      editor &&
+      editor.editExistingProperty &&
+      editor.propertyIndex
+    ) {
       editor.editExistingProperty(
         { name: typedName.target.value, value, immutable },
         editor.propertyIndex,
@@ -24,7 +29,12 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
 
   const onImmutableChanged = () => {
     setImmutable(!immutable);
-    if (editor.editorMode === EDIT_MODE) {
+    if (
+      editor.editorMode === EDIT_MODE &&
+      editor &&
+      editor.editExistingProperty &&
+      editor.propertyIndex
+    ) {
       editor.editExistingProperty({ name, value, immutable: !immutable }, editor.propertyIndex);
     }
   };
@@ -35,7 +45,12 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
       setValue(principalValue);
       setFormValue(typedValue.target.value);
       setIsInvalid(false);
-      if (editor.editorMode === EDIT_MODE) {
+      if (
+        editor.editorMode === EDIT_MODE &&
+        editor &&
+        editor.editExistingProperty &&
+        editor.propertyIndex
+      ) {
         editor.editExistingProperty(
           { name, value: principalValue, immutable },
           editor.propertyIndex,
@@ -65,9 +80,13 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
       setName(editor.property.name);
       setValue(candyValue);
       setImmutable(editor.property.immutable);
-      setFormValue(candyValue.Principal.toString());
+      setFormValue(candyValue.Principal?.toString() ?? '');
     }
   }, [editor.editorMode]);
+
+  if (!editor.property) {
+    return null;
+  }
 
   return (
     <>
@@ -98,7 +117,7 @@ export const PrincipalForm = (editor: CandyClassEditor) => {
         <>
           <Grid columns={1}>
             <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <b>{editor.candyType}</b>
+              <b>{String(editor.candyType)}</b>
             </span>
           </Grid>
           <Grid columns={2}>

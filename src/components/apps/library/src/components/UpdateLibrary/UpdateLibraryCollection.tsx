@@ -37,16 +37,18 @@ export const UpdateLibraryCollection = ({
   const getLibraries = async () => {
     await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     const response = await getNftCollectionMeta();
-    const library = await response.ok.metadata[0]['Class'].filter((res) => {
+    const library = await (response.ok?.metadata[0]?.['Class'] ?? []).filter((res) => {
       return res.name === 'library';
     })[0].value.Array;
-    let libraries = [];
+    let libraries: string[] = [];
     let i: any;
     for (i in library) {
       libraries.push(
-        library[i].Class.filter((res) => {
-          return res.name === 'library_id';
-        })[0].value.Text,
+        (
+          library[i].Class.filter((res: any) => {
+            return res.name === 'library_id';
+          })[0].value as { Text: string }
+        ).Text,
       );
     }
   };
@@ -83,7 +85,7 @@ export const UpdateLibraryCollection = ({
         read: selectedRead,
       });
 
-      if ('ok' in updateResponse) {
+      if (updateResponse && 'ok' in updateResponse) {
         // Display a success message - SNACKBAR
         enqueueSnackbar('Library Updated', {
           variant: 'success',
@@ -110,9 +112,9 @@ export const UpdateLibraryCollection = ({
     setInProgress(false);
     //Update the library data for the Token
     getNft(tokenId).then((r) => {
-      if ('Class' in r.ok.metadata) {
+      if (r.ok && 'metadata' in r.ok) {
         updateLibraryData(
-          r.ok.metadata.Class.filter((res) => {
+          (r.ok.metadata as any).Class.filter((res) => {
             return res.name === 'library';
           })[0].value['Array'],
         );

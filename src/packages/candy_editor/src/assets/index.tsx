@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Flex,
@@ -9,22 +9,34 @@ import {
   Container,
   Modal,
   Toggle,
-} from '@origyn/origyn-art-ui';
-import { FormTypes } from './formTypes';
+} from "@origyn/origyn-art-ui";
+import { FormTypes } from "./formTypes";
 import type {
   CandyClassEditor,
   EditorMode,
   EditableCandyClass,
   CandyDataEditorProps,
-} from '../types';
-import { CandyProperty, CandyClass, CandyType, PropertyWithId } from '@dapp/common-types';
-import { getValueType } from '../utils/functions';
-import { NOT_SELECTED, SELECT_OPTIONS, CREATE_MODE, EDIT_MODE, MESSAGES } from '../constants';
+} from "../types";
+import {
+  CandyProperty,
+  CandyClass,
+  CandyType,
+  PropertyWithId,
+} from "@dapp/common-types";
+import { getValueType } from "../utils/functions";
+import {
+  NOT_SELECTED,
+  SELECT_OPTIONS,
+  CREATE_MODE,
+  EDIT_MODE,
+  MESSAGES,
+} from "../constants";
 
 export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
   const [candyType, setCandyType] = useState<CandyType>(NOT_SELECTED);
   const [candyClass, setCandyClass] = useState<CandyClass>({ Class: [] });
-  const [editableCandyClass, setEditableCandyClass] = useState<EditableCandyClass>({ Class: [] });
+  const [editableCandyClass, setEditableCandyClass] =
+    useState<EditableCandyClass>({ Class: [] });
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [editorMode, setEditorMode] = useState<EditorMode>(EDIT_MODE);
   const [readOnly, setReadOnly] = useState<boolean>(false);
@@ -56,7 +68,10 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
     });
   };
 
-  const editExistingProperty = (updatedProperty: CandyProperty, propertyIndex: number) => {
+  const editExistingProperty = (
+    updatedProperty: CandyProperty,
+    propertyIndex: number
+  ) => {
     // console.log('🚀 UPDATED PROPERTY #' + propertyIndex, updatedProperty);
     const updated = editableCandyClass.Class.map((property, index) => {
       if (index === propertyIndex) {
@@ -70,7 +85,7 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
   const createEditCandyClassEditor = (
     candyType: string,
     property: CandyProperty,
-    propertyIndex: number,
+    propertyIndex: number
   ): CandyClassEditor => {
     return {
       candyType,
@@ -101,13 +116,15 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
   };
 
   const saveCandyClass = (): void => {
-    let properties: CandyProperty[] = editableCandyClass.Class.map((property) => {
-      return {
-        name: property.name,
-        immutable: property.immutable,
-        value: property.value,
-      };
-    });
+    let properties: CandyProperty[] = editableCandyClass.Class.map(
+      (property) => {
+        return {
+          name: property.name,
+          immutable: property.immutable,
+          value: property.value,
+        };
+      }
+    );
     setCandyClass({ Class: properties });
   };
 
@@ -121,20 +138,22 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
   // }, [candyClass]);
 
   useEffect(() => {
-    setCandyClass(candyDataEditor.existingCandyClass);
-    if (candyDataEditor.existingCandyClass) {
-      let propertiesWithId: PropertyWithId[] = candyDataEditor.existingCandyClass.Class.map(
-        (property) => {
-          return {
-            name: property.name,
-            immutable: property.immutable,
-            value: property.value,
-            id: Math.random().toString(),
-          };
-        },
-      );
-      setEditableCandyClass({ Class: propertiesWithId });
+    if (!candyDataEditor.existingCandyClass) {
+      throw new Error("CandyData is undefined");
     }
+
+    setCandyClass(candyDataEditor.existingCandyClass);
+
+    let propertiesWithId: PropertyWithId[] =
+      candyDataEditor.existingCandyClass.Class.map((property) => {
+        return {
+          name: property.name,
+          immutable: property.immutable,
+          value: property.value,
+          id: Math.random().toString(),
+        };
+      });
+    setEditableCandyClass({ Class: propertiesWithId });
 
     if (candyDataEditor.readOnly) {
       setReadOnly(true);
@@ -142,7 +161,7 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
   }, []);
 
   return (
-    <Card type="outlined" padding="16px">
+    <Card type="outlined" padding={16}>
       <Container>
         <Flex flexFlow="column" gap={16}>
           <Flex>
@@ -150,10 +169,12 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
               checked={readOnly}
               disabled={candyDataEditor?.readOnly}
               handleToggle={() => handleToggleReadOnly()}
-              style={{ marginBottom: 'auto', marginTop: 'auto' }}
+              style={{ marginBottom: "auto", marginTop: "auto" }}
             />
-            <span style={{ marginLeft: '16px' }}>
-              {candyDataEditor.readOnly ? MESSAGES.readOnlyMode : 'Read Only Mode'}
+            <span style={{ marginLeft: "16px" }}>
+              {candyDataEditor.readOnly
+                ? MESSAGES.readOnlyMode
+                : "Read Only Mode"}
             </span>
           </Flex>
           <HR marginTop={8} marginBottom={8} />
@@ -164,8 +185,9 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
                   <pre>
                     {JSON.stringify(
                       candyClass,
-                      (key, value) => (typeof value === 'bigint' ? value.toString() : value),
-                      4,
+                      (key, value) =>
+                        typeof value === "bigint" ? value.toString() : value,
+                      4
                     )}
                   </pre>
                 </>
@@ -186,11 +208,11 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
               {editableCandyClass?.Class?.length > 0 && (
                 <>
                   <Grid columns={5} gap={16}>
-                    <Grid column={1}>Property Type</Grid>
-                    <Grid column={2}>Property Name</Grid>
-                    <Grid column={3}>Property Value</Grid>
-                    <Grid column={4}>Immutable</Grid>
-                    <Grid column={5}>Actions</Grid>
+                    <Grid columns={1}>Property Type</Grid>
+                    <Grid columns={2}>Property Name</Grid>
+                    <Grid columns={3}>Property Value</Grid>
+                    <Grid columns={4}>Immutable</Grid>
+                    <Grid columns={5}>Actions</Grid>
                   </Grid>
                   {editableCandyClass.Class.map((property, index) => {
                     const item = getValueType(property);
@@ -198,12 +220,21 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
                       <>
                         <Grid columns={5} gap={16} key={property.id}>
                           {FormTypes[item.type](
-                            createEditCandyClassEditor(item.type, property, index),
+                            createEditCandyClassEditor(
+                              item.type,
+                              property,
+                              index
+                            )
                           )}
                           {!property.immutable && (
-                            <Grid column={5}>
+                            <Grid columns={5}>
                               <Flex>
-                                <span style={{ marginBottom: 'auto', marginTop: 'auto' }}>
+                                <span
+                                  style={{
+                                    marginBottom: "auto",
+                                    marginTop: "auto",
+                                  }}
+                                >
                                   <Button
                                     size="small"
                                     btnType="filled"
@@ -224,7 +255,11 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
               )}
               <Flex flexFlow="column" gap={24}>
                 <Flex align="flex-end" justify="flex-end">
-                  <Button size="medium" btnType="filled" onClick={() => saveCandyClass()}>
+                  <Button
+                    size="medium"
+                    btnType="filled"
+                    onClick={() => saveCandyClass()}
+                  >
                     Save Candy Class
                   </Button>
                 </Flex>
@@ -233,7 +268,12 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
           )}
         </Flex>
       </Container>
-      <Modal closeModal={closeModal} isOpened={openModal} mode="light" size="lg">
+      <Modal
+        closeModal={closeModal}
+        isOpened={openModal}
+        mode="light"
+        size="lg"
+      >
         <Container size="full" padding="48px">
           <Flex flexFlow="column" gap={16}>
             <Flex>

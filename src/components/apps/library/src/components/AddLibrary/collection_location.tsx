@@ -17,7 +17,7 @@ export const CollectionLocation = (props: any) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [libraries, setLibraries] = React.useState<any>([]);
-  const [selectedLibrary, setSelectedLibrary] = React.useState('');
+  const [selectedLibrary, setSelectedLibrary] = React.useState<any>(null);
   const [typedTitle, setTypedTitle] = useState('');
 
   const getTypedTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,15 +27,15 @@ export const CollectionLocation = (props: any) => {
   const getLibraries = async () => {
     await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
     const response = await getNftCollectionMeta();
-    const library = await response.ok.metadata[0]['Class'].filter((res) => {
+    const library = await response?.ok?.metadata[0]?.['Class'].filter((res) => {
       return res.name === 'library';
     })[0].value.Array;
-    let libraries = [];
+    let libraries: { Class: { name: string; value: { Text: string }[] }[] }[] = [];
     let i: any;
     for (i in library) {
       libraries.push(
-        library[i].Class.filter((res) => {
-          return res.name === 'library_id';
+        library[i].Class.filter((res: any) => {
+          return res.name === 'libraryId';
         })[0].value.Text,
       );
     }
@@ -51,7 +51,7 @@ export const CollectionLocation = (props: any) => {
         filename: typedTitle,
         title: typedTitle,
         path: '',
-        libraryId: selectedLibrary,
+        libraryId: selectedLibrary?.Class?.[0]?.value?.[0]?.Text || '',
       };
       const response = await stageCollectionLibraryAsset(props.tokenId, CollectionFile);
       if (response.ok) {
@@ -82,22 +82,23 @@ export const CollectionLocation = (props: any) => {
     if (props.tokenId == '') {
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
-        if ('Class' in r.ok.metadata[0]) {
-          props.updateData(
-            r.ok.metadata[0].Class.filter((res) => {
-              return res.name === 'library';
-            })[0].value['Array'],
-          );
+        if (r.ok && r.ok.metadata[0] && 'Class' in r.ok.metadata[0]) {
+          const libraryArray = r.ok.metadata[0]?.Class?.filter((res) => {
+            return res.name === 'library';
+          })[0]?.value?.['Array'];
+          props.updateData(libraryArray || []);
         }
       });
     } else {
       //Update the library data for the Token
       getNft(props.tokenId).then((r) => {
-        props.updateData(
-          r.ok.metadata['Class'].filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array,
-        );
+        if (r.ok && r.ok.metadata[0] && 'Class' in r.ok.metadata[0]) {
+          props.updateData(
+            r.ok.metadata[0].Class.filter((res) => {
+              return res.name === 'library';
+            })[0].value.Array,
+          );
+        }
       });
     }
   };

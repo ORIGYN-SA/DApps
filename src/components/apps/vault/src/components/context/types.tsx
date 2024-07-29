@@ -15,4 +15,4 @@ export type VaultAction =
   | { type: 'odcs'; payload: OdcDataWithSale[] }
   | { type: 'filter'; payload: string }
   | { type: 'sort'; payload: string }
-  | { type: 'filteredOdcs'; payload: OdcDataWithSale[] };
+  | { type: 'filteredOdcs'; payload: OdcDataWithSale[] | undefined };

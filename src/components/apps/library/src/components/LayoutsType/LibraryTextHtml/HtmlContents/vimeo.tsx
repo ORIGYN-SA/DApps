@@ -12,7 +12,10 @@ export const Vimeo = (props: any) => {
   };
 
   const SetEmbedLink = async () => {
-    setEmbedLink(await EmbedLink(props.htmlContent));
+    const link = await EmbedLink(props.htmlContent);
+    if (link) {
+      setEmbedLink(link);
+    }
   };
 
   useEffect(() => {

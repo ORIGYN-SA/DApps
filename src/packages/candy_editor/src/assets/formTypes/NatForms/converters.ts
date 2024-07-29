@@ -65,5 +65,7 @@ export function convertNaturalNumberToString(
       return (naturalNumber as CandyNat32).Nat32.valueOf().toString();
     case 'Nat64':
       return (naturalNumber as CandyNat64).Nat64.valueOf().toString();
+    default:
+      throw new Error('Invalid CandyType');
   }
 }

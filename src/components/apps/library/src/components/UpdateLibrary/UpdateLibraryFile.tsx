@@ -119,7 +119,7 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
     retryCount: number = 1,
   ): Promise<boolean> => {
     const result = await updateLibraryMetadata(tokenId, libraryId, data);
-    if ('err' in result) {
+    if (result && 'err' in result) {
       console.error(result.err);
       if (retryCount <= 5) {
         showSnackbar(`Update failed. Retry # ${retryCount}.`, false);
@@ -134,7 +134,11 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
   };
 
   const handleSubmit = async () => {
-    let fileInfo: StageFile;
+    let fileInfo: StageFile = {
+      filename: '',
+      index: 0,
+      path: ''
+    }
     if (selectedFile) {
       const rawFile = await readFileAsync(selectedFile);
       fileInfo = {
@@ -146,16 +150,16 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
         rawFile: rawFile,
       };
     }
-
+  
     setInProgress(true);
-
+  
     try {
       await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
-
+  
       // TODO: Implement a more transactional approach to ensure that file uploads
       // and metadata stay in sync if either operation fails.
       // This may require enhancements to origyn_nft canister or mintjs.
-
+  
       // Update library file with retries
       const uploadSucceeded = await uploadFileRecursive(tokenId, libraryId, fileInfo);
       if (!uploadSucceeded) {
@@ -184,7 +188,7 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
           // Update the library data for the collection
           const collMeta = await getNftCollectionMeta();
           if (collMeta.ok) {
-            const collLibrary = collMeta.ok.metadata[0]['Class'].filter(
+            const collLibrary = collMeta.ok.metadata[0]?.['Class']?.filter(
               (res) => res.name === 'library',
             )[0].value.Array;
             updateLibraryData(collLibrary);
@@ -193,8 +197,8 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
           // Update the library data for the Token
           const nftMeta = await getNft(tokenId);
           if (nftMeta.ok && 'Class' in nftMeta.ok.metadata) {
-            const nftLibrary = nftMeta.ok.metadata.Class.filter((res) => res.name === 'library')[0]
-              .value['Array'];
+            const nftLibrary = nftMeta.ok.metadata.Class?.filter((res) => res.name === 'library')[0]
+              ?.value?.['Array'] ?? [];
             updateLibraryData(nftLibrary);
           }
         }
@@ -272,6 +276,7 @@ export const UpdateLibraryFile = ({ tokenId, updateLibraryData, metadata }: Prop
                     filesLimit={1}
                     onChange={handleFileSelected}
                     maxFileSize={2147483648}
+                    fileObjects={selectedFile ? [selectedFile] : []}
                   />
                 </Flex>
                 <HR marginBottom={16} marginTop={16} />

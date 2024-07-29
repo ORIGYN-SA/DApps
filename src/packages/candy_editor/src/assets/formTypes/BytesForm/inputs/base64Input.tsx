@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
-import { Flex, TextInput, CheckboxInput, Button, HR, Container } from '@origyn/origyn-art-ui';
-import { convertBase64ToCandyBytes } from '@dapp/utils';
-import { VALIDATION_ERRORS } from '../../../../constants';
-import { BytesFormInput, CandyBytes } from '@dapp/common-types';
+import React, { useState } from "react";
+import {
+  Flex,
+  TextInput,
+  CheckboxInput,
+  Button,
+  HR,
+  Container,
+} from "@origyn/origyn-art-ui";
+import { convertBase64ToCandyBytes } from "@dapp/utils";
+import { VALIDATION_ERRORS } from "../../../../constants";
+import { BytesFormInput, CandyBytes } from "@dapp/common-types";
 
 export const Base64Input = (input: BytesFormInput) => {
-  const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>("");
   const [value, setValue] = useState<CandyBytes>();
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
@@ -29,12 +36,14 @@ export const Base64Input = (input: BytesFormInput) => {
   };
 
   const saveProperty = () => {
-    input.addPropertyToCandyClass({
-      name: name,
-      value: value,
-      immutable: immutable,
-      id: Math.random().toString(),
-    });
+    if (value && input.addPropertyToCandyClass) {
+      input.addPropertyToCandyClass({
+        name: name,
+        value: value,
+        immutable: immutable,
+        id: Math.random().toString(),
+      });
+    }
   };
 
   return (
@@ -58,7 +67,11 @@ export const Base64Input = (input: BytesFormInput) => {
           </Flex>
           <Flex>
             <Flex>
-              <CheckboxInput label="Immutable" name="immutable" onChange={onImmutableChanged} />
+              <CheckboxInput
+                label="Immutable"
+                name="immutable"
+                onChange={onImmutableChanged}
+              />
             </Flex>
           </Flex>
           <Flex>

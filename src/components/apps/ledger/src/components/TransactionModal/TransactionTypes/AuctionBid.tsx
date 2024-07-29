@@ -20,7 +20,7 @@ export const AuctionBid = (props: any) => {
         <span style={{ color: 'grey' }}> {sale_id}</span>
         <br />
         <Grid columns={1}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Buyer: <span style={{ color: 'grey' }}>{buyer.accountId}</span>
             <br />
             Amount:{' '}
@@ -32,7 +32,7 @@ export const AuctionBid = (props: any) => {
       </Container>
       <Container padding="16px">
         <Grid columns={2}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Canister: <span style={{ color: 'grey' }}>{token.canisterString}</span>
             <br />
             Fee:{' '}
@@ -42,7 +42,7 @@ export const AuctionBid = (props: any) => {
             <br />
             Decimals: <span style={{ color: 'grey' }}>{token.decimal.toString()}</span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             Symbol:{' '}
             {token.symbol === 'OGY' ? (
               <OGYIcon className="token-symbol" />

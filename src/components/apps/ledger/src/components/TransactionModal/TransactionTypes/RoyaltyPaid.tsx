@@ -16,7 +16,7 @@ export const RoyaltyPaid = (props: any) => {
       </Container>
       <Container padding="16px">
         <Grid columns={1}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Buyer:
             <br />
             <span style={{ color: 'grey' }}>{buyer.acc_principal_string}</span>
@@ -42,10 +42,10 @@ export const RoyaltyPaid = (props: any) => {
           </Grid>
         </Grid>
       </Container>
-      <HR marginTop="16px" marginBottom="16px" />
+      <HR marginTop={16} marginBottom={16} />
       <Container padding="16px">
         <Grid columns={2}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Canister:
             <br />
             <span style={{ color: 'grey' }}>{token.canister_string}</span>
@@ -60,7 +60,7 @@ export const RoyaltyPaid = (props: any) => {
             <br />
             <span style={{ color: 'grey' }}>{token.decimal.toString()}</span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             Symbol:
             <br />
             {token.symbol === 'OGY' ? (

@@ -24,13 +24,13 @@ const LibraryImage = (props: any) => {
   return (
     <>
       <Grid columns={3}>
-        <Grid column={1}></Grid>
-        <Grid column={2}>
+        <Grid columns={1}></Grid>
+        <Grid columns={2}>
           <Flex justify="center" align="center">
             <Image src={link} onClick={handleOpen} style={{ cursor: 'zoom-in' }} />
           </Flex>
         </Grid>
-        <Grid column={3}></Grid>
+        <Grid columns={3}></Grid>
       </Grid>
       <HR marginBottom={16} marginTop={16} />
       <Modal closeModal={handleClose} isOpened={open} mode="light" size="md">

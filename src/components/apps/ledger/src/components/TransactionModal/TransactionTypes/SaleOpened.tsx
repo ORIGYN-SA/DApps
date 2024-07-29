@@ -31,7 +31,7 @@ export const SaleOpened = (props: any) => {
       modalContent = (
         <Container padding="16px">
           <Grid columns={1}>
-            <Grid colum={1}>
+            <Grid columns={1}>
               Pricing type:
               <br />
               <span style={{ color: 'grey' }}>{pricingType}</span>
@@ -58,7 +58,7 @@ export const SaleOpened = (props: any) => {
       modalContent = (
         <Container padding="16px">
           <Grid columns={1}>
-            <Grid colum={1}>
+            <Grid columns={1}>
               Pricing type:
               <br />
               <span style={{ color: 'grey' }}>{pricingType}</span>
@@ -106,7 +106,7 @@ export const SaleOpened = (props: any) => {
       modalContent = (
         <Container padding="16px">
           <Grid columns={2}>
-            <Grid colum={1}>
+            <Grid columns={1}>
               Start date:
               <br />
               <span style={{ color: 'grey' }}> {start_date}</span>
@@ -147,7 +147,7 @@ export const SaleOpened = (props: any) => {
                 {min_increase ? toLargerUnit(min_increase, Number(token.decimal)).toFixed() : '-'}
               </span>
             </Grid>
-            <Grid column={2}>
+            <Grid columns={2}>
               Symbol:
               <br />
               {token.symbol === 'OGY' ? (
@@ -184,7 +184,7 @@ export const SaleOpened = (props: any) => {
       modalContent = (
         <Container padding="16px">
           <Grid columns={1}>
-            <Grid colum={1}>
+            <Grid columns={1}>
               Pricing type:
               <br />
               <span style={{ color: 'grey' }}> {pricingType}</span>
@@ -210,7 +210,7 @@ export const SaleOpened = (props: any) => {
         <br />
         <span style={{ color: 'grey' }}> {trxSaleId}</span>
       </Container>
-      <HR marginTop="8px" marginBottom="8px" />
+      <HR marginTop={8} marginBottom={8} />
       {modalContent}
     </Container>
   );

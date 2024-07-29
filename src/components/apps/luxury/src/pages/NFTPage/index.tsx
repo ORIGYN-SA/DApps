@@ -12,7 +12,11 @@ import DocumentIcon from '../../components/DocumentIcon';
 import DownloadIcon from '../../components/DownloadIcon';
 import Certificate from '../../components/Certificate';
 
-const ContentContainer = styled.div`
+interface ContentContainerProps {
+  imageURL: string;
+}
+
+const ContentContainer = styled.div<ContentContainerProps>`
   font-family: Outfit;
   background-image: url(${({ imageURL }) => imageURL});
   min-height: 100%;

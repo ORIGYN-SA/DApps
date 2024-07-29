@@ -30,12 +30,15 @@ export const FileInput = (input: BytesFormInput) => {
         const nat8Array = Array.from(byteArray);
         const candyBytes = convertNat8ArrayToCandyBytes(nat8Array);
 
+        if(input.addPropertyToCandyClass ){
         input.addPropertyToCandyClass({
           name: name,
           value: candyBytes,
           immutable: immutable,
           id: Math.random().toString(),
         });
+}
+
       };
     }
   };
@@ -49,7 +52,7 @@ export const FileInput = (input: BytesFormInput) => {
             <TextInput label="Name" onChange={onNameChanged} />
           </Flex>
           <Flex>
-            <DropzoneArea filesLimit={1} maxFileSize={16384} onChange={handleFileSelected} />
+            <DropzoneArea filesLimit={1} maxFileSize={16384} onChange={handleFileSelected} fileObjects={[]} />
           </Flex>
           <Flex>
             <Flex>

@@ -19,7 +19,12 @@ export const BytesForm = (editor: CandyClassEditor) => {
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
-    if (editor.editorMode === EDIT_MODE) {
+    if (
+      editor.editorMode === EDIT_MODE &&
+      editor.editExistingProperty &&
+      value &&
+      editor.propertyIndex
+    ) {
       editor.editExistingProperty(
         { name: typedName.target.value, value, immutable },
         editor.propertyIndex,
@@ -29,13 +34,18 @@ export const BytesForm = (editor: CandyClassEditor) => {
 
   const onImmutableChanged = () => {
     setImmutable(!immutable);
-    if (editor.editorMode === EDIT_MODE) {
+    if (
+      editor.editorMode === EDIT_MODE &&
+      editor.editExistingProperty &&
+      value &&
+      editor.propertyIndex
+    ) {
       editor.editExistingProperty({ name, value, immutable: !immutable }, editor.propertyIndex);
     }
   };
 
   useEffect(() => {
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.property) {
       const candyBytes = editor.property.value as CandyBytes;
       setName(editor.property.name);
       setValue(candyBytes);
@@ -48,7 +58,7 @@ export const BytesForm = (editor: CandyClassEditor) => {
   };
 
   const downloadBinaryArray = (uint8Array: Uint8Array | number[]) => {
-    let uint8ArrayToDownload: Uint8Array = null;
+    let uint8ArrayToDownload: Uint8Array | null;
     if (uint8Array instanceof Uint8Array) {
       uint8ArrayToDownload = uint8Array;
     } else {
@@ -67,7 +77,7 @@ export const BytesForm = (editor: CandyClassEditor) => {
   };
 
   const downloadFile = (uint8Array: Uint8Array | number[]) => {
-    let uint8ArrayToDownload: Uint8Array = null;
+    let uint8ArrayToDownload: Uint8Array | null;
     if (uint8Array instanceof Uint8Array) {
       uint8ArrayToDownload = uint8Array;
     } else {
@@ -88,6 +98,10 @@ export const BytesForm = (editor: CandyClassEditor) => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+
+  if (!editor.property) {
+    return null;
+  }
 
   return (
     <>
@@ -132,15 +146,15 @@ export const BytesForm = (editor: CandyClassEditor) => {
         </>
       ) : (
         <>
-          <Grid column={1}>
+          <Grid columns={1}>
             <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <b>{editor.candyType}</b>
+              <b>{String(editor.candyType)}</b>
             </span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             <TextInput onChange={onNameChanged} value={name} />
           </Grid>
-          <Grid column={3}>
+          <Grid columns={3}>
             <Flex flexFlow="column" gap={16}>
               <Flex flexFlow="row" gap={16}>
                 <Flex>Size: {value?.Bytes.length} Bytes</Flex>
@@ -150,22 +164,22 @@ export const BytesForm = (editor: CandyClassEditor) => {
                       {
                         listItemText: 'Copy as Base64',
                         listItemIcon: <CopyIcon width={12} height={12} fill="#fff" />,
-                        listItemFunction: () => copyString(convertUint8ArrayToBase64(value?.Bytes)),
+                        listItemFunction: () => copyString(convertUint8ArrayToBase64(value?.Bytes ?? [])),
                       },
                       {
                         listItemText: 'Copy as Hexadecimal',
                         listItemIcon: <CopyIcon width={12} height={12} fill="#fff" />,
-                        listItemFunction: () => copyString(convertUint8ArrayToHex(value?.Bytes)),
+                        listItemFunction: () => copyString(convertUint8ArrayToHex(value?.Bytes ?? [])),
                       },
                       {
                         listItemText: 'Download as Binary Array',
                         listItemIcon: <DownloadIcon width={12} height={12} fill="#fff" />,
-                        listItemFunction: () => downloadBinaryArray(value?.Bytes),
+                        listItemFunction: () => downloadBinaryArray(value?.Bytes ?? []),
                       },
                       {
                         listItemText: 'Download as File',
                         listItemIcon: <DownloadIcon width={12} height={12} fill="#fff" />,
-                        listItemFunction: () => downloadFile(value?.Bytes),
+                        listItemFunction: () => downloadFile(value?.Bytes ?? []),
                       },
                     ]}
                   >
@@ -184,7 +198,7 @@ export const BytesForm = (editor: CandyClassEditor) => {
               </Flex>
             </Flex>
           </Grid>
-          <Grid column={4}>
+          <Grid columns={4}>
             {editor.property.immutable ? (
               <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
             ) : (
@@ -193,7 +207,7 @@ export const BytesForm = (editor: CandyClassEditor) => {
           </Grid>
           {editor.property.immutable && (
             <>
-              <Grid column={5}>
+              <Grid columns={5}>
                 <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                   Property is immutable
                 </span>

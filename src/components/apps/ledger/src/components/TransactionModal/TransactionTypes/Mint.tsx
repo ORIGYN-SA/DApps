@@ -14,7 +14,7 @@ export const Mint = (props: any) => {
     display_token_config = (
       <Container padding="16px">
         <Grid columns={1}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Token: <span style={{ color: 'grey' }}>{token}</span>
             <br />
             Amount: <span style={{ color: 'grey' }}>{amount}</span>
@@ -26,12 +26,12 @@ export const Mint = (props: any) => {
     display_token_config = (
       <Container padding="16px">
         <Grid columns={2}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Canister: <span style={{ color: 'grey' }}>{token.canisterString}</span>
             Fee: <span style={{ color: 'grey' }}>{token.fee}</span>
             Decimals:<span style={{ color: 'grey' }}>{token.decimal}</span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             Symbol:{' '}
             {token.symbol === 'OGY' ? (
               <OGYIcon className="token-symbol" />
@@ -50,10 +50,10 @@ export const Mint = (props: any) => {
       <Container padding="16px">
         Transaction type: <span style={{ color: 'grey' }}>{type_txn}</span>
       </Container>
-      <HR marginTop="8px" marginBottom="8px" />
+      <HR marginTop={8} marginBottom={8} />
       <Container padding="16px">
         <Grid columns={1}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Mint from:
             <br />
             <span style={{ color: 'grey' }}>{mint_from}</span>
@@ -64,7 +64,7 @@ export const Mint = (props: any) => {
           </Grid>
         </Grid>
       </Container>
-      <HR marginTop="8px" marginBottom="8px" />
+      <HR marginTop={8} marginBottom={8} />
       {display_token_config}
     </Container>
   );

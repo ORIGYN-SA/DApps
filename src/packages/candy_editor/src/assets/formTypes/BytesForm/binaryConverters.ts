@@ -13,6 +13,7 @@ export function convertNat8ArrayToCandyBytes(
         return undefined;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     candyBytes = {
         Bytes: nat8Array
     };
@@ -32,6 +33,7 @@ export function convertBase64ToCandyBytes(
                 for (let i = 0; i < binary.length; i++) {
                     bytes[i] = binary.charCodeAt(i);
                 }
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 return candyBytes = {
                     Bytes: bytes
                 }
@@ -52,7 +54,8 @@ export function convertHexadecimalToCandyBytes(
     const regex = /^[0-9a-fA-F]+$/;
     if (regex.test(hexadecimal)) {
         const byteString = hexadecimal.match(/.{1,2}/g)?.join(' ');
-        const bytes = new Uint8Array(byteString?.split(' ').map((byte) => parseInt(byte, 16)));
+        const bytes = byteString ? new Uint8Array(byteString.split(' ').map((byte) => parseInt(byte, 16))) : new Uint8Array();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return candyBytes = {
             Bytes: bytes
         }

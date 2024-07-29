@@ -27,10 +27,10 @@ export const EscrowWithdraw = (props: any) => {
         <br />
         <span style={{ color: 'grey' }}>{id_trans}</span>
       </Container>
-      <HR marginTop="8px" marginBottom="8px" />
+      <HR marginTop={8} marginBottom={8} />
       <Container padding="16px">
         <Grid columns={1}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Buyer:
             <br />
             <span style={{ color: 'grey' }}>{buyer.acc_principal_string}</span>
@@ -52,7 +52,7 @@ export const EscrowWithdraw = (props: any) => {
       </Container>
       <Container padding="16px">
         <Grid columns={2}>
-          <Grid column={1}>
+          <Grid columns={1}>
             Canister: <span style={{ color: 'grey' }}>{token.canisterString}</span>
             <br />
             Fee:{' '}
@@ -62,7 +62,7 @@ export const EscrowWithdraw = (props: any) => {
             <br />
             Decimals: <span style={{ color: 'grey' }}>{token.decimal.toString()}</span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             Symbol:{' '}
             {token.symbol === 'OGY' ? (
               <OGYIcon className="token-symbol" />
@@ -74,7 +74,7 @@ export const EscrowWithdraw = (props: any) => {
           </Grid>
         </Grid>
       </Container>
-      <HR marginTop="8px" marginBottom="8px" />
+      <HR marginTop={8} marginBottom={8} />
     </Container>
   );
 };

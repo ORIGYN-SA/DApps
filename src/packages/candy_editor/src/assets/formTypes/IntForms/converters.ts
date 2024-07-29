@@ -1,4 +1,12 @@
-import { CandyInt, CandyInt8, CandyInt16, CandyInt32, CandyInt64, CandyIntegers, CandyType } from '@dapp/common-types';
+import {
+  CandyInt,
+  CandyInt8,
+  CandyInt16,
+  CandyInt32,
+  CandyInt64,
+  CandyIntegers,
+  CandyType,
+} from '@dapp/common-types';
 import { isInRange } from '../../../utils/functions';
 
 export function convertToCandyInt(typedValue: string): CandyInt | undefined {
@@ -60,6 +68,7 @@ export function convertIntegerNumberToString(
       return (naturalNumber as CandyInt32).Int32.valueOf().toString();
     case 'Int64':
       return (naturalNumber as CandyInt64).Int64.valueOf().toString();
+    default:
+      throw new Error('Invalid type of integer');
   }
 }
-

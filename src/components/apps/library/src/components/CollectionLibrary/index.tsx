@@ -75,7 +75,7 @@ export const CollectionLibrary = (props: any) => {
   return (
     <Container padding="16px">
       <Grid columns={1}>
-        <Grid column={1}>
+        <Grid columns={1}>
           {simplifiedLibraryMeta.content_type in Layouts ? (
             Layouts[simplifiedLibraryMeta.content_type](simplifiedLibraryMeta.location)
           ) : (
@@ -84,7 +84,7 @@ export const CollectionLibrary = (props: any) => {
         </Grid>
       </Grid>
       <Grid columns={1}>
-        <Grid column={1}>
+        <Grid columns={1}>
           <b>{simplifiedLibraryMeta.title}</b>
           <span style={{ color: 'grey' }}>
             {simplifiedLibraryMeta.content_type} - {formatBytes(Number(simplifiedLibraryMeta.size))}

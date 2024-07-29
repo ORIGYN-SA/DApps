@@ -98,14 +98,14 @@ export const SearchbarNft = (props: any) => {
       <>
         <Container padding="16px">
           {props.isLoading ? (
-            <Card type="filled" align="center" padding="16px">
+            <Card type="filled" align="center" padding={16}>
               Loading...
             </Card>
           ) : (
             <Container>
               <>
                 <Grid columns={3}>
-                  <Grid column={1}>
+                  <Grid columns={1}>
                     {!context.tokenId && (
                       <Container padding="16px">
                         Collection name: <b>{collectionName()}</b>
@@ -122,7 +122,7 @@ export const SearchbarNft = (props: any) => {
               <Container padding="16px">Search for NFTs</Container>
               <Container padding="16px">
                 <Grid columns={4}>
-                  <Grid column={1}>
+                  <Grid columns={1}>
                     <Flex flexFlow="row" align="center" gap={8}>
                       <Button iconButton onClick={() => setOpenSearch(!openSearch)}>
                         <Icons.SearchIcon width={18} height={18} />

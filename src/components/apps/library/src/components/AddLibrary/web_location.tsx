@@ -71,20 +71,18 @@ export const WebLocation = (props: any) => {
       //Update the library data for the collection
       getNftCollectionMeta().then((r) => {
         props.updateData(
-          r.ok.metadata[0]['Class'].filter((res) => {
+          (r.ok?.metadata[0]?.['Class'] || []).filter((res) => {
             return res.name === 'library';
-          })[0].value.Array || [],
+          })[0]?.value?.Array || [],
         );
       });
     } else {
       //Update the library data for the Token
       getNft(props.tokenId).then((r) => {
-        if ('Class' in r.ok.metadata) {
-          props.updateData(
-            r.ok.metadata.Class.filter((res) => {
-              return res.name === 'library';
-            })[0].value['Array'],
-          );
+        if (r.ok && r.ok.metadata && 'Class' in r.ok.metadata) {
+          const libraryData = r.ok.metadata.Class.find((res) => res.name === 'library');
+          const libraryArray = libraryData && libraryData.value ? libraryData.value['Array'] : [];
+          props.updateData(libraryArray);
         }
       });
     }

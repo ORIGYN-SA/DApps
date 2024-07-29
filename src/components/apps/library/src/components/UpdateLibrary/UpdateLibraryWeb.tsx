@@ -90,7 +90,7 @@ export const UpdateLibraryWeb = ({
         read: selectedRead,
       });
 
-      if ('ok' in updateResponse) {
+      if ((updateResponse as { ok: any }).ok) {
         if (immutable) {
           setLibraryImmutable(tokenId, libraryId);
           successMsg = 'Library Updated and made immutable';
@@ -119,25 +119,27 @@ export const UpdateLibraryWeb = ({
       handleClose();
     }
     setInProgress(false);
-    if (tokenId == '') {
+    if (tokenId === '') {
       //Update the library data for the collection
-      getNftCollectionMeta().then((r) => {
-        updateLibraryData(
-          r.ok.metadata[0]['Class'].filter((res) => {
-            return res.name === 'library';
-          })[0].value.Array,
-        );
+      getNftCollectionMeta().then((r: any) => {
+        if (r.ok?.metadata?.[0]?.Class) {
+          const libraryArray =
+            r.ok.metadata[0]?.['Class']?.filter((res: any) => {
+              return res.name === 'library';
+            })[0]?.value?.Array ?? [];
+          updateLibraryData(libraryArray);
+        }
       });
       setOpenLibrary(false);
     } else {
       //Update the library data for the Token
-      getNft(tokenId).then((r) => {
-        if ('Class' in r.ok.metadata) {
-          updateLibraryData(
-            r.ok.metadata.Class.filter((res) => {
+      getNft(tokenId).then((r: any) => {
+        if (r.ok?.metadata && r.ok.metadata.Class) {
+          const libraryArray =
+            (r.ok.metadata as any).Class.filter((res: any) => {
               return res.name === 'library';
-            })[0].value['Array'],
-          );
+            })[0]?.value?.Array ?? [];
+          updateLibraryData(libraryArray);
         }
       });
       setOpenLibrary(false);

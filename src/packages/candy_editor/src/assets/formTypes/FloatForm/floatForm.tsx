@@ -10,11 +10,11 @@ export const FloatForm = (editor: CandyClassEditor) => {
   const [formValue, setFormValue] = useState<string>('');
   const [immutable, setImmutable] = useState<boolean>(false);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  const [validationError, setValidationError] = useState<string>(null);
+  const [validationError, setValidationError] = useState<string>('');
 
   const onNameChanged = (typedName: React.ChangeEvent<HTMLInputElement>) => {
     setName(typedName.target.value);
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.editExistingProperty && editor.propertyIndex) {
       editor.editExistingProperty(
         { name: typedName.target.value, value, immutable },
         editor.propertyIndex,
@@ -24,7 +24,7 @@ export const FloatForm = (editor: CandyClassEditor) => {
 
   const onImmutableChanged = () => {
     setImmutable(!immutable);
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.editExistingProperty && editor.propertyIndex) {
       editor.editExistingProperty({ name, value, immutable: !immutable }, editor.propertyIndex);
     }
   };
@@ -35,7 +35,7 @@ export const FloatForm = (editor: CandyClassEditor) => {
       setValue(floatValue);
       setFormValue(typedValue.target.value);
       setIsInvalid(false);
-      if (editor.editorMode === EDIT_MODE) {
+      if (editor.editorMode === EDIT_MODE && editor.editExistingProperty && editor.propertyIndex) {
         editor.editExistingProperty({ name, value: floatValue, immutable }, editor.propertyIndex);
       }
     } else {
@@ -46,16 +46,18 @@ export const FloatForm = (editor: CandyClassEditor) => {
   };
 
   const saveProperty = () => {
-    editor.addPropertyToCandyClass({
-      name: name,
-      value: value,
-      immutable: immutable,
-      id: Math.random().toString(),
-    });
+    if (editor.addPropertyToCandyClass) {
+      editor.addPropertyToCandyClass({
+        name: name,
+        value: value,
+        immutable: immutable,
+        id: Math.random().toString(),
+      });
+    }
   };
 
   useEffect(() => {
-    if (editor.editorMode === EDIT_MODE) {
+    if (editor.editorMode === EDIT_MODE && editor.property) {
       const candyValue = editor.property.value as CandyFloat;
       setName(editor.property.name);
       setValue(candyValue);
@@ -63,6 +65,10 @@ export const FloatForm = (editor: CandyClassEditor) => {
       setFormValue(candyValue.Float.valueOf().toString());
     }
   }, [editor.editorMode]);
+
+  if (!editor.property) {
+    return null;
+  }
 
   return (
     <>
@@ -91,22 +97,22 @@ export const FloatForm = (editor: CandyClassEditor) => {
         </>
       ) : (
         <>
-          <Grid column={1}>
+          <Grid columns={1}>
             <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <b>{editor.candyType}</b>
+              <b>{String(editor.candyType)}</b>
             </span>
           </Grid>
-          <Grid column={2}>
+          <Grid columns={2}>
             <TextInput value={name} disabled={immutable} onChange={onNameChanged} />
           </Grid>
-          <Grid column={3}>
+          <Grid columns={3}>
             {isInvalid ? (
               <TextInput onChange={onValueChanged} error={validationError} value={formValue} />
             ) : (
               <TextInput onChange={onValueChanged} value={formValue} disabled={immutable} />
             )}
           </Grid>
-          <Grid column={4}>
+          <Grid columns={4}>
             {editor.property.immutable ? (
               <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>Property is immutable</span>
             ) : (
@@ -115,7 +121,7 @@ export const FloatForm = (editor: CandyClassEditor) => {
           </Grid>
           {editor.property.immutable && (
             <>
-              <Grid column={5}>
+              <Grid columns={5}>
                 <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                   Property is immutable
                 </span>

@@ -1,9 +1,8 @@
 import type { Principal } from '@dfinity/principal';
-import { ReactNode } from 'react';
-export interface CandyType { }
+export interface CandyType {}
 
 export interface CandyProperty {
-  value: CandyType;
+  value: CandyType | undefined;
   name: string;
   immutable: boolean;
 }
@@ -16,10 +15,9 @@ export interface PropertyWithId extends CandyProperty {
   id: string;
 }
 
-export interface CandyIntegers extends CandyType { }
+export interface CandyIntegers extends CandyType {}
 
-export interface CandyNaturals extends CandyType { }
-
+export interface CandyNaturals extends CandyType {}
 export interface CandyEmpty extends CandyType {
   Empty: null;
 }
@@ -53,8 +51,8 @@ export interface CandyNat64 extends CandyNaturals {
   Nat64: bigint;
 }
 export interface CandyNats extends CandyType {
-  Nats: Array<bigint>
-};
+  Nats: Array<bigint>;
+}
 export interface CandyInt extends CandyIntegers {
   Int: bigint;
 }
@@ -71,7 +69,7 @@ export interface CandyInt64 extends CandyIntegers {
   Int64: bigint;
 }
 export interface CandyFloats extends CandyType {
-  Floats: Array<number>
+  Floats: Array<number>;
 }
 export interface CandyFloat extends CandyType {
   Float: number;
@@ -80,13 +78,13 @@ export interface CandyBlob extends CandyType {
   Blob: Array<number>;
 }
 export interface CandyBytes extends CandyType {
-  Bytes: Uint8Array | number[]
+  Bytes: Uint8Array | number[];
 }
 export interface CandyOption extends CandyType {
   Option: [] | [CandyType];
 }
 export interface CandyPrincipal extends CandyType {
-  Principal: Principal;
+  Principal: Principal | null;
 }
 export interface CandyArray extends CandyType {
   Array: Array<CandyType>;

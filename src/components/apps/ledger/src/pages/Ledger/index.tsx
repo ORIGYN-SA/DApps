@@ -36,7 +36,7 @@ const Ledger = () => {
   }, []);
 
   return (
-    <Container fullWidth padding="0" flexFlow="column">
+    <Container size="full" padding="0">
       <SecondaryNav
         title="Ledger"
         titleLink={`${context.canisterUrl}/collection/-/ledger`}
@@ -67,7 +67,7 @@ const Ledger = () => {
                       isLoading={isLoading}
                       setInvalidToken={setInvalidToken}
                     />
-                    <HR marginTop="16px" marginBottom="16px" />
+                    <HR marginTop={16} marginBottom={16} />
                     <TransactionFilter
                       isLoading={isLoading}
                       setFilter={setFilter}
@@ -76,7 +76,7 @@ const Ledger = () => {
                       transactionData={transactionData}
                       searchBarTokenId={searchBarTokenId}
                     />
-                    <HR marginTop="16px" marginBottom="16px" />
+                    <HR marginTop={16} marginBottom={16} />
                     <TransactionsTable
                       setIsLoading={setIsLoading}
                       isLoading={isLoading}

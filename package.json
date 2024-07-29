@@ -2,7 +2,6 @@
   "name": "origyn-dapps",
   "version": "0.2.1",
   "private": true,
-  "type": "module",
   "scripts": {
     "start:dapps": "npm run start",
     "bootstrap": "lerna bootstrap",
@@ -73,10 +72,12 @@
     "ts-jest": "^28.0.7",
     "typescript": "^5.5.3",
     "url-loader": "^4.1.1",
-    "util": "0.12.3"
+    "util": "0.12.3",
+    "vite-plugin-require": "^1.2.14"
   },
   "dependencies": {
     "@astrojs/check": "^0.7.0",
+    "@astrojs/node": "^8.3.2",
     "@astrojs/react": "^3.6.0",
     "@astrojs/renderer-react": "^0.5.0",
     "@astrojs/ts-plugin": "^1.9.0",
@@ -132,7 +133,9 @@
     "react-toastify": "^8.1.0",
     "react-tooltip": "^4.2.21",
     "tss-react": "^4.4.4",
+    "vite-plugin-commonjs": "^0.10.1",
     "vite-plugin-environment": "^1.1.3",
+    "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-svgr": "^4.2.0",
     "yup": "^0.32.11"
   },

@@ -1,6 +1,6 @@
 import { EditorMode } from "./types";
 
-export const NOT_SELECTED: string = null;
+export const NOT_SELECTED: string = 'not selected';
 export const CREATE_MODE: EditorMode = 'create';
 export const EDIT_MODE: EditorMode = 'edit';
 

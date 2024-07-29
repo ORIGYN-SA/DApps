@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react';
-import NFTInfo from '../NFTInfo';
-import { OrigynClient, getNftCollectionMeta } from '@origyn/mintjs';
-import { Container } from '@origyn/origyn-art-ui';
-import { PerpetualOSContext } from '@dapp/features-context-provider';
+import React, { useEffect, useState, useContext } from "react";
+import NFTInfo from "../NFTInfo";
+import { OrigynClient, getNftCollectionMeta } from "@origyn/mintjs";
+import { Container } from "@origyn/origyn-art-ui";
+import { PerpetualOSContext } from "@dapp/features-context-provider";
 
 const Home = () => {
   const context = useContext(PerpetualOSContext);
@@ -12,6 +12,9 @@ const Home = () => {
     await OrigynClient.getInstance().init(!context.isLocal, context.canisterId);
     const response = await getNftCollectionMeta();
     const collectionNFT = response.ok;
+    if (!collectionNFT) {
+      throw new Error("collectionNFT is undefined");
+    }
     const obj_token_ids: any = collectionNFT.token_ids[0];
 
     // In case we have URL with tokenID and we change canister,
@@ -28,17 +31,21 @@ const Home = () => {
   const getData = async () => {
     if (context.tokenId) {
       try {
-        const response = await fetch(`${context.assetCanisterUrl}/-/${context.tokenId}/info`);
+        const response = await fetch(
+          `${context.assetCanisterUrl}/-/${context.tokenId}/info`
+        );
         const result = await response.text();
-        setNFTData(JSON.parse(result.replace(':,', ':"",')));
+        setNFTData(JSON.parse(result.replace(":,", ':"",')));
       } catch (err) {
         console.error(err);
       }
     } else {
       try {
-        const response = await fetch(`${context.assetCanisterUrl}/collection/info`);
+        const response = await fetch(
+          `${context.assetCanisterUrl}/collection/info`
+        );
         const result = await response.text();
-        setNFTData(JSON.parse(result.replace(':,', ':"",')));
+        setNFTData(JSON.parse(result.replace(":,", ':"",')));
       } catch (err) {
         console.error(err);
       }
@@ -46,7 +53,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    document.title = 'Origyn NFT data browser';
+    document.title = "Origyn NFT data browser";
   }, []);
 
   useEffect(() => {
@@ -56,6 +63,8 @@ const Home = () => {
     }
   }, [context]);
 
-  return <Container>{NFTData ? <NFTInfo metadata={NFTData} /> : null}</Container>;
+  return (
+    <Container>{NFTData ? <NFTInfo metadata={NFTData} /> : null}</Container>
+  );
 };
 export default Home;

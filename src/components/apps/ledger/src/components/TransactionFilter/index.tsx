@@ -101,7 +101,7 @@ export const TransactionFilter = (props: any) => {
       ) : (
         <>
           <Grid columns={2}>
-            <Grid column={1}>
+            <Grid columns={1}>
               <Flex flexFlow="row" align="center" fullWidth>
                 <Button iconButton>
                   <Icons.FilterIcon width={18} height={18} />

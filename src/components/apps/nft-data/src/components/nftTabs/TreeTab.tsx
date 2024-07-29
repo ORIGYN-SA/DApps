@@ -231,7 +231,7 @@ function Tree({ metadata }: any) {
 
   return (
     <Container padding="16px">
-      <Flex flexFow="row" gap={16}>
+      <Flex flexFlow="row" gap={16}>
         <Button btnType="filled" onClick={handleClose}>
           Close All
         </Button>

@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import vitePluginRequire from 'vite-plugin-require';
 import react from '@astrojs/react';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
@@ -7,6 +8,7 @@ import { loadEnv } from 'vite';
 import path from 'path';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import process from 'process';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -14,29 +16,27 @@ process.env = {
   ...process.env,
   ...loadEnv(process.env.NODE_ENV, path.resolve(process.cwd(), './'), ''),
 };
-
 //const url = '/-/'+process.env.NFT_CANISTER_ID+'/collection/-/marketplace';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()],
+  integrations: [react({})],
   server: {
     host: 'localhost',
-    port: parseInt(process.env.DEV_SERVER_PORT),
-  },
-  build: {
-    format: 'file',
-    out: 'dist',
-  },
-  fallback: {
-    fs: false,
-    path: false,
+    port: parseInt(process.env.PUBLIC_DEV_SERVER_PORT),
   },
   tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
   vite: {
-    plugins: [EnvironmentPlugin(['DEV_SERVER_PORT', 'NFT_CANISTER_ID', 'OGY_LEDGER_CANISTER_ID'])],
+    plugins: [
+      EnvironmentPlugin([
+        'PUBLIC_DEV_SERVER_PORT',
+        'PUBLIC_NFT_CANISTER_ID',
+        'PUBLIC_OGY_LEDGER_CANISTER_ID',
+      ]),
+    ],
     define: {
       'process.env': process.env,
+      process: process,
     },
     resolve: {
       alias: {
@@ -77,7 +77,10 @@ export default defineConfig({
         '@dapp/common-api': resolve(__dirname, './src/packages/common/api/src/index.ts'),
         '@dapp/app-ledger': resolve(__dirname, './src/pages/ledger.astro'),
         '@daap/app-vault': resolve(__dirname, './src/pages/vault.astro'),
-        '@dapp/features-sales-escrows/components/modals/TransferTokens': resolve( __dirname, './src/packages/features/sales-escrows/components/modals/TransferTokens.tsx'),
+        '@dapp/features-sales-escrows/components/modals/TransferTokens': resolve(
+          __dirname,
+          './src/packages/features/sales-escrows/components/modals/TransferTokens.tsx',
+        ),
         '@testUtils': resolve(__dirname, './src/testUtils/index.ts'),
         process: 'process/browser',
         buffer: 'buffer/',
@@ -99,6 +102,9 @@ export default defineConfig({
           }),
         ],
       },
+    },
+    setup: () => {
+      vitePluginRequire.setup();
     },
   },
 });
