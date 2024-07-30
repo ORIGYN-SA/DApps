@@ -2,6 +2,7 @@
   "name": "origyn-dapps",
   "version": "0.2.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "start:dapps": "npm run start",
     "bootstrap": "lerna bootstrap",
@@ -27,6 +28,7 @@
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.24.7",
     "@babel/runtime": "^7.15.3",
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@svgr/rollup": "^8.1.0",
     "@testing-library/react": "^13.4.0",
     "@types/styled-components": "^5.1.34",
@@ -73,7 +75,10 @@
     "typescript": "^5.5.3",
     "url-loader": "^4.1.1",
     "util": "0.12.3",
-    "vite-plugin-require": "^1.2.14"
+    "vite-plugin-babel": "^1.2.0",
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vite-plugin-require": "^1.2.14",
+    "vite-plugin-require-transform": "^1.0.21"
   },
   "dependencies": {
     "@astrojs/check": "^0.7.0",
@@ -108,6 +113,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-vue": "^5.1.1",
     "astro": "^4.11.3",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bignumber.js": "^9.1.1",
@@ -135,7 +141,6 @@
     "tss-react": "^4.4.4",
     "vite-plugin-commonjs": "^0.10.1",
     "vite-plugin-environment": "^1.1.3",
-    "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-svgr": "^4.2.0",
     "yup": "^0.32.11"
   },

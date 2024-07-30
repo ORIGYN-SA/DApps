@@ -1,21 +1,22 @@
 import { defineConfig } from 'astro/config';
-import vitePluginRequire from 'vite-plugin-require';
 import react from '@astrojs/react';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import { loadEnv } from 'vite';
 import path from 'path';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import process from 'process';
+import commonjs from '@rollup/plugin-commonjs';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 process.env = {
   ...process.env,
-  ...loadEnv(process.env.NODE_ENV, path.resolve(process.cwd(), './'), ''),
+  ...loadEnv(process.env.PUBLIC_NODE_ENV, path.resolve(process.cwd(), './'), ''),
 };
+
 //const url = '/-/'+process.env.NFT_CANISTER_ID+'/collection/-/marketplace';
 
 // https://astro.build/config
@@ -33,6 +34,12 @@ export default defineConfig({
         'PUBLIC_NFT_CANISTER_ID',
         'PUBLIC_OGY_LEDGER_CANISTER_ID',
       ]),
+      commonjs(),
+      nodePolyfills({
+        crypto: true,
+        buffer: true,
+        protocolImports: true,
+      }),
     ],
     define: {
       'process.env': process.env,
@@ -95,16 +102,13 @@ export default defineConfig({
           global: 'globalThis',
           'process.env.BROWSER': 'true',
         },
-        plugins: [
-          NodeGlobalsPolyfillPlugin({
-            process: true,
-            buffer: true,
-          }),
-        ],
       },
-    },
-    setup: () => {
-      vitePluginRequire.setup();
+      include: ['crypto', 'buffer'],
+      build: {
+        rollupOptions: {
+          plugins: [commonjs()],
+        },
+      },
     },
   },
 });
