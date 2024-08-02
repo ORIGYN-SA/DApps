@@ -68,6 +68,10 @@ The following script will build every dApp within the repo:
 
 `$ npm run build`
 
+If you want to preview the built dApps, you can run the following script:
+
+`$ npm run preview`
+
 The `dist` folder contains built html files for each dApp.
 
 ## 🚀 Local Development
