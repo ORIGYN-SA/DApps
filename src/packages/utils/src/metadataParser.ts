@@ -269,7 +269,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
   odc.token = {
     // @ts-ignore
     // eslint-disable-next-line no-undef
-    canister: Principal.fromText(process.env.OGY_LEDGER_CANISTER_ID),
+    canister: Principal.fromText(process.env.PUBLIC_OGY_LEDGER_CANISTER_ID),
     decimals: 8n,
     fee: 200000n,
     standard: { Ledger: null },

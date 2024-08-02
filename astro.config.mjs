@@ -2,28 +2,20 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { loadEnv } from 'vite';
-import path from 'path';
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import EnvironmentPlugin from 'vite-plugin-environment';
-import process from 'process';
-import commonjs from '@rollup/plugin-commonjs';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { loadEnv } from 'vite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-process.env = {
-  ...process.env,
-  ...loadEnv(process.env.PUBLIC_NODE_ENV, path.resolve(process.cwd(), './'), ''),
-};
+const mode = process.env.NODE_ENV || 'production';
+const env = loadEnv(mode, process.cwd(), '');
+process.env = { ...process.env, ...env };
 
-//const url = '/-/'+process.env.NFT_CANISTER_ID+'/collection/-/marketplace';
-
-// https://astro.build/config
 export default defineConfig({
-  integrations: [react({})],
+  integrations: [react()],
   server: {
-    host: 'localhost',
     port: parseInt(process.env.PUBLIC_DEV_SERVER_PORT),
   },
   tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
@@ -33,17 +25,13 @@ export default defineConfig({
         'PUBLIC_DEV_SERVER_PORT',
         'PUBLIC_NFT_CANISTER_ID',
         'PUBLIC_OGY_LEDGER_CANISTER_ID',
+        'PUBLIC_ICP_LEDGER_CANISTER_ID',
       ]),
-      commonjs(),
-      nodePolyfills({
-        crypto: true,
-        buffer: true,
-        protocolImports: true,
-      }),
     ],
     define: {
       'process.env': process.env,
-      process: process,
+      global: 'globalThis',
+      'process.env.BROWSER': 'true',
     },
     resolve: {
       alias: {
@@ -89,11 +77,6 @@ export default defineConfig({
           './src/packages/features/sales-escrows/components/modals/TransferTokens.tsx',
         ),
         '@testUtils': resolve(__dirname, './src/testUtils/index.ts'),
-        process: 'process/browser',
-        buffer: 'buffer/',
-        stream: 'stream-browserify/',
-        crypto: 'crypto-browserify/',
-        util: 'util/',
       },
     },
     optimizeDeps: {
@@ -102,12 +85,27 @@ export default defineConfig({
           global: 'globalThis',
           'process.env.BROWSER': 'true',
         },
+        plugins: [
+          NodeGlobalsPolyfillPlugin({
+            process: true,
+            global: true,
+            buffer: true,
+          }),
+        ],
       },
-      include: ['crypto', 'buffer'],
-      build: {
-        rollupOptions: {
-          plugins: [commonjs()],
-        },
+    },
+    build: {
+      commonjsOptions: {
+        transformMixedEsModules: true,
+      },
+      rollupOptions: {
+        plugins: [
+          NodeGlobalsPolyfillPlugin({
+            process: true,
+            global: true,
+            buffer: true,
+          }),
+        ],
       },
     },
   },

@@ -1,6 +1,6 @@
 import { IdlStandard } from '@dapp/utils';
 import { Principal } from '@dfinity/principal';
-import JSONBig from 'json-bigint';
+import JSONBig from '@apimatic/json-bigint';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { getBalance as getBalanceFromCanister } from './getBalance';
@@ -12,7 +12,7 @@ const defaultTokens = {
   ICP: {
     symbol: 'ICP',
     // eslint-disable-next-line
-    canisterId: process.env.ICP_LEDGER_CANISTER_ID,
+    canisterId: process.env.PUBLIC_ICP_LEDGER_CANISTER_ID,
     fee: 10000,
     standard: IdlStandard.ICP,
     decimals: 8,
@@ -22,7 +22,7 @@ const defaultTokens = {
   OGY: {
     symbol: 'OGY',
     // eslint-disable-next-line
-    canisterId: process.env.OGY_LEDGER_CANISTER_ID,
+    canisterId: process.env.PUBLIC_OGY_LEDGER_CANISTER_ID,
     fee: 200000,
     standard: IdlStandard.ICP,
     decimals: 8,
@@ -214,7 +214,14 @@ export const TokensContextProvider: React.FC<SessionProviderProps> = ({ children
   };
 
   useEffect(() => {
-    localStorage.setItem('tokensContext', JSONBig.stringify(tokens));
+    console.log("Tokens before stringify:", tokens);
+    try {
+      const tokensString = JSONBig.stringify(tokens);
+      localStorage.setItem('tokensContext', tokensString);
+      console.log("Tokens after stringify:", tokensString);
+    } catch (e) {
+      console.error("Error stringifying tokens:", e);
+    }
   }, [tokens]);
 
   return (

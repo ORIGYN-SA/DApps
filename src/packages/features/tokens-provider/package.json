@@ -6,5 +6,8 @@
   "dependencies": {
     "@dapp/features-authentication": "0.1.0",
     "@dapp/utils": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/json-bigint": "^1.0.4"
   }
 }

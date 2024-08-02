@@ -27,7 +27,12 @@ const sendICP = async (actor: any, token: Token, to: string, amount: BigNumber, 
 };
 
 // DIP20 and WICP
-export const sendWICP = async (actor: any, to: string, amount: BigNumber, memo?: number) => {
+export const sendWICP = async (
+  actor: any,
+  to: string,
+  amount: BigNumber,
+  memo?: number | undefined,
+) => {
   const transferResult = await actor.transfer(to, BigInt(amount.toString()));
 
   if ('Ok' in transferResult) return transferResult.Ok.toString();
@@ -35,7 +40,12 @@ export const sendWICP = async (actor: any, to: string, amount: BigNumber, memo?:
   throw new Error(Object.keys(transferResult.Err)[0]);
 };
 
-export const sendXTC = async (actor: any, to: string, amount: BigNumber, memo?: number) => {
+export const sendXTC = async (
+  actor: any,
+  to: string,
+  amount: BigNumber,
+  memo?: number | undefined,
+) => {
   const transferResult = await actor.transferErc20(to, BigInt(amount.toString()));
 
   if ('Ok' in transferResult) return transferResult.Ok.toString();
@@ -49,7 +59,8 @@ export const sendEXT = async (
   to: string,
   from: string,
   amount: BigNumber,
-  memo?: number,
+  memo?: number | undefined,
+  // memo?: number,
 ) => {
   const dummyMemmo = new Array(32).fill(0);
   const data = {
