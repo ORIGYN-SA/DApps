@@ -77,7 +77,7 @@ export const NFTLibrary = (props: any) => {
   return (
     <Container padding="16px">
       <Grid columns={1}>
-        <Grid columns={1} padding={16}>
+        <Grid columns={1}>
           {simplifiedLibraryMeta.content_type in Layouts ? (
             Layouts[simplifiedLibraryMeta.content_type](simplifiedLibraryMeta.location)
           ) : (

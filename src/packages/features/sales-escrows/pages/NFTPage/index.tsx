@@ -226,7 +226,7 @@ export const NFTPage = () => {
   return (
     <>
       {odc && (
-        <Flex fullWidth padding={0} flexFlow="column">
+        <Flex fullWidth flexFlow="column">
           <SecondaryNav
             title={title}
             titleLink={titleLink}
@@ -335,7 +335,6 @@ export const NFTPage = () => {
                                     <>
                                       {!isOwner && (
                                         <Button
-                                          btnType="accent"
                                           onClick={() =>
                                             onOpenEscrowModal("BuyNow")
                                           }
@@ -350,7 +349,6 @@ export const NFTPage = () => {
                                           odc.currentBid == 0) ||
                                         odc.auctionNotStarted ? (
                                           <Button
-                                            btnType="accent"
                                             onClick={handleClickOpenEsc}
                                             disabled={inProcess}
                                           >
@@ -389,7 +387,6 @@ export const NFTPage = () => {
                                     </>
                                   ) : isOwner ? (
                                     <Button
-                                      btnType="accent"
                                       onClick={onAuctionModalOpen}
                                       disabled={inProcess}
                                     >
@@ -412,7 +409,6 @@ export const NFTPage = () => {
                     <Banner
                       bgColor="PRIMARY_1000"
                       style={{ display: "block" }}
-                      padding={0}
                     >
                       <TabContent
                         fullWidth

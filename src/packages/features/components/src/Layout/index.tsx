@@ -106,7 +106,6 @@ export const Layout = ({ children }: LayoutProps) => {
             onChangeTheme={handleThemeChange}
             dAppsVersion="0.2.1"
             darkMode={darkTheme}
-            showThemeButton={true}
           />
           <Flex fullWidth>{children}</Flex>
         </Flex>

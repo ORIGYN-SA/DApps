@@ -161,7 +161,7 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
   }, []);
 
   return (
-    <Card type="outlined" padding={16}>
+    <Card type="outlined">
       <Container>
         <Flex flexFlow="column" gap={16}>
           <Flex>

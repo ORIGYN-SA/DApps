@@ -94,7 +94,6 @@ export const ConfirmEndSaleModal = ({
               <Flex>
                 <Button
                   onClick={() => onEndSaleConfirm(true)}
-                  variant="contained"
                   disabled={confirmed}
                 >
                   Confirm

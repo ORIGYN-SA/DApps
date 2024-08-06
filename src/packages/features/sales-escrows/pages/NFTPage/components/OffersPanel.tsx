@@ -84,7 +84,6 @@ export const OffersPanel = ({ odc, onOpenEscrowModal, inProcess }: OffersPanelPr
         <>
           {existingOffer === null && (
             <Button
-              btnType="accent"
               onClick={() => onOpenEscrowModal('Offer')}
               disabled={inProcess}
             >

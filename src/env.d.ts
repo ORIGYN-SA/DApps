@@ -1,3 +1,5 @@
+/// <reference types="vite-plugin-svgr/client" />
+/// <reference types="./client.d.ts" />
 /// <reference types="astro/client" />
 
 interface ImportMetaEnv {
@@ -7,8 +9,3 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
-
-import React = require('react');
-export const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
-const src: string;
-export default src;

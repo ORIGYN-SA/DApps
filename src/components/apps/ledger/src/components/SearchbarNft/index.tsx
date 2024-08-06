@@ -98,7 +98,7 @@ export const SearchbarNft = (props: any) => {
       <>
         <Container padding="16px">
           {props.isLoading ? (
-            <Card type="filled" align="center" padding={16}>
+            <Card type="filled" align="center">
               Loading...
             </Card>
           ) : (

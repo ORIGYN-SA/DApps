@@ -237,7 +237,6 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
             <Flex>
               <Button
                 onClick={() => selectedOffer && onConfirmOfferWithdraw(selectedOffer)}
-                variant="contained"
                 disabled={isLoading}
               >
                 Confirm

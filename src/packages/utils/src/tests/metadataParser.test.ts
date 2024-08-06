@@ -78,6 +78,7 @@ describe('isCandyClassOrArray function', () => {
 
 describe('candyValueToString function', () => {
   it('returns an empty string when the candy value is undefined', () => {
+    // @ts-ignore
     const candy: PropertyShared = { name: 'property', value: undefined, immutable: false };
     const result = candyValueToString(candy);
     expect(result).toEqual('');
@@ -176,7 +177,8 @@ describe('candyValueToString function', () => {
   });
 
   it('returns an empty string for unsupported types', () => {
-    const candy: PropertyShared = { name: 'property', value: null , immutable: false };
+    // @ts-ignore
+    const candy: PropertyShared = { name: 'property', value: null, immutable: false };
     const result = candyValueToString(candy);
     expect(result).toEqual('');
   });

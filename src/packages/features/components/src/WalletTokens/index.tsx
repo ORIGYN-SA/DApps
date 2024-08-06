@@ -133,7 +133,6 @@ export const WalletTokens = ({ children }: any) => {
                           key={`${token.symbol}-${token.enabled}`}
                           justify="space-between"
                           align="center"
-                          padding={16}
                         >
                           <Flex gap={8} align="center">
                             <CheckboxInput

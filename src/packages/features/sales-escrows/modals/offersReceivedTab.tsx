@@ -271,7 +271,6 @@ export const OffersReceivedTab = ({ collection }: OffersTabProps) => {
                   actionType &&
                   onConfirmOfferAcceptOrReject(selectedOffer, actionType)
                 }
-                variant="contained"
                 disabled={isLoading}
               >
                 Confirm

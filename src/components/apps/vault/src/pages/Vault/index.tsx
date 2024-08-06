@@ -62,7 +62,7 @@ const GuestContainer = () => {
         minHeight: "100%",
       }}
     >
-      <Container maxWidth="md">
+      <Container>
         <div
           style={{
             alignItems: "center",
@@ -72,7 +72,7 @@ const GuestContainer = () => {
         >
           <h3>Welcome to the Origyn Vault</h3>
           <br />
-          <Button variant="contained" onClick={open}>
+          <Button onClick={open}>
             Connect wallet
           </Button>
         </div>
@@ -383,7 +383,7 @@ const VaultPage = () => {
   return (
     <>
       {loggedIn ? (
-        <Flex fullWidth padding={0} flexFlow="column">
+        <Flex fullWidth flexFlow="column">
           <SecondaryNav
             title="Vault"
             titleLink={`${context.canisterUrl}/collection/-/vault`}
@@ -401,7 +401,6 @@ const VaultPage = () => {
                         bgColor="NAVIGATION_BACKGROUND"
                         type="outlined"
                         flexFlow="column"
-                        padding={24}
                         gap={16}
                       >
                         <h6>Wallet Balances</h6>
@@ -410,7 +409,6 @@ const VaultPage = () => {
                           <StyledBlackItemCard
                             key={i}
                             align="center"
-                            padding={12}
                             justify="space-between"
                           >
                             <Flex gap={8}>
@@ -459,7 +457,6 @@ const VaultPage = () => {
                         {activeWalletProvider && (
                           <StyledBlackCard
                             align="center"
-                            padding={12}
                             justify="space-between"
                           >
                             <Flex align="center" gap={12}>

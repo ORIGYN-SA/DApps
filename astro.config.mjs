@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import { loadEnv } from 'vite';
+import svgr from "vite-plugin-svgr";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +28,9 @@ export default defineConfig({
         'PUBLIC_OGY_LEDGER_CANISTER_ID',
         'PUBLIC_ICP_LEDGER_CANISTER_ID',
       ]),
+      svgr({
+        exportAsDefault: true
+      })
     ],
     define: {
       'process.env': process.env,
