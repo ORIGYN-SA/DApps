@@ -84,7 +84,7 @@
     "vite-plugin-babel": "^1.2.0",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-require": "^1.2.14",
-    "ite-plugin-require-transform": "^1.0.21",
+    "vite-plugin-require-transform": "^1.0.21",
     "vite-plugin-svgr": "^4.2.0"
  },
   "dependencies": {
