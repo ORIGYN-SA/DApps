@@ -103,16 +103,19 @@ const localStorageTokens = () => {
     return undefined;
   }
 
-  const localStorageTokens: { [key: string]: StorageToken } = JSONBig.parse(maybeLocalStorageTokens)
-  const tokens: { [key: string]: Token } = {}
-  Object.entries(localStorageTokens).forEach(([key, value]) => {
-    tokens[key] = {
-      ...value,
-      canisterId: Principal.fromText(value.canisterId)
-    }
-  })
-
-  return tokens;
+  try {
+    const localStorageTokens: { [key: string]: StorageToken } = JSONBig.parse(maybeLocalStorageTokens)
+    const tokens: { [key: string]: Token } = {}
+    Object.entries(localStorageTokens).forEach(([key, value]) => {
+      tokens[key] = {
+        ...value,
+        canisterId: Principal.fromText(value.canisterId)
+      }
+    })
+    return tokens;
+  } catch {
+    return undefined;
+  }
 };
 
 const initialTokens = localStorageTokens() ?? defaultTokensMapped();
