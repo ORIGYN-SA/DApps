@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-// import { Transactions } from '@dapp/utils';
+import { Transactions } from '@dapp/utils';
 
 import { Mint } from '../functions/Mint';
 

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { render, fireEvent, waitFor, screen, cleanup } from '../../../../../../testUtils';
+import { render, fireEvent, waitFor, screen, cleanup } from '@testUtils';
 import '@testing-library/jest-dom';
 import testData from './data';
 

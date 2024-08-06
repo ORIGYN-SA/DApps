@@ -1,6 +1,6 @@
 import { NatPrice } from './index';
 import React from 'react';
-import { render } from '../../../../../../testUtils';
+import { render } from '@testUtils';
 import '@testing-library/jest-dom';
 
 describe('Components > NatPrice', () => {

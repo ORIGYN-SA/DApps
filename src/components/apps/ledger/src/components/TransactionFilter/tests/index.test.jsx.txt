@@ -6,7 +6,7 @@ import {
   screen,
   cleanup,
   getAllByLabelText,
-} from '../../../../../../testUtils';
+} from '@testUtils';
 import '@testing-library/jest-dom';
 
 import { TransactionFilter } from '../index';

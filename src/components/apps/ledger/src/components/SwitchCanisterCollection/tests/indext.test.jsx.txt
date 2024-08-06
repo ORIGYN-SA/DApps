@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { SwitchCanisterCollection } from '../index';
 import {
   render, waitFor
-} from '../../../../../../testUtils';
+} from '@testUtils';
 import { SnackbarProvider } from 'notistack';
 
 //Mock the URL

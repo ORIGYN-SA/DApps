@@ -1,15 +1,7 @@
-import { render } from '@testing-library/react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React from 'react';
+import TestEnvironment from './testEnv'
 
-import { createMemoryHistory } from 'history';
-
-function customRender(children) {
-  const history = createMemoryHistory({ initialEntries: ['/'] });
-  return render(<Router history={history}>{children}</Router>);
-}
 export * from '@testing-library/react';
-
-export { customRender as render };
 
 export const makeFormikMethods = (mockFn) => ({
   resetForm: mockFn,
@@ -26,3 +18,5 @@ export const makeFormikMethods = (mockFn) => ({
   validateField: mockFn,
   validateForm: mockFn,
 });
+
+module.exports = TestEnvironment

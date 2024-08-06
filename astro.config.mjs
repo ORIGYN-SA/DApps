@@ -80,7 +80,7 @@ export default defineConfig({
           __dirname,
           './src/packages/features/sales-escrows/components/modals/TransferTokens.tsx',
         ),
-        '@testUtils': resolve(__dirname, './src/testUtils/index.jsx'),
+        '@testUtils': resolve(__dirname, './src/testUtils/index.js'),
       },
     },
     optimizeDeps: {

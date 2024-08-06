@@ -1,5 +1,4 @@
-import { TextDecoder, TextEncoder } from 'util';
-import module from 'module';
+const { TextDecoder, TextEncoder } = require('util')
 
 module.exports = {
   globals: {
@@ -7,21 +6,19 @@ module.exports = {
     TextEncoder: TextEncoder,
   },
   moduleNameMapper: {
-    '\\.(scss|svg|css)$': '<rootDir>/testUtils/fileMock.js',
-    '@testUtils': '<rootDir>/testUtils/index.js',
+    '\\.(scss|svg|css)$': '<rootDir>/src/testUtils/fileMock.js',
+    '@testUtils': '<rootDir>/src/testUtils/render.js',
+    '@dapp/utils': '<rootDir>/src/packages/utils/src/index.ts', 
+    '@dapp/common-candid': '<rootDir>/src/packages/common/candid/src/index.ts',
+    '@dapp/common-assets': '<rootDir>/src/packages/common/assets/src/index.ts'
   },
-  moduleDirectories: ['node_modules', 'packages', 'src', 'components'],
-  testEnvironment: '<rootDir>/testUtils/testEnv.js',
+  moduleDirectories: ['node_modules', 'packages', 'src'],
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!@connect2ic|@connect2ic/core|@connect2ic/react|@dfinity|event-e3|@astrox)',
   ],
   transform: {
     '^.+\\.[jt]sx?$': 'babel-jest',
-    "^.+\\.(j|t)sx?$": "ts-jest",
     '\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       'jest-transform-stub',
-    
   },
 };
-
-export default module.exports;
