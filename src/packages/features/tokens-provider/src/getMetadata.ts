@@ -1,6 +1,7 @@
 import { getActor } from "@origyn/actor-reference";
 import { IdlStandard, getIdl } from "@dapp/utils";
 import type { Token } from "./TokensContextProvider";
+import { Principal } from "@dfinity/principal";
 
 type MetadataReponse = {
   decimals: number;
@@ -96,7 +97,7 @@ const wicpMethod = async (
 
 export const getMetadata = async (
   isLocal: boolean,
-  canisterId: string,
+  canisterId: Principal,
   standard: IdlStandard
 ) => {
   const token: Token = {

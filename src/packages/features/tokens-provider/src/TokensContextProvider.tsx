@@ -11,8 +11,7 @@ import { timeConverter } from '@dapp/utils';
 const defaultTokens = {
   ICP: {
     symbol: 'ICP',
-    // eslint-disable-next-line
-    canisterId: process.env.PUBLIC_ICP_LEDGER_CANISTER_ID,
+    canisterId: process.env.PUBLIC_ICP_LEDGER_CANISTER_ID && Principal.fromText(process.env.PUBLIC_ICP_LEDGER_CANISTER_ID),
     fee: 10000,
     standard: IdlStandard.ICP,
     decimals: 8,
@@ -22,7 +21,7 @@ const defaultTokens = {
   OGY: {
     symbol: 'OGY',
     // eslint-disable-next-line
-    canisterId: process.env.PUBLIC_OGY_LEDGER_CANISTER_ID,
+    canisterId: process.env.PUBLIC_OGY_LEDGER_CANISTER_ID && Principal.fromText(process.env.PUBLIC_OGY_LEDGER_CANISTER_ID),
     fee: 200000,
     standard: IdlStandard.ICP,
     decimals: 8,
@@ -32,6 +31,17 @@ const defaultTokens = {
 };
 
 export type Token = {
+  balance?: number;
+  canisterId: Principal;
+  decimals?: number;
+  enabled?: boolean;
+  fee?: number;
+  icon?: any;
+  standard: IdlStandard;
+  symbol: string;
+};
+
+export type StorageToken = {
   balance?: number;
   canisterId: string;
   decimals?: number;
@@ -61,7 +71,7 @@ export type TokensContext = {
   };
   isFetchingBalance: boolean;
   addToken?: (
-    canisterId: string,
+    canisterId: Principal,
     standard: IdlStandard,
     principal: Principal,
   ) => Promise<Token | string>;
@@ -79,7 +89,6 @@ const defaultTokensMapped = () => {
     if (token.canisterId) {
       defaultTokensMapped[token.symbol] = {
         ...token,
-        canisterId: Principal.fromText(token.canisterId),
         icon: token.icon ?? token.symbol,
       };
     }
@@ -88,13 +97,22 @@ const defaultTokensMapped = () => {
 };
 
 const localStorageTokens = () => {
-  const localStorageTokens = localStorage.getItem('tokensContext');
+  const maybeLocalStorageTokens = localStorage.getItem('tokensContext');
 
-  if (!localStorageTokens) {
+  if (!maybeLocalStorageTokens) {
     return undefined;
   }
 
-  return JSONBig.parse(localStorageTokens ?? '');
+  const localStorageTokens: { [key: string]: StorageToken } = JSONBig.parse(maybeLocalStorageTokens ?? '')
+  const tokens: { [key: string]: Token } = {}
+  Object.entries(localStorageTokens).forEach(([key, value]) => {
+    tokens[key] = {
+      ...value,
+      canisterId: Principal.fromText(value.canisterId)
+    }
+  })
+
+  return tokens;
 };
 
 const initialTokens = localStorageTokens() ?? defaultTokensMapped();
@@ -130,7 +148,7 @@ export const TokensContextProvider: React.FC<SessionProviderProps> = ({ children
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
   const context = useContext(PerpetualOSContext);
 
-  const addToken = async (canisterId: string, standard: IdlStandard, principal: Principal) => {
+  const addToken = async (canisterId: Principal, standard: IdlStandard, principal: Principal) => {
     const metadata: any = await getMetadata(context.isLocal, canisterId, standard);
     const { symbol, fee, decimals, icon } = metadata || {};
     if (tokens[symbol]) return AddTokenError.ALREADY_EXIST;
@@ -166,8 +184,8 @@ export const TokensContextProvider: React.FC<SessionProviderProps> = ({ children
   const getBalance = async (principal: Principal, token: Token): Promise<number> => {
     try {
       setIsFetchingBalance(true);
-
       const balance = await getBalanceFromCanister(context.isLocal, principal, token);
+
       if (balance.decimals !== undefined) {
         return balance.value / 10 ** balance.decimals;
       } else {
@@ -213,15 +231,24 @@ export const TokensContextProvider: React.FC<SessionProviderProps> = ({ children
     });
   };
 
+  const safeTokensToLocalStorage = (tokens: {
+    [key: string]: Token;
+  }) => {
+    console.log("Tokens before stringify:", tokens);   
+    const localStorageTokens: { [key: string]: StorageToken } = {}
+    Object.entries(tokens).forEach(([key, value]) => {
+      localStorageTokens[key] = {
+        ...value,
+        canisterId: value.canisterId.toText()
+      }
+    })
+    const tokensString = JSONBig.stringify(localStorageTokens);
+    localStorage.setItem('tokensContext', tokensString);
+    console.log("Tokens after stringify:", tokensString); 
+  }
+
   useEffect(() => {
-    console.log("Tokens before stringify:", tokens);
-    try {
-      const tokensString = JSONBig.stringify(tokens);
-      localStorage.setItem('tokensContext', tokensString);
-      console.log("Tokens after stringify:", tokensString);
-    } catch (e) {
-      console.error("Error stringifying tokens:", e);
-    }
+    safeTokensToLocalStorage(tokens)
   }, [tokens]);
 
   return (
