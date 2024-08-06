@@ -103,7 +103,7 @@ const localStorageTokens = () => {
     return undefined;
   }
 
-  const localStorageTokens: { [key: string]: StorageToken } = JSONBig.parse(maybeLocalStorageTokens ?? '')
+  const localStorageTokens: { [key: string]: StorageToken } = JSONBig.parse(maybeLocalStorageTokens)
   const tokens: { [key: string]: Token } = {}
   Object.entries(localStorageTokens).forEach(([key, value]) => {
     tokens[key] = {
