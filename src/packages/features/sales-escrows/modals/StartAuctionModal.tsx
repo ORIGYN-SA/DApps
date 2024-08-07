@@ -1,5 +1,4 @@
 import React from 'react';
-import { Principal } from '@dfinity/principal';
 import { AuthContext } from '@dapp/features-authentication';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import * as Yup from 'yup';

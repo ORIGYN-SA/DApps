@@ -3,7 +3,6 @@ import { AuthContext } from '@dapp/features-authentication';
 import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { Container, Flex, Modal, Button, HR } from '@origyn/origyn-art-ui';
 import { getBalanceByAccount, useTokensContext } from '@dapp/features-tokens-provider';
-import { Principal } from '@dfinity/principal';
 import { LoadingContainer } from '@dapp/features-components';
 import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';

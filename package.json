@@ -109,7 +109,7 @@
     "last 2 edge version"
   ],
   "lint-staged": {
-    "*.{js, jsx, ts, tsx, json}": [
+    "*.{js,jsx,ts,tsx}": [
       "node_modules/.bin/eslint --max-warnings=0"
     ]
   }
