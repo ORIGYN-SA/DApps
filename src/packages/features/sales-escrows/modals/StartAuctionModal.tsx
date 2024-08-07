@@ -136,7 +136,7 @@ export function StartAuctionModal({
                   id: [],
                   fee: [BigInt(token.fee)],
                   decimals: BigInt(token.decimals),
-                  canister: Principal.fromText(walletTokens[saleToken]?.canisterId),
+                  canister: walletTokens[saleToken]?.canisterId,
                   standard: { Ledger: null },
                   symbol: walletTokens[saleToken]?.symbol,
                 },

@@ -16,6 +16,7 @@ import {
   TabContent,
   TextInput,
 } from "@origyn/origyn-art-ui";
+import { Principal } from "@dfinity/principal";
 
 export const WalletTokens = ({ children }: any) => {
   const { principal } = useContext(AuthContext);
@@ -40,7 +41,7 @@ export const WalletTokens = ({ children }: any) => {
     try {
       if (addToken && principal) {
         const tokenResponse = await addToken(
-          inputCanisterId,
+          Principal.fromText(inputCanisterId),
           IdlStandard[selectedStandard],
           principal
         );

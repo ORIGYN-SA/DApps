@@ -276,7 +276,7 @@ export const useApi = () => {
               id: [],
               fee: [BigInt(token.fee)],
               decimals: BigInt(token.decimals),
-              canister: Principal.fromText(token.canisterId),
+              canister: token.canisterId,
               standard: { Ledger: null },
               symbol: token.symbol,
             },

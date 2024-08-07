@@ -38,7 +38,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                   id: [],
                   fee: [BigInt(activeTokens[token]?.fee || 0)],
                   decimals: BigInt(activeTokens[token]?.decimals || 0),
-                  canister: Principal.fromText(activeTokens[token]?.canisterId || ''),
+                  canister: activeTokens[token]?.canisterId,
                   standard: { Ledger: null },
                   symbol: activeTokens[token]?.symbol || '',
                 },
