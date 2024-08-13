@@ -192,7 +192,6 @@ export const TransactionsTable = (props: any) => {
           if (trx.hasOwnProperty(trxType)) {
             // capitalize transaction
             const capitalized = trxType.charAt(0).toUpperCase() + trxType.slice(1);
-            // replace _ with " "
             const replaced = capitalized.replace('_', ' ');
             _transaction_type_formatted += replaced;
 

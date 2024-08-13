@@ -5,6 +5,7 @@ import {
   getPrincipalAccountFromArray,
   getAccount,
 } from './TableFunctions';
+import { Token } from '@origyn/mintjs';
 
 export const RoyaltyPaid = (
   obj_transaction,
@@ -70,7 +71,7 @@ export const RoyaltyPaid = (
   // token obj
   const token = obj_transaction[_props].token;
   let token_standard: string | undefined;
-  let obj_token: any;
+  let obj_token: Token | undefined; //add correct type
 
   let tokenProps: string;
   for (tokenProps in token) {
@@ -113,7 +114,7 @@ export const RoyaltyPaid = (
     getAccountId(receiverAccountId),
   );
   const array_principals: string[] = [];
-  array_principals.push(obj_token.canister_string);
+  array_principals.push(obj_token?.symbol);
   transactionObj = {
     trans_index: curr_obj.index.toString(),
     token_id: curr_obj.token_id,

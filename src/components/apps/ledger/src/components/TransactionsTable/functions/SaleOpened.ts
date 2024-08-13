@@ -167,7 +167,7 @@ export const SaleOpened = (
             }
 
             const obj_wfq: WaitForQuiet = {
-              date: wfq_date !== undefined ? wfq_date : '',
+              date: wfq_date ? wfq_date : '',
               extention: wfq_extention,
               fade: wfq_fade,
               max: wfq_max,
@@ -178,7 +178,7 @@ export const SaleOpened = (
 
           var _token = obj_pricing[typeOfPricing].token;
           var tokenProps: string;
-          let obj_token_auction: any;
+          let obj_token_auction: any; //add correct type
 
           for (tokenProps in _token) {
             var _canister = _token[tokenProps].canister;

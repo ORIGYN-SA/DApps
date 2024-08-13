@@ -72,7 +72,6 @@ export const CandyDataEditor = (candyDataEditor: CandyDataEditorProps) => {
     updatedProperty: CandyProperty,
     propertyIndex: number
   ) => {
-    // console.log('🚀 UPDATED PROPERTY #' + propertyIndex, updatedProperty);
     const updated = editableCandyClass.Class.map((property, index) => {
       if (index === propertyIndex) {
         return { ...property, ...updatedProperty };

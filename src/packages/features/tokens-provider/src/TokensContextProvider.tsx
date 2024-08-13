@@ -237,7 +237,6 @@ export const TokensContextProvider: React.FC<SessionProviderProps> = ({ children
   const safeTokensToLocalStorage = (tokens: {
     [key: string]: Token;
   }) => {
-    console.log("Tokens before stringify:", tokens);   
     const localStorageTokens: { [key: string]: StorageToken } = {}
     Object.entries(tokens).forEach(([key, value]) => {
       localStorageTokens[key] = {
@@ -247,7 +246,6 @@ export const TokensContextProvider: React.FC<SessionProviderProps> = ({ children
     })
     const tokensString = JSONBig.stringify(localStorageTokens);
     localStorage.setItem('tokensContext', tokensString);
-    console.log("Tokens after stringify:", tokensString); 
   }
 
   useEffect(() => {

@@ -10,6 +10,7 @@ import { LoadingContainer } from '@dapp/features-components';
 import { parseOdcs, parseMetadata } from '@dapp/utils';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { useMarketplace } from '../../components/context';
+import { PlaceholderIcon } from "@dapp/common-assets";
 import {
   Container,
   Flex,
@@ -206,6 +207,7 @@ const Marketplace = () => {
                           />
                         ) : (
                           <Flex align="center" justify="center">
+                            <PlaceholderIcon width={96} height={96} />
                           </Flex>
                         )}
                         <Flex flexFlow="column" justify="space-between" fullWidth gap={8}>

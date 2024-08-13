@@ -100,7 +100,7 @@ export const TextForm = (editor: CandyClassEditor) => {
           <>
             <Grid columns={1}>
               <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                <b>{String(editor.candyType) || ''}</b>  {/* added String() to avoid error */}
+              <b>{editor.candyType ? editor.candyType.toString() : ''}</b>
               </span>
             </Grid>
             <Grid columns={2}>

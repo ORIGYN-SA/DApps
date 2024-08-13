@@ -99,7 +99,7 @@ export const FloatForm = (editor: CandyClassEditor) => {
         <>
           <Grid columns={1}>
             <span style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <b>{String(editor.candyType)}</b>
+              <b>{editor.candyType?.toString()}</b>
             </span>
           </Grid>
           <Grid columns={2}>

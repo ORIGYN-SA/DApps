@@ -1,12 +1,13 @@
 ---
 import Layout from '../../../../../layouts/Layout.astro';
 import AppVault from '../../../../../components/apps/vault/src/AppVault';
-import { getStaticPaths } from './index'; 
+import { getStaticPaths } from './index';
 
 export { getStaticPaths };
 ---
 
 <Layout title="AppVault App">
-	<AppVault client:only="react"/>
+  <div id="root">
+    <AppVault client:only="react" />
+  </div>
 </Layout>
-
