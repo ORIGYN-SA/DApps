@@ -183,7 +183,7 @@ const FormTab = ({ metadata }: any) => {
         <h3>Libraries</h3>
       </Flex>
       {library?.map((lib, libraryIndex) => (
-        <>
+        <React.Fragment key={`library-${libraryIndex}`}>
           <HR marginTop={4} marginBottom={4} />
           <Grid key={`library-${libraryIndex}`} columns={3}>
             <Grid columns={1}></Grid>
@@ -204,7 +204,7 @@ const FormTab = ({ metadata }: any) => {
               ))}
             </Grid>
           </Grid>
-        </>
+        </React.Fragment>
       ))}
     </Container>
   );

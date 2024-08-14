@@ -17,10 +17,9 @@ export const checkOwner = async (principal: Principal, currCanisterId: string, i
   const metadataCollectionLevel = metadataCollectionLevelResponse.ok?.metadata?.[0]?.['Class'];
 
   // Collection Owner
-  const collectionData = metadataCollectionLevel.filter((res) => {
-    return res.name === 'owner';
-  })[0].value;
-
+  const owner = metadataCollectionLevel.find(res => res.name === 'owner');
+  const collectionData = owner ? owner.value : {};
+  
   let collectionOwner: string;
 
   if (Object.keys(collectionData)[0] == 'Principal') {

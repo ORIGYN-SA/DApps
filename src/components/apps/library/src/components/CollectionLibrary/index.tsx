@@ -42,7 +42,7 @@ export const CollectionLibrary = (props: any) => {
     if (metadata.length > 0) {
       const libraryId =
         metadata.filter((res) => res.name === 'library_id')[0].value.Text || 'No Library ID';
-      const title = metadata.filter((res) => res.name === 'title')[0].value.Text || 'No Title';
+        const title = metadata.find(res => res.name === 'title')?.value?.Text || 'No Title';
       const contentType =
         metadata.filter((res) => res.name === 'content_type')[0].value.Text || 'No Content Type';
       const location =
