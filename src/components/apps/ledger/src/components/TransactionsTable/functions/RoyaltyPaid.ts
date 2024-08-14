@@ -85,49 +85,51 @@ export const RoyaltyPaid = (
       token_standard = prop;
     }
   }
-  if (token_standard) {
+  if (token_standard && obj_token) {
     const obj_token = getToken(_canister, _fee, _symbol, _decimals, token_standard);
-  }
-  let sellerAccountId;
-  if ('principal' in seller) {
-    sellerAccountId = getPrincipalAccountFromArray(seller.principal);
-  } else {
-    sellerAccountId = getPrincipalAccountFromArray(seller.account.owner);
-  }
-  let buyerAccountId;
-  if ('principal' in buyer) {
-    buyerAccountId = getPrincipalAccountFromArray(buyer.principal);
-  } else {
-    buyerAccountId = getPrincipalAccountFromArray(buyer.account.owner);
-  }
-  let receiverAccountId;
-  if ('principal' in receiver) {
-    receiverAccountId = getPrincipalAccountFromArray(receiver.principal);
-  } else {
-    receiverAccountId = getPrincipalAccountFromArray(receiver.account.owner);
-  }
 
-  const array_accounts: string[] = [];
-  array_accounts.push(
-    getAccountId(buyerAccountId),
-    getAccountId(sellerAccountId),
-    getAccountId(receiverAccountId),
-  );
-  const array_principals: string[] = [];
-  array_principals.push(obj_token?.symbol);
-  transactionObj = {
-    trans_index: curr_obj.index.toString(),
-    token_id: curr_obj.token_id,
-    type_txn: _transaction_type_formatted,
-    message: royaltyPaid,
-    accounts: removeDuplicates(array_accounts),
-    principals: removeDuplicates(array_principals),
-    token: obj_token,
-    receiver: receiverAccount,
-    seller: sellerAccount,
-    buyer: buyerAccount,
-    amount: obj_transaction[_props].amount,
-  };
+    let sellerAccountId;
+    if ('principal' in seller) {
+      sellerAccountId = getPrincipalAccountFromArray(seller.principal);
+    } else {
+      sellerAccountId = getPrincipalAccountFromArray(seller.account.owner);
+    }
+    let buyerAccountId;
+    if ('principal' in buyer) {
+      buyerAccountId = getPrincipalAccountFromArray(buyer.principal);
+    } else {
+      buyerAccountId = getPrincipalAccountFromArray(buyer.account.owner);
+    }
+    let receiverAccountId;
+    if ('principal' in receiver) {
+      receiverAccountId = getPrincipalAccountFromArray(receiver.principal);
+    } else {
+      receiverAccountId = getPrincipalAccountFromArray(receiver.account.owner);
+    }
 
+    const array_accounts: string[] = [];
+    array_accounts.push(
+      getAccountId(buyerAccountId),
+      getAccountId(sellerAccountId),
+      getAccountId(receiverAccountId),
+    );
+    const array_principals: string[] = [];
+
+    array_principals.push(obj_token.canister_string);
+
+    transactionObj = {
+      trans_index: curr_obj.index.toString(),
+      token_id: curr_obj.token_id,
+      type_txn: _transaction_type_formatted,
+      message: royaltyPaid,
+      accounts: removeDuplicates(array_accounts),
+      principals: removeDuplicates(array_principals),
+      token: obj_token,
+      receiver: receiverAccount,
+      seller: sellerAccount,
+      buyer: buyerAccount,
+      amount: obj_transaction[_props].amount,
+    };
+  }
   return transactionObj;
 };

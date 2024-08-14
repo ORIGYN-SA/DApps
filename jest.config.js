@@ -1,5 +1,3 @@
-const { TextDecoder, TextEncoder } = require('util')
-
 module.exports = {
   globals: {
     TextDecoder: TextDecoder,
@@ -8,9 +6,10 @@ module.exports = {
   moduleNameMapper: {
     '\\.(scss|svg|css)$': '<rootDir>/src/testUtils/fileMock.js',
     '@testUtils': '<rootDir>/src/testUtils/render.js',
-    '@dapp/utils': '<rootDir>/src/packages/utils/src/index.ts', 
+    '@dapp/utils': '<rootDir>/src/packages/utils/src/index.ts',
     '@dapp/common-candid': '<rootDir>/src/packages/common/candid/src/index.ts',
-    '@dapp/common-assets': '<rootDir>/src/packages/common/assets/src/index.ts'
+    '@dapp/common-assets': '<rootDir>/src/packages/common/assets/src/index.ts',
+    '\\.(svg\\$|svg\\?react)': '<rootDir>/mocks/svg.js',
   },
   moduleDirectories: ['node_modules', 'packages', 'src'],
   transformIgnorePatterns: [
