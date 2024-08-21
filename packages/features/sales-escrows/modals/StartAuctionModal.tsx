@@ -108,6 +108,7 @@ export function StartAuctionModal({
     try {
       setInProgress(true);
       onProcessing(true);
+      console.log("START SALE");
 
       const token = walletTokens[saleToken];
 
@@ -155,11 +156,13 @@ export function StartAuctionModal({
           escrow_receipt: [],
         },
       };
+      console.log("marketTransferRequest",marketTransferRequest);
 
       debug.log('marketTransferRequest', marketTransferRequest);
 
       const resp = await actor.market_transfer_nft_origyn(marketTransferRequest);
 
+      console.log("resp",resp);
       debug.log(resp);
 
       if ('err' in resp) {
@@ -194,6 +197,7 @@ export function StartAuctionModal({
     validationSchema
       .validate(values, { abortEarly: false })
       .then(() => {
+        console.log(values);
         onStartAuction(values);
       })
       .catch(function (e) {

@@ -42,6 +42,7 @@ export const NFTPage = () => {
   const params = useParams();
   const { open } = useDialog();
   const { principal, actor, handleLogOut } = useContext(AuthContext);
+  console.log(principal.toString());
   const [principalId, setPrincipalId] = useState<string>();
   const [odc, setOdc] = useState<OdcDataWithSale>();
   const [initialized, setInitialized] = useState<boolean>(false);
