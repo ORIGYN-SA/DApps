@@ -77,13 +77,18 @@ const Marketplace = () => {
     }
 
     try {
-      await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
-
+      const act = await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
+      
       // get the canister's collection metadata
-      const meta = await getNftCollectionMeta();
+      console.log("actor", actor);
+      const meta = (await actor.collection_nft_origyn([]) as any).ok;
+      console.log("tmpMeta", meta);
+      //const meta = await getNftCollectionMeta();
       const metadata = meta.metadata[0];
       const metadataClass = 'Class' in metadata ? metadata.Class : [];
+      console.log("metadataClass", metadataClass);
       const collectionData = parseMetadata(metadataClass);
+      console.log("collectionData", collectionData);
       dispatch({ type: 'collectionData', payload: collectionData });
 
       // set number of tokens
@@ -125,7 +130,7 @@ const Marketplace = () => {
         clearInterval(intervalId);
       }
     };
-  }, [actor]);
+  }, []);
 
   /* Apply filter and sort to list */
   useEffect(() => {

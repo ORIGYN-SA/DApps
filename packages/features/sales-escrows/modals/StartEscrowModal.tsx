@@ -202,6 +202,8 @@ export function StartEscrowModal({
     onFormSubmitted(null, true);
   };
 
+  console.log(formErrors.amount, formErrors.token);
+
   const onFormSubmitted = async (e?: any, retry: boolean = false) => {
     e?.preventDefault();
 
@@ -312,10 +314,12 @@ export function StartEscrowModal({
       }
       setStatus('Escrow successfully sent.');
     } catch (e) {
+      console.log("ERROR");
       setError(true);
       setStatus(e.message);
       setProgressTitle('Error');
     } finally {
+      console.log("FINALIZED");
       onProcessing(false);
     }
   };

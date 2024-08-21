@@ -101,7 +101,8 @@ export const NFTPage = () => {
   const fetchCollection = async () => {
     await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
-    const collMetaResp = await getNftCollectionMeta();
+    // const collMetaResp = await getNftCollectionMeta();
+    const collMetaResp = (await actor.collection_nft_origyn([]) as any).ok;
     debug.log('return value from getNftCollectionMeta()');
     debug.log(JSON.stringify(collMetaResp, null, 2));
 
