@@ -13,8 +13,19 @@ export const PerpetualOSContextProvider = ({ children }) => {
     const updateContext = async () => {
       try {
         const urlContext = await getPerpetualOSContext(window.location.href);
-        setContext(urlContext);
+        const canisterID = window.location.pathname.split("/")[2]
+        
+        if (canisterID && urlContext.assetCanisterUrl === "") {
+          urlContext.assetCanisterUrl = `https://${canisterID}.raw.icp0.io`
+        }
+        if (canisterID && urlContext.directCanisterUrl === "https://.raw.icp0.io") {
+          urlContext.directCanisterUrl = `https://${canisterID}.raw.icp0.io`
+        }
+        if (canisterID && urlContext.canisterId === "") {
+          urlContext.canisterId = canisterID
+        }
 
+        setContext(urlContext);
         console.log('ContextProvider -> context', urlContext);
       } catch (err) {
         if (err instanceof Error) {
