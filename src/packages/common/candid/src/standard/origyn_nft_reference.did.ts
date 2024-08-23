@@ -1,4 +1,4 @@
-export const idlFactory = ({ IDL }) => {
+export default ({ IDL }) => {
   const ArchivedTransactionResponse = IDL.Rec();
   const CandyShared = IDL.Rec();
   const ManageSaleResponse = IDL.Rec();
