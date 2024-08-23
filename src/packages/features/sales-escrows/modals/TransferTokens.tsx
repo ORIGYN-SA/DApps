@@ -169,8 +169,8 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
 
       setInProcess(false);
 
-      if (result.err) {
-        showErrorMessage("Token transfer failed", result.err);
+      if (result?.err) {
+        showErrorMessage("Token transfer failed", result?.err);
       } else {
         setSuccess(true);
       }

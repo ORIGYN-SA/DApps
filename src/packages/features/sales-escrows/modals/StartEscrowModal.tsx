@@ -76,11 +76,6 @@ export function StartEscrowModal({
     token: '',
   });
 
-  if (!token || !token.decimals || !token.fee) {
-    throw new Error('Token is undefined');
-  }
-
-
   useEffect(() => {
     if (!odc.token) {
       throw new Error('Token is undefined');
@@ -422,14 +417,14 @@ export function StartEscrowModal({
                 <br />
                 {!isLoading && (
                   <Flex flexFlow="column" gap={8}>
-                    {escrowType === 'Offer' ? (
+                    {escrowType === 'Offer' && token?.symbol ? (
                       <Select
                         name="token"
                         selectedOption={{
                           /*@ts-ignore*/
                           label: (
                             <>
-                              <TokenIcon symbol={token.symbol} /> {token.symbol}
+                              <TokenIcon symbol={token?.symbol} /> {token?.symbol}
                             </>
                           ),
                           value: token?.symbol,
@@ -450,14 +445,14 @@ export function StartEscrowModal({
                         <span>Token</span>
                         <span style={{ color: theme.colors.SECONDARY_TEXT }}>
                           {' '}
-                          <TokenIcon symbol={token.symbol} /> {token.symbol}
+                          <TokenIcon symbol={token?.symbol} /> {token?.symbol}
                         </span>
                       </>
                     )}
-                    {escrowType == 'BuyNow' ? (
+                    {escrowType == 'BuyNow' ?   (
                       <>
                         <br />
-                        <span>Buy Now Price (in {token.symbol})</span>
+                        <span>Buy Now Price (in {token?.symbol})</span>
                         <span style={{ color: theme.colors.SECONDARY_TEXT }}>
                           {getBuyNowPrice(odc)}
                         </span>
@@ -468,12 +463,12 @@ export function StartEscrowModal({
                         <Flex flexFlow="row" align="center" justify="space-between">
                           <b>{escrowType == 'Bid' ? 'Your bid' : 'Price'}</b>
                           <span style={{ color: theme.colors.SECONDARY_TEXT }}>
-                            Balance: {String(walletTokens[token.symbol].balance)} {token.symbol}
+                            Balance: {token?.symbol ? String(walletTokens[token?.symbol].balance) : 0} {token?.symbol}
                           </span>
                         </Flex>
                         {escrowType == 'Bid' && (
                           <span style={{ color: theme.colors.SECONDARY_TEXT }}>
-                            {`Minimum bid: ${minBid.toFixed()} ${token.symbol}`}
+                            {`Minimum bid: ${minBid.toFixed()} ${token?.symbol}`}
                           </span>
                         )}
                         <TextInput

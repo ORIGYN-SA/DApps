@@ -1,5 +1,5 @@
 import { IDL } from '@dfinity/candid';
-import { xtcIdl, extIdl, dip20Idl, wicpIdl, icpIdl } from '@dapp/common-candid';
+import { xtcIdl, extIdl, dip20Idl, wicpIdl, icpIdl, ogyIdl } from '@dapp/common-candid';
 
 export enum IdlStandard {
   XTC,
@@ -7,6 +7,7 @@ export enum IdlStandard {
   DIP20,
   WICP,
   ICP,
+  OGY
 }
 
 export const getIdl = (
@@ -18,6 +19,7 @@ export const getIdl = (
     [IdlStandard.DIP20]: dip20Idl,
     [IdlStandard.WICP]: wicpIdl,
     [IdlStandard.ICP]: icpIdl,
+    [IdlStandard.OGY]: ogyIdl
   }[standard];
   return idl;
 };

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { getHttpAgentHost } from '@origyn/actor-reference';
 import { PerpetualOSContext } from '@dapp/features-context-provider';
-import { idlFactory as origynNftIdl } from '@origyn/mintjs';
+import { idlFactory as origynNftIdl } from '@dapp/common-candid/src/standard/origyn_nfr';
 
 import { Connect2ICProvider } from '@connect2ic/react';
 import { createClient } from '@connect2ic/core';

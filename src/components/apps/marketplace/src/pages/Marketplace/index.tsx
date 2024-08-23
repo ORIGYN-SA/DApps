@@ -45,7 +45,7 @@ const Marketplace = () => {
   const debug = useDebug();
   const context = useContext(PerpetualOSContext);
   const { principalId, actor, handleLogOut } = useContext(AuthContext);
-  const { getNftBatch, getNftCollectionMeta } = useApi();
+  const { getNftBatch } = useApi();
   const { showUnexpectedErrorMessage } = useUserMessages();
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -82,7 +82,7 @@ const Marketplace = () => {
       await OrigynClient.getInstance().init(!context.isLocal, context.canisterId, { actor });
 
       // get the canister's collection metadata
-      const meta = await getNftCollectionMeta();
+      const meta = (await actor.collection_nft_origyn([]) as any).ok;
       const metadata = meta?.metadata[0] || {};
       const metadataClass: PropertyShared[] =
         'Class' in metadata ? (metadata.Class as PropertyShared[]) : [];
@@ -128,7 +128,7 @@ const Marketplace = () => {
         clearInterval(intervalId);
       }
     };
-  }, [actor]);
+  }, []);
 
   /* Apply filter and sort to list */
   useEffect(() => {

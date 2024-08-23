@@ -5,5 +5,6 @@ import wicpIdl from './standard/wicp.did';
 import icpIdl from './standard/icp.did';
 import origynLedgerIdl from './ledger.did';
 import phonebookIdl from './phonebook.did';
+import ogyIdl from './standard/ogy.did';
 
-export { xtcIdl, extIdl, dip20Idl, wicpIdl, icpIdl, origynLedgerIdl, phonebookIdl };
+export { xtcIdl, extIdl, dip20Idl, wicpIdl, icpIdl, origynLedgerIdl, phonebookIdl, ogyIdl };

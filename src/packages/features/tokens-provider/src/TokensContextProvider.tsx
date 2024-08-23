@@ -12,7 +12,7 @@ const defaultTokens = {
   ICP: {
     symbol: 'ICP',
     canisterId: process.env.PUBLIC_ICP_LEDGER_CANISTER_ID && Principal.fromText(process.env.PUBLIC_ICP_LEDGER_CANISTER_ID),
-    fee: 10000,
+    fee: 10_000,
     standard: IdlStandard.ICP,
     decimals: 8,
     enabled: true,
@@ -22,8 +22,8 @@ const defaultTokens = {
     symbol: 'OGY',
     // eslint-disable-next-line
     canisterId: process.env.PUBLIC_OGY_LEDGER_CANISTER_ID && Principal.fromText(process.env.PUBLIC_OGY_LEDGER_CANISTER_ID),
-    fee: 200000,
-    standard: IdlStandard.ICP,
+    fee: 200_000,
+    standard: IdlStandard.OGY,
     decimals: 8,
     enabled: true,
     balance: 0,
@@ -190,6 +190,7 @@ export const TokensContextProvider: React.FC<SessionProviderProps> = ({ children
       const balance = await getBalanceFromCanister(context.isLocal, principal, token);
 
       if (balance.decimals !== undefined) {
+        
         return balance.value / 10 ** balance.decimals;
       } else {
         throw new Error('Cannot fetch balance value.');

@@ -1,7 +1,7 @@
-import { getActor } from "@origyn/actor-reference";
-import { IdlStandard, getIdl } from "@dapp/utils";
-import type { Token } from "./TokensContextProvider";
-import { Principal } from "@dfinity/principal";
+import { getActor } from '@origyn/actor-reference';
+import { IdlStandard, getIdl } from '@dapp/utils';
+import type { Token } from './TokensContextProvider';
+import { Principal } from '@dfinity/principal';
 
 type MetadataReponse = {
   decimals: number;
@@ -10,11 +10,7 @@ type MetadataReponse = {
   symbol: string;
 };
 
-const getTokenActor = async (
-  isLocal: boolean,
-  token: Token,
-  idlStandard: IdlStandard
-) => {
+const getTokenActor = async (isLocal: boolean, token: Token, idlStandard: IdlStandard) => {
   const actor = await getActor<any>({
     canisterId: token.canisterId,
     idlFactory: getIdl(idlStandard),
@@ -24,10 +20,33 @@ const getTokenActor = async (
   return actor;
 };
 
-const dip20Method = async (
-  isLocal: boolean,
-  token: Token
-): Promise<MetadataReponse> => {
+const icpMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
+  const actor = await getTokenActor(isLocal, token, IdlStandard.ICP);
+
+  const metadataResult: any = await actor.getMetadata();
+
+  return {
+    decimals: metadataResult.decimals,
+    fee: metadataResult.fee,
+    icon: metadataResult.logo,
+    symbol: metadataResult.symbol,
+  };
+};
+
+const ogyMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
+  const actor = await getTokenActor(isLocal, token, IdlStandard.OGY);
+
+  const metadataResult: any = await actor.getMetadata();
+
+  return {
+    decimals: metadataResult.decimals,
+    fee: metadataResult.fee,
+    icon: metadataResult.logo,
+    symbol: metadataResult.symbol,
+  };
+};
+
+const dip20Method = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
   const actor = await getTokenActor(isLocal, token, IdlStandard.DIP20);
 
   const metadataResult: any = await actor.getMetadata();
@@ -40,33 +59,25 @@ const dip20Method = async (
   };
 };
 
-const extMethod = async (
-  isLocal: boolean,
-  token: Token
-): Promise<MetadataReponse> => {
+const extMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
   const actor = await getTokenActor(isLocal, token, IdlStandard.EXT);
 
   const extensions: any = await actor.extensions();
 
-  if (!extensions.includes("@ext/common")) {
-    throw new Error(
-      "The provided canister does not implement commont extension"
-    );
+  if (!extensions.includes('@ext/common')) {
+    throw new Error('The provided canister does not implement commont extension');
   }
 
   const metadataResult: any = await actor.metadata(token.symbol);
 
-  if ("ok" in metadataResult) {
+  if ('ok' in metadataResult) {
     return metadataResult.ok;
   }
 
   throw new Error(Object.keys(metadataResult.err)[0]);
 };
 
-const xtcMethod = async (
-  isLocal: boolean,
-  token: Token
-): Promise<MetadataReponse> => {
+const xtcMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
   const actor = await getTokenActor(isLocal, token, IdlStandard.XTC);
 
   const metadataResult: any = await actor.getMetadata();
@@ -79,10 +90,7 @@ const xtcMethod = async (
   };
 };
 
-const wicpMethod = async (
-  isLocal: boolean,
-  token: Token
-): Promise<MetadataReponse> => {
+const wicpMethod = async (isLocal: boolean, token: Token): Promise<MetadataReponse> => {
   const actor = await getTokenActor(isLocal, token, IdlStandard.WICP);
 
   const metadataResult: any = await actor.getMetadata();
@@ -98,12 +106,12 @@ const wicpMethod = async (
 export const getMetadata = async (
   isLocal: boolean,
   canisterId: Principal,
-  standard: IdlStandard
+  standard: IdlStandard,
 ) => {
   const token: Token = {
     canisterId,
     standard,
-    symbol: "",
+    symbol: '',
   };
   switch (standard) {
     case IdlStandard.DIP20:
@@ -114,5 +122,9 @@ export const getMetadata = async (
       return wicpMethod(isLocal, token);
     case IdlStandard.XTC:
       return xtcMethod(isLocal, token);
+    case IdlStandard.ICP:
+      return icpMethod(isLocal, token);
+    case IdlStandard.OGY:
+      return ogyMethod(isLocal, token);
   }
 };

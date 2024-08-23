@@ -228,7 +228,7 @@ export const useApi = () => {
         totalAmount,
       );
 
-      if (sendTransactionResult.err) {
+      if (sendTransactionResult?.err) {
         console.error(sendTransactionResult.err);
         if (sendTransactionResult.err.toString().includes('InsufficientFunds')) {
           return { errorMessage: 'Insufficient funds' };
@@ -237,7 +237,7 @@ export const useApi = () => {
         }
       }
 
-      const transactionHeight = BigInt(sendTransactionResult.ok);
+      const transactionHeight = BigInt(sendTransactionResult?.ok);
       return { result: transactionHeight };
     } catch (e) {
       console.error(e);

@@ -14,12 +14,17 @@ const mode = process.env.NODE_ENV || 'production';
 const env = loadEnv(mode, process.cwd(), '');
 process.env = { ...process.env, ...env };
 
+const url = '/-/'+process.env.PUBLIC_NFT_CANISTER_ID+'/collection/-/marketplace';
+
 export default defineConfig({
   integrations: [react()],
   server: {
     port: parseInt(process.env.PUBLIC_DEV_SERVER_PORT),
   },
   tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
+  redirects: {
+    '/': url,
+  },
   vite: {
     plugins: [
       EnvironmentPlugin([
@@ -39,6 +44,10 @@ export default defineConfig({
     },
     resolve: {
       alias: {
+        '@dapp/common-candid/src/standard/origyn_nfr': resolve(
+          __dirname,
+          './src/packages/common/candid/src/standard/origyn_nfr.ts',
+        ),
         '@dapp/features-authentication': resolve(
           __dirname,
           './src/packages/features/authentication/src/index.tsx',
