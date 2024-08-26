@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppLibrary from '../components/apps/library/src/AppLibrary';
+---
+
+<Layout title="Library App">
+  <div id="root">
+    <AppLibrary client:only="react" />
+  </div>
+</Layout>

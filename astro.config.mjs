@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import { loadEnv } from 'vite';
-import svgr from "vite-plugin-svgr";
+import svgr from 'vite-plugin-svgr';
+import { createHtmlPlugin } from 'vite-plugin-html';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,17 +15,15 @@ const mode = process.env.NODE_ENV || 'production';
 const env = loadEnv(mode, process.cwd(), '');
 process.env = { ...process.env, ...env };
 
-const url = '/-/'+process.env.PUBLIC_NFT_CANISTER_ID+'/collection/-/marketplace';
+const url = `-/${process.env.PUBLIC_NFT_CANISTER_ID}/collection/-/`;
 
 export default defineConfig({
   integrations: [react()],
+  base: url,
   server: {
     port: parseInt(process.env.PUBLIC_DEV_SERVER_PORT),
   },
   tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
-  redirects: {
-    '/': url,
-  },
   vite: {
     plugins: [
       EnvironmentPlugin([
@@ -34,8 +33,9 @@ export default defineConfig({
         'PUBLIC_ICP_LEDGER_CANISTER_ID',
       ]),
       svgr({
-        exportAsDefault: true
-      })
+        exportAsDefault: true,
+      }),
+      createHtmlPlugin({}),
     ],
     define: {
       'process.env': process.env,
@@ -119,7 +119,7 @@ export default defineConfig({
             buffer: true,
           }),
         ],
-        external: ["src/testUtils/**/*.js"]
+        external: ['src/testUtils/**/*.js'],
       },
     },
   },

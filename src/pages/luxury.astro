@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppLuxury from '../components/apps/luxury/src/AppLuxury';
+---
+
+<Layout title="Luxury App">
+  <AppLuxury client:only="react" />
+</Layout>
