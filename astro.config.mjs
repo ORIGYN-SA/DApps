@@ -6,7 +6,6 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import EnvironmentPlugin from 'vite-plugin-environment';
 import { loadEnv } from 'vite';
 import svgr from 'vite-plugin-svgr';
-import { createHtmlPlugin } from 'vite-plugin-html';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,15 +14,14 @@ const mode = process.env.NODE_ENV || 'production';
 const env = loadEnv(mode, process.cwd(), '');
 process.env = { ...process.env, ...env };
 
-const url = `-/${process.env.PUBLIC_NFT_CANISTER_ID}/collection/-/`;
+const rgx = '/-/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/collection/-';
 
 export default defineConfig({
   integrations: [react()],
-  base: url,
+  tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
   server: {
     port: parseInt(process.env.PUBLIC_DEV_SERVER_PORT),
   },
-  tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
   vite: {
     plugins: [
       EnvironmentPlugin([
@@ -35,8 +33,20 @@ export default defineConfig({
       svgr({
         exportAsDefault: true,
       }),
-      createHtmlPlugin({}),
     ],
+    server: {
+      proxy: {
+        [`^${rgx}`]: {
+          target: 'http://localhost:9000',
+          changeOrigin: true,
+          rewrite: (path) => {
+            const newPath = path.replace(new RegExp(`^${rgx}`), '');
+
+            return newPath;
+          },
+        },
+      },
+    },
     define: {
       'process.env': process.env,
       global: 'globalThis',
