@@ -111,6 +111,7 @@ export function StartEscrowModal({
     }
   }, [open]);
 
+
   const onTokenChanged = (tokenSymbol?: any) => {
     const newToken = walletTokens[tokenSymbol];
     const newTotal = getDisplayTotal(toBigNumber(enteredAmount), newToken);
@@ -236,8 +237,7 @@ export function StartEscrowModal({
       return;
     }
 
-    if (!validateForm() || hasErrors()) {
-      showErrorMessage(ERROR.formHasErrors);
+    if (!validateForm()) {
       return;
     }
 
@@ -252,7 +252,6 @@ export function StartEscrowModal({
       // Add a tx fee to the total escrow amount (second tx fee).
       // This is needed to move the money from the deposit account to the escrow account.
       const amount = toSmallerUnit(toBigNumber(enteredAmount), token.decimals);
-
       const totalAmount = amount.plus(
         toBigNumber(token.fee).plus(toBigNumber(token.fee)).decimalPlaces(token.decimals),
       );
@@ -278,6 +277,7 @@ export function StartEscrowModal({
         totalAmount,
         token,
       );
+
       if (!sendTokensResult.result) {
         setError(true);
         setStatus(sendTokensResult.errorMessage as string);
@@ -289,6 +289,7 @@ export function StartEscrowModal({
       setCurrentProgressIndex(2);
       // Transfer tokens from the deposit account to the escrow account.
       // If this fails, the buyer can withdraw the tokens from Manage Deposits in Vault.
+
       const sendEscrowResponse = await sendEscrow(
         token,
         totalAmount,
@@ -297,7 +298,6 @@ export function StartEscrowModal({
         odc.ownerPrincipalId,
         odc.saleId,
       );
-
       if (!sendEscrowResponse.result) {
         setError(true);
         setStatus(sendEscrowResponse.errorMessage as string);
@@ -449,7 +449,7 @@ export function StartEscrowModal({
                         </span>
                       </>
                     )}
-                    {escrowType == 'BuyNow' ?   (
+                    {escrowType == 'BuyNow' ? (
                       <>
                         <br />
                         <span>Buy Now Price (in {token?.symbol})</span>
@@ -463,7 +463,9 @@ export function StartEscrowModal({
                         <Flex flexFlow="row" align="center" justify="space-between">
                           <b>{escrowType == 'Bid' ? 'Your bid' : 'Price'}</b>
                           <span style={{ color: theme.colors.SECONDARY_TEXT }}>
-                            Balance: {token?.symbol ? String(walletTokens[token?.symbol].balance) : 0} {token?.symbol}
+                            Balance:{' '}
+                            {token?.symbol ? String(walletTokens[token?.symbol].balance) : 0}{' '}
+                            {token?.symbol}
                           </span>
                         </Flex>
                         {escrowType == 'Bid' && (

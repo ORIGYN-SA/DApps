@@ -24,7 +24,6 @@ import {
   toSmallerUnit,
   toLargerUnit,
   toBigNumber,
-  getAccountId,
 } from "@dapp/utils";
 import { useUserMessages } from "@dapp/features-user-messages";
 import { VALIDATION } from "../constants";
@@ -150,12 +149,12 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         throw new Error("Token is undefined");
       }
       const total = toSmallerUnit(data.amount, token.decimals);
-      let address: string = data.recipientAddress;
+      let address: {
+        owner: Principal
+        subaccount: string
+      }= data.recipientAddress;
 
-      // if this is a principal id, convert to an account number
-      if (address.includes("-")) {
-        address = getAccountId(Principal.fromText(address));
-      }
+    
 
       debug.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
 

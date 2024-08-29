@@ -8,26 +8,22 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { toLargerUnit } from '@dapp/utils';
 import { ERROR } from '../constants';
+import { Principal } from '@dfinity/principal';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
   const { principal, actor } = useContext(AuthContext);
   const { showErrorMessage, showSuccessMessage, showUnexpectedErrorMessage } = useUserMessages();
-  //const [depositPrincipal, setDepositPrincipal] = useState();
   const [isLoading, setIsLoading] = useState(false);
-
   const [tokenBalances, setTokenBalances] = useState<any>({});
   const { activeTokens, refreshAllBalances } = useTokensContext();
   const context = useContext(PerpetualOSContext);
+  const principalId = Principal.fromText(context.canisterId);
 
   const withdraw = async (token) => {
     if (principal && refreshAllBalances && actor) {
       try {
         setIsLoading(true);
-
-        if (!token || !token.fee || !token.decimals) {
-          throw new Error('Token is undefined');
-        }
 
         const withdrawResp = await actor.sale_nft_origyn({
           withdraw: {
@@ -38,7 +34,7 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                   fee: [BigInt(activeTokens[token]?.fee || 0)],
                   decimals: BigInt(activeTokens[token]?.decimals || 0),
                   canister: activeTokens[token]?.canisterId,
-                  standard: { Ledger: null },
+                  standard: token === 'OGY' ? { ICRC1: null } : { Ledger: null },
                   symbol: activeTokens[token]?.symbol || '',
                 },
               },
@@ -93,15 +89,16 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         } else {
           const accountId =
             'deposit_info' in result.ok ? result.ok.deposit_info.account_id_text : '';
+
           const balances = Object.keys(activeTokens).map(async (tokenSymbol) => {
             const val = await getBalanceByAccount(
               context.isLocal,
               accountId,
               activeTokens[tokenSymbol],
+              principalId,
             );
             return { [tokenSymbol]: val };
           });
-
           Promise.all(Object.values(balances)).then((values) => {
             const b = values.reduce(
               (obj, item) =>
@@ -124,7 +121,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
       getDepositInfo();
     }
   }, [open, actor]);
-
   return (
     <div>
       <Modal isOpened={open} closeModal={() => handleClose(false)} size="md">
@@ -138,11 +134,13 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
           ) : (
             <>
               {Object.keys(activeTokens)
+
                 .filter(
                   (tokenSymbol) =>
                     tokenBalances[tokenSymbol]?.value && tokenBalances[tokenSymbol]?.decimals,
                 )
                 .map((tokenSymbol) => {
+                  console.log(activeTokens[tokenSymbol]);
                   return (
                     <div key={tokenSymbol} style={{ marginBottom: '16px' }}>
                       <Flex flexFlow="row" justify="space-around">
