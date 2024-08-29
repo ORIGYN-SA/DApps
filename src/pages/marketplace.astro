@@ -1,11 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AppMarketplace from '../components/apps/marketplace/src/AppMarketplace';
-
+import Render from '../bundlePages/marketplace/main'
 ---
 
-<Layout title="Marketplace App">
-  <div id="root">
-    <AppMarketplace client:only="react" />
-  </div>
-</Layout>
+<div>
+    <div id="root">
+        <Render client:only="react" />
+    </div>
+</div>

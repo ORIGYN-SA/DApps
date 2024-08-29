@@ -1,10 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AppNftData from '../components/apps/nft-data/src/AppNftData';
+import Render from '../bundlePages/nft-data/main'
 ---
 
-<Layout title="Nft-Data App">
-  <div id="root">
-    <AppNftData client:only="react" />
-  </div>
-</Layout>
+<div>
+    <div id="root">
+        <Render client:only="react" />
+    </div>
+</div>
