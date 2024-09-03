@@ -44,6 +44,8 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
             },
           },
         });
+
+        console.log('withdrawResp', withdrawResp);
         if ('err' in withdrawResp && activeTokens[token]?.decimals) {
           showErrorMessage(
             `${'Withdraw of '}${toLargerUnit(
@@ -140,7 +142,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                     tokenBalances[tokenSymbol]?.value && tokenBalances[tokenSymbol]?.decimals,
                 )
                 .map((tokenSymbol) => {
-                  console.log(activeTokens[tokenSymbol]);
                   return (
                     <div key={tokenSymbol} style={{ marginBottom: '16px' }}>
                       <Flex flexFlow="row" justify="space-around">

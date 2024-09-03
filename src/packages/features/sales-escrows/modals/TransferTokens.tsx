@@ -149,22 +149,61 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         throw new Error("Token is undefined");
       }
       const total = toSmallerUnit(data.amount, token.decimals);
-      let address: {
-        owner: Principal
-        subaccount: string
-      }= data.recipientAddress;
+      
 
+      console.log("recipientAddress", data.recipientAddress)
+
+
+
+// const adress: {
+//   owner?: Principal;
+//   subaccount: [string] | [];
+// } = {
+// owner: Principal,
+// subaccount: []
+// };
+
+let accountData: {
+    owner?: Principal;
+    subaccount: [string] | [];
+  } | undefined = undefined;
+
+
+      if (values.token === "ICP") { 
+        {
+          accountData = {
+          subaccount: data.recipientAddress
+          }
+        }
+      } else if (values.token === "OGY") {
+        {
+          accountData = {
+        owner: data.recipientAddress,
+        subaccount: []
+          }
+        }
+      }
     
+      debug.log(`Sending: ${total.toFixed()} ${token.symbol} to ${data.recipientAddress}`);
 
-      debug.log(`Sending: ${total.toFixed()} ${token.symbol} to ${address}`);
+
+      if (!accountData) {
+       
+          showErrorMessage("Token transfer failed");
+      return
+      }
 
       const result = await sendTransaction(
         activeWalletProvider,
         token,
-        address,
+        accountData,
         total,
         Number(data.memo)
       );
+
+      
+  console.log(accountData, 'ADRESS 1111111')
+
 
       setInProcess(false);
 
@@ -282,7 +321,11 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
               error={errors?.amount}
             />
             <br />
-            <span>Recipient Address</span>
+            <span>
+              {values.token === "OGY"
+              ? "Recipient Principal"
+              : "Recipient AccountID"}
+            </span>
             <TextInput
               name="recipientAddress"
               onChange={(e) => onChange("recipientAddress", e.target.value)}

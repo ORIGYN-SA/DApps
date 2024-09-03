@@ -12,32 +12,32 @@ import { getNftCollectionMeta, OrigynClient } from "@origyn/mintjs";
 // TODO: get APPS from NFT data
 const initialMenuItems: MenuItem[] = [
   {
-    href: "vault",
+    href: "vault.html",
     title: "Home",
     icon: Icons.Home,
   },
   {
-    href: "vault",
+    href: "vault.html",
     title: "Vault",
     icon: Icons.Wallet,
   },
   {
-    href: "nft-data",
+    href: "nft-data.html",
     title: "Certificates Data",
     icon: Icons.DataBrowse,
   },
   {
-    href: "library",
+    href: "library.html",
     title: "Certificates library",
     icon: Icons.Libraries,
   },
   {
-    href: "ledger",
+    href: "ledger.html",
     title: "Ledger",
     icon: Icons.TransactionIcon,
   },
   {
-    href: "marketplace",
+    href: "marketplace.html",
     title: "Marketplace",
     icon: Icons.Marketplace,
   },
@@ -71,7 +71,7 @@ export const Layout = ({ children }: LayoutProps) => {
           ).value.Array.reduce(
             (arr, val) => [
               ...arr,
-              val.Class.find(({ name }) => name === "library_id").value.Text,
+              val.Class.find(({ name }) => name === "library_id.html").value.Text,
             ],
             []
           );

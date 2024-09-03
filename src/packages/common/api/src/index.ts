@@ -229,9 +229,11 @@ export const useApi = () => {
     // separate from the second tx fee included in the total escrow amount.
     const genericErrorMessage = 'Failed to send tokens to deposit account';
     try {
+      
       const sendTransactionResult = await sendTransaction(
         activeWalletProvider,
         token,
+        //@ts-ignore // TODO: Type issue
         accountId,
         totalAmount,
       );
