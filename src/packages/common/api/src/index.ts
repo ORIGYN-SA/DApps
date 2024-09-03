@@ -22,6 +22,11 @@ export interface ActorResult<T> {
   errorMessage?: string;
 }
 
+export const uint8ArrayToHexString = (uint8Array) => Array.prototype.map
+// eslint-disable-next-line no-bitwise
+  .call(uint8Array, (byte) => `0${(byte & 0xff).toString(16)}`.slice(-2))
+  .join('');
+
 /** UTILITY FUNCTIONS */
 const getErrorText = (error: any, defaultMessage?: string) => {
   return error?.text || defaultMessage || 'Unexpected error';
@@ -185,8 +190,6 @@ export const useApi = () => {
       }
       // gets the deposit info for the account number of the caller
       const response = await actor.sale_info_nft_origyn({ deposit_info: [] });
-      debug.log('sale_info_nft_origyn response', response);
-
       if ('err' in response) {
         console.error(response.err);
         return { errorMessage: response.err?.[0] || genericErrorMessage };
@@ -199,14 +202,14 @@ export const useApi = () => {
 
       const result: M.SaleInfoResponse = response.ok;
 
-      let accountId: { owner?: Principal | undefined; subaccount: string } = { subaccount: '' };
-      if ('deposit_info' in result) {
-        accountId.subaccount = result.deposit_info.account_id_text;
-      }
+      const account = {
+        owner: result.deposit_info.account.principal,
+        subaccount: uint8ArrayToHexString(result.deposit_info.account.sub_account),
+      };
 
-      if (accountId) {
+      if (account) {
         return {
-          result: accountId,
+          result: account,
         };
       } else {
         return { errorMessage: 'Account ID not found in sale info' };
@@ -235,6 +238,7 @@ export const useApi = () => {
         accountId,
         totalAmount,
       );
+      console.log("sendTransactionResult", sendTransactionResult);
 
       if (sendTransactionResult?.err) {
         console.error(sendTransactionResult.err);
@@ -276,6 +280,8 @@ export const useApi = () => {
         throw new Error('Token is undefined');
       }
 
+      console.log(token);
+
       const escrowData: M.EscrowRequest = {
         token_id: tokenId,
         deposit: {
@@ -285,7 +291,7 @@ export const useApi = () => {
               fee: [BigInt(token.fee)],
               decimals: BigInt(token.decimals),
               canister: token.canisterId,
-              standard: { Ledger: null },
+              standard: { ICRC1: null }, // TODO use standard from the config for a token
               symbol: token.symbol,
             },
           },
@@ -297,7 +303,7 @@ export const useApi = () => {
         },
         lock_to_date: [],
       };
-      debug.log('escrowData', escrowData);
+      console.log('escrowData', escrowData);
 
       const response = await actor.sale_nft_origyn({
         escrow_deposit: escrowData,
@@ -311,7 +317,7 @@ export const useApi = () => {
 
       const result: M.ManageSaleResponse = response.ok;
       if ('escrow_deposit' in result && result.escrow_deposit.receipt) {
-        return { result: result.escrow_deposit.receipt };
+        return { result: { lock_to_date: [], sale_id: saleId ? [saleId] : [], account_hash: [], ...result.escrow_deposit.receipt } };
       } else {
         return {
           errorMessage: 'Escrow sent, but no escrow receipt was returned',
@@ -358,8 +364,8 @@ export const useApi = () => {
   };
 
   const createBid = async (
-    escrowReceipt: M.EscrowReceipt,
-    saleId: string,
+    escrowReceipt: any, // TODO: update .d.ts as well
+    // saleId: string,
   ): Promise<ActorResult<M.ManageSaleResponse>> => {
     const genericErrorMessage = 'Failed to create bid after tokens were sent to escrow';
 
@@ -369,15 +375,16 @@ export const useApi = () => {
       }
 
       // if the ODC is on auction, then this is a bid in the auction
-      const bidRequest: M.BidRequest = {
-        broker_id: [],
-        escrow_receipt: escrowReceipt,
-        sale_id: saleId,
+      console.log('escrowReceipt', escrowReceipt);
+      const bidRequest = {
+        config: [],
+        escrow_record: escrowReceipt,
       };
-      debug.log('bidRequest', bidRequest);
+      console.log('bidRequest', bidRequest, bidRequest.toString());
 
+      //@ts-ignore TODO: update .d.ts types
       const response = await actor.sale_nft_origyn({ bid: bidRequest });
-      debug.log('sale_nft_origyn response', response);
+      console.log('sale_nft_origyn response', response);
 
       if ('err' in response) {
         console.error(response.err);

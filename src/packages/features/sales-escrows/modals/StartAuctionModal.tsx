@@ -136,7 +136,7 @@ export function StartAuctionModal({
                   fee: [BigInt(token.fee)],
                   decimals: BigInt(token.decimals),
                   canister: walletTokens[saleToken]?.canisterId,
-                  standard: { Ledger: null },
+                  standard: { ICRC1: null }, // TODO use standard from token config here
                   symbol: walletTokens[saleToken]?.symbol,
                 },
               },

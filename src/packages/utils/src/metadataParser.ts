@@ -272,7 +272,7 @@ export function parseOdc(odcInfo: NFTInfoStable): OdcDataWithSale {
     canister: Principal.fromText(process.env.PUBLIC_OGY_LEDGER_CANISTER_ID),
     decimals: 8n,
     fee: 200000n,
-    standard: { Ledger: null },
+    standard: { ICRC1: null },
     symbol: 'OGY',
   };
   odc.tokenSymbol = odc.token.symbol;

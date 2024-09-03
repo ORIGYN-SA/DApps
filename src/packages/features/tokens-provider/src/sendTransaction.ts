@@ -32,9 +32,11 @@ const sendOGY = async (
   amount: BigNumber,
 ) => {
   try {
+
+    console.log("SEND", to);
     const response = await actor.icrc1_transfer({
       to: {
-        owner: to.owner,
+        owner: to?.owner,
         subaccount: [Buffer.from(to.subaccount, 'hex')],
       },
       fee: [],
@@ -126,7 +128,7 @@ export const sendTransaction = async (
           throw new Error("'from' parameter is required for EXT standard.");
         }
       case IdlStandard.OGY:
-        if (to.owner) {
+        if (to?.owner) {
           return { ok: await sendOGY(actor, {owner: to.owner, subaccount: to.subaccount}, amount) };
         }
         throw new Error('Invalid owner');

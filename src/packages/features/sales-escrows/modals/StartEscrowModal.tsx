@@ -161,6 +161,7 @@ export function StartEscrowModal({
 
   const validateForm = () => {
     if (!token || !token.decimals || !token.fee) {
+      console.log('Token is undefined');
       throw new Error('Token is undefined');
     }
 
@@ -172,8 +173,10 @@ export function StartEscrowModal({
     let validationMsg = validateTokenAmount(enteredAmount, token.decimals);
     if (validationMsg) {
       errors = { ...errors, amount: validationMsg };
+      console.log('validationMsg', validationMsg);
       return false;
     }
+    console.log('validationMsg');
     const amount = toBigNumber(enteredAmount);
     if (amount.isLessThanOrEqualTo(0)) {
       errors = {
@@ -208,9 +211,10 @@ export function StartEscrowModal({
       }
     }
 
-    errors = { ...errors, token: ERROR.tokenNotSelected };
+    // errors = { ...errors, token: ERROR.tokenNotSelected };
 
     // if there are any form errors, notify the user
+    console.log('validationMsg', errors, errors.amount || errors.token);
     if (errors.amount || errors.token) {
       setFormErrors(errors);
       return false;
@@ -228,6 +232,7 @@ export function StartEscrowModal({
 
     setCurrentProgressIndex(0);
 
+    console.log(validateForm(), activeWalletProvider, error);
     if (!retry && (isLoading || isTransacting)) {
       return;
     }
@@ -287,9 +292,9 @@ export function StartEscrowModal({
       const transactionHeight = sendTokensResult.result;
       setStatus(STATUS.sendingTokensEscrowAccount);
       setCurrentProgressIndex(2);
+
       // Transfer tokens from the deposit account to the escrow account.
       // If this fails, the buyer can withdraw the tokens from Manage Deposits in Vault.
-
       const sendEscrowResponse = await sendEscrow(
         token,
         totalAmount,
@@ -298,6 +303,7 @@ export function StartEscrowModal({
         odc.ownerPrincipalId,
         odc.saleId,
       );
+
       if (!sendEscrowResponse.result) {
         setError(true);
         setStatus(sendEscrowResponse.errorMessage as string);
@@ -334,6 +340,7 @@ export function StartEscrowModal({
       }
       setStatus('Escrow successfully sent.');
     } catch (e) {
+      console.log(e);
       if (e instanceof Error) {
         setError(true);
         setStatus(e.message);
