@@ -264,7 +264,7 @@ export const useApi = () => {
     tokenId: string,
     ownerPrincipalId: string,
     saleId?: string,
-  ): Promise<ActorResult<M.EscrowReceipt>> => {
+  ): Promise<ActorResult<any>> => { // TODO: fix .d.ts
     const genericErrorMessage =
       'Failed to send escrow. Withdraw your tokens from Manage Deposits in your Vault.';
 
@@ -279,8 +279,6 @@ export const useApi = () => {
       if (!token || !token.fee || !token.decimals) {
         throw new Error('Token is undefined');
       }
-
-      console.log(token);
 
       const escrowData: M.EscrowRequest = {
         token_id: tokenId,
@@ -365,7 +363,7 @@ export const useApi = () => {
 
   const createBid = async (
     escrowReceipt: any, // TODO: update .d.ts as well
-    // saleId: string,
+    saleId: string,
   ): Promise<ActorResult<M.ManageSaleResponse>> => {
     const genericErrorMessage = 'Failed to create bid after tokens were sent to escrow';
 
@@ -383,7 +381,7 @@ export const useApi = () => {
       console.log('bidRequest', bidRequest, bidRequest.toString());
 
       //@ts-ignore TODO: update .d.ts types
-      const response = await actor.sale_nft_origyn({ bid: bidRequest });
+      const response = await actor.sale_nft_origyn({ bid: { lock_to_date: [], sale_id: saleId ? [saleId] : [], account_hash: [], ...bidRequest} });
       console.log('sale_nft_origyn response', response);
 
       if ('err' in response) {
