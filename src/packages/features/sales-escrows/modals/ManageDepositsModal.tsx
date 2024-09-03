@@ -8,7 +8,6 @@ import { useDebug } from '@dapp/features-debug-provider';
 import { useUserMessages } from '@dapp/features-user-messages';
 import { toLargerUnit } from '@dapp/utils';
 import { ERROR } from '../constants';
-import { Principal } from '@dfinity/principal';
 
 const ManageDepositsModal = ({ open, handleClose }: any) => {
   const debug = useDebug();
@@ -18,7 +17,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
   const [tokenBalances, setTokenBalances] = useState<any>({});
   const { activeTokens, refreshAllBalances } = useTokensContext();
   const context = useContext(PerpetualOSContext);
-  const principalId = Principal.fromText(context.canisterId);
 
   const withdraw = async (token) => {
     if (principal && refreshAllBalances && actor) {
@@ -83,22 +81,22 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
           return;
         }
 
-        if ('err' in result) {
-          showErrorMessage(ERROR.tokenSaleInfoRetrieval, result.err);
-          return;
-        } else {
-          const accountId =
-            'deposit_info' in result.ok ? result.ok.deposit_info.account_id_text : '';
+        if ('ok' in result && 'deposit_info' in result.ok) {
+          const account = result.ok.deposit_info.account
 
+          console.log(account);
           const balances = Object.keys(activeTokens).map(async (tokenSymbol) => {
             const val = await getBalanceByAccount(
               context.isLocal,
-              accountId,
+              {
+                owner: account.principal,
+                subaccount: [account.sub_account],
+              },
               activeTokens[tokenSymbol],
-              principalId,
             );
             return { [tokenSymbol]: val };
           });
+          console.log(balances);
           Promise.all(Object.values(balances)).then((values) => {
             const b = values.reduce(
               (obj, item) =>
@@ -109,6 +107,9 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
             );
             setTokenBalances(b);
           });
+        } else {
+          showErrorMessage(ERROR.tokenSaleInfoRetrieval, 'err' in result && result.err);
+          return;
         }
       } catch (e) {
         showUnexpectedErrorMessage(e);
