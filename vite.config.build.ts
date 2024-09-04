@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 //@ts-ignore
 import { createHtmlPlugin } from 'vite-plugin-html'
 import {readFileSync} from "fs"
+import {extname} from "path"
 
 const VALIDATE_PRINCIPAL_RGX =
   '/-/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/collection/-';
@@ -27,7 +28,7 @@ export default defineConfig({
     createHtmlPlugin({
       inject: {
         data: {
-          InjectedHTML: readFileSync("src/index.html", "utf-8"),
+          InjectedHTML: readFileSync("src/index.html", "utf-8").replace('<slot />', '<script type="module" src="./main.tsx"></script>'),
         },
       },
     }),
@@ -43,9 +44,13 @@ export default defineConfig({
       [`^${VALIDATE_PRINCIPAL_RGX}`]: {
         target: `http://localhost:${PORT}`,
         changeOrigin: true,
-        rewrite: (path) =>
-          path.replace(new RegExp(`^${VALIDATE_PRINCIPAL_RGX}`), '') + '/index.html',
-      },
+        rewrite: (path) => {
+          const newPath = path.replace(new RegExp(`^${VALIDATE_PRINCIPAL_RGX}`), '');
+          if (extname(path) === ".html") {
+            return newPath.split(".")[0] + '/index.html'
+          }
+          return newPath + '/index.html'
+      }},
     },
   },
 });

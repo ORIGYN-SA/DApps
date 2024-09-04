@@ -1,10 +1,8 @@
 ---
 import Render from '../bundlePages/ledger/main';
-import Fonts from '../layouts/Fonts.astro';
+import HTMLTemplate from '../index.html';
 ---
 
-<Fonts />
-<div>
-  <div id="root"></div>
+<HTMLTemplate>
   <Render client:only="react" />
-</div>
+</HTMLTemplate>
