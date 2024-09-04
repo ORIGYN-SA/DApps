@@ -189,7 +189,7 @@ const VaultPage = () => {
         debug.log('ownedTokenIds', ownedTokenIds);
         const odcs = await getNftBatch(ownedTokenIds);
         // @ts-ignore
-        const parsedOdcs = parseOdcs(odcs); // origynNFTreference import problem
+        const parsedOdcs = parseOdcs(odcs); // TODO: origynNFTreference import problem
         debug.log('parsed odcs', parsedOdcs);
         dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });
         dispatch({ type: 'odcs', payload: parsedOdcs });
