@@ -2,5 +2,10 @@
   "name": "@dapp/common-candid",
   "version": "0.1.0",
   "description": "Candid files used within the dApps.",
-  "main": "src/index.ts"
+  "main": "src/index.ts",
+  "dependencies": {
+    "@dfinity/agent": "^0.15.5",
+    "@dfinity/candid": "^0.15.5",
+    "@dfinity/principal": "^0.15.5"
+  }
 }

@@ -63,7 +63,8 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
 
       const tokenIds = offersSent.map((offer) => offer.token_id);
       const odcs = await getNftBatch(tokenIds);
-      const parsedOdcs = parseOdcs(odcs);
+      //@ts-ignore
+      const parsedOdcs = parseOdcs(odcs); // OrigynNFTReference import problem
       const offersSentWithSaleData = parsedOdcs.map((odc: OdcDataWithSale, index) => {
         const offer = offersSent[index];
         return {

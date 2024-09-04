@@ -3,7 +3,9 @@
   "version": "0.2.1",
   "private": true,
   "scripts": {
-    "build": "rm -rf dist && tsc -b && for d in src/bundlePages/*/; do vite build -c \"$d/vite.config.ts\"; done",
+    "postinstall": "npm ci --prefix src/packages/common/candid",
+    "start:dapps": "npm run start",
+    "bootstrap_lerna": "lerna bootstrap",
     "test": "jest --env=./src/testUtils/index.js",
     "lint": "eslint ./src/**/*.tsx",
     "clear_jest": "jest --env=./src/testUtils/index.js --clearCache",

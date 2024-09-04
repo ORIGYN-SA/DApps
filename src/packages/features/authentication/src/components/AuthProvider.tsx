@@ -1,11 +1,14 @@
 import React, { createContext } from 'react';
 import { Principal } from '@dfinity/principal';
 import { ConnectDialog, useCanister, useConnect } from '@connect2ic/react';
-import { OrigynNftActor } from '@origyn/mintjs';
+//import { OrigynNftActor } from '@origyn/mintjs';
 import { Preloader } from '@dapp/features-components';
 import { AuthContextType } from '../types';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import type { origynNftReference } from '@dapp/common-candid';
+import { ActorSubclass } from '@dfinity/agent';
+
 
 export const AuthContext = createContext<AuthContextType>({
   loggedIn: false,
@@ -25,7 +28,7 @@ export const useAuth = (): AuthContextType => {
 
   const [actor] = useCanister('nft');
 
-  const origynNftActor: OrigynNftActor = actor as any;
+  const origynNftActor: ActorSubclass<origynNftReference._SERVICE> = actor as any;
 
   let principal = Principal.anonymous();
   if (principalId) {

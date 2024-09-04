@@ -37,7 +37,8 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
     canisters: {
       nft: {
         canisterId: context.canisterId,
-        idlFactory: origynNftIdl,
+        // @ts-ignore
+        idlFactory: origynNftIdl, // origynNFTReferebce import problem
       },
     },
     providers: [

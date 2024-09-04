@@ -63,7 +63,8 @@ export const BidsSentTab = ({ collection }: BidsSentTabProps) => {
         debug.log("activeNftHistory", activeNftHistory);
 
         const activeAttendedAuctionsTx = getTxOfActiveAttendedAuctions(
-          activeNftHistory,
+          //@ts-ignore
+          activeNftHistory, // origynNFTReference import problem
           principal
         );
         debug.log("activeAttendedAuctionsTx", activeAttendedAuctionsTx);
@@ -78,8 +79,8 @@ export const BidsSentTab = ({ collection }: BidsSentTabProps) => {
 
         const odcDataRaw = await getNftBatch(activeTokensIds);
         debug.log("odcDataRaw", odcDataRaw);
-
-        const parsedOdcs = parseOdcs(odcDataRaw);
+        //@ts-ignore
+        const parsedOdcs = parseOdcs(odcDataRaw); // origynNFTReference import problem
         debug.log("parsedOdcsBidSent", parsedOdcs);
         const parsedActiveBids = parsedOdcs
           .filter((odc: OdcDataWithSale) => odc.auctionOpen)
@@ -117,7 +118,8 @@ export const BidsSentTab = ({ collection }: BidsSentTabProps) => {
         debug.log("salesInfo", salesInfo);
         if (salesInfo) {
           const activeAttendedAuctions = await getActiveAttendedAuctions(
-            salesInfo,
+            //@ts-ignore
+            salesInfo, // origynNFTReference import problem
             principal
           );
           debug.log("activeAttendedAuctions", activeAttendedAuctions);

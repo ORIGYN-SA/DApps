@@ -85,9 +85,9 @@ const wicpMethod = async (
 
 const ogyMethod = async (
   isLocal: boolean,
-  principal: Principal,
   token: Token,
-  account?: string,
+  principal?: Principal,
+  account?: any,
 ): Promise<BalanceResponse> => {
   const actor = await getTokenActor(isLocal, token, IdlStandard.OGY);
 
@@ -98,12 +98,7 @@ const ogyMethod = async (
     });
     return { value: parseFloat(balance.toString()), decimals: 8 }; 
   } else {
-    const balance: any = await actor.icrc1_balance_of({
-      owner: principal,
-      subaccount: account
-        ? [Buffer.from(account, 'hex')]
-        : [],
-    });
+    const balance: any = await actor.icrc1_balance_of(account);
     return { value: parseFloat(balance.toString()), decimals: 8 };
   }
 };
@@ -121,15 +116,14 @@ export const getBalance = async (isLocal: boolean, principal: Principal, token: 
     case IdlStandard.XTC:
       return xtcMethod(isLocal, principal, token);
     case IdlStandard.OGY:
-      return ogyMethod(isLocal, principal, token);
+      return ogyMethod(isLocal, token, principal);
   }
 };
 
 export const getBalanceByAccount = async (
   isLocal: boolean,
-  account: string,
+  account: any,
   token: Token,
-  principal?: Principal,
 ) => {
   switch (token.standard) {
     case IdlStandard.ICP:
@@ -137,8 +131,6 @@ export const getBalanceByAccount = async (
     case IdlStandard.EXT:
       return extMethod(isLocal, account, token);
     case IdlStandard.OGY:
-      if (principal) {
-        return ogyMethod(isLocal, principal, token, account);
-      }
+      return ogyMethod(isLocal, token, undefined, account);
   }
 };

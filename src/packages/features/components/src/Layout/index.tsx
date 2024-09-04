@@ -66,18 +66,20 @@ export const Layout = ({ children }: LayoutProps) => {
       );
       getNftCollectionMeta().then((r: any) => {
         if (!("err" in r)) {
-          const data = r.ok.metadata[0].Class.find(
+          const data = r.ok.metadata[0]?.Class.find(
             ({ name }) => name === "library"
-          ).value.Array.reduce(
-            (arr, val) => [
+          )?.value?.Array.reduce(
+            (arr: any[], val: any) => [
               ...arr,
-              val.Class.find(({ name }) => name === "library_id.html").value.Text,
+              val.Class.find(({ name }: any) => name === "library_id.html").value.Text,
             ],
             []
           );
-          setMenuItems(
-            initialMenuItems.filter((item) => data.includes(item.href))
-          );
+          if (data) {
+            setMenuItems(
+              initialMenuItems.filter((item) => data.includes(item.href))
+            );
+          }
         }
       });
     };

@@ -55,7 +55,8 @@ export const BidsReceivedTab = ({ collection }: OffersTabProps) => {
       setIsLoading(true);
       const tokenIds = bidsReceived.map((offer) => offer.token_id);
       const odcs = await getNftBatch(tokenIds);
-      const parsedOdcs = parseOdcs(odcs);
+      //@ts-ignore
+      const parsedOdcs = parseOdcs(odcs); // OrigynNFTReference import problem
 
       const receivedActiveBids = parsedOdcs
         .map((odc: OdcDataWithSale, index) => {

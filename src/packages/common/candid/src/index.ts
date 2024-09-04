@@ -8,4 +8,5 @@ import phonebookIdl from './phonebook.did';
 import ogyIdl from './standard/ogy.did';
 import origynNftReference from './standard/origyn_nft_reference.did';
 
+//export type * from './standard/origyn_nft_reference.did';
 export { xtcIdl, extIdl, dip20Idl, wicpIdl, icpIdl, origynLedgerIdl, phonebookIdl, ogyIdl, origynNftReference };

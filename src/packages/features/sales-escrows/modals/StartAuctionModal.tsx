@@ -1,6 +1,7 @@
 import React from 'react';
 import { AuthContext } from '@dapp/features-authentication';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// @ts-ignore
 import * as Yup from 'yup';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { useTokensContext } from '@dapp/features-tokens-provider';
@@ -136,7 +137,7 @@ export function StartAuctionModal({
                   fee: [BigInt(token.fee)],
                   decimals: BigInt(token.decimals),
                   canister: walletTokens[saleToken]?.canisterId,
-                  standard: { Ledger: null },
+                  standard: token.symbol === "ICP" ? { Ledger: null } : {ICRC1: null},
                   symbol: walletTokens[saleToken]?.symbol,
                 },
               },

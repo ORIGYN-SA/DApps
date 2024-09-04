@@ -11,12 +11,13 @@ import M, {
   acceptEscrow as _acceptEscrow,
   rejectEscrow as _rejectEscrow,
   withdrawEscrow as _withdrawEscrow,
-  Account,
-  SaleInfoRequest,
 } from '@origyn/mintjs';
 import { OrigynClient } from '@origyn/mintjs';
 import { PerpetualOSContext } from '@dapp/features-context-provider';
 import { Actor } from '@dfinity/agent';
+import { Buffer } from 'buffer';
+import { origynNftReference } from '@dapp/common-candid';
+
 export interface ActorResult<T> {
   result?: T;
   errorMessage?: string;
@@ -56,7 +57,7 @@ export const useApi = () => {
   const context = useContext(PerpetualOSContext);
 
   OrigynClient.getInstance().init(!context.isLocal, context.canisterId, {
-    actor,
+    actor: actor as any,
   });
 
   const getNftCollectionMeta = async (): Promise<M.CollectionInfo> => {
@@ -78,7 +79,7 @@ export const useApi = () => {
     return response.ok;
   };
 
-  const getNftBatch = async (tokenIds: string[]): Promise<M.NFTInfoStable[]> => {
+  const getNftBatch = async (tokenIds: string[]): Promise<origynNftReference.NFTInfoStable[]> => {
     const response = await actor?.nft_batch_origyn(tokenIds);
     if (!response) {
       console.error('Failed to fetch metadata of tokens.');
@@ -99,7 +100,7 @@ export const useApi = () => {
       throw new Error('Actor is undefined.');
     }
 
-    const account: Account = { principal };
+    const account: origynNftReference.Account__1 = { principal };
     const response = await actor.balance_of_nft_origyn(account);
     debug.log('balance_of_nft_origyn response', response);
 
@@ -112,16 +113,15 @@ export const useApi = () => {
     }
   };
 
-  const getNftSaleInfo = async (): Promise<M.SaleInfoResponse> => {
+  const getNftSaleInfo = async (): Promise<origynNftReference.SaleInfoResponse> => {
     if (!actor) {
       throw new Error('Actor is undefined.');
     }
 
-    const active: SaleInfoRequest = {
+    const active: origynNftReference.SaleInfoRequest = {
       active: [],
     };
     const response = await actor.sale_info_nft_origyn(active);
-    debug.log('sale_info_nft_origyn response', response);
 
     if ('err' in response) {
       debug.log(response.err);
@@ -134,7 +134,7 @@ export const useApi = () => {
 
   const getNftsHistory = async (
     activeAttendedAuctions: M.AuctionStateStable[],
-  ): Promise<M.TransactionRecord[]> => {
+  ): Promise<origynNftReference.TransactionRecord[]> => {
     if (!actor) {
       throw new Error('Actor is undefined.');
     }
@@ -178,7 +178,7 @@ export const useApi = () => {
     }>
   > => {
     const genericErrorMessage = 'Failed to get deposit account';
-
+  
     try {
       if (!actor) {
         throw new Error('Actor is undefined.');
@@ -186,27 +186,26 @@ export const useApi = () => {
       // gets the deposit info for the account number of the caller
       const response = await actor.sale_info_nft_origyn({ deposit_info: [] });
       debug.log('sale_info_nft_origyn response', response);
-
+  
       if ('err' in response) {
         console.error(response.err);
         return { errorMessage: response.err?.[0] || genericErrorMessage };
       }
-
+  
       if (!('deposit_info' in response.ok)) {
         debug.log(response.ok);
         return { errorMessage: 'Deposit info not found in sale info' };
       }
-
-      const result: M.SaleInfoResponse = response.ok;
-
-      let accountId: { owner?: Principal | undefined; subaccount: string } = { subaccount: '' };
-      if ('deposit_info' in result) {
-        accountId.subaccount = result.deposit_info.account_id_text;
-      }
-
-      if (accountId) {
+      const result: origynNftReference.SaleInfoResponse & { deposit_info: any } = response.ok;
+  
+      const account = {
+        owner: result.deposit_info.account.principal,
+        subaccount: Buffer.from(result.deposit_info.account.sub_account).toString('hex'),
+      };
+  
+      if (account) {
         return {
-          result: accountId,
+          result: account,
         };
       } else {
         return { errorMessage: 'Account ID not found in sale info' };
@@ -218,8 +217,8 @@ export const useApi = () => {
 
   const sendTokensToDepositAccount = async (
     accountId: {
-      owner?: Principal;  
-      subaccount: string;
+      owner?: Principal;
+      subaccount: [string] | [];
     },
     totalAmount: BigNumber,
     token: Token,
@@ -229,15 +228,13 @@ export const useApi = () => {
     // separate from the second tx fee included in the total escrow amount.
     const genericErrorMessage = 'Failed to send tokens to deposit account';
     try {
-      
       const sendTransactionResult = await sendTransaction(
         activeWalletProvider,
         token,
-        //@ts-ignore // TODO: Type issue
         accountId,
         totalAmount,
       );
-
+      console.log('1', accountId.subaccount);
       if (sendTransactionResult?.err) {
         console.error(sendTransactionResult.err);
         if (sendTransactionResult.err.toString().includes('InsufficientFunds')) {
@@ -262,7 +259,8 @@ export const useApi = () => {
     tokenId: string,
     ownerPrincipalId: string,
     saleId?: string,
-  ): Promise<ActorResult<M.EscrowReceipt>> => {
+  ): Promise<ActorResult<any>> => {
+    // TODO: fix .d.ts
     const genericErrorMessage =
       'Failed to send escrow. Withdraw your tokens from Manage Deposits in your Vault.';
 
@@ -287,7 +285,7 @@ export const useApi = () => {
               fee: [BigInt(token.fee)],
               decimals: BigInt(token.decimals),
               canister: token.canisterId,
-              standard: { Ledger: null },
+              standard: token.symbol === 'ICP' ? { Ledger: null } : { ICRC1: null }, // TODO use standard from the config for a token { Ledger: null },
               symbol: token.symbol,
             },
           },
@@ -311,9 +309,16 @@ export const useApi = () => {
         return { errorMessage: genericErrorMessage };
       }
 
-      const result: M.ManageSaleResponse = response.ok;
+      const result: origynNftReference.ManageSaleResponse = response.ok;
       if ('escrow_deposit' in result && result.escrow_deposit.receipt) {
-        return { result: result.escrow_deposit.receipt };
+        return {
+          result: {
+            lock_to_date: [],
+            sale_id: saleId ? [saleId] : [],
+            account_hash: [],
+            ...result.escrow_deposit.receipt,
+          },
+        };
       } else {
         return {
           errorMessage: 'Escrow sent, but no escrow receipt was returned',
@@ -360,9 +365,9 @@ export const useApi = () => {
   };
 
   const createBid = async (
-    escrowReceipt: M.EscrowReceipt,
-    saleId: string,
-  ): Promise<ActorResult<M.ManageSaleResponse>> => {
+escrowReceipt: any, // TODO: update .d.ts as well
+    // saleId: string,
+  ): Promise<ActorResult<origynNftReference.ManageSaleResponse>> => {
     const genericErrorMessage = 'Failed to create bid after tokens were sent to escrow';
 
     try {
@@ -371,12 +376,13 @@ export const useApi = () => {
       }
 
       // if the ODC is on auction, then this is a bid in the auction
-      const bidRequest: M.BidRequest = {
-        broker_id: [],
-        escrow_receipt: escrowReceipt,
-        sale_id: saleId,
+      debug.log('escrowReceipt', escrowReceipt);
+      const bidRequest: origynNftReference.BidRequest = {
+        config: [],
+        escrow_record: escrowReceipt,
       };
-      debug.log('bidRequest', bidRequest);
+
+      debug.log('bidRequest', bidRequest, bidRequest.toString());
 
       const response = await actor.sale_nft_origyn({ bid: bidRequest });
       debug.log('sale_nft_origyn response', response);

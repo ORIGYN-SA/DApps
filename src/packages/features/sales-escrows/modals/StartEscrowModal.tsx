@@ -208,8 +208,6 @@ export function StartEscrowModal({
       }
     }
 
-    errors = { ...errors, token: ERROR.tokenNotSelected };
-
     // if there are any form errors, notify the user
     if (errors.amount || errors.token) {
       setFormErrors(errors);
@@ -273,7 +271,7 @@ export function StartEscrowModal({
       setStatus(STATUS.sendingTokensDepositAccount);
       setCurrentProgressIndex(1);
       const sendTokensResult = await sendTokensToDepositAccount(
-        depositAccountId,
+        {owner: depositAccountId.owner, subaccount: [depositAccountId.subaccount]},
         totalAmount,
         token,
       );
@@ -312,7 +310,7 @@ export function StartEscrowModal({
       if (odc.auctionOpen) {
         setStatus(STATUS.creatingBid);
         setCurrentProgressIndex(3);
-        const createBidResponse = await createBid(escrowReceipt, odc.saleId);
+        const createBidResponse = await createBid(escrowReceipt);
         if (!createBidResponse.result) {
           setError(true);
           setStatus(createBidResponse.errorMessage as string);
