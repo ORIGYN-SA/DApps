@@ -4,12 +4,12 @@ import { loadEnv } from 'vite';
 import mainConfig from './vite.config';
 
 const PORT = Number(process.env.PUBLIC_DEV_SERVER_PORT || 9000);
-const VALIDATE_PRINCIPAL_RGX = '/-/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/collection/-';
+const VALIDATE_PRINCIPAL_RGX =
+  '/-/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/collection/-';
 
 const mode = process.env.NODE_ENV || 'production';
 const env = loadEnv(mode, process.cwd(), '');
 process.env = { ...process.env, ...env };
-
 
 export default defineConfig({
   integrations: [react()],

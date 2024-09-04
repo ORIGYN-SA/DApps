@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { useDebug } from '@dapp/features-debug-provider';
 import { Principal } from '@dfinity/principal';
-import { sendTransaction, Token, useTokensContext } from '@dapp/features-tokens-provider';
+import { sendTransfer, Token, useTokensContext } from '@dapp/features-tokens-provider';
 import {
   Container,
   Flex,
@@ -129,14 +129,10 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
       }
       const total = toSmallerUnit(data.amount, token.decimals);
 
-      console.log('recipientAddress', data.recipientAddress);
-
-      let accountData:
-        | {
+      let accountData: {
             owner?: Principal;
             subaccount: [string] | [];
-          }
-        | undefined = undefined;
+          } | undefined = undefined;
 
       if (values.token === 'ICP') {
         {
@@ -160,13 +156,14 @@ const TransferTokensModal = ({ open, handleClose }: any) => {
         return;
       }
 
-      const result = await sendTransaction(
+      const result = await sendTransfer(
         activeWalletProvider,
         token,
         accountData,
         total,
         Number(data.memo),
       );
+
 
       setInProcess(false);
 

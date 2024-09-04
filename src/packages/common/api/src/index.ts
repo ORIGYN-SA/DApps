@@ -178,7 +178,7 @@ export const useApi = () => {
     }>
   > => {
     const genericErrorMessage = 'Failed to get deposit account';
-  
+
     try {
       if (!actor) {
         throw new Error('Actor is undefined.');
@@ -186,23 +186,23 @@ export const useApi = () => {
       // gets the deposit info for the account number of the caller
       const response = await actor.sale_info_nft_origyn({ deposit_info: [] });
       debug.log('sale_info_nft_origyn response', response);
-  
+
       if ('err' in response) {
         console.error(response.err);
         return { errorMessage: response.err?.[0] || genericErrorMessage };
       }
-  
+
       if (!('deposit_info' in response.ok)) {
         debug.log(response.ok);
         return { errorMessage: 'Deposit info not found in sale info' };
       }
       const result: origynNftReference.SaleInfoResponse & { deposit_info: any } = response.ok;
-  
+
       const account = {
         owner: result.deposit_info.account.principal,
         subaccount: Buffer.from(result.deposit_info.account.sub_account).toString('hex'),
       };
-  
+
       if (account) {
         return {
           result: account,
@@ -218,7 +218,7 @@ export const useApi = () => {
   const sendTokensToDepositAccount = async (
     accountId: {
       owner?: Principal;
-      subaccount: [string] | [];
+      subaccount: string;
     },
     totalAmount: BigNumber,
     token: Token,
@@ -275,7 +275,7 @@ export const useApi = () => {
         throw new Error('Token is undefined');
       }
 
-      const escrowData: M.EscrowRequest = {
+      const escrowData: origynNftReference.EscrowRequest = {
         token_id: tokenId,
         deposit: {
           token: {
@@ -284,7 +284,7 @@ export const useApi = () => {
               fee: [BigInt(token.fee)],
               decimals: BigInt(token.decimals),
               canister: token.canisterId,
-              standard: token.symbol === 'ICP' ? { Ledger: null } : { ICRC1: null }, // TODO use standard from the config for a token { Ledger: null },
+              standard: token.symbol === 'OGY' ? { ICRC1: null } : { Ledger: null },
               symbol: token.symbol,
             },
           },
@@ -296,6 +296,7 @@ export const useApi = () => {
         },
         lock_to_date: [],
       };
+      console.log('escrowData', escrowData);
       debug.log('escrowData', escrowData);
 
       const response = await actor.sale_nft_origyn({
@@ -364,8 +365,8 @@ export const useApi = () => {
   };
 
   const createBid = async (
-escrowReceipt: any, // TODO: update .d.ts as well
-    // saleId: string,
+    escrowReceipt: any,
+    //saleId: string,
   ): Promise<ActorResult<origynNftReference.ManageSaleResponse>> => {
     const genericErrorMessage = 'Failed to create bid after tokens were sent to escrow';
 

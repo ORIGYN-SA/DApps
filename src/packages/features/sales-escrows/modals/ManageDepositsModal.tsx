@@ -84,7 +84,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
         if ('ok' in result && 'deposit_info' in result.ok) {
           const account = result.ok.deposit_info.account
 
-          console.log(account);
           const balances = Object.keys(activeTokens).map(async (tokenSymbol) => {
             const val = await getBalanceByAccount(
               context.isLocal,
@@ -96,7 +95,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
             );
             return { [tokenSymbol]: val };
           });
-          console.log(balances);
           Promise.all(Object.values(balances)).then((values) => {
             const b = values.reduce(
               (obj, item) =>
@@ -141,7 +139,6 @@ const ManageDepositsModal = ({ open, handleClose }: any) => {
                     tokenBalances[tokenSymbol]?.value && tokenBalances[tokenSymbol]?.decimals,
                 )
                 .map((tokenSymbol) => {
-                  console.log(activeTokens[tokenSymbol]);
                   return (
                     <div key={tokenSymbol} style={{ marginBottom: '16px' }}>
                       <Flex flexFlow="row" justify="space-around">

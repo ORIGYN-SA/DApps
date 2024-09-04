@@ -137,7 +137,7 @@ export function StartAuctionModal({
                   fee: [BigInt(token.fee)],
                   decimals: BigInt(token.decimals),
                   canister: walletTokens[saleToken]?.canisterId,
-                  standard: token.symbol === "ICP" ? { Ledger: null } : {ICRC1: null},
+                  standard: token.symbol === "OGY" ? { ICRC1: null } : {Ledger: null},
                   symbol: walletTokens[saleToken]?.symbol,
                 },
               },

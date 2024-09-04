@@ -111,7 +111,6 @@ export function StartEscrowModal({
     }
   }, [open]);
 
-
   const onTokenChanged = (tokenSymbol?: any) => {
     const newToken = walletTokens[tokenSymbol];
     const newTotal = getDisplayTotal(toBigNumber(enteredAmount), newToken);
@@ -271,7 +270,7 @@ export function StartEscrowModal({
       setStatus(STATUS.sendingTokensDepositAccount);
       setCurrentProgressIndex(1);
       const sendTokensResult = await sendTokensToDepositAccount(
-        {owner: depositAccountId.owner, subaccount: [depositAccountId.subaccount]},
+        depositAccountId,
         totalAmount,
         token,
       );

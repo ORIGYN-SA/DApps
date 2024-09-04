@@ -26,14 +26,38 @@ const sendICP = async (actor: any, token: Token, to: string, amount: BigNumber, 
 // OGY
 const sendOGY = async (
   actor: any,
+  to: { owner: Principal; subaccount: string },
+  amount: BigNumber,
+) => {
+  try {
+    const response = await actor.icrc1_transfer({
+      to: {
+        owner: to?.owner,
+        subaccount: [Buffer.from(to.subaccount, 'hex')],
+      },
+      fee: [],
+      memo: [],
+      from_subaccount: [],
+      created_at_time: [],
+      amount: BigInt(amount.toString()),
+    });
+    return response.Ok.toString();
+  } catch (e) {
+    throw Error((e as any).message);
+  }
+};
+
+// OGY
+const transferOGY = async (
+  actor: any,
   to: { owner: Principal; subaccount: [string] | [] },
   amount: BigNumber,
 ) => {
   try {
     const response = await actor.icrc1_transfer({
       to: {
-        owner: to.owner,
-        subaccount: to.subaccount,
+        owner: to?.owner,
+        subaccount: to?.subaccount,
       },
       fee: [],
       memo: [],
@@ -99,7 +123,7 @@ export const sendTransaction = async (
   token: Token,
   to: {
     owner?: Principal;
-    subaccount: [string] | [];
+    subaccount: string;
   },
   amount: BigNumber,
   memo?: number,
@@ -111,7 +135,6 @@ export const sendTransaction = async (
   try {
     switch (token.standard) {
       case IdlStandard.ICP:
-        console.log('ICP', to.subaccount[0]);
         if (!to.subaccount[0]) {
           throw new Error('Invalid subaccount');
         }
@@ -139,9 +162,65 @@ export const sendTransaction = async (
           ok: await sendEXT(actor, token, to.subaccount[0], from, amount),
         };
       case IdlStandard.OGY:
-        if (to.owner) {
+        if (to?.owner) {
           return {
             ok: await sendOGY(actor, { owner: to.owner, subaccount: to.subaccount }, amount),
+          };
+        }
+        throw new Error('Invalid owner');
+    }
+  } catch (e: any) {
+    return { err: e.message };
+  }
+};
+
+export const sendTransfer = async (
+  activeWalletProvider: any,
+  token: Token,
+  to: {
+    owner?: Principal;
+    subaccount: [string] | [];
+  },
+  amount: BigNumber,
+  memo?: number,
+  from?: string,
+) => {
+  const ledgerCanisterId = token.canisterId;
+  const ledgerIdl = getIdl(token.standard);
+  const { value: actor } = await activeWalletProvider.createActor(ledgerCanisterId, ledgerIdl);
+  try {
+    switch (token.standard) {
+      case IdlStandard.ICP:
+        if (!to.subaccount[0]) {
+          throw new Error('Invalid subaccount');
+        }
+        return { ok: await sendICP(actor, token, to.subaccount[0], amount) };
+      case IdlStandard.WICP:
+      case IdlStandard.DIP20:
+        if (!to.subaccount[0]) {
+          throw new Error('Invalid subaccount');
+        }
+        return { ok: await sendWICP(actor, to.subaccount[0], amount) };
+
+      case IdlStandard.XTC:
+        if (!to.subaccount[0]) {
+          throw new Error('Invalid subaccount');
+        }
+        return { ok: await sendXTC(actor, to.subaccount[0], amount) };
+      case IdlStandard.EXT:
+        if (!from) {
+          throw new Error("'from' parameter is required for EXT standard.");
+        }
+        if (!to.subaccount[0]) {
+          throw new Error('Invalid subaccount');
+        }
+        return {
+          ok: await sendEXT(actor, token, to.subaccount[0], from, amount),
+        };
+      case IdlStandard.OGY:
+        if (to?.owner) {
+          return {
+            ok: await transferOGY(actor, { owner: to.owner, subaccount: to.subaccount }, amount),
           };
         }
         throw new Error('Invalid owner');
