@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "private": true,
   "scripts": {
-    "build": "rm -r dist && tsc -b && for d in src/bundlePages/*/; do vite build -c \"$d/vite.config.ts\"; done",
+    "build": "rm -rf dist && tsc -b && for d in src/bundlePages/*/; do vite build -c \"$d/vite.config.ts\"; done",
     "test": "jest --env=./src/testUtils/index.js",
     "lint": "eslint ./src/**/*.tsx",
     "clear_jest": "jest --env=./src/testUtils/index.js --clearCache",
@@ -64,12 +64,16 @@
     "ts-jest": "^28.0.7",
     "typescript": "^5.5.4",
     "util": "0.12.3",
-    "vite-plugin-svgr": "^4.2.0"
+    "vite-plugin-svgr": "^4.2.0",
+    "vite-plugin-environment": "1.1.3",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-singlefile": "^2.0.2",
+    "@astrojs/react": "^3.6.1",
+    "@astrojs/ts-plugin": "^1.9.1",
+    "astro": "^4.13.1"
   },
   "dependencies": {
     "@apimatic/json-bigint": "^1.2.0",
-    "@astrojs/react": "^3.6.1",
-    "@astrojs/ts-plugin": "^1.9.1",
     "@connect2ic/core": "^0.2.0-beta.23",
     "@connect2ic/react": "^0.2.0-beta.23",
     "@dfinity/agent": "^0.15.5",
@@ -84,7 +88,6 @@
     "@origyn/origyn-art-ui": "^1.2.35",
     "@origyn/perpetualos-context": "^0.2.1",
     "@testing-library/jest-dom": "^5.16.5",
-    "astro": "^4.13.1",
     "bignumber.js": "^9.1.2",
     "buffer-crc32": "^0.2.13",
     "crypto-js": "^4.1.1",
@@ -97,8 +100,6 @@
     "notistack": "^2.0.5",
     "react-json-to-table": "^0.1.7",
     "react-toastify": "^8.1.0",
-    "vite-plugin-environment": "1.1.3",
-    "vite-plugin-singlefile": "^2.0.2",
     "yup": "^0.32.11"
   },
   "browserslist": [

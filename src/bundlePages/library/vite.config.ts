@@ -7,6 +7,7 @@ const pageName = __dirname.split('/').pop() ?? '';
 
 export default defineConfig({
   ...mainConfig,
+  root: __dirname,
   build: {
     outDir: mainConfig.root ? join(mainConfig.root, 'dist', pageName) : undefined,
   },
