@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 import mainConfig from './vite.config';
 import react from '@vitejs/plugin-react';
+//@ts-ignore
 import { viteSingleFile } from 'vite-plugin-singlefile';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+//@ts-ignore
 import { createHtmlPlugin } from 'vite-plugin-html'
 import {readFileSync} from "fs"
 

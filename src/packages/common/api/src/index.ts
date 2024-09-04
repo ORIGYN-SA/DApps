@@ -234,7 +234,6 @@ export const useApi = () => {
         accountId,
         totalAmount,
       );
-      console.log('1', accountId.subaccount);
       if (sendTransactionResult?.err) {
         console.error(sendTransactionResult.err);
         if (sendTransactionResult.err.toString().includes('InsufficientFunds')) {

@@ -105,7 +105,6 @@ export const sendTransaction = async (
   memo?: number,
   from?: string,
 ) => {
-  console.log('2', typeof to.subaccount);
   const ledgerCanisterId = token.canisterId;
   const ledgerIdl = getIdl(token.standard);
   const { value: actor } = await activeWalletProvider.createActor(ledgerCanisterId, ledgerIdl);
@@ -141,7 +140,6 @@ export const sendTransaction = async (
         };
       case IdlStandard.OGY:
         if (to.owner) {
-          console.log('3', typeof to.subaccount);
           return {
             ok: await sendOGY(actor, { owner: to.owner, subaccount: to.subaccount }, amount),
           };
