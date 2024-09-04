@@ -171,7 +171,12 @@ export const useApi = () => {
     }
   };
 
-  const getDepositAccountNumber = async (): Promise<ActorResult<string>> => {
+  const getDepositAccountNumber = async (): Promise<
+    ActorResult<{
+      owner?: Principal;
+      subaccount: string;
+    }>
+  > => {
     const genericErrorMessage = 'Failed to get deposit account';
 
     try {
@@ -194,9 +199,9 @@ export const useApi = () => {
 
       const result: M.SaleInfoResponse = response.ok;
 
-      let accountId = '';
+      let accountId: { owner?: Principal | undefined; subaccount: string } = { subaccount: '' };
       if ('deposit_info' in result) {
-        accountId = result.deposit_info.account_id_text;
+        accountId.subaccount = result.deposit_info.account_id_text;
       }
 
       if (accountId) {
@@ -212,7 +217,10 @@ export const useApi = () => {
   };
 
   const sendTokensToDepositAccount = async (
-    accountId: string,
+    accountId: {
+      owner?: Principal;  
+      subaccount: string;
+    },
     totalAmount: BigNumber,
     token: Token,
   ): Promise<ActorResult<bigint>> => {
@@ -221,9 +229,11 @@ export const useApi = () => {
     // separate from the second tx fee included in the total escrow amount.
     const genericErrorMessage = 'Failed to send tokens to deposit account';
     try {
+      
       const sendTransactionResult = await sendTransaction(
         activeWalletProvider,
         token,
+        //@ts-ignore // TODO: Type issue
         accountId,
         totalAmount,
       );
@@ -265,7 +275,7 @@ export const useApi = () => {
       }
 
       if (!token || !token.fee || !token.decimals) {
-        throw new Error("Token is undefined");
+        throw new Error('Token is undefined');
       }
 
       const escrowData: M.EscrowRequest = {

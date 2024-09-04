@@ -177,7 +177,6 @@ const VaultPage = () => {
       fetchData();
     }
   };
-
   const fetchData = async () => {
     if (!actor) {
       return;
