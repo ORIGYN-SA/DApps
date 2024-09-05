@@ -38,7 +38,7 @@
       "@dapp/common-candid": ["./src/packages/common/candid/src/index.ts"],
       "@dapp/common-types": ["./src/packages/common/types/src/index.ts"],
       "@dapp/common-assets": ["./src/packages/common/assets/src/index.ts"],
-      "@dapp/candy-editor": ["./src/packages/candy_editor/src/index.ts"],
+      "@dapp/candy-editor": ["./src/packages/candy_editor/src/index.ts"]
     }
   },
   "exclude": ["./node_modules", ".git", "./packages/**/node_modules", "./dist/**/*.js"],

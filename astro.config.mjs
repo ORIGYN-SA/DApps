@@ -27,7 +27,6 @@ export default defineConfig({
           changeOrigin: true,
           rewrite: (path) => {
             const newPath = path.replace(new RegExp(`^${VALIDATE_PRINCIPAL_RGX}`), '');
-            console.log(newPath);
             return newPath;
           },
         },

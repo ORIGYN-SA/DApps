@@ -63,8 +63,7 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
 
       const tokenIds = offersSent.map((offer) => offer.token_id);
       const odcs = await getNftBatch(tokenIds);
-      //@ts-ignore
-      const parsedOdcs = parseOdcs(odcs); // TODO: OrigynNFTReference import problem
+      const parsedOdcs = parseOdcs(odcs);
       const offersSentWithSaleData = parsedOdcs.map((odc: OdcDataWithSale, index) => {
         const offer = offersSent[index];
         return {
@@ -108,6 +107,7 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
     // fetch, catch, parse, update state, catch
     try {
       if (principal) {
+        
         setIsLoading(true);
 
         let balances: BalanceResponse;
@@ -126,6 +126,7 @@ export const OffersSentTab = ({ collection }: OffersSentTabProps) => {
     } finally {
       setIsLoading(false);
     }
+    
   };
 
   useEffect(() => {

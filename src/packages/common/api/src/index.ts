@@ -79,7 +79,7 @@ export const useApi = () => {
     return response.ok;
   };
 
-  const getNftBatch = async (tokenIds: string[]): Promise<origynNftReference.NFTInfoStable[]> => {
+  const getNftBatch = async (tokenIds: string[]): Promise<M.NFTInfoStable[]> => {
     const response = await actor?.nft_batch_origyn(tokenIds);
     if (!response) {
       console.error('Failed to fetch metadata of tokens.');
@@ -113,7 +113,7 @@ export const useApi = () => {
     }
   };
 
-  const getNftSaleInfo = async (): Promise<origynNftReference.SaleInfoResponse> => {
+  const getNftSaleInfo = async (): Promise<M.SaleInfoResponse> => {
     if (!actor) {
       throw new Error('Actor is undefined.');
     }
@@ -134,7 +134,7 @@ export const useApi = () => {
 
   const getNftsHistory = async (
     activeAttendedAuctions: M.AuctionStateStable[],
-  ): Promise<origynNftReference.TransactionRecord[]> => {
+  ): Promise<M.TransactionRecord[]> => {
     if (!actor) {
       throw new Error('Actor is undefined.');
     }
@@ -296,7 +296,6 @@ export const useApi = () => {
         },
         lock_to_date: [],
       };
-      console.log('escrowData', escrowData);
       debug.log('escrowData', escrowData);
 
       const response = await actor.sale_nft_origyn({

@@ -1,7 +1,7 @@
 import type { Provider } from '@connect2ic/core';
 import { Principal } from '@dfinity/principal';
-// @ts-ignore
-import type { _SERVICE } from '@dapp/common-candid'; // export default service
+//@ts-ignore
+import type { _SERVICE } from '@dapp/common-candid'; 
 import { ActorSubclass } from '@dfinity/agent';
 
 export type AuthContextType = {

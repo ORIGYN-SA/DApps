@@ -40,7 +40,7 @@ Please document what each package is above.
 
 ## 🏁 Quickstart
 
-- Requires `node v18.17.1 or v20.3.0 or higher` in order to install all dependencies. (excluding any v19)
+- Requires `node v18.17.1 or v20.3.0 or higher (because of astro)` in order to install all dependencies. (excluding any v19)
 
 ```
 npm ci

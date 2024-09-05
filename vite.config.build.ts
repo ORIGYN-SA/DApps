@@ -6,9 +6,9 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 //@ts-ignore
-import { createHtmlPlugin } from 'vite-plugin-html'
-import {readFileSync} from "fs"
-import {extname} from "path"
+import { createHtmlPlugin } from 'vite-plugin-html';
+import { readFileSync } from 'fs';
+import { extname } from 'path';
 
 const VALIDATE_PRINCIPAL_RGX =
   '/-/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/collection/-';
@@ -28,14 +28,17 @@ export default defineConfig({
     createHtmlPlugin({
       inject: {
         data: {
-          InjectedHTML: readFileSync("src/index.html", "utf-8").replace('<slot />', '<script type="module" src="./main.tsx"></script>'),
+          InjectedHTML: readFileSync('src/index.html', 'utf-8').replace(
+            '<slot />',
+            '<script type="module" src="./main.tsx"></script>',
+          ),
         },
       },
     }),
   ],
   build: {
-    cssMinify: "lightningcss",
-    minify: "terser"
+    cssMinify: 'lightningcss',
+    minify: 'terser',
   },
   appType: 'custom',
   preview: {
@@ -46,11 +49,12 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => {
           const newPath = path.replace(new RegExp(`^${VALIDATE_PRINCIPAL_RGX}`), '');
-          if (extname(path) === ".html") {
-            return newPath.split(".")[0] + '/index.html'
+          if (extname(path) === '.html') {
+            return newPath.split('.')[0] + '/index.html';
           }
-          return newPath + '/index.html'
-      }},
+          return newPath + '/index.html';
+        },
+      },
     },
   },
 });

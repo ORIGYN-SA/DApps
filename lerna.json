@@ -1,5 +1,5 @@
 {
-  "packages": ["./src/components/**", "./src/packages/**"], 
+  "packages": ["./src/components/**", "./src/packages/**"],
   "npmClient": "npm",
   "version": "0.1.0"
 }
