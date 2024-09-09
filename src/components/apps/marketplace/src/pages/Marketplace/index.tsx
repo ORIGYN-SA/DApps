@@ -98,6 +98,7 @@ const Marketplace = () => {
       // get a list of all digital certificates in the collection
       const odcs = await getNftBatch(tokenIds);
       debug.log('odcs', odcs);
+      //@ts-ignore
       const parsedOdcs = parseOdcs(odcs);
       debug.log('parsed odcs', parsedOdcs);
       dispatch({ type: 'odcs', payload: parsedOdcs });

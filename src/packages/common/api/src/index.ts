@@ -79,7 +79,7 @@ export const useApi = () => {
     return response.ok;
   };
 
-  const getNftBatch = async (tokenIds: string[]): Promise<M.NFTInfoStable[]> => {
+  const getNftBatch = async (tokenIds: string[]): Promise<origynNftReference.NFTInfoStable[]> => {
     const response = await actor?.nft_batch_origyn(tokenIds);
     if (!response) {
       console.error('Failed to fetch metadata of tokens.');
@@ -113,7 +113,7 @@ export const useApi = () => {
     }
   };
 
-  const getNftSaleInfo = async (): Promise<M.SaleInfoResponse> => {
+  const getNftSaleInfo = async (): Promise<origynNftReference.SaleInfoResponse> => {
     if (!actor) {
       throw new Error('Actor is undefined.');
     }
@@ -134,7 +134,7 @@ export const useApi = () => {
 
   const getNftsHistory = async (
     activeAttendedAuctions: M.AuctionStateStable[],
-  ): Promise<M.TransactionRecord[]> => {
+  ): Promise<origynNftReference.TransactionRecord[]> => {
     if (!actor) {
       throw new Error('Actor is undefined.');
     }
@@ -258,8 +258,7 @@ export const useApi = () => {
     tokenId: string,
     ownerPrincipalId: string,
     saleId?: string,
-  ): Promise<ActorResult<any>> => {
-    // TODO: fix .d.ts
+  ): Promise<ActorResult<origynNftReference.EscrowRecord>> => {
     const genericErrorMessage =
       'Failed to send escrow. Withdraw your tokens from Manage Deposits in your Vault.';
 
@@ -364,8 +363,8 @@ export const useApi = () => {
   };
 
   const createBid = async (
-    escrowReceipt: any,
-    //saleId: string,
+    escrowReceipt: origynNftReference.EscrowRecord,
+    saleId: string,
   ): Promise<ActorResult<origynNftReference.ManageSaleResponse>> => {
     const genericErrorMessage = 'Failed to create bid after tokens were sent to escrow';
 
@@ -383,7 +382,9 @@ export const useApi = () => {
 
       debug.log('bidRequest', bidRequest, bidRequest.toString());
 
-      const response = await actor.sale_nft_origyn({ bid: bidRequest });
+      const response = await actor.sale_nft_origyn({
+        bid: { lock_to_date: [], sale_id: saleId ? [saleId] : [], account_hash: [], ...bidRequest },
+      });
       debug.log('sale_nft_origyn response', response);
 
       if ('err' in response) {

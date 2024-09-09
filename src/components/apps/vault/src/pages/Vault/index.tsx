@@ -188,6 +188,7 @@ const VaultPage = () => {
         const ownedTokenIds = vaultBalanceInfo.nfts || [];
         debug.log('ownedTokenIds', ownedTokenIds);
         const odcs = await getNftBatch(ownedTokenIds);
+        //@ts-ignore
         const parsedOdcs = parseOdcs(odcs);
         debug.log('parsed odcs', parsedOdcs);
         dispatch({ type: 'ownedItems', payload: ownedTokenIds.length || 0 });

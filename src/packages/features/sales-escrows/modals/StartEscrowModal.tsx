@@ -309,7 +309,7 @@ export function StartEscrowModal({
       if (odc.auctionOpen) {
         setStatus(STATUS.creatingBid);
         setCurrentProgressIndex(3);
-        const createBidResponse = await createBid(escrowReceipt);
+        const createBidResponse = await createBid(escrowReceipt, odc.saleId);
         if (!createBidResponse.result) {
           setError(true);
           setStatus(createBidResponse.errorMessage as string);

@@ -71,7 +71,7 @@ export const Layout = ({ children }: LayoutProps) => {
           )?.value?.Array.reduce(
             (arr: any[], val: any) => [
               ...arr,
-              val.Class.find(({ name }: any) => name === "library_id.html").value.Text,
+              val.Class.find(({ name }: any) => name === "library_id.html").value.Text, // value and Text could be undefined
             ],
             []
           );
