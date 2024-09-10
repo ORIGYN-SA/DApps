@@ -5,11 +5,11 @@
   "scripts": {
     "build": "rm -rf dist && tsc -b && for d in src/bundlePages/*/; do vite build -c \"$d/vite.config.ts\"; done",
     "test": "jest --env=./src/testUtils/index.js",
-    "lint": "eslint ./src/**/*.tsx",
+    "lint-staged": "eslint ./src/**/*.tsx",
     "clear_jest": "jest --env=./src/testUtils/index.js --clearCache",
     "dev": "astro dev --force",
     "preview": "vite preview -c vite.config.build.ts",
-    "precommit": "lint-staged && npm run check_err && npm run test",
+    "precommit": "npm run lint-staged && npm run check_err && npm run test",
     "prepare": "husky",
     "check_err": "astro check --minimumSeverity error",
     "bootstrap": "echo bootstrap script is deprecated!"
