@@ -41,6 +41,11 @@ const initialMenuItems: MenuItem[] = [
     title: "Marketplace",
     icon: Icons.Marketplace,
   },
+    {
+    href: "collections.html",
+    title: "ORIGYN Collections",
+    icon: Icons.Marketplace,
+  },
 ];
 
 export const Layout = ({ children }: LayoutProps) => {

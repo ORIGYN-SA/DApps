@@ -1,0 +1,22 @@
+{
+    "name": "@dapp/app-collections",
+    "version": "0.1.0",
+    "scripts": {
+      "build": "astro build",
+      "start": "astro dev --mode development --env development",
+      "start-ssl": "sudo astro dev --mode development --env development"
+    },
+    "dependencies": {
+      "@dapp/common-assets": "0.1.0",
+      "@dapp/common-candid": "0.1.0",
+      "@dapp/common-types": "0.1.0",
+      "@dapp/features-authentication": "0.1.0",
+      "@dapp/features-components": "0.1.0",
+      "@dapp/features-context-provider": "0.1.0",
+      "@dapp/features-sales-escrows": "0.1.0",
+      "@dapp/features-theme": "0.1.0",
+      "@dapp/features-tokens-provider": "0.1.0",
+      "@dapp/utils": "0.1.0"
+    }
+  }
+  
