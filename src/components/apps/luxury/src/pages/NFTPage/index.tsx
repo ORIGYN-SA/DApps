@@ -252,7 +252,7 @@ const NFTPage = () => {
               )}
             </>
           )}
-          <Accordion>
+            <Accordion>
             <span>GALLERY</span>
             <ArrowIcon />
           </Accordion>
