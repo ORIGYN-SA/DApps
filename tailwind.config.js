@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
   theme: {
     extend: {
       screens: {
@@ -24,13 +24,12 @@ module.exports = {
         // => @media (min-width: 3840px) { ... }
       },
       colors: {
-        white: "#FFFFFF",
-        slate: "#69737C",
-        mouse: "#E1E1E1",
-        charcoal: "#222526",
+        white: '#FFFFFF',
+        slate: '#69737C',
+        mouse: '#E1E1E1',
+        charcoal: '#222526',
       },
     },
   },
   plugins: [],
-}
-
+};

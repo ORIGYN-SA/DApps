@@ -1,45 +1,25 @@
-import React, { useState, useRef, useEffect } from 'react';
+// src/components/Bar/CheckboxBar.tsx
 
-interface Collection {
-  name: string;
-  checked: boolean;
+import React, { useEffect, useRef } from 'react';
+import { Collection } from '../../data';
+
+interface CheckboxBarProps {
+  collections: Collection[];
+  toggleCheckbox: (name: string) => void;
 }
 
-const initialCollections: Collection[] = [
-  { name: 'Art', checked: true },
-  { name: 'Precious Metal', checked: true },
-  { name: 'Diamond', checked: true },
-  { name: 'Jewelry', checked: true },
-  { name: 'Music', checked: true },
-  { name: 'Real Estate', checked: true },
-];
+const CheckboxBar: React.FC<CheckboxBarProps> = ({ collections, toggleCheckbox }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
 
-const CheckboxBar: React.FC = () => {
-  const [selectedItems, setSelectedItems] = useState<Collection[]>(initialCollections);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const selectedCount = collections.filter((item) => item.checked).length;
+  const allChecked = selectedCount === collections.length;
+  const buttonText = allChecked ? 'All collections' : `${selectedCount} collections selected`;
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Fonction pour basculer l'état d'une checkbox
-  const toggleCheckbox = (name: string) => {
-    const updatedItems = selectedItems.map((item) =>
-      item.name === name ? { ...item, checked: !item.checked } : item,
-    );
-    setSelectedItems(updatedItems);
-  };
-
-  // Fonction pour basculer l'ouverture du dropdown
   const toggleDropdown = () => {
-    setIsOpen((prev) => !prev);
+    setIsOpen(!isOpen);
   };
 
-  // Calculer le nombre de collections sélectionnées
-  const selectedCount = selectedItems.filter((item) => item.checked).length;
-  const allChecked = selectedCount === selectedItems.length;
-
-  // Texte du bouton principal
-  const buttonText = allChecked ? 'All collections' : `${selectedCount} collections selected`;
-
-  // Fonction pour fermer le dropdown lorsqu'on clique en dehors
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;
     if (dropdownRef.current && !dropdownRef.current.contains(target)) {
@@ -57,10 +37,13 @@ const CheckboxBar: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full  mx-auto" ref={dropdownRef}>
+    <div className="relative w-full mx-auto" ref={dropdownRef}>
       {/* Bouton Dropdown */}
       <div
-        onClick={toggleDropdown}
+        onClick={() => {
+          toggleCheckbox('toggleDropdown');
+          toggleDropdown();
+        }}
         className={`bg-white text-slate-700 font-semibold ${
           isOpen ? 'border-x border-t rounded-t-2xl' : 'border rounded-full'
         } border-gray-300 p-3 w-full cursor-pointer flex justify-between items-center`}
@@ -86,12 +69,13 @@ const CheckboxBar: React.FC = () => {
         </span>
       </div>
 
+      {/* Dropdown avec la liste des collections */}
       {isOpen && (
-        <ul className="absolute z-10 w-full bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-md overflow-y-auto">
-          {selectedItems.map((item) => (
+        <ul className="absolute z-10 w-full max-h-60  bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-md overflow-y-auto">
+          {collections.map((item) => (
             <li key={item.name} className="hover:bg-[#b7bbd51d]">
               <label className="flex justify-between items-center p-3 text-slate-700 w-full cursor-pointer">
-              <span>{item.name}</span>
+                <span>{item.name}</span>
                 {/* Checkbox native cachée */}
                 <input
                   type="checkbox"
@@ -102,7 +86,9 @@ const CheckboxBar: React.FC = () => {
                 {/* Checkbox personnalisée */}
                 <span
                   className={`w-5 h-5 flex items-center justify-center border-2 rounded mr-3 ${
-                    item.checked ? 'bg-mouse border-slate-500 border-2' : 'bg-mouse border-slate border-2'
+                    item.checked
+                      ? 'bg-mouse border-slate-500 border-2'
+                      : 'bg-mouse border-slate border-2'
                   }`}
                 >
                   {item.checked && (
