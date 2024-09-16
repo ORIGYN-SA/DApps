@@ -3,7 +3,7 @@ import '../index.css';
 import Header from './Header/Header';
 import Presentation from './Presentation/Presentation';
 import CheckBoxBar from './Bar/CheckBoxBar';
-import SearchSpecificCollectionBar from './Bar/SearchSpecificCollectionBar';
+import SearchBar from './Bar/SearchSpecificCollectionBar';
 
 const Home = () => {
   return (
@@ -12,7 +12,7 @@ const Home = () => {
       <Presentation />
       <div className="flex flex-row justify-between w-full px-[76px] space-x-12">
         <CheckBoxBar />
-        <SearchSpecificCollectionBar />
+        <SearchBar />
       </div>
     </div>
   );
