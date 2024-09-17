@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collection } from '../../data';
+import { Collection } from '../../data/index';
 import Pagination from '../Pagination/Pagination';
 
 interface CollectionsProps {
@@ -44,6 +44,7 @@ const Collections: React.FC<CollectionsProps> = ({
               className="w-full h-auto hover:bg-[#b7bbd51d] p-4 bg-white rounded-2xl border border-[#e1e1e1] flex flex-col justify-center items-start gap-4 row-span-2"
             >
               <img className="w-32 h-32 rounded-2xl" src={collection.image} alt={collection.name} />
+
               <div className="self-stretch h-[104px] flex-col justify-center items-start gap-2 flex">
                 <div className="self-stretch h-[72px] flex-col justify-center items-start flex">
                   <div className="self-stretch text-[#212425] text-[28px] font-bold font-['DM Sans']">

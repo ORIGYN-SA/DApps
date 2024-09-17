@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import '../index.css';
-import Header from './Header/Header';
-import Presentation from './Presentation/Presentation';
-import CheckboxBar from './Bar/CheckBoxBar';
-import SearchBar from './Bar/SearchBar';
-import Collections from './Collections/Collections';
-import { fetchCollectionsFromBackend, Collection } from '../data';
-
+import Header from '../components/Header/Header';
+import Presentation from '../components/Presentation/Presentation';
+import CheckboxBar from '../components/Bar/CheckBoxBar';
+import SearchBar from '../components/Bar/SearchBar';
+import Collections from '../components/Collections/Collections';
+import { fetchCollectionsFromBackend, Collection } from '../data/index';
 const Home: React.FC = () => {
   const [allCollections, setAllCollections] = useState<Collection[]>([]);
   const [filteredCollections, setFilteredCollections] = useState<Collection[]>([]);
@@ -16,10 +15,10 @@ const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const fetchCollections = async () => {
-    const response = await fetchCollectionsFromBackend(1, 100);
+    const response = await fetchCollectionsFromBackend(1, itemsPerPage);
     setAllCollections(response.collections);
     setFilteredCollections(response.collections);
-    setTotalPages(Math.ceil(response.collections.length / itemsPerPage));
+    setTotalPages(response.totalPages);
   };
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 // src/data.ts
 
-export interface Collection {
+interface Collection {
   name: string;
   checked: boolean;
   image: string;
@@ -8,12 +8,12 @@ export interface Collection {
   nftCount: number;
 }
 
-export interface BackendResponse {
+interface BackendResponse {
   collections: Collection[];
   totalPages: number;
 }
 
-export const fetchCollectionsFromBackend = async (
+const fetchCollectionsFromBackend = async (
   page: number,
   limit: number,
 ): Promise<BackendResponse> => {
