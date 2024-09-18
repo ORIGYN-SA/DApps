@@ -25,15 +25,15 @@ const Header: React.FC = () => {
   const location = useLocation();
 
   const links: Link[] = [
-    { title: 'Collections', href: '/' },
-    { title: 'DAOs', href: '/daos' },
+    { title: 'Collections', href: '#/' },
+    { title: 'DAOs', href: '#/daos' },
   ];
 
   return (
     <nav className="bg-white text-sm border-b border-mouse h-[90px] w-full flex flex-row items-center px-6">
       <div className="justify-center items-center flex-row flex w-full space-x-12">
         {links.map((link) => (
-          <LinkItem key={link.href} link={link} isActive={location.pathname === link.href} />
+          <LinkItem key={link.href} link={link} isActive={location.pathname === link.href.slice(1)} />
         ))}
       </div>
       <button className="bg-black text-white font-semibold px-5 py-3 text-base rounded-full hover:scale-105 duration-100 transition-all">

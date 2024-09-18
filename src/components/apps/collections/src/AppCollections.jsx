@@ -9,6 +9,7 @@ import { PerpetualOSContextProvider } from '@dapp/features-context-provider';
 import { SnackbarProvider } from 'notistack';
 import { GlobalStyle } from '@origyn/origyn-art-ui';
 import Home from './components/Home';
+import Daos from './components/Daos';
 
 const App = () => (
   <>
@@ -22,7 +23,8 @@ const App = () => (
                 <SnackbarProvider maxSnack={3}>
                   <Layout>
                     <Routes>
-                      <Route path="*" element={<Home />} />
+                      <Route path="/" element={<Home />} />
+                      <Route path="/daos" element={<Daos />} />
                     </Routes>
                   </Layout>
                 </SnackbarProvider>
