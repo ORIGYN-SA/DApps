@@ -79,6 +79,76 @@ export const fetchCollectionsFromBackend = async (
   }
 };
 
+export interface NFT {
+  id: string;
+  name: string;
+  collectionName: string;
+  image: string;
+  subtitle: string;
+  price: string;
+}
+
+export const fetchCollectionDetail = async (
+  collectionName: string | undefined,
+): Promise<{ nfts: NFT[] }> => {
+  try {
+    const agent = new HttpAgent({ host: 'https://ic0.app' });
+    const canisterId = 'io7gn-vyaaa-aaaak-qcbiq-cai';
+    const actor = Actor.createActor<_SERVICE>(idlFactory, {
+      agent,
+      canisterId,
+    });
+
+    // Récupère toutes les collections
+    const collectionResult = await actor.collection_nft_origyn([]);
+    if (!('ok' in collectionResult)) {
+      throw new Error(
+        `Erreur lors de la récupération de la collection : ${collectionResult.err.text}`,
+      );
+    }
+    const collectionInfo = collectionResult.ok;
+
+    // Vérifiez que token_ids[0] existe
+    if (
+      !collectionInfo.token_ids ||
+      collectionInfo.token_ids.length === 0 ||
+      !collectionInfo.token_ids[0]
+    ) {
+      return { nfts: [] };
+    }
+
+    const tokenIds: string[] = collectionInfo.token_ids[0];
+    const nftResults = await actor.nft_batch_origyn(tokenIds);
+
+    const nfts: NFT[] = nftResults
+      .map((nftResult, index) => {
+        if ('ok' in nftResult) {
+          const metadata = nftResult.ok.metadata;
+          const name = extractName(metadata);
+          const collection = extractName(metadata);
+          if (collection !== collectionName) return undefined;
+          return {
+            id: tokenIds[index],
+            name,
+            collectionName: collection,
+            image: 'https://via.placeholder.com/243x244',
+            subtitle: 'Subtitle if needed',
+            price: '12 OGY',
+          } as NFT;
+        } else {
+          console.error(`Erreur pour le token ${tokenIds[index]}: ${nftResult.err.text}`);
+          return undefined;
+        }
+      })
+      .filter((nft): nft is NFT => nft !== undefined);
+
+    return { nfts };
+  } catch (error) {
+    console.error('Erreur dans fetchCollectionDetail:', error);
+    return { nfts: [] };
+  }
+};
+
 const extractName = (metadata: any): string => {
   if ('Class' in metadata) {
     const properties = metadata.Class;

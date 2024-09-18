@@ -1,5 +1,4 @@
 // src/data.ts
-
 interface Collection {
   name: string;
   checked: boolean;
@@ -8,12 +7,26 @@ interface Collection {
   nftCount: number;
 }
 
+interface NFT {
+  id: string;
+  name: string;
+  collectionName: string;
+  image: string;
+  subtitle: string;
+  price: string;
+}
+
 interface BackendResponse {
   collections: Collection[];
   totalPages: number;
 }
 
-const fetchCollectionsFromBackend = async (
+interface NFTResponse {
+  nfts: NFT[];
+  totalPages: number;
+}
+
+export const fetchFakeCollections = async (
   page: number,
   limit: number,
 ): Promise<BackendResponse> => {
@@ -196,6 +209,182 @@ const fetchCollectionsFromBackend = async (
 
   return {
     collections: paginatedCollections,
+    totalPages,
+  };
+};
+
+export const fetchFakeNFTs = async (page: number, limit: number): Promise<NFTResponse> => {
+  // Simule les données des NFTs
+  const allNFT: NFT[] = [
+    {
+      id: 'nft-1',
+      name: 'Arctic Ice Bracelet',
+      collectionName: 'Jewelry',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'A unique piece of art',
+      price: '12 OGY',
+    },
+    {
+      id: 'nft-2',
+      name: 'The Midsummer Night Dream',
+      collectionName: 'Art',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Inspired by Shakespeare',
+      price: '556.76 ICP',
+    },
+    {
+      id: 'nft-3',
+      name: 'Magellanic Cloud Bracelet',
+      collectionName: 'Precious Metal',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Cosmic beauty captured',
+      price: '30 OGY',
+    },
+    {
+      id: 'nft-4',
+      name: 'Star Wars Treasures Ring',
+      collectionName: 'Collectible Coins',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'A galactic accessory',
+      price: '75 OGY',
+    },
+    {
+      id: 'nft-5',
+      name: 'Snow White Necklace',
+      collectionName: 'Antiques',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Timeless elegance',
+      price: '50 OGY',
+    },
+    {
+      id: 'nft-6',
+      name: 'Belle Epoque Earrings',
+      collectionName: 'Vintage Cars',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Classic charm',
+      price: '60 OGY',
+    },
+    {
+      id: 'nft-7',
+      name: 'Picture Perfect Ring',
+      collectionName: 'Photography',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Capturing moments',
+      price: '45 OGY',
+    },
+    {
+      id: 'nft-8',
+      name: 'La Preziosa Ring',
+      collectionName: 'Diamond',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Pure brilliance',
+      price: '120 OGY',
+    },
+    {
+      id: 'nft-9',
+      name: 'Moon and Sun Fun Ring',
+      collectionName: 'Jewelry',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Celestial harmony',
+      price: '85 OGY',
+    },
+    {
+      id: 'nft-10',
+      name: 'Vintage Car Model T',
+      collectionName: 'Vintage Cars',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'An antique masterpiece',
+      price: '150 OGY',
+    },
+    {
+      id: 'nft-11',
+      name: 'Rare Stamp 1840 Penny Black',
+      collectionName: 'Rare Stamps',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'First adhesive postage stamp',
+      price: '200 OGY',
+    },
+    {
+      id: 'nft-12',
+      name: 'Golden Wine Bottle',
+      collectionName: 'Wine Collection',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Aged to perfection',
+      price: '95 OGY',
+    },
+    {
+      id: 'nft-13',
+      name: 'Handcrafted Ceramic Vase',
+      collectionName: 'Ceramics',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Artisan craftsmanship',
+      price: '40 OGY',
+    },
+    {
+      id: 'nft-14',
+      name: 'Modern Art Piece',
+      collectionName: 'Modern Art',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Abstract expressionism',
+      price: '110 OGY',
+    },
+    {
+      id: 'nft-15',
+      name: 'Classic Comic Book',
+      collectionName: 'Comics',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'First edition superhero',
+      price: '70 OGY',
+    },
+    {
+      id: 'nft-16',
+      name: 'Historical Document',
+      collectionName: 'Historical Documents',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Signed by a famous figure',
+      price: '250 OGY',
+    },
+    {
+      id: 'nft-17',
+      name: 'Vintage Watch',
+      collectionName: 'Watches',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Timeless precision',
+      price: '80 OGY',
+    },
+    {
+      id: 'nft-18',
+      name: 'Digital Real Estate Plot',
+      collectionName: 'Virtual Real Estate',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Own a piece of the metaverse',
+      price: '300 OGY',
+    },
+    {
+      id: 'nft-19',
+      name: 'Sculpture of Liberty',
+      collectionName: 'Sculptures',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Symbol of freedom',
+      price: '130 OGY',
+    },
+    {
+      id: 'nft-20',
+      name: 'Handmade Leather Bag',
+      collectionName: 'Fashion',
+      image: 'https://via.placeholder.com/243x244',
+      subtitle: 'Elegance in every stitch',
+      price: '65 OGY',
+    },
+    // Ajoutez plus de NFTs si nécessaire
+  ];
+
+  const startIndex = (page - 1) * limit;
+  const paginatedNFTs = allNFT.slice(startIndex, startIndex + limit);
+  const totalPages = Math.ceil(allNFT.length / limit);
+
+  return {
+    nfts: paginatedNFTs,
     totalPages,
   };
 };
