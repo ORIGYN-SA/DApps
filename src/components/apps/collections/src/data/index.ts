@@ -7,7 +7,7 @@ export interface Collection {
   name: string;
   checked: boolean;
   image: string;
-  creator: string;
+  category_id: string;
   nftCount: number;
 }
 
@@ -29,13 +29,10 @@ export const fetchCollectionsFromBackend = async (
     });
 
     const logoResult = await actor.icrc7_logo();
-    console.log('logoResult', logoResult);
 
     const collectionResult = await actor.collection_nft_origyn([]);
     if (!('ok' in collectionResult)) {
-      throw new Error(
-        `Erreur lors de la récupération de la collection : ${collectionResult.err.text}`,
-      );
+      throw new Error(`Error while retrieving the collection: ${collectionResult.err.text}`);
     }
     const collectionInfo = collectionResult.ok;
 
@@ -43,26 +40,28 @@ export const fetchCollectionsFromBackend = async (
       return { collections: [], totalPages: 0 };
     }
 
-    const tokenIds = collectionInfo.token_ids[0];
+    // ! DEV ONLY :  limit added to the number of tokens to be fetched
+    const tokenIds = collectionInfo.token_ids[0].slice(0, 50);
 
     const nftResults = await actor.nft_batch_origyn(tokenIds);
+    console.log('nftResults', nftResults);
 
     const collections: Collection[] = nftResults
       .map((nftResult, index) => {
         if ('ok' in nftResult) {
           const metadata = nftResult.ok.metadata;
           const name = extractName(metadata);
-          const creator = extractCreator(metadata);
-          const nftCount = 1; // TODO
+          const category_id = extractCreator(metadata);
+          const nftCount = 1;
           return {
             name,
             checked: true,
             image: logoResult ? logoResult : '',
-            creator,
+            category_id,
             nftCount,
           };
         } else {
-          console.error(`Erreur pour le token ${tokenIds[index]}: ${nftResult.err.text}`);
+          console.error(`Error for the token ${tokenIds[index]}: ${nftResult.err.text}`);
           return undefined;
         }
       })
@@ -70,14 +69,12 @@ export const fetchCollectionsFromBackend = async (
 
     const totalPages = Math.ceil(collections.length / itemsPerPage);
 
-    console.log('collections', collections);
-
     return {
       collections,
       totalPages,
     };
   } catch (error) {
-    console.error('Erreur dans fetchCollectionsFromBackend:', error);
+    console.error('Error in fetchCollectionsFromBackend:', error);
     return { collections: [], totalPages: 0 };
   }
 };
@@ -119,7 +116,7 @@ const extractName = (metadata: any): string => {
       }
     }
   }
-  return 'Nom inconnu';
+  return 'Unknown';
 };
 
 const extractCreator = (metadata: any): string => {
@@ -152,5 +149,5 @@ const extractCreator = (metadata: any): string => {
       }
     }
   }
-  return 'Créateur inconnu';
+  return 'Unknown';
 };

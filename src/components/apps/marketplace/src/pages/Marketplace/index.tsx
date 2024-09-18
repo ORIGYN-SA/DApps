@@ -264,7 +264,7 @@ const Marketplace = () => {
                           <p>
                             <span className="secondary_color">Created by </span>
                             <span className="secondary_color">
-                              {collectionData.originatorPrincipalId || 'no creator name'}
+                              {collectionData.originatorPrincipalId || 'no category_id name'}
                             </span>
                           </p>
                           <br />

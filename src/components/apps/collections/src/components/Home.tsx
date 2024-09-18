@@ -13,12 +13,14 @@ const Home: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchCollections = async () => {
     const response = await fetchCollectionsFromBackend(1, itemsPerPage);
     setAllCollections(response.collections);
     setFilteredCollections(response.collections);
     setTotalPages(response.totalPages);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -62,6 +64,7 @@ const Home: React.FC = () => {
           totalPages={totalPages}
           setCurrentPage={setCurrentPage}
           setItemsPerPage={setItemsPerPage}
+          loading={loading}
         />
       </div>
     </div>
