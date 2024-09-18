@@ -4,6 +4,7 @@ import SearchBar from './Bar/SearchBar';
 import Pagination from './Pagination/Pagination';
 import { fetchCollectionDetail, NFT } from '../data/index';
 import { fetchFakeNFTs } from '../data';
+import NavBar from './NavBar/NavBar';
 
 const NFTCard = ({ nft }: { nft: NFT }) => (
   <div className="bg-white rounded-2xl border border-gray-300 flex flex-col">
@@ -60,44 +61,47 @@ const CollectionDetail: React.FC = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className="bg-gray-100 flex flex-col items-center w-full min-h-screen px-[30px]">
-      <div className=" bg-white rounded-[20px] border border-[#e1e1e1] mt-40 w-full relative">
-        {/* Header de la collection */}
-        <div className="flex flex-col items-center mb-10">
-          <img
-            className="w-40 h-40 rounded-full shadow-lg border-4 border-white absolute -top-[82px]"
-            src="https://via.placeholder.com/164x164"
-            alt={collectionName}
-          />
-          <div className="text-center mt-28">
-            <p className="text-[#69737c] text-[10px] font-medium  uppercase leading-[18px] tracking-widest">
-              {collectionName || 'Unknown'}
-            </p>
-            <h1 className="text-center text-[#212425] text-[28px] font-bold ">
-              {collectionName || 'Unknown'}
-            </h1>
-          </div>
-        </div>
-        <div className="flex flex-col sm:flex-row justify-between w-full px-20 mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
-          <SearchBar handleSearch={handleSearch} />
-        </div>
-
-        <div className="px-20 w-full flex flex-col items-center mt-10">
-          {/* Liste des NFT */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full">
-            {currentNFTs.map((nft) => (
-              <NFTCard key={nft.id} nft={nft} />
-            ))}
-          </div>
-
-          {/* Pagination */}
-          <div className="mt-6">
-            <Pagination
-              itemsPerPage={itemsPerPage}
-              totalPages={totalPages}
-              currentPage={currentPage}
-              paginate={paginate}
+    <div className="flex flex-row">
+      <NavBar />
+      <div className="bg-gray-100 flex flex-col items-center w-full min-h-screen px-[30px] ml-20">
+        <div className=" bg-white rounded-[20px] border border-[#e1e1e1] mt-40 w-full relative">
+          {/* Header de la collection */}
+          <div className="flex flex-col items-center mb-10">
+            <img
+              className="w-40 h-40 rounded-full shadow-lg border-4 border-white absolute -top-[82px]"
+              src="https://via.placeholder.com/164x164"
+              alt={collectionName}
             />
+            <div className="text-center mt-28">
+              <p className="text-[#69737c] text-[10px] font-medium  uppercase leading-[18px] tracking-widest">
+                {collectionName || 'Unknown'}
+              </p>
+              <h1 className="text-center text-[#212425] text-[28px] font-bold ">
+                {collectionName || 'Unknown'}
+              </h1>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row justify-between w-full px-20 mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
+            <SearchBar handleSearch={handleSearch} />
+          </div>
+
+          <div className="px-20 w-full flex flex-col items-center mt-10">
+            {/* Liste des NFT */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full">
+              {currentNFTs.map((nft) => (
+                <NFTCard key={nft.id} nft={nft} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            <div className="mt-6">
+              <Pagination
+                itemsPerPage={itemsPerPage}
+                totalPages={totalPages}
+                currentPage={currentPage}
+                paginate={paginate}
+              />
+            </div>
           </div>
         </div>
       </div>

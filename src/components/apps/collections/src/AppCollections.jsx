@@ -11,7 +11,6 @@ import { GlobalStyle } from '@origyn/origyn-art-ui';
 import CollectionsPage from './components/CollectionsPage';
 import CollectionDetail from './components/CollectionDetail';
 import Daos from './components/Daos';
-import Header from './components/Header/Header';
 
 const App = () => (
   <>
@@ -23,16 +22,11 @@ const App = () => (
             <AuthProvider>
               <TokensContextProvider>
                 <SnackbarProvider maxSnack={3}>
-                  <Layout>
-                    <div className="flex flex-col items-center w-full min-h-screen">
-                      <Header />
-                      <Routes>
-                        <Route path="/" element={<CollectionsPage />} />
-                        <Route path="/daos" element={<Daos />} />
-                        <Route path="/collection/:id" element={<CollectionDetail />} />
-                      </Routes>
-                    </div>
-                  </Layout>
+                  <Routes>
+                    <Route path="/" element={<CollectionsPage />} />
+                    <Route path="/daos" element={<Daos />} />
+                    <Route path="/collection/:id" element={<CollectionDetail />} />
+                  </Routes>
                 </SnackbarProvider>
               </TokensContextProvider>
             </AuthProvider>
