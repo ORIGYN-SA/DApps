@@ -4,7 +4,7 @@ import Header from '../components/Header/Header';
 import Presentation from '../components/Presentation/Presentation';
 import CheckboxBar from '../components/Bar/CheckBoxBar';
 import SearchBar from '../components/Bar/SearchBar';
-import Collections from '../components/Collections/Collections';
+import Collections from './Collections/CollectionsList';
 import { fetchCollectionsFromBackend, Collection } from '../data/index';
 const Daos: React.FC = () => {
   const [allCollections, setAllCollections] = useState<Collection[]>([]);
@@ -21,8 +21,7 @@ const Daos: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#FAFAFA] flex flex-col items-center w-full min-h-screen p-6">
-      <Header />
+    <div className="bg-[#FAFAFA] flex flex-col items-center w-full min-h-screen">
       <Presentation />
       <div className="flex flex-col sm:flex-row justify-between w-full px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
         <SearchBar handleSearch={handleSearch} />

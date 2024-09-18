@@ -1,39 +1,63 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-interface Link {
+interface LinkProps {
   title: string;
-  href: string;
+  to: string;
 }
 
-const LinkItem: React.FC<{ link: Link; isActive: boolean }> = ({ link, isActive }) => {
+const LinkItem: React.FC<{ link: LinkProps; isActive: boolean }> = ({ link, isActive }) => {
   return (
-    <a
-      href={link.href}
-      className={`items-center justify-around text-base font-semibold ${
+    <Link
+      to={link.to}
+      className={`flex items-center justify-center text-base font-semibold ${
         isActive
           ? 'text-black font-bold underline underline-offset-[37px]'
           : 'hover:underline hover:underline-offset-[37px]'
       }`}
     >
       {link.title}
-    </a>
+    </Link>
   );
 };
 
 const Header: React.FC = () => {
-  const location = useLocation();
+  const [currentPath, setCurrentPath] = useState<string>(
+    window.location.hash ? window.location.hash.slice(1) : '/'
+  );
 
-  const links: Link[] = [
-    { title: 'Collections', href: '#/' },
-    { title: 'DAOs', href: '#/daos' },
+  useEffect(() => {
+    const handleHashChange = () => {
+      const newPath = window.location.hash ? window.location.hash.slice(1) : '/';
+      setCurrentPath(newPath);
+      console.log('Current Path:', newPath);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
+  const links: LinkProps[] = [
+    { title: 'Collections', to: '/' },
+    { title: 'DAOs', to: '/daos' },
   ];
+
+  const isActiveLink = (linkTo: string) => {
+    if (linkTo === '/') {
+      return currentPath === '/' || currentPath.startsWith('/collection/');
+    }
+    return currentPath === linkTo;
+  };
 
   return (
     <nav className="bg-white text-sm border-b border-mouse h-[90px] w-full flex flex-row items-center px-6">
       <div className="justify-center items-center flex-row flex w-full space-x-12">
         {links.map((link) => (
-          <LinkItem key={link.href} link={link} isActive={location.pathname === link.href.slice(1)} />
+          <LinkItem key={link.to} link={link} isActive={isActiveLink(link.to)} />
         ))}
       </div>
       <button className="bg-black text-white font-semibold px-5 py-3 text-base rounded-full hover:scale-105 duration-100 transition-all">
