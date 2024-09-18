@@ -50,6 +50,7 @@ const CollectionsPage: React.FC = () => {
 
   return (
     <div className="bg-[#FAFAFA] flex flex-col items-center w-full min-h-screen">
+      <Header />
       <Presentation />
       <div className="flex flex-col sm:flex-row justify-between w-full px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
         <CheckboxBar collections={allCollections} toggleCheckbox={toggleCheckbox} />
