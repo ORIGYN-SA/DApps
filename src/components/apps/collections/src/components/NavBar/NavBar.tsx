@@ -1,4 +1,3 @@
-// src/components/NavBar.tsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ShopIcon from '../../assets/icons/ShopIcon';
@@ -43,7 +42,6 @@ const NavBar: React.FC = () => {
     return currentPath === linkTo;
   };
 
-  // Define NavItem inside NavBar
   const NavItem: React.FC<{ item: NavItemProps; isActive: boolean }> = ({ item, isActive }) => {
     const content = (
       <>
