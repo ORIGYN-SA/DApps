@@ -1,0 +1,28 @@
+type Collection = record {
+  name : opt text;
+  canister_id : principal;
+  is_promoted : bool;
+  category : opt vec nat64;
+};
+type GetCollectionsArgs = record { offset : nat64; limit : nat64 };
+type InitArgs = record {
+  test_mode : bool;
+  authorized_principals : vec principal;
+};
+type InsertCollectionArgs = record {
+  is_promoted : bool;
+  collection_canister_id : principal;
+};
+type InsertCollectionError = variant {
+  GenericOrigynNftError : text;
+  TargetCanisterIdNotOrigyn;
+  CollectionAlreadyExists;
+};
+type Result = variant { Ok : bool; Err : text };
+type Result_1 = variant { Ok : vec Collection; Err : text };
+type Result_2 = variant { Ok : bool; Err : InsertCollectionError };
+service : (InitArgs) -> {
+  add_authorised_principal : (principal) -> (Result);
+  get_collections : (GetCollectionsArgs) -> (Result_1) query;
+  insert_collection : (InsertCollectionArgs) -> (Result_2);
+}

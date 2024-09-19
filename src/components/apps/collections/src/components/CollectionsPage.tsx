@@ -4,11 +4,27 @@ import Header from './Header/Header';
 import Presentation from './Presentation/Presentation';
 import CheckboxBar from './Bar/CheckBoxBar';
 import SearchBar from './Bar/SearchBar';
-import { fetchCollectionsFromBackend, Collection } from '../data/index';
+import { fetchCollectionsList } from '../../src/data/index';
 import CollectionsList from './Collections/CollectionsList';
+import { Principal } from '@dfinity/principal';
+
+export interface Collection {
+  name: [] | [string];
+  canister_id: string;
+  is_promoted: boolean;
+  category: [] | [BigUint64Array | bigint[]];
+}
+
+export interface CollectionType extends Collection {
+  checked: boolean;
+  image?: string;
+  category_id?: string;
+  nftCount?: bigint;
+}
+
 const CollectionsPage: React.FC = () => {
-  const [allCollections, setAllCollections] = useState<Collection[]>([]);
-  const [filteredCollections, setFilteredCollections] = useState<Collection[]>([]);
+  const [allCollections, setAllCollections] = useState<CollectionType[]>([]);
+  const [filteredCollections, setFilteredCollections] = useState<CollectionType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -16,7 +32,7 @@ const CollectionsPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchCollections = async () => {
-    const response = await fetchCollectionsFromBackend(1, itemsPerPage);
+    const response = await fetchCollectionsList(0, itemsPerPage);
     setAllCollections(response.collections);
     setFilteredCollections(response.collections);
     setTotalPages(response.totalPages);
@@ -30,7 +46,10 @@ const CollectionsPage: React.FC = () => {
   useEffect(() => {
     const filtered = allCollections
       .filter((item) => item.checked)
-      .filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      .filter((item) => {
+        const name = item.name[0];
+        return name ? name.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+      });
 
     setFilteredCollections(filtered);
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
@@ -38,10 +57,17 @@ const CollectionsPage: React.FC = () => {
   }, [searchTerm, allCollections, itemsPerPage]);
 
   const toggleCheckbox = (name: string) => {
-    const updatedItems = allCollections.map((item) =>
-      item.name === name ? { ...item, checked: !item.checked } : item,
-    );
+    const updatedItems = allCollections.map((item) => {
+      const itemName = item.name[0];
+      return itemName === name ? { ...item, checked: !item.checked } : item;
+    });
+
     setAllCollections(updatedItems);
+
+    const filtered = updatedItems.filter((item) => item.checked);
+
+    setFilteredCollections(filtered);
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
   };
 
   const handleSearch = (term: string) => {

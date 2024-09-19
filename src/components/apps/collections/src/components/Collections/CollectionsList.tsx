@@ -1,11 +1,11 @@
-import React from 'react';
-import { Collection } from '../../data/index';
+import React, { useEffect } from 'react';
 import Pagination from '../Pagination/Pagination';
 import SkeletonItem from './SkeletonItem';
 import { Link } from 'react-router-dom';
+import { CollectionType } from '../CollectionsPage';
 
 interface CollectionsProps {
-  collections: Collection[];
+  collections: CollectionType[];
   currentPage: number;
   itemsPerPage: number;
   totalPages: number;
@@ -41,15 +41,13 @@ const Collections: React.FC<CollectionsProps> = ({
 
       <div className="w-full mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {loading
-          ? // Afficher les skeletons pendant le chargement
-            Array.from({ length: itemsPerPage }).map((_, index) => (
+          ? Array.from({ length: itemsPerPage }).map((_, index) => (
               <SkeletonItem key={index} isFirstItem={index === 0} />
             ))
-          : // Afficher les items réels après le chargement
-            currentItems.map((collection, index) => (
+          : currentItems.map((collection, index) => (
               <Link
                 to={`/collection/${collection.name}`}
-                key={collection.name}
+                key={collection.name[0] || index}
                 className={`block ${
                   index === 0
                     ? 'row-span-2 hover:bg-[#b7bbd51d]'
@@ -61,7 +59,7 @@ const Collections: React.FC<CollectionsProps> = ({
                     <img
                       className="w-32 h-32 rounded-2xl"
                       src={collection.image}
-                      alt={collection.name}
+                      key={collection.name[0] || 'Collection Image'}
                     />
                     <div className="self-stretch h-[104px] flex-col justify-center items-start gap-2 flex">
                       <div className="self-stretch text-[#212425] text-[28px] font-bold">
@@ -70,7 +68,7 @@ const Collections: React.FC<CollectionsProps> = ({
                       <div className="self-stretch justify-start items-center gap-4 inline-flex min-w-full">
                         <div className="px-2 py-1 bg-[#212425] rounded-[100px] justify-center items-center gap-2.5 flex">
                           <div className="text-white text-xs font-bold w-full">
-                            {collection.nftCount > 1
+                            {collection.nftCount !== undefined && collection.nftCount > 1
                               ? `${collection.nftCount} NFTs`
                               : `${collection.nftCount} NFT`}
                           </div>
@@ -87,7 +85,7 @@ const Collections: React.FC<CollectionsProps> = ({
                   <div className="flex p-2 items-center gap-4">
                     <img
                       src={collection.image}
-                      alt={collection.name}
+                      alt={collection.name[0] || 'Collection Image'}
                       className="h-28 w-28 rounded-2xl object-cover"
                     />
                     <div className="p-4">
@@ -97,7 +95,7 @@ const Collections: React.FC<CollectionsProps> = ({
                       <p className="text-[16px] font-bold leading-normal">{collection.name}</p>
                       <div className="h-6 px-2 py-1 bg-[#212425] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
                         <div className="text-white text-xs font-semibold">
-                          {collection.nftCount > 1
+                          {collection.nftCount !== undefined && collection.nftCount > 1
                             ? `${collection.nftCount} NFTs`
                             : `${collection.nftCount} NFT`}
                         </div>

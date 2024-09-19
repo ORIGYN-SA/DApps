@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import SearchBar from './Bar/SearchBar';
 import Pagination from './Pagination/Pagination';
-import { fetchCollectionDetail, NFT } from '../data/index';
+import { fetchCollectionDetail, NFT } from '../hooks/useCollectionsList';
 import { fetchFakeNFTs } from '../data';
 import NavBar from './NavBar/NavBar';
 

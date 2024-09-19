@@ -5,7 +5,7 @@ import Presentation from '../components/Presentation/Presentation';
 import CheckboxBar from '../components/Bar/CheckBoxBar';
 import SearchBar from '../components/Bar/SearchBar';
 import Collections from './Collections/CollectionsList';
-import { fetchCollectionsFromBackend, Collection } from '../data/index';
+import { fetchCollectionsFromBackend, Collection } from '../hooks/useCollectionsList';
 const Daos: React.FC = () => {
   const [allCollections, setAllCollections] = useState<Collection[]>([]);
   const [filteredCollections, setFilteredCollections] = useState<Collection[]>([]);
