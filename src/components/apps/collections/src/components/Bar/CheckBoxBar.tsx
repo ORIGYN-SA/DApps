@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { CollectionType } from '../CollectionsPage';
+import { CollectionType } from '../../types/global';
 
 interface CheckboxBarProps {
   collections: CollectionType[];
@@ -66,14 +66,14 @@ const CheckboxBar: React.FC<CheckboxBarProps> = ({ collections, toggleCheckbox }
       {isOpen && (
         <ul className="absolute z-10 w-full max-h-60  bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-md overflow-y-auto">
           {collections.map((item) => (
-            <li key={item.name[0]} className="hover:bg-[#b7bbd51d]">
+            <li key={item.name} className="hover:bg-[#b7bbd51d]">
               <label className="flex justify-between items-center p-3 text-slate-700 w-full cursor-pointer">
                 <span>{item.name}</span>
                 {/* Checkbox native cachée */}
                 <input
                   type="checkbox"
                   checked={item.checked}
-                  onChange={() => toggleCheckbox(item.name[0] as string)} // L'important ici
+                  onChange={() => toggleCheckbox(item.name)}
                   className="hidden"
                 />
                 {/* Checkbox personnalisée */}

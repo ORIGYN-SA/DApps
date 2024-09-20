@@ -1,10 +1,13 @@
+// components/Bar/SearchBar.tsx
+
 import React, { useState } from 'react';
 
 interface SearchBarProps {
   handleSearch: (term: string) => void;
+  placeholder?: string; // Ajout de la prop placeholder
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ handleSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, placeholder = "Search..." }) => { // Valeur par défaut
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ handleSearch }) => {
       <div className="bg-white text-slate-700 font-semibold border rounded-full border-gray-300 p-3 w-full flex items-center">
         <input
           type="text"
-          placeholder="Search for a specific collection"
+          placeholder={placeholder} // Utilisation de la prop placeholder
           value={searchTerm}
           onChange={handleInputChange}
           className="flex-grow outline-none bg-transparent"

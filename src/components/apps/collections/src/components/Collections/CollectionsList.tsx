@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Pagination from '../Pagination/Pagination';
 import SkeletonItem from './SkeletonItem';
 import { Link } from 'react-router-dom';
-import { CollectionType } from '../CollectionsPage';
+import { CollectionType } from '../../types/global';
 
 interface CollectionsProps {
   collections: CollectionType[];
@@ -32,6 +32,8 @@ const Collections: React.FC<CollectionsProps> = ({
     setCurrentPage(1);
   };
 
+  console.log('collections', collections);
+
   return (
     <div className="bg-white rounded-2xl mt-8 w-full p-8 border border-[#e1e1e1] shadow-md">
       <h3 className="font-semibold text-2xl leading-normal">All Collections</h3>
@@ -59,7 +61,7 @@ const Collections: React.FC<CollectionsProps> = ({
                     <img
                       className="w-32 h-32 rounded-2xl"
                       src={collection.image}
-                      key={collection.name[0] || 'Collection Image'}
+                      key={collection.name || 'Collection Image'}
                     />
                     <div className="self-stretch h-[104px] flex-col justify-center items-start gap-2 flex">
                       <div className="self-stretch text-[#212425] text-[28px] font-bold">
@@ -85,14 +87,14 @@ const Collections: React.FC<CollectionsProps> = ({
                   <div className="flex p-2 items-center gap-4">
                     <img
                       src={collection.image || 'https://via.placeholder.com/243x244'}
-                      alt={collection.name[0] || 'Collection Image'}
+                      alt={collection.name || 'Collection Image'}
                       className="h-28 w-28 rounded-2xl object-cover"
                     />
                     <div className="p-4">
                       <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
                         {collection.category_id}
                       </h3>
-                      <p className="text-[16px] font-bold leading-normal">{collection.name[0] || 'Unknown'}</p>
+                      <p className="text-[16px] font-bold leading-normal">{collection.name || 'Unknown'}</p>
                       <div className="h-6 px-2 py-1 bg-[#212425] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
                         <div className="text-white text-xs font-semibold">
                           {collection.nftCount !== undefined && collection.nftCount > 1
