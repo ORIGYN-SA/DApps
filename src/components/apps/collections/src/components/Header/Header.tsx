@@ -30,7 +30,6 @@ const Header: React.FC = () => {
     const handleHashChange = () => {
       const newPath = window.location.hash ? window.location.hash.slice(1) : '/';
       setCurrentPath(newPath);
-      console.log('Current Path:', newPath);
     };
 
     window.addEventListener('hashchange', handleHashChange);

@@ -54,7 +54,7 @@ const CollectionsPage: React.FC = () => {
     setFilteredCollections(filtered);
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
     setCurrentPage(1);
-  }, [searchTerm, allCollections, itemsPerPage]);
+  }, [searchTerm, itemsPerPage]);
 
   const toggleCheckbox = (name: string) => {
     const updatedItems = allCollections.map((item) => {

@@ -25,7 +25,7 @@ const App = () => (
                   <Routes>
                     <Route path="/" element={<CollectionsPage />} />
                     <Route path="/daos" element={<Daos />} />
-                    <Route path="/collection/:id" element={<CollectionDetail />} />
+                    <Route path="/collection/:canister_id" element={<CollectionDetail />} />
                   </Routes>
                 </SnackbarProvider>
               </TokensContextProvider>

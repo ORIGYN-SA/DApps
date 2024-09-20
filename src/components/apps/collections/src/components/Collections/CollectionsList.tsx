@@ -46,8 +46,8 @@ const Collections: React.FC<CollectionsProps> = ({
             ))
           : currentItems.map((collection, index) => (
               <Link
-                to={`/collection/${collection.name}`}
-                key={collection.name[0] || index}
+                to={`/collection/${collection.canister_id}`}
+                key={collection.canister_id}
                 className={`block ${
                   index === 0
                     ? 'row-span-2 hover:bg-[#b7bbd51d]'
@@ -84,7 +84,7 @@ const Collections: React.FC<CollectionsProps> = ({
                 ) : (
                   <div className="flex p-2 items-center gap-4">
                     <img
-                      src={collection.image}
+                      src={collection.image || 'https://via.placeholder.com/243x244'}
                       alt={collection.name[0] || 'Collection Image'}
                       className="h-28 w-28 rounded-2xl object-cover"
                     />
@@ -92,7 +92,7 @@ const Collections: React.FC<CollectionsProps> = ({
                       <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
                         {collection.category_id}
                       </h3>
-                      <p className="text-[16px] font-bold leading-normal">{collection.name}</p>
+                      <p className="text-[16px] font-bold leading-normal">{collection.name[0] || 'Unknown'}</p>
                       <div className="h-6 px-2 py-1 bg-[#212425] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
                         <div className="text-white text-xs font-semibold">
                           {collection.nftCount !== undefined && collection.nftCount > 1

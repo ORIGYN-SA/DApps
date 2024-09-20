@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import SearchBar from './Bar/SearchBar';
 import Pagination from './Pagination/Pagination';
-import { fetchCollectionDetail, NFT } from '../hooks/useCollectionsList';
-import { fetchFakeNFTs } from '../data';
+import { CollectionWithNFTs, fetchCollectionDetail, NFT } from '../data/index';
 import NavBar from './NavBar/NavBar';
 
 const NFTCard = ({ nft }: { nft: NFT }) => (
@@ -13,9 +11,8 @@ const NFTCard = ({ nft }: { nft: NFT }) => (
     </div>
     <div className="p-4 flex flex-col justify-between flex-grow">
       <div>
-        <p className="text-gray-500 text-xs uppercase tracking-wide">{nft.collectionName}</p>
+        {/* <p className="text-gray-500 text-xs uppercase tracking-wide">{nft.collectionName}</p> */}
         <h3 className="text-gray-900 text-base font-bold">{nft.name}</h3>
-        <p className="text-gray-500 text-sm">{nft.subtitle}</p>
       </div>
       <div className="mt-2">
         <span className="px-2 py-1 bg-gray-900 text-white text-xs font-bold rounded-full">
@@ -26,32 +23,58 @@ const NFTCard = ({ nft }: { nft: NFT }) => (
   </div>
 );
 
+// Composant Skeleton
+const NFTSkeleton = () => (
+  <div className="bg-white rounded-2xl border border-gray-300 flex flex-col animate-pulse">
+    <div className="h-56 rounded-t-2xl overflow-hidden bg-gray-300"></div>
+    <div className="p-4 flex flex-col justify-between flex-grow">
+      <div>
+        {/* <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div> */}
+        <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+      </div>
+      <div className="mt-2">
+        <span className="px-2 py-1 bg-gray-300 text-white text-xs font-bold rounded-full">
+          &nbsp;
+        </span>
+      </div>
+    </div>
+  </div>
+);
+
 const CollectionDetail: React.FC = () => {
-  const { collectionName } = useParams<{ collectionName: string }>();
+  const [collectionCanisterId, setCollectionCanisterId] = useState<string | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
-  const [nfts, setNfts] = useState<NFT[]>([]);
+  const [collection, setCollection] = useState<CollectionWithNFTs | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // État de chargement
   const itemsPerPage = 20;
 
   useEffect(() => {
-    // Récupère les détails de la collection basée sur le nom de la collection dans l'URL
+    const hash = window.location.hash;
+    const match = hash.match(/\/collection\/([^\/]+)/);
+    if (match) {
+      setCollectionCanisterId(match[1]);
+    }
+
     const fetchData = async () => {
-      const data = await fetchFakeNFTs(1, 20);
-      setNfts(data.nfts);
+      if (collectionCanisterId) {
+        setLoading(true); // Activer le chargement
+        const data = await fetchCollectionDetail(collectionCanisterId);
+        setCollection(data.collectionWithNFTs);
+        setLoading(false); // Désactiver le chargement
+      }
     };
     fetchData();
-  }, [collectionName]);
+  }, [collectionCanisterId]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
 
-  // Filtrer les NFT en fonction du terme de recherche
-  const filteredNfts = nfts.filter((nft) =>
-    nft.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredNfts =
+    collection?.nfts.filter((nft) => nft.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    [];
 
-  // Pagination
   const indexOfLastNFT = currentPage * itemsPerPage;
   const indexOfFirstNFT = indexOfLastNFT - itemsPerPage;
   const currentNFTs = filteredNfts.slice(indexOfFirstNFT, indexOfLastNFT);
@@ -69,16 +92,13 @@ const CollectionDetail: React.FC = () => {
           <div className="flex flex-col items-center mb-10">
             <img
               className="w-40 h-40 rounded-full shadow-lg border-4 border-white absolute -top-[82px]"
-              src="https://via.placeholder.com/164x164"
-              alt={collectionName}
+              src={collection?.logo[0] || 'https://via.placeholder.com/164x164'}
+              alt={collectionCanisterId}
             />
             <div className="text-center mt-28">
-              <p className="text-[#69737c] text-[10px] font-medium  uppercase leading-[18px] tracking-widest">
-                {collectionName || 'Unknown'}
+              <p className="text-[#222526] text-center font-dm-sans text-[28px] font-bold">
+                {loading ? 'Loading collection...' : collection?.name[0] || 'Unknown collection'}
               </p>
-              <h1 className="text-center text-[#212425] text-[28px] font-bold ">
-                {collectionName || 'Unknown'}
-              </h1>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-between w-full px-20 mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
@@ -88,20 +108,22 @@ const CollectionDetail: React.FC = () => {
           <div className="px-20 w-full flex flex-col items-center mt-10">
             {/* Liste des NFT */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full">
-              {currentNFTs.map((nft) => (
-                <NFTCard key={nft.id} nft={nft} />
-              ))}
+              {loading
+                ? Array.from({ length: itemsPerPage }, (_, index) => <NFTSkeleton key={index} />)
+                : currentNFTs.map((nft) => <NFTCard key={nft.id} nft={nft} />)}
             </div>
 
             {/* Pagination */}
-            <div className="mt-6">
-              <Pagination
-                itemsPerPage={itemsPerPage}
-                totalPages={totalPages}
-                currentPage={currentPage}
-                paginate={paginate}
-              />
-            </div>
+            {!loading && (
+              <div className="mt-6">
+                <Pagination
+                  itemsPerPage={itemsPerPage}
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  paginate={paginate}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

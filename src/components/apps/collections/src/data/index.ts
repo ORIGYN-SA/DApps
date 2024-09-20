@@ -1,8 +1,8 @@
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { idlFactory } from './canisters/collections/collection_index.did.js';
-import { Principal } from '@dfinity/principal';
 import { _SERVICE } from '../data/canisters/collections/collection_index.did';
 import { _SERVICE as _GOLD_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js';
+import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.ts';
 import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
 
 export interface CollectionType {
@@ -17,71 +17,9 @@ export interface BackendResponse {
   collections: CollectionType[];
   totalPages: number;
 }
-
-// export const fetchCollectionsFromBackend = async (
-//   page: number,
-//   itemsPerPage: number,
-// ): Promise<BackendResponse> => {
-//   try {
-//     const agent = new HttpAgent({ host: 'https://ic0.app' });
-//     const canisterId = 'io7gn-vyaaa-aaaak-qcbiq-cai';
-//     const actor = Actor.createActor<_SERVICE>(idlFactory, {
-//       agent,
-//       canisterId,
-//     });
-
-//     const logoResult = await actor.icrc7_logo();
-
-//     const collectionResult = await actor.collection_nft_origyn([]);
-//     if (!('ok' in collectionResult)) {
-//       throw new Error(`Error while retrieving the collection: ${collectionResult.err.text}`);
-//     }
-//     const collectionInfo = collectionResult.ok;
-
-//     if (!collectionInfo.token_ids || collectionInfo.token_ids.length === 0) {
-//       return { collections: [], totalPages: 0 };
-//     }
-
-//     // ! DEV ONLY :  limit added to the number of tokens to be fetched
-//     const tokenIds = collectionInfo.token_ids[0].slice(0, 50);
-
-//     const nftResults = await actor.nft_batch_origyn(tokenIds);
-//     console.log('nftResults', nftResults);
-
-//     const collections: CollectionType[] = nftResults
-//       .map((nftResult, index) => {
-//         if ('ok' in nftResult) {
-//           const metadata = nftResult.ok.metadata;
-//           const name = extractName(metadata);
-//           const category_id = extractCreator(metadata);
-//           const nftCount = 1;
-//           return {
-//             name,
-//             checked: true,
-//             image: logoResult ? logoResult : '',
-//             category_id,
-//             nftCount,
-//           };
-//         } else {
-//           console.error(`Error for the token ${tokenIds[index]}: ${nftResult.err.text}`);
-//           return undefined;
-//         }
-//       })
-//       .filter((item): item is CollectionType => item !== undefined);
-
-//     const totalPages = Math.ceil(collections.length / itemsPerPage);
-
-//     return {
-//       collections,
-//       totalPages,
-//     };
-//   } catch (error) {
-//     console.error('Error in fetchCollectionsFromBackend:', error);
-//     return { collections: [], totalPages: 0 };
-//   }
-// };
-
 export const fetchCollectionsList = async (offset: number, limit: number) => {
+  const startTime = performance.now();
+
   try {
     const agent = new HttpAgent({ host: 'https://ic0.app' });
     const canisterId = 'lnt3k-ciaaa-aaaaj-azsaq-cai';
@@ -107,6 +45,7 @@ export const fetchCollectionsList = async (offset: number, limit: number) => {
       const totalPages = Math.ceil(sortedCollections.length / limit);
 
       const canisterIds = sortedCollections.map((collection) => collection.canister_id);
+
       const additionalData = await fetchAllCollectionsData(canisterIds);
 
       const mergedCollections = sortedCollections.map((collection) => {
@@ -116,6 +55,10 @@ export const fetchCollectionsList = async (offset: number, limit: number) => {
           ...data,
         };
       });
+
+      const endTime = performance.now();
+      console.log(`Total fetch time: ${(endTime - startTime).toFixed(2)}ms`); // Temps total
+
       return { collections: mergedCollections, totalPages };
     } else {
       console.error('Error fetching collections:', collections.Err);
@@ -124,6 +67,9 @@ export const fetchCollectionsList = async (offset: number, limit: number) => {
   } catch (error) {
     console.error('Error in fetchCollectionsList:', error);
     return { collections: [], totalPages: 0 };
+  } finally {
+    const endTime = performance.now(); // Fin de la mesure du temps global, même en cas d'erreur
+    console.log(`Total fetch time (including errors): ${(endTime - startTime).toFixed(2)}ms`);
   }
 };
 
@@ -159,7 +105,6 @@ const fetchCollectionData = async (canisterId: string) => {
   }
 };
 
-// Fonction pour récupérer les données de tous les canisters de la liste
 const fetchAllCollectionsData = async (canisterIds: string[]) => {
   const promises = canisterIds.map(async (canisterId) => {
     return await fetchCollectionData(canisterId);
@@ -169,72 +114,104 @@ const fetchAllCollectionsData = async (canisterIds: string[]) => {
   return collectionsData.filter((data) => data !== null);
 };
 
+export interface CollectionWithNFTs {
+  name: [] | [string];
+  canister_id: string;
+  logo: [] | [string];
+  nfts: NFT[];
+}
+
 export interface NFT {
   id: string;
   name: string;
   collectionName: string;
   image: string;
-  subtitle: string;
   price: string;
 }
 
-// export const fetchCollectionDetail = async (
-//   collectionName: string | undefined,
-// ): Promise<{ nfts: NFT[] }> => {
-//   try {
-//     const agent = new HttpAgent({ host: 'https://ic0.app' });
-//     const canisterId = 'io7gn-vyaaa-aaaak-qcbiq-cai';
-//     const actor = Actor.createActor<_SERVICE>(idlFactory, {
-//       agent,
-//       canisterId,
-//     });
+const extractTokenName = (metadata: any): string => {
+  const nameField = metadata.Class.find((field: any) => field.name === 'id' && field.value?.Text);
+  return nameField?.value?.Text || 'Unknown';
+};
 
-//     // Récupère toutes les collections
-//     const collectionResult = await actor.collection_nft_origyn([]);
-//     if (!('ok' in collectionResult)) {
-//       throw new Error(
-//         `Erreur lors de la récupération de la collection : ${collectionResult.err.text}`,
-//       );
-//     }
-//     const collectionInfo = collectionResult.ok;
+const generateImageUrl = (canisterId: string, tokenName: string): string => {
+  return `https://prptl.io/-/${canisterId}/-/${tokenName}/preview`;
+};
 
-//     // Vérifiez que token_ids[0] existe
-//     if (
-//       !collectionInfo.token_ids ||
-//       collectionInfo.token_ids.length === 0 ||
-//       !collectionInfo.token_ids[0]
-//     ) {
-//       return { nfts: [] };
-//     }
+export const fetchCollectionDetail = async (
+  canisterId: string,
+): Promise<{ collectionWithNFTs: CollectionWithNFTs }> => {
+  try {
+    const startTime = performance.now();
+    const agent = new HttpAgent({ host: 'https://ic0.app' });
+    const actor = Actor.createActor<_GOLD_NFT_SERVICE>(goldIdlFactory, {
+      agent,
+      canisterId,
+    });
 
-//     const tokenIds: string[] = collectionInfo.token_ids[0];
-//     const nftResults = await actor.nft_batch_origyn(tokenIds);
+    const collectionResult = await actor.collection_nft_origyn([]);
+    if (!('ok' in collectionResult)) {
+      throw new Error(`Error while retrieving the collection: ${collectionResult.err.text}`);
+    }
+    const collectionInfo = collectionResult.ok;
 
-//     const nfts: NFT[] = nftResults
-//       .map((nftResult, index) => {
-//         if ('ok' in nftResult) {
-//           const metadata = nftResult.ok.metadata;
-//           const name = extractName(metadata);
-//           const collection = extractName(metadata);
-//           if (collection !== collectionName) return undefined;
-//           return {
-//             id: tokenIds[index],
-//             name,
-//             collectionName: collection,
-//             image: 'https://via.placeholder.com/243x244',
-//             subtitle: 'Subtitle if needed',
-//             price: '12 OGY',
-//           } as NFT;
-//         } else {
-//           console.error(`Erreur pour le token ${tokenIds[index]}: ${nftResult.err.text}`);
-//           return undefined;
-//         }
-//       })
-//       .filter((nft): nft is NFT => nft !== undefined);
+    if (
+      !collectionInfo.token_ids ||
+      collectionInfo.token_ids.length === 0 ||
+      !collectionInfo.token_ids[0]
+    ) {
+      return {
+        collectionWithNFTs: {
+          name: [],
+          canister_id: canisterId,
+          logo: [],
+          nfts: [],
+        },
+      };
+    }
 
-//     return { nfts };
-//   } catch (error) {
-//     console.error('Erreur dans fetchCollectionDetail:', error);
-//     return { nfts: [] };
-//   }
-// };
+    const tokenIds: string[] = collectionInfo.token_ids[0];
+    const nftResults = await actor.nft_batch_origyn(tokenIds);
+
+    const nfts: NFT[] = nftResults
+      .map((nftResult, index) => {
+        if ('ok' in nftResult) {
+          const metadata = nftResult.ok.metadata;
+
+          // Utilise la fonction extractTokenName pour récupérer le nom du token
+          const tokenName = extractTokenName(metadata);
+          const collection = canisterId;
+
+          // Génère l'URL de l'image
+          const imageUrl = generateImageUrl(canisterId, tokenName);
+
+          return {
+            id: tokenIds[index],
+            name: tokenName,
+            collectionName: collection,
+            image: imageUrl, // Utilise l'URL générée pour l'image
+            price: '12 OGY', // Exemple, à ajuster selon tes besoins
+          } as NFT;
+        } else {
+          console.error(`Erreur pour le token ${tokenIds[index]}: ${nftResult.err.text}`);
+          return undefined;
+        }
+      })
+      .filter((nft): nft is NFT => nft !== undefined);
+
+    const collectionWithNFTs: CollectionWithNFTs = {
+      name: collectionInfo.name || [],
+      logo: collectionInfo.logo || [],
+      canister_id: canisterId,
+      nfts,
+    };
+
+    const endTime = performance.now();
+    console.log(`Total fetch collection time: ${(endTime - startTime).toFixed(2)}ms`); // Temps total
+
+    return { collectionWithNFTs };
+  } catch (error) {
+    console.error('Erreur dans fetchCollectionDetail:', error);
+    return { collectionWithNFTs: { name: [], canister_id: canisterId, logo: [], nfts: [] } };
+  }
+};
