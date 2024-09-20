@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import '../index.css';
-import Header from '../components/Header/Header';
-import Presentation from '../components/Presentation/Presentation';
-import CheckboxBar from '../components/Bar/CheckBoxBar';
-import SearchBar from '../components/Bar/SearchBar';
-import Collections from './Collections/CollectionsList';
-import { fetchCollectionsFromBackend, Collection } from '../hooks/useCollectionsList';
+import '../../index.css';
+import Header from '../../components/Header/Header';
+import Presentation from '../../components/Presentation/Presentation';
+import CheckboxBar from '../../components/Bar/CheckBoxBar';
+import SearchBar from '../../components/Bar/SearchBar';
+import Collections from './../Collections/CollectionsList';
+import { CollectionType } from '../../types/global';
+
 const Daos: React.FC = () => {
-  const [allCollections, setAllCollections] = useState<Collection[]>([]);
-  const [filteredCollections, setFilteredCollections] = useState<Collection[]>([]);
+  const [allCollections, setAllCollections] = useState<CollectionType[]>([]);
+  const [filteredCollections, setFilteredCollections] = useState<CollectionType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
   const [totalPages, setTotalPages] = useState<number>(1);
