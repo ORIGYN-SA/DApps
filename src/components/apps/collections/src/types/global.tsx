@@ -19,6 +19,8 @@ export interface CollectionAdditionalData {
   nftCount?: bigint;
 }
 
+
+
 export interface CollectionWithNFTs {
   name: [] | [string];
   canister_id: string;

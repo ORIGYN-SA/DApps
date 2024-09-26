@@ -5,10 +5,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import { PerpetualOSContextProvider } from '@dapp/features-context-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import CollectionsPage from './components/CollectionsPage';
-import CollectionDetail from './components/CollectionDetail';
-import Daos from './components/Daos';
-import NFTPage from './components/NFTPage';
+import CollectionsPage from './components/Pages/CollectionsList';
+import CollectionDetail from './components/Pages/CollectionDetail';
+import Daos from './components/Pages/Daos';
+import NFTPage from './components/Pages/NFTPage';
 
 const queryClient = new QueryClient();
 

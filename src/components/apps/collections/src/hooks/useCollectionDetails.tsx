@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
 import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js'; // Assurez-vous que l'extension est .js
-import { CollectionWithNFTs, NFT } from '../types/global';
+import { CollectionWithNFTs, NFT } from '../types/global.js';
 
 const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWithNFTs> => {
   try {
@@ -84,7 +84,7 @@ const generateImageUrl = (canisterId: string, tokenName: string): string => {
   return `https://prptl.io/-/${canisterId}/-/${tokenName}/preview`;
 };
 
-export const useCollectionDetail = (canisterId: string) => {
+export const useCollectionDetails = (canisterId: string) => {
   return useQuery({
     queryKey: ['collectionDetail', canisterId],
     queryFn: () => fetchCollectionDetail(canisterId),

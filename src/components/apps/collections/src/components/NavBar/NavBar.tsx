@@ -74,7 +74,7 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <div className="w-[88px] h-full fixed">
+    <div className="w-[88px] h-full fixed pt-10">
       <div className="w-full h-full px-4 py-10 bg-white border-r border-[#e1e1e1] flex flex-col items-center justify-start">
         {/* Top Section */}
         <Link to="/" className="">

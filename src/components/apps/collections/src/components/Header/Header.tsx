@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ConnectWallet from '../Buttons/ConnectWallet';
 
 interface LinkProps {
   title: string;
@@ -23,7 +24,7 @@ const LinkItem: React.FC<{ link: LinkProps; isActive: boolean }> = ({ link, isAc
 
 const Header: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string>(
-    window.location.hash ? window.location.hash.slice(1) : '/'
+    window.location.hash ? window.location.hash.slice(1) : '/',
   );
 
   useEffect(() => {
@@ -53,15 +54,18 @@ const Header: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white text-sm border-b border-mouse h-[90px] w-full flex flex-row items-center px-6">
-      <div className="justify-center items-center flex-row flex w-full space-x-12">
+    <nav className="bg-white text-sm border-b border-gray-200 h-[90px] w-full grid grid-cols-3 items-center px-6">
+      {/* Left Column - Empty*/}
+      <div className="flex-grow flex justify-start space-x-12"></div>
+      <div className="flex-grow flex justify-center space-x-12">
         {links.map((link) => (
           <LinkItem key={link.to} link={link} isActive={isActiveLink(link.to)} />
         ))}
       </div>
-      <button className="bg-black text-white font-semibold px-5 py-3 text-base rounded-full hover:scale-105 duration-100 transition-all">
-        Connexion
-      </button>
+      {/* Right Column */}
+      <div className="flex items-center justify-end">
+        <ConnectWallet />
+      </div>
     </nav>
   );
 };

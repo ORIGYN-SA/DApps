@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import '../index.css';
-import Header from './Header/Header';
-import Presentation from './Presentation/Presentation';
-import CheckboxBar from './Bar/CheckBoxBar';
-import SearchBar from './Bar/SearchBar';
-import CollectionsList from './Collections/CollectionsList';
-import { useGetCollectionsList } from '../hooks/useGetCollectionsList';
-import { CollectionType } from '../types/global';
+import Header from './../Header/Header';
+import Presentation from './../Presentation/Presentation';
+import CheckboxBar from './../Bar/CheckBoxBar';
+import SearchBar from './../Bar/SearchBar';
+import CollectionsList from './../Collections/CollectionsList';
+import { useGetCollectionsList } from '../../hooks/useGetCollectionsList';
+import { CollectionType } from '../../types/global';
 
 const CollectionsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');

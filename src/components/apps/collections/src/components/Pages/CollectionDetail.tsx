@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import SearchBar from './Bar/SearchBar';
-import Pagination from './Pagination/Pagination';
-import NavBar from './NavBar/NavBar';
-import { useCollectionDetail } from '../hooks/useCollectionDetail';
-import { NFT } from '../types/global';
+import SearchBar from './../Bar/SearchBar';
+import Pagination from './../Pagination/Pagination';
+import NavBar from './../NavBar/NavBar';
+import { useCollectionDetails } from '../../hooks/useCollectionDetails';
+import { NFT } from '../../types/global';
 import { Link } from 'react-router-dom';
+import Banner from './../Banner';
+import ConnectWallet from './../Buttons/ConnectWallet';
+import OpenASale from './../Buttons/OpenASale';
 
 const NFTCard = ({ nft, canisterId }: { nft: NFT; canisterId: string }) => (
   <Link to={`/collection/${canisterId}/${nft.id}`} className="flex flex-col">
@@ -63,7 +66,7 @@ const CollectionDetail: React.FC = () => {
 
   const collectionCanisterId = window.location.hash.split('/').pop() || '';
 
-  const { data: collection, isLoading, error } = useCollectionDetail(collectionCanisterId);
+  const { data: collection, isLoading, error } = useCollectionDetails(collectionCanisterId);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -85,12 +88,17 @@ const CollectionDetail: React.FC = () => {
   return (
     <div className="flex flex-row">
       <NavBar />
-      <div className="bg-gray-100 flex flex-col items-center w-full min-h-screen px-[30px] ml-20">
-        <div className=" bg-white rounded-[20px] border border-[#e1e1e1] mt-40 w-full relative max-w-[1440px]">
+      <div className="bg-gray-100 flex flex-col items-center w-full min-h-screen">
+        <Banner collectionName={collection?.name[0] || 'Unknown'} />
+        <div className="mt-20 flex flex-row justify-end w-full space-x-6 4xl:max-w-7xl  px-[30px]">
+          <OpenASale />
+          <ConnectWallet />
+        </div>
+        <div className=" bg-white rounded-[20px] border border-[#e1e1e1] mt-20 w-11/12 ml-[88px] relative 4xl:max-w-7xl">
           {/* Header of the collection */}
           <div className="flex flex-col items-center mb-10">
             <img
-              className="w-40 h-40 rounded-full shadow-lg border-4 border-white absolute -top-[82px]"
+              className="w-40 h-40 rounded-full bg-mouse shadow-lg border-4 border-white absolute -top-[82px]"
               src={collection?.logo[0] || 'https://via.placeholder.com/164x164'}
               alt={collection?.name[0] || 'Unknown'}
             />
@@ -103,8 +111,15 @@ const CollectionDetail: React.FC = () => {
               </h1>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row justify-between w-full px-20 mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
-            <SearchBar handleSearch={handleSearch} placeholder='Search for a specific NFT' />
+          <div className="flex items-center justify-between px-20 mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
+            <div className="flex-grow">
+              <SearchBar handleSearch={handleSearch} placeholder="Search for a specific NFT" />
+            </div>
+            <p className="text-[13px] font-semibold leading-[16px] not-italic whitespace-nowrap">
+              {isLoading
+                ? 'Loading collection... '
+                : `${currentNFTs.length * totalPages} ${currentNFTs.length * totalPages > 1 ? 'results' : 'result'}`}
+            </p>
           </div>
 
           <div className="px-20 w-full flex flex-col items-center my-10">
