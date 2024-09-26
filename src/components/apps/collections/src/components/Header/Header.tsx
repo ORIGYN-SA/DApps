@@ -54,17 +54,19 @@ const Header: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white text-sm border-b border-gray-200 h-[90px] w-full grid grid-cols-3 items-center px-6">
-      {/* Left Column - Empty*/}
-      <div className="flex-grow flex justify-start space-x-12"></div>
-      <div className="flex-grow flex justify-center space-x-12">
-        {links.map((link) => (
-          <LinkItem key={link.to} link={link} isActive={isActiveLink(link.to)} />
-        ))}
-      </div>
-      {/* Right Column */}
-      <div className="flex items-center justify-end">
-        <ConnectWallet />
+    <nav className="bg-white text-sm border-b border-gray-200 h-[160px] md:h-[90px] w-full px-6 flex flex-row items-center justify-center">
+      <div className="4xl:max-w-7xl w-full md:justify-center md:items-center md:grid md:grid-cols-3">
+        {/* Left Column - Empty*/}
+        <div className="flex-grow flex justify-start space-x-12"></div>
+        <div className="flex-grow flex justify-center space-x-12">
+          {links.map((link) => (
+            <LinkItem key={link.to} link={link} isActive={isActiveLink(link.to)} />
+          ))}
+        </div>
+        {/* Right Column */}
+        <div className="flex items-center justify-center md:justify-end pt-14 md:pt-0">
+          <ConnectWallet />
+        </div>
       </div>
     </nav>
   );

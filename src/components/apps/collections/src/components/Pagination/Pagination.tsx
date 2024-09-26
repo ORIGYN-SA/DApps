@@ -13,10 +13,12 @@ const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   paginate,
 }) => {
+  const isMobile = window.innerWidth < 768;
+
   // Function to render page numbers with ellipses
   const renderPageNumbers = (): JSX.Element => {
     const pagesToShow: number[] = [];
-    const maxPageNumbersToShow = 5;
+    const maxPageNumbersToShow = isMobile ? 3 : 5;
     const halfWay = Math.floor(maxPageNumbersToShow / 2);
     let startPage = currentPage - halfWay;
     let endPage = currentPage + halfWay;
@@ -37,6 +39,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
     return (
       <>
+        {/* Show the first page and ellipsis if needed */}
         {startPage > 1 && (
           <>
             <button
@@ -48,6 +51,7 @@ const Pagination: React.FC<PaginationProps> = ({
             {startPage > 2 && <span className="mx-1">...</span>}
           </>
         )}
+        {/* Show pages in the middle */}
         {pagesToShow.map((number) => (
           <button
             key={number}
@@ -57,6 +61,7 @@ const Pagination: React.FC<PaginationProps> = ({
             {number}
           </button>
         ))}
+        {/* Show the last page and ellipsis if needed */}
         {endPage < totalPages && (
           <>
             {endPage < totalPages - 1 && <span className="mx-1">...</span>}
@@ -78,6 +83,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex justify-center items-center">
+      {/* Previous button */}
       <button
         onClick={() => paginate(Math.max(currentPage - 1, 1))}
         className="px-3 py-1 mx-1 text-gray-700"
@@ -94,7 +100,9 @@ const Pagination: React.FC<PaginationProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
       </button>
+      {/* Render page numbers */}
       {renderPageNumbers()}
+      {/* Next button */}
       <button
         onClick={() => paginate(Math.min(currentPage + 1, totalPages))}
         className="px-3 py-1 mx-1 text-gray-700"

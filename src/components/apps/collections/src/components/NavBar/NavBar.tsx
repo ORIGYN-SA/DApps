@@ -45,17 +45,19 @@ const NavBar: React.FC = () => {
   const NavItem: React.FC<{ item: NavItemProps; isActive: boolean }> = ({ item, isActive }) => {
     const content = (
       <>
+        {/* Container for the icon */}
         <div
-          className={`w-14 h-14 rounded-full flex items-center justify-center ${
+          className={`w-14 h-14 flex items-center justify-center ${
             isActive
-              ? 'bg-black text-white cursor-default'
-              : 'border border-mouse text-slate hover:bg-slate/10 duration-300 ease-in-out transition-all'
+              ? 'bg-black text-white cursor-default rounded-full'
+              : 'border border-mouse text-slate hover:bg-slate/10 duration-300 ease-in-out transition-all rounded-full'
           }`}
         >
           <item.Icon className="w-6 h-6" />
         </div>
+        {/* Text below the icon */}
         <div
-          className={`text-center text-[8px] uppercase tracking-wide ${
+          className={`mt-1 text-center text-[10px] uppercase tracking-wide ${
             isActive ? 'text-charcoal font-bold' : 'text-slate font-semibold'
           }`}
         >
@@ -65,20 +67,20 @@ const NavBar: React.FC = () => {
     );
 
     return isActive ? (
-      <div className="flex flex-col items-center gap-2">{content}</div>
+      <div className="flex flex-col items-center gap-1">{content}</div>
     ) : (
-      <Link to={item.path} className="flex flex-col items-center gap-2">
+      <Link to={item.path} className="flex flex-col items-center gap-1">
         {content}
       </Link>
     );
   };
 
   return (
-    <div className="w-[88px] h-full fixed pt-10">
-      <div className="w-full h-full px-4 py-10 bg-white border-r border-[#e1e1e1] flex flex-col items-center justify-start">
+    <div className="w-full h-[158px] md:w-[88px] md:h-full fixed pt-10 z-50">
+      <div className="w-full h-full px-4 py-10 bg-white border-r border-[#e1e1e1] flex flex-row md:flex-col items-center justify-start">
         {/* Top Section */}
-        <Link to="/" className="">
-          <div className="w-14 h-14 border border-gray-300 rounded-full flex items-center justify-center hover:bg-slate/10 duration-300 ease-in-out transition-all">
+        <Link to="/" className="flex flex-col items-center justify-center h-[78px] gap-1">
+          <div className="w-14 h-14 flex items-center justify-center border border-gray-300 rounded-full hover:bg-slate/10 duration-300 ease-in-out transition-all">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -94,7 +96,7 @@ const NavBar: React.FC = () => {
 
         <div className="flex-grow flex flex-col justify-center">
           {/* Navigation Section */}
-          <div className="flex flex-col items-center gap-8">
+          <div className="flex flex-row md:flex-col justify-center items-center gap-8">
             {navItems.map((item) => (
               <NavItem key={item.path} item={item} isActive={isActiveLink(item.path)} />
             ))}

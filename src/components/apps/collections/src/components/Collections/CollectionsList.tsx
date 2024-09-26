@@ -32,8 +32,6 @@ const Collections: React.FC<CollectionsProps> = ({
     setCurrentPage(1);
   };
 
-  console.log('collections', collections);
-
   return (
     <div className="bg-white rounded-2xl mt-8 w-full p-8 border border-[#e1e1e1] shadow-md">
       <h3 className="font-semibold text-2xl leading-normal">All Collections</h3>

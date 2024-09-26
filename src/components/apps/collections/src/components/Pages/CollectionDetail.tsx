@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import SearchBar from './../Bar/SearchBar';
 import Pagination from './../Pagination/Pagination';
 import NavBar from './../NavBar/NavBar';
@@ -12,16 +12,15 @@ import OpenASale from './../Buttons/OpenASale';
 const NFTCard = ({ nft, canisterId }: { nft: NFT; canisterId: string }) => (
   <Link to={`/collection/${canisterId}/${nft.id}`} className="flex flex-col">
     <div className="bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden">
-      <div className="h-56 rounded-t-2xl overflow-hidden">
+      <div className="aspect-w-1 aspect-h-1 w-full rounded-t-2xl overflow-hidden">
         <img
-          className="w-full h-full object-cover group-hover:scale-110 duration-300 ease-in-out transition-transform"
+          className="w-full h-full object-cover hover:scale-110 duration-300 ease-in-out transition-transform"
           src={nft.image}
           alt={nft.name}
         />
       </div>
       <div className="p-4 flex flex-col justify-between flex-grow">
         <div>
-          {/* <p className="text-gray-500 text-xs uppercase tracking-wide">{nft.collectionName}</p> */}
           <h3 className="text-gray-900 text-base font-bold">{nft.name}</h3>
         </div>
         <div className="mt-2">
@@ -32,8 +31,7 @@ const NFTCard = ({ nft, canisterId }: { nft: NFT; canisterId: string }) => (
       </div>
       <div
         className="opacity-0 absolute bottom-0 left-0 right-0 h-10 bg-charcoal rounded-b-2xl flex items-center justify-center
-                 group-hover:opacity-100 duration-300 ease-in-out transition-opacity
-                 pointer-events-none group-hover:pointer-events-auto"
+                 group-hover:opacity-100 duration-300 ease-in-out transition-opacity pointer-events-none group-hover:pointer-events-auto"
       >
         <p className="text-sm text-white">Buy now</p>
       </div>
@@ -41,7 +39,6 @@ const NFTCard = ({ nft, canisterId }: { nft: NFT; canisterId: string }) => (
   </Link>
 );
 
-// Composant Skeleton
 const NFTSkeleton = () => (
   <div className="bg-white rounded-2xl border border-gray-300 flex flex-col animate-pulse">
     <div className="h-56 rounded-t-2xl overflow-hidden bg-gray-300"></div>
@@ -86,23 +83,23 @@ const CollectionDetail: React.FC = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row w-full">
       <NavBar />
-      <div className="bg-gray-100 flex flex-col items-center w-full min-h-screen">
+      <div className="bg-gray-100 border border-red-500 flex flex-col flex-grow items-center min-h-screen ">
         <Banner collectionName={collection?.name[0] || 'Unknown'} />
-        <div className="mt-20 flex flex-row justify-end w-full space-x-6 4xl:max-w-7xl  px-[30px]">
+        <div className="mt-44 mb-4 md:mt-16 flex flex-row justify-center md:justify-end w-full space-x-6 md:px-[30px] 4xl:px-0 4xl:max-w-7xl">
           <OpenASale />
           <ConnectWallet />
         </div>
-        <div className=" bg-white rounded-[20px] border border-[#e1e1e1] mt-20 w-11/12 ml-[88px] relative 4xl:max-w-7xl">
+        <div className="bg-white rounded-[20px] border border-[#e1e1e1] mt-20 md:w-11/12 md:ml-[88px] relative 4xl:max-w-7xl">
           {/* Header of the collection */}
-          <div className="flex flex-col items-center mb-10">
+          <div className="flex flex-col items-center mb-10 w-full">
             <img
-              className="w-40 h-40 rounded-full bg-mouse shadow-lg border-4 border-white absolute -top-[82px]"
+              className="w-40 h-40 rounded-full bg-mouse object-cover shadow-lg border-4 border-white absolute -top-[82px]"
               src={collection?.logo[0] || 'https://via.placeholder.com/164x164'}
               alt={collection?.name[0] || 'Unknown'}
             />
-            <div className="text-center mt-28">
+            <div className="text-center mt-28 w-full">
               <p className="text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest">
                 {collectionCanisterId || 'Unknown'}
               </p>
@@ -111,20 +108,20 @@ const CollectionDetail: React.FC = () => {
               </h1>
             </div>
           </div>
-          <div className="flex items-center justify-between px-20 mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
-            <div className="flex-grow">
+          <div className="flex flex-col md:flex-row items-center justify-between px-6 md:px-20 mt-6 space-y-6 sm:space-y-0 sm:space-x-12 w-full">
+            <div className="flex-grow w-full flex items-center">
               <SearchBar handleSearch={handleSearch} placeholder="Search for a specific NFT" />
             </div>
-            <p className="text-[13px] font-semibold leading-[16px] not-italic whitespace-nowrap">
+            <p className="text-[13px] font-semibold leading-[16px] not-italic whitespace-nowrap flex items-center h-full">
               {isLoading
                 ? 'Loading collection... '
                 : `${currentNFTs.length * totalPages} ${currentNFTs.length * totalPages > 1 ? 'results' : 'result'}`}
             </p>
           </div>
 
-          <div className="px-20 w-full flex flex-col items-center my-10">
-            {/* NFT list */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full">
+          <div className="px-6 md:px-20 w-full flex flex-col items-center my-10">
+            {/* NFTs list */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full">
               {isLoading ? (
                 Array.from({ length: itemsPerPage }, (_, index) => <NFTSkeleton key={index} />)
               ) : error ? (
@@ -138,7 +135,7 @@ const CollectionDetail: React.FC = () => {
 
             {/* Pagination */}
             {!isLoading && totalPages > 1 && (
-              <div className="mt-6">
+              <div className="mt-6 w-full">
                 <Pagination
                   itemsPerPage={itemsPerPage}
                   totalPages={totalPages}

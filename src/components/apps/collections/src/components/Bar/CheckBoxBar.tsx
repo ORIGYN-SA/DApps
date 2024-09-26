@@ -34,7 +34,7 @@ const CheckboxBar: React.FC<CheckboxBarProps> = ({ collections, toggleCheckbox }
 
   return (
     <div className="relative w-full mx-auto" ref={dropdownRef}>
-      {/* Bouton Dropdown */}
+      {/* Dropdown button */}
       <div
         onClick={toggleDropdown}
         className={`bg-white text-slate-700 font-semibold ${
@@ -62,21 +62,21 @@ const CheckboxBar: React.FC<CheckboxBarProps> = ({ collections, toggleCheckbox }
         </span>
       </div>
 
-      {/* Dropdown avec la liste des collections */}
+      {/* Dropdown with the list of collections */}
       {isOpen && (
         <ul className="absolute z-10 w-full max-h-60  bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-md overflow-y-auto">
           {collections.map((item) => (
             <li key={item.name} className="hover:bg-[#b7bbd51d]">
               <label className="flex justify-between items-center p-3 text-slate-700 w-full cursor-pointer">
                 <span>{item.name}</span>
-                {/* Checkbox native cachée */}
+                {/* Checkbox native hidden */}
                 <input
                   type="checkbox"
                   checked={item.checked}
                   onChange={() => toggleCheckbox(item.name)}
                   className="hidden"
                 />
-                {/* Checkbox personnalisée */}
+                {/* Checkbox customized */}
                 <span
                   className={`w-5 h-5 flex items-center justify-center border-2 rounded mr-3 ${
                     item.checked

@@ -11,7 +11,7 @@ interface NFTPageProps {
 
 const Header = ({ nft, canisterId }: { nft: NFT | undefined; canisterId: string }) => {
   return (
-    <div className="flex flex-row mt-20 pb-8 px-8 items-center border-b border-mouse ml-[88px]">
+    <div className="flex flex-row mt-20 pb-8 px-8 items-center border-b border-mouse ml-[88px] 4xl:ml-0">
       <div className="flex flex-col gap-2 ">
         <p className="text-[#222526] text-[40px] font-bold leading-normal">Collection</p>
         <Link to={`/collection/${canisterId}`}>
@@ -64,7 +64,7 @@ const NFTPage: React.FC<NFTPageProps> = () => {
         //   },
         // };
         // setNft(data.nft);
-        console.log(data)
+        console.log(data);
         setLoading(false);
       }
     };
@@ -76,11 +76,11 @@ const NFTPage: React.FC<NFTPageProps> = () => {
       <Banner collectionName={nft?.collectionName || 'Unknown'} />
       <div className="flex flex-row flex-grow">
         <NavBar />
-        <div className="flex flex-col items-center w-full">
-          <div className="w-full">
+        <div className="flex flex-col items-center w-full 4xl:max-w-7xl mx-auto">
+          <div className="w-full ">
             <Header nft={nft} canisterId={canisterId} />
             <div className="xl:mt-10 3xl:mt-[92px] flex flex-col">
-              <div className="flex flex-row bg-white mb-20 rounded-2xl mx-auto border border-[#e1e1e1] max-w-6xl">
+              <div className="flex flex-row bg-white mb-20 rounded-2xl mx-auto border border-[#e1e1e1] 4xl:max-w-7xl">
                 <div className="w-[562px] h-[528px]">
                   <img
                     className="rounded-tl-2xl rounded-bl-2xl"

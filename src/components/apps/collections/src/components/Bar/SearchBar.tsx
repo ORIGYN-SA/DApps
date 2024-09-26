@@ -1,13 +1,10 @@
-// components/Bar/SearchBar.tsx
-
 import React, { useState } from 'react';
-
 interface SearchBarProps {
   handleSearch: (term: string) => void;
-  placeholder?: string; // Ajout de la prop placeholder
+  placeholder?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, placeholder = "Search..." }) => { // Valeur par défaut
+const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, placeholder = 'Search...' }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,13 +15,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, placeholder = "Sear
 
   return (
     <div className="relative w-full mx-auto">
-      <div className="bg-white text-slate-700 font-semibold border rounded-full border-gray-300 p-3 w-full flex items-center">
+      <div className="bg-white text-slate-700 font-semibold border rounded-full border-gray-300 p-2 h-[42px] w-full flex items-center">
         <input
           type="text"
-          placeholder={placeholder} // Utilisation de la prop placeholder
+          placeholder={placeholder}
           value={searchTerm}
           onChange={handleInputChange}
-          className="flex-grow outline-none bg-transparent"
+          className="flex-grow outline-none bg-transparent h-full"
         />
         {/* Search Icon */}
         <svg
