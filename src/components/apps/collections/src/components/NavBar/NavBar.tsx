@@ -66,9 +66,7 @@ const NavBar: React.FC = () => {
       </>
     );
 
-    return isActive ? (
-      <div className="flex flex-col items-center gap-1">{content}</div>
-    ) : (
+    return (
       <Link to={item.path} className="flex flex-col items-center gap-1">
         {content}
       </Link>
@@ -77,9 +75,9 @@ const NavBar: React.FC = () => {
 
   return (
     <div className="w-full h-[158px] md:w-[88px] md:h-full fixed pt-10 z-50">
-      <div className="w-full h-full px-4 py-10 bg-white border-r border-[#e1e1e1] flex flex-row md:flex-col items-center justify-start">
+      <div className="w-full h-full px-4 py-10 bg-white border-b md:border-b-0 md:border-r border-[#e1e1e1] flex flex-row md:flex-col items-center justify-start">
         {/* Top Section */}
-        <Link to="/" className="flex flex-col items-center justify-center h-[78px] gap-1">
+        <Link to="/" className="hidden md:flex flex-col items-center justify-center h-[78px] gap-1">
           <div className="w-14 h-14 flex items-center justify-center border border-gray-300 rounded-full hover:bg-slate/10 duration-300 ease-in-out transition-all">
             <svg
               xmlns="http://www.w3.org/2000/svg"

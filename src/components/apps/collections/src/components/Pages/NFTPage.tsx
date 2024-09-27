@@ -15,7 +15,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = React.memo(({ nft, canisterId }) => {
   return (
-    <div className="flex flex-row mt-20 pb-8 px-8 items-center border-b border-mouse ml-[88px] 4xl:ml-0">
+    <div className="flex flex-col md:flex-row mt-44 md:mt-20 pb-8 px-8 items-center border-b border-mouse md:ml-[88px]">
       <div className="flex flex-col gap-2">
         <p className="text-[#222526] text-[40px] font-bold leading-normal">Collection</p>
         <Link to={`/collection/${canisterId}`}>
@@ -38,7 +38,7 @@ const Header: React.FC<HeaderProps> = React.memo(({ nft, canisterId }) => {
           </div>
         </Link>
       </div>
-      <div className="ml-auto">
+      <div className="md:ml-auto mt-5 md:mt-0">
         <ConnectWallet />
       </div>
     </div>
@@ -54,10 +54,10 @@ const ImageContainer: React.FC<ImageContainerProps> = React.memo(({ nft }) => {
   const [isImageError, setIsImageError] = useState(false);
 
   return (
-    <div className="w-[562px] h-[564px] relative">
+    <div className="xl:w-[562px] xl:h-[564px] relative">
       {isImageLoading && !isImageError && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl">
-          <div className="w-[562px] h-[564px] bg-gray-300"></div>
+          <div className="xl:w-[562px] xl:h-[564px] bg-gray-300"></div>
         </div>
       )}
       {isImageError ? (
@@ -66,7 +66,7 @@ const ImageContainer: React.FC<ImageContainerProps> = React.memo(({ nft }) => {
         </div>
       ) : (
         <img
-          className={`rounded-tl-2xl rounded-bl-2xl object-contain w-[562px] h-[564px] ${
+          className={`rounded-tl-2xl rounded-bl-2xl object-contain w-full h-full ${
             isImageLoading ? 'hidden' : 'block'
           }`}
           src={nft?.image || 'https://via.placeholder.com/562x564'}
@@ -96,16 +96,16 @@ const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft }) => {
         <div className="text-[#262c2e] text-[40px] font-bold">{nft.name || 'NFT Name'}</div>
         <div className="gap-2 flex flex-row items-center flex-wrap text-[#212425]">
           <img src="/assets/owner.svg" alt="owner" className="w-6 h-6" />
-          <span className="font-light leading-normal w-fit">Owned by</span>
-          <span className="font-bold">{nft?.owner || 'Unknown'}</span>
+          <p className="font-light leading-normal w-fit">Owned by</p>
+          <p className="font-bold">{nft?.owner || 'Unknown'}</p>
         </div>
       </div>
       <div className="flex-col flex">
-        <div className="px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full">
+        <div className="px-2 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full">
           <div className="text-[#2E2E2E] text-base font-bold">Current price</div>
           <div className="flex flex-row justify-start items-center gap-2">
             <img src="/assets/IC_Icon.svg" alt="ICP" className="w-10 h-10" />
-            <div className="text-black text-[28px] font-bold">
+            <div className="text-black text-[22px] md:text-[28px] font-bold">
               {nft.priceICP > 0 ? `${nft.priceICP} ICP` : 'Not for sale'}
             </div>
             {nft.priceUSD > 0 && (
@@ -120,7 +120,7 @@ const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft }) => {
             </button>
           )}
         </div>
-        <div className="self-stretch justify-start items-start gap-2 inline-flex mt-2">
+        <div className="self-stretch justify-start items-start gap-2 inline-flex mt-6 md:mt-2">
           <div className="w-[18px] h-[18px] relative">
             <div className="w-[18px] h-[18px] left-0 top-0 absolute bg-[#e1e1e1] rounded-full" />
             <div className="w-[18px] left-0 top-[1px] absolute text-center text-[#69737c] text-[13px] font-bold">
@@ -145,7 +145,7 @@ const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft }) => {
 
 const Skeleton: React.FC = () => {
   return (
-    <div className="flex flex-row bg-white mb-20 xl:mt-10 3xl:mt-[92px]  rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px]">
+    <div className="flex flex-row bg-white rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px]">
       {/* Image Skeleton */}
       <div className="w-[562px] bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl"></div>
       <div className="flex flex-col justify-center items-center gap-8 mx-10 w-[562px] h-[564px]">
@@ -192,23 +192,23 @@ const NFTPage: React.FC = () => {
       <Banner collectionName={nft?.collectionName || 'Unknown'} />
       <div className="flex flex-row flex-grow">
         <NavBar />
-        <div className="flex flex-col items-center w-full 4xl:max-w-7xl mx-auto">
+        <div className="flex flex-col items-center w-full">
           <div className="w-full">
             <Header nft={nft} canisterId={canisterId} />
             <div className="xl:mt-10 3xl:mt-[92px] flex flex-col">
-              <div className="flex flex-row bg-white mb-20 rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px] min-h-[564px]">
-                {error && (
-                  <div className="absolute inset-0 flex items-center justify-center text-red-700 rounded-2xl">
-                    <p>An error occurred while fetching NFT details. : {error.message}</p>
-                  </div>
-                )}
+              {error && (
+                <div className="flex items-center justify-center px-6 py-4 text-red-700 rounded-2xl">
+                  <p>An error occurred while fetching NFT details. : {error.message}</p>
+                </div>
+              )}
+              <div className="flex flex-col w-11/12 mx-auto md:w-10/12 pb-8 md:pb-0 md:ml-28 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row bg-white mb-10 md:mb-20 rounded-2xl border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] xl:min-h-[564px]">
                 {isLoading ? (
                   <Skeleton />
                 ) : (
                   nft && (
                     <>
                       <ImageContainer nft={nft} />
-                      <div className="flex-col justify-center items-center gap-8 inline-flex mx-10 w-[562px] h-[564px]">
+                      <div className="flex-col justify-center items-center gap-8 inline-flex px-6 md:mx-10 xl:w-[562px] xl:h-[564px]">
                         <NFTDetails nft={nft} />
                       </div>
                     </>
