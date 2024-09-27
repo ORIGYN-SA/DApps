@@ -85,7 +85,7 @@ const CollectionDetail: React.FC = () => {
   return (
     <div className="flex flex-row w-full">
       <NavBar />
-      <div className="bg-gray-100 border border-red-500 flex flex-col flex-grow items-center min-h-screen ">
+      <div className="bg-gray-100 flex flex-col flex-grow items-center min-h-screen ">
         <Banner collectionName={collection?.name[0] || 'Unknown'} />
         <div className="mt-44 mb-4 md:mt-16 flex flex-row justify-center md:justify-end w-full space-x-6 md:px-[30px] 4xl:px-0 4xl:max-w-7xl">
           <OpenASale />

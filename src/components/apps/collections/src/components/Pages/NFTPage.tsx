@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
+// src/components/NFTPage.tsx
+
+import React, { useState, useMemo } from 'react';
 import NavBar from '../NavBar/NavBar';
 import { NFT } from '../../types/global';
 import { Link } from 'react-router-dom';
 import Banner from '../Banner';
 import { useGetNFTDetails } from '../../hooks/useGetNFTDetails';
+import ConnectWallet from '../Buttons/ConnectWallet';
 
-interface NFTPageProps {
-  NFTid: string;
+interface HeaderProps {
+  nft: NFT | undefined;
+  canisterId: string;
 }
 
-const Header = ({ nft, canisterId }: { nft: NFT | undefined; canisterId: string }) => {
+const Header: React.FC<HeaderProps> = React.memo(({ nft, canisterId }) => {
   return (
     <div className="flex flex-row mt-20 pb-8 px-8 items-center border-b border-mouse ml-[88px] 4xl:ml-0">
-      <div className="flex flex-col gap-2 ">
+      <div className="flex flex-col gap-2">
         <p className="text-[#222526] text-[40px] font-bold leading-normal">Collection</p>
         <Link to={`/collection/${canisterId}`}>
           <div className="text-[#212425] text-[10px] font-medium leading-[16px] tracking-[2px] uppercase flex flex-row items-center group">
@@ -27,49 +31,161 @@ const Header = ({ nft, canisterId }: { nft: NFT | undefined; canisterId: string 
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
               />
             </svg>
-            Collections / the midnightsummer night dream
+            Collections / {nft?.collectionName || 'Collection Name'}
           </div>
         </Link>
       </div>
-      <button className="bg-black ml-auto px-5 py-4 h-fit rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold">
-        Connect wallet
-      </button>
+      <div className="ml-auto">
+        <ConnectWallet />
+      </div>
+    </div>
+  );
+});
+
+interface ImageContainerProps {
+  nft: NFT | undefined;
+}
+
+const ImageContainer: React.FC<ImageContainerProps> = React.memo(({ nft }) => {
+  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [isImageError, setIsImageError] = useState(false);
+
+  return (
+    <div className="w-[562px] h-[564px] relative">
+      {isImageLoading && !isImageError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl">
+          <div className="w-[562px] h-[564px] bg-gray-300"></div>
+        </div>
+      )}
+      {isImageError ? (
+        <div className="flex items-center justify-center h-full bg-red-100 text-red-700 rounded-tl-2xl rounded-bl-2xl">
+          <p>Error loading image</p>
+        </div>
+      ) : (
+        <img
+          className={`rounded-tl-2xl rounded-bl-2xl object-contain w-[562px] h-[564px] ${
+            isImageLoading ? 'hidden' : 'block'
+          }`}
+          src={nft?.image || 'https://via.placeholder.com/562x564'}
+          alt={nft?.name || 'NFT Image'}
+          onLoad={() => setIsImageLoading(false)}
+          onError={() => {
+            setIsImageLoading(false);
+            setIsImageError(true);
+          }}
+        />
+      )}
+    </div>
+  );
+});
+
+interface NFTDetailsProps {
+  nft: NFT;
+}
+
+const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft }) => {
+  return (
+    <>
+      <div className="flex-col justify-start items-start gap-2 flex w-full">
+        <div className="gap-0.5 text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest">
+          {nft.collectionName || 'Collection Name'}
+        </div>
+        <div className="text-[#262c2e] text-[40px] font-bold">{nft.name || 'NFT Name'}</div>
+        <div className="gap-2 flex flex-row items-center flex-wrap text-[#212425]">
+          <img src="/assets/owner.svg" alt="owner" className="w-6 h-6" />
+          <span className="font-light leading-normal w-fit">Owned by</span>
+          <span className="font-bold">{nft?.owner || 'Unknown'}</span>
+        </div>
+      </div>
+      <div className="flex-col flex">
+        <div className="px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full">
+          <div className="text-[#2E2E2E] text-base font-bold">Current price</div>
+          <div className="flex flex-row justify-start items-center gap-2">
+            <img src="/assets/IC_Icon.svg" alt="ICP" className="w-10 h-10" />
+            <div className="text-black text-[28px] font-bold">
+              {nft.priceICP > 0 ? `${nft.priceICP} ICP` : 'Not for sale'}
+            </div>
+            {nft.priceUSD > 0 && (
+              <div className="text-[#6e6d66] text-base font-light">
+                (${nft.priceUSD.toFixed(2)})
+              </div>
+            )}
+          </div>
+          {nft.priceICP > 0 && (
+            <button className="bg-[#212425] rounded-full justify-center items-center w-full mt-4">
+              <p className="text-center text-white text-sm font-semibold leading-[48px]">Buy now</p>
+            </button>
+          )}
+        </div>
+        <div className="self-stretch justify-start items-start gap-2 inline-flex mt-2">
+          <div className="w-[18px] h-[18px] relative">
+            <div className="w-[18px] h-[18px] left-0 top-0 absolute bg-[#e1e1e1] rounded-full" />
+            <div className="w-[18px] left-0 top-[1px] absolute text-center text-[#69737c] text-[13px] font-bold">
+              i
+            </div>
+          </div>
+          <div className="grow shrink basis-0 opacity-70 text-[#69737c] text-[13px] font-light leading-none">
+            Reminder: This is a peer-to-peer gold purchase, with pricing set by the gold bar's
+            owner.
+          </div>
+        </div>
+      </div>
+      <div className="px-2 py-1.5 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-center items-center gap-1 inline-flex">
+        <img src="/assets/layer.svg" alt="layer" className="w-4 h-4" />
+        <div className="text-center text-[#69737c] text-[10px] font-normal">
+          Check this certificate on-chain
+        </div>
+      </div>
+    </>
+  );
+});
+
+const Skeleton: React.FC = () => {
+  return (
+    <div className="flex flex-row bg-white mb-20 xl:mt-10 3xl:mt-[92px]  rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px]">
+      {/* Image Skeleton */}
+      <div className="w-[562px] bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl"></div>
+      <div className="flex flex-col justify-center items-center gap-8 mx-10 w-[562px] h-[564px]">
+        {/* Collection Name Skeleton */}
+        <div className="w-full h-6 bg-gray-200 animate-pulse rounded-md mb-2"></div>
+
+        {/* NFT Name Skeleton */}
+        <div className="w-full h-10 bg-gray-200 animate-pulse rounded-md mb-4"></div>
+
+        {/* Owner Info Skeleton */}
+        <div className="flex flex-row gap-2 items-center">
+          <div className="w-6 h-6 bg-gray-200 animate-pulse rounded-full"></div>
+          <div className="w-32 h-4 bg-gray-200 animate-pulse rounded-md"></div>
+        </div>
+
+        {/* Price Skeleton */}
+        <div className="w-full flex flex-col mt-4 gap-2">
+          <div className="w-24 h-6 bg-gray-200 animate-pulse rounded-md"></div>
+          <div className="flex flex-row items-center gap-2">
+            <div className="w-10 h-10 bg-gray-200 animate-pulse rounded-full"></div>
+            <div className="w-32 h-8 bg-gray-200 animate-pulse rounded-md"></div>
+          </div>
+        </div>
+
+        {/* Button Skeleton */}
+        <div className="w-full h-12 bg-gray-300 animate-pulse rounded-full mt-4"></div>
+
+        {/* Additional Info Skeleton */}
+        <div className="w-full h-4 bg-gray-200 animate-pulse rounded-md mt-4"></div>
+      </div>
     </div>
   );
 };
 
-const NFTPage: React.FC<NFTPageProps> = () => {
-  const [nft, setNft] = useState<NFT | undefined>();
-  const [loading, setLoading] = useState(true);
-
-  const urlParts = window.location.hash.split('/');
+const NFTPage: React.FC = () => {
+  const urlParts = useMemo(() => window.location.hash.split('/'), []);
   const canisterId = urlParts[urlParts.indexOf('collection') + 1] || '';
   const NFTid = urlParts[urlParts.indexOf('collection') + 2] || '';
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (NFTid) {
-        setLoading(true);
-        const data = await useGetNFTDetails(canisterId, NFTid);
-        // const data = {
-        //   nft: {
-        //     id: NFTid,
-        //     name: 'NFT Name',
-        //     collectionName: 'Collection Name',
-        //     image: 'https://via.placeholder.com/243x244',
-        //     price: '12 OGY',
-        //   },
-        // };
-        // setNft(data.nft);
-        console.log(data);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [NFTid]);
+  const { data: nft, isLoading, error } = useGetNFTDetails(canisterId, NFTid);
 
   return (
     <div className="bg-gradient-to-t from-[#ebebeb] to-[#f9f9f9] flex flex-col min-h-screen">
@@ -77,62 +193,27 @@ const NFTPage: React.FC<NFTPageProps> = () => {
       <div className="flex flex-row flex-grow">
         <NavBar />
         <div className="flex flex-col items-center w-full 4xl:max-w-7xl mx-auto">
-          <div className="w-full ">
+          <div className="w-full">
             <Header nft={nft} canisterId={canisterId} />
             <div className="xl:mt-10 3xl:mt-[92px] flex flex-col">
-              <div className="flex flex-row bg-white mb-20 rounded-2xl mx-auto border border-[#e1e1e1] 4xl:max-w-7xl">
-                <div className="w-[562px] h-[528px]">
-                  <img
-                    className="rounded-tl-2xl rounded-bl-2xl"
-                    src="https://via.placeholder.com/562x562"
-                    alt={nft?.name}
-                  />
-                </div>
-                <div className="w-1/2 flex-col justify-center items-center gap-8 inline-flex  mx-10">
-                  <div className="flex-col justify-start items-start gap-2 flex">
-                    <div className="gap-0.5 text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest">
-                      Suzanne Syz Art Jewels
-                    </div>
-                    <div className=" text-[#262c2e] text-[40px] font-bold">
-                      The midsummer Night dream
-                    </div>
-                    <div className=" gap-2 inline-flex text-[#212425]">
-                      <span className="font-light leading-normal">Owned by</span>
-                      <span className="font-bold">Username</span>
-                    </div>
+              <div className="flex flex-row bg-white mb-20 rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px] min-h-[564px]">
+                {error && (
+                  <div className="absolute inset-0 flex items-center justify-center text-red-700 rounded-2xl">
+                    <p>An error occurred while fetching NFT details. : {error.message}</p>
                   </div>
-                  <div className=" flex-col flex">
-                    <div className=" px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full">
-                      <div className=" text-[#2e2e2e] text-base font-bold">Current price</div>
-                      <div className="flex flex-row justify-start items-center gap-2">
-                        <div className=" text-black text-[28px] font-bold">556.76 ICP</div>
-                        <div className=" text-[#6e6d66] text-base font-light">($6751.82)</div>
+                )}
+                {isLoading ? (
+                  <Skeleton />
+                ) : (
+                  nft && (
+                    <>
+                      <ImageContainer nft={nft} />
+                      <div className="flex-col justify-center items-center gap-8 inline-flex mx-10 w-[562px] h-[564px]">
+                        <NFTDetails nft={nft} />
                       </div>
-                      <button className=" bg-[#212425] rounded-full justify-center items-center w-full mt-4">
-                        <p className="text-center text-white text-sm font-semibold leading-[48px]">
-                          Buy now
-                        </p>
-                      </button>
-                    </div>
-                    <div className="self-stretch justify-start items-start gap-2 inline-flex mt-1">
-                      <div className="w-[18px] h-[18px] relative">
-                        <div className="w-[18px] h-[18px] left-0 top-0 absolute bg-[#e1e1e1] rounded-full" />
-                        <div className="w-[18px] left-0 top-[1px] absolute text-center text-[#69737c] text-[13px] font-bold">
-                          i
-                        </div>
-                      </div>
-                      <div className="grow shrink basis-0 opacity-70 text-[#69737c] text-[13px] font-light leading-none">
-                        Reminder: This is a peer-to-peer gold purchase, with pricing set by the gold
-                        bar's owner.
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-2 py-1.5 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-center items-center gap-1 inline-flex">
-                    <div className="text-center text-[#69737c] text-[10px] font-normal">
-                      Check this certificate on-chain
-                    </div>
-                  </div>
-                </div>
+                    </>
+                  )
+                )}
               </div>
             </div>
           </div>
