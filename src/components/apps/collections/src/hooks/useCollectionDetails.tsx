@@ -1,8 +1,9 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
-import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js'; // Assurez-vous que l'extension est .js
-import { CollectionWithNFTs, NFT } from '../types/global.js';
+import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js';
+import { CollectionWithNFTs, NFT, SaleDetails } from '../types/global.js';
+import { extractSaleDetails, fetchExchangeRate } from '../utils/priceUtils'; // Import sale details extraction and exchange rate utils
 
 const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWithNFTs> => {
   try {
@@ -32,14 +33,13 @@ const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWith
     }
 
     const tokenIds: string[] = collectionInfo.token_ids[0];
-
-    // const MAX_TOKENS = 50; // Limit to improv performance
-    // const limitedTokenIds = tokenIds.slice(0, MAX_TOKENS);
-
-    // Use every token
     const limitedTokenIds = tokenIds;
 
     const nftResults = await actor.nft_batch_origyn(limitedTokenIds);
+    console.log('nftResults', nftResults);
+
+    // Fetch the current exchange rate (ICP to USD)
+    const exchangeRate = await fetchExchangeRate();
 
     const nfts: NFT[] = nftResults
       .map((nftResult, index) => {
@@ -49,12 +49,35 @@ const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWith
           const collection = canisterId;
           const imageUrl = generateImageUrl(canisterId, tokenName);
 
+          // Extract sale details, if available
+          const saleData = nftResult.ok.current_sale ? nftResult.ok.current_sale[0] : null;
+          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, exchangeRate);
+
+          let priceICP = 0;
+          let priceUSD = 0;
+
+          // Determine the price based on sale details
+          if (saleDetails) {
+            if (saleDetails.currentBid.amountICP > 0) {
+              priceICP = parseFloat(saleDetails.currentBid.amountICP.toFixed(2));
+              priceUSD = parseFloat(saleDetails.currentBid.amountUSD.toFixed(2));
+            } else if (saleDetails.buyNow.amountICP > 0) {
+              priceICP = parseFloat(saleDetails.buyNow.amountICP.toFixed(2));
+              priceUSD = parseFloat(saleDetails.buyNow.amountUSD.toFixed(2));
+            } else if (saleDetails.startPrice.amountICP > 0) {
+              priceICP = parseFloat(saleDetails.startPrice.amountICP.toFixed(2));
+              priceUSD = parseFloat(saleDetails.startPrice.amountUSD.toFixed(2));
+            }
+          }
+
           return {
             id: limitedTokenIds[index],
             name: tokenName,
             collectionName: collection,
             image: imageUrl,
-            price: '12 OGY',
+            priceICP,
+            priceUSD,
+            saleDetails: saleDetails || undefined,
           } as NFT;
         } else {
           console.error(`Error for token ${limitedTokenIds[index]}: ${nftResult.err.text}`);
@@ -70,7 +93,7 @@ const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWith
       nfts,
     };
   } catch (error) {
-    console.error('Error in  fetchCollectionDetail:', error);
+    console.error('Error in fetchCollectionDetail:', error);
     throw error;
   }
 };
@@ -90,5 +113,7 @@ export const useCollectionDetails = (canisterId: string) => {
     queryFn: () => fetchCollectionDetail(canisterId),
     placeholderData: keepPreviousData,
     enabled: !!canisterId,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 };

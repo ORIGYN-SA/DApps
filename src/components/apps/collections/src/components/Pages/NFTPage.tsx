@@ -1,5 +1,3 @@
-// src/components/NFTPage.tsx
-
 import React, { useState, useMemo } from 'react';
 import NavBar from '../NavBar/NavBar';
 import { NFT } from '../../types/global';
@@ -15,7 +13,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = React.memo(({ nft, canisterId }) => {
   return (
-    <div className="flex flex-col md:flex-row mt-44 md:mt-20 pb-8 px-8 items-center border-b border-mouse md:ml-[88px]">
+    <div className="flex flex-col md:flex-row mt-44 md:mt-16 pb-8 px-8 items-center border-b border-mouse md:ml-[88px]">
       <div className="flex flex-col gap-2">
         <p className="text-[#222526] text-[40px] font-bold leading-normal">Collection</p>
         <Link to={`/collection/${canisterId}`}>
@@ -57,7 +55,7 @@ const ImageContainer: React.FC<ImageContainerProps> = React.memo(({ nft }) => {
     <div className="xl:w-[562px] xl:h-[564px] relative">
       {isImageLoading && !isImageError && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl">
-          <div className="xl:w-[562px] xl:h-[564px] bg-gray-300"></div>
+          <div className="xl:w-[562px] xl:h-[564px] bg-gray-300 rounded-[20px]"></div>
         </div>
       )}
       {isImageError ? (
@@ -84,9 +82,10 @@ const ImageContainer: React.FC<ImageContainerProps> = React.memo(({ nft }) => {
 
 interface NFTDetailsProps {
   nft: NFT;
+  onBuyNowClick: () => void;
 }
 
-const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft }) => {
+const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft, onBuyNowClick }) => {
   return (
     <>
       <div className="flex-col justify-start items-start gap-2 flex w-full">
@@ -101,11 +100,11 @@ const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft }) => {
         </div>
       </div>
       <div className="flex-col flex">
-        <div className="px-2 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full">
+        <div className="p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full">
           <div className="text-[#2E2E2E] text-base font-bold">Current price</div>
           <div className="flex flex-row justify-start items-center gap-2">
             <img src="/assets/IC_Icon.svg" alt="ICP" className="w-10 h-10" />
-            <div className="text-black text-[22px] md:text-[28px] font-bold">
+            <div className="text-black text-[18px] md:text-[28px] font-bold">
               {nft.priceICP > 0 ? `${nft.priceICP} ICP` : 'Not for sale'}
             </div>
             {nft.priceUSD > 0 && (
@@ -115,8 +114,13 @@ const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft }) => {
             )}
           </div>
           {nft.priceICP > 0 && (
-            <button className="bg-[#212425] rounded-full justify-center items-center w-full mt-4">
-              <p className="text-center text-white text-sm font-semibold leading-[48px]">Buy now</p>
+            <button
+              className="bg-[#212425] rounded-full justify-center items-center w-full mt-4"
+              onClick={onBuyNowClick}
+            >
+              <p className="text-center text-white text-sm font-semibold leading-[48px]">
+                Buy now for {nft.priceICP} ICP
+              </p>
             </button>
           )}
         </div>
@@ -143,25 +147,84 @@ const NFTDetails: React.FC<NFTDetailsProps> = React.memo(({ nft }) => {
   );
 });
 
+interface ModalProps {
+  nft: NFT;
+  onClose: () => void;
+}
+
+const BuyNowModal: React.FC<ModalProps> = ({ nft, onClose }) => {
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50"
+      onClick={handleOutsideClick}
+    >
+      <div className="bg-white rounded-2xl px-3 md:px-5 py-8 w-[90%] md:w-[400px] shadow-lg relative space-y-6">
+        {/* Close button */}
+        <button
+          className="absolute top-4 right-4 text-gray-400 text-2xl hover:text-gray-600"
+          onClick={onClose}
+        >
+          &times;
+        </button>
+        {/* Modal content */}
+        <h2 className="text-center text-[#212425] text-[22px] font-semibold ">Confirmation</h2>
+        <div className="border border-[#e1e1e1] bg-[#f9fafe] rounded-[25px] p-4 flex items-center gap-4">
+          <img src={nft.image} alt={nft.name} className="w-24 h-24 object-contain rounded-lg" />
+          <div className="text-center">
+            <h3 className="text-base font-bold">{nft.name}</h3>
+            <p className="text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest">
+              {nft.collectionName}
+            </p>
+          </div>
+          <p className="text-center text-[#262c2e] text-base font-bold leading-snug">
+            {nft.priceICP} ICP{' '}
+            <span className="text-center text-[#6e6d66] text-base font-normal leading-[25px]">
+              (${nft.priceUSD.toFixed(2)})
+            </span>
+          </p>
+        </div>
+        <div className="self-stretch justify-start items-start gap-2 inline-flex mt-6 md:mt-2">
+          <div className="w-[18px] h-[18px] relative">
+            <div className="w-[18px] h-[18px] left-0 top-0 absolute bg-[#e1e1e1] rounded-full" />
+            <div className="w-[18px] left-0 top-[1px] absolute text-center text-[#69737c] text-[13px] font-bold">
+              i
+            </div>
+          </div>
+          <div className="grow shrink basis-0 opacity-70 text-[#69737c] text-[13px] font-light leading-none">
+            Reminder: This is a peer-to-peer gold purchase, with pricing set by the gold bar's
+            owner.
+          </div>
+        </div>
+        <div className="mt-6">
+          <button className="bg-[#212425] rounded-full w-full py-3">
+            <span className="text-center text-white text-sm font-semibold">
+              Buy for {nft.priceICP} ICP
+            </span>
+          </button>
+        </div>
+        <p className="text-center text-gray-500 text-sm mt-2">Balance: xx ICP</p>
+      </div>
+    </div>
+  );
+};
+
 const Skeleton: React.FC = () => {
   return (
     <div className="flex flex-row bg-white rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px]">
-      {/* Image Skeleton */}
-      <div className="w-[562px] bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl"></div>
+      <div className="w-[562px] bg-gray-20 animate-pulse rounded-tl-2xl rounded-bl-2xl"></div>
       <div className="flex flex-col justify-center items-center gap-8 mx-10 w-[562px] h-[564px]">
-        {/* Collection Name Skeleton */}
         <div className="w-full h-6 bg-gray-200 animate-pulse rounded-md mb-2"></div>
-
-        {/* NFT Name Skeleton */}
         <div className="w-full h-10 bg-gray-200 animate-pulse rounded-md mb-4"></div>
-
-        {/* Owner Info Skeleton */}
         <div className="flex flex-row gap-2 items-center">
           <div className="w-6 h-6 bg-gray-200 animate-pulse rounded-full"></div>
           <div className="w-32 h-4 bg-gray-200 animate-pulse rounded-md"></div>
         </div>
-
-        {/* Price Skeleton */}
         <div className="w-full flex flex-col mt-4 gap-2">
           <div className="w-24 h-6 bg-gray-200 animate-pulse rounded-md"></div>
           <div className="flex flex-row items-center gap-2">
@@ -169,11 +232,7 @@ const Skeleton: React.FC = () => {
             <div className="w-32 h-8 bg-gray-200 animate-pulse rounded-md"></div>
           </div>
         </div>
-
-        {/* Button Skeleton */}
         <div className="w-full h-12 bg-gray-300 animate-pulse rounded-full mt-4"></div>
-
-        {/* Additional Info Skeleton */}
         <div className="w-full h-4 bg-gray-200 animate-pulse rounded-md mt-4"></div>
       </div>
     </div>
@@ -187,6 +246,16 @@ const NFTPage: React.FC = () => {
 
   const { data: nft, isLoading, error } = useGetNFTDetails(canisterId, NFTid);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleBuyNowClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="bg-gradient-to-t from-[#ebebeb] to-[#f9f9f9] flex flex-col min-h-screen">
       <Banner collectionName={nft?.collectionName || 'Unknown'} />
@@ -195,7 +264,7 @@ const NFTPage: React.FC = () => {
         <div className="flex flex-col items-center w-full">
           <div className="w-full">
             <Header nft={nft} canisterId={canisterId} />
-            <div className="xl:mt-10 3xl:mt-[92px] flex flex-col">
+            <div className="xl:mt-10 flex flex-col">
               {error && (
                 <div className="flex items-center justify-center px-6 py-4 text-red-700 rounded-2xl">
                   <p>An error occurred while fetching NFT details. : {error.message}</p>
@@ -209,7 +278,7 @@ const NFTPage: React.FC = () => {
                     <>
                       <ImageContainer nft={nft} />
                       <div className="flex-col justify-center items-center gap-8 inline-flex px-6 md:mx-10 xl:w-[562px] xl:h-[564px]">
-                        <NFTDetails nft={nft} />
+                        <NFTDetails nft={nft} onBuyNowClick={handleBuyNowClick} />
                       </div>
                     </>
                   )
@@ -219,6 +288,8 @@ const NFTPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {isModalOpen && <BuyNowModal nft={nft!} onClose={handleCloseModal} />}
     </div>
   );
 };

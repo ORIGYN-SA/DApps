@@ -1,6 +1,6 @@
 // src/hooks/useGetNFTDetails.ts
 
-import { useQuery } from '@tanstack/react-query';
+import { QueryKey, QueryClient, useQuery } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
 import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js';
@@ -16,9 +16,7 @@ import { hasClass, hasMap } from '../utils/typeGuards';
  */
 const extractTokenName = (metadata: Metadata): string => {
   if (hasClass(metadata)) {
-    const nameField = metadata.Class.find(
-      (field) => field.name === 'id' && field.value?.Text
-    );
+    const nameField = metadata.Class.find((field) => field.name === 'id' && field.value?.Text);
     return nameField?.value?.Text || 'Unknown';
   } else if (hasMap(metadata)) {
     // Handle CandyShared type if applicable
@@ -36,7 +34,7 @@ const extractTokenName = (metadata: Metadata): string => {
 const extractOwner = (metadata: Metadata): string => {
   if (hasClass(metadata)) {
     const ownerField = metadata.Class.find(
-      (field) => field.name === 'owner' && field.value?.Principal
+      (field) => field.name === 'owner' && field.value?.Principal,
     );
     if (ownerField && ownerField.value.Principal?._arr) {
       const ownerArr = ownerField.value.Principal._arr;
@@ -104,13 +102,8 @@ const fetchNFTDetails = async (canisterId: string, nftId: string): Promise<NFT> 
           const owner = extractOwner(metadata);
 
           // Extract sale details
-          const saleData = nftResultItem.ok.current_sale
-            ? nftResultItem.ok.current_sale[0]
-            : null;
-          const saleDetails: SaleDetails | null = extractSaleDetails(
-            saleData,
-            exchangeRate
-          );
+          const saleData = nftResultItem.ok.current_sale ? nftResultItem.ok.current_sale[0] : null;
+          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, exchangeRate);
 
           // Determine the price
           let priceICP = 0;
@@ -123,12 +116,8 @@ const fetchNFTDetails = async (canisterId: string, nftId: string): Promise<NFT> 
               priceICP = parseFloat(saleDetails.buyNow.amountICP.toFixed(2));
               priceUSD = parseFloat(saleDetails.buyNow.amountUSD.toFixed(2));
             } else if (saleDetails.startPrice.amountICP > 0) {
-              priceICP = parseFloat(
-                saleDetails.startPrice.amountICP.toFixed(2)
-              );
-              priceUSD = parseFloat(
-                saleDetails.startPrice.amountUSD.toFixed(2)
-              );
+              priceICP = parseFloat(saleDetails.startPrice.amountICP.toFixed(2));
+              priceUSD = parseFloat(saleDetails.startPrice.amountUSD.toFixed(2));
             }
           }
 
@@ -162,9 +151,11 @@ const fetchNFTDetails = async (canisterId: string, nftId: string): Promise<NFT> 
  * @returns {UseQueryResult<NFT>} - The React Query result.
  */
 export const useGetNFTDetails = (canisterId: string, nftId: string) => {
-  return useQuery<NFT>({
+  return useQuery<NFT, Error, NFT, [string, string, string]>({
     queryKey: ['collectionDetail', canisterId, nftId],
     queryFn: () => fetchNFTDetails(canisterId, nftId),
     enabled: !!canisterId && !!nftId,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 };

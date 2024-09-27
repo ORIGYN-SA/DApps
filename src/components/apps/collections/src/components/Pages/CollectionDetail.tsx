@@ -25,7 +25,7 @@ const NFTCard = ({ nft, canisterId }: { nft: NFT; canisterId: string }) => (
         </div>
         <div className="mt-2">
           <span className="px-2 py-1 bg-gray-900 text-white text-xs font-bold rounded-full">
-            {nft.price}
+            {nft.priceICP > 0 ? `${nft.priceICP} ICP` : 'Not for sale'}
           </span>
         </div>
       </div>
@@ -101,10 +101,10 @@ const CollectionDetail: React.FC = () => {
             />
             <div className="text-center mt-28 w-full">
               <p className="text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest">
-                {collectionCanisterId || 'Unknown'}
+                {collectionCanisterId || ''}
               </p>
               <h1 className="text-center text-[#212425] text-[28px] font-bold ">
-                {collection?.name[0] || 'Unknown'}
+                {collection?.name[0] || ''}
               </h1>
             </div>
           </div>
