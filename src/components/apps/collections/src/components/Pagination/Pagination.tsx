@@ -44,7 +44,7 @@ const Pagination: React.FC<PaginationProps> = ({
           <>
             <button
               onClick={() => paginate(1)}
-              className={`px-2 py-1 mx-1 ${currentPage === 1 ? 'bg-[#F1F6F9] rounded-full px-3 font-bold' : 'text-gray-700'}`}
+              className={`px-2 py-1 mx-1 ${currentPage === 1 ? 'bg-[#F1F6F9] rounded-full px-3 font-bold' : 'text-[#69737c] text-[13px] font-light'}`}
             >
               1
             </button>
@@ -56,7 +56,7 @@ const Pagination: React.FC<PaginationProps> = ({
           <button
             key={number}
             onClick={() => paginate(number)}
-            className={`px-2 py-1 mx-1 ${currentPage === number ? 'bg-[#F1F6F9] rounded-full px-3 font-bold' : 'text-gray-700'}`}
+            className={`px-2 py-1 mx-1 ${currentPage === number ? 'bg-[#F1F6F9] rounded-full px-3 font-bold' : 'text-[#69737c] text-[13px] font-light'}`}
           >
             {number}
           </button>
@@ -67,7 +67,7 @@ const Pagination: React.FC<PaginationProps> = ({
             {endPage < totalPages - 1 && <span className="mx-1">...</span>}
             <button
               onClick={() => paginate(totalPages)}
-              className={`px-2 py-1 mx-1 ${currentPage === totalPages ? 'bg-[#F1F6F9] rounded-full px-3 font-bold' : 'text-gray-700'}`}
+              className={`px-2 py-1 mx-1 ${currentPage === totalPages ? 'bg-[#F1F6F9] rounded-full px-3 font-bold' : 'text-[#69737c] text-[13px] font-light'}`}
             >
               {totalPages}
             </button>
@@ -86,7 +86,7 @@ const Pagination: React.FC<PaginationProps> = ({
       {/* Previous button */}
       <button
         onClick={() => paginate(Math.max(currentPage - 1, 1))}
-        className="px-3 py-1 mx-1 text-gray-700"
+        className="px-3 py-1 mx-1 text-[#69737c] text-[13px] font-light"
         disabled={currentPage === 1}
       >
         <svg
@@ -105,7 +105,7 @@ const Pagination: React.FC<PaginationProps> = ({
       {/* Next button */}
       <button
         onClick={() => paginate(Math.min(currentPage + 1, totalPages))}
-        className="px-3 py-1 mx-1 text-gray-700"
+        className="px-3 py-1 mx-1 text-[#69737c] text-[13px] font-light"
         disabled={currentPage === totalPages}
       >
         <svg

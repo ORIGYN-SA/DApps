@@ -1,35 +1,30 @@
 // src/hooks/useGetNFTDetails.ts
 
-import { QueryKey, QueryClient, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
 import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js';
 import { NFT, SaleDetails, Metadata } from '../types/global';
-import { extractSaleDetails, fetchExchangeRate } from '../utils/priceUtils';
+import { extractSaleDetails } from '../utils/priceUtils';
 import { convertPrincipalArrayToString } from '../utils/principalUtils';
 import { hasClass, hasMap } from '../utils/typeGuards';
+import { useCurrencyPrice } from '../context/CurrencyPriceContext';
 
 /**
  * Extracts the token name from metadata.
- * @param {Metadata} metadata - The metadata object.
- * @returns {string} - The token name.
  */
 const extractTokenName = (metadata: Metadata): string => {
   if (hasClass(metadata)) {
     const nameField = metadata.Class.find((field) => field.name === 'id' && field.value?.Text);
     return nameField?.value?.Text || 'Unknown';
   } else if (hasMap(metadata)) {
-    // Handle CandyShared type if applicable
-    // Adjust based on actual structure and requirements
-    return 'Unknown'; // Placeholder
+    return 'Unknown';
   }
   return 'Unknown';
 };
 
 /**
  * Extracts the owner from metadata.
- * @param {Metadata} metadata - The metadata object.
- * @returns {string} - The owner Principal as a string.
  */
 const extractOwner = (metadata: Metadata): string => {
   if (hasClass(metadata)) {
@@ -41,31 +36,26 @@ const extractOwner = (metadata: Metadata): string => {
       return convertPrincipalArrayToString(Object.values(ownerArr));
     }
   } else if (hasMap(metadata)) {
-    // Handle CandyShared type if applicable
-    // Extract owner from the Map if possible
-    // Adjust based on actual structure and requirements
-    return 'Unknown'; // Placeholder
+    return 'Unknown';
   }
   return 'Unknown';
 };
 
 /**
  * Generates the image URL based on canister ID and token name.
- * @param {string} canisterId - The canister ID.
- * @param {string} tokenName - The token name.
- * @returns {string} - The image URL.
  */
 const generateImageUrl = (canisterId: string, tokenName: string): string => {
   return `https://prptl.io/-/${canisterId}/-/${tokenName}/preview`;
 };
 
 /**
- * Fetches NFT details including sale information and converts prices.
- * @param {string} canisterId - The canister ID.
- * @param {string} nftId - The NFT ID.
- * @returns {Promise<NFT>} - The NFT object with formatted details.
+ * Fetches NFT details, using the exchange rate from the CurrencyPriceContext.
  */
-const fetchNFTDetails = async (canisterId: string, nftId: string): Promise<NFT> => {
+const fetchNFTDetails = async (
+  canisterId: string,
+  nftId: string,
+  icpUsdPrice: number,
+): Promise<NFT> => {
   try {
     const agent = new HttpAgent({ host: 'https://ic0.app' });
     const actor = Actor.createActor<_GOLD_NFT_SERVICE>(goldIdlFactory, {
@@ -73,23 +63,14 @@ const fetchNFTDetails = async (canisterId: string, nftId: string): Promise<NFT> 
       canisterId,
     });
 
-    console.log('nftId:', nftId);
-
-    // Fetch collection details
     const collectionResult = await actor.collection_nft_origyn([]);
-    console.log('nftCollectionResult:', collectionResult);
 
-    // Extract collection name
     let collectionName = 'Unknown';
     if ('ok' in collectionResult && Array.isArray(collectionResult.ok.name)) {
       collectionName = collectionResult.ok.name[0] || 'Unknown';
     }
 
     const nftResult = await actor.nft_batch_origyn([nftId]);
-    console.log('nftResult:', nftResult);
-
-    // Fetch exchange rate
-    const exchangeRate = await fetchExchangeRate();
 
     const nft: NFT[] = nftResult
       .map((nftResultItem) => {
@@ -98,14 +79,11 @@ const fetchNFTDetails = async (canisterId: string, nftId: string): Promise<NFT> 
           const tokenName = extractTokenName(metadata);
           const imageUrl = generateImageUrl(canisterId, tokenName);
 
-          // Extract owner
           const owner = extractOwner(metadata);
 
-          // Extract sale details
           const saleData = nftResultItem.ok.current_sale ? nftResultItem.ok.current_sale[0] : null;
-          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, exchangeRate);
+          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, icpUsdPrice);
 
-          // Determine the price
           let priceICP = 0;
           let priceUSD = 0;
           if (saleDetails) {
@@ -124,18 +102,16 @@ const fetchNFTDetails = async (canisterId: string, nftId: string): Promise<NFT> 
           return {
             id: nftId,
             name: tokenName,
-            collectionName, // Use the extracted collection name
+            collectionName,
             image: imageUrl,
             priceICP,
             priceUSD,
             saleDetails: saleDetails || undefined,
-            owner, // Add the owner field
+            owner,
           } as NFT;
         }
       })
       .filter((nft): nft is NFT => nft !== undefined);
-
-    console.log('nft:', nft);
 
     return nft[0];
   } catch (error) {
@@ -145,16 +121,15 @@ const fetchNFTDetails = async (canisterId: string, nftId: string): Promise<NFT> 
 };
 
 /**
- * Custom hook to get NFT details using React Query.
- * @param {string} canisterId - The canister ID.
- * @param {string} nftId - The NFT ID.
- * @returns {UseQueryResult<NFT>} - The React Query result.
+ * Custom hook to get NFT details using React Query and exchange rate from the context.
  */
 export const useGetNFTDetails = (canisterId: string, nftId: string) => {
+  const { prices, isLoading, isError } = useCurrencyPrice();
+
   return useQuery<NFT, Error, NFT, [string, string, string]>({
     queryKey: ['collectionDetail', canisterId, nftId],
-    queryFn: () => fetchNFTDetails(canisterId, nftId),
-    enabled: !!canisterId && !!nftId,
+    queryFn: () => fetchNFTDetails(canisterId, nftId, prices['ICP'] || 0),
+    enabled: !!canisterId && !!nftId && !isLoading && !isError,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
