@@ -10,6 +10,7 @@ import CollectionsPage from './components/Pages/CollectionsList';
 import CollectionDetail from './components/Pages/CollectionDetail';
 import Daos from './components/Pages/Daos';
 import NFTPage from './components/Pages/NFTPage';
+import ProfilePage from './components/Pages/ProfilePage';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
                     <Route path="/daos" element={<Daos />} />
                     <Route path="/collection/:canister_id" element={<CollectionDetail />} />
                     <Route path="/collection/:canister_id/:nft_id" element={<NFTPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
                   </Routes>
                 </TokensContextProvider>
               </AuthProvider>

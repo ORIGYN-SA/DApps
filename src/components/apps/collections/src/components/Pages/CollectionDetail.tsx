@@ -8,8 +8,8 @@ import { Link } from 'react-router-dom';
 import Banner from './../Banner';
 import ConnectWallet from './../Buttons/ConnectWallet';
 import OpenASale from './../Buttons/OpenASale';
-import NFTListModal from '../Modal/NFTListModal';
-import OpenASaleModal from '../Modal/OpenASaleModal';
+import NFTListModal from '../Modals/NFTListModal';
+import OpenASaleModal from '../Modals/OpenASaleModal';
 
 const NFTCard = ({ nft, canisterId }: { nft: NFT; canisterId: string }) => (
   <Link to={`/collection/${canisterId}/${nft.id}`} className="flex flex-col">

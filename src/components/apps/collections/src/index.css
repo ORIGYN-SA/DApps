@@ -2,24 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Loader Spinner */
-@keyframes spin {
+/* Animation bounce */
+@keyframes bounce {
   0% {
-    transform: rotate(0deg);
+    transform: translateY(100%);
+  }
+  50% {
+    transform: translateY(-10px);
   }
   100% {
-    transform: rotate(360deg);
+    transform: translateY(0);
   }
 }
 
-.loader {
-  border: 8px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #00f; /* Blue */
-  border-top-color: #0f0; /* Green */
-  border-right-color: #f0f; /* Pink */
-  border-bottom-color: #ff0; /* Yellow */
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
+/* Classe pour appliquer l'animation bounce */
+.bounce-animation {
+  animation: bounce 0.5s forwards;
 }

@@ -6,7 +6,7 @@ import Banner from '../Banner';
 import { useGetNFTDetails } from '../../hooks/useGetNFTDetails';
 import ConnectWallet from '../Buttons/ConnectWallet';
 import Reminder from '../Utils/Reminder';
-import BuyNowModal from '../Modal/BuyNowModal';
+import BuyNowModal from '../Modals/BuyNowModal';
 
 // Header Component
 const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.memo(
