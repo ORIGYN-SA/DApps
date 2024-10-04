@@ -21,13 +21,13 @@ const LeftProfilePanel = ({ user, onTransferClick, onManageClick }) => {
       {/* User Profile */}
       <div className="h-20 flex items-center gap-[29px] p-6 my-6">
         <img
-          src={user.profileImage || '/assets/default_profile.png'}
+          src={user.profileImage || '/assets/profile_icon.svg'}
           alt="profile"
           className="md:w-16 md:h-16 xl:w-20 xl:h-20 rounded-full"
         />
         <div className="flex flex-col">
           <div className="text-[#69737c] text-base font-normal">Welcome back</div>
-          <div className="text-[#212425] text-[24px] font-bold">{user.name}</div>
+          <div className="text-[#212425] text-[24px] font-bold">{truncateAddress(user.name)}</div>
         </div>
       </div>
 
@@ -58,7 +58,7 @@ const LeftProfilePanel = ({ user, onTransferClick, onManageClick }) => {
       </div>
 
       {/* Scrollable Section */}
-      <div className="px-3 3xl:px-6 flex-grow overflow-y-auto space-y-4 py-6 border-[#e1e1e1] mx-3 3xl:mx-6">
+      <div className="flex-grow overflow-y-auto space-y-4 py-3 border-[#e1e1e1] mx-3 3xl:mx-6">
         <div className="max-h-min overflow-y-auto space-y-2">
           {/* Loop over balances */}
           <div className="px-5 py-6 w-full bg-white rounded-[20px] border border-[#e1e1e1] justify-between items-center inline-flex">
@@ -98,8 +98,8 @@ const LeftProfilePanel = ({ user, onTransferClick, onManageClick }) => {
             </div>
           </button>
           <button
-            className="self-stretch px-[25px] bg-[#e1e1e1] rounded-[100px] justify-center items-center gap-2.5 inline-flex"
-            onClick={onManageClick}
+            className="self-stretch cursor-default px-[25px] bg-[#e1e1e1] rounded-[100px] justify-center items-center gap-2.5 inline-flex"
+            // onClick={onManageClick}
           >
             <div className="text-center text-[#212425] text-sm font-semibold leading-[48px]">
               Manage token

@@ -67,7 +67,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
       className="fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50"
       onClick={handleOutsideClick}
     >
-      <div className="bg-white rounded-2xl py-8 w-[90%] md:w-1/2 xl:w-1/3 2xl:w-1/4 shadow-lg relative space-y-6 min-h-[400px]">
+      <div className="bg-white rounded-2xl py-8 w-[90%] md:w-1/2 xl:w-1/3 2xl:w-1/4 3xl:w-1/5 shadow-lg relative space-y-6 min-h-[400px]">
         <button
           className="absolute top-4 right-4 text-gray-400 text-2xl hover:text-gray-600"
           onClick={onClose}
@@ -154,7 +154,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
               </div>
               {/* Section to set price with dropdown */}
               <div className="flex flex-col items-start mt-4 w-full px-3 md:px-6">
-                <label className="text-sm mb-2 font-semibold">Set your price</label>
+                <label className="text-[#6F6D66]  text-[13px] font-medium leading-normal mb-1">Set your price</label>
                 <div className="relative w-full">
                   <input
                     placeholder="Enter price"
@@ -163,7 +163,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
                     value={salePrice}
                   />
                   <div
-                    className="absolute inset-y-0 right-0 flex items-center pr-4"
+                    className="absolute inset-y-0 right-0 flex items-center pr-2"
                     ref={dropdownRef}
                   >
                     <div className="relative w-full">
