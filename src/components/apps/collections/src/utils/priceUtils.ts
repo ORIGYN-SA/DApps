@@ -18,17 +18,10 @@ export const fetchExchangeRate = async (): Promise<number> => {
   return data['internet-computer'].usd;
 };
 
-/**
- * Converts a token amount from its smallest unit based on decimals.
- * @param {string} amount - The raw token amount as a string.
- * @param {string} decimals - The number of decimal places.
- * @returns {number} - The converted token amount.
- */
-export const convertTokenAmount = (amount: string, decimals: string): number => {
-  const decimal = parseInt(decimals, 10);
+export const convertTokenAmount = (amount: string, decimals: string | number): number => {
+  const decimal = typeof decimals === 'string' ? parseInt(decimals, 10) : decimals;
   return parseFloat(amount) / Math.pow(10, decimal);
 };
-
 /**
  * Converts ICP amount to USD.
  * @param {number} icpAmount - The amount in ICP.
@@ -41,34 +34,40 @@ export const convertICPToUSD = (icpAmount: number, exchangeRate: number): number
 
 export const extractSaleDetails = (
   saleData: any,
-  exchangeRates: Record<string, number>,
+  tokenPrices: Record<string, number>,
 ): SaleDetails | null => {
-  if (!saleData) {
+  if (!saleData || !saleData.sale_type || !saleData.sale_type.auction) {
     return null;
   }
 
-  const currency = saleData.currency || 'Unknown';
+  const auction = saleData.sale_type.auction;
+  const currency = auction.token?.ic?.symbol || 'Unknown';
+  const decimals = auction.token?.ic?.decimals ? Number(auction.token.ic.decimals) : 0;
 
-  // Helper function to calculate USD equivalent
-  const calculateAmountUSD = (amount: number): number | null => {
-    return exchangeRates[currency]
-      ? parseFloat((amount * exchangeRates[currency]).toFixed(2))
+  const calculateAmountUSD = (amount: string | number): number | null => {
+    const scaledAmount = convertTokenAmount(amount.toString(), decimals);
+    return tokenPrices[currency]
+      ? parseFloat((scaledAmount * tokenPrices[currency]).toFixed(2))
       : null;
   };
 
-  const buyNow = {
-    amount: saleData.buy_now?.amount || 0,
-    amountUSD: calculateAmountUSD(saleData.buy_now?.amount || 0),
-  };
+  const currentBidAmount = auction.current_bid_amount || '0';
+  const buyNowAmount = auction.config?.auction?.buy_now?.[0] || '0';
+  const startPriceAmount = auction.config?.auction?.start_price || '0';
 
   const currentBid = {
-    amount: saleData.current_bid?.amount || 0,
-    amountUSD: calculateAmountUSD(saleData.current_bid?.amount || 0),
+    amount: convertTokenAmount(currentBidAmount, decimals),
+    amountUSD: calculateAmountUSD(currentBidAmount),
+  };
+
+  const buyNow = {
+    amount: convertTokenAmount(buyNowAmount, decimals),
+    amountUSD: calculateAmountUSD(buyNowAmount),
   };
 
   const startPrice = {
-    amount: saleData.start_price?.amount || 0,
-    amountUSD: calculateAmountUSD(saleData.start_price?.amount || 0),
+    amount: convertTokenAmount(startPriceAmount, decimals),
+    amountUSD: calculateAmountUSD(startPriceAmount),
   };
 
   return {
@@ -76,10 +75,10 @@ export const extractSaleDetails = (
     buyNow,
     startPrice,
     currency,
-    saleId: saleData.saleId || null,
-    startDate: saleData.startDate || null,
-    endDate: saleData.endDate || null,
-    winner: saleData.winner || [],
-    participants: saleData.participants || [],
+    saleId: saleData.sale_id || null,
+    startDate: auction.config?.auction?.start_date || null,
+    endDate: auction.config?.auction?.ending?.date || null,
+    winner: auction.winner || [],
+    participants: auction.participants || [],
   };
 };

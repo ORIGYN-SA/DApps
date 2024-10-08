@@ -7,6 +7,9 @@ import { useGetNFTDetails } from '../../hooks/useGetNFTDetails';
 import ConnectWallet from '../Buttons/ConnectWallet';
 import Reminder from '../Utils/Reminder';
 import BuyNowModal from '../Modals/BuyNowModal';
+import { useResponsiveTruncate } from '../../utils/responsiveTruncate';
+import { CopyButton } from '../Buttons/CopyButton';
+import { useTokenData } from '../../context/TokenDataContext';
 
 // Header Component
 const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.memo(
@@ -104,42 +107,52 @@ const NFTHeader: React.FC<{ nft: NFT }> = ({ nft }) => (
 );
 
 // OwnerInfo Component
-const OwnerInfo: React.FC<{ nft: NFT }> = ({ nft }) => (
-  <div className="gap-2 flex flex-row items-center flex-wrap text-[#212425]">
-    <img src="/assets/owner.svg" alt="owner" className="w-6 h-6" />
-    <p className="font-light leading-normal w-fit">Owned by</p>
-    <p className="font-bold">{nft?.owner || 'Unknown'}</p>
-  </div>
-);
+const OwnerInfo: React.FC<{ nft: NFT }> = ({ nft }) => {
+  const truncateAddress = useResponsiveTruncate();
+  return (
+    <div className="gap-2 flex flex-row items-center flex-wrap text-[#212425]">
+      <img src="/assets/owner.svg" alt="owner" className="w-6 h-6" />
+      <p className="font-light leading-normal w-fit">Owned by</p>
+      <p className="font-bold">{truncateAddress(nft?.owner) || 'Unknown'}</p>
+      <CopyButton text={nft?.owner || ''} />
+    </div>
+  );
+};
 
 // PriceSection Component
 const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
   nft,
   onBuyNowClick,
-}) => (
-  <div className="p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full">
-    <div className="text-[#2E2E2E] text-base font-bold">Current price</div>
-    <div className="flex flex-row justify-start items-center gap-2">
-      <img src="/assets/IC_Icon.svg" alt="ICP" className="w-10 h-10" />
-      <div className="text-black text-[18px] md:text-[28px] font-bold">
-        {nft.price > 0 ? `${nft.price} ${nft.currency}` : 'Not for sale'}
+}) => {
+  const { getLogo } = useTokenData();
+
+  return (
+    <div className="p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full">
+      <div className="text-[#2E2E2E] text-base font-bold">Current price</div>
+      <div className="flex flex-row justify-start items-center gap-2">
+        <img src={getLogo(nft.currency)} alt="Token Logo" className="w-10 h-10" />
+        <div className="flex flex-row gap-2 items-baseline">
+          <div className="text-black text-[18px] md:text-[28px] font-bold">
+            {nft.price > 0 ? `${nft.price.toFixed(2)} ${nft.currency}` : 'Not for sale'}
+          </div>
+          {nft.priceUSD > 0 && (
+            <div className="text-[#6e6d66] text-sm font-light">(${nft.priceUSD.toFixed(2)})</div>
+          )}
+        </div>
       </div>
-      {nft.priceUSD && nft.priceUSD > 0 && (
-        <div className="text-[#6e6d66] text-base font-light">(${nft.priceUSD.toFixed(2)})</div>
+      {nft.price > 0 && (
+        <button
+          className="bg-[#212425] rounded-full justify-center items-center w-full mt-4"
+          onClick={onBuyNowClick}
+        >
+          <p className="text-center text-white text-sm font-semibold leading-[48px]">
+            Buy now for {nft.price.toFixed(2)} {nft.currency}
+          </p>
+        </button>
       )}
     </div>
-    {nft.price > 0 && (
-      <button
-        className="bg-[#212425] rounded-full justify-center items-center w-full mt-4"
-        onClick={onBuyNowClick}
-      >
-        <p className="text-center text-white text-sm font-semibold leading-[48px]">
-          Buy now for {nft.price} ${nft.currency}
-        </p>
-      </button>
-    )}
-  </div>
-);
+  );
+};
 
 // CheckOnChain Component
 const CheckOnChain: React.FC = () => (

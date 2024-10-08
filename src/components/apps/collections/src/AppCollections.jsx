@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { TokensContextProvider } from '@dapp/features-tokens-provider';
 import { PerpetualOSContextProvider } from '@dapp/features-context-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { CurrencyPriceProvider } from './context/CurrencyPriceContext';
+import { TokenDataProvider } from './context/TokenDataContext';
 import CollectionsPage from './components/Pages/CollectionsList';
 import CollectionDetail from './components/Pages/CollectionDetail';
 import Daos from './components/Pages/Daos';
@@ -18,7 +18,7 @@ const App = () => (
   <>
     <HashRouter>
       <QueryClientProvider client={queryClient}>
-        <CurrencyPriceProvider>
+        <TokenDataProvider>
           <PerpetualOSContextProvider>
             <SessionProvider>
               <AuthProvider>
@@ -34,7 +34,7 @@ const App = () => (
               </AuthProvider>
             </SessionProvider>
           </PerpetualOSContextProvider>
-        </CurrencyPriceProvider>
+        </TokenDataProvider>
       </QueryClientProvider>
     </HashRouter>
   </>

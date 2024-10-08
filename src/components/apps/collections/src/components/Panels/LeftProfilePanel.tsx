@@ -1,20 +1,13 @@
-import React, { useState } from 'react';
-import { useCurrencyPrice } from '../../context/CurrencyPriceContext';
-import Toast from '../Utils/Toast';
+import { useTokenData } from '../../context/TokenDataContext';
 import { useResponsiveTruncate } from '../../utils/responsiveTruncate';
+import { CopyButton } from '../Buttons/CopyButton';
 
 const LeftProfilePanel = ({ user, onTransferClick, onManageClick }) => {
-  const { prices } = useCurrencyPrice();
+  const { getUSDPrice } = useTokenData();
   const truncateAddress = useResponsiveTruncate();
-  const [showToast, setShowToast] = useState(false);
 
-  const ogyToUsd = (user.balance.OGY * (prices['OGY'] || 0)).toFixed(2);
-  const icpToUsd = (user.balance.ICP * (prices['ICP'] || 0)).toFixed(2);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(user.walletAddress);
-    setShowToast(true);
-  };
+  const ogyToUsd = (user.balance.OGY * (getUSDPrice('OGY') || 0)).toFixed(2);
+  const icpToUsd = (user.balance.ICP * (getUSDPrice('ICP') || 0)).toFixed(2);
 
   return (
     <div className="fixed top-[90px] left-0 md:w-1/3 lg:w-1/4 h-[calc(100vh-90px)] bg-white flex flex-col shadow-lg">
@@ -46,12 +39,7 @@ const LeftProfilePanel = ({ user, onTransferClick, onManageClick }) => {
                   {truncateAddress(user.walletAddress)}
                 </span>
               </div>
-              <img
-                src="/assets/copy.svg"
-                alt="Copy Icon"
-                className="w-5 h-5 cursor-pointer"
-                onClick={handleCopy}
-              />
+              <CopyButton text={user.walletAddress} />
             </div>
           </div>
         </div>
@@ -114,9 +102,6 @@ const LeftProfilePanel = ({ user, onTransferClick, onManageClick }) => {
           Log out
         </button>
       </div>
-
-      {/* Custom Toast */}
-      {showToast && <Toast message="Copied to clipboard!" onClose={() => setShowToast(false)} />}
     </div>
   );
 };

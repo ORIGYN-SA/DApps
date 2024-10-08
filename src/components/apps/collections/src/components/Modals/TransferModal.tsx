@@ -1,22 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useResponsiveTruncate } from '../../utils/responsiveTruncate';
-import Toast from '../Utils/Toast';
 import { currencies, Currency } from '../../constants/currencies';
-import { useCurrencyPrice } from '../../context/CurrencyPriceContext';
+import { useTokenData } from '../../context/TokenDataContext';
+import { CopyButton } from '../Buttons/CopyButton';
 
 const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { prices, isLoading, isError } = useCurrencyPrice();
-
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [currency, setCurrency] = useState<Currency>(currencies[0]); // Default to first currency
+  const [currency, setCurrency] = useState<Currency>(currencies[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [transferPrice, setTransferPrice] = useState<string>('');
   const [transferTo, setTransferTo] = useState<string>('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const truncateAddress = useResponsiveTruncate();
+  const { getUSDPrice } = useTokenData();
 
   const onTransferClick = async () => {
     setIsProcessing(true);
@@ -24,11 +22,6 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       setIsProcessing(false);
       setIsSuccess(true);
     }, 2000);
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText('5obapm-2iaaa-aaaak-qcgca-cai');
-    setShowToast(true);
   };
 
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -57,7 +50,7 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const filteredCurrencies = currencies.filter((curr) => curr.code !== currency.code);
 
   const convertedPrice = transferPrice
-    ? (parseFloat(transferPrice) * (prices[currency.code] || 0)).toFixed(2)
+    ? (parseFloat(transferPrice) * (getUSDPrice(currency.code) || 0)).toFixed(2)
     : '0.00';
 
   return (
@@ -68,10 +61,7 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <div
         className={`bg-white rounded-2xl pt-8 w-[90%] md:w-1/2 xl:w-1/3 2xl:w-1/4 3xl:w-1/5  shadow-lg relative min-h-[400px]`}
       >
-        <button
-          className="absolute top-6 right-5"
-          onClick={onClose}
-        >
+        <button className="absolute top-6 right-5" onClick={onClose}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -108,12 +98,7 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   {truncateAddress('5obapm-2iaaa-aaaak-qcgca-cai')}
                 </span>
               </div>
-              <img
-                src="/assets/copy.svg"
-                alt="Copy Icon"
-                className="w-5 h-5 cursor-pointer"
-                onClick={handleCopy}
-              />
+              <CopyButton text={'5obapm-2iaaa-aaaak-qcgca-cai'} />
             </div>
             <button
               className={`bg-black mt-10 px-5 py-4 w-1/2 rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold
@@ -164,7 +149,7 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <div className="relative w-full">
                       <div
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className={`bg-[#f9fafe] text-[#212425] text-[12px] font-medium uppercase tracking-widest cursor-pointer flex justify-between items-center p-2 w-24 ${
+                        className={`bg-[#f9fafe] text-[#212425] text-[12px] font-medium uppercase tracking-widest cursor-pointer flex justify-between items-center p-2 w-32 ${
                           isDropdownOpen ? 'border-x border-t rounded-t-2xl' : 'border rounded-full'
                         } border-gray-300`}
                         style={{
@@ -197,7 +182,7 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       </div>
 
                       {isDropdownOpen && (
-                        <div className="absolute z-10 w-24 bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-lg">
+                        <div className="absolute z-10 w-32 bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-lg">
                           {filteredCurrencies.map((curr) => (
                             <button
                               key={curr.code}
@@ -214,19 +199,10 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </div>
                   </div>
                 </div>
-                {isLoading ? (
-                  <p className="text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7">
-                    Loading price...
-                  </p>
-                ) : isError ? (
-                  <p className="text-sm mb-4 text-red-500 text-[13px] font-medium leading-normal italic ml-auto pr-7">
-                    Error fetching price
-                  </p>
-                ) : (
-                  <p className="text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7">
-                    ${convertedPrice} USD
-                  </p>
-                )}
+
+                <p className="text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7">
+                  ${convertedPrice} USD
+                </p>
               </div>
               <div className="mt-6">
                 <button
@@ -246,8 +222,6 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </>
         )}
       </div>
-      {/* Custom Toast */}
-      {showToast && <Toast message="Copied to clipboard!" onClose={() => setShowToast(false)} />}
     </div>
   );
 };

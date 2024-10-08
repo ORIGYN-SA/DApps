@@ -14,18 +14,20 @@ import OpenASaleModal from '../Modals/OpenASaleModal';
 const NFTCard = ({ nft, canisterId }: { nft: NFT; canisterId: string }) => (
   <Link to={`/collection/${canisterId}/${nft.id}`} className="flex flex-col">
     <div className="bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden">
+      <div className=" rounded-t-2xl overflow-hidden">
         <img
-          className="w-[233px] h-[233px] object-contain hover:scale-110 duration-300 ease-in-out transition-transform"
+          className="w-full max-h-[243px] object-contain hover:scale-110 duration-300 ease-in-out transition-transform"
           src={nft.image}
           alt={nft.name}
         />
+      </div>
       <div className="p-4 flex flex-col justify-between flex-grow">
         <div>
           <h3 className="text-gray-900 text-base font-bold">{nft.name}</h3>
         </div>
         <div className="mt-2">
           <span className="px-2 py-1 bg-gray-900 text-white text-xs font-bold rounded-full">
-            {nft.price > 0 ? `${nft.price} ${nft.currency}` : 'Not for sale'}
+            {nft.price > 0 ? `${nft.price.toFixed(2)} ${nft.currency}` : 'Not for sale'}
           </span>
         </div>
       </div>
@@ -55,7 +57,7 @@ const NFTSkeleton = () => (
 const CollectionDetail: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
   const [salePrice, setSalePrice] = useState<string>('');
@@ -63,8 +65,6 @@ const CollectionDetail: React.FC = () => {
 
   const collectionCanisterId = window.location.hash.split('/').pop() || '';
   const { data: collection, isLoading, error } = useCollectionDetails(collectionCanisterId);
-
-  console.log('collection', collection);
 
   const openPriceModal = () => {
     setIsModalOpen(false);

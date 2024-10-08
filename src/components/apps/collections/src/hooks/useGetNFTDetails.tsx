@@ -2,13 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
-import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
-import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js';
+import { idlFactory as goldIdlFactory } from '../data/canisters/interfaces/gold/did.js';
+import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/interfaces/gold/interfaces/gld_nft.js';
 import { NFT, SaleDetails, Metadata } from '../types/global';
 import { extractSaleDetails } from '../utils/priceUtils';
 import { convertPrincipalArrayToString } from '../utils/principalUtils';
 import { hasClass, hasMap } from '../utils/typeGuards';
-import { useCurrencyPrice } from '../context/CurrencyPriceContext';
+import { useTokenData } from '../context/TokenDataContext';
 
 /**
  * Extracts the token name from metadata.
@@ -54,7 +54,7 @@ const generateImageUrl = (canisterId: string, tokenName: string): string => {
 const fetchNFTDetails = async (
   canisterId: string,
   nftId: string,
-  exchangeRates: { [key: string]: number },
+  tokenUSDPrices: Record<string, number>,
 ): Promise<NFT> => {
   try {
     const agent = new HttpAgent({ host: 'https://ic0.app' });
@@ -82,22 +82,16 @@ const fetchNFTDetails = async (
           const owner = extractOwner(metadata);
 
           const saleData = nftResultItem.ok.current_sale ? nftResultItem.ok.current_sale[0] : null;
-          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, exchangeRates);
+          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, tokenUSDPrices);
 
           let price = 0;
           let priceUSD = 0;
           let currency = '';
 
-          // Déterminez le prix en fonction des détails de la vente
           if (saleDetails) {
-            price =
-              parseFloat(saleDetails.currentBid.amount.toFixed(2)) ||
-              parseFloat(saleDetails.buyNow.amount.toFixed(2)) ||
-              parseFloat(saleDetails.startPrice.amount.toFixed(2));
+            price = saleDetails.buyNow.amount ?? 0;
             currency = saleDetails.currency;
-            priceUSD = exchangeRates[currency]
-              ? parseFloat((price * exchangeRates[currency]).toFixed(2))
-              : 0;
+            priceUSD = saleDetails.buyNow.amountUSD ?? 0;
           }
 
           return {
@@ -126,12 +120,20 @@ const fetchNFTDetails = async (
  * Custom hook to get NFT details using React Query and exchange rate from the context.
  */
 export const useGetNFTDetails = (canisterId: string, nftId: string) => {
-  const { prices, isLoading, isError } = useCurrencyPrice();
+  const { tokens, getLogo, isLoading: isPricesLoading, isError: isPricesError } = useTokenData();
+
+  const tokenUSDPrices: Record<string, number> = tokens.reduce(
+    (acc, token) => {
+      acc[token.symbol] = token.priceUSD;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return useQuery<NFT, Error, NFT, [string, string, string]>({
     queryKey: ['collectionDetail', canisterId, nftId],
-    queryFn: () => fetchNFTDetails(canisterId, nftId, prices),
-    enabled: !!canisterId && !!nftId && !isLoading && !isError,
+    queryFn: () => fetchNFTDetails(canisterId, nftId, tokenUSDPrices),
+    enabled: !!canisterId && !!nftId && !isPricesLoading && !isPricesError,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });

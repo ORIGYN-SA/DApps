@@ -19,25 +19,6 @@ export interface CollectionAdditionalData {
   nftCount?: bigint;
 }
 
-export interface CollectionWithNFTs {
-  name: [] | [string];
-  canister_id: string;
-  logo: [] | [string];
-  nfts: NFT[];
-}
-
-export interface NFT {
-  id: string;
-  name: string;
-  collectionName: string;
-  image: string;
-  price: number;
-  currency: string;
-  priceUSD: number;
-  saleDetails?: SaleDetails;
-  owner: string;
-}
-
 export interface SaleDetails {
   currentBid: {
     amount: number;
@@ -55,8 +36,28 @@ export interface SaleDetails {
   saleId: string | null;
   startDate: string | null;
   endDate: string | null;
-  winner: Principal[];
-  participants: Participant[];
+  winner: any[];
+  participants: any[];
+}
+
+export interface NFT {
+  id: string;
+  name: string;
+  collectionName: string;
+  image: string;
+  logo: string | undefined;
+  price: number;
+  currency: string;
+  priceUSD: number;
+  owner: string;
+  saleDetails?: SaleDetails;
+}
+
+export interface CollectionWithNFTs {
+  name: string[];
+  canister_id: string;
+  logo: string[];
+  nfts: NFT[];
 }
 
 export interface Principal {

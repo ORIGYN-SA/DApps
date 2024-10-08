@@ -1,9 +1,9 @@
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
-import { idlFactory, Result_2 } from '../data/canisters/collections/collection_index.did.js';
-import { _SERVICE } from '../data/canisters/collections/collection_index.did';
-import { _SERVICE as _GOLD_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js';
-import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
+import { idlFactory, Result_2 } from '../data/canisters/interfaces/collections/collection_index.did.js';
+import { _SERVICE } from '../data/canisters/interfaces/collections/collection_index.did.js';
+import { _SERVICE as _GOLD_SERVICE } from '../data/canisters/interfaces/gold/interfaces/gld_nft.js';
+import { idlFactory as goldIdlFactory } from '../data/canisters/interfaces/gold/did.js';
 import {
   CollectionsBackendResponse,
   CollectionAdditionalData,

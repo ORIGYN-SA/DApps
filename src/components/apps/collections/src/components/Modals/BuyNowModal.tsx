@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { NFT } from '../../types/global';
 import Reminder from '../Utils/Reminder';
+import { useTokenData } from '../../context/TokenDataContext';
 
 const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const { getLogo } = useTokenData();
 
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) onClose();
@@ -51,34 +54,29 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose
               Your NFT has been successfully purchased.
             </p>
             <div className="w-full px-3 md:px-6">
-              <div className="flex px-3 py-2 items-center gap-4 border border-gray-300 rounded-t-2xl">
+              <div className="flex px-3 py-2 items-center gap-4 border border-gray-300 rounded-t-2xl justify-center">
                 <img
                   src={nft.image || 'https://via.placeholder.com/243x244'}
                   alt={nft.name || 'NFT Image'}
-                  className="h-28 w-28 rounded-2xl object-cover"
+                  className="h-28 w-28 rounded-2xl object-contain"
                 />
                 <div className="p-4">
                   <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
                     {nft.collectionName || 'Unknown'}
                   </h3>
                   <p className="text-[16px] font-bold leading-normal">{nft.name || 'Unknown'}</p>
-                  <div className="mt-2">
-                    <span className="px-2 py-1 bg-gray-900 text-white text-xs font-bold rounded-full">
-                      {nft.priceICP > 0 ? `${nft.priceICP} ICP` : 'Not for sale'}
-                    </span>
-                  </div>
                 </div>
               </div>
               <div className="h-[37px] px-6 w-full py-2 bg-[#f9fafe] rounded-bl-[20px] rounded-br-[20px] border-l border-r border-b border-[#e1e1e1] justify-start items-center gap-4 inline-flex">
-                <div className="w-[88px] text-[#69737c] text-[13px] font-medium font-['DM Sans']">
+                <div className="w-[88px] text-[#69737c] text-[13px] font-medium">
                   Price
                 </div>
                 <div className="justify-start items-center gap-2 flex w-full">
-                  <img src="/assets/IC_Icon.svg" alt="ICP" className="w-6 h-6" />
-                  <div className="text-black text-base font-bold font-['DM Sans']">
-                    {nft.priceICP} ICP
+                  <img src={getLogo(nft.currency)} alt="Token Logo" className="w-6 h-6" />
+                  <div className="text-black text-base font-bold">
+                    {nft.price.toFixed(2)} {nft.currency}
                   </div>
-                  <div className="text-[#6e6d66] text-[13px] font-light font-['DM Sans']">
+                  <div className="text-[#6e6d66] text-[13px] font-light">
                     (${nft.priceUSD.toFixed(2)})
                   </div>
                 </div>
@@ -117,7 +115,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose
                   </p>
                 </div>
                 <p className="text-center text-[#262c2e] text-base font-bold leading-snug">
-                  {nft.priceICP} ICP{' '}
+                  {nft.price.toFixed(2)} {nft.currency}{' '}
                   <span className="text-center text-[#6e6d66] text-base font-normal leading-[25px]">
                     (${nft.priceUSD.toFixed(2)})
                   </span>
@@ -131,7 +129,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose
                     onClick={() => onBuyNowClick()}
                   >
                     <span className="text-center text-white text-sm font-semibold">
-                      Buy for {nft.priceICP} ICP
+                      Buy for {nft.price.toFixed(2)} {nft.currency}
                     </span>
                   </button>
                 </div>

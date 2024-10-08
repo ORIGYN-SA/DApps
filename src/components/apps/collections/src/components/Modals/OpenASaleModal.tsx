@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Currency, currencies } from '../../constants/currencies';
-import { useCurrencyPrice } from '../../context/CurrencyPriceContext';
 import { NFT } from '../../types/global';
+import { useTokenData } from '../../context/TokenDataContext';
 
 interface OpenASaleModalProps {
   selectedNFT: NFT;
@@ -16,8 +16,8 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
   salePrice,
   setSalePrice,
 }) => {
-  const { prices, isLoading, isError } = useCurrencyPrice();
-  const [currency, setCurrency] = useState<Currency>(currencies[0]); // Default to first currency
+  const { getUSDPrice } = useTokenData();
+  const [currency, setCurrency] = useState<Currency>(currencies[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isListing, setIsListing] = useState(false);
   const [isListed, setIsListed] = useState(false);
@@ -59,7 +59,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
   const filteredCurrencies = currencies.filter((curr) => curr.code !== currency.code);
 
   const convertedPrice = salePrice
-    ? (parseFloat(salePrice) * (prices[currency.code] || 0)).toFixed(2)
+    ? (parseFloat(salePrice) * (getUSDPrice(currency.code) || 0)).toFixed(2)
     : '0.00';
 
   return (
@@ -94,11 +94,11 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
                 Your NFT has been successfully listed for sale.
               </p>
               <div className="w-full px-3 md:px-6">
-                <div className="flex px-3 py-2 items-center gap-4 border border-gray-300 rounded-2xl">
+                <div className="flex px-3 py-2  justify-centeritems-center gap-4 border border-gray-300 rounded-2xl">
                   <img
                     src={selectedNFT.image || 'https://via.placeholder.com/243x244'}
                     alt={selectedNFT.name || 'NFT Image'}
-                    className="h-28 w-28 rounded-2xl object-cover"
+                    className="h-28 w-28 rounded-2xl object-contain"
                   />
                   <div className="p-4">
                     <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
@@ -107,11 +107,6 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
                     <p className="text-[16px] font-bold leading-normal">
                       {selectedNFT.name || 'Unknown'}
                     </p>
-                    <div className="mt-2">
-                      <span className="px-2 py-1 bg-gray-900 text-white text-xs font-bold rounded-full">
-                        {selectedNFT.priceICP > 0 ? `${selectedNFT.priceICP} ICP` : 'Not for sale'}
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -140,7 +135,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
                   <img
                     src={selectedNFT.image || 'https://via.placeholder.com/243x244'}
                     alt={selectedNFT.name || 'NFT Image'}
-                    className="h-28 w-28 rounded-2xl object-cover"
+                    className="h-28 w-28 rounded-2xl object-contain"
                   />
                   <div className="p-4">
                     <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
@@ -154,7 +149,9 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
               </div>
               {/* Section to set price with dropdown */}
               <div className="flex flex-col items-start mt-4 w-full px-3 md:px-6">
-                <label className="text-[#6F6D66]  text-[13px] font-medium leading-normal mb-1">Set your price</label>
+                <label className="text-[#6F6D66]  text-[13px] font-medium leading-normal mb-1">
+                  Set your price
+                </label>
                 <div className="relative w-full">
                   <input
                     placeholder="Enter price"
@@ -219,19 +216,9 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
                     </div>
                   </div>
                 </div>
-                {isLoading ? (
-                  <p className="text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7">
-                    Loading price...
-                  </p>
-                ) : isError ? (
-                  <p className="text-sm mb-4 text-red-500 text-[13px] font-medium leading-normal italic ml-auto pr-7">
-                    Error fetching price
-                  </p>
-                ) : (
-                  <p className="text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7">
-                    ${convertedPrice} USD
-                  </p>
-                )}
+                <p className="text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7">
+                  ${convertedPrice} USD
+                </p>
               </div>
               {/* Confirmation Button */}
               <button

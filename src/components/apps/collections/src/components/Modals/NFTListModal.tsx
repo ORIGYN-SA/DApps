@@ -80,7 +80,7 @@ const NFTListModal: React.FC<NFTListModalProps> = ({
                   <img
                     src={nft.image || 'https://via.placeholder.com/243x244'}
                     alt={nft.name || 'NFT Image'}
-                    className="h-28 w-28 rounded-2xl object-cover"
+                    className="h-28 w-28 rounded-2xl object-contain"
                   />
                   <div className="w-1/2">
                     <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
