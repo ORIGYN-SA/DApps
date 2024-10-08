@@ -2,7 +2,7 @@ export interface CollectionType {
   name: string;
   checked: boolean;
   image: string;
-  category_id?: string;
+  category_name: string;
   nftCount: bigint;
   canister_id: string;
   is_promoted: boolean;
@@ -31,7 +31,8 @@ export interface NFT {
   name: string;
   collectionName: string;
   image: string;
-  priceICP: number;
+  price: number;
+  currency: string;
   priceUSD: number;
   saleDetails?: SaleDetails;
   owner: string;
@@ -39,16 +40,16 @@ export interface NFT {
 
 export interface SaleDetails {
   currentBid: {
-    amountICP: number;
-    amountUSD: number;
+    amount: number;
+    amountUSD: number | null;
   };
   buyNow: {
-    amountICP: number;
-    amountUSD: number;
+    amount: number;
+    amountUSD: number | null;
   };
   startPrice: {
-    amountICP: number;
-    amountUSD: number;
+    amount: number;
+    amountUSD: number | null;
   };
   currency: string;
   saleId: string | null;

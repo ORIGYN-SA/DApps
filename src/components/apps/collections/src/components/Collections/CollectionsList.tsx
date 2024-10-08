@@ -57,11 +57,11 @@ const Collections: React.FC<CollectionsProps> = ({
                 {index === 0 ? (
                   <div className="flex flex-col justify-center items-start gap-4">
                     <img
-                      className="w-32 h-32 rounded-2xl"
-                      src={collection.image}
+                      className="w-36 h-36 rounded-2xl"
+                      src={collection.image || 'https://via.placeholder.com/243x244'}
                       key={collection.name || 'Collection Image'}
                     />
-                    <div className="self-stretch h-[104px] flex-col justify-center items-start gap-2 flex">
+                    <div className="self-stretch h-[104px] flex-col justify-center items-start gap-2 mt-2 space-y-2 flex">
                       <div className="self-stretch text-[#212425] text-[28px] font-bold">
                         {collection.name}
                       </div>
@@ -75,7 +75,7 @@ const Collections: React.FC<CollectionsProps> = ({
                         </div>
                         <div className="justify-start items-center gap-0.5 flex w-3/4">
                           <div className="text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest">
-                            {collection.category_id}
+                            {collection.category_name}
                           </div>
                         </div>
                       </div>
@@ -90,7 +90,7 @@ const Collections: React.FC<CollectionsProps> = ({
                     />
                     <div className="p-4">
                       <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
-                        {collection.category_id}
+                        {collection.category_name}
                       </h3>
                       <p className="text-[16px] font-bold leading-normal">{collection.name || 'Unknown'}</p>
                       <div className="h-6 px-2 py-1 bg-[#212425] rounded-[100px] justify-center items-center gap-2.5 inline-flex">

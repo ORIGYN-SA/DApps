@@ -2,34 +2,94 @@ import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
+export interface Category {
+  'active' : boolean,
+  'name' : string,
+  'collection_count' : bigint,
+}
 export interface Collection {
   'name' : [] | [string],
   'canister_id' : Principal,
   'is_promoted' : boolean,
-  'category' : [] | [BigUint64Array | bigint[]],
+  'category' : [] | [bigint],
 }
-export interface GetCollectionsArgs { 'offset' : bigint, 'limit' : bigint }
+export interface GetCollectionsArgs {
+  'categories' : [] | [BigUint64Array | bigint[]],
+  'offset' : bigint,
+  'limit' : bigint,
+}
+export type GetCollectionsError = { 'CategoryNotFound' : string };
+export interface GetCollectionsResult {
+  'total_pages' : bigint,
+  'collections' : Array<Collection>,
+}
 export interface InitArgs {
   'test_mode' : boolean,
   'authorized_principals' : Array<Principal>,
 }
+export interface InsertCategoryArgs { 'category_name' : string }
+export type InsertCategoryError = { 'CategoryAlreadyExists' : null };
 export interface InsertCollectionArgs {
   'is_promoted' : boolean,
   'collection_canister_id' : Principal,
+  'category' : bigint,
 }
 export type InsertCollectionError = { 'GenericOrigynNftError' : string } |
   { 'TargetCanisterIdNotOrigyn' : null } |
-  { 'CollectionAlreadyExists' : null };
+  { 'CollectionAlreadyExists' : null } |
+  { 'CategoryNotFound' : string };
+export interface RemoveCollectionArgs { 'collection_canister_id' : Principal }
+export type RemoveCollectionError = { 'CollectionNotFound' : null };
 export type Result = { 'Ok' : boolean } |
   { 'Err' : string };
-export type Result_1 = { 'Ok' : Array<Collection> } |
-  { 'Err' : string };
-export type Result_2 = { 'Ok' : boolean } |
+export type Result_1 = { 'Ok' : Array<[bigint, Category]> } |
+  { 'Err' : null };
+export type Result_2 = { 'Ok' : GetCollectionsResult } |
+  { 'Err' : GetCollectionsError };
+export type Result_3 = { 'Ok' : null } |
+  { 'Err' : InsertCategoryError };
+export type Result_4 = { 'Ok' : null } |
   { 'Err' : InsertCollectionError };
+export type Result_5 = { 'Ok' : null } |
+  { 'Err' : RemoveCollectionError };
+export type Result_6 = { 'Ok' : null } |
+  { 'Err' : SetCategoryVisibilityError };
+export type Result_7 = { 'Ok' : null } |
+  { 'Err' : UpdateCollectionCategoryError };
+export interface SearchCollectionsArg {
+  'categories' : [] | [BigUint64Array | bigint[]],
+  'search_string' : string,
+  'offset' : bigint,
+  'limit' : bigint,
+}
+export interface SetCategoryVisibility {
+  'hidden' : boolean,
+  'category_id' : bigint,
+}
+export type SetCategoryVisibilityError = { 'CategoryNotFound' : null };
+export interface UpdateCollectionCategoryArgs {
+  'collection_canister_id' : Principal,
+  'category_id' : bigint,
+}
+export type UpdateCollectionCategoryError = { 'CollectionNotFound' : null } |
+  { 'CategoryNotFound' : string };
 export interface _SERVICE {
   'add_authorised_principal' : ActorMethod<[Principal], Result>,
-  'get_collections' : ActorMethod<[GetCollectionsArgs], Result_1>,
-  'insert_collection' : ActorMethod<[InsertCollectionArgs], Result_2>,
+  'get_categories' : ActorMethod<[], Result_1>,
+  'get_collections' : ActorMethod<[GetCollectionsArgs], Result_2>,
+  'get_user_collections' : ActorMethod<[[] | [Principal]], Array<Collection>>,
+  'insert_category' : ActorMethod<[InsertCategoryArgs], Result_3>,
+  'insert_collection' : ActorMethod<[InsertCollectionArgs], Result_4>,
+  'remove_collection' : ActorMethod<[RemoveCollectionArgs], Result_5>,
+  'search_collections' : ActorMethod<
+    [SearchCollectionsArg],
+    GetCollectionsResult
+  >,
+  'set_category_visibility' : ActorMethod<[SetCategoryVisibility], Result_6>,
+  'update_collection_category' : ActorMethod<
+    [UpdateCollectionCategoryArgs],
+    Result_7
+  >,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

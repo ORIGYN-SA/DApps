@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
-import { idlFactory } from '../data/canisters/collections/collection_index.did.js';
+import { idlFactory, Result_2 } from '../data/canisters/collections/collection_index.did.js';
 import { _SERVICE } from '../data/canisters/collections/collection_index.did';
 import { _SERVICE as _GOLD_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js';
 import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
@@ -9,10 +9,13 @@ import {
   CollectionAdditionalData,
   CollectionType,
 } from '../types/global';
+import { extractCategoryName } from '../utils/categoryUtils.js';
+
 
 const fetchCollectionsList = async (
   offset: number,
   limit: number,
+  categories: [] | [BigUint64Array | bigint[]] = [],
 ): Promise<CollectionsBackendResponse> => {
   const agent = new HttpAgent({ host: 'https://ic0.app' });
   const canisterId = 'lnt3k-ciaaa-aaaaj-azsaq-cai';
@@ -21,45 +24,49 @@ const fetchCollectionsList = async (
     canisterId,
   });
 
-  const collections = await actor.get_collections({
+  const collectionsResult: Result_2 = await actor.get_collections({
+    categories,
     offset: BigInt(offset),
     limit: BigInt(limit),
   });
 
-  if ('Ok' in collections) {
-    const sortedCollections = collections.Ok.sort((a, b) => {
-      return a.is_promoted === b.is_promoted ? 0 : a.is_promoted ? -1 : 1;
-    }).map((collection) => ({
-      ...collection,
-      checked: true,
-      canister_id: collection.canister_id.toText(),
-    }));
+  if ('Ok' in collectionsResult) {
+    const { collections, total_pages } = collectionsResult.Ok;
 
-    const totalPages = Math.ceil(sortedCollections.length / limit);
+    const sortedCollections = collections
+      .sort((a, b) => (a.is_promoted === b.is_promoted ? 0 : a.is_promoted ? -1 : 1))
+      .map((collection) => ({
+        ...collection,
+        checked: true,
+        canister_id: collection.canister_id.toText(),
+      }));
+
+    const totalPages = Number(total_pages);
 
     const canisterIds = sortedCollections.map((collection) => collection.canister_id);
 
     const additionalData: CollectionAdditionalData[] = await fetchAllCollectionsData(canisterIds);
 
-    const mergedCollections: CollectionType[] = sortedCollections.map((collection) => {
-      const data = additionalData.find((item) => item.canisterId === collection.canister_id);
+    const mergedCollections: CollectionType[] = await Promise.all(
+      sortedCollections.map(async (collection) => {
+        const data = additionalData.find((item) => item.canisterId === collection.canister_id);
+        const category_name = await extractCategoryName(collection.category);
 
-      const category_id = extractCategoryId(collection.category);
-
-      return {
-        name: collection.name[0] || 'Unknown',
-        checked: collection.checked,
-        image: data?.image || '',
-        category_id,
-        nftCount: data?.nftCount || BigInt(0),
-        canister_id: collection.canister_id,
-        is_promoted: collection.is_promoted,
-      };
-    });
+        return {
+          name: collection.name[0] || 'Unknown',
+          checked: collection.checked,
+          image: data?.image || '',
+          category_name,
+          nftCount: data?.nftCount || BigInt(0),
+          canister_id: collection.canister_id,
+          is_promoted: collection.is_promoted,
+        };
+      }),
+    );
 
     return { collections: mergedCollections, totalPages };
   } else {
-    throw new Error(`Error fetching collections: ${collections.Err}`);
+    throw new Error(`Error fetching collections: ${collectionsResult.Err.CategoryNotFound}`);
   }
 };
 
@@ -111,20 +118,6 @@ const fetchAllCollectionsData = async (
   }
 
   return results.filter((data): data is CollectionAdditionalData => data !== null);
-};
-
-function isNonEmptyCategory(
-  category: [] | [BigUint64Array | bigint[]],
-): category is [BigUint64Array | bigint[]] {
-  return category.length > 0;
-}
-
-const extractCategoryId = (category: [] | [BigUint64Array | bigint[]]): string => {
-  if (isNonEmptyCategory(category)) {
-    const categoryValue = category[0];
-    return categoryValue.toString();
-  }
-  return '';
 };
 
 export const useGetCollectionsList = (

@@ -1,11 +1,18 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { idlFactory as goldIdlFactory } from '../data/canisters/gold/did.js';
-import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/gold/interfaces/gld_nft.js';
+import {
+  _SERVICE as _GOLD_NFT_SERVICE,
+  CandyShared,
+} from '../data/canisters/gold/interfaces/gld_nft.js';
 import { CollectionWithNFTs, NFT, SaleDetails } from '../types/global.js';
-import { extractSaleDetails, fetchExchangeRate } from '../utils/priceUtils'; // Import sale details extraction and exchange rate utils
+import { extractSaleDetails } from '../utils/priceUtils';
+import { useCurrencyPrice } from '../context/CurrencyPriceContext.js';
 
-const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWithNFTs> => {
+const fetchCollectionDetail = async (
+  canisterId: string,
+  exchangeRates: Record<string, number>,
+): Promise<CollectionWithNFTs> => {
   try {
     const agent = new HttpAgent({ host: 'https://ic0.app' });
     const actor = Actor.createActor<_GOLD_NFT_SERVICE>(goldIdlFactory, {
@@ -17,6 +24,9 @@ const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWith
     if (!('ok' in collectionResult)) {
       throw new Error(`Error during the retrieval of the collection: ${collectionResult.err.text}`);
     }
+
+    console.log('collection result', collectionResult);
+
     const collectionInfo = collectionResult.ok;
 
     if (
@@ -36,46 +46,48 @@ const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWith
     const limitedTokenIds = tokenIds;
 
     const nftResults = await actor.nft_batch_origyn(limitedTokenIds);
-    console.log('nftResults', nftResults);
-
-    // Fetch the current exchange rate (ICP to USD)
-    const exchangeRate = await fetchExchangeRate();
 
     const nfts: NFT[] = nftResults
       .map((nftResult, index) => {
         if ('ok' in nftResult) {
-          const metadata = nftResult.ok.metadata;
-          const tokenName = extractTokenName(metadata);
-          const collection = canisterId;
-          const imageUrl = generateImageUrl(canisterId, tokenName);
+          const { tokenName, imageUrl } = extractMetadata(nftResult.ok.metadata, canisterId);
 
-          // Extract sale details, if available
-          const saleData = nftResult.ok.current_sale ? nftResult.ok.current_sale[0] : null;
-          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, exchangeRate);
+          const saleData =
+            nftResult.ok.current_sale && nftResult.ok.current_sale.length > 0
+              ? nftResult.ok.current_sale[0]
+              : null;
 
-          let priceICP = 0;
+              console.log('saleData', saleData);
+
+          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, exchangeRates);
+
+          console.log('saleDetails', saleDetails);
+
+          let price = 0;
           let priceUSD = 0;
+          let currency = '';
 
-          // Determine the price based on sale details
           if (saleDetails) {
-            if (saleDetails.currentBid.amountICP > 0) {
-              priceICP = parseFloat(saleDetails.currentBid.amountICP.toFixed(2));
-              priceUSD = parseFloat(saleDetails.currentBid.amountUSD.toFixed(2));
-            } else if (saleDetails.buyNow.amountICP > 0) {
-              priceICP = parseFloat(saleDetails.buyNow.amountICP.toFixed(2));
-              priceUSD = parseFloat(saleDetails.buyNow.amountUSD.toFixed(2));
-            } else if (saleDetails.startPrice.amountICP > 0) {
-              priceICP = parseFloat(saleDetails.startPrice.amountICP.toFixed(2));
-              priceUSD = parseFloat(saleDetails.startPrice.amountUSD.toFixed(2));
+            if (saleDetails.currentBid.amount > 0) {
+              price = parseFloat(saleDetails.currentBid.amount.toFixed(2));
+            } else if (saleDetails.buyNow.amount > 0) {
+              price = parseFloat(saleDetails.buyNow.amount.toFixed(2));
+            } else if (saleDetails.startPrice.amount > 0) {
+              price = parseFloat(saleDetails.startPrice.amount.toFixed(2));
             }
+            currency = saleDetails.currency;
+            priceUSD = exchangeRates[currency]
+              ? parseFloat((price * exchangeRates[currency]).toFixed(2))
+              : 0;
           }
 
           return {
             id: limitedTokenIds[index],
             name: tokenName,
-            collectionName: collection,
+            collectionName: canisterId,
             image: imageUrl,
-            priceICP,
+            price,
+            currency,
             priceUSD,
             saleDetails: saleDetails || undefined,
           } as NFT;
@@ -98,19 +110,50 @@ const fetchCollectionDetail = async (canisterId: string): Promise<CollectionWith
   }
 };
 
-const extractTokenName = (metadata: any): string => {
-  const nameField = metadata.Class.find((field: any) => field.name === 'id' && field.value?.Text);
-  return nameField?.value?.Text || 'Unknown';
+const generateImageUrl = (canisterId: string, assetName: string): string => {
+  return `https://prptl.io/-/${canisterId}/-/${assetName}/preview`;
 };
 
-const generateImageUrl = (canisterId: string, tokenName: string): string => {
-  return `https://prptl.io/-/${canisterId}/-/${tokenName}/preview`;
+const extractMetadata = (
+  metadata: CandyShared,
+  canisterId: string,
+): { tokenName: string; imageUrl: string } => {
+  let tokenName = 'Unknown';
+  let imageUrl = '';
+
+  if ('Class' in metadata) {
+    const classProperties = metadata.Class;
+    console.log('classProperties', classProperties);
+
+    const nameField = classProperties.find(
+      (field: any) => field.name === 'id' && 'Text' in field.value,
+    );
+    if (nameField && 'Text' in nameField.value) {
+      tokenName = nameField.value.Text;
+    }
+
+    const imageField = classProperties.find(
+      (field: any) => field.name === 'primary_asset' && 'Text' in field.value,
+    );
+    if (imageField && 'Text' in imageField.value) {
+      imageUrl = generateImageUrl(canisterId, tokenName);
+    }
+  } else {
+    console.warn('The metadata does not contain a Class type.');
+    if ('Text' in metadata) {
+      tokenName = metadata.Text;
+    }
+  }
+
+  return { tokenName, imageUrl };
 };
 
 export const useCollectionDetails = (canisterId: string) => {
+  const { prices: exchangeRates } = useCurrencyPrice();
+
   return useQuery({
     queryKey: ['collectionDetail', canisterId],
-    queryFn: () => fetchCollectionDetail(canisterId),
+    queryFn: () => fetchCollectionDetail(canisterId, exchangeRates),
     placeholderData: keepPreviousData,
     enabled: !!canisterId,
     staleTime: 5 * 60 * 1000,

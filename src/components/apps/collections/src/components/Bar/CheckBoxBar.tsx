@@ -14,6 +14,8 @@ const CheckboxBar: React.FC<CheckboxBarProps> = ({ collections, toggleCheckbox }
   const buttonText = allChecked ? 'All collections' : `${selectedCount} collections selected`;
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const uniqueCollections = collections.filter((item, index) => collections.findIndex((t) => t.category_name === item.category_name) === index);
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -65,15 +67,15 @@ const CheckboxBar: React.FC<CheckboxBarProps> = ({ collections, toggleCheckbox }
       {/* Dropdown with the list of collections */}
       {isOpen && (
         <ul className="absolute z-10 w-full max-h-60  bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-md overflow-y-auto">
-          {collections.map((item) => (
-            <li key={item.name} className="hover:bg-[#b7bbd51d]">
+          {uniqueCollections.map((item) => (
+            <li key={item.category_name} className="hover:bg-[#b7bbd51d]">
               <label className="flex justify-between items-center p-3 text-slate-700 w-full cursor-pointer">
-                <span>{item.name}</span>
+                <span>{item.category_name}</span>
                 {/* Checkbox native hidden */}
                 <input
                   type="checkbox"
                   checked={item.checked}
-                  onChange={() => toggleCheckbox(item.name)}
+                  onChange={() => toggleCheckbox(item.category_name)}
                   className="hidden"
                 />
                 {/* Checkbox customized */}

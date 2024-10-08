@@ -54,7 +54,7 @@ const generateImageUrl = (canisterId: string, tokenName: string): string => {
 const fetchNFTDetails = async (
   canisterId: string,
   nftId: string,
-  icpUsdPrice: number,
+  exchangeRates: { [key: string]: number },
 ): Promise<NFT> => {
   try {
     const agent = new HttpAgent({ host: 'https://ic0.app' });
@@ -82,21 +82,22 @@ const fetchNFTDetails = async (
           const owner = extractOwner(metadata);
 
           const saleData = nftResultItem.ok.current_sale ? nftResultItem.ok.current_sale[0] : null;
-          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, icpUsdPrice);
+          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, exchangeRates);
 
-          let priceICP = 0;
+          let price = 0;
           let priceUSD = 0;
+          let currency = '';
+
+          // Déterminez le prix en fonction des détails de la vente
           if (saleDetails) {
-            if (saleDetails.currentBid.amountICP > 0) {
-              priceICP = parseFloat(saleDetails.currentBid.amountICP.toFixed(2));
-              priceUSD = parseFloat(saleDetails.currentBid.amountUSD.toFixed(2));
-            } else if (saleDetails.buyNow.amountICP > 0) {
-              priceICP = parseFloat(saleDetails.buyNow.amountICP.toFixed(2));
-              priceUSD = parseFloat(saleDetails.buyNow.amountUSD.toFixed(2));
-            } else if (saleDetails.startPrice.amountICP > 0) {
-              priceICP = parseFloat(saleDetails.startPrice.amountICP.toFixed(2));
-              priceUSD = parseFloat(saleDetails.startPrice.amountUSD.toFixed(2));
-            }
+            price =
+              parseFloat(saleDetails.currentBid.amount.toFixed(2)) ||
+              parseFloat(saleDetails.buyNow.amount.toFixed(2)) ||
+              parseFloat(saleDetails.startPrice.amount.toFixed(2));
+            currency = saleDetails.currency;
+            priceUSD = exchangeRates[currency]
+              ? parseFloat((price * exchangeRates[currency]).toFixed(2))
+              : 0;
           }
 
           return {
@@ -104,7 +105,8 @@ const fetchNFTDetails = async (
             name: tokenName,
             collectionName,
             image: imageUrl,
-            priceICP,
+            price,
+            currency,
             priceUSD,
             saleDetails: saleDetails || undefined,
             owner,
@@ -128,7 +130,7 @@ export const useGetNFTDetails = (canisterId: string, nftId: string) => {
 
   return useQuery<NFT, Error, NFT, [string, string, string]>({
     queryKey: ['collectionDetail', canisterId, nftId],
-    queryFn: () => fetchNFTDetails(canisterId, nftId, prices['ICP'] || 0),
+    queryFn: () => fetchNFTDetails(canisterId, nftId, prices),
     enabled: !!canisterId && !!nftId && !isLoading && !isError,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,

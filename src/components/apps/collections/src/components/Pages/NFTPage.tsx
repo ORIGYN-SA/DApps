@@ -122,19 +122,19 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
     <div className="flex flex-row justify-start items-center gap-2">
       <img src="/assets/IC_Icon.svg" alt="ICP" className="w-10 h-10" />
       <div className="text-black text-[18px] md:text-[28px] font-bold">
-        {nft.priceICP > 0 ? `${nft.priceICP} ICP` : 'Not for sale'}
+        {nft.price > 0 ? `${nft.price} ${nft.currency}` : 'Not for sale'}
       </div>
-      {nft.priceUSD > 0 && (
+      {nft.priceUSD && nft.priceUSD > 0 && (
         <div className="text-[#6e6d66] text-base font-light">(${nft.priceUSD.toFixed(2)})</div>
       )}
     </div>
-    {nft.priceICP > 0 && (
+    {nft.price > 0 && (
       <button
         className="bg-[#212425] rounded-full justify-center items-center w-full mt-4"
         onClick={onBuyNowClick}
       >
         <p className="text-center text-white text-sm font-semibold leading-[48px]">
-          Buy now for {nft.priceICP} ICP
+          Buy now for {nft.price} ${nft.currency}
         </p>
       </button>
     )}

@@ -39,66 +39,47 @@ export const convertICPToUSD = (icpAmount: number, exchangeRate: number): number
   return icpAmount * exchangeRate;
 };
 
-/**
- * Extracts and formats sale details from the raw NFT sale data.
- * @param {any} saleData - The raw sale data object.
- * @param {number} exchangeRate - The current ICP to USD exchange rate.
- * @returns {SaleDetails | null} - An object containing formatted sale details or null if not available.
- */
-export const extractSaleDetails = (saleData: any, exchangeRate: number): SaleDetails | null => {
-  if (!saleData || !saleData.sale_type || !saleData.sale_type.auction) {
+export const extractSaleDetails = (
+  saleData: any,
+  exchangeRates: Record<string, number>,
+): SaleDetails | null => {
+  if (!saleData) {
     return null;
   }
 
-  const auction = saleData.sale_type.auction;
-  const token = auction.token.ic;
-  const decimals = token.decimals;
-  const symbol = token.symbol;
+  const currency = saleData.currency || 'Unknown';
 
-  // Current Bid Amount
-  const rawCurrentBid = auction.current_bid_amount;
-  const currentBidICP = convertTokenAmount(rawCurrentBid, decimals);
-  const currentBidUSD = convertICPToUSD(currentBidICP, exchangeRate);
+  // Helper function to calculate USD equivalent
+  const calculateAmountUSD = (amount: number): number | null => {
+    return exchangeRates[currency]
+      ? parseFloat((amount * exchangeRates[currency]).toFixed(2))
+      : null;
+  };
 
-  // Buy Now Price
-  const rawBuyNow = auction.config.auction.buy_now[0];
-  const buyNowICP = convertTokenAmount(rawBuyNow, decimals);
-  const buyNowUSD = convertICPToUSD(buyNowICP, exchangeRate);
+  const buyNow = {
+    amount: saleData.buy_now?.amount || 0,
+    amountUSD: calculateAmountUSD(saleData.buy_now?.amount || 0),
+  };
 
-  // Start Price
-  const rawStartPrice = auction.config.auction.start_price;
-  const startPriceICP = convertTokenAmount(rawStartPrice, decimals);
-  const startPriceUSD = convertICPToUSD(startPriceICP, exchangeRate);
+  const currentBid = {
+    amount: saleData.current_bid?.amount || 0,
+    amountUSD: calculateAmountUSD(saleData.current_bid?.amount || 0),
+  };
 
-  // Extract winner
-  const winner = auction.winner ? auction.winner.map((w: any) => w.principal) : [];
-
-  // Extract participants
-  const participants = auction.participants
-    ? auction.participants.map((p: any) => ({
-        principal: p[0],
-        bidAmount: p[1],
-      }))
-    : [];
+  const startPrice = {
+    amount: saleData.start_price?.amount || 0,
+    amountUSD: calculateAmountUSD(saleData.start_price?.amount || 0),
+  };
 
   return {
-    currentBid: {
-      amountICP: currentBidICP,
-      amountUSD: currentBidUSD,
-    },
-    buyNow: {
-      amountICP: buyNowICP,
-      amountUSD: buyNowUSD,
-    },
-    startPrice: {
-      amountICP: startPriceICP,
-      amountUSD: startPriceUSD,
-    },
-    currency: symbol,
-    saleId: saleData.sale_id || null,
-    startDate: auction.start_date || null,
-    endDate: auction.end_date || null,
-    winner,
-    participants,
+    currentBid,
+    buyNow,
+    startPrice,
+    currency,
+    saleId: saleData.saleId || null,
+    startDate: saleData.startDate || null,
+    endDate: saleData.endDate || null,
+    winner: saleData.winner || [],
+    participants: saleData.participants || [],
   };
 };

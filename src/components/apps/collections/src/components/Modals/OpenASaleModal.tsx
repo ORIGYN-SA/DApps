@@ -169,7 +169,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
                     <div className="relative w-full">
                       <div
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className={`bg-[#f9fafe] text-[#212425] text-[12px] font-medium uppercase tracking-widest cursor-pointer flex justify-between items-center p-2 w-24 ${
+                        className={`bg-[#f9fafe] text-[#212425] text-[12px] font-medium uppercase tracking-widest cursor-pointer flex justify-between items-center p-2 w-32 ${
                           isDropdownOpen ? 'border-x border-t rounded-t-2xl' : 'border rounded-full'
                         } border-gray-300`}
                         style={{
@@ -202,12 +202,12 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
                       </div>
 
                       {isDropdownOpen && (
-                        <div className="absolute z-10 w-24 bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-lg">
+                        <div className="absolute z-10 w-32 bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-lg">
                           {filteredCurrencies.map((curr) => (
                             <button
                               key={curr.code}
                               type="button"
-                              className="flex items-center w-full px-4 py-2 text-sm text-left hover:bg-gray-100 rounded-b-2xl focus:outline-none"
+                              className="flex items-center w-full px-[12px] py-2 text-sm text-left hover:bg-gray-100 rounded-b-2xl focus:outline-none"
                               onClick={() => handleCurrencySelect(curr)}
                             >
                               <img src={curr.icon} alt={curr.code} className="h-5 w-5 mr-2" />

@@ -11,10 +11,12 @@ const CollectionsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
+  
 
   const { data, isLoading, error } = useGetCollectionsList(0, itemsPerPage);
 
   const [allCollections, setAllCollections] = useState<CollectionType[]>([]);
+  const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
   const [filteredCollections, setFilteredCollections] = useState<CollectionType[]>([]);
   const [totalPages, setTotalPages] = useState<number>(1);
 
@@ -23,6 +25,9 @@ const CollectionsPage: React.FC = () => {
       setAllCollections(data.collections);
       setFilteredCollections(data.collections);
       setTotalPages(data.totalPages);
+
+      const categoriesSet = new Set<string>(data.collections.map((item) => item.category_name));
+      setUniqueCategories(Array.from(categoriesSet));
     }
   }, [data]);
 
@@ -41,16 +46,15 @@ const CollectionsPage: React.FC = () => {
     }
   }, [searchTerm, itemsPerPage, allCollections]);
 
-  const toggleCheckbox = (name: string) => {
+  const toggleCheckbox = (categoryName: string) => {
     const updatedItems = allCollections.map((item) => {
-      const itemName = item.name;
-      return itemName === name ? { ...item, checked: !item.checked } : item;
+      return item.category_name === categoryName ? { ...item, checked: !item.checked } : item;
     });
-
+  
     setAllCollections(updatedItems);
-
+  
     const filtered = updatedItems.filter((item) => item.checked);
-
+  
     setFilteredCollections(filtered);
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
   };

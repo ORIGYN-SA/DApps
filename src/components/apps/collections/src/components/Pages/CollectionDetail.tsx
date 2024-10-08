@@ -14,20 +14,18 @@ import OpenASaleModal from '../Modals/OpenASaleModal';
 const NFTCard = ({ nft, canisterId }: { nft: NFT; canisterId: string }) => (
   <Link to={`/collection/${canisterId}/${nft.id}`} className="flex flex-col">
     <div className="bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden">
-      <div className="aspect-w-1 aspect-h-1 w-full rounded-t-2xl overflow-hidden">
         <img
-          className="w-full h-full object-cover hover:scale-110 duration-300 ease-in-out transition-transform"
+          className="w-[233px] h-[233px] object-contain hover:scale-110 duration-300 ease-in-out transition-transform"
           src={nft.image}
           alt={nft.name}
         />
-      </div>
       <div className="p-4 flex flex-col justify-between flex-grow">
         <div>
           <h3 className="text-gray-900 text-base font-bold">{nft.name}</h3>
         </div>
         <div className="mt-2">
           <span className="px-2 py-1 bg-gray-900 text-white text-xs font-bold rounded-full">
-            {nft.priceICP > 0 ? `${nft.priceICP} ICP` : 'Not for sale'}
+            {nft.price > 0 ? `${nft.price} ${nft.currency}` : 'Not for sale'}
           </span>
         </div>
       </div>
@@ -43,10 +41,10 @@ const NFTSkeleton = () => (
     <div className="h-56 rounded-t-2xl overflow-hidden bg-gray-300"></div>
     <div className="p-4 flex flex-col justify-between flex-grow">
       <div>
-        <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+        <div className="h-6 bg-gray-300 rounded w-3/4"></div>
       </div>
       <div className="mt-2">
-        <span className="px-2 py-1 bg-gray-300 text-white text-xs font-bold rounded-full">
+        <span className="px-8 py-1 bg-gray-300 text-white text-xs font-bold rounded-full">
           &nbsp;
         </span>
       </div>
@@ -65,6 +63,8 @@ const CollectionDetail: React.FC = () => {
 
   const collectionCanisterId = window.location.hash.split('/').pop() || '';
   const { data: collection, isLoading, error } = useCollectionDetails(collectionCanisterId);
+
+  console.log('collection', collection);
 
   const openPriceModal = () => {
     setIsModalOpen(false);
