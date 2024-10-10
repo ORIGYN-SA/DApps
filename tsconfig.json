@@ -13,7 +13,7 @@
     "removeComments": true,
     "sourceMap": true,
     "target": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Node16",
     "allowJs": true,
     "rootDir": ".",
     "lib": ["es5", "es6", "esnext", "dom", "dom.iterable"],

@@ -1,12 +1,9 @@
 import React, { createContext, useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { icpswapStoreActor } from '../data/canisters/actor/ICSwapStore';
-import { createTokenMetadataActor } from '../data/canisters/actor/TokenMetadata';
+import { icpswapStoreActor } from '../canisters/actor/ICSwapStore';
+import { createTokenMetadataActor } from '../canisters/actor/TokenMetadata';
 import { currencies } from '../constants/currencies';
-import {
-  _SERVICE as StoreService,
-  PublicTokenOverview,
-} from '../data/canisters/interfaces/icpswap/store';
+import { _SERVICE as StoreService, PublicTokenOverview } from '../canisters/icpswap/store';
 
 interface Token extends PublicTokenOverview {
   decimals: number;
@@ -33,6 +30,7 @@ const isText = (value: any): value is { Text: string } => {
 const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens();
 
+  // TODO: Add documentation for the filter
   const filteredTokens = allTokens.filter((token) => token.volumeUSD7d >= 1000);
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens');
@@ -118,16 +116,14 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
   return tokensWithDetails.filter((token): token is Token => token !== null);
 };
 
-
 const useTokenPriceQuery = () => {
   return useQuery<Token[], Error>({
     queryKey: ['tokens'],
     queryFn: fetchVerifiedTokens,
-    refetchInterval: 30000,
-    staleTime: 30000,
+    refetchInterval: 300000,
+    staleTime: 300000,
   });
 };
-
 
 export const TokenDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { data, isLoading, isError } = useTokenPriceQuery();
@@ -149,7 +145,6 @@ export const TokenDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     </TokenDataContext.Provider>
   );
 };
-
 
 export const useTokenData = (): TokenPriceContextProps => {
   const context = useContext(TokenDataContext);

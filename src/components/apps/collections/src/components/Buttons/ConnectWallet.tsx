@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useResponsiveTruncate } from '../../utils/responsiveTruncate';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../auth';
+import ConnectingDialog from '../auth/ConnectingDialog';
 
 const ConnectWallet = () => {
-  const [isConnected, setIsConnected] = useState(false);
+  const { isConnected, connect, isConnecting } = useAuth();
 
   const truncateAddress = useResponsiveTruncate();
 
@@ -20,12 +22,15 @@ const ConnectWallet = () => {
           </div>
         </div>
       ) : (
-        <Link to="/profile" onClick={() => setIsConnected(true)}>
-          <button className="bg-charcoal text-white px-5 py-1 text-center text-sm font-semibold leading-[48px] rounded-full hover:scale-105 duration-100 transition-all">
-            Connect wallet
-          </button>
-        </Link>
+        <button
+          onClick={connect}
+          className="bg-charcoal text-white px-5 py-1 text-center text-sm font-semibold leading-[48px] rounded-full hover:scale-105 duration-100 transition-all"
+        >
+          Connect wallet
+        </button>
       )}
+
+      {isConnecting && <ConnectingDialog />}
     </>
   );
 };

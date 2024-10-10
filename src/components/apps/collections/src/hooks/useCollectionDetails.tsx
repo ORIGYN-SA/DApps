@@ -2,11 +2,11 @@
 
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
-import { idlFactory as goldIdlFactory } from '../data/canisters/interfaces/gold/did.js';
+import { idlFactory as goldIdlFactory } from '../canisters/gld_nft/did.js';
 import {
   _SERVICE as _GOLD_NFT_SERVICE,
   CandyShared,
-} from '../data/canisters/interfaces/gold/interfaces/gld_nft.js';
+} from '../canisters/gld_nft/interfaces/gld_nft.js';
 import { CollectionWithNFTs, NFT, SaleDetails } from '../types/global.js';
 import { extractSaleDetails } from '../utils/priceUtils';
 import { useTokenData } from '../context/TokenDataContext';

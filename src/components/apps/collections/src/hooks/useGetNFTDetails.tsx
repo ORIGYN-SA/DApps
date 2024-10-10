@@ -2,8 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
-import { idlFactory as goldIdlFactory } from '../data/canisters/interfaces/gold/did.js';
-import { _SERVICE as _GOLD_NFT_SERVICE } from '../data/canisters/interfaces/gold/interfaces/gld_nft.js';
+import { idlFactory as goldIdlFactory } from '../canisters/gld_nft/did.js';
+import { _SERVICE as _GOLD_NFT_SERVICE } from '../canisters/gld_nft/interfaces/gld_nft.js';
 import { NFT, SaleDetails, Metadata } from '../types/global';
 import { extractSaleDetails } from '../utils/priceUtils';
 import { convertPrincipalArrayToString } from '../utils/principalUtils';

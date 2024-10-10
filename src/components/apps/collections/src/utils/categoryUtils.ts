@@ -2,7 +2,7 @@ import { Actor, HttpAgent } from '@dfinity/agent';
 import {
   idlFactory,
   _SERVICE as CollectionService,
-} from '../data/canisters/interfaces/collections/collection_index.did.js';
+} from '../canisters/collections/collection_index.did.js';
 
 let categoriesCache: Record<string, string> | null = null;
 

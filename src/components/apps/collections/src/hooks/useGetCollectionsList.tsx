@@ -1,16 +1,19 @@
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { Actor, HttpAgent } from '@dfinity/agent';
-import { idlFactory, Result_2 } from '../data/canisters/interfaces/collections/collection_index.did.js';
-import { _SERVICE } from '../data/canisters/interfaces/collections/collection_index.did.js';
-import { _SERVICE as _GOLD_SERVICE } from '../data/canisters/interfaces/gold/interfaces/gld_nft.js';
-import { idlFactory as goldIdlFactory } from '../data/canisters/interfaces/gold/did.js';
+import {
+  idlFactory,
+  Result_2,
+} from '../canisters/collections/collection_index.did.js';
+import { _SERVICE } from '../canisters/collections/collection_index.did.js';
+import { _SERVICE as _GOLD_SERVICE } from '../canisters/gld_nft/interfaces/gld_nft.js';
+import { idlFactory as goldIdlFactory } from '../canisters/gld_nft/did.js';
 import {
   CollectionsBackendResponse,
   CollectionAdditionalData,
   CollectionType,
 } from '../types/global';
 import { extractCategoryName } from '../utils/categoryUtils.js';
-
+import { COLLECTIONS_INDEX_CANISTER_ID } from '../constants.js';
 
 const fetchCollectionsList = async (
   offset: number,
@@ -18,7 +21,7 @@ const fetchCollectionsList = async (
   categories: [] | [BigUint64Array | bigint[]] = [],
 ): Promise<CollectionsBackendResponse> => {
   const agent = new HttpAgent({ host: 'https://ic0.app' });
-  const canisterId = 'lnt3k-ciaaa-aaaaj-azsaq-cai';
+  const canisterId = COLLECTIONS_INDEX_CANISTER_ID;
   const actor = Actor.createActor<_SERVICE>(idlFactory, {
     agent,
     canisterId,

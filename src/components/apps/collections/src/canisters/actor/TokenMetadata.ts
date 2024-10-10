@@ -1,6 +1,6 @@
 import { Actor, HttpAgent, ActorSubclass } from '@dfinity/agent';
-import { idlFactory as tokenMetadataIdlFactory } from '../interfaces/tokens/info.did';
-import { _SERVICE as TokenMetadataService } from '../interfaces/tokens/info';
+import { idlFactory as tokenMetadataIdlFactory } from '../tokens/info.did';
+import { _SERVICE as TokenMetadataService } from '../tokens/info';
 
 export const createTokenMetadataActor = (
   canisterId: string,

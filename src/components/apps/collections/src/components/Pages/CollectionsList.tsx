@@ -11,7 +11,6 @@ const CollectionsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
-  
 
   const { data, isLoading, error } = useGetCollectionsList(0, itemsPerPage);
 
@@ -50,11 +49,11 @@ const CollectionsPage: React.FC = () => {
     const updatedItems = allCollections.map((item) => {
       return item.category_name === categoryName ? { ...item, checked: !item.checked } : item;
     });
-  
+
     setAllCollections(updatedItems);
-  
+
     const filtered = updatedItems.filter((item) => item.checked);
-  
+
     setFilteredCollections(filtered);
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
   };
