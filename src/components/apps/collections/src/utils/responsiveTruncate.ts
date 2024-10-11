@@ -55,8 +55,8 @@ export const useResponsiveTruncate = () => {
       endLength = 10;
     } else if (windowWidth >= 320) {
       // 320px to 480px screens
-      startLength = 20;
-      endLength = 11;
+      startLength = 6;
+      endLength = 7;
     }
 
     if (length <= startLength + endLength) return address;

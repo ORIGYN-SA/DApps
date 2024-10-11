@@ -73,7 +73,7 @@ const CollectionsPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-[#FAFAFA] flex flex-col items-center w-fit md:w-full min-h-screen">
+    <div className="bg-[#FAFAFA] flex flex-col items-center md:w-full min-h-screen">
       <Header />
       <div className="4xl:max-w-7xl w-full">
         <Presentation />

@@ -15,7 +15,7 @@ const ConnectWallet = () => {
       {isConnected ? (
         location.pathname !== '/profile' ? (
           <Link to="/profile">
-            <div className="pl-1 pr-4 py-1 hover:opacity-90 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-between items-center inline-flex">
+            <div className="pl-1 pr-4 py-1 hover:shadow transition-all duration-200 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-between items-center inline-flex">
               <img src="/assets/profile_icon.svg" alt="Profile Icon" className="w-10 h-10" />
               <div className="flex flex-col xl:flex-row justify-center items-center">
                 <span className="text-[#212425] text-sm font-semibold pl-2">My Account:</span>
@@ -39,6 +39,7 @@ const ConnectWallet = () => {
       ) : (
         <button
           onClick={connect}
+          disabled={isConnecting}
           className="bg-charcoal text-white px-5 py-1 text-center text-sm font-semibold leading-[48px] rounded-full hover:scale-105 duration-100 transition-all"
         >
           {isConnecting ? (

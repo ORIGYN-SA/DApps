@@ -33,7 +33,7 @@ const Collections: React.FC<CollectionsProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl mt-8 w-full p-8 border border-[#e1e1e1] shadow-md">
+    <div className="bg-white rounded-2xl mt-8 w-full p-4 md:p-8 border border-[#e1e1e1] shadow-md">
       <h3 className="font-semibold text-2xl leading-normal">All Collections</h3>
       <p className="text-slate text-[13px] font-medium leading-normal">
         {loading ? 'Loading collections...' : `${collections.length} collections`}
@@ -82,7 +82,7 @@ const Collections: React.FC<CollectionsProps> = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex p-2 items-center gap-4">
+                  <div className="flex flex-col md:flex-row p-2 items-center gap-4">
                     <img
                       src={collection.image || 'https://via.placeholder.com/243x244'}
                       alt={collection.name || 'Collection Image'}

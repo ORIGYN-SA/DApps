@@ -3,6 +3,7 @@ import { Routes, Route, HashRouter } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TokenDataProvider } from './context/TokenDataContext';
+import { UserProfileProvider } from './context/UserProfileContext';
 import CollectionsPage from './components/Pages/CollectionsList';
 import CollectionDetail from './components/Pages/CollectionDetail';
 import Daos from './components/Pages/Daos';
@@ -74,13 +75,15 @@ const App = () => (
           }}
         >
           <TokenDataProvider>
-            <Routes>
-              <Route path="/" element={<CollectionsPage />} />
-              <Route path="/daos" element={<Daos />} />
-              <Route path="/collection/:canister_id" element={<CollectionDetail />} />
-              <Route path="/collection/:canister_id/:nft_id" element={<NFTPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-            </Routes>
+            <UserProfileProvider>
+              <Routes>
+                <Route path="/" element={<CollectionsPage />} />
+                <Route path="/daos" element={<Daos />} />
+                <Route path="/collection/:canister_id" element={<CollectionDetail />} />
+                <Route path="/collection/:canister_id/:nft_id" element={<NFTPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+              </Routes>
+            </UserProfileProvider>
           </TokenDataProvider>
         </AuthProvider>
       </QueryClientProvider>

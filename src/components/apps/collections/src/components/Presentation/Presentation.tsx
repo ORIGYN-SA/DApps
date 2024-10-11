@@ -2,7 +2,7 @@ import React from 'react';
 
 const Presentation: React.FC = () => {
   return (
-    <div className="flex flex-col items-center my-16 px-[76px]">
+    <div className="flex flex-col items-center my-8 md:my-16 md:px-[76px] space-y-4 md:space-y-0">
       <h1 className="text-center text-charcoal font-dm-sans text-[64px] font-extrabold leading-[60px] tracking-[-3.2px]">
         Collections
       </h1>

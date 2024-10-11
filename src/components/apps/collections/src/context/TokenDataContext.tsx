@@ -30,7 +30,6 @@ const isText = (value: any): value is { Text: string } => {
 const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens();
 
-  // TODO: Add documentation for the filter
   const filteredTokens = allTokens.filter((token) => token.volumeUSD7d >= 10000);
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens');
@@ -61,7 +60,7 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
       if (icpToken.canister_id === tokenOverview.address) {
         uniqueTokensMap[tokenOverview.symbol] = {
           ...tokenOverview,
-          decimals: 8,
+          decimals: icpToken.decimals || 8,
           isUsable: currenciesMap[tokenOverview.symbol] ?? false,
         };
       }
@@ -83,18 +82,14 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
 
       try {
         const metadata = await tokenMetadataActor.icrc1_metadata();
-
         const logoEntry = metadata.find((entry) => entry[0] === 'icrc1:logo');
         if (logoEntry && isText(logoEntry[1])) {
           logo = logoEntry[1].Text;
         }
 
-        const decimalsEntry = metadata.find((entry) => entry[0] === 'icrc1:decimals');
-        if (decimalsEntry && isNat(decimalsEntry[1])) {
-          decimals = decimalsEntry[1].Nat;
-        }
+        const decimalsResult = await tokenMetadataActor.icrc1_decimals();
+        decimals = decimalsResult[0];
 
-        // Fallback to icpTokens logo if no logo in metadata
         if (!logo && icpTokensMap[tokenOverview.symbol]) {
           const icpToken = icpTokensMap[tokenOverview.symbol];
           if (icpToken.logo) {
@@ -115,6 +110,7 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
 
   return tokensWithDetails.filter((token): token is Token => token !== null);
 };
+
 
 const useTokenPriceQuery = () => {
   return useQuery<Token[], Error>({
