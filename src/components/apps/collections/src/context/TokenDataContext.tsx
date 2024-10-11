@@ -15,7 +15,7 @@ interface TokenPriceContextProps {
   tokens: Token[];
   isLoading: boolean;
   isError: boolean;
-  getUSDPrice: (symbol: string) => number | undefined;
+  getUSDPrice: (symbol: string) => number;
   getLogo: (symbol: string) => string | undefined;
 }
 
@@ -29,8 +29,9 @@ const isText = (value: any): value is { Text: string } => {
 
 const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens();
+  console.log('All Tokens:', allTokens);
 
-  const filteredTokens = allTokens.filter((token) => token.volumeUSD7d >= 10000);
+  const filteredTokens = allTokens.filter((token) => token.volumeUSD7d >= 1000);
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens');
   const icpTokens = await icpTokensResponse.json();
@@ -62,6 +63,7 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
           ...tokenOverview,
           decimals: icpToken.decimals || 8,
           isUsable: currenciesMap[tokenOverview.symbol] ?? false,
+          priceUSD: tokenOverview.priceUSD,
         };
       }
     } else {
@@ -69,6 +71,7 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
         ...tokenOverview,
         decimals: 8,
         isUsable: currenciesMap[tokenOverview.symbol] ?? false,
+        priceUSD: tokenOverview.priceUSD,
       };
     }
   });
@@ -108,16 +111,25 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
     }),
   );
 
-  return tokensWithDetails.filter((token): token is Token => token !== null);
+
+  const tokensWithPrices = tokensWithDetails.map(token => {
+    return {
+      ...token,
+      priceUSD: token.priceUSD ?? 0,
+    };
+  });
+
+  return tokensWithPrices.filter((token): token is Token => token !== null);
 };
+
 
 
 const useTokenPriceQuery = () => {
   return useQuery<Token[], Error>({
     queryKey: ['tokens'],
     queryFn: fetchVerifiedTokens,
-    refetchInterval: 300000,
-    staleTime: 300000,
+    refetchInterval: 3000000,
+    staleTime: 3000000,
   });
 };
 
@@ -125,9 +137,11 @@ export const TokenDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { data, isLoading, isError } = useTokenPriceQuery();
   const tokens: Token[] = data ?? [];
 
-  const getUSDPrice = (symbol: string): number | undefined => {
+  console.log('tokens', tokens);
+
+  const getUSDPrice = (symbol: string): number => {
     const token = tokens.find((t) => t.symbol === symbol);
-    return token?.priceUSD;
+    return token?.priceUSD ?? 0;
   };
 
   const getLogo = (symbol: string): string | undefined => {

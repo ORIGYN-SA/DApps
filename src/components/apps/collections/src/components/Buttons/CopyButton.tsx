@@ -3,9 +3,15 @@ import Toast from '../Utils/Toast';
 
 export const CopyButton = ({ text }: { text: string }) => {
   const [showToast, setShowToast] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    setShowToast(true);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy:', error);
+    }
   };
 
   return (

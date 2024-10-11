@@ -23,19 +23,62 @@ const Collections: React.FC<CollectionsProps> = ({
   setItemsPerPage,
   loading,
 }) => {
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = collections.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = collections.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setItemsPerPage(parseInt(e.target.value));
     setCurrentPage(1);
   };
 
+  const CollectionCard = ({
+    collection,
+    isFirst,
+  }: {
+    collection: CollectionType;
+    isFirst: boolean;
+  }) => (
+    <Link
+      to={`/collection/${collection.canister_id}`}
+      key={collection.canister_id}
+      className={`block ${
+        isFirst ? 'row-span-2' : 'flex flex-row'
+      } hover:bg-[#b7bbd51d] p-4 bg-white border border-[#e1e1e1] rounded-2xl`}
+    >
+      <img
+        className={`${isFirst ? 'w-36 h-36' : 'h-28 w-28'} rounded-2xl object-cover`}
+        src={collection.image || 'https://via.placeholder.com/243x244'}
+        alt={collection.name || 'Collection Image'}
+      />
+      <div className={`flex flex-col justify-center ${isFirst ? 'mt-2 space-y-2' : 'p-4'}`}>
+        {isFirst && (
+          <h3 className="text-[#212425] text-[28px] font-bold">{collection.name}</h3>
+        )}
+        {!isFirst && (
+          <>
+            <h3 className="text-[#69737C] text-[10px] font-medium tracking-[2px] uppercase">
+              {collection.category_name}
+            </h3>
+            <p className="text-[16px] font-bold leading-normal">{collection.name || 'Unknown'}</p>
+          </>
+        )}
+        <div className="h-6 py-1 w-fit px-4 bg-[#212425] rounded-[100px] inline-flex items-center justify-center">
+          <span className="text-white text-xs font-semibold">
+            {collection.nftCount && collection.nftCount > 1
+              ? `${collection.nftCount} NFTs`
+              : `${collection.nftCount || 0} NFT`}
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+
   return (
     <div className="bg-white rounded-2xl mt-8 w-full p-4 md:p-8 border border-[#e1e1e1] shadow-md">
-      <h3 className="font-semibold text-2xl leading-normal">All Collections</h3>
-      <p className="text-slate text-[13px] font-medium leading-normal">
+      <h3 className="font-semibold text-2xl">All Collections</h3>
+      <p className="text-slate text-[13px] font-medium">
         {loading ? 'Loading collections...' : `${collections.length} collections`}
       </p>
 
@@ -45,91 +88,33 @@ const Collections: React.FC<CollectionsProps> = ({
               <SkeletonItem key={index} isFirstItem={index === 0} />
             ))
           : currentItems.map((collection, index) => (
-              <Link
-                to={`/collection/${collection.canister_id}`}
-                key={collection.canister_id}
-                className={`block ${
-                  index === 0
-                    ? 'row-span-2 hover:bg-[#b7bbd51d]'
-                    : 'hover:bg-[#b7bbd51d] flex flex-row border border-[#E1E1E1] rounded-2xl bg-white'
-                } p-4 bg-white rounded-2xl border border-[#e1e1e1]`}
-              >
-                {index === 0 ? (
-                  <div className="flex flex-col justify-center items-start gap-4">
-                    <img
-                      className="w-36 h-36 rounded-2xl"
-                      src={collection.image || 'https://via.placeholder.com/243x244'}
-                      key={collection.name || 'Collection Image'}
-                    />
-                    <div className="self-stretch h-[104px] flex-col justify-center items-start gap-2 mt-2 space-y-2 flex">
-                      <div className="self-stretch text-[#212425] text-[28px] font-bold">
-                        {collection.name}
-                      </div>
-                      <div className="self-stretch justify-start items-center gap-4 inline-flex min-w-full">
-                        <div className="px-2 py-1 bg-[#212425] rounded-[100px] justify-center items-center gap-2.5 flex">
-                          <div className="text-white text-xs font-bold w-full">
-                            {collection.nftCount !== undefined && collection.nftCount > 1
-                              ? `${collection.nftCount} NFTs`
-                              : `${collection.nftCount} NFT`}
-                          </div>
-                        </div>
-                        <div className="justify-start items-center gap-0.5 flex w-3/4">
-                          <div className="text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest">
-                            {collection.category_name}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col md:flex-row p-2 items-center gap-4">
-                    <img
-                      src={collection.image || 'https://via.placeholder.com/243x244'}
-                      alt={collection.name || 'Collection Image'}
-                      className="h-28 w-28 rounded-2xl object-cover"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
-                        {collection.category_name}
-                      </h3>
-                      <p className="text-[16px] font-bold leading-normal">{collection.name || 'Unknown'}</p>
-                      <div className="h-6 px-2 py-1 bg-[#212425] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
-                        <div className="text-white text-xs font-semibold">
-                          {collection.nftCount !== undefined && collection.nftCount > 1
-                            ? `${collection.nftCount} NFTs`
-                            : `${collection.nftCount} NFT`}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </Link>
+              <CollectionCard key={collection.canister_id} collection={collection} isFirst={index === 0} />
             ))}
       </div>
 
       <div className="flex flex-row w-full items-center mt-6">
-        <div className="flex justify-end items-center">
+        <div className="flex items-center">
           <label className="mr-2 text-slate text-sm font-light">Items per page</label>
           <select
             value={itemsPerPage}
             onChange={handleItemsPerPageChange}
-            className="bg-[#F1F6F9] flex p-[5px_10px] font-semibold text-slate items-center gap-[5px] rounded-full"
+            className="bg-[#F1F6F9] p-[5px_10px] font-semibold text-slate rounded-full"
           >
             <option value={20}>20</option>
             <option value={40}>40</option>
             <option value={60}>60</option>
           </select>
         </div>
-        <div className="ml-auto">
-          {totalPages > 1 && (
+        {totalPages > 1 && (
+          <div className="ml-auto">
             <Pagination
               itemsPerPage={itemsPerPage}
               totalPages={totalPages}
               currentPage={currentPage}
               paginate={setCurrentPage}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

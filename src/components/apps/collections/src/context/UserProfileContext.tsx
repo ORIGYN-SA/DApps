@@ -3,11 +3,13 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useIdentityKit } from '@nfid/identitykit/react';
 import { useAuth } from '../auth';
 import { useGetTokenBalances } from '../hooks/useGetTokenBalances';
+import { useTokenData } from './TokenDataContext';
 
 interface BalanceDetails {
   amount: number;
   currency: string;
   totalUSD: number;
+  logo: string;
 }
 
 interface UserProfile {
@@ -37,30 +39,35 @@ export const UserProfileProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const { user } = useIdentityKit();
   const { isConnected } = useAuth();
 
-  const { data: tokenBalances, isLoading: isBalancesLoading, isError, error } = useGetTokenBalances(user?.principal);
+  const { isLoading: isTokenDataLoading } = useTokenData();
+
+  const { data: tokenBalances, isLoading: isBalancesLoading, isError, error } = useGetTokenBalances(user?.principal, !isTokenDataLoading);
 
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (isConnected && user?.principal && tokenBalances) {
+    if (isConnected && user?.principal && tokenBalances && !isBalancesLoading && !isTokenDataLoading) {
       const profile: UserProfile = {
         name: user.principal.toText(),
         walletAddress: user.principal.toText(),
         balances: tokenBalances,
         profileImage: '/assets/profile_icon.svg',
       };
-
+      
+      console.log('profile', profile);
+  
       setUserProfile(profile);
       setIsLoading(false);
-    } else {
+    } else if (!isTokenDataLoading && !isBalancesLoading) {
       setUserProfile(null);
       setIsLoading(false);
     }
-  }, [isConnected, user, tokenBalances]);
+  }, [isConnected, user, tokenBalances, isBalancesLoading, isTokenDataLoading]);
+  
 
   return (
-    <UserProfileContext.Provider value={{ userProfile, isLoading: isLoading || isBalancesLoading, error: isError ? error : null }}>
+    <UserProfileContext.Provider value={{ userProfile, isLoading: isLoading || isTokenDataLoading || isBalancesLoading, error: isError ? error : null }}>
       {children}
     </UserProfileContext.Provider>
   );

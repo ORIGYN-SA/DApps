@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TokenDataProvider } from './context/TokenDataContext';
 import { UserProfileProvider } from './context/UserProfileContext';
 import CollectionsPage from './components/Pages/CollectionsList';
-import CollectionDetail from './components/Pages/CollectionDetail';
+import CollectionDetail from './components/Pages/CollectionDetailsPage';
 import Daos from './components/Pages/Daos';
 import NFTPage from './components/Pages/NFTPage';
 import ProfilePage from './components/Pages/ProfilePage';
@@ -33,48 +33,48 @@ const App = () => (
   <>
     <HashRouter>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider
-          targets={[
-            GLD_NFT_1G_CANISTER_ID,
-            GLD_NFT_10G_CANISTER_ID,
-            GLD_NFT_100G_CANISTER_ID,
-            GLD_NFT_1000G_CANISTER_ID,
-            LOGO_CANISTER_ID,
-            ICPSWAP_TOKENS_CANISTER_ID,
-            COLLECTIONS_INDEX_CANISTER_ID,
-          ]}
-          canisters={{
-            gld_nft_1g: {
-              canisterId: GLD_NFT_1G_CANISTER_ID,
-              idlFactory: gld_nft_idl,
-            },
-            gld_nft_10g: {
-              canisterId: GLD_NFT_10G_CANISTER_ID,
-              idlFactory: gld_nft_idl,
-            },
-            gld_nft_100g: {
-              canisterId: GLD_NFT_100G_CANISTER_ID,
-              idlFactory: gld_nft_idl,
-            },
-            gld_nft_1000g: {
-              canisterId: GLD_NFT_1000G_CANISTER_ID,
-              idlFactory: gld_nft_idl,
-            },
-            logo: {
-              canisterId: LOGO_CANISTER_ID,
-              idlFactory: logo_idl,
-            },
-            icp_swap_tokens: {
-              canisterId: ICPSWAP_TOKENS_CANISTER_ID,
-              idlFactory: gldt_swap_tokens_idl,
-            },
-            collection_index: {
-              canisterId: COLLECTIONS_INDEX_CANISTER_ID,
-              idlFactory: collections_idl,
-            },
-          }}
-        >
-          <TokenDataProvider>
+        <TokenDataProvider>
+          <AuthProvider
+            targets={[
+              GLD_NFT_1G_CANISTER_ID,
+              GLD_NFT_10G_CANISTER_ID,
+              GLD_NFT_100G_CANISTER_ID,
+              GLD_NFT_1000G_CANISTER_ID,
+              LOGO_CANISTER_ID,
+              ICPSWAP_TOKENS_CANISTER_ID,
+              COLLECTIONS_INDEX_CANISTER_ID,
+            ]}
+            canisters={{
+              gld_nft_1g: {
+                canisterId: GLD_NFT_1G_CANISTER_ID,
+                idlFactory: gld_nft_idl,
+              },
+              gld_nft_10g: {
+                canisterId: GLD_NFT_10G_CANISTER_ID,
+                idlFactory: gld_nft_idl,
+              },
+              gld_nft_100g: {
+                canisterId: GLD_NFT_100G_CANISTER_ID,
+                idlFactory: gld_nft_idl,
+              },
+              gld_nft_1000g: {
+                canisterId: GLD_NFT_1000G_CANISTER_ID,
+                idlFactory: gld_nft_idl,
+              },
+              logo: {
+                canisterId: LOGO_CANISTER_ID,
+                idlFactory: logo_idl,
+              },
+              icp_swap_tokens: {
+                canisterId: ICPSWAP_TOKENS_CANISTER_ID,
+                idlFactory: gldt_swap_tokens_idl,
+              },
+              collection_index: {
+                canisterId: COLLECTIONS_INDEX_CANISTER_ID,
+                idlFactory: collections_idl,
+              },
+            }}
+          >
             <UserProfileProvider>
               <Routes>
                 <Route path="/" element={<CollectionsPage />} />
@@ -84,8 +84,8 @@ const App = () => (
                 <Route path="/profile" element={<ProfilePage />} />
               </Routes>
             </UserProfileProvider>
-          </TokenDataProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </TokenDataProvider>
       </QueryClientProvider>
     </HashRouter>
   </>

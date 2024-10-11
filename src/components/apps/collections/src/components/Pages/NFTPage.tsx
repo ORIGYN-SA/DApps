@@ -12,26 +12,24 @@ import { CopyButton } from '../Buttons/CopyButton';
 import { useTokenData } from '../../context/TokenDataContext';
 
 // Header Component
-const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.memo(
-  ({ nft, canisterId }) => (
-    <div className="flex flex-col md:flex-row mt-44 md:mt-16 pb-8 px-8 items-center border-b border-mouse md:ml-[88px]">
-      <div className="flex flex-col gap-2">
-        <p className="text-[#222526] text-[40px] font-bold leading-normal">Collection</p>
-        <Link to={`/collection/${canisterId}`}>
-          <div className="text-[#212425] text-[10px] font-medium leading-[16px] tracking-[2px] uppercase flex flex-row items-center group">
-            <ArrowIcon />
-            Collections / {nft?.collectionName || 'Collection Name'}
-          </div>
-        </Link>
-      </div>
-      <div className="md:ml-auto mt-5 md:mt-0">
-        <ConnectWallet />
-      </div>
+const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.memo(({ nft, canisterId }) => (
+  <div className="flex flex-col md:flex-row mt-44 md:mt-16 pb-8 px-8 items-center border-b border-mouse md:ml-[88px]">
+    <div className="flex flex-col gap-2">
+      <p className="text-[#222526] text-[40px] font-bold leading-normal">Collection</p>
+      <Link to={`/collection/${canisterId}`}>
+        <div className="text-[#212425] text-[10px] font-medium leading-[16px] tracking-[2px] uppercase flex flex-row items-center group">
+          <ArrowIcon />
+          Collections / {nft?.collectionName || 'Collection Name'}
+        </div>
+      </Link>
     </div>
-  ),
-);
+    <div className="md:ml-auto mt-5 md:mt-0">
+      <ConnectWallet />
+    </div>
+  </div>
+));
 
-// Reusable Arrow Icon Component
+// Arrow Icon Component
 const ArrowIcon: React.FC = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -82,19 +80,17 @@ const ErrorImage: React.FC = () => (
 );
 
 // NFTDetails Component
-const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo(
-  ({ nft, onBuyNowClick }) => (
-    <>
-      <div className="flex-col justify-start items-start gap-2 flex w-full">
-        <NFTHeader nft={nft} />
-        <OwnerInfo nft={nft} />
-      </div>
-      <PriceSection nft={nft} onBuyNowClick={onBuyNowClick} />
-      <Reminder />
-      <CheckOnChain />
-    </>
-  ),
-);
+const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo(({ nft, onBuyNowClick }) => (
+  <>
+    <div className="flex-col justify-start items-start gap-2 flex w-full">
+      <NFTHeader nft={nft} />
+      <OwnerInfo nft={nft} />
+    </div>
+    <PriceSection nft={nft} onBuyNowClick={onBuyNowClick} />
+    <Reminder />
+    <CheckOnChain />
+  </>
+));
 
 // NFTHeader Component
 const NFTHeader: React.FC<{ nft: NFT }> = ({ nft }) => (
@@ -120,10 +116,7 @@ const OwnerInfo: React.FC<{ nft: NFT }> = ({ nft }) => {
 };
 
 // PriceSection Component
-const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
-  nft,
-  onBuyNowClick,
-}) => {
+const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({ nft, onBuyNowClick }) => {
   const { getLogo } = useTokenData();
 
   return (
@@ -141,10 +134,7 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
         </div>
       </div>
       {nft.price > 0 && (
-        <button
-          className="bg-[#212425] rounded-full justify-center items-center w-full mt-4"
-          onClick={onBuyNowClick}
-        >
+        <button className="bg-[#212425] rounded-full justify-center items-center w-full mt-4" onClick={onBuyNowClick}>
           <p className="text-center text-white text-sm font-semibold leading-[48px]">
             Buy now for {nft.price.toFixed(2)} {nft.currency}
           </p>
@@ -158,9 +148,7 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
 const CheckOnChain: React.FC = () => (
   <div className="px-2 py-1.5 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-center items-center gap-1 inline-flex">
     <img src="/assets/layer.svg" alt="layer" className="w-4 h-4" />
-    <div className="text-center text-[#69737c] text-[10px] font-normal">
-      Check this certificate on-chain
-    </div>
+    <div className="text-center text-[#69737c] text-[10px] font-normal">Check this certificate on-chain</div>
   </div>
 );
 
@@ -180,30 +168,29 @@ const useImageLoader = () => {
   return { isImageLoading, isImageError, handleImageLoad, handleImageError };
 };
 
-const Skeleton: React.FC = () => {
-  return (
-    <div className="flex flex-row bg-white rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px]">
-      <div className="w-[562px] bg-gray-20 animate-pulse rounded-tl-2xl rounded-bl-2xl"></div>
-      <div className="flex flex-col justify-center items-center gap-8 mx-10 w-[562px] h-[564px]">
-        <div className="w-full h-6 bg-gray-200 animate-pulse rounded-md mb-2"></div>
-        <div className="w-full h-10 bg-gray-200 animate-pulse rounded-md mb-4"></div>
-        <div className="flex flex-row gap-2 items-center">
-          <div className="w-6 h-6 bg-gray-200 animate-pulse rounded-full"></div>
-          <div className="w-32 h-4 bg-gray-200 animate-pulse rounded-md"></div>
-        </div>
-        <div className="w-full flex flex-col mt-4 gap-2">
-          <div className="w-24 h-6 bg-gray-200 animate-pulse rounded-md"></div>
-          <div className="flex flex-row items-center gap-2">
-            <div className="w-10 h-10 bg-gray-200 animate-pulse rounded-full"></div>
-            <div className="w-32 h-8 bg-gray-200 animate-pulse rounded-md"></div>
-          </div>
-        </div>
-        <div className="w-full h-12 bg-gray-300 animate-pulse rounded-full mt-4"></div>
-        <div className="w-full h-4 bg-gray-200 animate-pulse rounded-md mt-4"></div>
+// Skeleton Loader
+const Skeleton: React.FC = () => (
+  <div className="flex flex-row bg-white rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px]">
+    <div className="w-[562px] bg-gray-20 animate-pulse rounded-tl-2xl rounded-bl-2xl"></div>
+    <div className="flex flex-col justify-center items-center gap-8 mx-10 w-[562px] h-[564px]">
+      <div className="w-full h-6 bg-gray-200 animate-pulse rounded-md mb-2"></div>
+      <div className="w-full h-10 bg-gray-200 animate-pulse rounded-md mb-4"></div>
+      <div className="flex flex-row gap-2 items-center">
+        <div className="w-6 h-6 bg-gray-200 animate-pulse rounded-full"></div>
+        <div className="w-32 h-4 bg-gray-200 animate-pulse rounded-md"></div>
       </div>
+      <div className="w-full flex flex-col mt-4 gap-2">
+        <div className="w-24 h-6 bg-gray-200 animate-pulse rounded-md"></div>
+        <div className="flex flex-row items-center gap-2">
+          <div className="w-10 h-10 bg-gray-200 animate-pulse rounded-full"></div>
+          <div className="w-32 h-8 bg-gray-200 animate-pulse rounded-md"></div>
+        </div>
+      </div>
+      <div className="w-full h-12 bg-gray-300 animate-pulse rounded-full mt-4"></div>
+      <div className="w-full h-4 bg-gray-200 animate-pulse rounded-md mt-4"></div>
     </div>
-  );
-};
+  </div>
+);
 
 // NFTPage Component
 const NFTPage: React.FC = () => {

@@ -1,5 +1,3 @@
-// src/constants/currencies.ts
-
 export interface Currency {
   code: string;
   name: string;

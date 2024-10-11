@@ -31,20 +31,14 @@ const NFTListModal: React.FC<NFTListModalProps> = ({
     if (e.target === e.currentTarget) onClose();
   };
 
-  // Adjust items per page based on window width
   useEffect(() => {
     const updateItemsPerPage = () => {
-      if (window.innerWidth <= 640) { // Mobile screen size
-        setItemsPerPage(4);
-      } else {
-        setItemsPerPage(8); // For larger screens
-      }
+      setItemsPerPage(window.innerWidth <= 640 ? 4 : 8);
     };
 
-    updateItemsPerPage(); // Call it initially
-    window.addEventListener('resize', updateItemsPerPage); // Update on resize
-
-    return () => window.removeEventListener('resize', updateItemsPerPage); // Cleanup on unmount
+    updateItemsPerPage();
+    window.addEventListener('resize', updateItemsPerPage);
+    return () => window.removeEventListener('resize', updateItemsPerPage);
   }, [setItemsPerPage]);
 
   return (
@@ -52,16 +46,14 @@ const NFTListModal: React.FC<NFTListModalProps> = ({
       className="fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50"
       onClick={handleOutsideClick}
     >
-      <div
-        className={`bg-white rounded-2xl  py-8 w-[90%] md:w-3/4 3xl:max-w-3xl shadow-lg relative space-y-6`}
-      >
+      <div className="bg-white rounded-2xl py-8 w-[90%] md:w-3/4 3xl:max-w-3xl shadow-lg relative space-y-6">
         <button
           className="absolute top-4 right-4 text-gray-400 text-2xl hover:text-gray-600"
           onClick={onClose}
         >
           &times;
         </button>
-        <div className="flex flex-col items-center justify-center w-full h-full ">
+        <div className="flex flex-col items-center justify-center w-full h-full">
           <h2 className="text-center text-[#212425] text-[22px] font-semibold">Select your NFT</h2>
           <p className="text-center text-[#69737c] text-[13px] font-medium mb-4 px-6">
             Please select one NFT from the list below to open a sale.
@@ -71,9 +63,9 @@ const NFTListModal: React.FC<NFTListModalProps> = ({
             {currentNFTs.map((nft) => (
               <div
                 key={nft.id}
-                className={`block ${
+                className={`block cursor-pointer border rounded-2xl bg-white transition duration-300 ${
                   selectedNFT?.id === nft.id ? 'border-[#33B9FF] border-2' : 'border-gray-300'
-                } cursor-pointer border rounded-2xl bg-white transition duration-300`}
+                }`}
                 onClick={() => handleSelectNFT(nft)}
               >
                 <div className="flex p-2 items-center gap-4">
@@ -86,9 +78,7 @@ const NFTListModal: React.FC<NFTListModalProps> = ({
                     <h3 className="text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase">
                       {nft.collectionName || 'Unknown'}
                     </h3>
-                    <p className="text-[16px] font-bold leading-normal">
-                      {nft.name || 'Unknown'}
-                    </p>
+                    <p className="text-[16px] font-bold leading-normal">{nft.name || 'Unknown'}</p>
                   </div>
                 </div>
               </div>
@@ -109,7 +99,7 @@ const NFTListModal: React.FC<NFTListModalProps> = ({
           <div className="h-[1px] w-full bg-gray-300 my-4"></div>
 
           <button
-            className={`bg-charcoal w-3/4 md:px-0 md:w-1/2 py-4 mt-2 md:mt-6 h-fit rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold ${
+            className={`bg-charcoal w-3/4 md:w-1/2 py-4 mt-2 md:mt-6 rounded-full hover:scale-105 transition-all text-center text-white text-sm font-semibold ${
               !selectedNFT ? 'opacity-30 cursor-not-allowed' : ''
             }`}
             disabled={!selectedNFT}

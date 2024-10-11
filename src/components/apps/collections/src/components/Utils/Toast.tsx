@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 interface ToastProps {
   message: string;
   onClose: () => void;
-  duration?: number; // Durée avant la fermeture automatique (en millisecondes)
+  duration?: number;
 }
 
 const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000 }) => {
@@ -13,7 +13,7 @@ const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000 }) => {
     setIsVisible(true);
     const timer = setTimeout(() => {
       setIsVisible(false);
-      setTimeout(onClose, 300); // Temps de fermeture pour l'animation
+      setTimeout(onClose, 300);
     }, duration);
 
     return () => clearTimeout(timer);
@@ -26,11 +26,11 @@ const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000 }) => {
       }`}
       style={{
         transitionTimingFunction: 'cubic-bezier(0.25, 1, 0.5, 1)',
-        willChange: 'transform, opacity', // Optimise les performances pour l'animation
+        willChange: 'transform, opacity',
       }}
     >
       <p>{message}</p>
-      <button className="w-12 h-12 text-white ml-auto text-4xl ml-8 " onClick={() => setIsVisible(false)}>
+      <button className="w-12 h-12 text-white ml-auto text-4xl" onClick={() => setIsVisible(false)}>
         &times;
       </button>
     </div>

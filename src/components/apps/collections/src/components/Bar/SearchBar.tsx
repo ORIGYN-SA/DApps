@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+
 interface SearchBarProps {
   handleSearch: (term: string) => void;
   placeholder?: string;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, placeholder = 'Search...' }) => {
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -23,7 +24,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ handleSearch, placeholder = 'Sear
           onChange={handleInputChange}
           className="flex-grow outline-none bg-transparent h-full"
         />
-        {/* Search Icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
