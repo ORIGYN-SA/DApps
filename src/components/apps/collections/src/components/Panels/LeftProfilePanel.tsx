@@ -1,13 +1,22 @@
+import { useIdentityKit } from '@nfid/identitykit/react';
 import { useTokenData } from '../../context/TokenDataContext';
 import { useResponsiveTruncate } from '../../utils/responsiveTruncate';
 import { CopyButton } from '../Buttons/CopyButton';
+import { useNavigate } from 'react-router-dom';
 
 const LeftProfilePanel = ({ user, onTransferClick, onManageClick }) => {
+  const { disconnect } = useIdentityKit();
   const { getUSDPrice } = useTokenData();
   const truncateAddress = useResponsiveTruncate();
+  const navigate = useNavigate();
 
   const ogyToUsd = (user.balance.OGY * (getUSDPrice('OGY') || 0)).toFixed(2);
   const icpToUsd = (user.balance.ICP * (getUSDPrice('ICP') || 0)).toFixed(2);
+
+  const handleDisconnect = () => {
+    disconnect();
+    navigate('/');
+  };
 
   return (
     <div className="fixed top-[90px] left-0 md:w-1/3 lg:w-1/4 h-[calc(100vh-90px)] bg-white flex flex-col shadow-lg">
@@ -96,8 +105,8 @@ const LeftProfilePanel = ({ user, onTransferClick, onManageClick }) => {
         </div>
       </div>
 
-      {/* Log out button - */}
-      <div className="p-4">
+      {/* Log out button */}
+      <div className="p-4" onClick={handleDisconnect}>
         <button className="text-[#69737c] hover:underline text-[10px] font-medium font-['DM Sans'] uppercase leading-none tracking-widest w-full">
           Log out
         </button>

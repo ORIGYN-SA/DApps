@@ -31,7 +31,7 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens();
 
   // TODO: Add documentation for the filter
-  const filteredTokens = allTokens.filter((token) => token.volumeUSD7d >= 1000);
+  const filteredTokens = allTokens.filter((token) => token.volumeUSD7d >= 10000);
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens');
   const icpTokens = await icpTokensResponse.json();

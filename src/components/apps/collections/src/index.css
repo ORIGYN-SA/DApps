@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#ik-identity-kit-modal[data-state='open'] {
+  pointer-events: auto !important;
+}

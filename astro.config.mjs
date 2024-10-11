@@ -2,14 +2,15 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import { loadEnv } from 'vite';
 import mainConfig from './vite.config';
-import tailwind from "@astrojs/tailwind";
+import tailwind from '@astrojs/tailwind';
 const PORT = Number(process.env.PUBLIC_DEV_SERVER_PORT || 9000);
-const VALIDATE_PRINCIPAL_RGX = '/-/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/collection/-';
+const VALIDATE_PRINCIPAL_RGX =
+  '/-/[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/collection/-';
 const mode = process.env.NODE_ENV || 'production';
 const env = loadEnv(mode, process.cwd(), '');
 process.env = {
   ...process.env,
-  ...env
+  ...env,
 };
 
 // https://astro.build/config
@@ -17,7 +18,7 @@ export default defineConfig({
   integrations: [react(), tailwind()],
   tsconfig: new URL('./tsconfig.json', import.meta.url).pathname,
   server: {
-    port: parseInt(process.env.PUBLIC_DEV_SERVER_PORT)
+    port: parseInt(process.env.PUBLIC_DEV_SERVER_PORT),
   },
   vite: {
     ...mainConfig,
@@ -27,12 +28,12 @@ export default defineConfig({
         [`^${VALIDATE_PRINCIPAL_RGX}`]: {
           target: `http://localhost:${PORT}`,
           changeOrigin: true,
-          rewrite: path => {
+          rewrite: (path) => {
             const newPath = path.replace(new RegExp(`^${VALIDATE_PRINCIPAL_RGX}`), '');
             return newPath;
-          }
-        }
-      }
-    }
-  }
+          },
+        },
+      },
+    },
+  },
 });

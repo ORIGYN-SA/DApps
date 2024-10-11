@@ -9,6 +9,10 @@ import { CollectionType } from '../../types/global';
 import { useGetCollectionsList } from '../../hooks/useGetCollectionsList';
 import CollectionsList from '../Collections/CollectionsList';
 import CheckboxBar from '../Bar/CheckBoxBar';
+import { useIdentityKit } from '@nfid/identitykit/react';
+import { useAuth } from '../../auth/index';
+import ConnectWallet from '../Buttons/ConnectWallet'; // Import the ConnectWallet component
+import { Link } from 'react-router-dom';
 
 const ProfilePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,6 +25,8 @@ const ProfilePage = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
 
   const { data, isLoading, error } = useGetCollectionsList(0, itemsPerPage);
+  const { user, icpBalance, isInitializing } = useIdentityKit();
+  const { isConnected, isConnecting } = useAuth();
 
   useEffect(() => {
     if (data) {
@@ -30,16 +36,26 @@ const ProfilePage = () => {
     }
   }, [data]);
 
-  // Fake user data
-  const userData = {
-    name: '5obapm-2iaaa-aaaak-qcgca-cai',
-    profileImage: '/assets/profile_icon.svg',
-    walletAddress: '5obapm-2iaaa-aaaak-qcgca-cai',
-    balance: {
-      OGY: 100,
-      ICP: 1,
-    },
-  };
+  const userData =
+    user && user.principal
+      ? {
+          name: user.principal.toText(),
+          profileImage: '/assets/profile_icon.svg',
+          walletAddress: user.principal.toText(),
+          balance: {
+            OGY: 100,
+            ICP: icpBalance,
+          },
+        }
+      : {
+          name: 'Guest',
+          profileImage: '/assets/profile_icon.svg',
+          walletAddress: 'N/A',
+          balance: {
+            OGY: 0,
+            ICP: 0,
+          },
+        };
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -76,41 +92,61 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-white to-[#f7f7f7] flex flex-col items-center w-full min-h-screen">
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 w-full h-[90px] bg-white flex items-center justify-between z-50">
-        <Header />
-      </div>
-      {/* Layout for LeftPanel and Scrollable Content */}
-      <div className="flex w-full h-full">
-        {/* Fixed LeftPanel */}
-        <LeftProfilePanel
-          user={userData}
-          onTransferClick={handleOpenTransferModal}
-          onManageClick={handleOpenManageModal}
-        />
-        {/* Scrollable Right Content */}
-        <div className="md:ml-[33%] w-1/2 xl:ml-[25%] mt-[90px] md:w-3/4 bg-gray-100 flex flex-col flex-grow items-center overflow-y-auto min-h-screen">
-          <div className="flex flex-col sm:flex-row justify-between w-full px-6 md:px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
-            <CheckboxBar collections={allCollections} toggleCheckbox={toggleCheckbox} />
-            <SearchBar handleSearch={handleSearch} placeholder="Search for a specific collection" />
-          </div>
-          <div className="px-6 md:px-[16px] w-full ">
-            <CollectionsList
-              collections={filteredCollections}
-              currentPage={currentPage}
-              itemsPerPage={itemsPerPage}
-              totalPages={totalPages}
-              setCurrentPage={setCurrentPage}
-              setItemsPerPage={setItemsPerPage}
-              loading={isLoading}
-            />
+    <div className="relative">
+      {!isConnected && (
+        <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-white bg-opacity-80 backdrop-blur-sm z-50">
+          <p className="text-lg text-gray-700 mb-4 w-3/4 text-center xl:w-full">
+            You are not connected. Please press the "Connect Wallet" button below to access your
+            profile.
+          </p>
+          <ConnectWallet />
+          <Link to="/" className="hover:underline pt-4 ">
+            Back to Collections
+          </Link>
+        </div>
+      )}
+      <div
+        className={`bg-gradient-to-b from-white to-[#f7f7f7] flex flex-col items-center w-full min-h-screen ${!isConnected ? 'blur-sm' : ''}`}
+      >
+        {/* Fixed Header */}
+        <div className="fixed top-0 left-0 w-full h-[90px] bg-white flex items-center justify-between z-50">
+          <Header />
+        </div>
+        {/* Layout for LeftPanel and Scrollable Content */}
+        <div className="flex w-full h-full">
+          {/* Fixed LeftPanel */}
+          <LeftProfilePanel
+            user={userData}
+            onTransferClick={handleOpenTransferModal}
+            onManageClick={handleOpenManageModal}
+          />
+          {/* Scrollable Right Content */}
+          <div className="md:ml-[33%] w-1/2 xl:ml-[25%] mt-[90px] md:w-3/4 bg-gray-100 flex flex-col flex-grow items-center overflow-y-auto min-h-screen">
+            <div className="flex flex-col sm:flex-row justify-between w-full px-6 md:px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12">
+              <CheckboxBar collections={allCollections} toggleCheckbox={toggleCheckbox} />
+              <SearchBar
+                handleSearch={handleSearch}
+                placeholder="Search for a specific collection"
+              />
+            </div>
+            {/* Uncomment the collections list when ready */}
+            {/* <div className="px-6 md:px-[16px] w-full ">
+              <CollectionsList
+                collections={filteredCollections}
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+                setItemsPerPage={setItemsPerPage}
+                loading={isLoading}
+              />
+            </div> */}
           </div>
         </div>
-      </div>
 
-      {showTransferModal && <TransferModal onClose={handleCloseTransferModal} />}
-      {showManageModal && <ManageModal onClose={handleCloseManageModal} />}
+        {showTransferModal && <TransferModal onClose={handleCloseTransferModal} />}
+        {showManageModal && <ManageModal onClose={handleCloseManageModal} />}
+      </div>
     </div>
   );
 };
