@@ -1,14 +1,14 @@
-import React from 'react';
-import { Routes, Route, HashRouter } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TokenDataProvider } from './context/TokenDataContext';
-import { UserProfileProvider } from './context/UserProfileContext';
-import CollectionsPage from './components/Pages/CollectionsList';
-import CollectionDetail from './components/Pages/CollectionDetailsPage';
-import Daos from './components/Pages/Daos';
-import NFTPage from './components/Pages/NFTPage';
-import ProfilePage from './components/Pages/ProfilePage';
+import React from 'react'
+import { Routes, Route, HashRouter } from 'react-router-dom'
+import 'react-toastify/dist/ReactToastify.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { TokenDataProvider } from './context/TokenDataContext'
+import { UserProfileProvider } from './context/UserProfileContext'
+import OGYCollections from './components/Pages/OGYCollections'
+import OGYCollectionDetails from './components/Pages/OGYCollectionDetails'
+import Daos from './components/Pages/Daos'
+import NFTPage from './components/Pages/NFTPage'
+import ProfilePage from './components/Pages/ProfilePage'
 import {
   GLD_NFT_1G_CANISTER_ID,
   GLD_NFT_10G_CANISTER_ID,
@@ -17,17 +17,17 @@ import {
   LOGO_CANISTER_ID,
   ICPSWAP_TOKENS_CANISTER_ID,
   COLLECTIONS_INDEX_CANISTER_ID,
-} from './constants';
+} from './constants'
 
-import { idlFactory as gld_nft_idl } from './canisters/gld_nft/did';
-import { idlFactory as gldt_swap_tokens_idl } from './canisters/icpswap/store.did';
-import { idlFactory as logo_idl } from './canisters/icpswap/info.did';
-import { idlFactory as collections_idl } from './canisters/collections/index';
-import { AuthProvider } from './auth';
+import { idlFactory as gld_nft_idl } from './canisters/gld_nft/did'
+import { idlFactory as gldt_swap_tokens_idl } from './canisters/icpswap/store.did'
+import { idlFactory as logo_idl } from './canisters/icpswap/info.did'
+import { idlFactory as collections_idl } from './canisters/collections/index'
+import { AuthProvider } from './auth'
 
-import '@nfid/identitykit/react/styles.css';
+import '@nfid/identitykit/react/styles.css'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 const App = () => (
   <>
@@ -77,11 +77,11 @@ const App = () => (
           >
             <UserProfileProvider>
               <Routes>
-                <Route path="/" element={<CollectionsPage />} />
-                <Route path="/daos" element={<Daos />} />
-                <Route path="/collection/:canister_id" element={<CollectionDetail />} />
-                <Route path="/collection/:canister_id/:nft_id" element={<NFTPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route path='/' element={<OGYCollections />} />
+                <Route path='/daos' element={<Daos />} />
+                <Route path='/collection/:canister_id' element={<OGYCollectionDetails />} />
+                <Route path='/collection/:canister_id/:nft_id' element={<NFTPage />} />
+                <Route path='/profile' element={<ProfilePage />} />
               </Routes>
             </UserProfileProvider>
           </AuthProvider>
@@ -89,6 +89,6 @@ const App = () => (
       </QueryClientProvider>
     </HashRouter>
   </>
-);
+)
 
-export default App;
+export default App

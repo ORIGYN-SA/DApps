@@ -1,17 +1,17 @@
 // src/components/Panels/NFTsPanel.tsx
-import React from 'react';
-import { useGetCollectionsList } from '../../hooks/useGetCollectionsList';
-import CollectionsList from '../Collections/CollectionsList';
-import { CollectionType } from '../../types/global';
-import CheckboxBar from '../Bar/CheckBoxBar';
-import SearchBar from '../Bar/SearchBar';
-import { useUserProfile } from '../../context/UserProfileContext';
+import React from 'react'
+import { useGetCollectionsList } from '../../hooks/useGetCollectionsList'
+import CollectionsList from '../Collections/OGYCollectionsList'
+import { CollectionType } from '../../types/global'
+import CheckboxBar from '../Bar/CheckBoxBar'
+import SearchBar from '../Bar/SearchBar'
+import { useUserProfile } from '../../context/UserProfileContext'
 
 interface NFTsPanelProps {
-  searchTerm: string;
-  handleSearch: (term: string) => void;
-  filteredCollections: CollectionType[];
-  toggleCheckbox: (name: string) => void;
+  searchTerm: string
+  handleSearch: (term: string) => void
+  filteredCollections: CollectionType[]
+  toggleCheckbox: (name: string) => void
 }
 
 const MyNFTsPanel: React.FC<NFTsPanelProps> = ({
@@ -21,11 +21,8 @@ const MyNFTsPanel: React.FC<NFTsPanelProps> = ({
   toggleCheckbox,
 }) => {
   return (
-    <div className="p-6">
-      <SearchBar
-        handleSearch={handleSearch}
-        placeholder="Search for a specific collection"
-      />
+    <div className='p-6'>
+      <SearchBar handleSearch={handleSearch} placeholder='Search for a specific collection' />
       <CheckboxBar collections={filteredCollections} toggleCheckbox={toggleCheckbox} />
       {/* Vous pouvez décommenter ceci lorsque CollectionsList est prêt */}
       {/* <CollectionsList
@@ -38,7 +35,7 @@ const MyNFTsPanel: React.FC<NFTsPanelProps> = ({
         loading={isLoading}
       /> */}
     </div>
-  );
-};
+  )
+}
 
-export default MyNFTsPanel;
+export default MyNFTsPanel

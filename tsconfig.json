@@ -5,7 +5,7 @@
     "verbatimModuleSyntax": false,
     "strict": true,
     "skipLibCheck": true,
-    "module": "esnext",
+    "module": "Node16",
     "jsx": "react-jsx",
     "noImplicitAny": false,
     "outDir": "dist",

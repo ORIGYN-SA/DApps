@@ -3,6 +3,8 @@ import { useResponsiveTruncate } from '../../utils/responsiveTruncate';
 import { currencies, Currency } from '../../constants/currencies';
 import { useTokenData } from '../../context/TokenDataContext';
 import { CopyButton } from '../Buttons/CopyButton';
+import { useUserProfile } from '../../context/UserProfileContext';
+import { getUserBalance } from '../../utils/balanceUtils';
 
 const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -15,6 +17,7 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const truncateAddress = useResponsiveTruncate();
   const { getUSDPrice } = useTokenData();
+  const { userProfile } = useUserProfile();
 
   const onTransferClick = () => {
     setIsProcessing(true);
@@ -217,7 +220,7 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
             <div className="flex flex-col items-center justify-center min-h-12 mt-8 border-t border-slate w-full rounded-b-2xl bg-[#f9fafe]">
               <p className="text-[#69737c] text-[13px] font-normal leading-none">
-                Current balance: <span className="font-bold">xx ICP</span>
+                Current balance: <span className="font-bold">{getUserBalance(userProfile, currency.code)} {currency.code}</span>
               </p>
             </div>
           </>

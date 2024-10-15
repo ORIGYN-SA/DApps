@@ -2,11 +2,14 @@ import { useState } from 'react';
 import Reminder from '../Utils/Reminder';
 import { useTokenData } from '../../context/TokenDataContext';
 import { NFT } from '../../types/global';
+import { getUserBalance } from '../../utils/balanceUtils';
+import { useUserProfile } from '../../context/UserProfileContext';
 
 const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { getLogo } = useTokenData();
+  const { userProfile } = useUserProfile();
 
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) onClose();
@@ -82,7 +85,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose
                 </div>
               </div>
             </div>
-            <p className="text-center text-[#69737c] text-[13px] font-normal leading-none mt-2">Balance: xx ICP</p>
+            <p className="text-center text-[#69737c] text-[13px] font-normal leading-none mt-2">Balance: {getUserBalance(userProfile, nft.currency)} {nft.currency}</p>
           </>
         )}
       </div>
