@@ -13,6 +13,7 @@ export interface Collection {
   'is_promoted' : boolean,
   'category' : [] | [bigint],
 }
+export type GetCollectionByPrincipal = { 'CollectionNotFound' : null };
 export interface GetCollectionsArgs {
   'categories' : [] | [BigUint64Array | bigint[]],
   'offset' : bigint,
@@ -44,17 +45,19 @@ export type Result = { 'Ok' : boolean } |
   { 'Err' : string };
 export type Result_1 = { 'Ok' : Array<[bigint, Category]> } |
   { 'Err' : null };
-export type Result_2 = { 'Ok' : GetCollectionsResult } |
+export type Result_2 = { 'Ok' : Collection } |
+  { 'Err' : GetCollectionByPrincipal };
+export type Result_3 = { 'Ok' : GetCollectionsResult } |
   { 'Err' : GetCollectionsError };
-export type Result_3 = { 'Ok' : null } |
-  { 'Err' : InsertCategoryError };
 export type Result_4 = { 'Ok' : null } |
-  { 'Err' : InsertCollectionError };
+  { 'Err' : InsertCategoryError };
 export type Result_5 = { 'Ok' : null } |
-  { 'Err' : RemoveCollectionError };
+  { 'Err' : InsertCollectionError };
 export type Result_6 = { 'Ok' : null } |
-  { 'Err' : SetCategoryVisibilityError };
+  { 'Err' : RemoveCollectionError };
 export type Result_7 = { 'Ok' : null } |
+  { 'Err' : SetCategoryVisibilityError };
+export type Result_8 = { 'Ok' : null } |
   { 'Err' : UpdateCollectionCategoryError };
 export interface SearchCollectionsArg {
   'categories' : [] | [BigUint64Array | bigint[]],
@@ -76,19 +79,20 @@ export type UpdateCollectionCategoryError = { 'CollectionNotFound' : null } |
 export interface _SERVICE {
   'add_authorised_principal' : ActorMethod<[Principal], Result>,
   'get_categories' : ActorMethod<[], Result_1>,
-  'get_collections' : ActorMethod<[GetCollectionsArgs], Result_2>,
+  'get_collection_by_principal' : ActorMethod<[Principal], Result_2>,
+  'get_collections' : ActorMethod<[GetCollectionsArgs], Result_3>,
   'get_user_collections' : ActorMethod<[[] | [Principal]], Array<Collection>>,
-  'insert_category' : ActorMethod<[InsertCategoryArgs], Result_3>,
-  'insert_collection' : ActorMethod<[InsertCollectionArgs], Result_4>,
-  'remove_collection' : ActorMethod<[RemoveCollectionArgs], Result_5>,
+  'insert_category' : ActorMethod<[InsertCategoryArgs], Result_4>,
+  'insert_collection' : ActorMethod<[InsertCollectionArgs], Result_5>,
+  'remove_collection' : ActorMethod<[RemoveCollectionArgs], Result_6>,
   'search_collections' : ActorMethod<
     [SearchCollectionsArg],
     GetCollectionsResult
   >,
-  'set_category_visibility' : ActorMethod<[SetCategoryVisibility], Result_6>,
+  'set_category_visibility' : ActorMethod<[SetCategoryVisibility], Result_7>,
   'update_collection_category' : ActorMethod<
     [UpdateCollectionCategoryArgs],
-    Result_7
+    Result_8
   >,
 }
 export declare const idlFactory: IDL.InterfaceFactory;

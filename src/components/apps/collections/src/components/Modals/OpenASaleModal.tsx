@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import { Currency, currencies } from '../../constants/currencies'
 import { NFT } from '../../types/global'
 import { useTokenData } from '../../context/TokenDataContext'
+import { useUserProfile } from '../../context/UserProfileContext'
+import { Token } from '../../types/token'
+import { SaleToken, useSellNFT } from '../../hooks/useSellNFT'
 
 interface OpenASaleModalProps {
   selectedNFT: NFT
@@ -16,12 +19,13 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
   salePrice,
   setSalePrice,
 }) => {
-  const { getUSDPrice } = useTokenData()
+  const { getUSDPrice, getTokenData } = useTokenData()
+  const { userProfile } = useUserProfile()
   const [currency, setCurrency] = useState<Currency>(currencies[0])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isListing, setIsListing] = useState(false)
-  const [isListed, setIsListed] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const { mutate: sellNFT, isError, isSuccess, error, isPending } = useSellNFT()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,11 +43,31 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
   }
 
   const handleListNFT = () => {
-    setIsListing(true)
-    setTimeout(() => {
-      setIsListing(false)
-      setIsListed(true)
-    }, 2000)
+    const tokenData = getTokenData(currency.code)
+    if (!tokenData) {
+      console.error('Get Token data Error:', currency.code)
+      return
+    }
+    const token: SaleToken = {
+      feesUSD: tokenData.feesUSD,
+      priceUSD: tokenData.priceUSD,
+      decimals: currency.decimals,
+      canister: currency.canisterId,
+      standard: tokenData.standard as 'Ledger',
+      symbol: tokenData.symbol,
+      id: tokenData.id,
+    }
+
+    sellNFT({
+      nftId: selectedNFT.id,
+      collectionId: selectedNFT.collectionName,
+      price: BigInt(salePrice),
+      token,
+    })
+  }
+
+  const isSaleSuccess = (data: any) => {
+    return data && 'ok' in data && !('err' in data)
   }
 
   const filteredCurrencies = currencies.filter(curr => curr.code !== currency.code)
@@ -157,7 +181,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
           &times;
         </button>
         <div className='flex flex-col items-center justify-center w-full h-full'>
-          {isListing ? (
+          {isPending ? (
             <div className='my-12 flex flex-col items-center justify-center w-full h-full'>
               <img
                 src={'/assets/spinner.png'}
@@ -166,7 +190,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
               />
               <h2 className='text-[22px] font-semibold leading-normal'>Listing your NFT</h2>
             </div>
-          ) : isListed ? (
+          ) : isSuccess ? (
             <div className='flex flex-col items-center justify-center w-full h-full'>
               <img src='/assets/tick-circle.svg' alt='Tick circle' className='w-20 h-20 mb-6' />
               <h2 className='text-[22px] font-semibold leading-normal'>NFT successfully listed</h2>
@@ -180,6 +204,13 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
               >
                 See certificate
               </a>
+            </div>
+          ) : isError ? (
+            <div className='flex flex-col items-center justify-center w-full h-full'>
+              <h2 className='text-[22px] font-semibold leading-normal text-red-600'>
+                Error listing NFT
+              </h2>
+              <p className='text-red-600'>{error?.message}</p>
             </div>
           ) : (
             <>

@@ -45,7 +45,9 @@ const SelectNFTForSaleModal: React.FC<SelectNFTForSaleModalProps> = ({
           <p className='text-center text-[#69737c] text-[13px] font-medium px-6'>
             Please select one NFT from the list below to open a sale.
           </p>
-          <UserNFTsList selectedNFT={selectedNFT} handleSelectNFT={handleSelectNFT} />
+          <div className='my-8 px-6'>
+            <UserNFTsList selectedNFT={selectedNFT} handleSelectNFT={handleSelectNFT} />
+          </div>
           <div className='h-[1px] w-full bg-gray-300 my-4'></div>
           <button
             className={`bg-charcoal w-3/4 md:w-1/2 py-4 mt-2 md:mt-6 rounded-full hover:scale-105 transition-all text-center text-white text-sm font-semibold ${

@@ -13,23 +13,30 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : IDL.Vec(IDL.Tuple(IDL.Nat64, Category)),
     'Err' : IDL.Null,
   });
-  const GetCollectionsArgs = IDL.Record({
-    'categories' : IDL.Opt(IDL.Vec(IDL.Nat64)),
-    'offset' : IDL.Nat64,
-    'limit' : IDL.Nat64,
-  });
   const Collection = IDL.Record({
     'name' : IDL.Opt(IDL.Text),
     'canister_id' : IDL.Principal,
     'is_promoted' : IDL.Bool,
     'category' : IDL.Opt(IDL.Nat64),
   });
+  const GetCollectionByPrincipal = IDL.Variant({
+    'CollectionNotFound' : IDL.Null,
+  });
+  const Result_2 = IDL.Variant({
+    'Ok' : Collection,
+    'Err' : GetCollectionByPrincipal,
+  });
+  const GetCollectionsArgs = IDL.Record({
+    'categories' : IDL.Opt(IDL.Vec(IDL.Nat64)),
+    'offset' : IDL.Nat64,
+    'limit' : IDL.Nat64,
+  });
   const GetCollectionsResult = IDL.Record({
     'total_pages' : IDL.Nat64,
     'collections' : IDL.Vec(Collection),
   });
   const GetCollectionsError = IDL.Variant({ 'CategoryNotFound' : IDL.Text });
-  const Result_2 = IDL.Variant({
+  const Result_3 = IDL.Variant({
     'Ok' : GetCollectionsResult,
     'Err' : GetCollectionsError,
   });
@@ -37,7 +44,7 @@ export const idlFactory = ({ IDL }) => {
   const InsertCategoryError = IDL.Variant({
     'CategoryAlreadyExists' : IDL.Null,
   });
-  const Result_3 = IDL.Variant({
+  const Result_4 = IDL.Variant({
     'Ok' : IDL.Null,
     'Err' : InsertCategoryError,
   });
@@ -52,7 +59,7 @@ export const idlFactory = ({ IDL }) => {
     'CollectionAlreadyExists' : IDL.Null,
     'CategoryNotFound' : IDL.Text,
   });
-  const Result_4 = IDL.Variant({
+  const Result_5 = IDL.Variant({
     'Ok' : IDL.Null,
     'Err' : InsertCollectionError,
   });
@@ -62,7 +69,7 @@ export const idlFactory = ({ IDL }) => {
   const RemoveCollectionError = IDL.Variant({
     'CollectionNotFound' : IDL.Null,
   });
-  const Result_5 = IDL.Variant({
+  const Result_6 = IDL.Variant({
     'Ok' : IDL.Null,
     'Err' : RemoveCollectionError,
   });
@@ -79,7 +86,7 @@ export const idlFactory = ({ IDL }) => {
   const SetCategoryVisibilityError = IDL.Variant({
     'CategoryNotFound' : IDL.Null,
   });
-  const Result_6 = IDL.Variant({
+  const Result_7 = IDL.Variant({
     'Ok' : IDL.Null,
     'Err' : SetCategoryVisibilityError,
   });
@@ -91,22 +98,27 @@ export const idlFactory = ({ IDL }) => {
     'CollectionNotFound' : IDL.Null,
     'CategoryNotFound' : IDL.Text,
   });
-  const Result_7 = IDL.Variant({
+  const Result_8 = IDL.Variant({
     'Ok' : IDL.Null,
     'Err' : UpdateCollectionCategoryError,
   });
   return IDL.Service({
     'add_authorised_principal' : IDL.Func([IDL.Principal], [Result], []),
     'get_categories' : IDL.Func([], [Result_1], ['query']),
-    'get_collections' : IDL.Func([GetCollectionsArgs], [Result_2], ['query']),
+    'get_collection_by_principal' : IDL.Func(
+        [IDL.Principal],
+        [Result_2],
+        ['query'],
+      ),
+    'get_collections' : IDL.Func([GetCollectionsArgs], [Result_3], ['query']),
     'get_user_collections' : IDL.Func(
         [IDL.Opt(IDL.Principal)],
         [IDL.Vec(Collection)],
         [],
       ),
-    'insert_category' : IDL.Func([InsertCategoryArgs], [Result_3], []),
-    'insert_collection' : IDL.Func([InsertCollectionArgs], [Result_4], []),
-    'remove_collection' : IDL.Func([RemoveCollectionArgs], [Result_5], []),
+    'insert_category' : IDL.Func([InsertCategoryArgs], [Result_4], []),
+    'insert_collection' : IDL.Func([InsertCollectionArgs], [Result_5], []),
+    'remove_collection' : IDL.Func([RemoveCollectionArgs], [Result_6], []),
     'search_collections' : IDL.Func(
         [SearchCollectionsArg],
         [GetCollectionsResult],
@@ -114,12 +126,12 @@ export const idlFactory = ({ IDL }) => {
       ),
     'set_category_visibility' : IDL.Func(
         [SetCategoryVisibility],
-        [Result_6],
+        [Result_7],
         [],
       ),
     'update_collection_category' : IDL.Func(
         [UpdateCollectionCategoryArgs],
-        [Result_7],
+        [Result_8],
         [],
       ),
   });

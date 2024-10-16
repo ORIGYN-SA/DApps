@@ -11,6 +11,7 @@ import { CollectionWithNFTs, NFT, SaleDetails } from '../types/global.js'
 import { extractSaleDetails } from '../utils/priceUtils'
 import { useTokenData } from '../context/TokenDataContext'
 import { extractMetadata } from '../utils/metadataUtils.js'
+import { fetchCategoryByPrincipalId } from '../utils/categoryUtils.js'
 
 const fetchCollectionDetail = async (
   canisterId: string,
@@ -30,31 +31,31 @@ const fetchCollectionDetail = async (
     }
 
     const collectionInfo = collectionResult.ok
+    const categoryName = await fetchCategoryByPrincipalId(canisterId)
 
-    if (
-      !collectionInfo.token_ids ||
-      collectionInfo.token_ids.length === 0 ||
-      !collectionInfo.token_ids[0]
-    ) {
+    if (!collectionInfo.token_ids || collectionInfo.token_ids.length === 0) {
       return {
         name: [],
         canister_id: canisterId,
+        categoryName,
         logo: [],
         nfts: [],
       }
     }
 
     const tokenIds: string[] = collectionInfo.token_ids[0]
-    const nftResults = await actor.nft_batch_origyn(tokenIds)
+
+    // Utilisation de Promise.all pour récupérer tous les NFTs en parallèle
+    const nftResults = await Promise.all(tokenIds.map(tokenId => actor.nft_batch_origyn([tokenId])))
 
     const nfts: NFT[] = nftResults
       .map((nftResult, index) => {
-        if ('ok' in nftResult) {
-          const { tokenName, imageUrl } = extractMetadata(nftResult.ok.metadata, canisterId)
+        if ('ok' in nftResult[0]) {
+          const { tokenName, imageUrl } = extractMetadata(nftResult[0].ok.metadata, canisterId)
 
           const saleData =
-            nftResult.ok.current_sale && nftResult.ok.current_sale.length > 0
-              ? nftResult.ok.current_sale[0]
+            nftResult[0].ok.current_sale && nftResult[0].ok.current_sale.length > 0
+              ? nftResult[0].ok.current_sale[0]
               : null
 
           const saleDetails: SaleDetails | null = extractSaleDetails(saleData, tokenPrices)
@@ -83,6 +84,7 @@ const fetchCollectionDetail = async (
             id: tokenIds[index],
             name: tokenName,
             collectionName: canisterId,
+            categoryName,
             image: imageUrl,
             logo: getLogo(currency),
             price,
@@ -91,7 +93,7 @@ const fetchCollectionDetail = async (
             saleDetails: saleDetails || undefined,
           } as NFT
         } else {
-          console.error(`Error for token ${tokenIds[index]}: ${nftResult.err.text}`)
+          console.error(`Error for token ${tokenIds[index]}: ${nftResult[0].err.text}`)
           return undefined
         }
       })
@@ -100,6 +102,7 @@ const fetchCollectionDetail = async (
     return {
       name: collectionInfo.name || [],
       logo: collectionInfo.logo || [],
+      categoryName,
       canister_id: canisterId,
       nfts,
     }

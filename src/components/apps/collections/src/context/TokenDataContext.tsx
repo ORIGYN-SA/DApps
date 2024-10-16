@@ -17,6 +17,7 @@ interface TokenPriceContextProps {
   isError: boolean
   getUSDPrice: (symbol: string) => number
   getLogo: (symbol: string) => string | undefined
+  getTokenData: (symbol: string) => Token | undefined
 }
 
 const isNat = (value: any): value is { Nat: number } => {
@@ -31,7 +32,7 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens()
   console.log('All Tokens:', allTokens)
 
-  const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 1000)
+  const filteredTokens = allTokens.filter(token => token.volumeUSD1d >= 10000)
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens')
   const icpTokens = await icpTokensResponse.json()
@@ -138,8 +139,15 @@ export const TokenDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return token?.logo
   }
 
+  const getTokenData = (symbol: string): Token | undefined => {
+    const token = tokens.find(t => t.symbol === symbol)
+    return token
+  }
+
   return (
-    <TokenDataContext.Provider value={{ tokens, isLoading, isError, getUSDPrice, getLogo }}>
+    <TokenDataContext.Provider
+      value={{ tokens, isLoading, isError, getUSDPrice, getLogo, getTokenData }}
+    >
       {children}
     </TokenDataContext.Provider>
   )

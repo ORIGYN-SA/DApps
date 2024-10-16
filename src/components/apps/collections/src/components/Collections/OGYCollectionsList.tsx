@@ -51,15 +51,10 @@ const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
         alt={collection.name || 'Collection Image'}
       />
       <div className={`flex flex-col justify-center ${isFirst ? 'mt-2 space-y-2' : 'p-4'}`}>
-        {isFirst && <h3 className='text-[#212425] text-[28px] font-bold'>{collection.name}</h3>}
-        {!isFirst && (
-          <>
-            <h3 className='text-[#69737C] text-[10px] font-medium tracking-[2px] uppercase'>
-              {collection.category_name}
-            </h3>
-            <p className='text-[16px] font-bold leading-normal'>{collection.name || 'Unknown'}</p>
-          </>
-        )}
+        <h3 className='text-[#69737C] text-[10px] font-medium tracking-[2px] uppercase'>
+          {collection.category_name || 'Unknown'}
+        </h3>
+        <p className='text-[16px] font-bold leading-normal'>{collection.name || 'Unknown'}</p>
         <div className='h-6 py-1 w-fit px-4 bg-[#212425] rounded-[100px] inline-flex items-center justify-center'>
           <span className='text-white text-xs font-semibold'>
             {collection.nftCount && collection.nftCount > 1

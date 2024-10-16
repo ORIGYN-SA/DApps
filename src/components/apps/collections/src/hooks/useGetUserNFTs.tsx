@@ -1,3 +1,5 @@
+// useGetUserNFTs.ts
+
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { Actor, HttpAgent } from '@dfinity/agent'
 import { Principal } from '@dfinity/principal'
@@ -10,6 +12,7 @@ import { _SERVICE as _GOLD_SERVICE } from '../canisters/gld_nft/interfaces/gld_n
 import { idlFactory as nft_idlFactory } from '../canisters/gld_nft/did.js'
 import { extractMetadata } from '../utils/metadataUtils.js'
 import { COLLECTIONS_INDEX_CANISTER_ID } from '../constants.js'
+import { fetchCategoryByPrincipalId } from '../utils/categoryUtils.js'
 
 const fetchUserNFTs = async (
   userPrincipal: Principal,
@@ -42,8 +45,6 @@ const fetchUserNFTs = async (
       category: [] | [bigint]
     }>
 
-    console.log('collectionsResult', collectionsResult)
-
     const allNFTs: NFT[] = []
 
     for (const collection of collections) {
@@ -68,8 +69,10 @@ const fetchUserNFTs = async (
 
       const nftResults = await nftActor.nft_batch_origyn(tokenIds)
 
-      const nfts: NFT[] = nftResults
-        .map((nftResult: any, index: number) => {
+      console.log('nftResults', nftResults)
+
+      const nfts: (NFT | undefined)[] = await Promise.all(
+        nftResults.map(async (nftResult: any, index: number) => {
           if ('ok' in nftResult) {
             const { tokenName, imageUrl } = extractMetadata(nftResult.ok.metadata, canisterId)
 
@@ -79,6 +82,7 @@ const fetchUserNFTs = async (
                 : null
 
             const saleDetails: SaleDetails | null = extractSaleDetails(saleData, tokenPrices)
+            const categoryName = await fetchCategoryByPrincipalId(collection.canister_id.toText())
 
             let price = 0
             let priceUSD = 0
@@ -104,6 +108,7 @@ const fetchUserNFTs = async (
               id: tokenIds[index],
               name: tokenName,
               collectionName: canisterId,
+              categoryName,
               image: imageUrl,
               logo: getLogo(currency),
               price,
@@ -116,22 +121,23 @@ const fetchUserNFTs = async (
             console.error(`Error for token ${tokenIds[index]}: ${nftResult.err.text}`)
             return undefined
           }
-        })
-        .filter((nft): nft is NFT => nft !== undefined)
+        }),
+      )
 
-      allNFTs.push(...nfts)
+      const filteredNFTs = nfts.filter((nft): nft is NFT => nft !== undefined)
+
+      allNFTs.push(...filteredNFTs)
     }
 
-    return allNFTs
+    return allNFTs as NFT[]
   } catch (error) {
     console.error('Error in fetchUserNFTs:', error)
     throw error
   }
 }
 
-export const useUserNFTs = (userPrincipal: Principal) => {
+export const useUserNFTs = (userPrincipal?: Principal) => {
   const { tokens, getLogo, isLoading: isPricesLoading, isError: isPricesError } = useTokenData()
-  console.log('🚀 - useUserNFTs', userPrincipal)
 
   const tokenUSDPrices: Record<string, number> = tokens.reduce((acc, token) => {
     acc[token.symbol] = token.priceUSD
@@ -139,8 +145,10 @@ export const useUserNFTs = (userPrincipal: Principal) => {
   }, {} as Record<string, number>)
 
   return useQuery<NFT[], Error>({
-    queryKey: ['userNFTs', userPrincipal.toText()],
-    queryFn: () => fetchUserNFTs(userPrincipal, tokenUSDPrices, getLogo),
+    queryKey: userPrincipal ? ['userNFTs', userPrincipal.toText()] : ['userNFTs'],
+    queryFn: userPrincipal
+      ? () => fetchUserNFTs(userPrincipal, tokenUSDPrices, getLogo)
+      : undefined,
     placeholderData: keepPreviousData,
     enabled: !!userPrincipal && !isPricesLoading && !isPricesError,
     staleTime: 5 * 60 * 1000,
