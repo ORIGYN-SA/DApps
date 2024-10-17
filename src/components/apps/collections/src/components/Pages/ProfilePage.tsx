@@ -12,7 +12,6 @@ import ConnectWallet from '../Buttons/ConnectWallet'
 import { Link } from 'react-router-dom'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { CollectionType, NFT } from '../../types/global'
-import OpenASaleModal from '../Modals/OpenASaleModal'
 import UserNFTsList from '../Collections/UserNFTsList'
 
 const ProfilePage = () => {
@@ -22,7 +21,6 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState<'Wallet' | 'My NFTs'>('Wallet')
   const [filteredCollections, setFilteredCollections] = useState<CollectionType[]>([])
   const [isOpenASaleModalOpen, setisOpenASaleModalOpen] = useState(false)
-  const [salePrice, setSalePrice] = useState('')
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null)
 
   const { data } = useGetCollectionsList(0, 20)

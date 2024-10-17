@@ -1,5 +1,4 @@
-// hooks/useSellNFT.ts
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Principal } from '@dfinity/principal'
 import {
   _SERVICE as SaleService,
@@ -32,6 +31,7 @@ interface SellNFTVariables {
 
 export const useSellNFT = () => {
   const { createActor } = useAuth()
+  const queryClient = useQueryClient()
 
   const sellNFT = async ({
     nftId,
@@ -43,6 +43,8 @@ export const useSellNFT = () => {
 
       const feesInToken = BigInt(Math.ceil(token.feesUSD / token.priceUSD))
       const scaledPrice = BigInt(price) * BigInt(10 ** token.decimals)
+      const startDate = BigInt(Date.now()) * BigInt(1_000_000)
+      const endDate = startDate + BigInt(3600 * 24 * 30 * 1_000_000_000)
 
       const tokenSpec: TokenSpec = {
         ic: {
@@ -59,6 +61,8 @@ export const useSellNFT = () => {
         { token: tokenSpec },
         { buy_now: scaledPrice },
         { fee_schema: 'com.origyn.royalties.fixed' },
+        { ending: { date: endDate } },
+        { start_date: startDate },
       ]
 
       const askConfigShared: AskConfigShared = [askFeatures]
@@ -89,6 +93,7 @@ export const useSellNFT = () => {
     mutationFn: sellNFT,
     onSuccess: data => {
       console.log('NFT sold successfully:', data)
+      queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
     },
     onError: error => {
       console.error('Error while selling NFT:', error)

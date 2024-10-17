@@ -62,7 +62,7 @@ const fetchTokenBalances = async (
     }
   }
 
-  return balances
+  return balances.sort((a, b) => b.amount - a.amount)
 }
 
 /**

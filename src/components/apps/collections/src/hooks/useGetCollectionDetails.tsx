@@ -27,7 +27,9 @@ const fetchCollectionDetail = async (
 
     const collectionResult = await actor.collection_nft_origyn([])
     if (!('ok' in collectionResult)) {
-      throw new Error(`Error retrieving collection: ${collectionResult.err.text}`)
+      throw new Error(
+        `Error retrieving collection: ${collectionResult.err?.text || 'Unknown error'}`,
+      )
     }
 
     const collectionInfo = collectionResult.ok
@@ -45,20 +47,39 @@ const fetchCollectionDetail = async (
 
     const tokenIds: string[] = collectionInfo.token_ids[0]
 
-    // Utilisation de Promise.all pour récupérer tous les NFTs en parallèle
     const nftResults = await Promise.all(tokenIds.map(tokenId => actor.nft_batch_origyn([tokenId])))
-
     const nfts: NFT[] = nftResults
+      .filter((nftResult: any) => {
+        if ('ok' in nftResult[0]) {
+          const sales = nftResult[0].ok.current_sale || []
+          const openSales = sales.filter((sale: any) => {
+            return (
+              sale.sale_type &&
+              sale.sale_type.auction &&
+              !('closed' in sale.sale_type.auction.status)
+            )
+          })
+          return openSales.length > 0
+        }
+        return false
+      })
       .map((nftResult, index) => {
         if ('ok' in nftResult[0]) {
           const { tokenName, imageUrl } = extractMetadata(nftResult[0].ok.metadata, canisterId)
 
-          const saleData =
-            nftResult[0].ok.current_sale && nftResult[0].ok.current_sale.length > 0
-              ? nftResult[0].ok.current_sale[0]
-              : null
+          const sales = nftResult[0].ok.current_sale || []
+          const openSales = sales.filter((sale: any) => {
+            return (
+              sale.sale_type &&
+              sale.sale_type.auction &&
+              !('closed' in sale.sale_type.auction.status)
+            )
+          })
 
-          const saleDetails: SaleDetails | null = extractSaleDetails(saleData, tokenPrices)
+          console.log('openSales', openSales)
+
+          const saleDetails: SaleDetails | null =
+            openSales.length > 0 ? extractSaleDetails(openSales[0], tokenPrices) : null
 
           let price = 0
           let priceUSD = 0
@@ -92,7 +113,7 @@ const fetchCollectionDetail = async (
             priceUSD,
             saleDetails: saleDetails || undefined,
           } as NFT
-        } else {
+        } else if ('err' in nftResult[0]) {
           console.error(`Error for token ${tokenIds[index]}: ${nftResult[0].err.text}`)
           return undefined
         }
@@ -126,6 +147,5 @@ export const useGetCollectionDetails = (canisterId: string) => {
     placeholderData: keepPreviousData,
     enabled: !!canisterId && !isPricesLoading && !isPricesError,
     staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
   })
 }

@@ -135,10 +135,10 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
         <img src={getLogo(nft.currency)} alt='Token Logo' className='w-10 h-10' />
         <div className='flex flex-row gap-2 items-baseline'>
           <div className='text-black text-[18px] md:text-[28px] font-bold'>
-            {nft.price > 0 ? `${nft.price.toFixed(2)} ${nft.currency}` : 'Not for sale'}
+            {nft.price > 0 ? `${nft.price} ${nft.currency}` : 'Not for sale'}
           </div>
           {nft.priceUSD > 0 && (
-            <div className='text-[#6e6d66] text-sm font-light'>(${nft.priceUSD.toFixed(2)})</div>
+            <div className='text-[#6e6d66] text-sm font-light'>(${nft.priceUSD})</div>
           )}
         </div>
       </div>
@@ -148,7 +148,7 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
           onClick={onBuyNowClick}
         >
           <p className='text-center text-white text-sm font-semibold leading-[48px]'>
-            Buy now for {nft.price.toFixed(2)} {nft.currency}
+            Buy now for {nft.price} {nft.currency}
           </p>
         </button>
       )}

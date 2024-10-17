@@ -31,7 +31,8 @@ const isText = (value: any): value is { Text: string } => {
 const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens()
 
-  const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 10000)
+  const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 1000)
+  console.log('total tokens data', filteredTokens)
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens')
   const icpTokens = await icpTokensResponse.json()
@@ -119,8 +120,9 @@ const useTokenPriceQuery = () => {
   return useQuery<Token[], Error>({
     queryKey: ['tokens'],
     queryFn: fetchVerifiedTokens,
-    refetchInterval: 60000,
-    staleTime: 60000,
+    refetchInterval: 600000,
+    staleTime: 600000,
+    refetchOnWindowFocus: false,
   })
 }
 

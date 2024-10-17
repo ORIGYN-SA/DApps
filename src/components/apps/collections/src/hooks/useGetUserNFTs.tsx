@@ -69,19 +69,23 @@ const fetchUserNFTs = async (
 
       const nftResults = await nftActor.nft_batch_origyn(tokenIds)
 
-      console.log('nftResults', nftResults)
-
       const nfts: (NFT | undefined)[] = await Promise.all(
         nftResults.map(async (nftResult: any, index: number) => {
           if ('ok' in nftResult) {
             const { tokenName, imageUrl } = extractMetadata(nftResult.ok.metadata, canisterId)
 
-            const saleData =
-              nftResult.ok.current_sale && nftResult.ok.current_sale.length > 0
-                ? nftResult.ok.current_sale[0]
-                : null
+            const sales = nftResult.ok.current_sale || []
+            const openSales = sales.filter((sale: any) => {
+              return (
+                sale.sale_type &&
+                sale.sale_type.auction &&
+                !('closed' in sale.sale_type.auction.status)
+              )
+            })
 
-            const saleDetails: SaleDetails | null = extractSaleDetails(saleData, tokenPrices)
+            const saleDetails: SaleDetails | null =
+              openSales.length > 0 ? extractSaleDetails(openSales[0], tokenPrices) : null
+
             const categoryName = await fetchCategoryByPrincipalId(collection.canister_id.toText())
 
             let price = 0
@@ -145,7 +149,7 @@ export const useUserNFTs = (userPrincipal?: Principal) => {
   }, {} as Record<string, number>)
 
   return useQuery<NFT[], Error>({
-    queryKey: userPrincipal ? ['userNFTs', userPrincipal.toText()] : ['userNFTs'],
+    queryKey: ['userNFTs'],
     queryFn: userPrincipal
       ? () => fetchUserNFTs(userPrincipal, tokenUSDPrices, getLogo)
       : undefined,

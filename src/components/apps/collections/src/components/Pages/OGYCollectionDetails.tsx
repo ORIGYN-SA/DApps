@@ -13,47 +13,36 @@ import OpenASaleModal from '../Modals/OpenASaleModal'
 import ItemsPerPage from '../Utils/ItemsPerPage'
 import { useAuth } from '../../auth/hooks/useAuth'
 
-const NFTCard: React.FC<{ nft: NFT; canisterId: string }> = ({ nft, canisterId }) => {
-  const [isImageLoaded, setIsImageLoaded] = useState(false)
-
-  return (
-    <Link to={`/collection/${canisterId}/${nft.id}`} className='flex flex-col'>
-      <div className='bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden'>
-        <div className='rounded-t-2xl overflow-hidden'>
-          {!isImageLoaded && (
-            <div className='w-full min-h-[243px] bg-gray-300 animate-pulse'></div> /* Placeholder while loading */
-          )}
-          <img
-            className={`w-full min-h-[243px] object-contain transition-transform duration-300 ease-in-out ${
-              isImageLoaded ? 'hover:scale-110' : 'hidden'
-            }`}
-            src={nft.image}
-            alt={nft.name}
-            onLoad={() => setIsImageLoaded(true)}
-            loading='lazy'
-          />
-        </div>
-        <div className='p-4 flex flex-col justify-between flex-grow'>
-          <h3 className='text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase'>
-            {nft.categoryName || 'Unknown'}
-          </h3>
-          <h3 className='text-gray-900 text-base font-bold'>{nft.name}</h3>
-          <div className='mt-2'>
-            <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
-              {nft.price > 0 ? `${nft.price.toFixed(2)} ${nft.currency}` : 'Not for sale'}
-            </span>
-          </div>
-        </div>
-        <div className='opacity-0 absolute bottom-0 left-0 right-0 h-10 bg-charcoal rounded-b-2xl flex items-center justify-center group-hover:opacity-100 duration-300 ease-in-out transition-opacity pointer-events-none group-hover:pointer-events-auto'>
-          <p className='text-sm text-white'>Buy now</p>
+const NFTCard: React.FC<{ nft: NFT; canisterId: string }> = ({ nft, canisterId }) => (
+  <Link to={`/collection/${canisterId}/${nft.id}`} className='flex flex-col'>
+    <div className='bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden'>
+      <div className='rounded-t-2xl overflow-hidden'>
+        <img
+          className='w-full h-[243px] object-contain hover:scale-110 duration-300 ease-in-out transition-transform'
+          src={nft.image}
+          alt={nft.name}
+        />
+      </div>
+      <div className='p-4 flex flex-col justify-between flex-grow'>
+        <h3 className='text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase'>
+          {nft.categoryName || 'Unknown'}
+        </h3>
+        <h3 className='text-gray-900 text-base font-bold'>{nft.name}</h3>
+        <div className='mt-2'>
+          <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
+            {nft.price > 0 ? `${nft.price} ${nft.currency}` : 'Not for sale'}
+          </span>
         </div>
       </div>
-    </Link>
-  )
-}
+      <div className='opacity-0 absolute bottom-0 left-0 right-0 h-10 bg-charcoal rounded-b-2xl flex items-center justify-center group-hover:opacity-100 duration-300 ease-in-out transition-opacity pointer-events-none group-hover:pointer-events-auto'>
+        <p className='text-sm text-white'>Buy now</p>
+      </div>
+    </div>
+  </Link>
+)
 
 const NFTSkeleton: React.FC = () => (
-  <div className='bg-white rounded-2xl border border-gray-300 flex flex-col animate-pulse h-[243px]'>
+  <div className='bg-white rounded-2xl border border-gray-300 flex flex-col animate-pulse'>
     <div className='h-56 rounded-t-2xl overflow-hidden bg-gray-300'></div>
     <div className='p-4 flex flex-col justify-between flex-grow'>
       <div className='h-6 bg-gray-300 rounded w-3/4'></div>
@@ -72,7 +61,6 @@ const OGYCollectionDetails: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(20)
   const [isSelectNFTModalOpen, setIsSelectNFTModalOpen] = useState(false)
   const [isOpenASaleModalOpen, setisOpenASaleModalOpen] = useState(false)
-  const [salePrice, setSalePrice] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
 
   const collectionCanisterId = window.location.hash.split('/').pop() || ''
@@ -90,6 +78,8 @@ const OGYCollectionDetails: React.FC = () => {
   const filteredNfts =
     collection?.nfts.filter(nft => nft.name.toLowerCase().includes(searchTerm.toLowerCase())) || []
 
+  console.log('filteredNfts', filteredNfts)
+
   const indexOfLastNFT = currentPage * itemsPerPage
   const indexOfFirstNFT = indexOfLastNFT - itemsPerPage
   const currentNFTs = filteredNfts.slice(indexOfFirstNFT, indexOfLastNFT)
@@ -104,7 +94,6 @@ const OGYCollectionDetails: React.FC = () => {
 
   const closePriceModal = () => {
     setisOpenASaleModalOpen(false)
-    setSalePrice('')
   }
 
   return (
@@ -184,12 +173,7 @@ const OGYCollectionDetails: React.FC = () => {
           />
         )}
         {isOpenASaleModalOpen && selectedNFT && (
-          <OpenASaleModal
-            selectedNFT={selectedNFT}
-            onClose={closePriceModal}
-            salePrice={salePrice}
-            setSalePrice={setSalePrice}
-          />
+          <OpenASaleModal selectedNFT={selectedNFT} onClose={closePriceModal} />
         )}
       </div>
     </div>

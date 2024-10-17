@@ -36,7 +36,7 @@ export const currencies: Currency[] = [
     code: 'GLDT',
     name: 'Gold Token',
     icon: '/assets/GLDT_Icon.svg',
-    isUsable: true,
+    isUsable: false,
     canisterId: '6uad6-fqaaa-aaaam-abovq-cai',
     decimals: 8,
   },

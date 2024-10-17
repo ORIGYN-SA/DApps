@@ -894,7 +894,6 @@ export interface ICTokenSpec {
   canister: Principal
   standard:
     | { ICRC1: null }
-    | { ICRC2: null }
     | { EXTFungible: null }
     | { DIP20: null }
     | { Other: CandyShared }

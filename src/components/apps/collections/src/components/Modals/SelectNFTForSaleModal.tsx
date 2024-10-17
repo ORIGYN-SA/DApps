@@ -33,7 +33,7 @@ const SelectNFTForSaleModal: React.FC<SelectNFTForSaleModalProps> = ({
       className='fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50'
       onClick={handleOutsideClick}
     >
-      <div className='bg-white rounded-2xl py-4 3xl:py-8 w-[90%] md:w-3/4 3xl:max-w-5xl shadow-lg relative xl:space-y-3 3xl:space-y-6'>
+      <div className='bg-white rounded-2xl py-4 3xl:py-8 w-[90%] md:w-1/2 3xl:max-w-5xl shadow-lg relative xl:space-y-3 3xl:space-y-6'>
         <button
           className='absolute top-4 right-4 text-gray-400 text-2xl hover:text-gray-600'
           onClick={onClose}

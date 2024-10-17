@@ -89,16 +89,6 @@ const UserNFTsAvailableForSale: React.FC<UserNFTsAvailableForSaleProps> = ({
                   <p className='text-[16px] font-bold leading-normal'>{nft.name || 'Unknown'}</p>
                 </div>
               </div>
-              {nft.saleDetails && (
-                <div className='bg-charcoal text-center text-white text-[12px] w-1/2 italic font-medium absolute top-0 right-0 p-1 rounded-tr-2xl rounded-bl-xl'>
-                  NFT on sale
-                </div>
-              )}
-              {nft.saleDetails && (
-                <div className='bg-charcoal text-center text-white text-[12px] w-fit px-6 italic font-medium absolute bottom-0 right-0 p-1 rounded-br-2xl rounded-tl-xl'>
-                  Price: {nft.saleDetails.buyNow.amount} {nft.saleDetails.currency}
-                </div>
-              )}
             </div>
           ))}
       </div>
