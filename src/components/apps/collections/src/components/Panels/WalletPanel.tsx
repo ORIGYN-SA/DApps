@@ -1,13 +1,10 @@
-import React, { useCallback, useState } from 'react'
-import { useIdentityKit } from '@nfid/identitykit/react'
-import { useTokenData } from '../../context/TokenDataContext'
+import { useCallback, useState } from 'react'
 import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
 import { CopyButton } from '../Buttons/CopyButton'
 import { useNavigate } from 'react-router-dom'
 import { useUserProfile } from '../../context/UserProfileContext'
 import Loader from '../Utils/Loader'
-import TransferModal from '../Modals/TransferModal'
-import ManageModal from '../Modals/ManageModal'
+import { useAuth } from '../../auth/hooks'
 
 interface WalletPanelProps {
   onTransferClick: () => void
@@ -15,12 +12,13 @@ interface WalletPanelProps {
 }
 
 const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
-  const { disconnect } = useIdentityKit()
+  const { disconnect } = useAuth()
   const { userProfile, error } = useUserProfile()
   const truncateAddress = useResponsiveTruncate()
   const navigate = useNavigate()
 
   const handleDisconnect = useCallback(() => {
+    console.log('disconnect')
     disconnect()
     navigate('/')
   }, [disconnect, navigate])

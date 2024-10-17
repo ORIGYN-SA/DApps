@@ -45,9 +45,9 @@ const fetchCollectionDetail = async (
 
     const tokenIds: string[] = collectionInfo.token_ids[0]
 
-    // Utilisation de Promise.all pour récupérer tous les NFTs en parallèle
     const nftResults = await Promise.all(tokenIds.map(tokenId => actor.nft_batch_origyn([tokenId])))
 
+    console.log('nftResults', nftResults)
     const nfts: NFT[] = nftResults
       .map((nftResult, index) => {
         if ('ok' in nftResult[0]) {

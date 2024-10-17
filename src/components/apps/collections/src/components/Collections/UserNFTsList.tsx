@@ -1,5 +1,3 @@
-// UserNFTsList.tsx
-
 import React, { useCallback, useEffect, useState } from 'react'
 import { NFT } from '../../types/global'
 import Pagination from '../Pagination/Pagination'
@@ -9,6 +7,7 @@ import Loader from '../Utils/Loader'
 import { useUserNFTs } from '../../hooks/useGetUserNFTs'
 import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 import OpenASaleModal from '../Modals/OpenASaleModal'
+import { useCancelNFTSale } from '../../hooks/useCancelNFTSale'
 
 const UserNFTsList: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(8)
@@ -18,6 +17,7 @@ const UserNFTsList: React.FC = () => {
   const [salePrice, setSalePrice] = useState('')
 
   const { userProfile } = useUserProfile()
+  const { mutate: cancelSale } = useCancelNFTSale()
 
   let userPrincipal: Principal | undefined
   try {
@@ -56,6 +56,14 @@ const UserNFTsList: React.FC = () => {
     setSalePrice('')
   }
 
+  const handleCancelSale = (saleId: string | null) => {
+    if (saleId) {
+      cancelSale({ saleId }) // Appel de la fonction mutate avec saleId
+    }
+  }
+
+  console.log('nfts', nfts)
+
   const NFTCard: React.FC<{ nft: NFT }> = React.memo(({ nft }) => (
     <div className='bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden'>
       <div className='rounded-t-2xl overflow-hidden'>
@@ -73,11 +81,18 @@ const UserNFTsList: React.FC = () => {
         </h3>
         <h3 className='text-gray-900 text-base font-bold'>{nft.name}</h3>
 
-        {nft.saleDetails && nft.price > 0 ? (
-          <div className='mt-2'>
-            <span className='px-4 py-2 mt-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
-              {`${nft.price} ${nft.currency}`}
-            </span>
+        {nft.saleDetails && nft.saleDetails.saleId && nft.price > 0 ? (
+          <div className='flex row items-center justify-between'>
+            <div className='mt-2'>
+              <span className='px-4 py-2 mt-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
+                {`${nft.price} ${nft.currency}`}
+              </span>
+            </div>
+            <div className='mt-2' onClick={() => handleCancelSale(nft.id || null)}>
+              <span className='px-4 py-2 mt-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
+                Cancel sale
+              </span>
+            </div>
           </div>
         ) : (
           <button className='mt-2 hover:opacity-80 mr-auto' onClick={() => openSaleModal(nft)}>
