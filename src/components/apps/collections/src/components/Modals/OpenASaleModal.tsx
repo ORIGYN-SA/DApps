@@ -5,24 +5,18 @@ import { useTokenData } from '../../context/TokenDataContext'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { Token } from '../../types/token'
 import { SaleToken, useSellNFT } from '../../hooks/useSellNFT'
+import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 
 interface OpenASaleModalProps {
   selectedNFT: NFT
   onClose: () => void
-  salePrice: string
-  setSalePrice: (salePrice: string) => void
 }
 
-const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
-  selectedNFT,
-  onClose,
-  salePrice,
-  setSalePrice,
-}) => {
+const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose }) => {
   const { getUSDPrice, getTokenData } = useTokenData()
-  const { userProfile } = useUserProfile()
   const [currency, setCurrency] = useState<Currency>(currencies[0])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [salePrice, setSalePrice] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const { mutate: sellNFT, isError, isSuccess, error, isPending } = useSellNFT()
@@ -89,7 +83,9 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
         />
         <div className='p-4'>
           <h3 className='text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase'>
-            {selectedNFT.collectionName || 'Unknown'}
+            <span className='flex flex-row items-center gap-1'>
+              {selectedNFT.categoryName || 'Unknown'} <VerifiedIcon />
+            </span>
           </h3>
           <p className='text-[16px] font-bold leading-normal'>{selectedNFT.name || 'Unknown'}</p>
         </div>
@@ -173,7 +169,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({
       className='fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50'
       onClick={handleOutsideClick}
     >
-      <div className='bg-white rounded-2xl px-4 md:px-0 py-8 w-[90%] md:w-1/2 xl:w-1/3 3xl:w-1/4 shadow-lg relative space-y-6 min-h-[400px]'>
+      <div className='bg-white rounded-2xl px-4 md:px-0 py-8 w-[90%] md:w-1/2 xl:w-1/4 3xl:w-1/4 shadow-lg relative space-y-6 min-h-[400px]'>
         <button
           className='absolute top-4 right-4 text-gray-400 text-2xl hover:text-gray-600'
           onClick={onClose}

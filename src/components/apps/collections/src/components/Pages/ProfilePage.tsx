@@ -12,8 +12,8 @@ import ConnectWallet from '../Buttons/ConnectWallet'
 import { Link } from 'react-router-dom'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { CollectionType, NFT } from '../../types/global'
-import UserNFTsList from '../Collections/UserNFTsList'
 import OpenASaleModal from '../Modals/OpenASaleModal'
+import UserNFTsList from '../Collections/UserNFTsList'
 
 const ProfilePage = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -49,14 +49,10 @@ const ProfilePage = () => {
     type === 'transfer' ? setShowTransferModal(status) : setShowManageModal(status)
   }, [])
 
-  const handleSelectedNFT = (nft: NFT) => {
+  const openSaleModal = useCallback((nft: NFT) => {
     setSelectedNFT(nft)
-  }
-
-  const closePriceModal = () => {
-    setisOpenASaleModalOpen(false)
-    setSalePrice('')
-  }
+    setisOpenASaleModalOpen(true)
+  }, [])
 
   const renderWalletContent = useMemo(
     () => (
@@ -143,21 +139,13 @@ const ProfilePage = () => {
                   placeholder='Search for a specific collection'
                 />
               </div>
-              <UserNFTsList selectedNFT={selectedNFT} handleSelectNFT={handleSelectedNFT} />
+              <UserNFTsList />
             </div>
           </div>
         </div>
 
         {showTransferModal && <TransferModal onClose={() => handleModal('transfer', false)} />}
         {showManageModal && <ManageModal onClose={() => handleModal('manage', false)} />}
-        {isOpenASaleModalOpen && selectedNFT && (
-          <OpenASaleModal
-            selectedNFT={selectedNFT}
-            onClose={closePriceModal}
-            salePrice={salePrice}
-            setSalePrice={setSalePrice}
-          />
-        )}
       </div>
     </div>
   )

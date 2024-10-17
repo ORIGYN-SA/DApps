@@ -37,7 +37,7 @@ A crucial aspect of this dApp is token validation and filtering:
 
 - **Fake or duplicate tokens** are automatically filtered out using the canister IDs from the [ICPTokens API](https://web2.icptokens.net/api/tokens).
 - We prioritize the most **popular tokens**, as defined by the internal `currencies` file.
-- **Tokens with a 7-day volume below 1000 USD** are excluded from the dApp to ensure a clean and accurate token selection process.
+- **Tokens with a 7-day volume below 10000 USD** are excluded from the dApp to ensure a clean and accurate token selection process.
 
 **Important**: This filtering logic is **variable** and can be modified (e.g., filtering tokens based on 1-day volume) or removed entirely depending on future needs.
 

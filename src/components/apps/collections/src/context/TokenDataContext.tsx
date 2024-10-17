@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useCallback, useContext } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { icpswapStoreActor } from '../canisters/actor/ICSwapStore'
 import { createTokenMetadataActor } from '../canisters/actor/TokenMetadata'
@@ -30,9 +30,8 @@ const isText = (value: any): value is { Text: string } => {
 
 const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens()
-  console.log('All Tokens:', allTokens)
 
-  const filteredTokens = allTokens.filter(token => token.volumeUSD1d >= 10000)
+  const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 10000)
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens')
   const icpTokens = await icpTokensResponse.json()
@@ -129,20 +128,25 @@ export const TokenDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { data, isLoading, isError } = useTokenPriceQuery()
   const tokens: Token[] = data ?? []
 
-  const getUSDPrice = (symbol: string): number => {
-    const token = tokens.find(t => t.symbol === symbol)
-    return token?.priceUSD ?? 0
-  }
-
   const getLogo = (symbol: string): string | undefined => {
     const token = tokens.find(t => t.symbol === symbol)
     return token?.logo
   }
 
-  const getTokenData = (symbol: string): Token | undefined => {
-    const token = tokens.find(t => t.symbol === symbol)
-    return token
-  }
+  const getTokenData = useCallback(
+    (symbol: string) => {
+      return tokens.find(t => t.symbol === symbol)
+    },
+    [tokens],
+  )
+
+  const getUSDPrice = useCallback(
+    (symbol: string) => {
+      const token = getTokenData(symbol)
+      return token?.priceUSD || 0
+    },
+    [getTokenData],
+  )
 
   return (
     <TokenDataContext.Provider

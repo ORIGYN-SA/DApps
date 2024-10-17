@@ -1,5 +1,4 @@
-// src/components/Panels/WalletPanel.tsx
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { useIdentityKit } from '@nfid/identitykit/react'
 import { useTokenData } from '../../context/TokenDataContext'
 import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
@@ -7,21 +6,26 @@ import { CopyButton } from '../Buttons/CopyButton'
 import { useNavigate } from 'react-router-dom'
 import { useUserProfile } from '../../context/UserProfileContext'
 import Loader from '../Utils/Loader'
+import TransferModal from '../Modals/TransferModal'
+import ManageModal from '../Modals/ManageModal'
 
-const WalletPanel = ({ onTransferClick, onManageClick }) => {
+interface WalletPanelProps {
+  onTransferClick: () => void
+  onManageClick: () => void
+}
+
+const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
   const { disconnect } = useIdentityKit()
-  const { getLogo, isLoading: isTokenDataLoading } = useTokenData()
-  const { userProfile, isLoading: isUserProfileLoading, error } = useUserProfile()
-
+  const { userProfile, error } = useUserProfile()
   const truncateAddress = useResponsiveTruncate()
   const navigate = useNavigate()
 
-  const handleDisconnect = () => {
+  const handleDisconnect = useCallback(() => {
     disconnect()
     navigate('/')
-  }
+  }, [disconnect, navigate])
 
-  if (isTokenDataLoading || isUserProfileLoading || !userProfile) {
+  if (!userProfile) {
     return (
       <div className='md:fixed top-[90px] left-0 md:w-1/3 lg:w-1/4 h-[calc(100vh-90px)] bg-white flex flex-col items-center justify-center shadow-lg'>
         <Loader size={24} />
@@ -71,38 +75,36 @@ const WalletPanel = ({ onTransferClick, onManageClick }) => {
     </div>
   )
 
-  const renderBalances = () => {
-    return (
-      <div className='md:flex-grow md:overflow-y-auto space-y-4 py-3 border-[#e1e1e1] mx-3 3xl:mx-6'>
-        {userProfile.balances.length > 0 ? (
-          userProfile.balances.map((balance, index) => (
-            <div
-              key={index}
-              className='px-5 py-6 w-full bg-white rounded-[20px] border border-[#e1e1e1] flex justify-between items-center'
-            >
-              <div className='flex items-center gap-2'>
-                <img
-                  src={balance.logo || '/assets/default_logo.svg'}
-                  alt={balance.currency}
-                  className='w-6 h-6'
-                />
-                <p className='text-[#212425] text-base font-bold'>
-                  {balance.amount} {balance.currency}
-                </p>
-              </div>
-              {balance.totalUSD > 0 ? (
-                <p className='text-[#69737c] text-[13px]'>${balance.totalUSD.toFixed(2)}</p>
-              ) : (
-                <p className='text-[#69737c] text-[13px]'></p>
-              )}
+  const renderBalances = () => (
+    <div className='md:flex-grow md:overflow-y-auto space-y-4 py-3 border-[#e1e1e1] mx-3 3xl:mx-6'>
+      {userProfile.balances.length > 0 ? (
+        userProfile.balances.map((balance, index) => (
+          <div
+            key={index}
+            className='px-5 py-6 w-full bg-white rounded-[20px] border border-[#e1e1e1] flex justify-between items-center'
+          >
+            <div className='flex items-center gap-2'>
+              <img
+                src={balance.logo || '/assets/default_logo.svg'}
+                alt={balance.currency}
+                className='w-6 h-6'
+              />
+              <p className='text-[#212425] text-base font-bold'>
+                {balance.amount} {balance.currency}
+              </p>
             </div>
-          ))
-        ) : (
-          <p className='text-center text-[#69737c]'>No balances available</p>
-        )}
-      </div>
-    )
-  }
+            {balance.totalUSD > 0 ? (
+              <p className='text-[#69737c] text-[13px]'>${balance.totalUSD.toFixed(2)}</p>
+            ) : (
+              <p className='text-[#69737c] text-[13px]'></p>
+            )}
+          </div>
+        ))
+      ) : (
+        <p className='text-center text-[#69737c]'>No balances available</p>
+      )}
+    </div>
+  )
 
   const renderButtons = () => (
     <div className='px-3 3xl:px-6'>

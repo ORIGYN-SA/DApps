@@ -1,10 +1,10 @@
 export interface Currency {
-  code: string;
-  name: string;
-  icon: string;
-  isUsable: boolean;
-  canisterId: string;
-  decimals: number;
+  code: string
+  name: string
+  icon: string
+  isUsable: boolean
+  canisterId: string
+  decimals: number
 }
 
 export const currencies: Currency[] = [
@@ -32,6 +32,14 @@ export const currencies: Currency[] = [
     canisterId: 'xevnm-gaaaa-aaaar-qafnq-cai',
     decimals: 8,
   },
+  {
+    code: 'GLDT',
+    name: 'Gold Token',
+    icon: '/assets/GLDT_Icon.svg',
+    isUsable: true,
+    canisterId: '6uad6-fqaaa-aaaam-abovq-cai',
+    decimals: 8,
+  },
   // add more currencies as needed
   // warning: max character currency name length to not break the layout is 6 characters.
-];
+]

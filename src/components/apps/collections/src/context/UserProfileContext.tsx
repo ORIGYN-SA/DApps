@@ -1,5 +1,5 @@
 // src/context/UserProfileContext.tsx
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useIdentityKit } from '@nfid/identitykit/react'
 import { useAuth } from '../auth'
 import { useGetTokenBalances } from '../hooks/useGetTokenBalances'
@@ -65,24 +65,20 @@ export const UserProfileProvider: React.FC<{ children: React.ReactNode }> = ({ c
         balances: tokenBalances,
         profileImage: '/assets/profile_icon.svg',
       }
-
       setUserProfile(profile)
-      setIsLoading(false)
-    } else if (!isTokenDataLoading && !isBalancesLoading) {
-      setUserProfile(null)
-      setIsLoading(false)
     }
+
+    setIsLoading(isTokenDataLoading || isBalancesLoading)
   }, [isConnected, user, tokenBalances, isBalancesLoading, isTokenDataLoading])
 
-  return (
-    <UserProfileContext.Provider
-      value={{
-        userProfile,
-        isLoading: isLoading || isTokenDataLoading || isBalancesLoading,
-        error: isError ? error : null,
-      }}
-    >
-      {children}
-    </UserProfileContext.Provider>
+  const profileValue = useMemo(
+    () => ({
+      userProfile,
+      isLoading: isLoading || isTokenDataLoading || isBalancesLoading,
+      error: isError ? error : null,
+    }),
+    [userProfile, isLoading, isTokenDataLoading, isBalancesLoading, isError, error],
   )
+
+  return <UserProfileContext.Provider value={profileValue}>{children}</UserProfileContext.Provider>
 }

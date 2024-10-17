@@ -3,7 +3,7 @@ import { NFT } from '../../types/global'
 import Pagination from '../Pagination/Pagination'
 import { useUserProfile } from '../../context/UserProfileContext'
 import Loader from '../Utils/Loader'
-import UserNFTsList from '../Collections/UserNFTsList'
+import UserNFTsAvailableForSale from '../Collections/UserNFTsAvailableForSale'
 
 interface SelectNFTForSaleModalProps {
   currentNFTs: NFT[]
@@ -46,7 +46,7 @@ const SelectNFTForSaleModal: React.FC<SelectNFTForSaleModalProps> = ({
             Please select one NFT from the list below to open a sale.
           </p>
           <div className='my-8 px-6'>
-            <UserNFTsList selectedNFT={selectedNFT} handleSelectNFT={handleSelectNFT} />
+            <UserNFTsAvailableForSale selectedNFT={selectedNFT} handleSelectNFT={handleSelectNFT} />
           </div>
           <div className='h-[1px] w-full bg-gray-300 my-4'></div>
           <button
