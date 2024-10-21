@@ -73,7 +73,12 @@ export const useGetTokenBalances = (principal: Principal | undefined, enabled: b
 
   return useQuery<BalanceDetails[], Error>({
     queryKey: ['tokenBalances', principal?.toText()],
-    queryFn: () => fetchTokenBalances(principal!, getUSDPrice),
+    queryFn: async () => {
+      if (!principal) {
+        throw new Error('Principal is undefined')
+      }
+      return fetchTokenBalances(principal, getUSDPrice)
+    },
     enabled: !!principal && enabled,
     refetchInterval: 60000,
     staleTime: 60000,

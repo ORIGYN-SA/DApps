@@ -4,12 +4,10 @@ import { useQuery } from '@tanstack/react-query'
 import { Actor, HttpAgent } from '@dfinity/agent'
 import { idlFactory as goldIdlFactory } from '../canisters/gld_nft/did.js'
 import { _SERVICE as _GOLD_NFT_SERVICE } from '../canisters/gld_nft/interfaces/gld_nft.js'
-import { NFT, SaleDetails, Metadata } from '../types/global'
+import { NFT, SaleDetails } from '../types/global'
 import { extractSaleDetails } from '../utils/priceUtils'
-import { convertPrincipalArrayToString } from '../utils/principalUtils'
-import { hasClass, hasMap } from '../utils/typeGuards'
 import { useTokenData } from '../context/TokenDataContext'
-import { extractOwner, extractTokenName, generateImageUrl } from '../utils/metadataUtils.js'
+import { extractMetadata, extractOwner } from '../utils/metadataUtils.js'
 
 /**
  * Fetches NFT details, using the exchange rate from the CurrencyPriceContext.
@@ -38,11 +36,9 @@ const fetchNFTDetails = async (
     const nft: NFT[] = nftResult
       .map(nftResultItem => {
         if ('ok' in nftResultItem) {
-          const metadata = nftResultItem.ok.metadata as Metadata
-          const tokenName = extractTokenName(metadata)
-          const imageUrl = generateImageUrl(canisterId, tokenName)
+          const { tokenName, imageUrl } = extractMetadata(nftResultItem.ok.metadata, canisterId)
 
-          const owner = extractOwner(metadata)
+          const owner = extractOwner(nftResultItem.ok.metadata)
 
           const saleData = nftResultItem.ok.current_sale ? nftResultItem.ok.current_sale[0] : null
           const saleDetails: SaleDetails | null = extractSaleDetails(saleData, tokenUSDPrices)
@@ -84,6 +80,8 @@ const fetchNFTDetails = async (
  */
 export const useGetNFTDetails = (canisterId: string, nftId: string) => {
   const { tokens, isLoading: isPricesLoading, isError: isPricesError } = useTokenData()
+
+  console.log('tokens', tokens)
 
   const tokenUSDPrices: Record<string, number> = tokens.reduce((acc, token) => {
     acc[token.symbol] = token.priceUSD

@@ -151,7 +151,7 @@ const UserNFTsList: React.FC = () => {
       </div>
       {!isLoading && !isError && filteredNfts.length === 0 && (
         <p className='text-center text-[#69737c] italic font-medium mb-4 px-6'>
-          No NFTs available in your collection
+          No NFTs in your collection
         </p>
       )}
       {error && (

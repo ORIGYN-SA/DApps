@@ -12,6 +12,7 @@ import SelectNFTForSaleModal from '../Modals/SelectNFTForSaleModal'
 import OpenASaleModal from '../Modals/OpenASaleModal'
 import ItemsPerPage from '../Utils/ItemsPerPage'
 import { useAuth } from '../../auth/hooks/useAuth'
+import { useUserProfile } from '../../context/UserProfileContext'
 
 const NFTCard: React.FC<{ nft: NFT; canisterId: string }> = ({ nft, canisterId }) => (
   <Link to={`/collection/${canisterId}/${nft.id}`} className='flex flex-col'>
@@ -64,6 +65,7 @@ const OGYCollectionDetails: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const collectionCanisterId = window.location.hash.split('/').pop() || ''
+  const { isLoading: isUserProfileLoading, error: userProfileError } = useUserProfile()
   const { data: collection, isLoading, error } = useGetCollectionDetails(collectionCanisterId)
 
   const { isConnected } = useAuth()
@@ -77,8 +79,6 @@ const OGYCollectionDetails: React.FC = () => {
 
   const filteredNfts =
     collection?.nfts.filter(nft => nft.name.toLowerCase().includes(searchTerm.toLowerCase())) || []
-
-  console.log('filteredNfts', filteredNfts)
 
   const indexOfLastNFT = currentPage * itemsPerPage
   const indexOfFirstNFT = indexOfLastNFT - itemsPerPage
@@ -105,35 +105,45 @@ const OGYCollectionDetails: React.FC = () => {
           {isConnected && <OpenASale onClick={() => setIsSelectNFTModalOpen(true)} />}
           <ConnectWallet />
         </div>
-        <div className='bg-white rounded-[20px] border border-[#e1e1e1] mt-20 md:w-11/12 md:ml-[88px] relative 4xl:max-w-7xl'>
+        <div className='w-[95%] bg-white rounded-[20px] border border-[#e1e1e1] mt-20 md:w-11/12 md:ml-[88px] relative 4xl:max-w-7xl'>
           <div className='flex flex-col items-center mb-10 w-full'>
             <img
-              className='w-40 h-40 rounded-full bg-mouse object-cover shadow-lg border-4 border-white absolute -top-[82px]'
-              src={collection?.logo[0] || 'https://via.placeholder.com/164x164'}
-              alt={collection?.name[0] || 'Unknown'}
+              className={`w-40 h-40 ${
+                isLoading || isUserProfileLoading ? ' bg-gray-300' : ''
+              } rounded-full bg-mouse object-cover shadow-lg border-4 border-white absolute -top-[82px]`}
+              src={collection?.logo[0]}
+              alt={collection?.name[0]}
             />
             <div className='text-center mt-28 w-full'>
-              <p className='text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest'>
-                {collection?.categoryName || ''}
-              </p>
-              <h1 className='text-center text-[#212425] text-[28px] font-bold'>
-                {collection?.name[0] || ''}
-              </h1>
+              {isLoading || isUserProfileLoading ? (
+                <div className='h-3 bg-gray-300 rounded mx-auto w-1/4 xl:w-1/6 animate-pulse my-2'></div>
+              ) : (
+                <p className='text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest'>
+                  {collection?.categoryName || ''}
+                </p>
+              )}
+              {isLoading || isUserProfileLoading ? (
+                <div className='h-6 bg-gray-300 rounded mx-auto w-3/4 xl:w-1/4 animate-pulse mt-2'></div>
+              ) : (
+                <h1 className='text-center text-[#212425] text-[28px] font-bold'>
+                  {collection?.name[0] || ''}
+                </h1>
+              )}
             </div>
           </div>
 
           <div className='flex flex-col md:flex-row items-center justify-between px-6 md:px-20 mt-6 space-y-6 sm:space-y-0 sm:space-x-12 w-full'>
             <SearchBar handleSearch={handleSearch} placeholder='Search for a specific NFT' />
             <p className='text-[13px] font-semibold leading-[16px] whitespace-nowrap'>
-              {isLoading
+              {isLoading || isUserProfileLoading
                 ? 'Loading collection...'
                 : `${filteredNfts.length} ${filteredNfts.length > 1 ? 'results' : 'result'}`}
             </p>
           </div>
 
-          <div className='px-6 md:px-20 w-full flex flex-col items-center my-10'>
-            <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full'>
-              {isLoading ? (
+          <div className='px-3 md:px-20 w-full flex flex-col items-center my-10'>
+            <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6 w-full'>
+              {isLoading || isUserProfileLoading ? (
                 Array.from({ length: itemsPerPage }, (_, index) => <NFTSkeleton key={index} />)
               ) : error ? (
                 <p>Error while loading NFTs: {error.message}</p>

@@ -1,3 +1,4 @@
+import { Principal } from '@dfinity/principal'
 import { CandyShared } from '../canisters/gld_nft/interfaces/gld_nft'
 import { Metadata } from '../types/global'
 import { convertPrincipalArrayToString } from './principalUtils'
@@ -13,7 +14,6 @@ export const extractMetadata = (
 ): { tokenName: string; imageUrl: string } => {
   let tokenName = 'Unknown'
   let imageUrl = ''
-
   if ('Class' in metadata) {
     const classProperties = metadata.Class
     const nameField = classProperties.find(
@@ -31,9 +31,6 @@ export const extractMetadata = (
     }
   } else {
     console.warn('The metadata does not contain a Class type.')
-    if ('Text' in metadata) {
-      tokenName = metadata.Text
-    }
   }
 
   return { tokenName, imageUrl }
@@ -55,17 +52,26 @@ export const extractTokenName = (metadata: Metadata): string => {
 /**
  * Extracts the owner from metadata.
  */
-export const extractOwner = (metadata: Metadata): string => {
-  if (hasClass(metadata)) {
-    const ownerField = metadata.Class.find(
-      field => field.name === 'owner' && field.value?.Principal,
-    )
-    if (ownerField && ownerField.value.Principal?._arr) {
-      const ownerArr = ownerField.value.Principal._arr
-      return convertPrincipalArrayToString(Object.values(ownerArr))
+export const extractOwner = (metadata: any): string => {
+  if (metadata && Array.isArray(metadata.Class)) {
+    const ownerField = metadata.Class.find((field: any) => field.name === 'owner')
+
+    if (ownerField && Array.isArray(ownerField.value) && ownerField.value.length > 0) {
+      const principalObj = ownerField.value[0]
+
+      if (
+        principalObj &&
+        principalObj.Principal &&
+        principalObj.Principal._arr instanceof Uint8Array
+      ) {
+        const ownerArr = principalObj.Principal._arr
+        const ownerString = convertPrincipalArrayToString(ownerArr)
+        console.log('Converted Owner:', ownerString)
+        return ownerString
+      }
     }
-  } else if (hasMap(metadata)) {
-    return 'Unknown'
   }
+
+  console.error('Owner field is missing or not an array.')
   return 'Unknown'
 }

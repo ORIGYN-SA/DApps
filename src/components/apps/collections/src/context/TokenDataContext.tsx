@@ -31,7 +31,7 @@ const isText = (value: any): value is { Text: string } => {
 const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens()
 
-  const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 1000)
+  const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 5000)
   console.log('total tokens data', filteredTokens)
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens')
@@ -71,47 +71,50 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
     }
   })
 
+  const pLimit = await import('p-limit').then(module => module.default)
+  const limit = pLimit(5)
+
   const tokensWithDetails = await Promise.all(
-    Object.values(uniqueTokensMap).map(async tokenOverview => {
-      const tokenMetadataActor = createTokenMetadataActor(tokenOverview.address)
+    Object.values(uniqueTokensMap).map(tokenOverview =>
+      limit(async () => {
+        const tokenMetadataActor = createTokenMetadataActor(tokenOverview.address)
 
-      let logo = ''
-      let decimals = tokenOverview.decimals
+        let logo = ''
+        let decimals = tokenOverview.decimals
 
-      try {
-        const metadata = await tokenMetadataActor.icrc1_metadata()
-        const logoEntry = metadata.find(entry => entry[0] === 'icrc1:logo')
-        if (logoEntry && isText(logoEntry[1])) {
-          logo = logoEntry[1].Text
-        }
-
-        const decimalsResult = await tokenMetadataActor.icrc1_decimals()
-        decimals = decimalsResult[0]
-
-        if (!logo && icpTokensMap[tokenOverview.symbol]) {
-          const icpToken = icpTokensMap[tokenOverview.symbol]
-          if (icpToken.logo) {
-            logo = `https://web2.icptokens.net/storage/${icpToken.logo}`
+        try {
+          const metadata = await tokenMetadataActor.icrc1_metadata()
+          const logoEntry = metadata.find(entry => entry[0] === 'icrc1:logo')
+          if (logoEntry && isText(logoEntry[1])) {
+            logo = logoEntry[1].Text
           }
-        }
-      } catch (error) {
-        console.error(`Error fetching metadata for ${tokenOverview.symbol}:`, error)
-      }
 
-      return {
-        ...tokenOverview,
-        decimals,
-        logo,
-      } as Token
-    }),
+          const decimalsResult = await tokenMetadataActor.icrc1_decimals()
+          decimals = decimalsResult[0]
+
+          if (!logo && icpTokensMap[tokenOverview.symbol]) {
+            const icpToken = icpTokensMap[tokenOverview.symbol]
+            if (icpToken.logo) {
+              logo = `https://web2.icptokens.net/storage/${icpToken.logo}`
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching metadata for ${tokenOverview.symbol}:`, error)
+        }
+
+        return {
+          ...tokenOverview,
+          decimals,
+          logo,
+        } as Token
+      }),
+    ),
   )
 
-  const tokensWithPrices = tokensWithDetails.map(token => {
-    return {
-      ...token,
-      priceUSD: token.priceUSD ?? 0,
-    }
-  })
+  const tokensWithPrices = tokensWithDetails.map(token => ({
+    ...token,
+    priceUSD: token.priceUSD ?? 0,
+  }))
 
   return tokensWithPrices.filter((token): token is Token => token !== null)
 }
@@ -123,6 +126,8 @@ const useTokenPriceQuery = () => {
     refetchInterval: 600000,
     staleTime: 600000,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   })
 }
 
@@ -130,20 +135,23 @@ export const TokenDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { data, isLoading, isError } = useTokenPriceQuery()
   const tokens: Token[] = data ?? []
 
-  const getLogo = (symbol: string): string | undefined => {
-    const token = tokens.find(t => t.symbol === symbol)
-    return token?.logo
-  }
+  const getLogo = useCallback(
+    (symbol: string): string | undefined => {
+      const token = tokens.find(t => t.symbol === symbol)
+      return token?.logo
+    },
+    [tokens],
+  )
 
   const getTokenData = useCallback(
-    (symbol: string) => {
+    (symbol: string): Token | undefined => {
       return tokens.find(t => t.symbol === symbol)
     },
     [tokens],
   )
 
   const getUSDPrice = useCallback(
-    (symbol: string) => {
+    (symbol: string): number => {
       const token = getTokenData(symbol)
       return token?.priceUSD || 0
     },

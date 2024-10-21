@@ -48,6 +48,7 @@ const fetchCollectionDetail = async (
     const tokenIds: string[] = collectionInfo.token_ids[0]
 
     const nftResults = await Promise.all(tokenIds.map(tokenId => actor.nft_batch_origyn([tokenId])))
+    console.log('nftResults', nftResults)
     const nfts: NFT[] = nftResults
       .filter((nftResult: any) => {
         if ('ok' in nftResult[0]) {
@@ -102,7 +103,7 @@ const fetchCollectionDetail = async (
           }
 
           return {
-            id: tokenIds[index],
+            id: tokenName,
             name: tokenName,
             collectionName: canisterId,
             categoryName,

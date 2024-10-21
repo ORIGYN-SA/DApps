@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
 interface ToastProps {
-  message: string;
-  onClose: () => void;
-  duration?: number;
+  message: string
+  onClose: () => void
+  duration?: number
 }
 
 const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    setIsVisible(true);
+    setIsVisible(true)
     const timer = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(onClose, 300);
-    }, duration);
+      setIsVisible(false)
+      setTimeout(onClose, 300)
+    }, duration)
 
-    return () => clearTimeout(timer);
-  }, [onClose, duration]);
+    return () => clearTimeout(timer)
+  }, [onClose, duration])
 
   return (
     <div
-      className={`fixed bottom-5 left-1/2 transform -translate-x-1/2 h-12 pl-8 bg-[#212425] text-white text-sm rounded shadow flex items-center transition-transform duration-300 ease-out ${
+      className={`fixed bottom-5 left-1/2 z-50 transform -translate-x-1/2 h-12 pl-8 bg-[#212425] text-white text-sm rounded shadow flex items-center transition-transform duration-300 ease-out ${
         isVisible ? 'translate-y-0' : 'translate-y-full opacity-0'
       }`}
       style={{
@@ -30,11 +30,11 @@ const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000 }) => {
       }}
     >
       <p>{message}</p>
-      <button className="w-12 h-12 text-white ml-auto text-4xl" onClick={() => setIsVisible(false)}>
+      <button className='w-12 h-12 text-white ml-auto text-4xl' onClick={() => setIsVisible(false)}>
         &times;
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default Toast;
+export default Toast

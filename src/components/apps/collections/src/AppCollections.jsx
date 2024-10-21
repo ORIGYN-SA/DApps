@@ -27,7 +27,13 @@ import { AuthProvider } from './auth'
 
 import '@nfid/identitykit/react/styles.css'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+    },
+  },
+})
 
 const App = () => (
   <>
