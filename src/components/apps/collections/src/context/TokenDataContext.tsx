@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { icpswapStoreActor } from '../canisters/actor/ICSwapStore'
 import { createTokenMetadataActor } from '../canisters/actor/TokenMetadata'
-import { currencies } from '../constants/currencies'
+import { currencies, Currency } from '../constants/currencies'
 import { _SERVICE as StoreService, PublicTokenOverview } from '../canisters/icpswap/store'
 
 interface Token extends PublicTokenOverview {
@@ -20,10 +20,6 @@ interface TokenPriceContextProps {
   getTokenData: (symbol: string) => Token | undefined
 }
 
-const isNat = (value: any): value is { Nat: number } => {
-  return 'Nat' in value
-}
-
 const isText = (value: any): value is { Text: string } => {
   return 'Text' in value
 }
@@ -32,7 +28,6 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens()
 
   const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 5000)
-  console.log('total tokens data', filteredTokens)
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens')
   const icpTokens = await icpTokensResponse.json()
@@ -43,87 +38,60 @@ const fetchVerifiedTokens = async (): Promise<Token[]> => {
   }, {} as { [symbol: string]: any })
 
   const currenciesMap = currencies.reduce((acc, curr) => {
-    acc[curr.code] = curr.isUsable
+    acc[curr.code] = curr
     return acc
-  }, {} as { [symbol: string]: boolean })
-
-  const uniqueTokensMap: { [symbol: string]: Token } = {}
-
-  filteredTokens.forEach(tokenOverview => {
-    const icpToken = icpTokensMap[tokenOverview.symbol]
-
-    if (icpToken) {
-      if (icpToken.canister_id === tokenOverview.address) {
-        uniqueTokensMap[tokenOverview.symbol] = {
-          ...tokenOverview,
-          decimals: icpToken.decimals || 8,
-          isUsable: currenciesMap[tokenOverview.symbol] ?? false,
-          priceUSD: tokenOverview.priceUSD,
-        }
-      }
-    } else {
-      uniqueTokensMap[tokenOverview.symbol] = {
-        ...tokenOverview,
-        decimals: 8,
-        isUsable: currenciesMap[tokenOverview.symbol] ?? false,
-        priceUSD: tokenOverview.priceUSD,
-      }
-    }
-  })
+  }, {} as { [symbol: string]: Currency })
 
   const pLimit = await import('p-limit').then(module => module.default)
   const limit = pLimit(5)
 
   const tokensWithDetails = await Promise.all(
-    Object.values(uniqueTokensMap).map(tokenOverview =>
+    filteredTokens.map(tokenOverview =>
       limit(async () => {
-        const tokenMetadataActor = createTokenMetadataActor(tokenOverview.address)
+        const icpToken = icpTokensMap[tokenOverview.symbol]
+        let decimals = 8 // Default value
 
-        let logo = ''
-        let decimals = tokenOverview.decimals
+        const currencyInfo = currenciesMap[tokenOverview.symbol]
+        if (currencyInfo) {
+          decimals = currencyInfo.decimals
+        } else {
+          if (icpToken && icpToken.canister_id === tokenOverview.address) {
+            const tokenMetadataActor = createTokenMetadataActor(tokenOverview.address)
 
-        try {
-          const metadata = await tokenMetadataActor.icrc1_metadata()
-          const logoEntry = metadata.find(entry => entry[0] === 'icrc1:logo')
-          if (logoEntry && isText(logoEntry[1])) {
-            logo = logoEntry[1].Text
-          }
-
-          const decimalsResult = await tokenMetadataActor.icrc1_decimals()
-          decimals = decimalsResult[0]
-
-          if (!logo && icpTokensMap[tokenOverview.symbol]) {
-            const icpToken = icpTokensMap[tokenOverview.symbol]
-            if (icpToken.logo) {
-              logo = `https://web2.icptokens.net/storage/${icpToken.logo}`
+            try {
+              const decimalsResult = await tokenMetadataActor.icrc1_decimals()
+              if (typeof decimalsResult === 'number') {
+                decimals = decimalsResult
+              } else {
+                console.warn(
+                  `Unexpected decimalsResult for token ${tokenOverview.symbol}:`,
+                  decimalsResult,
+                )
+              }
+            } catch (error) {
+              console.error(`Error fetching decimals for token ${tokenOverview.symbol}:`, error)
             }
           }
-        } catch (error) {
-          console.error(`Error fetching metadata for ${tokenOverview.symbol}:`, error)
         }
 
         return {
           ...tokenOverview,
           decimals,
-          logo,
+          isUsable: currencyInfo?.isUsable ?? false,
+          logo: currencyInfo?.icon || icpToken?.logo || '',
         } as Token
       }),
     ),
   )
 
-  const tokensWithPrices = tokensWithDetails.map(token => ({
-    ...token,
-    priceUSD: token.priceUSD ?? 0,
-  }))
-
-  return tokensWithPrices.filter((token): token is Token => token !== null)
+  return tokensWithDetails.filter(token => token !== null)
 }
 
 const useTokenPriceQuery = () => {
   return useQuery<Token[], Error>({
     queryKey: ['tokens'],
     queryFn: fetchVerifiedTokens,
-    refetchInterval: 600000,
+    refetchInterval: 600000, // 10 minutes
     staleTime: 600000,
     refetchOnWindowFocus: false,
     refetchOnMount: false,

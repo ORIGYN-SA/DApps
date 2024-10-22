@@ -55,6 +55,8 @@ const UserNFTsList: React.FC = () => {
   )
   const totalPages = Math.ceil(filteredNfts.length / itemsPerPage)
 
+  console.log('currentNFTs', currentNFTs)
+
   const openSaleModal = useCallback((nft: NFT) => {
     setSelectedNFT(nft)
     setisOpenASaleModalOpen(true)

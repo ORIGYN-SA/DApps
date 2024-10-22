@@ -65,7 +65,7 @@ const OGYCollectionDetails: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const collectionCanisterId = window.location.hash.split('/').pop() || ''
-  const { isLoading: isUserProfileLoading, error: userProfileError } = useUserProfile()
+  const { isLoading: isUserProfileLoading } = useUserProfile()
   const { data: collection, isLoading, error } = useGetCollectionDetails(collectionCanisterId)
 
   const { isConnected } = useAuth()
@@ -148,11 +148,19 @@ const OGYCollectionDetails: React.FC = () => {
               ) : error ? (
                 <p>Error while loading NFTs: {error.message}</p>
               ) : (
+                currentNFTs.length > 0 &&
                 currentNFTs.map(nft => (
                   <NFTCard key={nft.id} nft={nft} canisterId={collectionCanisterId} />
                 ))
               )}
             </div>
+            {currentNFTs.length === 0 && (
+              <div className='flex flex-col items-center justify-center w-full h-[200px]'>
+                <h2 className='text-center text-[#69737c] italic font-medium '>
+                  No NFTs found in this collection
+                </h2>
+              </div>
+            )}
 
             <div className='flex flex-row justify-between w-full px-6 md:px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12'>
               <ItemsPerPage

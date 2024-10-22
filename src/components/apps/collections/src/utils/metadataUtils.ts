@@ -1,8 +1,10 @@
 import { Principal } from '@dfinity/principal'
 import { CandyShared } from '../canisters/gld_nft/interfaces/gld_nft'
+import { _SERVICE as NFT_SERVICE } from '../canisters/gld_nft/interfaces/gld_nft'
 import { Metadata } from '../types/global'
 import { convertPrincipalArrayToString } from './principalUtils'
 import { hasClass, hasMap } from './typeGuards'
+import { useAuth } from '../auth/hooks'
 
 export const generateImageUrl = (canisterId: string, assetName: string): string => {
   return `https://prptl.io/-/${canisterId}/-/${assetName}/preview`
@@ -52,26 +54,48 @@ export const extractTokenName = (metadata: Metadata): string => {
 /**
  * Extracts the owner from metadata.
  */
-export const extractOwner = (metadata: any): string => {
-  if (metadata && Array.isArray(metadata.Class)) {
-    const ownerField = metadata.Class.find((field: any) => field.name === 'owner')
+export function extractOwner (nftResultItem: any): string | null {
+  try {
+    const metadata = nftResultItem?.ok?.metadata?.Class
+    if (metadata && Array.isArray(metadata)) {
+      const ownerField = metadata.find((item: any) => item.name === 'owner')
 
-    if (ownerField && Array.isArray(ownerField.value) && ownerField.value.length > 0) {
-      const principalObj = ownerField.value[0]
+      if (ownerField && ownerField.value && Array.isArray(ownerField.value.Array)) {
+        const ownerPrincipal = ownerField.value.Array[0].Principal
 
-      if (
-        principalObj &&
-        principalObj.Principal &&
-        principalObj.Principal._arr instanceof Uint8Array
-      ) {
-        const ownerArr = principalObj.Principal._arr
-        const ownerString = convertPrincipalArrayToString(ownerArr)
-        console.log('Converted Owner:', ownerString)
-        return ownerString
+        if (ownerPrincipal && ownerPrincipal._isPrincipal) {
+          return ownerPrincipal.toText()
+        }
       }
     }
+  } catch (error) {
+    console.error('Error extracting owner:', error)
   }
 
-  console.error('Owner field is missing or not an array.')
-  return 'Unknown'
+  return null
+}
+
+export const convertTokenId = async (
+  nftId: string | bigint,
+  actor: NFT_SERVICE,
+): Promise<bigint | string> => {
+  if (typeof nftId === 'string') {
+    try {
+      const natValue = await actor.get_token_id_as_nat(nftId)
+      return natValue
+    } catch (error) {
+      console.error(`Error converting string to nat for token ID: ${nftId}`, error)
+      throw new Error('Unable to convert token ID to nat')
+    }
+  } else if (typeof nftId === 'bigint') {
+    try {
+      const textValue = await actor.get_nat_as_token_id_origyn(nftId)
+      return textValue
+    } catch (error) {
+      console.error(`Error converting nat to string for token ID: ${nftId}`, error)
+      throw new Error('Unable to convert token ID to text')
+    }
+  } else {
+    throw new Error('Invalid token ID type')
+  }
 }

@@ -249,7 +249,9 @@ const NFTPage: React.FC = () => {
         </div>
       </div>
 
-      {isModalOpen && <BuyNowModal nft={nft!} onClose={handleCloseModal} />}
+      {isModalOpen && (
+        <BuyNowModal nft={nft!} onClose={handleCloseModal} collectionId={canisterId} />
+      )}
     </div>
   )
 }

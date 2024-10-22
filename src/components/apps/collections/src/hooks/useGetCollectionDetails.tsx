@@ -26,6 +26,7 @@ const fetchCollectionDetail = async (
     })
 
     const collectionResult = await actor.collection_nft_origyn([])
+    console.log('collectionResult', collectionResult)
     if (!('ok' in collectionResult)) {
       throw new Error(
         `Error retrieving collection: ${collectionResult.err?.text || 'Unknown error'}`,
@@ -60,6 +61,7 @@ const fetchCollectionDetail = async (
               !('closed' in sale.sale_type.auction.status)
             )
           })
+          console.log('openSales', openSales.length > 0)
           return openSales.length > 0
         }
         return false

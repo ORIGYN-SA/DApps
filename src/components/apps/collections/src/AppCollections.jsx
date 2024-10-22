@@ -17,12 +17,14 @@ import {
   LOGO_CANISTER_ID,
   ICPSWAP_TOKENS_CANISTER_ID,
   COLLECTIONS_INDEX_CANISTER_ID,
+  OGY_LEDGER_CANISTER_ID,
 } from './constants'
 
 import { idlFactory as gld_nft_idl } from './canisters/gld_nft/did'
 import { idlFactory as gldt_swap_tokens_idl } from './canisters/icpswap/store.did'
 import { idlFactory as logo_idl } from './canisters/icpswap/info.did'
 import { idlFactory as collections_idl } from './canisters/collections/index'
+import { idlFactory as ledger_idl } from './canisters/ledger/did'
 import { AuthProvider } from './auth'
 
 import '@nfid/identitykit/react/styles.css'
@@ -49,6 +51,7 @@ const App = () => (
               LOGO_CANISTER_ID,
               ICPSWAP_TOKENS_CANISTER_ID,
               COLLECTIONS_INDEX_CANISTER_ID,
+              OGY_LEDGER_CANISTER_ID,
             ]}
             canisters={{
               gld_nft_1g: {
@@ -78,6 +81,10 @@ const App = () => (
               collection_index: {
                 canisterId: COLLECTIONS_INDEX_CANISTER_ID,
                 idlFactory: collections_idl,
+              },
+              ogy_ledger: {
+                canisterId: OGY_LEDGER_CANISTER_ID,
+                idlFactory: ledger_idl,
               },
             }}
           >

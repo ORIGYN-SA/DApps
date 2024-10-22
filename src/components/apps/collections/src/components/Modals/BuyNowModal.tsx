@@ -2,25 +2,91 @@ import { useState } from 'react'
 import Reminder from '../Utils/Reminder'
 import { useTokenData } from '../../context/TokenDataContext'
 import { NFT } from '../../types/global'
-import { getUserBalance } from '../../utils/balanceUtils'
 import { useUserProfile } from '../../context/UserProfileContext'
+import { useBuyNFT } from '../../hooks/useBuyNFT'
+import { getUserBalance } from '../../utils/balanceUtils'
+import { Principal } from '@dfinity/principal'
 
-const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose }) => {
+const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: string }> = ({
+  nft,
+  onClose,
+  collectionId,
+}) => {
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const { getLogo } = useTokenData()
+  const { getLogo, getTokenData } = useTokenData()
   const { userProfile } = useUserProfile()
+
+  const { mutate: buyNFT, isError } = useBuyNFT()
 
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) onClose()
   }
 
-  const onBuyNowClick = async () => {
+  const canBuy = getUserBalance(userProfile, nft.currency) >= Number(nft.price)
+
+  const onBuyNowClick = () => {
+    const tokenData = getTokenData(nft.currency)
+    console.log(tokenData)
     setIsProcessing(true)
-    setTimeout(() => {
+
+    if (canBuy && tokenData && userProfile) {
+      try {
+        const buyerPrincipal = Principal.fromText(userProfile.walletAddress)
+        const sellerPrincipal = Principal.fromText(nft.owner)
+
+        if (!tokenData.address) {
+          throw new Error('Canister ID is not defined for this token.')
+        }
+
+        if (!nft.saleDetails?.saleId) {
+          throw new Error('Sale ID is not defined for this NFT.')
+        }
+
+        console.log('token address', tokenData.address)
+        console.log('token decimals', tokenData.decimals)
+        console.log(tokenData)
+        console.log('nft', nft)
+        const priceInToken = BigInt(Math.floor(nft.price * 10 ** tokenData.decimals))
+
+        console.log('priceInToken', priceInToken)
+        buyNFT(
+          {
+            nftId: nft.id,
+            price: priceInToken,
+            token: {
+              feesUSD: tokenData.feesUSD,
+              priceUSD: nft.priceUSD,
+              decimals: tokenData.decimals,
+              canister: 'j5naj-nqaaa-aaaal-ajc7q-cai',
+              id: tokenData.id,
+              standard: 'Ledger',
+              symbol: tokenData.symbol,
+            },
+            buyer: buyerPrincipal,
+            seller: sellerPrincipal,
+            collectionId,
+            saleId: nft.saleDetails?.saleId,
+          },
+          {
+            onSuccess: () => {
+              setIsProcessing(false)
+              setIsSuccess(true)
+            },
+            onError: error => {
+              console.error('Error during purchase:', error)
+              setIsProcessing(false)
+            },
+          },
+        )
+      } catch (error) {
+        console.error('Error initiating purchase:', error)
+        setIsProcessing(false)
+      }
+    } else {
+      console.error('Cannot proceed with purchase due to invalid data.')
       setIsProcessing(false)
-      setIsSuccess(true)
-    }, 2000)
+    }
   }
 
   return (
@@ -35,6 +101,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose
         >
           &times;
         </button>
+
         {isProcessing ? (
           <div className='my-12 flex flex-col items-center justify-center w-full h-full'>
             <img
@@ -89,7 +156,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose
               See certificate
             </a>
             <p className='text-center text-[#69737c] text-[13px] font-normal leading-none mt-2'>
-              Balance: xx ICP
+              Balance: {getUserBalance(userProfile, nft.currency)} {nft.currency}
             </p>
           </div>
         ) : (
@@ -118,7 +185,13 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose
               <div className='mt-3'>
                 <Reminder />
                 <div className='mt-6'>
-                  <button className='bg-[#212425] rounded-full w-full py-3' onClick={onBuyNowClick}>
+                  <button
+                    className={`bg-[#212425] rounded-full w-full py-3 ${
+                      !canBuy ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                    onClick={onBuyNowClick}
+                    disabled={!canBuy}
+                  >
                     <span className='text-center text-white text-sm font-semibold'>
                       Buy for {nft.price} {nft.currency}
                     </span>
@@ -130,6 +203,10 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void }> = ({ nft, onClose
               Balance: {getUserBalance(userProfile, nft.currency)} {nft.currency}
             </p>
           </>
+        )}
+
+        {isError && (
+          <div className='text-red-500 mt-4'>Error during purchase, please try again.</div>
         )}
       </div>
     </div>
