@@ -1,17 +1,15 @@
-// src/components/Panels/NFTsPanel.tsx
 import React from 'react'
-import { useGetCollectionsList } from '../../hooks/useGetCollectionsList'
-import CollectionsList from '../Collections/OGYCollectionsList'
-import { CollectionType } from '../../types/global'
 import CheckboxBar from '../Bar/CheckBoxBar'
 import SearchBar from '../Bar/SearchBar'
-import { useUserProfile } from '../../context/UserProfileContext'
+import FilterBar from '../Bar/FilterBar'
+import { CollectionType } from '../../types/global'
 
 interface NFTsPanelProps {
   searchTerm: string
   handleSearch: (term: string) => void
   filteredCollections: CollectionType[]
   toggleCheckbox: (name: string) => void
+  setListedFilter: (status: 'all' | 'listed' | 'non-listed') => void
 }
 
 const MyNFTsPanel: React.FC<NFTsPanelProps> = ({
@@ -19,21 +17,13 @@ const MyNFTsPanel: React.FC<NFTsPanelProps> = ({
   handleSearch,
   filteredCollections,
   toggleCheckbox,
+  setListedFilter,
 }) => {
   return (
     <div className='p-6'>
       <SearchBar handleSearch={handleSearch} placeholder='Search for a specific collection' />
       <CheckboxBar collections={filteredCollections} toggleCheckbox={toggleCheckbox} />
-      {/* Vous pouvez décommenter ceci lorsque CollectionsList est prêt */}
-      {/* <CollectionsList
-        collections={filteredCollections}
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-        totalPages={totalPages}
-        setCurrentPage={setCurrentPage}
-        setItemsPerPage={setItemsPerPage}
-        loading={isLoading}
-      /> */}
+      <FilterBar setListedFilter={setListedFilter} />
     </div>
   )
 }

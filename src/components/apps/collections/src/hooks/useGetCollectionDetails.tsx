@@ -145,7 +145,7 @@ export const useGetCollectionDetails = (canisterId: string) => {
   }, {} as Record<string, number>)
 
   return useQuery<CollectionWithNFTs, Error>({
-    queryKey: ['collectionDetail', canisterId],
+    queryKey: ['fetchCollectionDetails', canisterId],
     queryFn: () => fetchCollectionDetail(canisterId, tokenUSDPrices, getLogo),
     placeholderData: keepPreviousData,
     enabled: !!canisterId && !isPricesLoading && !isPricesError,

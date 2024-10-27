@@ -9,28 +9,25 @@ import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 import OpenASaleModal from '../Modals/OpenASaleModal'
 import { useCancelNFTSale } from '../../hooks/useCancelNFTSale'
 import { useQueryClient } from '@tanstack/react-query'
+import Toast from '../Utils/Toast'
 
-const UserNFTsList: React.FC = () => {
+interface UserNFTsListProps {
+  nfts: NFT[]
+  isLoading: boolean
+  isError: boolean
+}
+
+const UserNFTsList = ({ nfts, isLoading, isError }: UserNFTsListProps) => {
   const [itemsPerPage, setItemsPerPage] = useState(8)
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null)
   const [isOpenASaleModalOpen, setisOpenASaleModalOpen] = useState(false)
   const [salePrice, setSalePrice] = useState('')
+  const [message, setMessage] = useState('')
+  const [showToast, setShowToast] = useState(false)
 
-  const { userProfile } = useUserProfile()
   const { mutate: cancelSale } = useCancelNFTSale()
   const queryClient = useQueryClient()
-
-  const userPrincipal = useMemo(() => {
-    try {
-      return userProfile ? Principal.fromText(userProfile.walletAddress) : undefined
-    } catch (e) {
-      console.error('Invalid wallet address:', e)
-      return undefined
-    }
-  }, [userProfile])
-
-  const { data: nfts, isLoading, isError, error } = useUserNFTs(userPrincipal)
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -75,9 +72,13 @@ const UserNFTsList: React.FC = () => {
           {
             onSuccess: () => {
               queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
+              setMessage('Sale cancelled successfully')
+              setShowToast(true)
             },
             onError: error => {
               console.error('Error cancelling the sale:', error)
+              setMessage(error.message)
+              setShowToast(true)
             },
           },
         )
@@ -156,9 +157,9 @@ const UserNFTsList: React.FC = () => {
           No NFTs in your collection
         </p>
       )}
-      {error && (
+      {isError && (
         <p className='text-center text-[#69737c] italic font-medium mb-4 px-6'>
-          Error loading your NFTs: {error?.message || 'Please try again later.'}
+          Error loading your NFTs. Please try again later.
         </p>
       )}
       {!isLoading && !isError && nfts && (
@@ -176,6 +177,7 @@ const UserNFTsList: React.FC = () => {
       {isOpenASaleModalOpen && selectedNFT && (
         <OpenASaleModal selectedNFT={selectedNFT} onClose={closeOpenASaleModal} />
       )}
+      {showToast && <Toast message={message} onClose={() => setShowToast(false)} />}
     </div>
   )
 }

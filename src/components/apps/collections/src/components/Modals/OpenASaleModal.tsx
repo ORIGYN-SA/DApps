@@ -6,6 +6,7 @@ import { useTokenData } from '../../context/TokenDataContext'
 import { SaleToken, useSellNFT } from '../../hooks/useSellNFT'
 import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 import { useQueryClient } from '@tanstack/react-query'
+import Toast from '../Utils/Toast'
 
 interface OpenASaleModalProps {
   selectedNFT: NFT
@@ -16,6 +17,8 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
   const [currency, setCurrency] = useState<Currency>(currencies[0])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [salePrice, setSalePrice] = useState('')
+  const [message, setMessage] = useState('')
+  const [showToast, setShowToast] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const { getUSDPrice, getTokenData } = useTokenData()
@@ -58,7 +61,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
     const token: SaleToken = {
       feesUSD: tokenData.feesUSD,
       priceUSD: tokenData.priceUSD,
-      decimals: currency.decimals,
+      decimals: tokenData.decimals,
       canister: currency.canisterId,
       standard: tokenData.standard as 'Ledger',
       symbol: tokenData.symbol,
@@ -74,10 +77,14 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
       },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
+          queryClient.invalidateQueries({ queryKey: ['userNFTs', ['fetchCollectionDetails']] })
+          setMessage('Sale opened successfully')
+          setShowToast(true)
         },
         onError: error => {
           console.error('Error while selling NFT:', error)
+          setMessage(error.message)
+          setShowToast(true)
         },
       },
     )
@@ -242,6 +249,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
           )}
         </div>
       </div>
+      {showToast && <Toast message={message} onClose={() => setShowToast(false)} />}
     </div>
   )
 }
