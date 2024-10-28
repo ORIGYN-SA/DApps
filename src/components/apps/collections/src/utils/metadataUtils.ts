@@ -60,11 +60,11 @@ export function extractOwner (nftResultItem: any): string | null {
     if (metadata && Array.isArray(metadata)) {
       const ownerField = metadata.find((item: any) => item.name === 'owner')
 
-      if (ownerField && ownerField.value && Array.isArray(ownerField.value.Array)) {
+      if (ownerField && ownerField.value?.Array?.[0]?.Principal?._arr) {
         const ownerPrincipal = ownerField.value.Array[0].Principal
 
-        if (ownerPrincipal && ownerPrincipal._isPrincipal) {
-          return ownerPrincipal.toText()
+        if (ownerPrincipal._isPrincipal) {
+          return Principal.fromUint8Array(ownerPrincipal._arr).toText()
         }
       }
     }

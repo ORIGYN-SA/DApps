@@ -77,7 +77,8 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
       },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['userNFTs', ['fetchCollectionDetails']] })
+          queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
+          queryClient.invalidateQueries({ queryKey: ['fetchCollectionDetails'] })
           setMessage('Sale opened successfully')
           setShowToast(true)
         },
@@ -225,11 +226,17 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
               </a>
             </div>
           ) : isError ? (
-            <div className='flex flex-col items-center justify-center w-full h-full'>
-              <h2 className='text-[22px] font-semibold leading-normal text-red-600'>
-                Error listing NFT
-              </h2>
-              <p className='text-red-600'>{error?.message}</p>
+            <div className='flex flex-col items-center justify-center w-full h-full px-6'>
+              <h2 className='text-[20px] font-semibold text-red-700 mb-4'>Error listing NFT</h2>
+              <p className='text-red-600 text-[14px] font-medium'>
+                {error?.message || 'An unexpected error occurred. Please try again.'}
+              </p>
+              <button
+                className='mt-36 px-4 py-2  bg-gray-700 text-white rounded-full hover:bg-gray-800 transition-all duration-150 ease-in-out'
+                onClick={onClose}
+              >
+                Close
+              </button>
             </div>
           ) : (
             <>

@@ -32,13 +32,14 @@ const fetchNFTDetails = async (
     }
 
     const nftResult = await actor.nft_batch_origyn([nftId])
-    console.log('nftResult', nftResult)
+    console.log('nft batch origyn result', nftResult)
 
     const nft: NFT[] = nftResult
       .map(nftResultItem => {
         if ('ok' in nftResultItem) {
           const { tokenName, imageUrl } = extractMetadata(nftResultItem.ok.metadata, canisterId)
 
+          console.log('nftResultItem', nftResultItem)
           const owner = extractOwner(nftResultItem)
 
           const saleData = nftResultItem.ok.current_sale ? nftResultItem.ok.current_sale[0] : null
@@ -72,6 +73,7 @@ const fetchNFTDetails = async (
     return nft[0]
   } catch (error) {
     console.error('Error in fetchNFTDetails:', error)
+    new Error('Error in fetchNFTDetails: ')
     throw error
   }
 }

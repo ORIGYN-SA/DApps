@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useAuth } from '../auth/index'
+import { ManageSaleResult } from '../canisters/gld_nft/interfaces/gld_nft'
 
 interface CancelSaleVariables {
   saleId: string
@@ -16,7 +17,11 @@ export const useCancelNFTSale = () => {
         end_sale: saleId,
       }
 
-      const result = await actor.sale_nft_origyn(manageSaleRequest)
+      const result = (await actor.sale_nft_origyn(manageSaleRequest)) as ManageSaleResult
+
+      if ('err' in result) {
+        throw new Error(`Error cancelling sale: ${result.err.text}`)
+      }
 
       console.log('Sale cancelled successfully:', result)
     } catch (error) {

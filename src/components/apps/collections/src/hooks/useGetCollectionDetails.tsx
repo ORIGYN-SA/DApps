@@ -10,7 +10,7 @@ import {
 import { CollectionWithNFTs, NFT, SaleDetails } from '../types/global.js'
 import { extractSaleDetails } from '../utils/priceUtils'
 import { useTokenData } from '../context/TokenDataContext'
-import { extractMetadata } from '../utils/metadataUtils.js'
+import { extractMetadata, extractOwner } from '../utils/metadataUtils.js'
 import { fetchCategoryByPrincipalId } from '../utils/categoryUtils.js'
 
 const fetchCollectionDetail = async (
@@ -26,7 +26,6 @@ const fetchCollectionDetail = async (
     })
 
     const collectionResult = await actor.collection_nft_origyn([])
-    console.log('collectionResult', collectionResult)
     if (!('ok' in collectionResult)) {
       throw new Error(
         `Error retrieving collection: ${collectionResult.err?.text || 'Unknown error'}`,
@@ -49,7 +48,6 @@ const fetchCollectionDetail = async (
     const tokenIds: string[] = collectionInfo.token_ids[0]
 
     const nftResults = await Promise.all(tokenIds.map(tokenId => actor.nft_batch_origyn([tokenId])))
-    console.log('nftResults', nftResults)
     const nfts: NFT[] = nftResults
       .filter((nftResult: any) => {
         if ('ok' in nftResult[0]) {
@@ -61,7 +59,6 @@ const fetchCollectionDetail = async (
               !('closed' in sale.sale_type.auction.status)
             )
           })
-          console.log('openSales', openSales.length > 0)
           return openSales.length > 0
         }
         return false
@@ -69,6 +66,9 @@ const fetchCollectionDetail = async (
       .map((nftResult, index) => {
         if ('ok' in nftResult[0]) {
           const { tokenName, imageUrl } = extractMetadata(nftResult[0].ok.metadata, canisterId)
+          console.log('nftResult', nftResult)
+          const owner = extractOwner(nftResult[0])
+          console.log('owner', owner)
 
           const sales = nftResult[0].ok.current_sale || []
           const openSales = sales.filter((sale: any) => {
@@ -78,8 +78,6 @@ const fetchCollectionDetail = async (
               !('closed' in sale.sale_type.auction.status)
             )
           })
-
-          console.log('openSales', openSales)
 
           const saleDetails: SaleDetails | null =
             openSales.length > 0 ? extractSaleDetails(openSales[0], tokenPrices) : null
@@ -115,6 +113,7 @@ const fetchCollectionDetail = async (
             currency,
             priceUSD,
             saleDetails: saleDetails || undefined,
+            owner,
           } as NFT
         } else if ('err' in nftResult[0]) {
           console.error(`Error for token ${tokenIds[index]}: ${nftResult[0].err.text}`)

@@ -37,7 +37,7 @@ const ProfilePage = () => {
       return undefined
     }
   }, [userProfile])
-  const { data: nfts, isLoading, isError } = useUserNFTs(userPrincipal)
+  const { data: nfts, isLoading, isError, isFetching } = useUserNFTs(userPrincipal)
 
   useEffect(() => {
     if (data && nfts) {
@@ -131,7 +131,6 @@ const ProfilePage = () => {
         <div className='w-full mt-2 mb-1 px-6 md:hidden'>
           <h1 className='text-lg font-semibold'>My Account</h1>
         </div>
-
         <div className='flex w-full h-full border-mouse border-y'>
           <div className='w-full md:hidden'>
             <div className='flex border-b border-gray-300'>
@@ -172,12 +171,11 @@ const ProfilePage = () => {
                 />
                 <FilterBar setListedFilter={setListedFilter} />
               </div>
-              {nfts && <UserNFTsList nfts={filteredNfts} isLoading={isLoading} isError={isError} />}
+              {<UserNFTsList nfts={filteredNfts} isLoading={isLoading} isError={isError} isFetching={isFetching} />}
             </div>
           </div>
         </div>
-
-        {showTransferModal && <TransferModal onClose={() => handleModal('transfer', false)} />}
+        ²{showTransferModal && <TransferModal onClose={() => handleModal('transfer', false)} />}
         {showManageModal && <ManageModal onClose={() => handleModal('manage', false)} />}
       </div>
     </div>

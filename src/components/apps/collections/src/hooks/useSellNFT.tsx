@@ -92,8 +92,12 @@ export const useSellNFT = () => {
   return useMutation<MarketTransferResult, Error, SellNFTVariables>({
     mutationFn: sellNFT,
     onSuccess: data => {
-      console.log('NFT sold successfully:', data)
-      queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
+      if (data && 'err' in data && data.err) {
+        throw new Error(data.err.flag_point || 'Unknown error in market transfer response')
+      } else {
+        console.log('NFT sold successfully:', data)
+        queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
+      }
     },
     onError: error => {
       console.error('Error while selling NFT:', error)

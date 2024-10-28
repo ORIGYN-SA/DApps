@@ -15,9 +15,10 @@ interface UserNFTsListProps {
   nfts: NFT[]
   isLoading: boolean
   isError: boolean
+  isFetching: boolean
 }
 
-const UserNFTsList = ({ nfts, isLoading, isError }: UserNFTsListProps) => {
+const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProps) => {
   const [itemsPerPage, setItemsPerPage] = useState(8)
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null)
@@ -25,6 +26,8 @@ const UserNFTsList = ({ nfts, isLoading, isError }: UserNFTsListProps) => {
   const [salePrice, setSalePrice] = useState('')
   const [message, setMessage] = useState('')
   const [showToast, setShowToast] = useState(false)
+  const [isLoadingAction, setIsLoadingAction] = useState(false)
+  const [selectedNFTId, setSelectedNFTId] = useState<string | null>(null)
 
   const { mutate: cancelSale } = useCancelNFTSale()
   const queryClient = useQueryClient()
@@ -55,6 +58,7 @@ const UserNFTsList = ({ nfts, isLoading, isError }: UserNFTsListProps) => {
   console.log('currentNFTs', currentNFTs)
 
   const openSaleModal = useCallback((nft: NFT) => {
+    setSelectedNFTId(nft.id)
     setSelectedNFT(nft)
     setisOpenASaleModalOpen(true)
   }, [])
@@ -65,8 +69,10 @@ const UserNFTsList = ({ nfts, isLoading, isError }: UserNFTsListProps) => {
   }, [])
 
   const handleCancelSale = useCallback(
-    (saleId: string | null) => {
-      if (saleId) {
+    (saleId: string | null, nftId: string | null) => {
+      if (saleId && nftId) {
+        setSelectedNFTId(nftId)
+        setIsLoadingAction(true)
         cancelSale(
           { saleId },
           {
@@ -74,11 +80,14 @@ const UserNFTsList = ({ nfts, isLoading, isError }: UserNFTsListProps) => {
               queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
               setMessage('Sale cancelled successfully')
               setShowToast(true)
+              setIsLoadingAction(false)
             },
             onError: error => {
               console.error('Error cancelling the sale:', error)
               setMessage(error.message)
               setShowToast(true)
+              setIsLoadingAction(false)
+              setSelectedNFTId(null)
             },
           },
         )
@@ -87,59 +96,83 @@ const UserNFTsList = ({ nfts, isLoading, isError }: UserNFTsListProps) => {
     [cancelSale, queryClient],
   )
 
-  const NFTCard: React.FC<{ nft: NFT }> = React.memo(({ nft }) => (
-    <div className='bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden'>
-      <div className='rounded-t-2xl overflow-hidden'>
-        <img
-          className='w-full h-[243px] object-contain hover:scale-110 duration-300 ease-in-out transition-transform'
-          src={nft.image}
-          alt={nft.name}
-        />
-      </div>
-      <div className='p-4 flex flex-col justify-between flex-grow'>
-        <h3 className='text-[10px] font-medium leading-[18px] tracking-[2px] text-[#69737C] uppercase'>
-          <span className='flex flex-row items-center gap-1'>
-            {nft.categoryName || 'Unknown'} <VerifiedIcon />
-          </span>
-        </h3>
-        <h3 className='text-gray-900 text-base font-bold'>{nft.name}</h3>
+  const NFTCard: React.FC<{ nft: NFT }> = React.memo(({ nft }) => {
+    const isNFTLoading = isFetching && selectedNFTId === nft.id
 
-        {nft.saleDetails && nft.saleDetails.saleId && nft.price > 0 ? (
-          <div className='flex row items-center justify-between'>
-            <div className='mt-2'>
-              <span className='px-4 py-2 mt-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
-                {`${nft.price} ${nft.currency}`}
-              </span>
-            </div>
-            <button
-              className='mt-2 hover:opacity-80'
-              onClick={() => handleCancelSale(nft.id || null)}
-            >
-              <span className='px-4 py-2 mt-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
-                Cancel sale
-              </span>
-            </button>
-          </div>
+    return (
+      <div className='bg-white rounded-2xl h-[374px] border border-gray-300 flex flex-col group relative overflow-hidden'>
+        {isNFTLoading ? (
+          <NFTSkeleton />
         ) : (
-          <button className='mt-2 hover:opacity-80 mr-auto' onClick={() => openSaleModal(nft)}>
-            <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
-              Open a sale
-            </span>
-          </button>
+          <>
+            <div className='rounded-t-2xl overflow-hidden'>
+              <img
+                className='w-full h-[243px] object-contain hover:scale-110 duration-300 ease-in-out transition-transform'
+                src={nft.image}
+                alt={nft.name}
+              />
+            </div>
+            <div className='p-4 flex flex-col justify-between flex-grow'>
+              <div>
+                <h3 className='text-[10px] font-medium leading-[18px] tracking-[2px] text-[#69737C] uppercase'>
+                  <span className='flex flex-row items-center gap-1'>
+                    {nft.categoryName || 'Unknown'} <VerifiedIcon />
+                  </span>
+                </h3>
+                <h3 className='text-gray-900 text-base font-bold'>{nft.name}</h3>
+              </div>
+
+              <div className='mt-auto'>
+                {nft.saleDetails && nft.saleDetails.saleId && nft.price > 0 ? (
+                  <div className='flex row items-center justify-between'>
+                    <div>
+                      <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
+                        {`${nft.price} ${nft.currency}`}
+                      </span>
+                    </div>
+                    <button
+                      className='hover:opacity-80 disabled:opacity-50'
+                      disabled={isLoadingAction && selectedNFTId === nft.id}
+                      onClick={() => handleCancelSale(nft.id || null, nft.id)}
+                    >
+                      <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
+                        {isLoadingAction && selectedNFTId === nft.id
+                          ? 'Canceling...'
+                          : 'Cancel sale'}
+                      </span>
+                    </button>
+                  </div>
+                ) : (
+                  <button className='hover:opacity-80 mr-auto' onClick={() => openSaleModal(nft)}>
+                    <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
+                      {isLoading && selectedNFTId === nft.id ? 'Opening...' : 'Open a sale'}
+                    </span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </>
         )}
       </div>
-    </div>
-  ))
+    )
+  })
 
   const NFTSkeleton: React.FC = () => (
-    <div className='bg-white rounded-2xl border border-gray-300 flex flex-col animate-pulse'>
-      <div className='h-56 rounded-t-2xl overflow-hidden bg-gray-300'></div>
+    <div className='bg-white rounded-2xl border border-gray-300 flex flex-col animate-pulse h-[374px]'>
+      <div className='h-[243px] rounded-t-2xl overflow-hidden bg-gray-300'></div>
       <div className='p-4 flex flex-col justify-between flex-grow'>
-        <div className='h-6 bg-gray-300 rounded w-3/4'></div>
-        <div className='mt-2'>
-          <span className='px-8 py-1 bg-gray-300 text-white text-xs font-bold rounded-full'>
+        <div>
+          <div className='h-3 bg-gray-300 rounded w-1/2 mb-2'></div>
+          <div className='h-4 bg-gray-300 rounded w-3/4'></div>
+        </div>
+
+        <div className='mt-auto flex items-center justify-between'>
+          <div className='px-10 py-1 bg-gray-300 text-transparent text-xs font-bold rounded-full'>
             &nbsp;
-          </span>
+          </div>
+          <div className='px-8 py-1 bg-gray-300 text-transparent text-xs font-bold rounded-full'>
+            &nbsp;
+          </div>
         </div>
       </div>
     </div>
@@ -152,7 +185,7 @@ const UserNFTsList = ({ nfts, isLoading, isError }: UserNFTsListProps) => {
           ? Array.from({ length: itemsPerPage }, (_, index) => <NFTSkeleton key={index} />)
           : currentNFTs.map(nft => <NFTCard key={nft.id} nft={nft} />)}
       </div>
-      {!isLoading && !isError && filteredNfts.length === 0 && (
+      {!isLoading && !isError && filteredNfts.length === 0 && !nfts && (
         <p className='text-center text-[#69737c] italic font-medium mb-4 px-6'>
           No NFTs in your collection
         </p>

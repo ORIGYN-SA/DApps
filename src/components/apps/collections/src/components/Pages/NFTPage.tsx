@@ -11,6 +11,7 @@ import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
 import { CopyButton } from '../Buttons/CopyButton'
 import { useTokenData } from '../../context/TokenDataContext'
 import { useCombinedUserProfile } from '../../hooks/useCombinedUserProfile'
+import { useUserProfile } from '../../context/UserProfileContext'
 
 const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.memo(
   ({ nft, canisterId }) => (
@@ -119,6 +120,9 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
   onBuyNowClick,
 }) => {
   const { getLogo } = useTokenData()
+  const { userProfile } = useUserProfile()
+  const userPrincipal = userProfile?.walletAddress
+  const isMyNFT = nft.owner === userPrincipal
 
   return (
     <div className='p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full'>
@@ -138,9 +142,10 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
         <button
           className='bg-[#212425] rounded-full justify-center items-center w-full mt-4'
           onClick={onBuyNowClick}
+          disabled={isMyNFT}
         >
           <p className='text-center text-white text-sm font-semibold leading-[48px]'>
-            Buy now for {nft.price} {nft.currency}
+            {isMyNFT ? 'Your NFT at' : 'Buy now for'} {nft.price} {nft.currency}
           </p>
         </button>
       )}

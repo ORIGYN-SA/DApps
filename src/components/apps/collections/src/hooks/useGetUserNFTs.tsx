@@ -69,6 +69,8 @@ const fetchUserNFTs = async (
 
       const nftResults = await nftActor.nft_batch_origyn(tokenIds)
 
+      console.log('nftResults', nftResults)
+
       const nfts: (NFT | undefined)[] = await Promise.all(
         nftResults.map(async (nftResult: any, index: number) => {
           if ('ok' in nftResult) {
@@ -153,7 +155,7 @@ export const useUserNFTs = (userPrincipal?: Principal) => {
     queryFn: userPrincipal
       ? () => fetchUserNFTs(userPrincipal, tokenUSDPrices, getLogo)
       : undefined,
-    placeholderData: keepPreviousData,
+    placeholderData: oldData => oldData,
     enabled: !!userPrincipal && !isPricesLoading && !isPricesError,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
