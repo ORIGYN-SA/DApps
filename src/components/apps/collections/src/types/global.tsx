@@ -38,6 +38,7 @@ export interface SaleDetails {
   endDate: string | null
   winner: any[]
   participants: any[]
+  isSaleOpen: boolean
 }
 
 export interface NFT {

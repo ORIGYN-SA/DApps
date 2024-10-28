@@ -215,15 +215,6 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
               <img src='/assets/tick-circle.svg' alt='Tick circle' className='w-20 h-20 mb-6' />
               <h2 className='text-[22px] font-semibold leading-normal'>NFT successfully listed</h2>
               {renderNFTDetails}
-              <a
-                className='bg-black px-5 py-4 w-1/2 rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold'
-                href=''
-                target='_blank'
-                rel='noreferrer'
-                onClick={onClose}
-              >
-                See certificate
-              </a>
             </div>
           ) : isError ? (
             <div className='flex flex-col items-center justify-center w-full h-full px-6'>

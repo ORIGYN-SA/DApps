@@ -6,7 +6,7 @@ import { useUserProfile } from '../../context/UserProfileContext'
 import { useBuyNFT } from '../../hooks/useBuyNFT'
 import { getUserBalance } from '../../utils/balanceUtils'
 import { Principal } from '@dfinity/principal'
-
+import { useQueryClient } from '@tanstack/react-query'
 const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: string }> = ({
   nft,
   onClose,
@@ -18,6 +18,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: strin
   const { userProfile } = useUserProfile()
 
   const { mutate: buyNFT, isError } = useBuyNFT()
+  const queryClient = useQueryClient()
 
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) onClose()
@@ -72,6 +73,9 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: strin
             onSuccess: () => {
               setIsProcessing(false)
               setIsSuccess(true)
+              queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
+              queryClient.invalidateQueries({ queryKey: ['fetchCollectionDetails'] })
+              queryClient.invalidateQueries({ queryKey: ['getNFTDetails'] })
             },
             onError: error => {
               console.error('Error during purchase:', error)
@@ -146,15 +150,6 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: strin
               </div>
             </div>
             <div className='h-[1px] w-full bg-gray-300 my-4'></div>
-            <a
-              className='bg-black mt-4 px-5 py-4 w-1/2 rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold'
-              href=''
-              target='_blank'
-              rel='noreferrer'
-              onClick={onClose}
-            >
-              See certificate
-            </a>
             <p className='text-center text-[#69737c] text-[13px] font-normal leading-none mt-2'>
               Balance: {getUserBalance(userProfile, nft.currency)} {nft.currency}
             </p>

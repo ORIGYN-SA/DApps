@@ -90,7 +90,7 @@ export const useGetNFTDetails = (canisterId: string, nftId: string) => {
   }, {} as Record<string, number>)
 
   return useQuery<NFT, Error, NFT, [string, string, string]>({
-    queryKey: ['collectionDetail', canisterId, nftId],
+    queryKey: ['getNFTDetails', canisterId, nftId],
     queryFn: () => fetchNFTDetails(canisterId, nftId, tokenUSDPrices),
     enabled: !!canisterId && !!nftId && !isPricesLoading && !isPricesError,
     staleTime: 5 * 60 * 1000,

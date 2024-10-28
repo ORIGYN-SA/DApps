@@ -185,7 +185,7 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
           ? Array.from({ length: itemsPerPage }, (_, index) => <NFTSkeleton key={index} />)
           : currentNFTs.map(nft => <NFTCard key={nft.id} nft={nft} />)}
       </div>
-      {!isLoading && !isError && filteredNfts.length === 0 && !nfts && (
+      {!isLoading && !isError && filteredNfts.length === 0 && (
         <p className='text-center text-[#69737c] italic font-medium mb-4 px-6'>
           No NFTs in your collection
         </p>

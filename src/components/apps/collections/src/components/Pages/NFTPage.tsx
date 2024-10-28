@@ -75,7 +75,7 @@ const SkeletonImage: React.FC = () => (
 )
 
 const ErrorImage: React.FC = () => (
-  <div className='flex items-center justify-center h-full italic bg-red-100 rounded-tl-2xl rounded-bl-2xl'>
+  <div className='flex items-center justify-center h-full italic bg-gray-200 rounded-tl-2xl rounded-bl-2xl'>
     <p>Error loading image</p>
   </div>
 )
@@ -89,7 +89,7 @@ const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo
       </div>
       <PriceSection nft={nft} onBuyNowClick={onBuyNowClick} />
       <Reminder />
-      <CheckOnChain />
+      {/* <CheckOnChain /> */}
     </>
   ),
 )
@@ -126,19 +126,21 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
 
   return (
     <div className='p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full'>
-      <div className='text-[#2E2E2E] text-base font-bold'>Current price</div>
+      <div className='text-[#2E2E2E] text-base font-bold'>
+        {nft.saleDetails?.isSaleOpen ? 'Current price' : 'Last sale price'}
+      </div>
       <div className='flex flex-row justify-start items-center gap-2'>
         <img src={getLogo(nft.currency)} alt='Token Logo' className='w-10 h-10' />
         <div className='flex flex-row gap-2 items-baseline'>
           <div className='text-black text-[18px] md:text-[28px] font-bold'>
-            {nft.price > 0 ? `${nft.price} ${nft.currency}` : 'Not for sale'}
+            {nft.price > 0 && `${nft.price} ${nft.currency}`}
           </div>
           {nft.priceUSD > 0 && (
             <div className='text-[#6e6d66] text-sm font-light'>(${nft.priceUSD})</div>
           )}
         </div>
       </div>
-      {nft.price > 0 && (
+      {nft.saleDetails?.isSaleOpen && nft.price > 0 && (
         <button
           className='bg-[#212425] rounded-full justify-center items-center w-full mt-4'
           onClick={onBuyNowClick}
@@ -153,14 +155,14 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
   )
 }
 
-const CheckOnChain: React.FC = () => (
-  <div className='px-2 py-1.5 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-center items-center gap-1 inline-flex'>
-    <img src='/assets/layer.svg' alt='layer' className='w-4 h-4' />
-    <div className='text-center text-[#69737c] text-[10px] font-normal'>
-      Check this certificate on-chain
-    </div>
-  </div>
-)
+// const CheckOnChain: React.FC = () => (
+//   <div className='px-2 py-1.5 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-center items-center gap-1 inline-flex'>
+//     <img src='/assets/layer.svg' alt='layer' className='w-4 h-4' />
+//     <div className='text-center text-[#69737c] text-[10px] font-normal'>
+//       Check this certificate on-chain
+//     </div>
+//   </div>
+// )
 
 const useImageLoader = () => {
   const [isImageLoading, setIsImageLoading] = useState(true)
@@ -217,8 +219,10 @@ const NFTPage: React.FC = () => {
   const canisterId = urlParts[urlParts.indexOf('collection') + 1] || ''
   const NFTid = urlParts[urlParts.indexOf('collection') + 2] || ''
 
-  const { data: nft, isLoading, error } = useGetNFTDetails(canisterId, NFTid)
+  const { data: nft, isLoading, error, isFetching } = useGetNFTDetails(canisterId, NFTid)
   const { isLoading: isUserProfileLoading } = useCombinedUserProfile()
+
+  console.log('nft', nft)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -236,7 +240,7 @@ const NFTPage: React.FC = () => {
             <div className='xl:mt-10 flex flex-col'>
               {error && <ErrorMessage message={error.message} />}
               <div className='flex flex-col w-11/12 mx-auto md:w-10/12 pb-8 md:pb-0 md:ml-28 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row bg-white mb-10 md:mb-20 rounded-2xl border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] xl:min-h-[564px]'>
-                {isLoading || isUserProfileLoading ? (
+                {isLoading || isUserProfileLoading || isFetching ? (
                   <Skeleton />
                 ) : (
                   nft && (

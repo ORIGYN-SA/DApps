@@ -57,6 +57,7 @@ export const extractSaleDetails = (
     auction.config?.ask?.[0]?.find((feature: any) => 'buy_now' in feature)?.buy_now ||
     '0'
   const startPriceAmount = auction.config?.auction?.start_price || '0'
+  const isSaleOpen = auction.status && !('closed' in auction.status)
 
   const currentBid = {
     amount: convertTokenAmount(currentBidAmount, decimals),
@@ -83,5 +84,6 @@ export const extractSaleDetails = (
     endDate: auction.config?.auction?.ending?.date || null,
     winner: auction.winner || [],
     participants: auction.participants || [],
+    isSaleOpen,
   }
 }

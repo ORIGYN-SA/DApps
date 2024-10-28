@@ -171,11 +171,18 @@ const ProfilePage = () => {
                 />
                 <FilterBar setListedFilter={setListedFilter} />
               </div>
-              {<UserNFTsList nfts={filteredNfts} isLoading={isLoading} isError={isError} isFetching={isFetching} />}
+              {
+                <UserNFTsList
+                  nfts={filteredNfts}
+                  isLoading={isLoading}
+                  isError={isError}
+                  isFetching={isFetching}
+                />
+              }
             </div>
           </div>
         </div>
-        ²{showTransferModal && <TransferModal onClose={() => handleModal('transfer', false)} />}
+        {showTransferModal && <TransferModal onClose={() => handleModal('transfer', false)} />}
         {showManageModal && <ManageModal onClose={() => handleModal('manage', false)} />}
       </div>
     </div>

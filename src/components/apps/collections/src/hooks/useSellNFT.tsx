@@ -11,6 +11,7 @@ import {
   TokenSpec,
 } from '../canisters/gld_nft/interfaces/gld_nft'
 import { useAuth } from '../auth/index'
+import { OGY_TX_FEE } from '../constants'
 
 export interface SaleToken {
   feesUSD: number
@@ -41,7 +42,7 @@ export const useSellNFT = () => {
     try {
       const actor = createActor('gld_nft_1g')
 
-      const feesInToken = BigInt(Math.ceil(token.feesUSD / token.priceUSD))
+      const feesInToken = OGY_TX_FEE
       const scaledPrice = BigInt(price) * BigInt(10 ** token.decimals)
       const startDate = BigInt(Date.now()) * BigInt(1_000_000)
       const endDate = startDate + BigInt(3600 * 24 * 30 * 1_000_000_000)
@@ -49,7 +50,7 @@ export const useSellNFT = () => {
       const tokenSpec: TokenSpec = {
         ic: {
           id: token.id ? [token.id] : [],
-          fee: [feesInToken],
+          fee: [BigInt(feesInToken)],
           decimals: BigInt(token.decimals),
           canister: Principal.fromText(token.canister),
           standard: { Ledger: null },
@@ -60,9 +61,10 @@ export const useSellNFT = () => {
       const askFeatures: AskFeature[] = [
         { token: tokenSpec },
         { buy_now: scaledPrice },
-        { fee_schema: 'com.origyn.royalties.fixed' },
         { ending: { date: endDate } },
         { start_date: startDate },
+        { start_price: scaledPrice },
+        { reserve: scaledPrice },
       ]
 
       const askConfigShared: AskConfigShared = [askFeatures]
