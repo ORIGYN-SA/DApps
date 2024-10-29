@@ -35,5 +35,7 @@ export const useUserProfile = (): UserProfileContextProps => {
 export const UserProfileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const profile = useCombinedUserProfile()
 
+  console.log('User Profile:', profile)
+
   return <UserProfileContext.Provider value={profile}>{children}</UserProfileContext.Provider>
 }

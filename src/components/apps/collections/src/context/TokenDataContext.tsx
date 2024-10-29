@@ -103,6 +103,8 @@ export const TokenDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { data, isLoading, isError } = useTokenPriceQuery()
   const tokens: Token[] = data ?? []
 
+  console.log('Available tokens on the dApp:', tokens)
+
   const getLogo = useCallback(
     (symbol: string): string | undefined => {
       const token = tokens.find(t => t.symbol === symbol)

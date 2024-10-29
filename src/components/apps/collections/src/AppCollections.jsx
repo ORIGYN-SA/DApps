@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { Routes, Route, HashRouter } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -37,71 +37,77 @@ const queryClient = new QueryClient({
   },
 })
 
-const App = () => (
-  <>
-    <HashRouter>
-      <QueryClientProvider client={queryClient}>
-        <TokenDataProvider>
-          <AuthProvider
-            targets={[
-              GLD_NFT_1G_CANISTER_ID,
-              GLD_NFT_10G_CANISTER_ID,
-              GLD_NFT_100G_CANISTER_ID,
-              GLD_NFT_1000G_CANISTER_ID,
-              LOGO_CANISTER_ID,
-              ICPSWAP_TOKENS_CANISTER_ID,
-              COLLECTIONS_INDEX_CANISTER_ID,
-              OGY_LEDGER_CANISTER_ID,
-            ]}
-            canisters={{
-              gld_nft_1g: {
-                canisterId: GLD_NFT_1G_CANISTER_ID,
-                idlFactory: gld_nft_idl,
-              },
-              gld_nft_10g: {
-                canisterId: GLD_NFT_10G_CANISTER_ID,
-                idlFactory: gld_nft_idl,
-              },
-              gld_nft_100g: {
-                canisterId: GLD_NFT_100G_CANISTER_ID,
-                idlFactory: gld_nft_idl,
-              },
-              gld_nft_1000g: {
-                canisterId: GLD_NFT_1000G_CANISTER_ID,
-                idlFactory: gld_nft_idl,
-              },
-              logo: {
-                canisterId: LOGO_CANISTER_ID,
-                idlFactory: logo_idl,
-              },
-              icp_swap_tokens: {
-                canisterId: ICPSWAP_TOKENS_CANISTER_ID,
-                idlFactory: gldt_swap_tokens_idl,
-              },
-              collection_index: {
-                canisterId: COLLECTIONS_INDEX_CANISTER_ID,
-                idlFactory: collections_idl,
-              },
-              ogy_ledger: {
-                canisterId: OGY_LEDGER_CANISTER_ID,
-                idlFactory: ledger_idl,
-              },
-            }}
-          >
-            <UserProfileProvider>
-              <Routes>
-                <Route path='/' element={<OGYCollections />} />
-                <Route path='/daos' element={<Daos />} />
-                <Route path='/collection/:canister_id' element={<OGYCollectionDetails />} />
-                <Route path='/collection/:canister_id/:nft_id' element={<NFTPage />} />
-                <Route path='/profile' element={<ProfilePage />} />
-              </Routes>
-            </UserProfileProvider>
-          </AuthProvider>
-        </TokenDataProvider>
-      </QueryClientProvider>
-    </HashRouter>
-  </>
-)
+const App = () => {
+  useEffect(() => {
+    document.title = 'The dApp - Origyn Collections'
+  }, [])
+
+  return (
+    <>
+      <HashRouter>
+        <QueryClientProvider client={queryClient}>
+          <TokenDataProvider>
+            <AuthProvider
+              targets={[
+                GLD_NFT_1G_CANISTER_ID,
+                GLD_NFT_10G_CANISTER_ID,
+                GLD_NFT_100G_CANISTER_ID,
+                GLD_NFT_1000G_CANISTER_ID,
+                LOGO_CANISTER_ID,
+                ICPSWAP_TOKENS_CANISTER_ID,
+                COLLECTIONS_INDEX_CANISTER_ID,
+                OGY_LEDGER_CANISTER_ID,
+              ]}
+              canisters={{
+                gld_nft_1g: {
+                  canisterId: GLD_NFT_1G_CANISTER_ID,
+                  idlFactory: gld_nft_idl,
+                },
+                gld_nft_10g: {
+                  canisterId: GLD_NFT_10G_CANISTER_ID,
+                  idlFactory: gld_nft_idl,
+                },
+                gld_nft_100g: {
+                  canisterId: GLD_NFT_100G_CANISTER_ID,
+                  idlFactory: gld_nft_idl,
+                },
+                gld_nft_1000g: {
+                  canisterId: GLD_NFT_1000G_CANISTER_ID,
+                  idlFactory: gld_nft_idl,
+                },
+                logo: {
+                  canisterId: LOGO_CANISTER_ID,
+                  idlFactory: logo_idl,
+                },
+                icp_swap_tokens: {
+                  canisterId: ICPSWAP_TOKENS_CANISTER_ID,
+                  idlFactory: gldt_swap_tokens_idl,
+                },
+                collection_index: {
+                  canisterId: COLLECTIONS_INDEX_CANISTER_ID,
+                  idlFactory: collections_idl,
+                },
+                ogy_ledger: {
+                  canisterId: OGY_LEDGER_CANISTER_ID,
+                  idlFactory: ledger_idl,
+                },
+              }}
+            >
+              <UserProfileProvider>
+                <Routes>
+                  <Route path='/' element={<OGYCollections />} />
+                  <Route path='/daos' element={<Daos />} />
+                  <Route path='/collection/:canister_id' element={<OGYCollectionDetails />} />
+                  <Route path='/collection/:canister_id/:nft_id' element={<NFTPage />} />
+                  <Route path='/profile' element={<ProfilePage />} />
+                </Routes>
+              </UserProfileProvider>
+            </AuthProvider>
+          </TokenDataProvider>
+        </QueryClientProvider>
+      </HashRouter>
+    </>
+  )
+}
 
 export default App

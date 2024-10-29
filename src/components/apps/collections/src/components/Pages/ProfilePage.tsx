@@ -96,13 +96,21 @@ const ProfilePage = () => {
 
   const renderNFTContent = useMemo(
     () => (
-      <MyNFTSPanel
-        searchTerm={searchTerm}
-        handleSearch={handleSearch}
-        filteredCollections={filteredCollections}
-        toggleCheckbox={toggleCheckbox}
-        setListedFilter={setListedFilter}
-      />
+      <div className='flex flex-col items-center w-full'>
+        <MyNFTSPanel
+          searchTerm={searchTerm}
+          handleSearch={handleSearch}
+          filteredCollections={filteredCollections}
+          toggleCheckbox={toggleCheckbox}
+          setListedFilter={setListedFilter}
+        />
+        <UserNFTsList
+          nfts={filteredNfts}
+          isLoading={isLoading}
+          isError={isError}
+          isFetching={isFetching}
+        />
+      </div>
     ),
     [searchTerm, filteredCollections, handleSearch, toggleCheckbox, setListedFilter],
   )
@@ -170,14 +178,13 @@ const ProfilePage = () => {
                 />
                 <FilterBar setListedFilter={setListedFilter} />
               </div>
-              {
-                <UserNFTsList
-                  nfts={filteredNfts}
-                  isLoading={isLoading}
-                  isError={isError}
-                  isFetching={isFetching}
-                />
-              }
+
+              <UserNFTsList
+                nfts={filteredNfts}
+                isLoading={isLoading}
+                isError={isError}
+                isFetching={isFetching}
+              />
             </div>
           </div>
         </div>

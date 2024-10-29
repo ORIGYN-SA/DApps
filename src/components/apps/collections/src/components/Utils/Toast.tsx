@@ -21,7 +21,7 @@ const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000 }) => {
 
   return (
     <div
-      className={`fixed bottom-5 left-1/2 z-50 transform -translate-x-1/2 h-12 pl-8 bg-[#212425] text-white text-sm rounded shadow flex items-center transition-transform duration-300 ease-out ${
+      className={`fixed bottom-5 left-1/2 z-50 transform -translate-x-1/2 h-12 pl-8 bg-[#212425] text-white text-sm rounded shadow flex items-center transition-transform duration-300 w-[90%] sm:w-fit ease-out ${
         isVisible ? 'translate-y-0' : 'translate-y-full opacity-0'
       }`}
       style={{
