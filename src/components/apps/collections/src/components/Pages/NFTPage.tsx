@@ -222,8 +222,6 @@ const NFTPage: React.FC = () => {
   const { data: nft, isLoading, error, isFetching } = useGetNFTDetails(canisterId, NFTid)
   const { isLoading: isUserProfileLoading } = useCombinedUserProfile()
 
-  console.log('nft', nft)
-
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleBuyNowClick = useCallback(() => setIsModalOpen(true), [])

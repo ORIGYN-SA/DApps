@@ -243,7 +243,7 @@ const OGYCollectionDetails: React.FC = () => {
               </div>
             )}
 
-            <div className='flex flex-row justify-between w-full px-6 md:px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12'>
+            <div className='flex flex-row justify-between w-full mt-6 space-y-6 sm:space-y-0 sm:space-x-12'>
               <ItemsPerPage
                 itemsPerPage={itemsPerPage}
                 setItemsPerPage={setItemsPerPage}

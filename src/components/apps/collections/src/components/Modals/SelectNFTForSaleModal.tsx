@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { NFT } from '../../types/global'
-import Pagination from '../Pagination/Pagination'
 import { useUserProfile } from '../../context/UserProfileContext'
 import Loader from '../Utils/Loader'
 import UserNFTsAvailableForSale from '../Collections/UserNFTsAvailableForSale'

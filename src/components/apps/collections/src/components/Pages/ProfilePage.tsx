@@ -67,7 +67,6 @@ const ProfilePage = () => {
         })
       : []
 
-    console.log('Filtered NFTs:', filteredNfts) // Debugging line
     setFilteredNfts(filteredNfts)
   }, [nfts, filteredCollections, searchTerm, listedFilter])
 
@@ -183,7 +182,7 @@ const ProfilePage = () => {
           </div>
         </div>
         {showTransferModal && <TransferModal onClose={() => handleModal('transfer', false)} />}
-        {showManageModal && <ManageModal onClose={() => handleModal('manage', false)} />}
+        {/* {showManageModal && <ManageModal onClose={() => handleModal('manage', false)} />} */}
       </div>
     </div>
   )

@@ -106,20 +106,16 @@ const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
       <div className='px-3 3xl:px-6'>
         <div className='flex flex-col justify-center items-center gap-2'>
           <button
-            className='w-full px-[25px] bg-[#212425] rounded-[100px] justify-center items-center gap-2.5 inline-flex'
+            className='w-full px-[25px] bg-[#212425] text-white text-sm font-semibold leading-[48px] text-center rounded-[100px] justify-center items-center gap-2.5 inline-flex'
             onClick={onTransferClick}
           >
-            <div className='text-white text-sm font-semibold leading-[48px] text-center'>
-              Transfer token
-            </div>
+            Transfer token
           </button>
           <button
-            className='w-full px-[25px] bg-[#e1e1e1] rounded-[100px] justify-center items-center gap-2.5 inline-flex'
-            onClick={onManageClick}
+            className='w-full px-[25px] bg-[#e1e1e1]  text-[#212425] text-sm cursor-default font-semibold leading-[48px] text-center rounded-[100px] justify-center items-center gap-2.5 inline-flex'
+            disabled
           >
-            <div className='text-[#212425] text-sm font-semibold leading-[48px] text-center'>
-              Manage token
-            </div>
+            Manage token
           </button>
         </div>
       </div>

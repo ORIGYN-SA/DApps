@@ -20,7 +20,7 @@ const MyNFTsPanel: React.FC<NFTsPanelProps> = ({
   setListedFilter,
 }) => {
   return (
-    <div className='p-6'>
+    <div className='p-6 space-y-2'>
       <SearchBar handleSearch={handleSearch} placeholder='Search for a specific collection' />
       <CheckboxBar collections={filteredCollections} toggleCheckbox={toggleCheckbox} />
       <FilterBar setListedFilter={setListedFilter} />

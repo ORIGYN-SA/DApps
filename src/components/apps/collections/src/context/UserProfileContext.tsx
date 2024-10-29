@@ -1,7 +1,5 @@
-// src/context/UserProfileContext.tsx
 import React, { createContext, useContext } from 'react'
 import { useCombinedUserProfile } from '../hooks/useCombinedUserProfile'
-import { useAuth } from '../auth'
 
 interface BalanceDetails {
   amount: number

@@ -1,56 +1,66 @@
-import { useState, useRef, useEffect } from 'react';
-import { useResponsiveTruncate } from '../../utils/responsiveTruncate';
-import { currencies, Currency } from '../../constants/currencies';
-import { useTokenData } from '../../context/TokenDataContext';
-import { CopyButton } from '../Buttons/CopyButton';
-import { useUserProfile } from '../../context/UserProfileContext';
-import { getUserBalance } from '../../utils/balanceUtils';
+import { useState, useRef, useEffect } from 'react'
+import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
+import { currencies, Currency } from '../../constants/currencies'
+import { useTokenData } from '../../context/TokenDataContext'
+import { CopyButton } from '../Buttons/CopyButton'
+import { useUserProfile } from '../../context/UserProfileContext'
+import { getUserBalance } from '../../utils/balanceUtils'
+import { useTokensTransfer } from '../../hooks/useTokensTransfer' // Assurez-vous que le chemin est correct
 
 const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [currency, setCurrency] = useState<Currency>(currencies[0]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [transferPrice, setTransferPrice] = useState('');
-  const [transferTo, setTransferTo] = useState('');
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [currency, setCurrency] = useState<Currency>(currencies[0])
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [transferPrice, setTransferPrice] = useState('')
+  const [transferTo, setTransferTo] = useState('')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const truncateAddress = useResponsiveTruncate();
-  const { getUSDPrice } = useTokenData();
-  const { userProfile } = useUserProfile();
+  const truncateAddress = useResponsiveTruncate()
+  const { getUSDPrice, getLogo } = useTokenData()
+  const { userProfile } = useUserProfile()
+  const { mutate: transferTokens, status, isSuccess, isError } = useTokensTransfer()
 
   const onTransferClick = () => {
-    setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      setIsSuccess(true);
-    }, 2000);
-  };
+    if (!transferTo || !transferPrice) {
+      setErrorMessage("Please enter the recipient's address and amount.")
+      return
+    }
 
-  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) onClose();
-  };
+    const amount = BigInt(parseFloat(transferPrice) * 10 ** currency.decimals)
+    setErrorMessage(null)
+    transferTokens(
+      { to: transferTo, amount },
+      {
+        onError: (error: Error) => {
+          setErrorMessage(error.message)
+        },
+        onSuccess: () => {
+          setErrorMessage(null)
+        },
+      },
+    )
+  }
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsDropdownOpen(false)
+    }
+  }
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleCurrencySelect = (selectedCurrency: Currency) => {
-    setCurrency(selectedCurrency);
-    setIsDropdownOpen(false);
-  };
+    setCurrency(selectedCurrency)
+    setIsDropdownOpen(false)
+  }
 
-  const filteredCurrencies = currencies.filter((curr) => curr.code !== currency.code);
+  const filteredCurrencies = currencies.filter(curr => curr.code !== currency.code && curr.isUsable)
   const convertedPrice = transferPrice
     ? (parseFloat(transferPrice) * (getUSDPrice(currency.code) || 0)).toFixed(2)
-    : '0.00';
+    : '0.00'
 
   const renderInputField = (
     label: string,
@@ -59,24 +69,24 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     extraContent?: JSX.Element,
   ) => (
-    <div className="flex flex-col items-start mt-4 w-full">
-      <label className="text-[#6F6D66] text-[13px] font-medium leading-normal mb-1">{label}</label>
-      <div className="relative w-full">
+    <div className='flex flex-col items-start mt-4 w-full'>
+      <label className='text-[#6F6D66] text-[13px] font-medium leading-normal mb-1'>{label}</label>
+      <div className='relative w-full'>
         <input
-          className="p-3 border rounded-full w-full pr-28"
+          className='p-3 border rounded-full w-full'
           placeholder={placeholder}
           value={value}
           onChange={onChange}
         />
         {extraContent && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2">{extraContent}</div>
+          <div className='absolute inset-y-0 right-0 flex items-center pr-2'>{extraContent}</div>
         )}
       </div>
     </div>
-  );
+  )
 
   const renderCurrencyDropdown = (
-    <div className="relative w-full">
+    <div className='relative w-full' ref={dropdownRef}>
       <div
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className={`bg-[#f9fafe] text-[#212425] text-[12px] font-medium uppercase tracking-widest cursor-pointer flex justify-between items-center p-2 w-32 ${
@@ -92,142 +102,154 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       >
         {currency.code}
         <span
-          className={`transform font-semibold text-lg transition-transform ${isDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
+          className={`transform font-semibold text-lg transition-transform ${
+            isDropdownOpen ? 'rotate-180' : 'rotate-0'
+          }`}
         >
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="w-5 h-5"
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 20 20'
+            fill='currentColor'
+            className='w-5 h-5'
           >
             <path
-              fillRule="evenodd"
-              d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-              clipRule="evenodd"
+              fillRule='evenodd'
+              d='M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z'
+              clipRule='evenodd'
             />
           </svg>
         </span>
       </div>
 
       {isDropdownOpen && (
-        <div className="absolute z-10 w-32 bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-lg">
-          {filteredCurrencies.map((curr) => (
+        <div className='absolute z-10 w-32 bg-white border-x border-b rounded-b-2xl border-gray-300 shadow-lg'>
+          {filteredCurrencies.map(curr => (
             <button
               key={curr.code}
-              className="flex items-center w-full px-4 py-2 text-sm text-left hover:bg-gray-100 rounded-b-2xl focus:outline-none"
+              className='flex items-center w-full px-4 py-2 text-sm text-left hover:bg-gray-100 rounded-b-2xl focus:outline-none'
               onClick={() => handleCurrencySelect(curr)}
             >
-              <img src={curr.icon} alt={curr.code} className="h-5 w-5 mr-2" />
+              <img src={curr.icon} alt={curr.code} className='h-5 w-5 mr-2' />
               {curr.code}
             </button>
           ))}
         </div>
       )}
     </div>
-  );
+  )
 
   const renderProcessingView = (
-    <div className="my-12 flex flex-col items-center justify-center w-full h-full">
+    <div className='my-12 flex flex-col items-center justify-center w-full h-full'>
       <img
-        src="/assets/spinner.png"
-        alt="Loading spinner"
-        className="w-12 h-12 animate-spin my-8"
+        src='/assets/spinner.png'
+        alt='Loading spinner'
+        className='w-12 h-12 animate-spin my-8'
       />
-      <h2 className="text-[22px] font-semibold leading-normal">Processing</h2>
+      <h2 className='text-[22px] font-semibold leading-normal'>Processing</h2>
     </div>
-  );
+  )
 
   const renderSuccessView = (
-    <div className="flex flex-col items-center justify-center w-full h-full">
-      <img src="/assets/tick-circle.svg" alt="Tick circle" className="w-20 h-20 my-6" />
-      <h2 className="text-[22px] font-semibold leading-normal">You sent xx</h2>
-      <div className="pl-1 pr-4 py-1 mt-2 bg-[#f9fafe] w-3/4 rounded-[100px] border border-[#e9eaf1] justify-between items-center inline-flex">
-        <img src="/assets/profile_icon.svg" alt="Profile Icon" className="w-10 h-10" />
-        <div className="flex flex-col xl:flex-row justify-center items-center w-[60%]">
-          <span className="text-[#212425] text-sm font-normal">to:</span>
-          <span className="text-[#212425] text-sm font-semibold pl-2">
-            {truncateAddress('5obapm-2iaaa-aaaak-qcgca-cai')}
+    <div className='flex flex-col items-center justify-center w-full h-full'>
+      <img src='/assets/tick-circle.svg' alt='Tick circle' className='w-20 h-20 my-6' />
+      <h2 className='text-[22px] font-semibold leading-normal flex flex-row items-center gap-2'>
+        You sent {transferPrice} {currency.code}{' '}
+        <img src={getLogo(currency.code)} alt={currency.code} className='w-6 h-6' />
+      </h2>
+      <div className='pl-1 pr-4 py-1 my-4 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-between items-center inline-flex w-3/4'>
+        <img src='/assets/profile_icon.svg' alt='Profile Icon' className='w-10 h-10' />
+        <div className='flex flex-col xl:flex-row justify-center items-center w-3/4 md:w-[60%]'>
+          <span className='text-[#212425] text-sm'>to:</span>
+          <span className='text-[#212425] text-sm font-semibold pl-2'>
+            {truncateAddress(transferTo)}
           </span>
         </div>
-        <CopyButton text={'5obapm-2iaaa-aaaak-qcgca-cai'} />
+        <CopyButton text={transferTo} />
       </div>
       <button
-        className="bg-black mt-10 px-5 py-4 w-1/2 rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold"
+        className='bg-black px-5 py-4 w-3/4 rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold'
         onClick={onClose}
       >
         Back to profile
       </button>
     </div>
-  );
+  )
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50"
-      onClick={handleOutsideClick}
+      className='fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50'
+      onClick={e => {
+        if (e.target === e.currentTarget) onClose()
+      }}
     >
-      <div className="bg-white rounded-2xl pt-8 w-[90%] md:w-1/2 xl:w-1/3 2xl:w-1/4 3xl:w-1/5 shadow-lg relative min-h-[400px]">
-        <button className="absolute top-6 right-5" onClick={onClose}>
+      <div className='bg-white rounded-2xl flex flex-col items-center justify-center w-[90%] md:w-1/2 xl:w-1/3 2xl:w-1/4 3xl:w-1/5 shadow-lg relative min-h-[400px]'>
+        <button className='absolute top-6 right-5' onClick={onClose}>
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
+            xmlns='http://www.w3.org/2000/svg'
+            width='24'
+            height='24'
+            viewBox='0 0 24 24'
+            fill='none'
           >
             <path
-              d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"
-              fill="#69737C"
+              d='M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z'
+              fill='#69737C'
             />
           </svg>
         </button>
 
-        {isProcessing ? (
+        {status === 'pending' ? (
           renderProcessingView
         ) : isSuccess ? (
           renderSuccessView
         ) : (
           <>
-            <div className="my-6">
-              <h2 className="text-center text-[#212425] text-[22px] font-semibold">
+            <div className='my-6'>
+              <h2 className='text-center text-[#212425] text-[22px] font-semibold'>
                 Transfer Token
               </h2>
-              <p className="text-sm mb-4 text-slate text-[13px] font-medium leading-normal text-center">
+              <p className='text-sm mb-4 text-slate text-[13px] font-medium leading-normal text-center'>
                 Transfer your tokens to another wallet.
               </p>
             </div>
 
-            <div className="w-full px-3 md:px-6">
-              {renderInputField('Recipient Address', transferTo, 'Principal ID', (e) =>
+            <div className='w-full px-3 md:px-6'>
+              {renderInputField('Recipient Address', transferTo, 'Principal ID', e =>
                 setTransferTo(e.target.value),
               )}
               {renderInputField(
                 'Amount',
                 transferPrice,
                 'Enter amount',
-                (e) => setTransferPrice(e.target.value),
+                e => setTransferPrice(e.target.value),
                 renderCurrencyDropdown,
               )}
-              <p className="text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7">
+              <p className='text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7'>
                 ${convertedPrice} USD
               </p>
+              {isError && errorMessage && (
+                <p className='text-red-500 text-sm italic mb-2 text-center'>{errorMessage}</p>
+              )}
               <button
-                className="bg-[#212425] rounded-full w-full py-3 text-center text-white text-sm font-semibold"
+                className='bg-[#212425] rounded-full w-full py-3 text-center text-white text-sm font-semibold'
                 onClick={onTransferClick}
               >
                 Transfer
               </button>
             </div>
-
-            <div className="flex flex-col items-center justify-center min-h-12 mt-8 border-t border-slate w-full rounded-b-2xl bg-[#f9fafe]">
-              <p className="text-[#69737c] text-[13px] font-normal leading-none">
-                Current balance: <span className="font-bold">{getUserBalance(userProfile, currency.code)} {currency.code}</span>
+            <div className='flex flex-col items-center justify-center min-h-12 mt-8 border-t border-slate w-full rounded-b-2xl bg-[#f9fafe]'>
+              <p className='text-[#69737c] text-[13px] font-normal leading-none'>
+                Current balance:{' '}
+                <span className='font-bold'>
+                  {getUserBalance(userProfile, currency.code)} {currency.code}
+                </span>
               </p>
             </div>
           </>
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TransferModal;
+export default TransferModal
