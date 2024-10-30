@@ -53,7 +53,7 @@ const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
             <div className='pl-1 pr-4 w-full py-1 bg-[#f9fafe] rounded-[100px] border border-[#e9eaf1] justify-between items-center inline-flex'>
               <img src='/assets/profile_icon.svg' alt='Profile Icon' className='w-10 h-10' />
               <div className='flex flex-col xl:flex-row justify-center items-center w-3/4 md:w-[60%]'>
-                <span className='text-[#212425] text-sm'>Account ID:</span>
+                <span className='text-[#212425] text-sm'>Principal ID:</span>
                 <span className='text-[#212425] text-sm font-semibold pl-2'>
                   {truncateAddress(userProfile.walletAddress)}
                 </span>

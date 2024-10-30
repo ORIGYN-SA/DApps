@@ -10,6 +10,7 @@ import OpenASaleModal from '../Modals/OpenASaleModal'
 import { useCancelNFTSale } from '../../hooks/useCancelNFTSale'
 import { useQueryClient } from '@tanstack/react-query'
 import Toast from '../Utils/Toast'
+import { Link } from 'react-router-dom'
 
 interface UserNFTsListProps {
   nfts: NFT[]
@@ -110,7 +111,7 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
         {isNFTLoading ? (
           <NFTSkeleton />
         ) : (
-          <div onClick={() => handleClickOnCard(nft)} className='cursor-pointer'>
+          <Link to={`/profile/${nft.collectionName}/${nft.id}`} className='cursor-pointer'>
             <div className='rounded-t-2xl overflow-hidden'>
               <img
                 className='w-full h-[243px] object-contain group-hover:scale-110 duration-300 ease-in-out transition-transform'
@@ -178,7 +179,7 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
                 </span>
               </button>
             )}
-          </div>
+          </Link>
         )}
       </div>
     )
