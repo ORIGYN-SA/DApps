@@ -8,6 +8,7 @@ import OGYCollections from './components/Pages/OGYCollections'
 import OGYCollectionDetails from './components/Pages/OGYCollectionDetails'
 import Daos from './components/Pages/Daos'
 import NFTPage from './components/Pages/NFTPage'
+import UserNFTPage from './components/Pages/UserNFTPage'
 import ProfilePage from './components/Pages/ProfilePage'
 import {
   GLD_NFT_1G_CANISTER_ID,
@@ -100,6 +101,7 @@ const App = () => {
                   <Route path='/collection/:canister_id' element={<OGYCollectionDetails />} />
                   <Route path='/collection/:canister_id/:nft_id' element={<NFTPage />} />
                   <Route path='/profile' element={<ProfilePage />} />
+                  <Route path='/profile/:canister_id/:nft_id' element={<UserNFTPage />} />
                 </Routes>
               </UserProfileProvider>
             </AuthProvider>

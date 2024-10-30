@@ -70,6 +70,19 @@ const ProfilePage = () => {
     setFilteredNfts(filteredNfts)
   }, [nfts, filteredCollections, searchTerm, listedFilter])
 
+  const useImageLoader = () => {
+    const [isImageLoading, setIsImageLoading] = useState(true)
+    const [isImageError, setIsImageError] = useState(false)
+
+    const handleImageLoad = useCallback(() => setIsImageLoading(false), [])
+    const handleImageError = useCallback(() => {
+      setIsImageLoading(false)
+      setIsImageError(true)
+    }, [])
+
+    return { isImageLoading, isImageError, handleImageLoad, handleImageError }
+  }
+
   const toggleCheckbox = useCallback((name: string) => {
     setFilteredCollections(prev =>
       prev.map(item => (item.category_name === name ? { ...item, checked: !item.checked } : item)),
