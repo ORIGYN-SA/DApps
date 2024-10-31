@@ -8,6 +8,7 @@ import { NFT, SaleDetails } from '../types/global'
 import { extractSaleDetails } from '../utils/priceUtils'
 import { useTokenData } from '../context/TokenDataContext'
 import { extractMetadata, extractOwner } from '../utils/metadataUtils.js'
+import { fetchCategoryByPrincipalId } from '../utils/categoryUtils.js'
 
 /**
  * Fetches NFT details, using the exchange rate from the CurrencyPriceContext.
@@ -24,12 +25,7 @@ const fetchNFTDetails = async (
       canisterId,
     })
 
-    const collectionResult = await actor.collection_nft_origyn([])
-
-    let collectionName = 'Unknown'
-    if ('ok' in collectionResult && Array.isArray(collectionResult.ok.name)) {
-      collectionName = collectionResult.ok.name[0] || 'Unknown'
-    }
+    const categoryName = (await fetchCategoryByPrincipalId(canisterId)) || 'Unknown'
 
     const nftResult = await actor.nft_batch_origyn([nftId])
     console.log('nft batch origyn result', nftResult)
@@ -58,7 +54,7 @@ const fetchNFTDetails = async (
           return {
             id: nftId,
             name: tokenName,
-            collectionName,
+            categoryName,
             image: imageUrl,
             price,
             currency,

@@ -27,7 +27,7 @@ const isText = (value: any): value is { Text: string } => {
 const fetchVerifiedTokens = async (): Promise<Token[]> => {
   const allTokens: PublicTokenOverview[] = await icpswapStoreActor.getAllTokens()
 
-  const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 5000)
+  const filteredTokens = allTokens.filter(token => token.volumeUSD7d >= 1000)
 
   const icpTokensResponse = await fetch('https://web2.icptokens.net/api/tokens')
   const icpTokens = await icpTokensResponse.json()

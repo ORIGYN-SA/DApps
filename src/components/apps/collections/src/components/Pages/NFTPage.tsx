@@ -97,7 +97,7 @@ const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo
 const NFTHeader: React.FC<{ nft: NFT }> = ({ nft }) => (
   <>
     <div className='gap-0.5 text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest'>
-      {nft.collectionName || 'Collection Name'}
+      {nft.categoryName || 'Unknown'}
     </div>
     <div className='text-[#262c2e] text-[40px] font-bold'>{nft.name || 'NFT Name'}</div>
   </>

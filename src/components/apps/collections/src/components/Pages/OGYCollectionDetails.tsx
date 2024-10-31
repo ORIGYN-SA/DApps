@@ -72,34 +72,6 @@ const OGYCollectionDetails: React.FC = () => {
     setisOpenASaleModalOpen(false)
   }
 
-  const handleCancelSale = useCallback(
-    (saleId: string | null, nftId: string | null) => {
-      if (saleId && nftId) {
-        setSelectedNFTId(nftId)
-        setIsLoadingAction(true)
-        cancelSale(
-          { saleId },
-          {
-            onSuccess: () => {
-              queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
-              setMessage('Sale cancelled successfully')
-              setShowToast(true)
-              setIsLoadingAction(false)
-            },
-            onError: error => {
-              console.error('Error cancelling the sale:', error)
-              setMessage(error.message)
-              setShowToast(true)
-              setIsLoadingAction(false)
-              setSelectedNFTId(null)
-            },
-          },
-        )
-      }
-    },
-    [cancelSale, queryClient],
-  )
-
   const NFTCard: React.FC<{ nft: NFT; canisterId: string }> = ({ nft, canisterId }) => {
     const isNFTLoading = isFetching && selectedNFTId === nft.id
     const isMyNFT = nft.owner === userPrincipal
