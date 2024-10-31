@@ -1,3 +1,5 @@
+import { CandyShared } from '../canisters/gld_nft/interfaces/gld_nft'
+
 export interface CollectionType {
   name: string
   checked: boolean
@@ -53,6 +55,7 @@ export interface NFT {
   priceUSD: number
   owner: string
   saleDetails?: SaleDetails
+  metadata?: CandyShared
 }
 
 export interface CollectionWithNFTs {
@@ -97,10 +100,6 @@ export interface MetadataWithClass {
 export interface MapEntry {
   0: any
   1: any
-}
-
-export interface CandyShared {
-  Map: MapEntry[]
 }
 
 // Union type for Metadata

@@ -64,6 +64,7 @@ const fetchNFTDetails = async (
             currency,
             priceUSD,
             saleDetails: saleDetails || undefined,
+            metadata: nftResultItem.ok.metadata,
             owner,
           } as NFT
         }

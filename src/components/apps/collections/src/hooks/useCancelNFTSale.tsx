@@ -3,18 +3,20 @@ import { useAuth } from '../auth/index'
 import { ManageSaleResult } from '../canisters/gld_nft/interfaces/gld_nft'
 
 interface CancelSaleVariables {
-  saleId: string
+  tokenId: string
 }
 
 export const useCancelNFTSale = () => {
   const { createActor } = useAuth()
 
-  const cancelSale = async ({ saleId }: CancelSaleVariables): Promise<void> => {
+  const cancelSale = async ({ tokenId }: CancelSaleVariables): Promise<void> => {
     try {
       const actor = createActor('gld_nft_1g')
 
+      console.log('tokenId', tokenId)
+
       const manageSaleRequest = {
-        end_sale: saleId,
+        end_sale: tokenId,
       }
 
       const result = (await actor.sale_nft_origyn(manageSaleRequest)) as ManageSaleResult

@@ -28,11 +28,11 @@ const ArrowIcon: React.FC = () => (
 const Header: React.FC<{ canisterId: string }> = React.memo(({ canisterId }) => (
   <div className='flex flex-col md:flex-row mt-44 md:mt-16 pb-8 px-8 items-center border-b border-mouse md:ml-[88px]'>
     <div className='flex flex-col gap-2'>
-      <p className='text-[#222526] text-[40px] font-bold leading-normal'>Collection</p>
-      <Link to={`/collection/${canisterId}`}>
+      <p className='text-[#222526] text-[40px] font-bold leading-normal'>NFT Details</p>
+      <Link to={`/profile`}>
         <div className='text-[#212425] text-[10px] font-medium leading-[16px] tracking-[2px] uppercase flex flex-row items-center group'>
           <ArrowIcon />
-          Collections / Collection Name
+          Profile
         </div>
       </Link>
     </div>
@@ -81,8 +81,6 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.me
   ({ nft, onBuyNowClick }) => {
     const { getLogo } = useTokenData()
     const { userProfile } = useUserProfile()
-    const userPrincipal = userProfile?.walletAddress
-    const isMyNFT = nft.owner === userPrincipal
 
     return (
       <div className='p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full'>
@@ -100,17 +98,6 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.me
             )}
           </div>
         </div>
-        {nft.saleDetails?.isSaleOpen && nft.price > 0 && (
-          <button
-            className='bg-[#212425] rounded-full justify-center items-center w-full mt-4'
-            onClick={onBuyNowClick}
-            disabled={isMyNFT}
-          >
-            <p className='text-center text-white text-sm font-semibold leading-[48px]'>
-              {isMyNFT ? 'Your NFT at' : 'Buy now for'} {nft.price} {nft.currency}
-            </p>
-          </button>
-        )}
       </div>
     )
   },
@@ -177,29 +164,32 @@ const UserNFTPage: React.FC = () => {
   const urlParts = useMemo(() => window.location.hash.split('/'), [])
   const canisterId = urlParts[2] || ''
   const NFTid = urlParts[3] || ''
-  const { data: nft, isLoading, error } = useGetNFTDetails(canisterId, NFTid)
+  const { data: nft, isLoading, error, isFetching } = useGetNFTDetails(canisterId, NFTid)
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [message, setMessage] = useState('')
   const [isLoadingAction, setIsLoadingAction] = useState(false)
-  const [selectedNFTId, setSelectedNFTId] = useState<string | null>(null)
   const { mutate: cancelSale } = useCancelNFTSale()
+  const [activeTab, setActiveTab] = useState<'details' | 'activity'>('details')
+
+  console.log(nft)
 
   const handleOpenSaleModal = useCallback(() => {
     setIsModalOpen(true)
   }, [])
 
   const handleCancelSale = useCallback(
-    (saleId: string | null, nftId: string | null) => {
-      if (saleId && nftId) {
-        setSelectedNFTId(nftId)
+    (tokenId: string) => {
+      console.log('tokenId', tokenId)
+      console.log('nftId', tokenId)
+      if (tokenId && tokenId) {
         setIsLoadingAction(true)
         cancelSale(
-          { saleId },
+          { tokenId },
           {
             onSuccess: () => {
-              queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
+              queryClient.invalidateQueries({ queryKey: ['getNFTDetails'] })
               setMessage('Sale cancelled successfully')
               setShowToast(true)
               setIsLoadingAction(false)
@@ -209,7 +199,6 @@ const UserNFTPage: React.FC = () => {
               setMessage(error.message)
               setShowToast(true)
               setIsLoadingAction(false)
-              setSelectedNFTId(null)
             },
           },
         )
@@ -230,8 +219,8 @@ const UserNFTPage: React.FC = () => {
             <Header canisterId={canisterId} />
             <div className='xl:mt-10 flex flex-col'>
               {error && <ErrorMessage message={error.message} />}
-              <div className='flex flex-col w-11/12 mx-auto md:w-10/12 pb-8 md:pb-0 md:ml-28 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row bg-white mb-10 md:mb-20 rounded-2xl border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] xl:min-h-[564px]'>
-                {isLoading || isLoadingAction ? (
+              <div className='flex flex-col w-11/12 mx-auto md:w-10/12 md:pb-0 md:ml-28 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row bg-white rounded-2xl border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] xl:min-h-[564px]'>
+                {isLoading || isFetching ? (
                   <UserNFTPageSkeleton />
                 ) : (
                   nft && (
@@ -239,33 +228,62 @@ const UserNFTPage: React.FC = () => {
                       <ImageContainer nft={nft} />
                       <div className='flex-col justify-center items-center gap-8 inline-flex px-6 md:mx-10 xl:w-[562px] xl:h-[564px]'>
                         <NFTDetails nft={nft} onBuyNowClick={handleOpenSaleModal} />
-                        {nft.saleDetails?.saleId && nft.price > 0 ? (
-                          <button
-                            className='bg-[#212425] rounded-full justify-center items-center w-full mt-4'
-                            onClick={() =>
-                              handleCancelSale(nft.saleDetails?.saleId ?? null, nft.id)
-                            }
-                            disabled={isLoadingAction && selectedNFTId === nft.id}
-                          >
-                            <p className='text-center text-white text-sm font-semibold leading-[48px]'>
-                              {isLoadingAction && selectedNFTId === nft.id
-                                ? 'Canceling...'
-                                : 'Cancel listing'}
-                            </p>
-                          </button>
+                        {nft.saleDetails?.saleId && nft.price > 0 && nft.saleDetails.isSaleOpen ? (
+                          <>
+                            <div className='w-full h-20 px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] justify-start items-start gap-2.5 inline-flex'>
+                              <button
+                                className='bg-[#212425] rounded-full justify-center items-center w-full'
+                                onClick={() => handleCancelSale(nft.id)}
+                                disabled={isLoadingAction}
+                              >
+                                <p className='text-center text-white text-sm font-semibold leading-[48px]'>
+                                  {isLoadingAction ? 'Canceling...' : 'Cancel listing'}
+                                </p>
+                              </button>
+                            </div>
+                          </>
                         ) : (
-                          <Link to={`/profile/nft:${nft.id}`} className='w-full'>
-                            <button className='bg-[#212425] rounded-full justify-center items-center w-full mt-4'>
+                          <div className='w-full h-20 px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] justify-start items-start gap-2.5 inline-flex'>
+                            <button
+                              className='bg-[#212425] rounded-full justify-center items-center w-full'
+                              onClick={() => handleOpenSaleModal()}
+                              disabled={isLoadingAction}
+                            >
                               <p className='text-center text-white text-sm font-semibold leading-[48px]'>
-                                Open sale
+                                {isLoadingAction ? 'Listing...' : 'List item'}
                               </p>
                             </button>
-                          </Link>
+                          </div>
                         )}
                       </div>
                     </>
                   )
                 )}
+              </div>
+              {/* Tabs section */}
+              <div className='flex justify-center items-center w-11/12 mx-auto md:w-10/12 mt-8'>
+                <div className='flex gap-10'>
+                  <button
+                    className={`text-[10px] font-medium uppercase tracking-widest pb-2 ${
+                      activeTab === 'details'
+                        ? 'font-bold text-[#262c2e] underline underline-offset-4'
+                        : 'text-[#69737c]'
+                    }`}
+                    onClick={() => setActiveTab('details')}
+                  >
+                    Details
+                  </button>
+                  <button
+                    className={`text-[10px] font-medium uppercase tracking-widest pb-2 ${
+                      activeTab === 'activity'
+                        ? 'font-bold text-[#262c2e] underline underline-offset-4'
+                        : 'text-[#69737c]'
+                    }`}
+                    onClick={() => setActiveTab('activity')}
+                  >
+                    Activity
+                  </button>
+                </div>
               </div>
             </div>
           </div>

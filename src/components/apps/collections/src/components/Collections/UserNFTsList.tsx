@@ -68,12 +68,12 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
   }, [])
 
   const handleCancelSale = useCallback(
-    (saleId: string | null, nftId: string | null) => {
-      if (saleId && nftId) {
-        setSelectedNFTId(nftId)
+    (tokenId: string | null) => {
+      if (tokenId) {
+        setSelectedNFTId(tokenId)
         setIsLoadingAction(true)
         cancelSale(
-          { saleId },
+          { tokenId },
           {
             onSuccess: () => {
               queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
@@ -94,14 +94,6 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
     },
     [cancelSale, queryClient],
   )
-
-  const handleClickOnCard = nft => {
-    if (nft.saleDetails && nft.saleDetails.saleId && nft.price > 0) {
-      handleCancelSale(nft.id || null, nft.id)
-    } else {
-      openSaleModal(nft)
-    }
-  }
 
   const NFTCard: React.FC<{ nft: NFT }> = React.memo(({ nft }) => {
     const isNFTLoading = isFetching && selectedNFTId === nft.id
@@ -134,7 +126,7 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
                   <button
                     className='opacity-0 hidden absolute bottom-0 left-0 right-0 h-10 bg-charcoal rounded-b-2xl sm:flex items-center justify-center group-hover:opacity-100 duration-300 ease-in-out transition-opacity pointer-events-none group-hover:pointer-events-auto'
                     disabled={isLoadingAction && selectedNFTId === nft.id}
-                    onClick={() => handleCancelSale(nft.id || null, nft.id)}
+                    onClick={() => handleCancelSale(nft.id)}
                   >
                     <p className='text-sm text-white'>
                       {' '}
@@ -165,7 +157,7 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
                 <button
                   className='hover:opacity-80 disabled:opacity-50 sm:hidden'
                   disabled={isLoadingAction && selectedNFTId === nft.id}
-                  onClick={() => handleCancelSale(nft.id || null, nft.id)}
+                  onClick={() => handleCancelSale(nft.id)}
                 >
                   <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
                     {isLoadingAction && selectedNFTId === nft.id ? 'Canceling...' : 'Cancel sale'}

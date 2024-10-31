@@ -79,6 +79,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
           queryClient.invalidateQueries({ queryKey: ['fetchCollectionDetails'] })
+          queryClient.invalidateQueries({ queryKey: ['getNFTDetails'] })
           setMessage('Sale opened successfully')
           setShowToast(true)
         },
