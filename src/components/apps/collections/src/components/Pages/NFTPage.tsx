@@ -12,6 +12,7 @@ import { CopyButton } from '../Buttons/CopyButton'
 import { useTokenData } from '../../context/TokenDataContext'
 import { useCombinedUserProfile } from '../../hooks/useCombinedUserProfile'
 import { useUserProfile } from '../../context/UserProfileContext'
+import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 
 const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.memo(
   ({ nft, canisterId }) => (
@@ -97,7 +98,9 @@ const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo
 const NFTHeader: React.FC<{ nft: NFT }> = ({ nft }) => (
   <>
     <div className='gap-0.5 text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest'>
-      {nft.categoryName || 'Unknown'}
+      <span className='flex flex-row items-center gap-1'>
+        {nft.categoryName || 'Unknown'} <VerifiedIcon />
+      </span>
     </div>
     <div className='text-[#262c2e] text-[40px] font-bold'>{nft.name || 'NFT Name'}</div>
   </>
@@ -142,11 +145,11 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
       </div>
       {nft.saleDetails?.isSaleOpen && nft.price > 0 && (
         <button
-          className='bg-[#212425] rounded-full justify-center items-center w-full mt-4'
+          className='bg-[#212425] rounded-full justify-center items-center w-full mt-4 hover:scale-105 duration-300 ease-in-out transition-all'
           onClick={onBuyNowClick}
           disabled={isMyNFT}
         >
-          <p className='text-center text-white text-sm font-semibold leading-[48px]'>
+          <p className='text-center text-white text-sm font-semibold leading-[48px] '>
             {isMyNFT ? 'Your NFT at' : 'Buy now for'} {nft.price} {nft.currency}
           </p>
         </button>

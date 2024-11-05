@@ -16,6 +16,7 @@ import { useUserProfile } from '../../context/UserProfileContext'
 import { useCancelNFTSale } from '../../hooks/useCancelNFTSale'
 import { useQueryClient } from '@tanstack/react-query'
 import { is } from 'date-fns/locale'
+import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 
 const OGYCollectionDetails: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -96,7 +97,9 @@ const OGYCollectionDetails: React.FC = () => {
               <div className='p-4 flex flex-col justify-between flex-grow'>
                 <div>
                   <h3 className='text-[10px] font-medium leading-[18px] tracking-[2px] text-[#69737C] uppercase'>
-                    {nft.categoryName || 'Unknown'}
+                    <span className='flex flex-row items-center gap-1'>
+                      {nft.categoryName || 'Unknown'} <VerifiedIcon />
+                    </span>
                   </h3>
                   <h3 className='text-gray-900 text-base font-bold'>{nft.name}</h3>
                 </div>

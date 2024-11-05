@@ -50,6 +50,11 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
     setIsDropdownOpen(false)
   }, [])
 
+  const isSalePriceValid = () => {
+    const price = parseFloat(salePrice)
+    return !isNaN(price) && price > 0
+  }
+
   const handleListNFT = useCallback(() => {
     const tokenData = getTokenData(currency.code)
     console.log(tokenData)
@@ -127,6 +132,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
             className='p-3 border rounded-full w-full pr-28'
             onChange={e => setSalePrice(e.target.value)}
             value={salePrice}
+            type='number'
           />
           <div className='absolute inset-y-0 right-0 flex items-center pr-2' ref={dropdownRef}>
             <div className='relative w-full'>
@@ -194,7 +200,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
       className='fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50'
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div className='bg-white rounded-2xl px-4 md:px-0 py-8 w-[90%] md:w-1/2 xl:w-1/4 3xl:w-1/4 shadow-lg relative space-y-6 min-h-[400px]'>
+      <div className='bg-white rounded-2xl px-4 md:px-0 py-8 w-[90%] md:w-1/2 xl:w-1/4 3xl:w-[20%] shadow-lg relative space-y-6 min-h-[400px]'>
         <button
           className='absolute top-4 right-4 text-gray-400 text-2xl hover:text-gray-600'
           onClick={onClose}
@@ -237,10 +243,10 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
               {renderPriceInput}
               <button
                 className={`bg-black mt-4 px-5 py-4 rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold ${
-                  salePrice ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'
+                  isSalePriceValid() ? '' : 'cursor-not-allowed opacity-50'
                 }`}
-                onClick={salePrice ? handleListNFT : undefined}
-                disabled={!salePrice}
+                onClick={isSalePriceValid() ? handleListNFT : undefined}
+                disabled={!isSalePriceValid()}
               >
                 List for {salePrice || '0'} {currency.code}
               </button>

@@ -151,7 +151,7 @@ export const useUserNFTs = (userPrincipal?: Principal) => {
   }, {} as Record<string, number>)
 
   return useQuery<NFT[], Error>({
-    queryKey: ['userNFTs'],
+    queryKey: ['getUserNFTs'],
     queryFn: userPrincipal
       ? () => fetchUserNFTs(userPrincipal, tokenUSDPrices, getLogo)
       : undefined,

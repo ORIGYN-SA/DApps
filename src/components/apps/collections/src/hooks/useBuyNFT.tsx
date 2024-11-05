@@ -12,7 +12,6 @@ import { _SERVICE as NFT_SERVICE } from '../canisters/gld_nft/interfaces/gld_nft
 import { Result, TransferArg } from '../canisters/ledger/interfaces/ledger'
 import LedgerService from '../canisters/ledger/interfaces/ledger'
 import { useAuth } from '../auth/index'
-import { convertTokenId } from '../utils/metadataUtils'
 import { OGY_TX_FEE } from '../constants'
 
 export interface SaleToken {

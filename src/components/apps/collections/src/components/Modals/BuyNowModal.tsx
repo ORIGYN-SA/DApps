@@ -43,14 +43,8 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: strin
         if (!nft.saleDetails?.saleId) {
           throw new Error('Sale ID is not defined for this NFT.')
         }
-
-        console.log('token address', tokenData.address)
-        console.log('token decimals', tokenData.decimals)
-        console.log(tokenData)
-        console.log('nft', nft)
         const priceInToken = BigInt(Math.floor(nft.price * 10 ** tokenData.decimals))
 
-        console.log('priceInToken', priceInToken)
         buyNFT(
           {
             nftId: nft.id,

@@ -6,8 +6,10 @@ import { CopyButton } from '../Buttons/CopyButton'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getUserBalance } from '../../utils/balanceUtils'
 import { useTokensTransfer } from '../../hooks/useTokensTransfer' // Assurez-vous que le chemin est correct
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
+import { Principal } from '@dfinity/principal'
 
-const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+const TokenTransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [currency, setCurrency] = useState<Currency>(currencies[0])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [transferPrice, setTransferPrice] = useState('')
@@ -19,10 +21,18 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { getUSDPrice, getLogo } = useTokenData()
   const { userProfile } = useUserProfile()
   const { mutate: transferTokens, status, isSuccess, isError } = useTokensTransfer()
+  const queryClient = useQueryClient()
 
   const onTransferClick = () => {
     if (!transferTo || !transferPrice) {
       setErrorMessage("Please enter the recipient's address and amount.")
+      return
+    }
+
+    try {
+      Principal.fromText(transferTo)
+    } catch (error) {
+      setErrorMessage('Invalid recipient address. Please enter a valid Principal ID.')
       return
     }
 
@@ -36,6 +46,8 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         },
         onSuccess: () => {
           setErrorMessage(null)
+          queryClient.invalidateQueries({ queryKey: ['getUserNFTs'] })
+          queryClient.invalidateQueries({ queryKey: ['getNFTDetails'] })
         },
       },
     )
@@ -69,10 +81,11 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     extraContent?: JSX.Element,
   ) => (
-    <div className='flex flex-col items-start mt-4 w-full'>
+    <div className='flex flex-col items-start mt-2 w-full'>
       <label className='text-[#6F6D66] text-[13px] font-medium leading-normal mb-1'>{label}</label>
       <div className='relative w-full'>
         <input
+          type={label === 'Amount' ? 'number' : 'text'} // Ajout de type 'number' pour le champ Amount
           className='p-3 border rounded-full w-full'
           placeholder={placeholder}
           value={value}
@@ -204,8 +217,8 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           renderSuccessView
         ) : (
           <>
-            <div className='my-6'>
-              <h2 className='text-center text-[#212425] text-[22px] font-semibold'>
+            <div className='mt-6'>
+              <h2 className='text-center text-[#212425] text-[22px] font-semibold mt-6'>
                 Transfer Token
               </h2>
               <p className='text-sm mb-4 text-slate text-[13px] font-medium leading-normal text-center'>
@@ -221,18 +234,27 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 'Amount',
                 transferPrice,
                 'Enter amount',
-                e => setTransferPrice(e.target.value),
+                e => {
+                  const value = e.target.value
+                  if (!isNaN(parseFloat(value)) || value === '') {
+                    setTransferPrice(value)
+                  }
+                },
                 renderCurrencyDropdown,
               )}
               <p className='text-sm mb-4 text-slate text-[13px] font-medium leading-normal italic ml-auto pr-7'>
                 ${convertedPrice} USD
               </p>
-              {isError && errorMessage && (
-                <p className='text-red-500 text-sm italic mb-2 text-center'>{errorMessage}</p>
-              )}
+              {isError ||
+                (errorMessage && (
+                  <p className='text-red-500 text-sm italic my-4'>{errorMessage}</p>
+                ))}
               <button
-                className='bg-[#212425] rounded-full w-full py-3 text-center text-white text-sm font-semibold'
+                className={`bg-[#212425] rounded-full w-full py-3 text-center text-white text-sm font-semibold transition-opacity duration-300 ${
+                  !transferTo || !transferPrice ? 'opacity-80 cursor-not-allowed' : ''
+                }`}
                 onClick={onTransferClick}
+                disabled={!transferTo || !transferPrice}
               >
                 Transfer
               </button>
@@ -252,4 +274,4 @@ const TransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   )
 }
 
-export default TransferModal
+export default TokenTransferModal

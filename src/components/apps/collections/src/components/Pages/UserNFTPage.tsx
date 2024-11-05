@@ -11,15 +11,13 @@ import Toast from '../Utils/Toast'
 import ConnectWallet from '../Buttons/ConnectWallet'
 import { useTokenData } from '../../context/TokenDataContext'
 import { useUserProfile } from '../../context/UserProfileContext'
-import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
 import { useAuth } from '../../auth/hooks'
-import { useGetNFTActivity } from '../../hooks/useGetNFTActivity'
-import Loader from '../Utils/Loader'
-import Pagination from '../Pagination/Pagination'
 import ErrorMessage from '../UserNFTPage/ErrorMessage'
 import NFTActivityContent from '../UserNFTPage/NFTActivityContent'
 import NFTDetailsContent from '../UserNFTPage/NFTDetailsContent'
 import UserNFTPageSkeleton from '../UserNFTPage/Skeletons/UserNFTPageSkeleton'
+import NFTTransferModal from '../Modals/NFTTransferModal'
+import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 
 const ArrowIcon: React.FC = () => (
   <svg
@@ -117,15 +115,17 @@ const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo
       <div className='flex-col justify-start items-start gap-2 flex w-full'>
         <NFTHeader nft={nft} />
       </div>
-      <PriceSection nft={nft} onBuyNowClick={onBuyNowClick} />
+      {nft.saleDetails && <PriceSection nft={nft} onBuyNowClick={onBuyNowClick} />}
     </>
   ),
 )
 
 const NFTHeader: React.FC<{ nft: NFT }> = ({ nft }) => (
   <>
-    <div className='gap-0.5 text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest'>
-      {nft.categoryName || 'Unknown'}
+    <div className=' text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest'>
+      <span className='flex flex-row items-center gap-1'>
+        {nft.categoryName || 'Unknown'} <VerifiedIcon />
+      </span>
     </div>
     <div className='text-[#262c2e] text-[40px] font-bold'>{nft.name || 'NFT Name'}</div>
   </>
@@ -149,8 +149,8 @@ const UserNFTPage: React.FC = () => {
   const canisterId = urlParts[2] || ''
   const NFTid = urlParts[3] || ''
   const { data: nft, isLoading, error, isFetching } = useGetNFTDetails(canisterId, NFTid)
-  console.log('nft', nft)
   const queryClient = useQueryClient()
+  const [modalType, setModalType] = useState<'sale' | 'transfer' | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [message, setMessage] = useState('')
@@ -160,10 +160,6 @@ const UserNFTPage: React.FC = () => {
 
   const { isConnected } = useAuth()
   const { userProfile } = useUserProfile()
-
-  const handleOpenSaleModal = useCallback(() => {
-    setIsModalOpen(true)
-  }, [])
 
   const handleCancelSale = useCallback(
     (tokenId: string) => {
@@ -191,7 +187,22 @@ const UserNFTPage: React.FC = () => {
     [cancelSale, queryClient],
   )
 
-  const handleCloseModal = useCallback(() => setIsModalOpen(false), [])
+  const handleOpenSaleModal = useCallback(() => {
+    setModalType('sale')
+    setIsModalOpen(true)
+  }, [])
+
+  const handleTransferModal = useCallback(() => {
+    setModalType('transfer')
+    setIsModalOpen(true)
+  }, [])
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false)
+    setModalType(null)
+  }, [])
+
+  const isMyNFT = nft?.owner === userProfile?.walletAddress
 
   return (
     <div className='relative'>
@@ -201,8 +212,8 @@ const UserNFTPage: React.FC = () => {
             Please press the "Connect Wallet" button below to access your profile.
           </p>
           <ConnectWallet />
-          <Link to='/' className='hover:underline pt-4 '>
-            Back to Collections
+          <Link to='/profile' className='hover:underline pt-4 '>
+            Back to Profile
           </Link>
         </div>
       )}
@@ -240,19 +251,28 @@ const UserNFTPage: React.FC = () => {
                                 </button>
                               </div>
                             </>
-                          ) : (
+                          ) : isMyNFT ? (
                             <div className='w-full h-20 px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] justify-start items-start gap-2.5 inline-flex'>
                               <button
-                                className='bg-[#212425] rounded-full justify-center items-center w-full'
+                                className='bg-[#212425] rounded-full justify-center hover:scale-105 duration-200 transition-all ease-in-out items-center w-full'
                                 onClick={() => handleOpenSaleModal()}
                                 disabled={isLoadingAction}
                               >
                                 <p className='text-center text-white text-sm font-semibold leading-[48px]'>
-                                  {isLoadingAction ? 'Listing...' : 'List item'}
+                                  {isLoadingAction ? 'Opening...' : 'Open a sale'}
+                                </p>
+                              </button>
+                              <button
+                                className='bg-[#212425] rounded-full hover:scale-105 duration-200 transition-all ease-in-out justify-center items-center w-full'
+                                onClick={() => handleTransferModal()}
+                                disabled={isLoadingAction}
+                              >
+                                <p className='text-center text-white text-sm font-semibold leading-[48px]'>
+                                  {isLoadingAction ? 'Transferring...' : 'Transfer'}
                                 </p>
                               </button>
                             </div>
-                          )}
+                          ) : null}
                         </div>
                       </>
                     )
@@ -294,7 +314,12 @@ const UserNFTPage: React.FC = () => {
             </div>
           </div>
         </div>
-        {isModalOpen && nft && <OpenASaleModal selectedNFT={nft} onClose={handleCloseModal} />}
+        {isModalOpen && nft && modalType === 'sale' && (
+          <OpenASaleModal selectedNFT={nft} onClose={handleCloseModal} />
+        )}
+        {isModalOpen && nft && modalType === 'transfer' && (
+          <NFTTransferModal selectedNFT={nft} onClose={handleCloseModal} canisterId={canisterId} />
+        )}
         {showToast && <Toast message={message} onClose={() => setShowToast(false)} />}
       </div>
     </div>

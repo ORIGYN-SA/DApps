@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import '../../index.css'
-import Header from '../../components/Header/Header'
-import Presentation from '../../components/Presentation/Presentation'
-import CheckboxBar from '../../components/Bar/CheckBoxBar'
-import SearchBar from '../../components/Bar/SearchBar'
+import Header from '../Header/Header'
+import Presentation from '../Presentation/Presentation'
+import CheckboxBar from '../Bar/CheckBoxBar'
+import SearchBar from '../Bar/SearchBar'
 import Collections from '../Collections/OGYCollectionsList'
 import { CollectionType } from '../../types/global'
 

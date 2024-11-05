@@ -54,6 +54,10 @@ export const useGetNFTActivity = (
         { start, length },
       ])) as GetTransactionsResult
 
+      if (!dataBlocksResponse.archived_blocks || dataBlocksResponse.archived_blocks.length === 0) {
+        throw new Error('No archived blocks found in response')
+      }
+
       const extractedCanisterId = convertPrincipalArrayToString(
         dataBlocksResponse.archived_blocks[0].callback[0]._arr,
       )

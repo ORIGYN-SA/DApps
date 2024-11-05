@@ -64,6 +64,7 @@ export const useTokensTransfer = () => {
     },
     onError: error => {
       console.error('Transfer failed:', error)
+      throw new Error('Transfer failed')
     },
     retry: 1,
   })
