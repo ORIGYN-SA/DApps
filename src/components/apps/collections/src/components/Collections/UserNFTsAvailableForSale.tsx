@@ -7,6 +7,7 @@ import { useUserProfile } from '../../context/UserProfileContext'
 import { Principal } from '@dfinity/principal'
 import Loader from '../Utils/Loader'
 import { useUserNFTs } from '../../hooks/useGetUserNFTs'
+import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 
 interface UserNFTsAvailableForSaleProps {
   selectedNFT: NFT | null
@@ -34,7 +35,7 @@ const UserNFTsAvailableForSale: React.FC<UserNFTsAvailableForSaleProps> = ({
 
   useEffect(() => {
     const updateItemsPerPage = () => {
-      setItemsPerPage(window.innerWidth <= 640 ? 4 : 8)
+      setItemsPerPage(window.innerWidth <= 640 ? 2 : 9)
     }
 
     updateItemsPerPage()
@@ -60,7 +61,7 @@ const UserNFTsAvailableForSale: React.FC<UserNFTsAvailableForSaleProps> = ({
           </p>
         )}
       </div>
-      <div className='mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full px-6 md:px-5'>
+      <div className='mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full md:px-5'>
         {!isLoading &&
           !isError &&
           currentNFTs.length > 0 &&
@@ -78,13 +79,15 @@ const UserNFTsAvailableForSale: React.FC<UserNFTsAvailableForSaleProps> = ({
             >
               <div className='flex p-2 items-center gap-4'>
                 <img
-                  src={nft.image || 'https://via.placeholder.com/243'}
+                  src={nft.image || 'https://placehold.co/243'}
                   alt={nft.name || 'NFT Image'}
                   className='h-28 w-28 rounded-2xl object-contain'
                 />
                 <div className='w-1/2'>
                   <h3 className='text-[#69737C] font-medium text-[10px] leading-[18px] tracking-[2px] uppercase'>
-                    {nft.categoryName || 'Unknown'}
+                    <span className='flex flex-row items-center gap-1'>
+                      {nft.categoryName || 'Unknown'} <VerifiedIcon />
+                    </span>
                   </h3>
                   <p className='text-[16px] font-bold leading-normal'>{nft.name || 'Unknown'}</p>
                 </div>

@@ -157,7 +157,7 @@ const ProfilePage = () => {
       {!isConnected && !userProfile && (
         <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-white bg-opacity-80 backdrop-blur-sm z-50'>
           <p className='text-lg text-gray-700 mb-4 w-3/4 text-center xl:w-full'>
-            Please press the "Connect Wallet" button below to access your profile.
+            Please press the "Connexion" button below to access your profile.
           </p>
           <ConnectWallet />
           <Link to='/' className='hover:underline pt-4 '>

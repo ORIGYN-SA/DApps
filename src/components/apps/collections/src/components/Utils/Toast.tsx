@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 
 interface ToastProps {
   message: string
@@ -19,9 +20,9 @@ const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000 }) => {
     return () => clearTimeout(timer)
   }, [onClose, duration])
 
-  return (
+  return ReactDOM.createPortal(
     <div
-      className={`fixed bottom-5 left-1/2 z-50 transform -translate-x-1/2 h-12 pl-8 bg-[#212425] text-white text-sm rounded shadow flex items-center transition-transform duration-300 w-[90%] sm:w-fit ease-out ${
+      className={`fixed bottom-5 left-1/2 z-[100] transform -translate-x-1/2 h-12 pl-8 bg-[#212425] text-white text-sm rounded shadow flex items-center transition-transform duration-300 w-[90%] sm:w-fit ease-out ${
         isVisible ? 'translate-y-0' : 'translate-y-full opacity-0'
       }`}
       style={{
@@ -33,7 +34,8 @@ const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000 }) => {
       <button className='w-12 h-12 text-white ml-auto text-4xl' onClick={() => setIsVisible(false)}>
         &times;
       </button>
-    </div>
+    </div>,
+    document.body,
   )
 }
 

@@ -32,6 +32,7 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
 
   const { mutate: cancelSale } = useCancelNFTSale()
   const queryClient = useQueryClient()
+  const { userProfile } = useUserProfile()
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -198,11 +199,12 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
           ? Array.from({ length: itemsPerPage }, (_, index) => <NFTSkeleton key={index} />)
           : currentNFTs.map(nft => <NFTCard key={nft.id} nft={nft} />)}
       </div>
-      {!isLoading && !isError && filteredNfts.length === 0 && (
+      {!isLoading && !isError && userProfile && filteredNfts.length === 0 && nfts.length === 0 && (
         <p className='text-center text-[#69737c] italic font-medium mb-4 px-6'>
           No NFTs in your collection
         </p>
       )}
+
       {isError && (
         <p className='text-center text-[#69737c] italic font-medium mb-4 px-6'>
           Error loading your NFTs. Please try again later.

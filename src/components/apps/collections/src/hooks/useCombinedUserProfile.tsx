@@ -1,4 +1,3 @@
-// src/hooks/useCombinedUserProfile.tsx
 import { useMemo } from 'react'
 import { useIdentityKit } from '@nfid/identitykit/react'
 import { useAuth } from '../auth'
@@ -36,18 +35,24 @@ export const useCombinedUserProfile = (): CombinedUserProfileContextProps => {
 
   const userProfile: UserProfile | null = useMemo(() => {
     if (isConnected && user?.principal && tokenBalances) {
+      const validBalances = tokenBalances
+        .map(balance => {
+          const token = tokens.find(t => t.symbol === balance.currency)
+          if (token && token.logo) {
+            return {
+              amount: balance.amount,
+              currency: balance.currency,
+              totalUSD: balance.amount * (token.priceUSD || 0),
+              logo: token.logo,
+            }
+          }
+          return null
+        })
+        .filter((balance): balance is BalanceDetails => balance !== null)
       return {
         name: user.principal.toText(),
         walletAddress: user.principal.toText(),
-        balances: tokenBalances.map(balance => {
-          const token = tokens.find(t => t.symbol === balance.currency)
-          return {
-            amount: balance.amount,
-            currency: balance.currency,
-            totalUSD: balance.amount * (token?.priceUSD || 0),
-            logo: token?.logo || '/assets/default_logo.svg',
-          }
-        }),
+        balances: validBalances,
         profileImage: '/assets/profile_icon.svg',
       }
     }

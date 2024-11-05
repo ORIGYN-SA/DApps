@@ -78,7 +78,7 @@ const NFTTransferModal: React.FC<NFTTransferModalProps> = ({
       <div className='w-full px-3 md:px-6 my-6'>
         <div className='flex px-3 py-2 items-center gap-4 border border-gray-300 rounded-2xl'>
           <img
-            src={selectedNFT.image || 'https://via.placeholder.com/243x244'}
+            src={selectedNFT.image || 'https://placehold.co/243x244'}
             alt={selectedNFT.name || 'NFT Image'}
             className='h-28 w-28 rounded-2xl object-contain'
           />

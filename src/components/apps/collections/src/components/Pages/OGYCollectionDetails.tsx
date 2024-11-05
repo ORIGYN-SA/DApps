@@ -13,9 +13,6 @@ import OpenASaleModal from '../Modals/OpenASaleModal'
 import ItemsPerPage from '../Utils/ItemsPerPage'
 import { useAuth } from '../../auth/hooks/useAuth'
 import { useUserProfile } from '../../context/UserProfileContext'
-import { useCancelNFTSale } from '../../hooks/useCancelNFTSale'
-import { useQueryClient } from '@tanstack/react-query'
-import { is } from 'date-fns/locale'
 import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 
 const OGYCollectionDetails: React.FC = () => {
@@ -25,10 +22,7 @@ const OGYCollectionDetails: React.FC = () => {
   const [isSelectNFTModalOpen, setIsSelectNFTModalOpen] = useState(false)
   const [isOpenASaleModalOpen, setisOpenASaleModalOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isLoadingAction, setIsLoadingAction] = useState(false)
   const [selectedNFTId, setSelectedNFTId] = useState<string | null>(null)
-  const [message, setMessage] = useState('')
-  const [showToast, setShowToast] = useState(false)
 
   const collectionCanisterId = window.location.hash.split('/').pop() || ''
   const { isLoading: isUserProfileLoading } = useUserProfile()
@@ -38,8 +32,7 @@ const OGYCollectionDetails: React.FC = () => {
     error,
     isFetching,
   } = useGetCollectionDetails(collectionCanisterId)
-  const { mutate: cancelSale } = useCancelNFTSale()
-  const queryClient = useQueryClient()
+
   const { userProfile } = useUserProfile()
   const userPrincipal = userProfile?.walletAddress
 
@@ -79,7 +72,7 @@ const OGYCollectionDetails: React.FC = () => {
 
     return (
       <Link to={`/collection/${canisterId}/${nft.id}`} className='flex flex-col'>
-        <div className='bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden h-[374px]'>
+        <div className='bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden h-[340px]'>
           {isNFTLoading ? (
             <NFTSkeleton />
           ) : (
@@ -87,14 +80,14 @@ const OGYCollectionDetails: React.FC = () => {
               {/* Image Section */}
               <div className='rounded-t-2xl overflow-hidden'>
                 <img
-                  className='w-full h-[243px] object-contain hover:scale-110 duration-300 ease-in-out transition-transform'
+                  className='w-full h-[243px] object-contain hover:scale-105 duration-300 ease-in-out transition-transform'
                   src={nft.image}
                   alt={nft.name}
                 />
               </div>
 
               {/* Content Section */}
-              <div className='p-4 flex flex-col justify-between flex-grow'>
+              <div className='px-4 pb-2 flex flex-col justify-between flex-grow'>
                 <div>
                   <h3 className='text-[10px] font-medium leading-[18px] tracking-[2px] text-[#69737C] uppercase'>
                     <span className='flex flex-row items-center gap-1'>
@@ -107,22 +100,6 @@ const OGYCollectionDetails: React.FC = () => {
                   <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
                     {`${nft.price} ${nft.currency}`}
                   </span>
-                  {/* {isMyNFT && (
-                    <button
-                      className='hover:opacity-80 disabled:opacity-50'
-                      disabled={isLoadingAction && selectedNFTId === nft.id}
-                      onClick={e => {
-                        e.stopPropagation() // Empêche le déclenchement du Link
-                        handleCancelSale(nft.id || null, nft.id)
-                      }}
-                    >
-                      <span className='px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-full'>
-                        {isLoadingAction && selectedNFTId === nft.id
-                          ? 'Canceling...'
-                          : 'Cancel sale'}
-                      </span>
-                    </button>
-                  )} */}
                 </div>
               </div>
 
@@ -161,7 +138,7 @@ const OGYCollectionDetails: React.FC = () => {
           {isConnected && <OpenASale onClick={() => setIsSelectNFTModalOpen(true)} />}
           <ConnectWallet />
         </div>
-        <div className='w-[95%] bg-white rounded-[20px] border border-[#e1e1e1] mt-20 md:w-11/12 md:ml-[88px] relative 4xl:max-w-7xl'>
+        <div className='w-[95%] bg-white rounded-[20px] border border-[#e1e1e1] mt-20 md:w-11/12 md:ml-[88px] relative 3xl:max-w-[90rem]'>
           <div className='flex flex-col items-center mb-10 w-full'>
             <img
               className={`w-40 h-40 ${
@@ -175,7 +152,9 @@ const OGYCollectionDetails: React.FC = () => {
                 <div className='h-3 bg-gray-300 rounded mx-auto w-1/4 xl:w-1/6 animate-pulse my-2'></div>
               ) : (
                 <p className='text-[#69737c] text-[10px] font-medium uppercase leading-[18px] tracking-widest'>
-                  {collection?.categoryName || ''}
+                  <span className='flex flex-row items-center gap-1 justify-center'>
+                    {collection?.categoryName || ''} <VerifiedIcon />
+                  </span>
                 </p>
               )}
               {isLoading || isUserProfileLoading ? (
@@ -210,10 +189,10 @@ const OGYCollectionDetails: React.FC = () => {
                 ))
               )}
             </div>
-            {currentNFTs.length === 0 && !isLoading && !Error && (
+            {currentNFTs.length === 0 && (
               <div className='flex flex-col items-center justify-center w-full h-[200px]'>
                 <h2 className='text-center text-[#69737c] italic font-medium '>
-                  No NFTs found in this collection
+                  No NFTs in sale in this collection
                 </h2>
               </div>
             )}

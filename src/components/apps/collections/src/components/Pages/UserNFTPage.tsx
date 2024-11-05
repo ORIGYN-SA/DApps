@@ -62,7 +62,7 @@ const ImageContainer: React.FC<{ nft: NFT }> = React.memo(({ nft }) => {
           className={`rounded-tl-2xl rounded-bl-2xl object-contain w-full h-full ${
             isImageLoading ? 'hidden' : 'block'
           }`}
-          src={nft.image || 'https://via.placeholder.com/562x564'}
+          src={nft.image || 'https://placehold.co/562x564'}
           alt={nft.name || 'NFT Image'}
           onLoad={handleImageLoad}
           onError={handleImageError}
@@ -209,7 +209,7 @@ const UserNFTPage: React.FC = () => {
       {!isConnected && !userProfile && (
         <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-white bg-opacity-80 backdrop-blur-sm z-50'>
           <p className='text-lg text-gray-700 mb-4 w-3/4 text-center xl:w-full'>
-            Please press the "Connect Wallet" button below to access your profile.
+            Please press the "Connexion" button below to access your profile.
           </p>
           <ConnectWallet />
           <Link to='/profile' className='hover:underline pt-4 '>

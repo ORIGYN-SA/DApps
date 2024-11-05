@@ -119,7 +119,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: strin
             <div className='w-full px-3 md:px-6'>
               <div className='flex px-3 py-2 items-center gap-4 border border-gray-300 rounded-t-2xl justify-center'>
                 <img
-                  src={nft.image || 'https://via.placeholder.com/243x244'}
+                  src={nft.image || 'https://placehold.co/243x244'}
                   alt={nft.name || 'NFT Image'}
                   className='h-28 w-28 rounded-2xl object-contain'
                 />
@@ -156,7 +156,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: strin
                 <img
                   src={nft.image}
                   alt={nft.name}
-                  className='w-24 h-24 object-contain rounded-lg'
+                  className='w-32 h-32 object-contain rounded-lg'
                 />
                 <div className='text-center'>
                   <h3 className='text-base font-bold'>{nft.name}</h3>

@@ -13,7 +13,7 @@ interface WalletPanelProps {
 
 const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
   const { disconnect } = useAuth()
-  const { userProfile, error, lastUpdated } = useUserProfile()
+  const { userProfile, error, lastUpdated, isLoading } = useUserProfile()
   const truncateAddress = useResponsiveTruncate()
   const navigate = useNavigate()
 
@@ -78,7 +78,7 @@ const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
               >
                 <div className='flex items-center gap-2'>
                   <img
-                    src={balance.logo || '/assets/default_logo.svg'}
+                    src={balance.logo || 'https://placehold.co/24x24'}
                     alt={balance.currency}
                     className='w-6 h-6'
                   />
@@ -137,7 +137,7 @@ const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
     [handleDisconnect],
   )
 
-  if (!userProfile) {
+  if (!userProfile || isLoading) {
     return (
       <div className='md:fixed top-[90px] left-0 md:w-1/3 lg:w-1/4 h-[calc(100vh-90px)] bg-white flex flex-col items-center justify-center shadow-lg'>
         <Loader size={24} />

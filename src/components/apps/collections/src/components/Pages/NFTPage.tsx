@@ -16,13 +16,13 @@ import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 
 const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.memo(
   ({ nft, canisterId }) => (
-    <div className='flex flex-col md:flex-row mt-44 md:mt-16 pb-8 px-8 items-center border-b border-mouse md:ml-[88px]'>
+    <div className='flex flex-col md:flex-row mt-44 md:mt-16 px-8 items-center border-b pb-8 border-mouse md:ml-[88px]'>
       <div className='flex flex-col gap-2'>
         <p className='text-[#222526] text-[40px] font-bold leading-normal'>Collection</p>
         <Link to={`/collection/${canisterId}`}>
           <div className='text-[#212425] text-[10px] font-medium leading-[16px] tracking-[2px] uppercase flex flex-row items-center group'>
             <ArrowIcon />
-            Collections / {nft?.collectionName || 'Collection Name'}
+            Collections / {nft?.categoryName || 'Unknown'}
           </div>
         </Link>
       </div>
@@ -56,10 +56,10 @@ const ImageContainer: React.FC<{ nft: NFT | undefined }> = React.memo(({ nft }) 
         <ErrorImage />
       ) : (
         <img
-          className={`rounded-tl-2xl rounded-bl-2xl object-contain w-full h-full ${
+          className={`rounded-tl-2xl rounded-bl-2xl object-contain mx-auto w-1/2 xl:w-full h-full ${
             isImageLoading ? 'hidden' : 'block'
           }`}
-          src={nft?.image || 'https://via.placeholder.com/562x564'}
+          src={nft?.image || 'https://placehold.co/562x564'}
           alt={nft?.name || 'NFT Image'}
           onLoad={handleImageLoad}
           onError={handleImageError}
@@ -70,8 +70,8 @@ const ImageContainer: React.FC<{ nft: NFT | undefined }> = React.memo(({ nft }) 
 })
 
 const SkeletonImage: React.FC = () => (
-  <div className='absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl'>
-    <div className='xl:w-[562px] xl:h-[564px] bg-gray-300 rounded-[20px]' />
+  <div className='absolute inset-0 mb-8 xl:mb-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-bl-[0px] rounded-tl-2xl rounded-tr-2xl xl:rounded-bl-2xl xl:rounded-tr-[0px]'>
+    <div className='xl:w-[562px] xl:h-[564px] bg-gray-300 rounded-tl-2xl rounded-bl-2xl' />
   </div>
 )
 
@@ -83,15 +83,15 @@ const ErrorImage: React.FC = () => (
 
 const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo(
   ({ nft, onBuyNowClick }) => (
-    <>
-      <div className='flex-col justify-start items-start gap-2 flex w-full'>
+    <div className='pb-8 xl:pb-0'>
+      <div className='flex-col justify-start items-start gap-2 flex w-full pb-4'>
         <NFTHeader nft={nft} />
         <OwnerInfo nft={nft} />
       </div>
       <PriceSection nft={nft} onBuyNowClick={onBuyNowClick} />
       <Reminder />
       {/* <CheckOnChain /> */}
-    </>
+    </div>
   ),
 )
 
@@ -181,12 +181,12 @@ const useImageLoader = () => {
 }
 
 const Skeleton: React.FC = () => (
-  <div className='flex flex-row bg-white rounded-2xl mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl min-w-[1128px]'>
+  <div className='flex flex-col md:flex-row bg-white rounded-2xl w-full mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] md:pb-0'>
     {/* Skeleton for the image */}
-    <div className='w-[562px] h-[564px] bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl'></div>
+    <div className='md:w-[562px] h-[564px] bg-gray-200 animate-pulse rounded-tr-2xl rounded-tl-2xl xl:rounded-bl-2xl md:rounded-tr-[0px] '></div>
 
     {/* Skeleton for the content */}
-    <div className='flex flex-col justify-center items-start gap-4 mx-10 w-[562px] h-[564px]'>
+    <div className='flex flex-col justify-center items-start gap-4 mx-10 md:w-[562px] h-[564px]'>
       {/* Collection Name */}
       <div className='w-full h-6 bg-gray-200 animate-pulse rounded-md mb-2'></div>
 
@@ -224,6 +224,7 @@ const NFTPage: React.FC = () => {
 
   const { data: nft, isLoading, error, isFetching } = useGetNFTDetails(canisterId, NFTid)
   const { isLoading: isUserProfileLoading } = useCombinedUserProfile()
+  console.log('nft', nft)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -232,7 +233,7 @@ const NFTPage: React.FC = () => {
 
   return (
     <div className='bg-gradient-to-t from-[#ebebeb] to-[#f9f9f9] flex flex-col min-h-screen'>
-      <Banner collectionName={nft?.collectionName || 'Unknown'} />
+      <Banner collectionName={nft?.categoryName || 'Unknown'} />
       <div className='flex flex-row flex-grow'>
         <NavBar />
         <div className='flex flex-col items-center w-full'>
@@ -240,7 +241,7 @@ const NFTPage: React.FC = () => {
             <Header nft={nft} canisterId={canisterId} />
             <div className='xl:mt-10 flex flex-col'>
               {error && <ErrorMessage message={error.message} />}
-              <div className='flex flex-col w-11/12 mx-auto md:w-10/12 pb-8 md:pb-0 md:ml-28 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row bg-white mb-10 md:mb-20 rounded-2xl border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] xl:min-h-[564px]'>
+              <div className='flex flex-col w-11/12 mx-auto md:w-10/12 md:pb-0 md:ml-28 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row bg-white mb-10 md:mb-20 rounded-2xl border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] xl:min-h-[564px]'>
                 {isLoading || isUserProfileLoading || isFetching ? (
                   <Skeleton />
                 ) : (

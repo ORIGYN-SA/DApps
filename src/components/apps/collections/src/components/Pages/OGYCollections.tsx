@@ -75,13 +75,13 @@ const OGYCollectionsPage: React.FC = () => {
   return (
     <div className='bg-[#FAFAFA] flex flex-col items-center md:w-full min-h-screen'>
       <Header />
-      <div className='4xl:max-w-7xl w-full'>
+      <div className='3xl:max-w-[90rem] w-full'>
         <Presentation />
-        <div className='flex flex-col sm:flex-row justify-between w-full px-6 md:px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12'>
+        <div className='flex flex-col sm:flex-row justify-between w-full px-6 xl:px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-3'>
           <CheckboxBar collections={allCollections} toggleCheckbox={toggleCheckbox} />
           <SearchBar handleSearch={handleSearch} placeholder='Search for a specific collection' />
         </div>
-        <div className='px-6 md:px-[76px] w-full '>
+        <div className='px-6 xl:px-[76px] w-full '>
           <CollectionsList
             collections={filteredCollections}
             currentPage={currentPage}

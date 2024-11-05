@@ -100,9 +100,9 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
   const renderNFTDetails = useMemo(
     () => (
       <div className='w-full px-3 md:px-6 my-6'>
-        <div className='flex px-3 py-2 items-center gap-4 border border-gray-300 rounded-2xl'>
+        <div className='flex  py-2 items-center gap-4 border border-gray-300 rounded-2xl'>
           <img
-            src={selectedNFT.image || 'https://via.placeholder.com/243x244'}
+            src={selectedNFT.image || 'https://placehold.co/243x244'}
             alt={selectedNFT.name || 'NFT Image'}
             className='h-28 w-28 rounded-2xl object-contain'
           />
@@ -122,7 +122,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
 
   const renderPriceInput = useMemo(
     () => (
-      <div className='flex flex-col items-start mt-4 w-full px-3 md:px-6'>
+      <div className='flex flex-col items-start w-full px-3 md:px-6'>
         <label className='text-[#6F6D66] text-[13px] font-medium leading-normal mb-1'>
           Set your price
         </label>
@@ -200,7 +200,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
       className='fixed inset-0 flex items-center justify-center bg-[#212425] bg-opacity-70 z-50'
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div className='bg-white rounded-2xl px-4 md:px-0 py-8 w-[90%] md:w-1/2 xl:w-1/4 3xl:w-[20%] shadow-lg relative space-y-6 min-h-[400px]'>
+      <div className='bg-white rounded-2xl px-4 md:px-0 py-4 w-[90%] md:w-1/2 xl:w-[30%] 3xl:w-[20%] shadow-lg relative space-y-6 min-h-[400px]'>
         <button
           className='absolute top-4 right-4 text-gray-400 text-2xl hover:text-gray-600'
           onClick={onClose}
@@ -239,10 +239,14 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
           ) : (
             <>
               <h2 className='text-[22px] font-semibold leading-normal'>Open a sale</h2>
+              <p className='text-center text-[#69737c] text-[13px] font-medium px-6'>
+                You can list your NFT for sale by setting a price.
+              </p>
               {renderNFTDetails}
               {renderPriceInput}
+              <div className='h-[1px] w-full bg-gray-300 my-2'></div>
               <button
-                className={`bg-black mt-4 px-5 py-4 rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold ${
+                className={`bg-black md:mt-2 px-5 py-4 rounded-full hover:scale-105 duration-300 ease-in-out transition-all text-center text-white text-sm font-semibold ${
                   isSalePriceValid() ? '' : 'cursor-not-allowed opacity-50'
                 }`}
                 onClick={isSalePriceValid() ? handleListNFT : undefined}

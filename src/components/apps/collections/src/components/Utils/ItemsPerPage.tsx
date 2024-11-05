@@ -24,7 +24,7 @@ const ItemsPerPage: React.FC<ItemsPerPageProps> = ({
         className='bg-[#F1F6F9] p-[5px_10px] font-semibold text-slate rounded-full focus:outline-none shadow-none '
       >
         {perPageOptions.map(option => (
-          <option key={option} value={option}>
+          <option key={option} value={option} className='text-sm'>
             {option}
           </option>
         ))}
