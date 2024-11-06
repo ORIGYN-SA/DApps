@@ -14,7 +14,7 @@ import { useUserProfile } from '../../context/UserProfileContext'
 import { useAuth } from '../../auth/hooks'
 import ErrorMessage from '../UserNFTPage/ErrorMessage'
 import NFTActivityContent from '../UserNFTPage/NFTActivityContent'
-import NFTDetailsContent from '../UserNFTPage/NFTDetailsContent'
+import NFTMetadataContent from '../UserNFTPage/NFTMetadataContent'
 import UserNFTPageSkeleton from '../UserNFTPage/Skeletons/UserNFTPageSkeleton'
 import NFTTransferModal from '../Modals/NFTTransferModal'
 import VerifiedIcon from '../../assets/icons/VerifiedIcon'
@@ -306,7 +306,9 @@ const UserNFTPage: React.FC = () => {
                 )}
                 {isConnected && (
                   <div className=' mt-4'>
-                    {activeTab === 'details' && nft && <NFTDetailsContent nft={nft} />}
+                    {activeTab === 'details' && nft && (
+                      <NFTMetadataContent canisterId={canisterId} nftId={nft.id} />
+                    )}
                     {activeTab === 'activity' && nft && <NFTActivityContent nft={nft} />}
                   </div>
                 )}

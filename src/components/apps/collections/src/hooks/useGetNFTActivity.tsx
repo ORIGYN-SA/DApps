@@ -1,4 +1,3 @@
-// Importation des types et modules nécessaires
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { Actor, HttpAgent } from '@dfinity/agent'
 import { idlFactory as goldIdlFactory } from '../canisters/gld_nft/did.js'
