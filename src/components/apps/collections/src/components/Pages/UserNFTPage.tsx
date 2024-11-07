@@ -309,7 +309,7 @@ const UserNFTPage: React.FC = () => {
                     {activeTab === 'details' && nft && (
                       <NFTMetadataContent canisterId={canisterId} nftId={nft.id} />
                     )}
-                    {activeTab === 'activity' && nft && <NFTActivityContent nft={nft} />}
+                    {activeTab === 'activity' && nft && <NFTActivityContent nft={nft} canisterId={canisterId} />}
                   </div>
                 )}
               </div>

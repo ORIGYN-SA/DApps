@@ -2,19 +2,26 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Principal } from '@dfinity/principal'
 import { useAuth } from '../auth/index'
 import { Result, TransferArg, TransferError } from '../canisters/ledger/interfaces/ledger'
+import { currencies } from '../constants/currencies'
 
 interface TransferVariables {
   to: string
   amount: bigint
+  currency: string
 }
 
 export const useTokensTransfer = () => {
   const { createActor } = useAuth()
   const queryClient = useQueryClient()
 
-  const transferTokens = async ({ to, amount }: TransferVariables) => {
+  const transferTokens = async ({ to, amount, currency }: TransferVariables) => {
     try {
-      const actor = createActor('ogy_ledger')
+      const currencyData = currencies.find(curr => curr.code === currency)
+      if (!currencyData) {
+        throw new Error(`Currency ${currency} not found`)
+      }
+
+      const actor = createActor(currencyData.canisterId)
 
       const transferArg: TransferArg = {
         to: {

@@ -27,7 +27,7 @@ interface TransactionType {
   buyer?: string
 }
 
-interface Transaction {
+export interface Transaction {
   index: string | number
   timestamp: number | null
   txn_type: TransactionType
@@ -37,6 +37,7 @@ interface Transaction {
 
 export const useGetNFTActivity = (
   tokenId: string,
+  canisterId: string,
   start: bigint,
   length: bigint,
 ): UseQueryResult<Transaction[], Error> => {
@@ -44,11 +45,16 @@ export const useGetNFTActivity = (
 
   const fetchUserActivity = async (
     tokenId: string,
+    canisterId: string,
     start: bigint,
     length: bigint,
   ): Promise<Transaction[]> => {
     try {
-      const actor = createActor('gld_nft_1g')
+      const agent = new HttpAgent({ host: 'https://ic0.app' })
+      const actor = Actor.createActor<_GOLD_NFT_SERVICE>(goldIdlFactory, {
+        agent,
+        canisterId,
+      })
       const dataBlocksResponse = (await actor.icrc3_get_blocks([
         { start, length },
       ])) as GetTransactionsResult
@@ -61,7 +67,6 @@ export const useGetNFTActivity = (
         dataBlocksResponse.archived_blocks[0].callback[0]._arr,
       )
 
-      const agent = new HttpAgent({ host: 'https://ic0.app' })
       const blockActor = Actor.createActor<_GOLD_NFT_SERVICE>(goldIdlFactory, {
         agent,
         canisterId: extractedCanisterId,
@@ -141,7 +146,7 @@ export const useGetNFTActivity = (
 
   return useQuery<Transaction[], Error>({
     queryKey: ['getNFTActivity', tokenId],
-    queryFn: () => fetchUserActivity(tokenId, start, length),
+    queryFn: () => fetchUserActivity(tokenId, canisterId, start, length),
     placeholderData: oldData => oldData,
     staleTime: 60 * 60 * 1000,
     retry: 1,

@@ -1,17 +1,51 @@
 import React from 'react'
-import { useGetNFTDetails } from '../../hooks/useGetNFTDetails'
 import { useGetNFTMetadata } from '../../hooks/useGetNFTMetadata'
 
 interface NFTMetadataContentProps {
   canisterId: string
   nftId: string | bigint
 }
+const NFTMetadataSkeleton: React.FC = () => {
+  return (
+    <section className='bg-white rounded-2xl md:px-12 px-6 pt-6 md:pt-12 mb-14 mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] md:ml-28 w-11/12 xl:mx-auto'>
+      <header className='flex flex-col md:flex-row center justify-center md:justify-between items-center mb-4 md:mb-8'>
+        <div>
+          <div className='h-8 w-40 bg-gray-300 rounded-md animate-pulse mb-2'></div>
+          <div className='h-4 w-64 bg-gray-200 rounded-md animate-pulse'></div>
+        </div>
+        <div className='text-center md:text-right'>
+          <div className='h-8 w-24 bg-gray-300 rounded-md animate-pulse mb-2'></div>
+          <div className='h-4 w-32 bg-gray-200 rounded-md animate-pulse'></div>
+        </div>
+      </header>
+
+      <section className='flex flex-col md:flex-row justify-between items-start'>
+        <div className='grid grid-cols-2 gap-4 text-center text-gray-700 mb-8 p-4 md:w-1/2'>
+          {[...Array(4)].map((_, index) => (
+            <div key={index} className='border border-[#e1e1e1] p-4 rounded-xl'>
+              <div className='h-6 w-16 bg-gray-300 rounded-md animate-pulse mb-2'></div>
+              <div className='h-4 w-12 bg-gray-200 rounded-md animate-pulse'></div>
+            </div>
+          ))}
+        </div>
+
+        <div className='w-3/4 md:w-1/3 mx-auto'>
+          <div className='h-64 bg-gray-300 rounded-md animate-pulse'></div>
+        </div>
+
+        <div className='flex flex-col items-center text-center self-center mb-8 md:mb-0'>
+          <div className='w-24 h-24 bg-gray-300 rounded-full animate-pulse mb-2'></div>
+          <div className='h-4 w-32 bg-gray-200 rounded-md animate-pulse'></div>
+        </div>
+      </section>
+    </section>
+  )
+}
 
 const NFTMetadataContent: React.FC<NFTMetadataContentProps> = ({ canisterId, nftId }) => {
   const { data: nft, isLoading, isError } = useGetNFTMetadata(canisterId, nftId)
-  console.log('nft', nft)
 
-  if (isLoading) return <p>Loading NFT Details...</p>
+  if (isLoading) return <NFTMetadataSkeleton />
   if (isError || !nft) return <p>Error loading NFT Details.</p>
 
   return (

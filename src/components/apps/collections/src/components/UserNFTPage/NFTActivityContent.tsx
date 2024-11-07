@@ -1,21 +1,43 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NFT } from '../../types/global'
-import { useGetNFTActivity } from '../../hooks/useGetNFTActivity'
+import { Transaction, useGetNFTActivity } from '../../hooks/useGetNFTActivity'
 import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
 import TableSkeleton from './Skeletons/TableSkeleton'
 import Pagination from '../Pagination/Pagination'
 import ErrorMessage from './ErrorMessage'
 
-const NFTActivityContent = ({ nft }) => {
-  const truncateAddress = useResponsiveTruncate()
-  const {
-    data: NFTactivity,
-    isLoading,
-    isError,
-    error,
-  } = useGetNFTActivity(nft.id, BigInt(0), BigInt(5000))
+interface NFTActivityContentProps {
+  nft: NFT
+  canisterId: string
+}
+
+const NFTActivityContent = ({ nft, canisterId }: NFTActivityContentProps) => {
   const [currentPage, setCurrentPage] = useState(1)
+  const [NFTactivity, setNFTactivity] = useState<Transaction[]>([])
+  const truncateAddress = useResponsiveTruncate()
+
   const itemsPerPage = 10
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
+  const offset = (currentPage - 1) * itemsPerPage
+  const limit = itemsPerPage
+
+  const { data, isLoading, isError, error } = useGetNFTActivity(
+    nft.id,
+    canisterId,
+    BigInt(offset),
+    BigInt(limit),
+  )
+
+  useEffect(() => {
+    if (data) {
+      setNFTactivity(data)
+    }
+  }, [data])
+
+  const currentItems = NFTactivity.slice(indexOfFirstItem, indexOfLastItem)
 
   if (isLoading) {
     return <TableSkeleton />
@@ -26,12 +48,6 @@ const NFTActivityContent = ({ nft }) => {
   if (!NFTactivity || NFTactivity.length === 0) {
     return <p className='text-center text-gray-500 italic mb-14'>No activity found for this NFT</p>
   }
-
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = NFTactivity.slice(indexOfFirstItem, indexOfLastItem)
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
 
   const getStringAddress = (address: string | string[] | undefined): string => {
     if (Array.isArray(address)) {
