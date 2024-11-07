@@ -39,7 +39,7 @@ const TokenTransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const amount = BigInt(parseFloat(transferPrice) * 10 ** currency.decimals)
     setErrorMessage(null)
     transferTokens(
-      { to: transferTo, amount },
+      { to: transferTo, amount, currency: currency.code },
       {
         onError: (error: Error) => {
           setErrorMessage(error.message)

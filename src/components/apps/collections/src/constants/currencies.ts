@@ -1,3 +1,10 @@
+import {
+  CKUSDC_LEDGER_CANISTER_ID,
+  GLDT_LEDGER_CANISTER_ID,
+  ICP_LEDGER_CANISTER_ID,
+  OGY_LEDGER_CANISTER_ID,
+} from '../constants'
+
 export interface Currency {
   code: string
   name: string
@@ -13,7 +20,7 @@ export const currencies: Currency[] = [
     name: 'OGY',
     icon: '/assets/OGY_Icon.svg',
     isUsable: true,
-    canisterId: 'j5naj-nqaaa-aaaal-ajc7q-cai',
+    canisterId: OGY_LEDGER_CANISTER_ID,
     decimals: 8,
   },
   {
@@ -21,7 +28,7 @@ export const currencies: Currency[] = [
     name: 'ICP',
     icon: '/assets/IC_Icon.svg',
     isUsable: true,
-    canisterId: 'ryjl3-tyaaa-aaaaa-aaaba-cai',
+    canisterId: ICP_LEDGER_CANISTER_ID,
     decimals: 8,
   },
   {
@@ -29,7 +36,7 @@ export const currencies: Currency[] = [
     name: 'ckUSDC',
     icon: '/assets/ckUSDC.webp',
     isUsable: true,
-    canisterId: 'xevnm-gaaaa-aaaar-qafnq-cai',
+    canisterId: CKUSDC_LEDGER_CANISTER_ID,
     decimals: 8,
   },
   {
@@ -37,7 +44,7 @@ export const currencies: Currency[] = [
     name: 'Gold Token',
     icon: '/assets/GLDT_Icon.svg',
     isUsable: false,
-    canisterId: '6uad6-fqaaa-aaaam-abovq-cai',
+    canisterId: GLDT_LEDGER_CANISTER_ID,
     decimals: 8,
   },
   // add more currencies as needed

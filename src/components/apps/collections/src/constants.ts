@@ -3,10 +3,11 @@ export const GLD_NFT_1G_CANISTER_ID = import.meta.env.PUBLIC_GLD_NFT_1G_CANISTER
 export const GLD_NFT_10G_CANISTER_ID = import.meta.env.PUBLIC_GLD_NFT_10G_CANISTER_ID
 export const GLD_NFT_100G_CANISTER_ID = import.meta.env.PUBLIC_GLD_NFT_100G_CANISTER_ID
 export const GLD_NFT_1000G_CANISTER_ID = import.meta.env.PUBLIC_GLD_NFT_1000G_CANISTER_ID
-export const OGY_LEDGER_CANISTER_ID = import.meta.env.PUBLIC_OGY_LEDGER_CANISTER_ID
 export const SWAP_CANISTER_ID = import.meta.env.PUBLIC_SWAP_CANISTER_ID
+export const OGY_LEDGER_CANISTER_ID = import.meta.env.PUBLIC_OGY_LEDGER_CANISTER_ID
 export const GLDT_LEDGER_CANISTER_ID = import.meta.env.PUBLIC_GLDT_LEDGER_CANISTER_ID
-export const ICP_SWAP_CANISTER_ID = import.meta.env.PUBLIC_ICP_SWAP_CANISTER_ID
+export const ICP_LEDGER_CANISTER_ID = import.meta.env.PUBLIC_ICP_LEDGER_CANISTER_ID
+export const CKUSDC_LEDGER_CANISTER_ID = import.meta.env.PUBLIC_CKUSDC_LEDGER_CANISTER_ID
 export const LOGO_CANISTER_ID = import.meta.env.PUBLIC_LOGO_CANISTER_ID
 export const ICPSWAP_TOKENS_CANISTER_ID = import.meta.env.PUBLIC_ICPSWAP_TOKENS_CANISTER_ID
 export const COLLECTIONS_INDEX_CANISTER_ID = import.meta.env.PUBLIC_COLLECTIONS_INDEX
@@ -64,11 +65,11 @@ if (!(APP_MODE === 'production')) {
     )
   else console.log(`GLDT_LEDGER_CANISTER_ID=${GLDT_LEDGER_CANISTER_ID}`)
 
-  if (!ICP_SWAP_CANISTER_ID)
+  if (!ICP_LEDGER_CANISTER_ID)
     console.log(
-      'No ICP_SWAP_CANISTER_ID environment variable. Set ICP_SWAP_CANISTER_ID environment variable.',
+      'No ICP_LEDGER_CANISTER_ID environment variable. Set ICP_LEDGER_CANISTER_ID environment variable.',
     )
-  else console.log(`ICP_SWAP_CANISTER_ID=${ICP_SWAP_CANISTER_ID}`)
+  else console.log(`ICP_LEDGER_CANISTER_ID=${ICP_LEDGER_CANISTER_ID}`)
 
   if (!LOGO_CANISTER_ID)
     console.log(
@@ -80,4 +81,9 @@ if (!(APP_MODE === 'production')) {
       'No ICPSWAP_TOKENS_CANISTER_ID environment variable. Set ICPSWAP_TOKENS_CANISTER_ID environment variable.',
     )
   else console.log(`ICPSWAP_TOKENS_CANISTER_ID=${ICPSWAP_TOKENS_CANISTER_ID}`)
+  if (!CKUSDC_LEDGER_CANISTER_ID)
+    console.log(
+      'No CKUSDC_LEDGER_CANISTER_ID environment variable. Set CKUSDC_LEDGER_CANISTER_ID environment variable.',
+    )
+  else console.log(`CKUSDC_LEDGER_CANISTER_ID=${CKUSDC_LEDGER_CANISTER_ID}`)
 }
