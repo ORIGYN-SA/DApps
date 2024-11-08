@@ -53,7 +53,7 @@ const ImageContainer: React.FC<{ nft: NFT }> = React.memo(({ nft }) => {
   const { isImageLoading, isImageError, handleImageLoad, handleImageError } = useImageLoader()
 
   return (
-    <div className='xl:w-[562px] xl:h-[564px] relative'>
+    <div className='w-3/4 md:w-1/2 xl:w-[562px] xl:h-[564px] relative mx-auto'>
       {isImageLoading && !isImageError && <SkeletonImage />}
       {isImageError ? (
         <ErrorImage />
@@ -91,7 +91,7 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.me
     return (
       <div className='p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full'>
         <div className='text-[#2E2E2E] text-base font-bold'>
-          {nft.saleDetails?.isSaleOpen ? 'Current price' : 'Last sale price'}
+          {nft.saleDetails?.isSaleOpen ? 'Current price' : 'Last opened price'}
         </div>
         <div className='flex flex-row justify-start items-center gap-2'>
           <img src={getLogo(nft.currency)} alt='Token Logo' className='w-10 h-10' />
@@ -170,6 +170,7 @@ const UserNFTPage: React.FC = () => {
           {
             onSuccess: () => {
               queryClient.invalidateQueries({ queryKey: ['getNFTDetails'] })
+              queryClient.invalidateQueries({ queryKey: ['getNFTActivity'] })
               setMessage('Sale cancelled successfully')
               setShowToast(true)
               setIsLoadingAction(false)
@@ -309,7 +310,9 @@ const UserNFTPage: React.FC = () => {
                     {activeTab === 'details' && nft && (
                       <NFTMetadataContent canisterId={canisterId} nftId={nft.id} />
                     )}
-                    {activeTab === 'activity' && nft && <NFTActivityContent nft={nft} canisterId={canisterId} />}
+                    {activeTab === 'activity' && nft && (
+                      <NFTActivityContent nft={nft} canisterId={canisterId} />
+                    )}
                   </div>
                 )}
               </div>

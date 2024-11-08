@@ -70,6 +70,7 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: strin
               queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
               queryClient.invalidateQueries({ queryKey: ['fetchCollectionDetails'] })
               queryClient.invalidateQueries({ queryKey: ['getNFTDetails'] })
+              queryClient.invalidateQueries({ queryKey: ['getNFTActivity'] })
             },
             onError: error => {
               console.error('Error during purchase:', error)

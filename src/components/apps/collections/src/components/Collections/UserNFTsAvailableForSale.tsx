@@ -35,7 +35,7 @@ const UserNFTsAvailableForSale: React.FC<UserNFTsAvailableForSaleProps> = ({
 
   useEffect(() => {
     const updateItemsPerPage = () => {
-      setItemsPerPage(window.innerWidth <= 640 ? 2 : 9)
+      setItemsPerPage(window.innerWidth <= 640 ? 2 : 8)
     }
 
     updateItemsPerPage()

@@ -130,7 +130,7 @@ const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = ({
   return (
     <div className='p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full'>
       <div className='text-[#2E2E2E] text-base font-bold'>
-        {nft.saleDetails?.isSaleOpen ? 'Current price' : 'Last sale price'}
+        {nft.saleDetails?.isSaleOpen ? 'Current price' : 'Last opened price'}
       </div>
       <div className='flex flex-row justify-start items-center gap-2'>
         <img src={getLogo(nft.currency)} alt='Token Logo' className='w-10 h-10' />

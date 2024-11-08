@@ -29,8 +29,8 @@ const NFTMetadataSkeleton: React.FC = () => {
           ))}
         </div>
 
-        <div className='w-3/4 md:w-1/3 mx-auto'>
-          <div className='h-64 bg-gray-300 rounded-md animate-pulse'></div>
+        <div className='w-3/4 md:w-1/3 mx-auto h-80 mb-10'>
+          <div className='h-full bg-gray-300 rounded-md animate-pulse'></div>
         </div>
 
         <div className='flex flex-col items-center text-center self-center mb-8 md:mb-0'>
@@ -43,13 +43,16 @@ const NFTMetadataSkeleton: React.FC = () => {
 }
 
 const NFTMetadataContent: React.FC<NFTMetadataContentProps> = ({ canisterId, nftId }) => {
-  const { data: nft, isLoading, isError } = useGetNFTMetadata(canisterId, nftId)
+  const { data: nft, isLoading, isError, isFetching } = useGetNFTMetadata(canisterId, nftId)
 
-  if (isLoading) return <NFTMetadataSkeleton />
+  if (isLoading || isFetching) return <NFTMetadataSkeleton />
   if (isError || !nft) return <p>Error loading NFT Details.</p>
 
   return (
-    <section className='bg-white rounded-2xl md:px-12 px-6 pt-6 md:pt-12 mb-14 mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] md:ml-28 w-11/12 xl:mx-auto'>
+    <section
+      className='bg-white rounded-2xl md:px-12 px-6 w-11/12 pt-6 md:pt-12 mb-14 mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] md:ml-28 xl:mx-auto
+    md:w-10/12 md:pb-0 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row 4xl:max-w-7xl xl:min-h-[564px]'
+    >
       {/* Title and Header */}
       <header className='flex flex-col md:flex-row center justify-center md:justify-between items-center mb-4 md:mb-8'>
         <div>

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { NFT } from '../../types/global'
-import { Transaction, useGetNFTActivity } from '../../hooks/useGetNFTActivity'
+import { useGetNFTActivity } from '../../hooks/useGetNFTActivity'
 import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
 import TableSkeleton from './Skeletons/TableSkeleton'
 import Pagination from '../Pagination/Pagination'
 import ErrorMessage from './ErrorMessage'
+import { format } from 'util'
 
 interface NFTActivityContentProps {
   nft: NFT
@@ -13,33 +14,34 @@ interface NFTActivityContentProps {
 
 const NFTActivityContent = ({ nft, canisterId }: NFTActivityContentProps) => {
   const [currentPage, setCurrentPage] = useState(1)
-  const [NFTactivity, setNFTactivity] = useState<Transaction[]>([])
+  const [itemsPerPage, setItemsPerPage] = useState(8)
   const truncateAddress = useResponsiveTruncate()
 
-  const itemsPerPage = 10
+  const {
+    data: NFTactivity,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+  } = useGetNFTActivity(nft.id, canisterId)
+
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = NFTactivity ? NFTactivity.slice(indexOfFirstItem, indexOfLastItem) : []
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
-  const offset = (currentPage - 1) * itemsPerPage
-  const limit = itemsPerPage
-
-  const { data, isLoading, isError, error } = useGetNFTActivity(
-    nft.id,
-    canisterId,
-    BigInt(offset),
-    BigInt(limit),
-  )
 
   useEffect(() => {
-    if (data) {
-      setNFTactivity(data)
+    const updateItemsPerPage = () => {
+      setItemsPerPage(window.innerWidth <= 640 ? 5 : 10)
     }
-  }, [data])
 
-  const currentItems = NFTactivity.slice(indexOfFirstItem, indexOfLastItem)
+    updateItemsPerPage()
+    window.addEventListener('resize', updateItemsPerPage)
+    return () => window.removeEventListener('resize', updateItemsPerPage)
+  }, [])
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <TableSkeleton />
   }
   if (isError) {
@@ -49,18 +51,37 @@ const NFTActivityContent = ({ nft, canisterId }: NFTActivityContentProps) => {
     return <p className='text-center text-gray-500 italic mb-14'>No activity found for this NFT</p>
   }
 
-  const getStringAddress = (address: string | string[] | undefined): string => {
-    if (Array.isArray(address)) {
-      return address.length > 0 ? address[0] : 'N/A'
+  const parseTimestamp = (timestampStr: string | null): string => {
+    if (!timestampStr) return 'N/A'
+    try {
+      const timestampBigInt = BigInt(timestampStr)
+      const timestampMillis = timestampBigInt / BigInt(1e6)
+      if (timestampMillis <= BigInt(Number.MAX_SAFE_INTEGER)) {
+        const date = new Date(Number(timestampMillis))
+        const formattedDate = date.toLocaleString(format('en-US'), {
+          month: 'numeric',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        })
+
+        return formattedDate
+      }
+      return 'Date too large'
+    } catch {
+      return 'Invalid timestamp'
     }
-    return address || 'N/A'
+  }
+
+  const getStringAddress = (address: string | 'N/A'): string => {
+    return address !== 'N/A' ? truncateAddress(address) : 'N/A'
   }
 
   return (
-    <div className='bg-white rounded-2xl md:px-12 px-6 pt-6 md:pt-12 mb-14 mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] md:ml-28 w-10/12 xl:mx-auto'>
-      {/* Large screen table */}
+    <div className='bg-white rounded-2xl px-6 md:px-0 xl:px-6  pt-6 md:p-6 mb-14 mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] md:ml-28 w-10/12 lg:ml-28 xl:mx-auto'>
       <div className='hidden md:block'>
-        <table className='w-full '>
+        <table className='w-full'>
           <thead>
             <tr>
               <th className='py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600'>
@@ -93,23 +114,22 @@ const NFTActivityContent = ({ nft, canisterId }: NFTActivityContentProps) => {
                   {activity.txn_type.type}
                 </td>
                 <td className='py-2 px-4 border-b border-gray-200 text-sm text-gray-700'>
-                  {activity.timestamp ? new Date(activity.timestamp / 1e6).toLocaleString() : 'N/A'}
+                  {parseTimestamp(activity.timestamp)}
                 </td>
                 <td className='py-2 px-4 border-b border-gray-200 text-sm text-gray-700'>
-                  {truncateAddress(
-                    getStringAddress(activity.txn_type.from || activity.txn_type.seller),
+                  {getStringAddress(activity.txn_type.from)}
+                </td>
+                <td className='py-2 px-4 border-b border-gray-200 text-sm text-gray-700'>
+                  {getStringAddress(activity.txn_type.to)}
+                </td>
+                <td className='py-2 px-4 border-b border-gray-200 text-sm text-gray-700'>
+                  {activity.formattedAmount !== 'N/A' ? (
+                    <>
+                      {activity.formattedAmount} {activity.txn_type.token.data.symbol}
+                    </>
+                  ) : (
+                    'N/A'
                   )}
-                </td>
-                <td className='py-2 px-4 border-b border-gray-200 text-sm text-gray-700'>
-                  {truncateAddress(
-                    getStringAddress(activity.txn_type.to || activity.txn_type.buyer),
-                  )}
-                </td>
-                <td className='py-2 px-4 border-b border-gray-200 text-sm text-gray-700'>
-                  {activity.txn_type.amount
-                    ? activity.txn_type.amount / 10 ** activity.txn_type.token.data.decimals
-                    : 'N/A'}{' '}
-                  {activity.txn_type.token?.data.symbol || ''}
                 </td>
               </tr>
             ))}
@@ -117,10 +137,9 @@ const NFTActivityContent = ({ nft, canisterId }: NFTActivityContentProps) => {
         </table>
       </div>
 
-      {/* Mobile screen table */}
       <div className='md:hidden space-y-4'>
         {currentItems.map(activity => (
-          <div key={activity.index} className=''>
+          <div key={activity.index} className='bg-gray-50 p-4 rounded-lg shadow'>
             <div className='flex justify-between mb-2'>
               <span className='font-semibold text-gray-700'>Index:</span>
               <span className='text-gray-700'>{activity.index}</span>
@@ -133,42 +152,36 @@ const NFTActivityContent = ({ nft, canisterId }: NFTActivityContentProps) => {
             </div>
             <div className='flex justify-between mb-2'>
               <span className='font-semibold text-gray-700'>Timestamp:</span>
-              <span className='text-gray-700 text-right'>
-                {activity.timestamp ? new Date(activity.timestamp / 1e6).toLocaleString() : 'N/A'}
-              </span>
+              <span className='text-gray-700 text-right'>{parseTimestamp(activity.timestamp)}</span>
             </div>
             <div className='flex justify-between mb-2'>
               <span className='font-semibold text-gray-700'>From:</span>
-              <span className='text-gray-700'>
-                {truncateAddress(
-                  getStringAddress(activity.txn_type.from || activity.txn_type.seller),
-                )}
-              </span>
+              <span className='text-gray-700'>{getStringAddress(activity.txn_type.from)}</span>
             </div>
             <div className='flex justify-between mb-2'>
               <span className='font-semibold text-gray-700'>To:</span>
-              <span className='text-gray-700'>
-                {truncateAddress(getStringAddress(activity.txn_type.to || activity.txn_type.buyer))}
-              </span>
+              <span className='text-gray-700'>{getStringAddress(activity.txn_type.to)}</span>
             </div>
             <div className='flex justify-between'>
               <span className='font-semibold text-gray-700'>Amount:</span>
               <span className='text-gray-700'>
-                {activity.txn_type.amount
-                  ? activity.txn_type.amount / 10 ** activity.txn_type.token.data.decimals
-                  : 'N/A'}{' '}
-                {activity.txn_type.token?.data.symbol || ''}
+                {activity.formattedAmount !== 'N/A' ? (
+                  <>
+                    {activity.formattedAmount} {activity.txn_type.token.data.symbol}
+                  </>
+                ) : (
+                  'N/A'
+                )}
               </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Pagination */}
-      <div className='mt-4'>
+      <div className='my-4'>
         <Pagination
           itemsPerPage={itemsPerPage}
-          totalPages={Math.ceil(NFTactivity.length / itemsPerPage)}
+          totalPages={Math.ceil((NFTactivity?.length || 0) / itemsPerPage)}
           currentPage={currentPage}
           paginate={paginate}
         />
