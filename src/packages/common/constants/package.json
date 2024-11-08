@@ -1,0 +1,6 @@
+{
+  "name": "@dapp/common-constants",
+  "version": "0.1.0",
+  "main": "src/index.tsx",
+  "description": "Common constants for dApps."
+}

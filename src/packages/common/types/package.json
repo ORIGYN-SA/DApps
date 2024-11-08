@@ -2,5 +2,9 @@
   "name": "@dapp/common-types",
   "version": "0.1.0",
   "description": "Common TypeScript types used within the dApps.",
-  "main": "src/index.ts"
+  "main": "src/index.ts",
+  "dependencies": {
+    "@dapp/features-authentication": "0.1.0",
+    "@dapp/utils": "0.1.0"
+  }
 }

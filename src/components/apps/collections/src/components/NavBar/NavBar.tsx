@@ -1,9 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { ShopIcon, LibraryIcon, GovernanceIcon } from '@dapp/common-assets'
 import { Link, useLocation } from 'react-router-dom'
-import ShopIcon from '../../assets/icons/ShopIcon'
-import LibraryIcon from '../../assets/icons/LibraryIcon'
-import GovernanceIcon from '../../assets/icons/GovernanceIcon'
-
 interface NavItemProps {
   name: string
   Icon: React.FC<React.SVGProps<SVGSVGElement>>

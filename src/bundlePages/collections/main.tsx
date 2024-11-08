@@ -1,14 +1,14 @@
-import React from "react"
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import AppCollections from '../../components/apps/collections/src/AppCollections.jsx';
+import React from 'react'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import CollectionsApp from '../../components/apps/collections/src/CollectionsApp.jsx'
 
-export default function render() {
+export default function render () {
   return (
     <StrictMode>
-      <AppCollections />
+      <CollectionsApp />
     </StrictMode>
-  );
+  )
 }
 
-createRoot(document.getElementById('root')!).render(render());
+createRoot(document.getElementById('root')!).render(render())

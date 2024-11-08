@@ -1,18 +1,14 @@
 import React, { useState, useMemo, useCallback } from 'react'
-import NavBar from '../NavBar/NavBar'
-import { NFT } from '../../types/global'
 import { Link } from 'react-router-dom'
-import Banner from '../Utils/Banner'
-import { useGetNFTDetails } from '../../hooks/useGetNFTDetails'
-import ConnectWallet from '../Buttons/ConnectWallet'
-import Reminder from '../Utils/Reminder'
+import NavBar from '../NavBar/NavBar'
 import BuyNowModal from '../Modals/BuyNowModal'
-import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
-import { CopyButton } from '../Buttons/CopyButton'
-import { useTokenData } from '../../context/TokenDataContext'
-import { useCombinedUserProfile } from '../../hooks/useCombinedUserProfile'
-import { useUserProfile } from '../../context/UserProfileContext'
-import VerifiedIcon from '../../assets/icons/VerifiedIcon'
+import { VerifiedIcon } from '@dapp/common-assets'
+import { useGetNFTDetails, useCombinedUserProfile } from '@dapp/common-hooks'
+import { NFT } from '@dapp/common-types'
+import { ConnectWallet, Reminder, CopyButton, Banner } from '@dapp/features-components'
+import { useTokenData } from '@dapp/features-tokensdata'
+import { useUserProfile } from '@dapp/features-userprofile'
+import { useResponsiveTruncate } from '@dapp/utils'
 
 const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.memo(
   ({ nft, canisterId }) => (
@@ -224,7 +220,6 @@ const NFTPage: React.FC = () => {
 
   const { data: nft, isLoading, error, isFetching } = useGetNFTDetails(canisterId, NFTid)
   const { isLoading: isUserProfileLoading } = useCombinedUserProfile()
-  console.log('nft', nft)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 

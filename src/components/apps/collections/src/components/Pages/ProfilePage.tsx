@@ -1,21 +1,15 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
-import SearchBar from '../Bar/SearchBar'
-import Header from '../Header/Header'
 import WalletPanel from '../Panels/WalletPanel'
 import MyNFTSPanel from '../Panels/MyNFTsPanel'
 import TokenTransferModal from '../Modals/TokenTransferModal'
-import ManageModal from '../Modals/ManageModal'
-import CheckboxBar from '../Bar/CheckBoxBar'
-import { useGetCollectionsList } from '../../hooks/useGetCollectionsList'
-import { useAuth } from '../../auth/index'
-import ConnectWallet from '../Buttons/ConnectWallet'
 import { Link } from 'react-router-dom'
-import { useUserProfile } from '../../context/UserProfileContext'
-import { CollectionType, NFT } from '../../types/global'
 import UserNFTsList from '../Collections/UserNFTsList'
 import { Principal } from '@dfinity/principal'
-import { useUserNFTs } from '../../hooks/useGetUserNFTs'
-import FilterBar from '../Bar/FilterBar'
+import { useGetCollectionsList, useUserNFTs } from '@dapp/common-hooks'
+import { CollectionType, NFT } from '@dapp/common-types'
+import { useAuth } from '@dapp/features-authentication'
+import { ConnectWallet, Header, CheckboxBar, SearchBar, FilterBar } from '@dapp/features-components'
+import { useUserProfile } from '@dapp/features-userprofile'
 
 const ProfilePage = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -208,7 +202,7 @@ const ProfilePage = () => {
             {renderWalletContent}
             <div className='ml-0 md:ml-[33%] lg:ml-[25%] w-full md:w-3/4 bg-gray-100 flex flex-col flex-grow items-center overflow-y-auto min-h-screen'>
               <div className='flex flex-col sm:flex-row justify-between w-full md:px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12'>
-                <CheckboxBar collections={filteredCollections} toggleCheckbox={toggleCheckbox} />
+                <CheckboxBar items={filteredCollections} toggleCheckbox={toggleCheckbox} />
                 <SearchBar
                   handleSearch={handleSearch}
                   placeholder='Search for a specific collection'

@@ -1,3 +1,5 @@
+import { DAOType } from '@dapp/common-types'
+
 // src/data.ts
 interface Collection {
   name: string
@@ -16,8 +18,13 @@ interface NFT {
   price: string
 }
 
-interface BackendResponse {
+interface BackendCollectionResponse {
   collections: Collection[]
+  totalPages: number
+}
+
+interface BackendDaoResponse {
+  daos: DAOType[]
   totalPages: number
 }
 
@@ -26,10 +33,15 @@ interface NFTResponse {
   totalPages: number
 }
 
+interface DAOResponse {
+  daos: DAOType[]
+  totalPages: number
+}
+
 export const fetchFakeCollections = async (
   page: number,
   limit: number,
-): Promise<BackendResponse> => {
+): Promise<BackendCollectionResponse> => {
   // Simulate more data for pagination
   const allCollections: Collection[] = [
     {
@@ -386,5 +398,82 @@ export const fetchFakeNFTs = async (page: number, limit: number): Promise<NFTRes
   return {
     nfts: paginatedNFTs,
     totalPages,
+  }
+}
+
+export const fetchFakeDaos = async (page: number, limit: number): Promise<DAOResponse> => {
+  const allDaos: DAOType[] = [
+    {
+      name: 'Art',
+      checked: true,
+      image: 'https://via.placeholder.com/150',
+      category_name: 'Alice',
+      nftCount: 120n,
+      is_promoted: false,
+      canister_id: 'alice',
+    },
+    {
+      name: 'Precious Metal',
+      checked: true,
+      image: 'https://via.placeholder.com/150',
+      category_name: 'Bob',
+      nftCount: 85n,
+      is_promoted: false,
+      canister_id: 'bob',
+    },
+    {
+      name: 'Diamond',
+      checked: true,
+      image: 'https://via.placeholder.com/150',
+      category_name: 'Charlie',
+      nftCount: 200n,
+      is_promoted: false,
+      canister_id: 'charlie',
+    },
+    {
+      name: 'Jewelry',
+      checked: true,
+      image: 'https://via.placeholder.com/150',
+      category_name: 'Diana',
+      nftCount: 150n,
+      is_promoted: false,
+      canister_id: 'diana',
+    },
+    {
+      name: 'Music',
+      checked: true,
+      image: 'https://via.placeholder.com/150',
+      category_name: 'Ethan',
+      nftCount: 95n,
+      is_promoted: false,
+      canister_id: 'ethan',
+    },
+    {
+      name: 'Real Estate',
+      checked: true,
+      image: 'https://via.placeholder.com/150',
+      category_name: 'Fiona',
+      nftCount: 60n,
+      is_promoted: false,
+      canister_id: 'fiona',
+    },
+    {
+      name: 'Photography',
+      checked: true,
+      image: 'https://via.placeholder.com/150',
+      category_name: 'Grace',
+      nftCount: 110n,
+      is_promoted: false,
+      canister_id: 'grace',
+    },
+  ]
+
+  const startIndex = (page - 1) * limit
+  const paginatedDaos = allDaos.slice(startIndex, startIndex + limit)
+  const totalPages = Math.ceil(allDaos.length / limit)
+
+  return {
+    daos: paginatedDaos,
+    totalPages: totalPages,
   }
 }

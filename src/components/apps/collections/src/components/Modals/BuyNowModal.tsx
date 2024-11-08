@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import Reminder from '../Utils/Reminder'
-import { useTokenData } from '../../context/TokenDataContext'
-import { NFT } from '../../types/global'
-import { useUserProfile } from '../../context/UserProfileContext'
-import { useBuyNFT } from '../../hooks/useBuyNFT'
-import { getUserBalance } from '../../utils/balanceUtils'
 import { Principal } from '@dfinity/principal'
 import { useQueryClient } from '@tanstack/react-query'
+import { useBuyNFT } from '@dapp/common-hooks'
+import { NFT } from '@dapp/common-types'
+import { Reminder } from '@dapp/features-components'
+import { useTokenData } from '@dapp/features-tokensdata'
+import { useUserProfile } from '@dapp/features-userprofile'
+import { getUserBalance } from '@dapp/utils'
 const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: string }> = ({
   nft,
   onClose,
@@ -28,7 +28,6 @@ const BuyNowModal: React.FC<{ nft: NFT; onClose: () => void; collectionId: strin
 
   const onBuyNowClick = () => {
     const tokenData = getTokenData(nft.currency)
-    console.log(tokenData)
     setIsProcessing(true)
 
     if (canBuy && tokenData && userProfile) {

@@ -1,16 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { NFT } from '../../types/global'
-import Pagination from '../Pagination/Pagination'
-import { useUserProfile } from '../../context/UserProfileContext'
-import { Principal } from '@dfinity/principal'
-import Loader from '../Utils/Loader'
-import { useUserNFTs } from '../../hooks/useGetUserNFTs'
-import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 import OpenASaleModal from '../Modals/OpenASaleModal'
-import { useCancelNFTSale } from '../../hooks/useCancelNFTSale'
 import { useQueryClient } from '@tanstack/react-query'
-import Toast from '../Utils/Toast'
 import { Link } from 'react-router-dom'
+import { VerifiedIcon } from '@dapp/common-assets'
+import { useCancelNFTSale } from '@dapp/common-hooks'
+import { NFT } from '@dapp/common-types'
+import { Pagination, Toast } from '@dapp/features-components'
+import { useUserProfile } from '@dapp/features-userprofile'
 
 interface UserNFTsListProps {
   nfts: NFT[]

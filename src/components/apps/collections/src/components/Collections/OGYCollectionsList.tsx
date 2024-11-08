@@ -1,10 +1,9 @@
 import React from 'react'
-import Pagination from '../Pagination/Pagination'
 import SkeletonItem from './SkeletonItem'
 import { Link } from 'react-router-dom'
-import { CollectionType } from '../../types/global'
-import ItemsPerPage from '../Utils/ItemsPerPage'
-import VerifiedIcon from '../../assets/icons/VerifiedIcon'
+import { VerifiedIcon } from '@dapp/common-assets'
+import { CollectionType } from '@dapp/common-types'
+import { ItemsPerPage, Pagination } from '@dapp/features-components'
 
 interface OGYCollectionsProps {
   collections: CollectionType[]

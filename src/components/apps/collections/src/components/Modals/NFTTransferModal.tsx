@@ -1,16 +1,11 @@
 import React from 'react'
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import { Currency, currencies } from '../../constants/currencies'
-import { NFT } from '../../types/global'
-import { useTokenData } from '../../context/TokenDataContext'
-import { SaleToken, useSellNFT } from '../../hooks/useSellNFT'
-import VerifiedIcon from '../../assets/icons/VerifiedIcon'
+import { useState, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import Toast from '../Utils/Toast'
-import { useTransferNFT } from '../../hooks/useTransferNFT'
-import { nft } from '../../../../../../packages/features/sales-escrows/modals/tests/data'
-import { useFetchTransferFeeNft } from '../../hooks/useFetchTransferFeeNFT'
 import { Principal } from '@dfinity/principal'
+import { VerifiedIcon } from '@dapp/common-assets'
+import { useFetchTransferFeeNft, useTransferNFT } from '@dapp/common-hooks'
+import { NFT } from '@dapp/common-types'
+import { Toast } from '@dapp/features-components'
 
 interface NFTTransferModalProps {
   selectedNFT: NFT

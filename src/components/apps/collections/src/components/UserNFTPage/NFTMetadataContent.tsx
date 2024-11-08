@@ -1,5 +1,5 @@
+import { useGetNFTMetadata } from '@dapp/common-hooks'
 import React from 'react'
-import { useGetNFTMetadata } from '../../hooks/useGetNFTMetadata'
 
 interface NFTMetadataContentProps {
   canisterId: string
@@ -51,7 +51,7 @@ const NFTMetadataContent: React.FC<NFTMetadataContentProps> = ({ canisterId, nft
   return (
     <section
       className='bg-white rounded-2xl md:px-12 px-6 w-11/12 pt-6 md:pt-12 mb-14 mx-auto border border-[#e1e1e1] xl:max-w-5xl 4xl:max-w-7xl xl:min-w-[1128px] md:ml-28 xl:mx-auto
-    md:w-10/12 md:pb-0 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row 4xl:max-w-7xl xl:min-h-[564px]'
+    md:w-10/12 md:pb-0 mt-8 xl:ml-28 2xl:mx-auto xl:flex-row xl:min-h-[564px]'
     >
       {/* Title and Header */}
       <header className='flex flex-col md:flex-row center justify-center md:justify-between items-center mb-4 md:mb-8'>

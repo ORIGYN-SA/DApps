@@ -1,13 +1,12 @@
 // UserNFTsAvailableForSale.tsx
 
 import React, { useEffect, useState } from 'react'
-import { NFT } from '../../types/global'
-import Pagination from '../Pagination/Pagination'
-import { useUserProfile } from '../../context/UserProfileContext'
 import { Principal } from '@dfinity/principal'
-import Loader from '../Utils/Loader'
-import { useUserNFTs } from '../../hooks/useGetUserNFTs'
-import VerifiedIcon from '../../assets/icons/VerifiedIcon'
+import { VerifiedIcon } from '@dapp/common-assets'
+import { useUserNFTs } from '@dapp/common-hooks'
+import { NFT } from '@dapp/common-types'
+import { Loader, Pagination } from '@dapp/features-components'
+import { useUserProfile } from '@dapp/features-userprofile'
 
 interface UserNFTsAvailableForSaleProps {
   selectedNFT: NFT | null

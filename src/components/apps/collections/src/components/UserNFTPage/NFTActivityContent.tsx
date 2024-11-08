@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { NFT } from '../../types/global'
-import { useGetNFTActivity } from '../../hooks/useGetNFTActivity'
-import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
 import TableSkeleton from './Skeletons/TableSkeleton'
-import Pagination from '../Pagination/Pagination'
 import ErrorMessage from './ErrorMessage'
 import { format } from 'util'
+import { useGetNFTActivity } from '@dapp/common-hooks'
+import { NFT } from '@dapp/common-types'
+import { Pagination } from '@dapp/features-components'
+import { useResponsiveTruncate } from '@dapp/utils'
 
 interface NFTActivityContentProps {
   nft: NFT

@@ -1,8 +1,8 @@
 import React from 'react'
-import { NFT } from '../../types/global'
-import { useUserProfile } from '../../context/UserProfileContext'
-import Loader from '../Utils/Loader'
 import UserNFTsAvailableForSale from '../Collections/UserNFTsAvailableForSale'
+import { NFT } from '@dapp/common-types'
+import { Loader } from '@dapp/features-components'
+import { useUserProfile } from '@dapp/features-userprofile'
 
 interface SelectNFTForSaleModalProps {
   currentNFTs: NFT[]

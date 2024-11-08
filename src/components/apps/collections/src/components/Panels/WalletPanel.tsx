@@ -1,10 +1,9 @@
 import { useCallback, useMemo } from 'react'
-import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
-import { CopyButton } from '../Buttons/CopyButton'
 import { useNavigate } from 'react-router-dom'
-import { useUserProfile } from '../../context/UserProfileContext'
-import Loader from '../Utils/Loader'
-import { useAuth } from '../../auth/hooks'
+import { useAuth } from '@dapp/features-authentication'
+import { CopyButton, Loader } from '@dapp/features-components'
+import { useUserProfile } from '@dapp/features-userprofile'
+import { useResponsiveTruncate } from '@dapp/utils'
 
 interface WalletPanelProps {
   onTransferClick: () => void

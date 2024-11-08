@@ -1,9 +1,16 @@
-export * from './Layout';
-export * from './LoadingContainer';
-export * from './Logo';
-export * from './NatPrice';
-export * from './Preloader';
-export * from './TabPanel';
-export * from './TokenIcon';
-export * from './WalletTokens';
-export * from './ProgressBar';
+// index.ts
+export { default as ConnectWallet } from './Buttons/ConnectWallet'
+export { default as CopyButton } from './Buttons/CopyButton'
+export { default as OpenASaleButton } from './Buttons/OpenASaleButton'
+export { default as CheckboxBar } from './Bar/CheckBoxBar'
+export { default as SearchBar } from './Bar/SearchBar'
+export { default as FilterBar } from './Bar/FilterBar'
+export { default as OpenProposalBar } from './Bar/OpenProposalBar'
+export { default as Header } from './Header/Header'
+export { default as NavBar } from './NavBar/NavBar'
+export { default as Pagination } from './Pagination/Pagination'
+export { default as Banner } from './Utils/Banner'
+export { default as ItemsPerPage } from './Utils/ItemsPerPage'
+export { default as Loader } from './Utils/Loader'
+export { default as Reminder } from './Utils/Reminder'
+export { default as Toast } from './Utils/Toast'

@@ -1,8 +1,6 @@
 import React from 'react'
-import CheckboxBar from '../Bar/CheckBoxBar'
-import SearchBar from '../Bar/SearchBar'
-import FilterBar from '../Bar/FilterBar'
-import { CollectionType } from '../../types/global'
+import { CollectionType } from '@dapp/common-types'
+import { SearchBar, CheckboxBar, FilterBar } from '@dapp/features-components'
 
 interface NFTsPanelProps {
   handleSearch: (term: string) => void

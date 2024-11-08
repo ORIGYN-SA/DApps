@@ -1,19 +1,21 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import SearchBar from '../Bar/SearchBar'
-import Pagination from '../Pagination/Pagination'
-import NavBar from '../NavBar/NavBar'
-import { useGetCollectionDetails } from '../../hooks/useGetCollectionDetails'
-import { NFT } from '../../types/global'
-import Banner from '../Utils/Banner'
-import ConnectWallet from '../Buttons/ConnectWallet'
-import OpenASale from '../Buttons/OpenASale'
 import SelectNFTForSaleModal from '../Modals/SelectNFTForSaleModal'
 import OpenASaleModal from '../Modals/OpenASaleModal'
-import ItemsPerPage from '../Utils/ItemsPerPage'
-import { useAuth } from '../../auth/hooks/useAuth'
-import { useUserProfile } from '../../context/UserProfileContext'
-import VerifiedIcon from '../../assets/icons/VerifiedIcon'
+import { useUserProfile } from '@dapp/features-userprofile'
+import { useGetCollectionDetails } from '@dapp/common-hooks'
+import { useAuth } from '@dapp/features-authentication'
+import { VerifiedIcon } from '@dapp/common-assets'
+import {
+  Banner,
+  ConnectWallet,
+  ItemsPerPage,
+  NavBar,
+  OpenASaleButton,
+  Pagination,
+  SearchBar,
+} from '@dapp/features-components'
+import { NFT } from '@dapp/common-types'
 
 const OGYCollectionDetails: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -47,8 +49,6 @@ const OGYCollectionDetails: React.FC = () => {
 
   const filteredNfts =
     collection?.nfts.filter(nft => nft.name.toLowerCase().includes(searchTerm.toLowerCase())) || []
-
-  console.log('filteredNfts', filteredNfts)
 
   const indexOfLastNFT = currentPage * itemsPerPage
   const indexOfFirstNFT = indexOfLastNFT - itemsPerPage
@@ -135,7 +135,7 @@ const OGYCollectionDetails: React.FC = () => {
       <div className='bg-gray-100 flex flex-col flex-grow items-center min-h-screen'>
         <Banner collectionName={collection?.name[0] || 'Unknown'} />
         <div className='mt-44 mb-4 md:mt-16 flex flex-row justify-center md:justify-end w-full space-x-6 md:px-[30px] 4xl:px-0 4xl:max-w-7xl'>
-          {isConnected && <OpenASale onClick={() => setIsSelectNFTModalOpen(true)} />}
+          {isConnected && <OpenASaleButton onClick={() => setIsSelectNFTModalOpen(true)} />}
           <ConnectWallet />
         </div>
         <div className='w-[95%] bg-white rounded-[20px] border border-[#e1e1e1] mt-20 md:w-11/12 md:ml-[88px] relative 3xl:max-w-[90rem]'>
@@ -189,7 +189,7 @@ const OGYCollectionDetails: React.FC = () => {
                 ))
               )}
             </div>
-            {currentNFTs.length === 0 && (
+            {currentNFTs.length === 0 && !isLoading && !error && !isFetching && (
               <div className='flex flex-col items-center justify-center w-full h-[200px]'>
                 <h2 className='text-center text-[#69737c] italic font-medium '>
                   No NFTs in sale in this collection

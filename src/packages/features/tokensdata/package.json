@@ -1,0 +1,10 @@
+{
+  "name": "@dapp/features-tokensdata",
+  "version": "0.1.0",
+  "description": "Tokens Data provider that handles tokens and settings.",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@dapp/features-authentication": "0.1.0",
+    "@dapp/utils": "0.1.0"
+  }
+}

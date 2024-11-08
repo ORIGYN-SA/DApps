@@ -1,12 +1,12 @@
 import React from 'react'
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import { Currency, currencies } from '../../constants/currencies'
-import { NFT } from '../../types/global'
-import { useTokenData } from '../../context/TokenDataContext'
-import { SaleToken, useSellNFT } from '../../hooks/useSellNFT'
-import VerifiedIcon from '../../assets/icons/VerifiedIcon'
 import { useQueryClient } from '@tanstack/react-query'
-import Toast from '../Utils/Toast'
+import { VerifiedIcon } from '@dapp/common-assets'
+import { Currency, currencies } from '@dapp/common-constants'
+import { useSellNFT, SaleToken } from '@dapp/common-hooks'
+import { NFT } from '@dapp/common-types'
+import { Toast } from '@dapp/features-components'
+import { useTokenData } from '@dapp/features-tokensdata'
 
 interface OpenASaleModalProps {
   selectedNFT: NFT
@@ -57,7 +57,6 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
 
   const handleListNFT = useCallback(() => {
     const tokenData = getTokenData(currency.code)
-    console.log(tokenData)
     if (!tokenData) {
       console.error('Get Token data Error:', currency.code)
       return
@@ -83,6 +82,7 @@ const OpenASaleModal: React.FC<OpenASaleModalProps> = ({ selectedNFT, onClose })
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['userNFTs'] })
+          queryClient.invalidateQueries({ queryKey: ['getUserNFTs'] })
           queryClient.invalidateQueries({ queryKey: ['fetchCollectionDetails'] })
           queryClient.invalidateQueries({ queryKey: ['getNFTDetails'] })
           queryClient.invalidateQueries({ queryKey: ['getNFTActivity'] })

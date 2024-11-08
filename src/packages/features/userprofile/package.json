@@ -1,0 +1,10 @@
+{
+  "name": "@dapp/features-userprofile",
+  "version": "0.1.0",
+  "description": "User profile provider for all dApps.",
+  "main": "src/index.tsx",
+  "dependencies": {
+    "@dapp/features-authentication": "0.1.0",
+    "@dapp/utils": "0.1.0"
+  }
+}

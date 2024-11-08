@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
-import { useResponsiveTruncate } from '../../utils/responsiveTruncate'
-import { currencies, Currency } from '../../constants/currencies'
-import { useTokenData } from '../../context/TokenDataContext'
-import { CopyButton } from '../Buttons/CopyButton'
-import { useUserProfile } from '../../context/UserProfileContext'
-import { getUserBalance } from '../../utils/balanceUtils'
-import { useTokensTransfer } from '../../hooks/useTokensTransfer' // Assurez-vous que le chemin est correct
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { Principal } from '@dfinity/principal'
+import { Currency, currencies } from '@dapp/common-constants'
+import { useTokensTransfer } from '@dapp/common-hooks'
+import { CopyButton } from '@dapp/features-components'
+import { useTokenData } from '@dapp/features-tokensdata'
+import { useUserProfile } from '@dapp/features-userprofile'
+import { useResponsiveTruncate, getUserBalance } from '@dapp/utils'
 
 const TokenTransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [currency, setCurrency] = useState<Currency>(currencies[0])
@@ -85,7 +84,7 @@ const TokenTransferModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <label className='text-[#6F6D66] text-[13px] font-medium leading-normal mb-1'>{label}</label>
       <div className='relative w-full'>
         <input
-          type={label === 'Amount' ? 'number' : 'text'} // Ajout de type 'number' pour le champ Amount
+          type={label === 'Amount' ? 'number' : 'text'}
           className='p-3 border rounded-full w-full'
           placeholder={placeholder}
           value={value}
