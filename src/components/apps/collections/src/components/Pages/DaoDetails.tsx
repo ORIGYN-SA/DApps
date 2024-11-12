@@ -10,6 +10,7 @@ import { NFT, DAOResponse } from '@dapp/common-types'
 import { useAuth } from '@dapp/features-authentication'
 import { ConnectWallet, Banner } from '@dapp/features-components'
 import { useUserProfile } from '@dapp/features-userprofile'
+import ExpiredProposalsList from '../DAOs/Cards/ExpiredProposalsList'
 
 const DaoDetails: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -80,7 +81,7 @@ const DaoDetails: React.FC = () => {
 
   const Header: React.FC<{ allDaos: DAOResponse | undefined; canisterId: string }> = React.memo(
     ({ allDaos, canisterId }) => (
-      <div className='flex flex-col md:flex-row mt-44 md:mt-16 px-8 items-center border-b pb-8 border-mouse md:ml-[88px]'>
+      <div className='flex flex-col md:flex-row mt-44 md:mt-16 pb-8 md:px-8 items-center border-b border-mouse md:ml-[88px]'>
         <div className='flex flex-col gap-2'>
           <p className='text-[#222526] text-[40px] font-bold leading-normal'>DAOs</p>
           <Link to={`/daos/`}>
@@ -100,16 +101,18 @@ const DaoDetails: React.FC = () => {
   return (
     <div className='flex flex-row w-full'>
       <NavBar />
-      <div className='bg-gray-100 flex flex-col flex-grow items-center min-h-screen'>
+      <div className='bg-gray-100 flex flex-col flex-grow items-center min-h-screen w-full'>
         <Banner collectionName={collection?.name[0] || 'Unknown'} />
-        <Header allDaos={data} canisterId={collectionCanisterId} />
-        <div className='mt-44 mb-4 md:mt-16 flex flex-row justify-center md:justify-end w-full space-x-6 md:px-[30px] 4xl:px-0 4xl:max-w-7xl'>
-          <ConnectWallet />
+        <div className='w-full'>
+          <Header allDaos={data} canisterId={collectionCanisterId} />
         </div>
-        <div className='w-[95%]  mt-20 md:w-11/12 md:ml-[88px] relative 3xl:max-w-[90rem]'>
-          <div className='flex flex-col md:flex-row items-center justify-around'>
+        <div className='w-[95%]  mt-10 md:w-11/12 md:ml-[88px] relative 3xl:max-w-[90rem]'>
+          <div className='flex flex-col xl:flex-row xl:justify-around justify-center mb-10 md:px-0 w-full gap-2 xl:gap-4'>
             <DAOCard isLoading={false} />
-            <ProposalsList isLoading={false} />
+            <div className='flex flex-col justify-between gap-2 xl:gap-4 md:px-6'>
+              <ProposalsList isLoading={false} />
+              <ExpiredProposalsList isLoading={false} />
+            </div>
           </div>
         </div>
       </div>

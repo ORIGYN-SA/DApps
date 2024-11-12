@@ -3,7 +3,7 @@ const DAOCard = ({ isLoading }) => {
   return isLoading ? (
     <DAOCardSkeleton />
   ) : (
-    <div className='w-[468px] min-h-[588px] py-10 flex-col justify-center items-start gap-2.5 inline-flex'>
+    <div className=' flex-col  items-start gap-2.5 inline-flex w-fit mx-auto'>
       <div className='bg-white rounded-2xl border border-[#e1e1e1] flex-col flex'>
         <img
           className='w-full h-[300px] object-cover ease-in-out transition-transform rounded-t-2xl'
@@ -46,9 +46,9 @@ const DAOCard = ({ isLoading }) => {
 }
 
 const DAOCardSkeleton = () => (
-  <div className='w-[468px] h-[588px] py-10 flex-col justify-center items-start gap-2.5 inline-flex'>
+  <div className='h-[588px] py-10 flex-col justify-center items-start gap-2.5 inline-flex'>
     <div className='bg-white rounded-2xl border border-[#e1e1e1] flex-col flex'>
-      <div className='h-[300px] w-[468px] bg-gray-200 animate-pulse rounded-t-2xl' />
+      <div className='h-[300px] bg-gray-200 animate-pulse rounded-t-2xl' />
       <div className='p-4 flex-col justify-start items-start gap-2 flex'>
         <div className='w-20 h-4 bg-gray-200 animate-pulse rounded' />
         <div className='w-48 h-6 bg-gray-200 animate-pulse rounded mt-2' />
