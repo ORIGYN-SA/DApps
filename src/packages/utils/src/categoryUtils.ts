@@ -18,6 +18,9 @@ export const fetchCategories = async (): Promise<Record<string, string>> => {
 
   const agent = new HttpAgent({ host: 'https://ic0.app' })
   const canisterId = COLLECTIONS_INDEX_CANISTER_ID
+  if (!canisterId) {
+    throw new Error('COLLECTIONS_INDEX_CANISTER_ID is undefined.')
+  }
   const actor = Actor.createActor<CollectionService>(idlFactory, {
     agent,
     canisterId,
@@ -75,6 +78,9 @@ export const fetchCategoryByPrincipalId = async (principalId: string): Promise<s
 
   const agent = new HttpAgent({ host: 'https://ic0.app' })
   const canisterId = COLLECTIONS_INDEX_CANISTER_ID
+  if (!canisterId) {
+    throw new Error('COLLECTIONS_INDEX_CANISTER_ID is undefined.')
+  }
   const actor = Actor.createActor<CollectionService>(idlFactory, {
     agent,
     canisterId,

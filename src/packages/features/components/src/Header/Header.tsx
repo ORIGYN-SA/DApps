@@ -1,9 +1,9 @@
+/* eslint-disable import/extensions */
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@dapp/features-authentication'
 import { ConnectWallet } from '@dapp/features-components'
-import MenuIcon from 'public/assets/MenuIcon'
-import XIcon from 'public/assets/XIcon'
+import { MenuIcon, XIcon } from '@dapp/common-assets'
 
 interface LinkProps {
   title: string

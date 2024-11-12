@@ -21,6 +21,9 @@ const fetchUserNFTs = async (
   try {
     const agent = new HttpAgent({ host: 'https://ic0.app' })
     const collectionsIndexCanisterId = COLLECTIONS_INDEX_CANISTER_ID
+    if (!collectionsIndexCanisterId) {
+      throw new Error('COLLECTIONS_INDEX_CANISTER_ID is undefined.')
+    }
     const collectionActor = Actor.createActor<_COLLECTION_SERVICE>(collection_idlFactory, {
       agent,
       canisterId: collectionsIndexCanisterId,

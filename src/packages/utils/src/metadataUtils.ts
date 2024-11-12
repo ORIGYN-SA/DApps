@@ -1,10 +1,9 @@
 import { Principal } from '@dfinity/principal'
-import { CandyShared } from '../canisters/gld_nft/interfaces/gld_nft'
-import { _SERVICE as NFT_SERVICE } from '../canisters/gld_nft/interfaces/gld_nft'
-import { Metadata } from '../types/global'
-import { convertPrincipalArrayToString } from './principalUtils'
-import { hasClass, hasMap } from './typeGuards'
-import { useAuth } from '../../../../../packages/features/authentication/src/hooks'
+
+import {
+  CandyShared,
+  _SERVICE as NFT_SERVICE,
+} from '../../../packages/common/canisters/gld_nft/interfaces/gld_nft'
 
 export const generateImageUrl = (canisterId: string, assetName: string): string => {
   return `https://prptl.io/-/${canisterId}/-/${assetName}/preview`
@@ -41,15 +40,6 @@ export const extractMetadata = (
 /**
  * Extracts the token name from metadata.
  */
-export const extractTokenName = (metadata: Metadata): string => {
-  if (hasClass(metadata)) {
-    const nameField = metadata.Class.find(field => field.name === 'id' && field.value?.Text)
-    return nameField?.value?.Text || 'Unknown'
-  } else if (hasMap(metadata)) {
-    return 'Unknown'
-  }
-  return 'Unknown'
-}
 
 /**
  * Extracts the owner from metadata.

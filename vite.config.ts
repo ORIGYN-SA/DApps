@@ -1,20 +1,23 @@
+// vite.config.ts
+
 import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import { resolve, dirname } from 'path'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import EnvironmentPlugin from 'vite-plugin-environment'
 import svgr from 'vite-plugin-svgr'
 import { loadEnv } from 'vite'
-import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 
+// Load environment variables based on the current mode
 const MODE = process.env.NODE_ENV || 'production'
 const env = loadEnv(MODE, process.cwd(), '')
 process.env = { ...process.env, ...env }
 
+// Derive __dirname and __filename using fileURLToPath and import.meta.url
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// https://vitejs.dev/config/
+// Export the Vite configuration directly as an object
 export default defineConfig({
   plugins: [
     EnvironmentPlugin([
@@ -53,9 +56,9 @@ export default defineConfig({
       '@dapp/common-hooks': resolve(__dirname, './src/packages/common/hooks/src/index.ts'),
       '@dapp/common-types': resolve(__dirname, './src/packages/common/types/src/index.ts'),
       '@dapp/utils': resolve(__dirname, './src/packages/utils/src/index.ts'),
+      '@assets': resolve(__dirname, 'public/assets'),
     },
   },
-
   optimizeDeps: {
     esbuildOptions: {
       define: {

@@ -5,15 +5,15 @@
     "verbatimModuleSyntax": false,
     "strict": true,
     "skipLibCheck": true,
-    "module": "ESNext",
     "jsx": "react-jsx",
     "noImplicitAny": false,
     "outDir": "dist",
     "preserveConstEnums": true,
     "removeComments": true,
     "sourceMap": true,
-    "target": "ESNext",
-    "moduleResolution": "Node",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "allowJs": true,
     "rootDir": ".",
     "lib": ["es5", "es6", "esnext", "dom", "dom.iterable"],
@@ -35,7 +35,8 @@
       "@dapp/features-userprofile": ["./src/packages/features/userprofile/src/index.ts"],
       "@dapp/features-components": ["./src/packages/features/components/src/index.ts"],
       "@dapp/features-components/*": ["./src/packages/features/components/src/*"],
-      "@dapp/utils": ["./src/packages/utils/src/index.ts"]
+      "@dapp/utils": ["./src/packages/utils/src/index.ts"],
+      "@assets": ["./public/assets"]
     }
   },
   "exclude": ["./node_modules", ".git", "./packages/**/node_modules", "./dist/**/*.js"],

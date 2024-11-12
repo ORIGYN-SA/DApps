@@ -1,6 +1,7 @@
 // src/utils/typeGuards.ts
 
-import { MetadataWithClass, CandyShared } from '../types/global'
+import { MetadataWithClass } from '@dapp/common-types'
+import { CandyShared } from 'src/packages/common/canisters/gld_nft/interfaces/gld_nft'
 
 /**
  * Checks if the metadata contains the 'Class' property.

@@ -1,6 +1,6 @@
 // src/utils/priceUtils.ts
 
-import { SaleDetails } from '../types/global'
+import { SaleDetails } from '@dapp/common-types'
 
 export const EXCHANGE_RATE_API_URL =
   'https://api.coingecko.com/api/v3/simple/price?ids=internet-computer&vs_currencies=usd'

@@ -19,6 +19,9 @@ const fetchCollectionsList = async (
 ): Promise<CollectionsBackendResponse> => {
   const agent = new HttpAgent({ host: 'https://ic0.app' })
   const canisterId = COLLECTIONS_INDEX_CANISTER_ID
+  if (!canisterId) {
+    throw new Error('CanisterId is undefined.')
+  }
   const actor = Actor.createActor<_SERVICE>(idlFactory, {
     agent,
     canisterId,

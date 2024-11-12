@@ -1,4 +1,4 @@
-import { DAOType } from './types/global'
+import { DAOType } from '@dapp/common-types'
 
 // src/data.ts
 interface Collection {

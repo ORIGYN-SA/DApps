@@ -8,6 +8,10 @@ const canisterId = ICPSWAP_TOKENS_CANISTER_ID
 
 const agent = new HttpAgent({ host: 'https://ic0.app' })
 
+if (!canisterId) {
+  throw new Error('ICPSWAP_TOKENS_CANISTER_ID is undefined.')
+}
+
 export const icpswapStoreActor = Actor.createActor<_ICSWAP_STORE>(idlFactory, {
   agent,
   canisterId,
