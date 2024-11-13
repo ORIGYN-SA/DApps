@@ -1,72 +1,85 @@
+import React from 'react'
+
 const ExpiredProposalsList = ({ isLoading }) => {
-  return isLoading ? (
-    <></>
-  ) : (
+  if (isLoading) return null
+
+  return (
     <div className='p-4 md:p-6 bg-white rounded-3xl shadow border border-[#e1e1e1]'>
       {/* Header */}
-      <div className='w-full pb-4 border-b border-[#e1e1e1]'>
-        <div className="text-[#212425] text-base md:text-lg font-bold font-['DM Sans']">
+      <header className='w-full pb-2 border-b border-[#e1e1e1]'>
+        <h2 className="text-[#212425] text-base md:text-lg font-bold font-['DM Sans']">
           Expired proposals
-        </div>
-      </div>
+        </h2>
+      </header>
 
-      {/* Mobile View - Cards */}
-      <div className='flex flex-col gap-4 md:hidden'>
-        <div className="text-[#69737c] text-base font-medium font-['DM Sans']">Top holders</div>
+      {/* Mobile View - Display cards for each proposal */}
+      <section className='flex flex-col gap-4 pt-2 md:hidden'>
+        <h3 className="text-[#69737c] text-base font-medium font-['DM Sans']">Top holders</h3>
 
-        {/* Cards for each proposal */}
         {[1, 2].map(id => (
-          <div
+          <article
             key={id}
             className='p-4 bg-[#f9f9f9] rounded-lg border border-[#e1e1e1] shadow-sm flex flex-col gap-2'
           >
+            {/* Proposal title and status */}
             <div className='flex justify-between items-center'>
-              <div className="text-[#212425] text-sm font-medium font-['DM Sans']">
+              <p className="text-[#212425] text-sm font-medium font-['DM Sans'] w-3/4">
                 {id === 1 ? 'Sell everything and buy an elephant' : 'Example of expired proposals'}
-              </div>
-              <div className='px-2 py-1 bg-[#e1e1e1] rounded-full text-[#69737c] text-xs font-bold'>
+              </p>
+              <span className='px-2 py-1 bg-[#e1e1e1] rounded-full text-[#69737c] text-xs font-bold'>
                 Expired
-              </div>
+              </span>
             </div>
+
+            {/* Proposal ID and date */}
             <div className='flex justify-between items-center'>
-              <div className="text-[#69737c] text-sm font-normal font-['DM Sans']">#{id}</div>
-              <div className="text-[#69737c] text-sm font-normal font-['DM Sans']">
+              <span className="text-[#69737c] text-sm font-normal font-['DM Sans']">#{id}</span>
+              <span className="text-[#69737c] text-sm font-normal font-['DM Sans']">
                 {id === 1 ? '20 days ago' : '1 month ago'}
-              </div>
+              </span>
             </div>
-          </div>
+          </article>
         ))}
-      </div>
+      </section>
 
-      {/* Tablet/Desktop View - Table */}
-      <div className='hidden md:flex flex-col gap-8'>
-        <div className="text-[#69737c] text-base font-medium font-['DM Sans']">Top holders</div>
+      {/* Tablet/Desktop View - Display proposals in a table format */}
+      <section className='hidden md:flex flex-col gap-8'>
+        <h3 className="text-[#69737c] text-base font-medium font-['DM Sans']">Top holders</h3>
 
+        {/* Table header */}
         <div className="w-full p-4 bg-[#212425] rounded-lg flex justify-between items-center text-white text-xs font-bold font-['DM Sans']">
-          <div className='w-[30px]'>Nb</div>
-          <div className='flex-grow'>Subjects</div>
-          <div>Status</div>
-          <div>Date</div>
+          <span className='w-[30px]'>Nb</span>
+          <span className='flex-grow'>Subjects</span>
+          <span>Status</span>
+          <span>Date</span>
         </div>
 
+        {/* Table rows for each proposal */}
         {[1, 2].map(id => (
-          <div
+          <article
             key={id}
             className='w-full px-4 pb-4 border-b border-[#e1e1e1] flex items-center gap-4'
           >
-            <div className="text-[#69737c] text-base font-normal font-['DM Sans']">#{id}</div>
-            <div className="flex-grow text-[#212425] text-base font-medium font-['DM Sans']">
+            {/* Proposal ID */}
+            <span className="text-[#69737c] text-base font-normal font-['DM Sans']">#{id}</span>
+
+            {/* Proposal title */}
+            <p className="flex-grow text-[#212425] text-base font-medium font-['DM Sans']">
               {id === 1 ? 'Sell everything and buy an elephant' : 'Example of expired proposals'}
-            </div>
-            <div className='px-2 py-1 bg-[#e1e1e1] rounded-full text-[#69737c] text-xs font-bold'>
+            </p>
+
+            {/* Proposal status */}
+            <span className='px-2 py-1 bg-[#e1e1e1] rounded-full text-[#69737c] text-xs font-bold'>
               Expired
-            </div>
-            <div className="text-[#69737c] text-base font-normal font-['DM Sans']">
+            </span>
+
+            {/* Proposal date */}
+            <span className="text-[#69737c] text-base font-normal font-['DM Sans']">
               {id === 1 ? '20 days ago' : '1 month ago'}
-            </div>
-          </div>
+            </span>
+          </article>
         ))}
-      </div>
+      </section>
     </div>
   )
 }

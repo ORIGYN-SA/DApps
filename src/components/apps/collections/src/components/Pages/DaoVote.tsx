@@ -11,8 +11,9 @@ import { useAuth } from '@dapp/features-authentication'
 import { ConnectWallet, Banner } from '@dapp/features-components'
 import { useUserProfile } from '@dapp/features-userprofile'
 import ExpiredProposalsList from '../DAOs/Cards/ExpiredProposalsList'
+import ProposalDetails from '../DAOs/Cards/ProposalDetails'
 
-const DaoDetails: React.FC = () => {
+const DaoVote: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null)
   const [itemsPerPage, setItemsPerPage] = useState(20)
@@ -87,7 +88,7 @@ const DaoDetails: React.FC = () => {
           <Link to={`/daos/bob`}>
             <div className='text-[#212425] text-[10px] font-medium leading-[16px] tracking-[2px] uppercase flex flex-row items-center group'>
               <ArrowIcon />
-              All governance
+              Governance / {'Unknown'}
             </div>
           </Link>
         </div>
@@ -110,8 +111,7 @@ const DaoDetails: React.FC = () => {
           <div className='flex flex-col xl:flex-row xl:justify-around justify-center mb-10 md:px-0 w-full gap-2 xl:gap-4'>
             <DAOCard isLoading={false} />
             <div className='flex flex-col justify-between gap-2 xl:gap-4 md:px-6'>
-              <ProposalsList isLoading={false} />
-              <ExpiredProposalsList isLoading={false} />
+              <ProposalDetails isLoading={false} />
             </div>
           </div>
         </div>
@@ -120,4 +120,4 @@ const DaoDetails: React.FC = () => {
   )
 }
 
-export default DaoDetails
+export default DaoVote

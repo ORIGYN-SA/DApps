@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, HashRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import OGYCollectionDetails from './components/Pages/OGYCollectionDetails'
+import DaoHome from './components/Pages/DaoHome'
 import DaoDetails from './components/Pages/DaoDetails'
 import NFTPage from './components/Pages/NFTPage'
 import UserNFTPage from './components/Pages/UserNFTPage'
@@ -30,6 +31,7 @@ import { TokenDataProvider } from '@dapp/features-tokensdata'
 
 import '@nfid/identitykit/react/styles.css'
 import './index.css'
+import DaoVote from './components/Pages/DaoVote'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -97,7 +99,9 @@ const App = () => {
             >
               <UserProfileProvider>
                 <Routes>
-                  <Route path='/daos/:daos_id' element={<DaoDetails />} />
+                  <Route path='/daos/:daos_id' element={<DaoHome />} />
+                  <Route path='/daos/:daos_id/vote' element={<DaoDetails />} />
+                  <Route path='/daos/:daos_id/vote/:proposal_id' element={<DaoVote />} />
                   <Route path='/collection/:canister_id' element={<OGYCollectionDetails />} />
                   <Route path='/collection/:canister_id/:nft_id' element={<NFTPage />} />
                   <Route path='/profile' element={<ProfilePage />} />

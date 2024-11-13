@@ -1,82 +1,75 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+
 const ProposalsList = ({ isLoading }) => {
-  return isLoading ? (
-    <ProposalsListSkeleton />
-  ) : (
-    <div className='h-fit p-6 bg-white rounded-3xl shadow border border-[#e1e1e1] flex-col items-center gap-8 inline-flex'>
-      <div className='self-stretch pb-4 border-b border-[#e1e1e1] justify-start items-start inline-flex'>
-        <div className='h-6 justify-start items-center gap-1 flex'>
-          <div className='w-6 h-6 p-2.5 bg-[#50be8f] rounded-[100px] flex-col justify-center items-center gap-2.5 inline-flex'>
-            <div className="text-white text-[13px] font-semibold font-['DM Sans'] leading-none">
-              6
-            </div>
-          </div>
-          <div className="text-[#212425] text-base font-bold font-['DM Sans']">
-            Active proposals
-          </div>
+  if (isLoading) return <ProposalsListSkeleton />
+
+  return (
+    <section className='h-fit p-6 bg-white rounded-3xl shadow border border-[#e1e1e1] flex flex-col items-center gap-8'>
+      {/* Header */}
+      <header className='w-full pb-4 border-b border-[#e1e1e1] flex items-center gap-1'>
+        <div className='w-6 h-6 p-2.5 bg-[#50be8f] rounded-full flex items-center justify-center text-white text-[13px] font-semibold'>
+          6
         </div>
-      </div>
-      <div className='self-stretch flex-col justify-start items-start gap-4 flex'>
-        <div className='self-stretch justify-start items-start gap-4 flex flex-col md:flex-row'>
-          <div className='grow shrink basis-0 p-6 bg-white rounded-2xl border border-[#e1e1e1] flex-col justify-center items-start gap-6 inline-flex'>
-            <div className='self-stretch h-[88px] flex-col justify-center items-start gap-2 flex'>
-              <div className="self-stretch grow shrink basis-0 text-[#212425] text-[22px] font-semibold font-['DM Sans']">
+        <h2 className="text-[#212425] text-base font-bold font-['DM Sans']">Active proposals</h2>
+      </header>
+
+      {/* Proposal Cards */}
+      <div className='w-full flex flex-col md:flex-row gap-4'>
+        {/* Proposal #1 */}
+        <Link to='/daos/bob/vote/1' className='grow'>
+          <article className='p-6 bg-white relative cursor-pointer group rounded-[25px] border border-[#e1e1e1] flex flex-col gap-6 transition-all duration-300 hover:bg-gradient-to-r hover:from-[#f7fcfa] hover:to-[#ebf7f8]'>
+            <header className='flex flex-col gap-2'>
+              <h3 className="text-[#212425] text-[22px] font-semibold font-['DM Sans']">
                 Proposal #1
-              </div>
-              <div className="self-stretch text-[#69737c] text-base font-normal font-['DM Sans'] leading-normal">
+              </h3>
+              <p className="text-[#69737c] text-base font-normal font-['DM Sans']">
                 Should we expose the painting at the Tate Museum?
+              </p>
+            </header>
+            <footer className='flex flex-col gap-2'>
+              <div className='inline-flex px-2 py-1 bg-[#e5f6ff] rounded-full items-center gap-2.5'>
+                <img src='/assets/people.svg' alt='people' className='w-4 h-4' />
+                <span className="text-[#00a2f7] text-xs font-bold font-['DM Sans']">1245</span>
               </div>
-            </div>
-            <div className='h-14 flex-col justify-start items-start gap-2 flex'>
-              <div className='px-2 py-1 bg-[#e5f6ff] rounded-[100px] justify-center items-center gap-2.5 inline-flex'>
-                <div className="text-[#00a2f7] text-xs font-bold font-['DM Sans'] leading-none flex-row">
-                  <span className='flex flex-row items-center gap-1'>
-                    <img src='/assets/people.svg' alt='people' className='w-4 h-4' /> 1245
-                  </span>
-                </div>
-              </div>
-              <div className='self-stretch px-2 py-1 bg-[#e5f6ff] rounded-[100px] justify-center items-center gap-2.5 inline-flex'>
-                <div className="text-[#00a2f7] text-xs font-bold font-['DM Sans'] leading-none">
+              <div className='inline-flex px-2 py-1 bg-[#e5f6ff] rounded-full items-center'>
+                <span className="text-[#00a2f7] text-xs font-bold font-['DM Sans']">
                   2 hours, 8 minutes remaining
-                </div>
+                </span>
               </div>
+            </footer>
+            <div className='absolute right-0 opacity-0 group-hover:opacity-100 duration-200 transition-all -bottom-[1.3px]'>
+              <img src='/assets/arrow_hover.svg' alt='arrow' />
             </div>
-          </div>
-          <div className='grow shrink basis-0 p-6 bg-white rounded-2xl border border-[#e1e1e1] flex-col justify-center items-start gap-6 inline-flex'>
-            <div className='self-stretch h-[88px] flex-col justify-center items-start gap-2 flex'>
-              <div className="self-stretch grow shrink basis-0 text-[#212425] text-[22px] font-semibold font-['DM Sans']">
-                Proposal #2
-              </div>
-              <div className="self-stretch text-[#69737c] text-base font-normal font-['DM Sans'] leading-normal">
-                Should we expose the painting at the Tate Museum?
-              </div>
+          </article>
+        </Link>
+
+        {/* Proposal #2 */}
+        <article className='grow p-6 bg-white rounded-2xl border border-[#e1e1e1] flex flex-col gap-6'>
+          <header className='flex flex-col gap-2'>
+            <h3 className="text-[#212425] text-[22px] font-semibold font-['DM Sans']">
+              Proposal #2
+            </h3>
+            <p className="text-[#69737c] text-base font-normal font-['DM Sans']">
+              Should we expose the painting at the Tate Museum?
+            </p>
+          </header>
+          <footer className='flex flex-col gap-2'>
+            <div className='inline-flex px-2 py-1 bg-[#e5f6ff] rounded-full items-center gap-2.5'>
+              <span className="text-[#00a2f7] text-xs font-bold font-['DM Sans']">1245</span>
             </div>
-            <div className='h-14 flex-col justify-start items-start gap-2 flex'>
-              <div className='px-2 py-1 bg-[#e5f6ff] rounded-[100px] justify-center items-center gap-2.5 inline-flex'>
-                <div className='w-4 h-4 justify-center items-center flex'>
-                  <div className='w-4 h-4 relative'>
-                    <div className='w-[4.43px] h-[8.35px] left-[10.22px] top-[1.33px] absolute'></div>
-                    <div className='w-[4.42px] h-[8.35px] left-[1.34px] top-[1.33px] absolute'></div>
-                    <div className='w-[5.29px] h-[8.35px] left-[5.36px] top-[6.31px] absolute'></div>
-                  </div>
-                </div>
-                <div className="text-[#00a2f7] text-xs font-bold font-['DM Sans'] leading-none">
-                  1245
-                </div>
-              </div>
-              <div className='self-stretch px-2 py-1 bg-[#e5f6ff] rounded-[100px] justify-center items-center gap-2.5 inline-flex'>
-                <div className="text-[#00a2f7] text-xs font-bold font-['DM Sans'] leading-none">
-                  2 hours, 8 minutes remaining
-                </div>
-              </div>
+            <div className='inline-flex px-2 py-1 bg-[#e5f6ff] rounded-full items-center'>
+              <span className="text-[#00a2f7] text-xs font-bold font-['DM Sans']">
+                2 hours, 8 minutes remaining
+              </span>
             </div>
-          </div>
-        </div>
+          </footer>
+        </article>
       </div>
-    </div>
+    </section>
   )
 }
 
-export default ProposalsList
+const ProposalsListSkeleton = () => <div>Loading...</div>
 
-const ProposalsListSkeleton = () => <></>
+export default ProposalsList

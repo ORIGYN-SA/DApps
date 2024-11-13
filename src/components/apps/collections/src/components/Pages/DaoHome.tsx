@@ -11,8 +11,9 @@ import { useAuth } from '@dapp/features-authentication'
 import { ConnectWallet, Banner } from '@dapp/features-components'
 import { useUserProfile } from '@dapp/features-userprofile'
 import ExpiredProposalsList from '../DAOs/Cards/ExpiredProposalsList'
+import AvailableDAOs from '../DAOs/Cards/AvailableDAOs'
 
-const DaoDetails: React.FC = () => {
+const DaoHome: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null)
   const [itemsPerPage, setItemsPerPage] = useState(20)
@@ -66,30 +67,14 @@ const DaoDetails: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   })
 
-  const ArrowIcon: React.FC = () => (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      fill='none'
-      viewBox='0 0 24 24'
-      strokeWidth={1.5}
-      stroke='currentColor'
-      className='size-5 mr-2 group-hover:-translate-x-1 duration-300 ease-in-out transition-all'
-    >
-      <path strokeLinecap='round' strokeLinejoin='round' d='M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18' />
-    </svg>
-  )
-
   const Header: React.FC<{ allDaos: DAOResponse | undefined; canisterId: string }> = React.memo(
     ({ allDaos, canisterId }) => (
       <div className='flex flex-col md:flex-row mt-44 md:mt-16 pb-8 md:px-8 items-center border-b border-mouse md:ml-[88px]'>
-        <div className='flex flex-col gap-2'>
-          <p className='text-[#222526] text-[40px] font-bold leading-normal'>DAOs</p>
-          <Link to={`/daos/bob`}>
-            <div className='text-[#212425] text-[10px] font-medium leading-[16px] tracking-[2px] uppercase flex flex-row items-center group'>
-              <ArrowIcon />
-              All governance
-            </div>
-          </Link>
+        <div className='flex flex-col gap-2 px-6'>
+          <p className='text-[#222526] text-[40px] font-bold leading-normal'>Governance</p>
+          <div className='text-[#212425] text-[10px] font-medium leading-[16px] tracking-[2px] uppercase flex flex-row items-center group'>
+            Little description to talk about this section?
+          </div>
         </div>
         <div className='md:ml-auto mt-5 md:mt-0'>
           <ConnectWallet />
@@ -107,17 +92,11 @@ const DaoDetails: React.FC = () => {
           <Header allDaos={data} canisterId={collectionCanisterId} />
         </div>
         <div className='w-[95%]  mt-10 md:w-11/12 md:ml-[88px] relative 3xl:max-w-[90rem]'>
-          <div className='flex flex-col xl:flex-row xl:justify-around justify-center mb-10 md:px-0 w-full gap-2 xl:gap-4'>
-            <DAOCard isLoading={false} />
-            <div className='flex flex-col justify-between gap-2 xl:gap-4 md:px-6'>
-              <ProposalsList isLoading={false} />
-              <ExpiredProposalsList isLoading={false} />
-            </div>
-          </div>
+          <AvailableDAOs isLoading={false} />
         </div>
       </div>
     </div>
   )
 }
 
-export default DaoDetails
+export default DaoHome
