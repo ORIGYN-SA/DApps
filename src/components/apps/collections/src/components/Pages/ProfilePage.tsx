@@ -201,7 +201,7 @@ const ProfilePage = () => {
           <div className='hidden md:flex w-full'>
             {renderWalletContent}
             <div className='ml-0 md:ml-[33%] lg:ml-[25%] w-full md:w-3/4 bg-gray-100 flex flex-col flex-grow items-center overflow-y-auto min-h-screen'>
-              <div className='flex flex-col sm:flex-row justify-between w-full md:px-[76px] mt-6 space-y-6 sm:space-y-0 sm:space-x-12'>
+              <div className='flex flex-col xl:flex-row justify-between w-full md:px-[76px] mt-6 space-y-6 sm:space-y-4 xl:space-x-12 xl:space-y-0'>
                 <CheckboxBar items={filteredCollections} toggleCheckbox={toggleCheckbox} />
                 <SearchBar
                   handleSearch={handleSearch}

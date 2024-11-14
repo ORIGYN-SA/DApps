@@ -72,7 +72,7 @@ const Daos: React.FC = () => {
         <CheckboxBar items={allDaos} toggleCheckbox={toggleCheckbox} />
         <SearchBar handleSearch={handleSearch} placeholder='Search for a specific collection' />
       </div>
-      <div className='px-[76px] w-full mb-12'>
+      <div className='px-6 md:px-[76px] w-full mb-12'>
         <DAOsList
           daos={filteredDaos}
           currentPage={currentPage}

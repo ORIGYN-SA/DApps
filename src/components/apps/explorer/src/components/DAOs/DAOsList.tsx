@@ -78,7 +78,7 @@ const DAOsList: React.FC<OGYDaosProps> = ({
           {dao.name || 'Unknown'}
         </p>
         <div className='flex flex-row gap-4 items-center'>
-          <div className='h-6 py-1 w-fit px-2 bg-[#212425] rounded-[100px] inline-flex items-center justify-center'>
+          <div className='h-6 py-4 md:py-1 w-fit px-2 bg-[#212425]  text-center rounded-[100px] inline-flex items-center justify-center'>
             <span className='text-white text-xs font-semibold'>
               {dao.nftCount && dao.nftCount > 1
                 ? `${dao.nftCount} NFTs holders`

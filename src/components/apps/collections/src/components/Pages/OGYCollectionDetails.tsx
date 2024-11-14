@@ -189,7 +189,7 @@ const OGYCollectionDetails: React.FC = () => {
                 ))
               )}
             </div>
-            {currentNFTs.length === 0 && !isLoading && !error && !isFetching && (
+            {currentNFTs.length === 0 && !isLoading && !error && !userProfile && !isFetching && (
               <div className='flex flex-col items-center justify-center w-full h-[200px]'>
                 <h2 className='text-center text-[#69737c] italic font-medium '>
                   No NFTs in sale in this collection

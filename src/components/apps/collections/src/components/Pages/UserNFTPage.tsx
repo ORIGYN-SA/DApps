@@ -237,7 +237,7 @@ const UserNFTPage: React.FC = () => {
                           nft.price > 0 &&
                           nft.saleDetails.isSaleOpen ? (
                             <>
-                              <div className='w-full h-20 px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] justify-start items-start gap-2.5 inline-flex'>
+                              <div className='w-full h-20 px-3 md:px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] justify-start items-start gap-2.5 inline-flex'>
                                 <button
                                   className='bg-[#212425] rounded-full justify-center items-center w-full'
                                   onClick={() => handleCancelSale(nft.id)}
@@ -250,7 +250,7 @@ const UserNFTPage: React.FC = () => {
                               </div>
                             </>
                           ) : isMyNFT ? (
-                            <div className='w-full h-20 px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] justify-start items-start gap-2.5 inline-flex'>
+                            <div className='w-full h-20 px-3 md:px-8 py-4 bg-white rounded-2xl border border-[#e1e1e1] justify-start items-start gap-2.5 inline-flex'>
                               <button
                                 className='bg-[#212425] rounded-full justify-center hover:scale-105 duration-200 transition-all ease-in-out items-center w-full'
                                 onClick={() => handleOpenSaleModal()}

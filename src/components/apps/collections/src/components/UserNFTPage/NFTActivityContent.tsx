@@ -146,7 +146,7 @@ const NFTActivityContent = ({ nft, canisterId }: NFTActivityContentProps) => {
             </div>
             <div className='flex justify-between mb-2'>
               <span className='font-semibold text-gray-700'>Type:</span>
-              <span className='text-gray-700 capitalize'>
+              <span className='text-gray-700 capitalize text-right'>
                 {activity.txn_type.type.replace('_', ' ')}
               </span>
             </div>

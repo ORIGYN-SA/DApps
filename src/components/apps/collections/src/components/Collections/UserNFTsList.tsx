@@ -32,7 +32,7 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
 
   useEffect(() => {
     const updateItemsPerPage = () => {
-      setItemsPerPage(window.innerWidth <= 640 ? 4 : 8)
+      setItemsPerPage(window.innerWidth <= 640 ? 4 : window.innerWidth < 1920 ? 9 : 8)
     }
 
     updateItemsPerPage()
@@ -189,8 +189,8 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
   )
 
   return (
-    <div className='px-6 md:px-20 w-full flex flex-col items-center my-5 md:my-10'>
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 gap-6 w-full'>
+    <div className='px-6 xl:px-20 w-full flex flex-col items-center my-5 md:my-10'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 gap-6 w-full'>
         {isLoading
           ? Array.from({ length: itemsPerPage }, (_, index) => <NFTSkeleton key={index} />)
           : currentNFTs.map(nft => <NFTCard key={nft.id} nft={nft} />)}
