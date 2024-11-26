@@ -3,6 +3,8 @@ import { Routes, Route, HashRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import OGYCollections from './components/Pages/OGYCollections'
 import Daos from './components/Pages/DaosPage'
+import UserNFTPage from './components/Pages/UserNFTPage'
+import ProfilePage from './components/Pages/ProfilePage'
 import {
   OGY_LEDGER_CANISTER_ID,
   GLD_NFT_1G_CANISTER_ID,
@@ -95,6 +97,8 @@ const App = () => {
                 <Routes>
                   <Route path='/' element={<OGYCollections />} />
                   <Route path='/daos' element={<Daos />} />
+                  <Route path='/profile' element={<ProfilePage />} />
+                  <Route path='/profile/:canister_id/:nft_id' element={<UserNFTPage />} />
                 </Routes>
               </UserProfileProvider>
             </AuthProvider>

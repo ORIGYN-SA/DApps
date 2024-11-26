@@ -5,8 +5,6 @@ import OGYCollectionDetails from './components/Pages/OGYCollectionDetails'
 import DaoHome from './components/Pages/DaoHome'
 import DaoDetails from './components/Pages/DaoDetails'
 import NFTPage from './components/Pages/NFTPage'
-import UserNFTPage from './components/Pages/UserNFTPage'
-import ProfilePage from './components/Pages/ProfilePage'
 
 import {
   OGY_LEDGER_CANISTER_ID,
@@ -99,9 +97,9 @@ const App = () => {
             >
               <UserProfileProvider>
                 <Routes>
-                  <Route path='/daos/:daos_id' element={<DaoHome />} />
+                  {/* <Route path='/daos/:daos_id' element={<DaoHome />} />
                   <Route path='/daos/:daos_id/vote' element={<DaoDetails />} />
-                  <Route path='/daos/:daos_id/vote/:proposal_id' element={<DaoVote />} />
+                  <Route path='/daos/:daos_id/vote/:proposal_id' element={<DaoVote />} /> */}
                   <Route path='/collection/:canister_id' element={<OGYCollectionDetails />} />
                   <Route path='/collection/:canister_id/:nft_id' element={<NFTPage />} />
                   <Route path='/profile' element={<ProfilePage />} />

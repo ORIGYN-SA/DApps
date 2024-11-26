@@ -93,7 +93,7 @@ const Header: React.FC = () => {
 
   const links: LinkProps[] = [
     { title: 'Collections', to: '/' },
-    { title: 'DAOs', to: '/daos' },
+    // { title: 'DAOs', to: '/daos' },
   ]
 
   const isActiveLink = (linkTo: string) => {
