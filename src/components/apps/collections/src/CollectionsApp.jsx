@@ -29,7 +29,6 @@ import { TokenDataProvider } from '@dapp/features-tokensdata'
 
 import '@nfid/identitykit/react/styles.css'
 import './index.css'
-import DaoVote from './components/Pages/DaoVote'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -102,8 +101,6 @@ const App = () => {
                   <Route path='/daos/:daos_id/vote/:proposal_id' element={<DaoVote />} /> */}
                   <Route path='/collection/:canister_id' element={<OGYCollectionDetails />} />
                   <Route path='/collection/:canister_id/:nft_id' element={<NFTPage />} />
-                  <Route path='/profile' element={<ProfilePage />} />
-                  <Route path='/profile/:canister_id/:nft_id' element={<UserNFTPage />} />
                 </Routes>
               </UserProfileProvider>
             </AuthProvider>
