@@ -29,7 +29,7 @@ const ArrowIcon: React.FC = () => (
   </svg>
 )
 
-const Header: React.FC<{ canisterId: string }> = React.memo(({ canisterId }) => (
+const Header: React.FC<{ canisterId: string }> = React.memo(() => (
   <div className='flex flex-col md:flex-row mt-44 md:mt-16 pb-8 md:px-8 items-center border-b border-mouse md:ml-[88px]'>
     <div className='flex flex-col gap-2'>
       <p className='text-[#222526] text-[40px] font-bold leading-normal'>NFT Details</p>
@@ -45,6 +45,8 @@ const Header: React.FC<{ canisterId: string }> = React.memo(({ canisterId }) => 
     </div>
   </div>
 ))
+
+Header.displayName = 'Header'
 
 const ImageContainer: React.FC<{ nft: NFT }> = React.memo(({ nft }) => {
   const { isImageLoading, isImageError, handleImageLoad, handleImageError } = useImageLoader()
@@ -69,6 +71,8 @@ const ImageContainer: React.FC<{ nft: NFT }> = React.memo(({ nft }) => {
   )
 })
 
+ImageContainer.displayName = 'ImageContainer'
+
 const SkeletonImage: React.FC = () => (
   <div className='absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-tl-2xl rounded-bl-2xl'>
     <div className='xl:w-[562px] xl:h-[564px] bg-gray-300 rounded-[20px]' />
@@ -81,30 +85,32 @@ const ErrorImage: React.FC = () => (
   </div>
 )
 
-const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo(
-  ({ nft, onBuyNowClick }) => {
-    const { getLogo } = useTokenData()
+ErrorImage.displayName = 'ErrorImage'
 
-    return (
-      <div className='p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full'>
-        <div className='text-[#2E2E2E] text-base font-bold'>
-          {nft.saleDetails?.isSaleOpen ? 'Current price' : 'Last opened price'}
-        </div>
-        <div className='flex flex-row justify-start items-center gap-2'>
-          <img src={getLogo(nft.currency)} alt='Token Logo' className='w-10 h-10' />
-          <div className='flex flex-row gap-2 items-baseline'>
-            <div className='text-black text-[18px] md:text-[28px] font-bold'>
-              {nft.price > 0 && `${nft.price} ${nft.currency}`}
-            </div>
-            {nft.priceUSD > 0 && (
-              <div className='text-[#6e6d66] text-sm font-light'>(${nft.priceUSD})</div>
-            )}
+const PriceSection: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo(({ nft }) => {
+  const { getLogo } = useTokenData()
+
+  return (
+    <div className='p-4 md:px-8 py-6 md:py-4 bg-white rounded-2xl border border-[#e1e1e1] flex-col w-full'>
+      <div className='text-[#2E2E2E] text-base font-bold'>
+        {nft.saleDetails?.isSaleOpen ? 'Current price' : 'Last opened price'}
+      </div>
+      <div className='flex flex-row justify-start items-center gap-2'>
+        <img src={getLogo(nft.currency)} alt='Token Logo' className='w-10 h-10' />
+        <div className='flex flex-row gap-2 items-baseline'>
+          <div className='text-black text-[18px] md:text-[28px] font-bold'>
+            {nft.price > 0 && `${nft.price} ${nft.currency}`}
           </div>
+          {nft.priceUSD > 0 && (
+            <div className='text-[#6e6d66] text-sm font-light'>(${nft.priceUSD})</div>
+          )}
         </div>
       </div>
-    )
-  },
-)
+    </div>
+  )
+})
+
+PriceSection.displayName = 'PriceSection'
 
 const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo(
   ({ nft, onBuyNowClick }) => (
@@ -116,6 +122,8 @@ const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo
     </>
   ),
 )
+
+NFTDetails.displayName = 'NFTDetails'
 
 const NFTHeader: React.FC<{ nft: NFT }> = ({ nft }) => (
   <>

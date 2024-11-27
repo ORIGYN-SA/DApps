@@ -1,7 +1,7 @@
 // src/components/icons/GovernanceIcon.tsx
 import React from 'react'
 
-const GovernanceIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ className, ...props }) => (
+const GovernanceIcon: React.FC<React.SVGProps<SVGSVGElement>> = () => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     fill='none'

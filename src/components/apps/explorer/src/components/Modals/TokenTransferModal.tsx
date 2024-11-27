@@ -1,5 +1,6 @@
+import React from 'react'
 import { useState, useRef, useEffect } from 'react'
-import { QueryClient, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { Principal } from '@dfinity/principal'
 import { Currency, currencies } from '@dapp/common-constants'
 import { useTokensTransfer } from '@dapp/common-hooks'

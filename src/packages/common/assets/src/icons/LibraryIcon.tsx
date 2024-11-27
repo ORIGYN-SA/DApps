@@ -1,7 +1,7 @@
 // src/components/icons/LibraryIcon.tsx
 import React from 'react'
 
-const LibraryIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ className, ...props }) => (
+const LibraryIcon: React.FC<React.SVGProps<SVGSVGElement>> = () => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     fill='none'

@@ -63,13 +63,11 @@ const Proposal = ({ openModal }) => (
         <StatusItem
           label='Adopt'
           percentage={fakeProposalData.adoptPercentage}
-          color='#50be8f'
           iconSrc='/assets/adopted.svg'
         />
         <StatusItem
           label='Reject'
           percentage={fakeProposalData.rejectPercentage}
-          color='#e84c25'
           iconSrc='/assets/rejected.svg'
         />
       </div>
@@ -82,7 +80,7 @@ const Proposal = ({ openModal }) => (
   </div>
 )
 
-const StatusItem = ({ label, percentage, color, iconSrc }) => (
+const StatusItem = ({ label, percentage, iconSrc }) => (
   <div className='flex items-center gap-2'>
     <img src={iconSrc} alt={`${label} icon`} className='w-12 h-12' />
     <div className='flex flex-col'>

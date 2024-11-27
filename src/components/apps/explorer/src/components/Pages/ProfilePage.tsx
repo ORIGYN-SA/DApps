@@ -14,7 +14,6 @@ import { useUserProfile } from '@dapp/features-userprofile'
 const ProfilePage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [showTransferModal, setShowTransferModal] = useState(false)
-  const [showManageModal, setShowManageModal] = useState(false)
   const [activeTab, setActiveTab] = useState<'Wallet' | 'My NFTs'>('Wallet')
   const [filteredCollections, setFilteredCollections] = useState<CollectionType[]>([])
   const [filteredNfts, setFilteredNfts] = useState<NFT[]>([])
@@ -102,17 +101,12 @@ const ProfilePage = () => {
     setSearchTerm(term)
   }, [])
 
-  const handleModal = useCallback((type: 'transfer' | 'manage', status: boolean) => {
-    type === 'transfer' ? setShowTransferModal(status) : setShowManageModal(status)
-  }, [])
+  const handleModal = () => {
+    setShowTransferModal(true)
+  }
 
   const renderWalletContent = useMemo(
-    () => (
-      <WalletPanel
-        onTransferClick={() => handleModal('transfer', true)}
-        onManageClick={() => handleModal('manage', true)}
-      />
-    ),
+    () => <WalletPanel onTransferClick={() => handleModal()} />,
     [handleModal],
   )
 
@@ -219,7 +213,7 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-        {showTransferModal && <TokenTransferModal onClose={() => handleModal('transfer', false)} />}
+        {showTransferModal && <TokenTransferModal onClose={() => handleModal()} />}
         {/* {showManageModal && <ManageModal onClose={() => handleModal('manage', false)} />} */}
       </div>
     </div>

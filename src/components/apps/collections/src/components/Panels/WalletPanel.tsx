@@ -1,3 +1,4 @@
+import React from 'react'
 import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@dapp/features-authentication'

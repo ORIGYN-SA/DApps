@@ -24,8 +24,6 @@ const OGYCollectionDetails: React.FC = () => {
   const [isSelectNFTModalOpen, setIsSelectNFTModalOpen] = useState(false)
   const [isOpenASaleModalOpen, setisOpenASaleModalOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedNFTId, setSelectedNFTId] = useState<string | null>(null)
-
   const collectionCanisterId = window.location.hash.split('/').pop() || ''
   const { isLoading: isUserProfileLoading } = useUserProfile()
   const {
@@ -67,13 +65,12 @@ const OGYCollectionDetails: React.FC = () => {
   }
 
   const NFTCard: React.FC<{ nft: NFT; canisterId: string }> = ({ nft, canisterId }) => {
-    const isNFTLoading = isFetching && selectedNFTId === nft.id
     const isMyNFT = nft.owner === userPrincipal
 
     return (
       <Link to={`/collection/${canisterId}/${nft.id}`} className='flex flex-col'>
         <div className='bg-white rounded-2xl border border-gray-300 flex flex-col group relative overflow-hidden h-[340px]'>
-          {isNFTLoading ? (
+          {isFetching ? (
             <NFTSkeleton />
           ) : (
             <>

@@ -29,6 +29,8 @@ const Header: React.FC<{ nft: NFT | undefined; canisterId: string }> = React.mem
   ),
 )
 
+Header.displayName = 'Header'
+
 const ArrowIcon: React.FC = () => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
@@ -41,6 +43,8 @@ const ArrowIcon: React.FC = () => (
     <path strokeLinecap='round' strokeLinejoin='round' d='M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18' />
   </svg>
 )
+
+ArrowIcon.displayName = 'ArrowIcon'
 
 const ImageContainer: React.FC<{ nft: NFT | undefined }> = React.memo(({ nft }) => {
   const { isImageLoading, isImageError, handleImageLoad, handleImageError } = useImageLoader()
@@ -65,6 +69,8 @@ const ImageContainer: React.FC<{ nft: NFT | undefined }> = React.memo(({ nft }) 
   )
 })
 
+ImageContainer.displayName = 'ImageContainer'
+
 const SkeletonImage: React.FC = () => (
   <div className='absolute inset-0 mb-8 xl:mb-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-bl-[0px] rounded-tl-2xl rounded-tr-2xl xl:rounded-bl-2xl xl:rounded-tr-[0px]'>
     <div className='xl:w-[562px] xl:h-[564px] bg-gray-300 rounded-tl-2xl rounded-bl-2xl' />
@@ -76,6 +82,8 @@ const ErrorImage: React.FC = () => (
     <p>Error loading image</p>
   </div>
 )
+
+ErrorImage.displayName = 'ErrorImage'
 
 const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo(
   ({ nft, onBuyNowClick }) => (
@@ -90,6 +98,8 @@ const NFTDetails: React.FC<{ nft: NFT; onBuyNowClick: () => void }> = React.memo
     </div>
   ),
 )
+
+NFTDetails.displayName = 'NFTDetails'
 
 const NFTHeader: React.FC<{ nft: NFT }> = ({ nft }) => (
   <>

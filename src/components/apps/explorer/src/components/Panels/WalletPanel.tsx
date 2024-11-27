@@ -1,3 +1,4 @@
+import React from 'react'
 import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@dapp/features-authentication'
@@ -7,10 +8,9 @@ import { useResponsiveTruncate } from '@dapp/utils'
 
 interface WalletPanelProps {
   onTransferClick: () => void
-  onManageClick: () => void
 }
 
-const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
+const WalletPanel = ({ onTransferClick }: WalletPanelProps) => {
   const { disconnect } = useAuth()
   const { userProfile, error, lastUpdated, isLoading } = useUserProfile()
   const truncateAddress = useResponsiveTruncate()
@@ -119,7 +119,7 @@ const WalletPanel = ({ onTransferClick, onManageClick }: WalletPanelProps) => {
         </div>
       </div>
     ),
-    [onTransferClick, onManageClick],
+    [onTransferClick],
   )
 
   const renderLogOut = useMemo(

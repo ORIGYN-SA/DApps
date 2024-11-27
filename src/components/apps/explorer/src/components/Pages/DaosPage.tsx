@@ -15,9 +15,8 @@ const Daos: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(20)
-  const [uniqueCategories, setUniqueCategories] = useState<string[]>([])
 
-  const { data, isLoading, isError, error } = useQuery<DAOResponse, Error>({
+  const { data, isLoading } = useQuery<DAOResponse, Error>({
     queryKey: ['fetchFakeDaos', currentPage, itemsPerPage],
     queryFn: () => fetchFakeDaos(currentPage, itemsPerPage),
     staleTime: 5 * 60 * 1000,
@@ -28,9 +27,6 @@ const Daos: React.FC = () => {
       setAllDaos(data.daos)
       setFilteredDaos(data.daos)
       setTotalPages(data.totalPages)
-
-      const categoriesSet = new Set<string>(data.daos.map(item => item.category_name))
-      setUniqueCategories(Array.from(categoriesSet))
     }
   }, [data])
 

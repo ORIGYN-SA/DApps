@@ -12,7 +12,6 @@ const OGYCollectionsPage: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(20)
   const { data, isLoading, error } = useGetCollectionsList(0, itemsPerPage)
   const [allCollections, setAllCollections] = useState<CollectionType[]>([])
-  const [uniqueCategories, setUniqueCategories] = useState<string[]>([])
   const [filteredCollections, setFilteredCollections] = useState<CollectionType[]>([])
   const [totalPages, setTotalPages] = useState<number>(1)
 
@@ -21,9 +20,6 @@ const OGYCollectionsPage: React.FC = () => {
       setAllCollections(data.collections)
       setFilteredCollections(data.collections)
       setTotalPages(data.totalPages)
-
-      const categoriesSet = new Set<string>(data.collections.map(item => item.category_name))
-      setUniqueCategories(Array.from(categoriesSet))
     }
   }, [data])
 

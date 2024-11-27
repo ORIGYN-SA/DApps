@@ -109,7 +109,7 @@ export const AuthProvider = ({
           disableIdle: false,
         },
       }}
-      onConnectFailure={(e: Error) => {
+      onConnectFailure={() => {
         window.location.reload()
       }}
       onConnectSuccess={() => {

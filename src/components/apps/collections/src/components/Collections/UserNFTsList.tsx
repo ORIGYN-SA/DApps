@@ -20,7 +20,6 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null)
   const [isOpenASaleModalOpen, setisOpenASaleModalOpen] = useState(false)
-  const [salePrice, setSalePrice] = useState('')
   const [message, setMessage] = useState('')
   const [showToast, setShowToast] = useState(false)
   const [isLoadingAction, setIsLoadingAction] = useState(false)
@@ -61,7 +60,6 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
 
   const closeOpenASaleModal = useCallback(() => {
     setisOpenASaleModalOpen(false)
-    setSalePrice('')
   }, [])
 
   const handleCancelSale = useCallback(
@@ -169,6 +167,8 @@ const UserNFTsList = ({ nfts, isLoading, isError, isFetching }: UserNFTsListProp
       </div>
     )
   })
+
+  NFTCard.displayName = 'NFTCard'
 
   const NFTSkeleton: React.FC = () => (
     <div className='bg-white rounded-2xl border border-gray-300 flex flex-col animate-pulse h-[350px]'>
