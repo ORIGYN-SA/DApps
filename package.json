@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:staging": "BUILD_ENV=staging node build.mjs",
+    "build:preprod": "BUILD_ENV=preprod node build.mjs",
+    "build:production": "BUILD_ENV=production node build.mjs",
     "build": "node build.mjs",
     "test": "jest --env=./src/testUtils/index.js",
     "lint": "eslint ./src/**/*.tsx",
