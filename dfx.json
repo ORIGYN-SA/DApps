@@ -1,0 +1,35 @@
+{
+  "canisters": {
+    "explorer": {
+      "build": ["npm run build:explorer"],
+      "declarations": {
+        "bindings": [],
+        "env_override": null,
+        "output": null
+      },
+      "frontend": {},
+      "source": ["./dist/explorer"],
+      "type": "assets"
+    }
+  },
+  "dfx": "0.22.0",
+  "networks": {
+    "development": {
+      "providers": ["https://icp0.io"],
+      "type": "persistent"
+    },
+    "staging": {
+      "providers": ["https://icp0.io"],
+      "type": "persistent"
+    },
+    "production": {
+      "providers": ["https://icp0.io"],
+      "type": "persistent"
+    },
+    "local": {
+      "bind": "localhost:8080",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}

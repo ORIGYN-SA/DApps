@@ -1,5 +1,3 @@
-// vite.config.ts
-
 import { defineConfig } from 'vite';
 import { resolve, dirname } from 'path';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
@@ -7,6 +5,8 @@ import EnvironmentPlugin from 'vite-plugin-environment';
 import svgr from 'vite-plugin-svgr';
 import { loadEnv } from 'vite';
 import { fileURLToPath } from 'url';
+import react from '@vitejs/plugin-react';
+import tailwindcss from 'tailwindcss';
 
 // Load environment variables based on the current mode
 const MODE = process.env.NODE_ENV || 'production';
@@ -19,7 +19,14 @@ const __dirname = dirname(__filename);
 
 // Export the Vite configuration directly as an object
 export default defineConfig({
+  css: {
+    postcss: {
+      plugins: [tailwindcss],
+    },
+  },
+  root: resolve(__dirname, 'src/bundlePages/explorer'),
   plugins: [
+    react(),
     EnvironmentPlugin([
       'PUBLIC_DEV_SERVER_PORT',
       'PUBLIC_NFT_CANISTER_ID',
@@ -68,6 +75,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: '../../../dist/explorer',
     commonjsOptions: {
       transformMixedEsModules: true,
     },
@@ -81,4 +89,5 @@ export default defineConfig({
       external: ['src/testUtils/**/*.js'],
     },
   },
+  publicDir: resolve(__dirname, './public'),
 });

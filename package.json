@@ -4,18 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:staging": "BUILD_ENV=staging node build.mjs",
-    "build:preprod": "BUILD_ENV=preprod node build.mjs",
-    "build:production": "BUILD_ENV=production node build.mjs",
-    "build": "node build.mjs",
-    "test": "jest --env=./src/testUtils/index.js",
     "lint": "eslint ./src/**/*.tsx",
-    "clear_jest": "jest --env=./src/testUtils/index.js --clearCache",
-    "dev": "astro dev --force",
-    "preview": "vite preview -c vite.config.build.ts",
     "prepare": "husky",
-    "check_err": "astro check --minimumSeverity error",
-    "bootstrap": "echo bootstrap script is deprecated!"
+    "build:explorer": "vite build --config vite.config.explorer.ts",
+    "build:collection": "vite build --config vite.config.collection.ts",
+    "dev:explorer": "vite --mode dev --config vite.config.explorer.ts",
+    "dev:collection": "vite --mode dev --config vite.config.collection.ts"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.2",

@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
-import { Routes, Route, HashRouter } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import OGYCollections from './components/Pages/OGYCollections'
-import Daos from './components/Pages/DaosPage'
-import UserNFTPage from './components/Pages/UserNFTPage'
-import ProfilePage from './components/Pages/ProfilePage'
+import { useEffect } from 'react';
+import { Routes, Route, HashRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import OGYCollections from './components/Pages/OGYCollections';
+import Daos from './components/Pages/DaosPage';
+import UserNFTPage from './components/Pages/UserNFTPage';
+import ProfilePage from './components/Pages/ProfilePage';
 import {
   OGY_LEDGER_CANISTER_ID,
   GLD_NFT_1G_CANISTER_ID,
@@ -14,20 +14,21 @@ import {
   LOGO_CANISTER_ID,
   ICPSWAP_TOKENS_CANISTER_ID,
   COLLECTIONS_INDEX_CANISTER_ID,
-} from '@dapp/common-constants'
+} from '@dapp/common-constants';
 
-import { idlFactory as gld_nft_idl } from '../../../../packages/common/canisters/gld_nft/did'
-import { idlFactory as gldt_swap_tokens_idl } from '../../../../packages/common/canisters/icpswap/store.did'
-import { idlFactory as logo_idl } from '../../../../packages/common/canisters/icpswap/info.did'
-import { idlFactory as collections_idl } from '../../../../packages/common/canisters/collections/index'
-import { idlFactory as ledger_idl } from '../../../../packages/common/canisters/ledger/did'
+import { idlFactory as gld_nft_idl } from '../../../../packages/common/canisters/gld_nft/did';
+import { idlFactory as gldt_swap_tokens_idl } from '../../../../packages/common/canisters/icpswap/store.did';
+import { idlFactory as logo_idl } from '../../../../packages/common/canisters/icpswap/info.did';
+import { idlFactory as collections_idl } from '../../../../packages/common/canisters/collections/index';
+import { idlFactory as ledger_idl } from '../../../../packages/common/canisters/ledger/did';
 
-import { UserProfileProvider } from '@dapp/features-userprofile'
-import { AuthProvider } from '@dapp/features-authentication'
-import { TokenDataProvider } from '@dapp/features-tokensdata'
+import { UserProfileProvider } from '@dapp/features-userprofile';
+import { AuthProvider } from '@dapp/features-authentication';
+import { TokenDataProvider } from '@dapp/features-tokensdata';
 
-import '@nfid/identitykit/react/styles.css'
-import './index.css'
+import '@nfid/identitykit/react/styles.css';
+import './index.css';
+import 'tailwindcss/tailwind.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,12 +36,12 @@ const queryClient = new QueryClient({
       retry: 1,
     },
   },
-})
+});
 
 const App = () => {
   useEffect(() => {
-    document.title = 'The dApp - Origyn Collections'
-  }, [])
+    document.title = 'The dApp - Origyn Collections';
+  }, []);
 
   return (
     <>
@@ -95,10 +96,10 @@ const App = () => {
             >
               <UserProfileProvider>
                 <Routes>
-                  <Route path='/' element={<OGYCollections />} />
-                  <Route path='/daos' element={<Daos />} />
-                  <Route path='/profile' element={<ProfilePage />} />
-                  <Route path='/profile/:canister_id/:nft_id' element={<UserNFTPage />} />
+                  <Route path="/" element={<OGYCollections />} />
+                  <Route path="/daos" element={<Daos />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/profile/:canister_id/:nft_id" element={<UserNFTPage />} />
                 </Routes>
               </UserProfileProvider>
             </AuthProvider>
@@ -106,7 +107,7 @@ const App = () => {
         </QueryClientProvider>
       </HashRouter>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
