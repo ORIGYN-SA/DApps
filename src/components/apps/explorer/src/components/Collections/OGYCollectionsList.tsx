@@ -62,8 +62,7 @@ const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
     collection: CollectionType
     isFirst: boolean
   }) => (
-    <Link
-      to={`/collection/${collection.canister_id}`}
+    <div
       key={collection.canister_id}
       className={`block ${
         isFirst ? 'row-span-2' : 'flex flex-row'
@@ -103,7 +102,7 @@ const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
           )}
         </div>
       </div>
-    </Link>
+    </div>
   )
 
   return (

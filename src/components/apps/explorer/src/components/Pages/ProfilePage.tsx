@@ -101,12 +101,12 @@ const ProfilePage = () => {
     setSearchTerm(term)
   }, [])
 
-  const handleModal = () => {
-    setShowTransferModal(true)
+  const handleModal = (isOpen: boolean) => {
+    setShowTransferModal(isOpen)
   }
 
   const renderWalletContent = useMemo(
-    () => <WalletPanel onTransferClick={() => handleModal()} />,
+    () => <WalletPanel onTransferClick={() => handleModal(true)} />,
     [handleModal],
   )
 
@@ -213,7 +213,7 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-        {showTransferModal && <TokenTransferModal onClose={() => handleModal()} />}
+        {showTransferModal && <TokenTransferModal onClose={() => handleModal(false)} />}
         {/* {showManageModal && <ManageModal onClose={() => handleModal('manage', false)} />} */}
       </div>
     </div>
