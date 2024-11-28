@@ -48,7 +48,7 @@ global linter:
   rules:
   extends: .node template
   script:
-    - npm run lint:explorer
+    - npm run lint
 
 explorer staging build:
   stage: build
