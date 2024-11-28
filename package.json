@@ -6,12 +6,12 @@
   "scripts": {
     "lint": "eslint ./src/**/*.tsx",
     "prepare": "husky",
-    "build:explorer_staging": "vite build --config vite.config.explorer.ts --mode staging --emptyOutDir",
-    "build:explorer_preprod": "vite build --config vite.config.explorer.ts --mode preprod --emptyOutDir",
-    "build:explorer_production": "vite build --config vite.config.explorer.ts --mode production --emptyOutDir",
-    "build:collection_staging": "vite build --config vite.config.collection.ts --mode staging --emptyOutDir",
-    "build:collection_preprod": "vite build --config vite.config.collection.ts --mode preprod --emptyOutDir",
-    "build:collection_production": "vite build --config vite.config.collection.ts --mode production --emptyOutDir",
+    "build_explorer:staging": "vite build --config vite.config.explorer.ts --mode staging --emptyOutDir",
+    "build_explorer:preprod": "vite build --config vite.config.explorer.ts --mode preprod --emptyOutDir",
+    "build_explorer:production": "vite build --config vite.config.explorer.ts --mode production --emptyOutDir",
+    "build_collection:staging": "vite build --config vite.config.collection.ts --mode staging --emptyOutDir",
+    "build_collection:preprod": "vite build --config vite.config.collection.ts --mode preprod --emptyOutDir",
+    "build_collection:production": "vite build --config vite.config.collection.ts --mode production --emptyOutDir",
     "dev:explorer": "vite --mode dev --config vite.config.explorer.ts",
     "dev:collection": "vite --mode dev --config vite.config.collection.ts"
   },
