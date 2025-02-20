@@ -33,6 +33,7 @@ export interface CollectionsBackendResponse {
 export interface CollectionAdditionalData {
   canisterId: string
   image?: string
+  name?: string
   nftCount?: bigint
 }
 

@@ -12,6 +12,10 @@ import {
 import { COLLECTIONS_INDEX_CANISTER_ID } from '@dapp/common-constants';
 import { extractCategoryName } from '@dapp/utils';
 
+const computeLogoUrl = (canisterId: string, logoFileName: string): string => {
+  return `https://${canisterId}.raw.icp0.io/collection/-/${logoFileName}`;
+};
+
 const fetchCollectionsList = async (
   offset: number,
   limit: number,
@@ -53,10 +57,10 @@ const fetchCollectionsList = async (
     const mergedCollections: CollectionType[] = await Promise.all(
       sortedCollections.map(async (collection) => {
         const data = additionalData.find((item) => item.canisterId === collection.canister_id);
-        const category_name = await extractCategoryName(collection.category);
+        const category_name = await extractCategoryName(collection.category?.[0] ?? '');
 
         return {
-          name: collection.name[0] || 'Unknown',
+          name: data?.name || 'Unknown',
           checked: collection.checked,
           image: data?.image || '',
           category_name,
@@ -89,12 +93,15 @@ const fetchCollectionData = async (
     const result = await collectionActor.collection_nft_origyn([]);
 
     if ('ok' in result) {
-      const logo = result.ok.logo[0];
+      let logo = result.ok.logo[0];
       const totalSupply = result.ok.total_supply[0];
+
+      if (logo && !logo?.startsWith('data:image')) logo = computeLogoUrl(canisterId, logo);
 
       return {
         canisterId,
         image: logo,
+        name: result.ok.name[0],
         nftCount: totalSupply,
       };
     } else {

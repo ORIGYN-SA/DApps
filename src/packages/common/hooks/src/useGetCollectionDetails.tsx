@@ -1,17 +1,17 @@
 // src/hooks/useGetCollectionDetails.ts
 
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { Actor, HttpAgent } from '@dfinity/agent'
-import { idlFactory as goldIdlFactory } from '../../canisters/gld_nft/did.js'
-import { _SERVICE as _GOLD_NFT_SERVICE } from '../../canisters/gld_nft/interfaces/gld_nft.js'
-import { CollectionWithNFTs, NFT, SaleDetails } from '@dapp/common-types'
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { Actor, HttpAgent } from '@dfinity/agent';
+import { idlFactory as goldIdlFactory } from '../../canisters/gld_nft/did.js';
+import { _SERVICE as _GOLD_NFT_SERVICE } from '../../canisters/gld_nft/interfaces/gld_nft.js';
+import { CollectionWithNFTs, NFT, SaleDetails } from '@dapp/common-types';
 import {
   extractMetadata,
   extractOwner,
   extractSaleDetails,
   fetchCategoryByPrincipalId,
-} from '@dapp/utils'
-import { useTokenData } from '@dapp/features-tokensdata'
+} from '@dapp/utils';
+import { useTokenData } from '@dapp/features-tokensdata';
 
 const fetchCollectionDetail = async (
   canisterId: string,
@@ -19,21 +19,21 @@ const fetchCollectionDetail = async (
   getLogo: (symbol: string) => string | undefined,
 ): Promise<CollectionWithNFTs> => {
   try {
-    const agent = new HttpAgent({ host: 'https://ic0.app' })
+    const agent = new HttpAgent({ host: 'https://ic0.app' });
     const actor = Actor.createActor<_GOLD_NFT_SERVICE>(goldIdlFactory, {
       agent,
       canisterId,
-    })
+    });
 
-    const collectionResult = await actor.collection_nft_origyn([])
+    const collectionResult = await actor.collection_nft_origyn([]);
     if (!('ok' in collectionResult)) {
       throw new Error(
         `Error retrieving collection: ${collectionResult.err?.text || 'Unknown error'}`,
-      )
+      );
     }
 
-    const collectionInfo = collectionResult.ok
-    const categoryName = await fetchCategoryByPrincipalId(canisterId)
+    const collectionInfo = collectionResult.ok;
+    const categoryName = await fetchCategoryByPrincipalId(canisterId);
 
     if (!collectionInfo.token_ids || collectionInfo.token_ids.length === 0) {
       return {
@@ -42,62 +42,64 @@ const fetchCollectionDetail = async (
         categoryName,
         logo: [],
         nfts: [],
-      }
+      };
     }
 
-    const tokenIds: string[] = collectionInfo.token_ids[0]
+    const tokenIds: string[] = collectionInfo.token_ids[0];
 
-    const nftResults = await Promise.all(tokenIds.map(tokenId => actor.nft_batch_origyn([tokenId])))
+    const nftResults = await Promise.all(
+      tokenIds.map((tokenId) => actor.nft_batch_origyn([tokenId])),
+    );
     const nfts: NFT[] = nftResults
       .filter((nftResult: any) => {
         if ('ok' in nftResult[0]) {
-          const sales = nftResult[0].ok.current_sale || []
+          const sales = nftResult[0].ok.current_sale || [];
           const openSales = sales.filter((sale: any) => {
             return (
               sale.sale_type &&
               sale.sale_type.auction &&
               !('closed' in sale.sale_type.auction.status)
-            )
-          })
-          return openSales.length > 0
+            );
+          });
+          return openSales.length > 0;
         }
-        return false
+        return false;
       })
       .map((nftResult, index) => {
         if ('ok' in nftResult[0]) {
-          const { tokenName, imageUrl } = extractMetadata(nftResult[0].ok.metadata, canisterId)
-          const owner = extractOwner(nftResult[0])
+          const { tokenName, imageUrl } = extractMetadata(nftResult[0].ok.metadata, canisterId);
+          const owner = extractOwner(nftResult[0]);
 
-          const sales = nftResult[0].ok.current_sale || []
+          const sales = nftResult[0].ok.current_sale || [];
           const openSales = sales.filter((sale: any) => {
             return (
               sale.sale_type &&
               sale.sale_type.auction &&
               !('closed' in sale.sale_type.auction.status)
-            )
-          })
+            );
+          });
 
           const saleDetails: SaleDetails | null =
-            openSales.length > 0 ? extractSaleDetails(openSales[0], tokenPrices) : null
+            openSales.length > 0 ? extractSaleDetails(openSales[0], tokenPrices) : null;
 
-          let price = 0
-          let priceUSD = 0
-          let currency = ''
+          let price = 0;
+          let priceUSD = 0;
+          let currency = '';
 
           if (saleDetails) {
             price =
               saleDetails.currentBid.amount > 0
                 ? saleDetails.currentBid.amount
                 : saleDetails.buyNow.amount > 0
-                ? saleDetails.buyNow.amount
-                : saleDetails.startPrice.amount
+                  ? saleDetails.buyNow.amount
+                  : saleDetails.startPrice.amount;
 
-            currency = saleDetails.currency
+            currency = saleDetails.currency;
             priceUSD =
               saleDetails.currentBid.amountUSD ??
               saleDetails.buyNow.amountUSD ??
               saleDetails.startPrice.amountUSD ??
-              0
+              0;
           }
 
           return {
@@ -112,34 +114,37 @@ const fetchCollectionDetail = async (
             priceUSD,
             saleDetails: saleDetails || undefined,
             owner,
-          } as NFT
+          } as NFT;
         } else if ('err' in nftResult[0]) {
-          console.error(`Error for token ${tokenIds[index]}: ${nftResult[0].err.text}`)
-          return undefined
+          console.error(`Error for token ${tokenIds[index]}: ${nftResult[0].err.text}`);
+          return undefined;
         }
       })
-      .filter((nft): nft is NFT => nft !== undefined)
+      .filter((nft): nft is NFT => nft !== undefined);
 
     return {
       name: collectionInfo.name || [],
-      logo: collectionInfo.logo || [],
+      logo: collectionInfo.logo,
       categoryName,
       canister_id: canisterId,
       nfts,
-    }
+    };
   } catch (error) {
-    console.error('Error in fetchCollectionDetail:', error)
-    throw error
+    console.error('Error in fetchCollectionDetail:', error);
+    throw error;
   }
-}
+};
 
 export const useGetCollectionDetails = (canisterId: string) => {
-  const { tokens, getLogo, isLoading: isPricesLoading, isError: isPricesError } = useTokenData()
+  const { tokens, getLogo, isLoading: isPricesLoading, isError: isPricesError } = useTokenData();
 
-  const tokenUSDPrices: Record<string, number> = tokens.reduce((acc, token) => {
-    acc[token.symbol] = token.priceUSD
-    return acc
-  }, {} as Record<string, number>)
+  const tokenUSDPrices: Record<string, number> = tokens.reduce(
+    (acc, token) => {
+      acc[token.symbol] = token.priceUSD;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return useQuery<CollectionWithNFTs, Error>({
     queryKey: ['fetchCollectionDetails', canisterId],
@@ -147,5 +152,5 @@ export const useGetCollectionDetails = (canisterId: string) => {
     placeholderData: keepPreviousData,
     enabled: !!canisterId && !isPricesLoading && !isPricesError,
     staleTime: 5 * 60 * 1000,
-  })
-}
+  });
+};

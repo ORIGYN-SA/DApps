@@ -25,7 +25,7 @@ const DAOsList: React.FC<OGYDaosProps> = ({
 }) => {
   const currentItems = daos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
-  const perPageOptions = [20, 40, 60]
+  const perPageOptions = [40, 60]
 
   interface SkeletonItemProps {
     isFirstItem?: boolean

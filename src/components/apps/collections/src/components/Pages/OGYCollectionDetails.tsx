@@ -38,7 +38,7 @@ const OGYCollectionDetails: React.FC = () => {
 
   const { isConnected } = useAuth()
 
-  const perPageOptions = [20, 40, 60]
+  const perPageOptions = [40, 60]
 
   const handleSearch = (term: string) => {
     setSearchTerm(term)

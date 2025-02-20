@@ -1,17 +1,17 @@
-import { VerifiedIcon } from '@dapp/common-assets'
-import { CollectionType } from '@dapp/common-types'
-import { ItemsPerPage, Pagination } from '@dapp/features-components'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { VerifiedIcon } from '@dapp/common-assets';
+import { CollectionType } from '@dapp/common-types';
+import { ItemsPerPage, Pagination } from '@dapp/features-components';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface OGYCollectionsProps {
-  collections: CollectionType[]
-  currentPage: number
-  itemsPerPage: number
-  totalPages: number
-  setCurrentPage: (page: number) => void
-  setItemsPerPage: (items: number) => void
-  loading: boolean
+  collections: CollectionType[];
+  currentPage: number;
+  itemsPerPage: number;
+  totalPages: number;
+  setCurrentPage: (page: number) => void;
+  setItemsPerPage: (items: number) => void;
+  loading: boolean;
 }
 
 const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
@@ -26,41 +26,41 @@ const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
   const currentItems = collections.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
-  )
+  );
 
-  const perPageOptions = [20, 40, 60]
+  const perPageOptions = [40, 60];
 
   interface SkeletonItemProps {
-    isFirstItem?: boolean
+    isFirstItem?: boolean;
   }
 
   const SkeletonItem: React.FC<SkeletonItemProps> = ({ isFirstItem }) => {
     return isFirstItem ? (
-      <div className='w-full p-4 bg-[#f0f0f0] rounded-2xl border border-[#e1e1e1] flex flex-col gap-4 animate-pulse'>
-        <div className='w-32 h-32 bg-[#d1d1d1] rounded-2xl' />
-        <div className='flex flex-col gap-2 w-full'>
-          <div className='h-7 bg-[#d1d1d1] rounded w-full'></div>
-          <div className='h-5 bg-[#e1e1e1] rounded mt-2 w-full'></div>
+      <div className="w-full p-4 bg-[#f0f0f0] rounded-2xl border border-[#e1e1e1] flex flex-col gap-4 animate-pulse">
+        <div className="w-32 h-32 bg-[#d1d1d1] rounded-2xl" />
+        <div className="flex flex-col gap-2 w-full">
+          <div className="h-7 bg-[#d1d1d1] rounded w-full"></div>
+          <div className="h-5 bg-[#e1e1e1] rounded mt-2 w-full"></div>
         </div>
       </div>
     ) : (
-      <div className='flex p-2 items-center gap-4 border border-[#E1E1E1] rounded-2xl bg-[#f0f0f0] animate-pulse'>
-        <div className='h-28 w-28 bg-[#d1d1d1] rounded-2xl' />
-        <div className='flex-1 p-4'>
-          <div className='h-4 bg-[#d1d1d1] rounded w-1/2 mb-2'></div>
-          <div className='h-6 bg-[#e1e1e1] rounded w-3/4'></div>
-          <div className='h-4 bg-[#d1d1d1] rounded-full w-1/4 mt-4'></div>
+      <div className="flex p-2 items-center gap-4 border border-[#E1E1E1] rounded-2xl bg-[#f0f0f0] animate-pulse">
+        <div className="h-28 w-28 bg-[#d1d1d1] rounded-2xl" />
+        <div className="flex-1 p-4">
+          <div className="h-4 bg-[#d1d1d1] rounded w-1/2 mb-2"></div>
+          <div className="h-6 bg-[#e1e1e1] rounded w-3/4"></div>
+          <div className="h-4 bg-[#d1d1d1] rounded-full w-1/4 mt-4"></div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const CollectionCard = ({
     collection,
     isFirst,
   }: {
-    collection: CollectionType
-    isFirst: boolean
+    collection: CollectionType;
+    isFirst: boolean;
   }) => (
     <div
       key={collection.canister_id}
@@ -75,8 +75,8 @@ const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
       />
       <div className={`flex flex-col justify-center ${isFirst ? 'mt-4' : 'p-4 space-y-1'}`}>
         {!isFirst && (
-          <h3 className='text-[#69737C] text-[10px] font-medium tracking-[2px] uppercase'>
-            <span className='flex flex-row items-center gap-1'>
+          <h3 className="text-[#69737C] text-[10px] font-medium tracking-[2px] uppercase">
+            <span className="flex flex-row items-center gap-1">
               {collection.category_name || 'Unknown'} <VerifiedIcon />
             </span>
           </h3>
@@ -85,34 +85,41 @@ const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
         <p className={` ${isFirst ? 'text-[28px]' : 'text-[16px]'} font-bold leading-normal`}>
           {collection.name || 'Unknown'}
         </p>
-        <div className='flex flex-row gap-4 items-center'>
-          <div className='h-6 py-1 w-fit px-2 bg-[#212425] rounded-[100px] inline-flex items-center justify-center'>
-            <span className='text-white text-xs font-semibold'>
+        <div className="flex flex-row gap-4 items-center">
+          <div className="h-6 py-1 w-fit px-2 bg-[#212425] rounded-[100px] inline-flex items-center justify-center">
+            <span className="text-white text-xs font-semibold">
               {collection.nftCount && collection.nftCount > 1
                 ? `${collection.nftCount} NFTs`
                 : `${collection.nftCount || 0} NFT`}
             </span>
           </div>
           {isFirst && (
-            <h3 className='text-[#69737C] text-[10px] font-medium tracking-[2px] uppercase'>
-              <span className='flex flex-row items-center gap-1'>
+            <h3 className="text-[#69737C] text-[10px] font-medium tracking-[2px] uppercase">
+              <span className="flex flex-row items-center gap-1">
                 {collection.category_name || 'Unknown'} <VerifiedIcon />
               </span>
             </h3>
           )}
         </div>
+        <a
+          href={`https://${collection.canister_id}.raw.icp0.io/collection/info`}
+          target="_blank"
+          className="text-[#69737C] text-[10px] font-medium tracking-[2px] pt-1.5 hover:underline"
+        >
+          Canister ID: {collection.canister_id || 'Unknown'}
+        </a>
       </div>
     </div>
-  )
+  );
 
   return (
-    <div className='bg-white rounded-2xl mt-8 w-full p-4 md:p-8 border border-[#e1e1e1] shadow-md'>
-      <h3 className='font-semibold text-2xl'>All Collections</h3>
-      <p className='text-slate text-[13px] font-medium'>
+    <div className="bg-white rounded-2xl mt-8 w-full p-4 md:p-8 border border-[#e1e1e1] shadow-md">
+      <h3 className="font-semibold text-2xl">All Collections</h3>
+      <p className="text-slate text-[13px] font-medium">
         {loading ? 'Loading collections...' : `${collections.length} collections`}
       </p>
 
-      <div className='w-full mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6'>
+      <div className="w-full mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {loading
           ? Array.from({ length: itemsPerPage }).map((_, index) => (
               <SkeletonItem key={index} isFirstItem={index === 0} />
@@ -126,14 +133,14 @@ const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
             ))}
       </div>
 
-      <div className='flex flex-row w-full items-center mt-6'>
+      <div className="flex flex-row w-full items-center mt-6">
         <ItemsPerPage
           itemsPerPage={itemsPerPage}
           setItemsPerPage={setItemsPerPage}
           perPageOptions={perPageOptions}
         />
         {totalPages > 1 && (
-          <div className='ml-auto'>
+          <div className="ml-auto">
             <Pagination
               itemsPerPage={itemsPerPage}
               totalPages={totalPages}
@@ -144,7 +151,7 @@ const OGYCollectionsList: React.FC<OGYCollectionsProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default OGYCollectionsList
+export default OGYCollectionsList;

@@ -9,7 +9,7 @@ import OGYCollectionsList from '../Collections/OGYCollectionsList'
 const OGYCollectionsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [itemsPerPage, setItemsPerPage] = useState<number>(20)
+  const [itemsPerPage, setItemsPerPage] = useState<number>(40)
   const { data, isLoading, error } = useGetCollectionsList(0, itemsPerPage)
   const [allCollections, setAllCollections] = useState<CollectionType[]>([])
   const [filteredCollections, setFilteredCollections] = useState<CollectionType[]>([])
